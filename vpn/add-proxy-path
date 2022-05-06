@@ -1,0 +1,31 @@
+#!/bin/sh
+
+env > /etc/openvpn/$username.env
+
+cat <<EOF > /etc/openvpn/proxy/$username.yaml
+http:
+  # Add the router
+  routers:
+    router$username:
+      entryPoints:
+      - web
+      middlewares:
+      - m$username-stripprefix
+      service: service-$username
+      rule: PathPrefix(\`/$username\`)
+
+  # Add the service
+  services:
+    service-$username:
+      loadBalancer:
+        servers:
+        - url: https://$ifconfig_pool_remote_ip/
+        passHostHeader: true
+
+  # Add middleware
+  middlewares:
+    m$username-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/$username"
+EOF

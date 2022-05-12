@@ -29,7 +29,7 @@ buildah commit "${container_p}" "${repobase}/nextsec-api"
 
 container_ui=$(buildah from docker.io/alpine:latest)
 buildah run ${container_ui} apk add --no-cache lighttpd
-buildah add "${container_ui}" ui/static/* /var/www/localhost/htdocs/
+buildah add "${container_ui}" ui/static/ /var/www/localhost/htdocs/
 buildah add "${container_ui}" ui/lighttpd.conf /etc/lighttpd/lighttpd.conf
 buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_ui}

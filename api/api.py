@@ -4,11 +4,13 @@ import base64
 import socket
 import os.path
 import ipaddress
+import subprocess
 from flask import Flask, json, request
 
 odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
 pdir = f"{odir}/proxy"
+kdir = f"{odir}/pki"
 network = os.environ.get('NETWORK', '172.21.0.0')
 netmask =  os.environ.get('NETMASK', '255.255.0.0')
 port = os.environ.get('PORT', 1194)
@@ -17,12 +19,24 @@ fqdn = os.environ.get('FQDN', socket.getfqdn())
 
 api = Flask(__name__)
 
-def read_ca():
+def read_cert(filename):
     lines = ''
-    with open('/etc/openvpn/pki/ca.crt', 'r') as fp:
+    with open(filename, 'r') as fp:
         lines = fp.readlines()
-
     return ''.join(lines)
+
+def read_ca():
+    return read_cert(f'{kdir}/ca.crt')
+
+def generate_certificate(name):
+    env = {"EASYRSA_BATCH": "1", "EASYRSA_REQ_CN": name, "EASYRSA_PKI": kdir}
+    subprocess.run(["/usr/share/easy-rsa/easyrsa", "gen-req", name, "nopass"], env=env, check=True)
+    subprocess.run(["/usr/share/easy-rsa/easyrsa", "sign-req", "client", name], env=env, check=True)
+
+def revoke_certificate(name):
+    env = {"EASYRSA_BATCH": "1", "EASYRSA_PKI": kdir}
+    subprocess.run(["/usr/share/easy-rsa/easyrsa", "revoke", name], env=env, check=True)
+    subprocess.run(["/usr/share/easy-rsa/easyrsa", "gen-crl"], env=env, check=True)
 
 def list_servers():
     servers = []
@@ -46,17 +60,16 @@ def delete_server(name):
 
     # Kill existing VPN connection
     cmd = f'kill {name}'
-    cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
-    cs.connect(("127.0.0.1",mport));
+    cs = socket.create_connection(("localhost",mport));
     cs.send(cmd.encode())
     cs.close()
 
-    # Delete traefik config and reservation/auth file
-    try:
+    # Delete traefik config, reservation/auth file and revoke certificate
+    revoke_certificate(name)
+    if os.path.isfile(f'{cdir}/{name}'):
         os.unlink(f'{cdir}/{name}')
+    if os.path.isfile('{pdir}/{name}.yaml'):
         os.unlink(f'{pdir}/{name}.yaml')
-    except:
-        pass
 
     return json.dumps({'success': True})
 
@@ -76,8 +89,11 @@ def add_server(name):
             break
 
     if not free_ip:
-        return json.dumps({'success': False}, 500)
+        return json.dumps({'success': False}), 500
     else:
+        generate_certificate(name)
+        if not os.path.isdir(cdir):
+            os.makedirs()
         with open(f'{cdir}/{name}', 'w') as fp:
             fp.write(f'ifconfig-push {free_ip} {netmask}\n')
 
@@ -110,12 +126,18 @@ def server_config(name):
 @api.route('/servers/token/<name>', methods=['GET'])
 def get_token(name):
     encoded = request.args.get('encoded') or False
-    ca = read_ca()
+    crt = f'{kdir}/issued/{name}.crt'
+    key = f'{kdir}/private/{name}.key'
+
+    if not os.path.isfile(crt):
+        return json.dumps({'success': False}), 403
 
     token = dict()
     token['host'] = fqdn
     token['port'] = port
-    token['cat'] = ca
+    token['ca'] = read_ca()
+    token['cert'] = read_cert(crt)
+    token['key'] = read_cert(key)
 
     if encoded:
         return base64.b64encode(json.dumps(token).encode())

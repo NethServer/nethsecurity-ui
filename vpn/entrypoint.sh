@@ -14,6 +14,7 @@ if [ ! -f /etc/openvpn/pki/ca.crt ]; then
     EASYRSA_BATCH=1 EASYRSA_REQ_CN=$cn /usr/share/easy-rsa/easyrsa build-ca nopass
     EASYRSA_BATCH=1 EASYRSA_REQ_CN=$cn /usr/share/easy-rsa/easyrsa gen-dh
     EASYRSA_BATCH=1 EASYRSA_REQ_CN=$cn /usr/share/easy-rsa/easyrsa build-server-full server nopass
+    EASYRSA_BATCH=1 EASYRSA_REQ_CN=$cn /usr/share/easy-rsa/easyrsa gen-crl
     cd -
 fi
 
@@ -46,6 +47,7 @@ dh /etc/openvpn/pki/dh.pem
 ca /etc/openvpn/pki/ca.crt
 cert /etc/openvpn/pki/issued/server.crt
 key /etc/openvpn/pki/private/server.key
+crl-verify /etc/openvpn/pki/crl.pem
 
 auth-user-pass-verify /usr/local/bin/controller-auth via-env
 client-connect /usr/local/bin/add-proxy-path

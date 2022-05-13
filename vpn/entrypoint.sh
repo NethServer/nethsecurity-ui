@@ -55,7 +55,6 @@ username-as-common-name
 
 management localhost $mport
 
-compress lz4
 errors-to-stderr
 keepalive 20 120
 persist-key

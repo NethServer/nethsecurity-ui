@@ -14,6 +14,11 @@ To run the stack:
 ./start.sh
 ```
 
+To load the UI from a local dir, use:
+```
+./start.sh <ui_path>
+```
+
 ## How it works
 
 Services:

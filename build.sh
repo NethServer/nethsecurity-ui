@@ -27,11 +27,14 @@ buildah add "${container_p}" api/api.py /usr/share/nextsec-api/
 buildah config --cmd='["python3", "/usr/share/nextsec-api/api.py"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"
 
+container_ui_build=$(buildah from -v "${PWD}/ui:/build:z" docker.io/library/node:lts-slim)
+buildah run ${container_ui_build} sh -c "cd /build && npm install && npm run build"
+buildah rm ${container_ui_build}
+
 container_ui=$(buildah from docker.io/alpine:latest)
 buildah run ${container_ui} apk add --no-cache lighttpd
-buildah add "${container_ui}" ui/static/ /var/www/localhost/htdocs/
+buildah add "${container_ui}" ui/dist/ /var/www/localhost/htdocs/
 buildah add "${container_ui}" ui/lighttpd.conf /etc/lighttpd/lighttpd.conf
 buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_ui}
 buildah commit "${container_ui}" "${repobase}/nextsec-ui"
-

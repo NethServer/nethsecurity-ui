@@ -1,9 +1,10 @@
 import os
 import glob
-import os.path
+import base64
 import socket
+import os.path
 import ipaddress
-from flask import Flask, json, render_template
+from flask import Flask, json, request
 
 odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
@@ -15,6 +16,13 @@ mport = os.environ.get('MPORT', 1175)
 fqdn = os.environ.get('FQDN', socket.getfqdn())
 
 api = Flask(__name__)
+
+def read_ca():
+    lines = ''
+    with open('/etc/openvpn/pki/ca.crt', 'r') as fp:
+        lines = fp.readlines()
+
+    return ''.join(lines)
 
 def list_servers():
     servers = []
@@ -77,11 +85,7 @@ def add_server(name):
 
 @api.route('/servers/config/<name>', methods=['GET'])
 def server_config(name):
-    lines = ''
-    with open('/etc/openvpn/pki/ca.crt', 'r') as fp:
-        lines = fp.readlines()
-
-    ca = ''.join(lines)
+    ca = read_ca()
     config = ( 
             f'client\n'
             f'server-poll-timeout 5\n'
@@ -102,6 +106,22 @@ def server_config(name):
             f'compress lz4\n'
             )
     return config
+
+@api.route('/servers/token/<name>', methods=['GET'])
+def get_token(name):
+    encoded = request.args.get('encoded') or False
+    ca = read_ca()
+
+    token = dict()
+    token['host'] = fqdn
+    token['port'] = port
+    token['cat'] = ca
+
+    if encoded:
+        return base64.b64encode(json.dumps(token).encode())
+    else:
+        return json.dumps(token)
+
 
 if __name__ == '__main__':
     api.run() 

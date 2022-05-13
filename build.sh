@@ -21,8 +21,8 @@ buildah commit "${container}" "${repobase}/${reponame}"
 container_p=$(buildah from docker.io/alpine:latest)
 
 buildah run ${container_p} apk add --no-cache python3 py3-pip
-buildah run ${container_p} pip install flask
-buildah run ${container_p} mkdir -p /usr/share/nextsec-api/{templates,static}
+buildah add "${container_p}" api/requirements.txt /usr/share/nextsec-api/
+buildah run ${container_p} pip install -r /usr/share/nextsec-api/requirements.txt
 buildah add "${container_p}" api/api.py /usr/share/nextsec-api/
 buildah config --cmd='["python3", "/usr/share/nextsec-api/api.py"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"

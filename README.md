@@ -88,6 +88,22 @@ Get VPN client config:
 curl http://localhost:5000/servers/config/client1
 ```
 
+### token
+
+Get token to join the controller.
+The token contains all required configuration to connect to the VPN.
+
+Get the token in JSON format:
+```
+curl http://localhost:5000/servers/token/client1
+```
+
+Get the token in base64-encoded JSON:
+```
+curl http://localhost:5000/servers/token/client1?encoded=true
+```
+
+
 ## Add a server
 
 Execute the `add` API below, then create the OpenVPN client configuration inside NextSecurity.

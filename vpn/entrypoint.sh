@@ -49,11 +49,11 @@ cert /etc/openvpn/pki/issued/server.crt
 key /etc/openvpn/pki/private/server.key
 crl-verify /etc/openvpn/pki/crl.pem
 
-auth-user-pass-verify /usr/local/bin/controller-auth via-env
 client-connect /usr/local/bin/add-proxy-path
 
-verify-client-cert none
-username-as-common-name
+# configuration for old easy RSA certs
+remote-cert-ku e0 80
+remote-cert-eku "TLS Web Client Authentication"
 
 management localhost $mport
 

@@ -20,7 +20,6 @@ buildah commit "${container}" "${repobase}/nextsec-vpn"
 images+=("${repobase}/nextsec-vpn")
 
 container_p=$(buildah from docker.io/alpine:latest)
-
 buildah run ${container_p} apk add --no-cache python3 py3-pip easy-rsa
 buildah add "${container_p}" api/requirements.txt /usr/share/nextsec-api/
 buildah run ${container_p} pip install -r /usr/share/nextsec-api/requirements.txt
@@ -41,7 +40,6 @@ buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_ui}
 buildah commit "${container_ui}" "${repobase}/nextsec-ui"
 images+=("${repobase}/nextsec-ui")
-
 
 container_proxy=$(buildah from docker.io/library/traefik:v2.6)
 buildah add "${container_proxy}" proxy/entrypoint.sh /entrypoint.sh

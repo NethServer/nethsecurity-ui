@@ -16,5 +16,4 @@ podman run --rm --detach --network=host --cap-add=NET_ADMIN --device /dev/net/tu
 podman run --rm --detach --network=host --volumes-from=$POD-vpn --pod $POD --name $POD-api -e FQDN=$(hostname -f) ghcr.io/nethserver/nextsec-api:latest
 podman run --rm --detach --network=host --pod $POD --name $POD-ui $vopts ghcr.io/nethserver/nextsec-ui:latest
 sleep 2
-podman run --rm --detach --network=host --volumes-from=$POD-vpn --pod $POD --name $POD-proxy docker.io/library/traefik:v2.6 --providers.file.directory=/etc/openvpn/proxy/ --providers.file.watch=true --serversTransport.insecureSkipVerify=true --entryPoints.web.address=:8181 --accesslog=true --log.level=DEBUG
-
+podman run --rm --detach --network=host --volumes-from=$POD-vpn --pod $POD --name $POD-proxy ghcr.ip/nethserver/nextsec-proxy:latest

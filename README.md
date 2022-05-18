@@ -59,6 +59,8 @@ The following environment variables can be used to configure the containers:
 - `API_PORT`: API server listening port, default is `5000`
 - `UI_PORT`: UI listening port, default is `3000`
 - `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
+- `PROXY_PORT`: proxy listening port, default is `8080`
+- `PROXY_BIND_IP`: proxy binding IP, default is `0.0.0.0`
 
 ## REST API
 

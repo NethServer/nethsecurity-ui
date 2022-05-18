@@ -45,7 +45,20 @@ General workflow:
 - access connect the NextSecurity and create the OpenVPN configuration, then start the VPN on the machine
 - go back to server and invoke luci APIs: `curl http://localhost:8181/clientX/..`
 
+### Environment configuration
 
+The following environment variables can be used to configure the containers:
+
+- `FQDN`: default is the container/pod hostname
+- `OVPN_NETWORK`: OpenVPN network, default is `172.21.0.0`
+- `OVPN_NETMASK`: OpenVPN netmask, default is `255.255.0.0`
+- `OVPN_CN`: OpenVPN certificate CN, default is `nextsec`
+- `OVPN_UDP_PORT`: OpenVPN UDP port, default is `1194`
+- `OVPN_MGMT_PORT`: OpenVPN TCP managament port, default is `1175`
+- `OVPN_TUN`: OpenVPN tun device name, default is `tunsec`
+- `API_PORT`: API server listening port, default is `5000`
+- `UI_PORT`: UI listening port, default is `3000`
+- `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
 
 ## REST API
 

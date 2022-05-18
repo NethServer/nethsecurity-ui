@@ -25,7 +25,8 @@ buildah run ${container_p} apk add --no-cache python3 py3-pip easy-rsa
 buildah add "${container_p}" api/requirements.txt /usr/share/nextsec-api/
 buildah run ${container_p} pip install -r /usr/share/nextsec-api/requirements.txt
 buildah add "${container_p}" api/api.py /usr/share/nextsec-api/
-buildah config --cmd='["python3", "/usr/share/nextsec-api/api.py"]' ${container_p}
+buildah add "${container_p}" api/entrypoint.sh /entrypoint.sh
+buildah config --entrypoint='["/entrypoint.sh"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"
 images+=("${repobase}/nextsec-api")
 
@@ -36,7 +37,6 @@ buildah rm ${container_ui_build}
 container_ui=$(buildah from docker.io/alpine:latest)
 buildah run ${container_ui} apk add --no-cache lighttpd
 buildah add "${container_ui}" ui/dist/ /var/www/localhost/htdocs/
-buildah add "${container_ui}" ui/lighttpd.conf /etc/lighttpd/lighttpd.conf
 buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_ui}
 buildah commit "${container_ui}" "${repobase}/nextsec-ui"

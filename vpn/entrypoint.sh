@@ -2,11 +2,14 @@
 
 set -e
 
-ovpn_network=${NETWORK:-172.21.0.0}
-ovpn_netmask=${NETMASK:-255.255.0.0}
-cn=${CN:-nextsec}
-port=${PORT:-1194}
-mport=${MPORT:-1175}
+ovpn_network=${OVPN_NETWORK:-172.21.0.0}
+ovpn_netmask=${OVPN_NETMASK:-255.255.0.0}
+cn=${OVPN_CN:-nextsec}
+ovpn_port=${OVPN_UDP_PORT:-1194}
+mport=${OVPN_MGMT_PORT:-1175}
+tun=${OVPN_TUN:-tunsec}
+ui_port=${UI_PORT:-3000}
+api_port=${API_PORT:-5000}
 
 if [ ! -f /etc/openvpn/pki/ca.crt ]; then
     cd /etc/openvpn
@@ -27,7 +30,8 @@ if [ ! -d /etc/openvpn/proxy ]; then
 fi
 
 cat << EOF > /etc/openvpn/server.conf
-dev tun$cn
+dev $tun
+dev-type tun
 server $ovpn_network $ovpn_netmask
 push "route $ovpn_network $ovpn_netmask"
 
@@ -36,7 +40,7 @@ client-config-dir /etc/openvpn/ccd
 
 ifconfig-pool-persist host-to-net.pool 0
 
-port $port
+port $ovpn_port
 script-security 3
 float
 multihome
@@ -82,7 +86,7 @@ http:
     service-api:
       loadBalancer:
         servers:
-        - url: http://127.0.0.1:5000/
+        - url: http://127.0.0.1:${api_port}/
         passHostHeader: true
 
   # Add middleware
@@ -110,7 +114,7 @@ http:
     service-ui:
       loadBalancer:
         servers:
-        - url: http://127.0.0.1:3000/
+        - url: http://127.0.0.1:${ui_port}/
         passHostHeader: true
 
   # Add middleware

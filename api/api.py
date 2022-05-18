@@ -11,10 +11,10 @@ odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
 pdir = f"{odir}/proxy"
 kdir = f"{odir}/pki"
-network = os.environ.get('NETWORK', '172.21.0.0')
-netmask =  os.environ.get('NETMASK', '255.255.0.0')
-port = os.environ.get('PORT', 1194)
-mport = os.environ.get('MPORT', 1175)
+network = os.environ.get('OVPN_NETWORK', '172.21.0.0')
+netmask =  os.environ.get('OVPN_NETMASK', '255.255.0.0')
+ovpn_udp_port = os.environ.get('OVPN_UDP_PORT', 1194)
+ovpn_mgmt_port = os.environ.get('OVPN_MGMT_PORT', 1175)
 fqdn = os.environ.get('FQDN', socket.getfqdn())
 
 api = Flask(__name__)
@@ -60,7 +60,7 @@ def delete_server(name):
 
     # Kill existing VPN connection
     cmd = f'kill {name}'
-    cs = socket.create_connection(("localhost",mport));
+    cs = socket.create_connection(("localhost",ovpn_mgmt_port));
     cs.send(cmd.encode())
     cs.close()
 
@@ -108,7 +108,7 @@ def server_config(name):
             f'nobind\n'
             f'float\n'
             f'explicit-exit-notify 1\n'
-            f'remote {fqdn} {port} udp\n'
+            f'remote {fqdn} {ovpn_udp_port} udp\n'
             f'dev tun{name}\n'
             f'tls-client\n'
             f'auth-nocache\n'
@@ -134,7 +134,7 @@ def get_token(name):
 
     token = dict()
     token['host'] = fqdn
-    token['port'] = port
+    token['port'] = ovpn_udp_port
     token['ca'] = read_ca()
     token['cert'] = read_cert(crt)
     token['key'] = read_cert(key)

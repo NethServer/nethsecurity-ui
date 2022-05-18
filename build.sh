@@ -6,7 +6,7 @@ repobase="ghcr.io/nethserver"
 images=()
 container=$(buildah from docker.io/alpine:latest)
 
-trap "buildah rm ${container} ${container_p} ${container_ui} ${container_ui_build}" EXIT
+trap "buildah rm ${container} ${container_p} ${container_ui} ${container_ui_build} ${container_proxy}" EXIT
 
 echo "Installing build depencies..."
 buildah run ${container} apk add --no-cache openvpn easy-rsa
@@ -20,12 +20,12 @@ buildah commit "${container}" "${repobase}/nextsec-vpn"
 images+=("${repobase}/nextsec-vpn")
 
 container_p=$(buildah from docker.io/alpine:latest)
-
 buildah run ${container_p} apk add --no-cache python3 py3-pip easy-rsa
 buildah add "${container_p}" api/requirements.txt /usr/share/nextsec-api/
 buildah run ${container_p} pip install -r /usr/share/nextsec-api/requirements.txt
 buildah add "${container_p}" api/api.py /usr/share/nextsec-api/
-buildah config --cmd='["python3", "/usr/share/nextsec-api/api.py"]' ${container_p}
+buildah add "${container_p}" api/entrypoint.sh /entrypoint.sh
+buildah config --entrypoint='["/entrypoint.sh"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"
 images+=("${repobase}/nextsec-api")
 
@@ -36,11 +36,16 @@ buildah rm ${container_ui_build}
 container_ui=$(buildah from docker.io/alpine:latest)
 buildah run ${container_ui} apk add --no-cache lighttpd
 buildah add "${container_ui}" ui/dist/ /var/www/localhost/htdocs/
-buildah add "${container_ui}" ui/lighttpd.conf /etc/lighttpd/lighttpd.conf
 buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_ui}
 buildah commit "${container_ui}" "${repobase}/nextsec-ui"
 images+=("${repobase}/nextsec-ui")
+
+container_proxy=$(buildah from docker.io/library/traefik:v2.6)
+buildah add "${container_proxy}" proxy/entrypoint.sh /entrypoint.sh
+buildah config --entrypoint='["/entrypoint.sh"]' --cmd='["/usr/local/bin/traefik", "--configFile=/config.yaml"]' ${container_proxy}
+buildah commit "${container_proxy}" "${repobase}/nextsec-proxy"
+images+=("${repobase}/nextsec-proxy")
 
 if [[ -n "${CI}" ]]; then
     # Set output value for Github Actions

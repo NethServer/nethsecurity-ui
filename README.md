@@ -39,11 +39,19 @@ Example:
 curl -k http://localhost:8181/client1/cgi-bin/luci/rpc/auth --data '{ "id": 1, "method": "login", "params": ["root", "Nethesis,1234"]}'
 ```
 
-General workflow:
+General workflow without waiting list:
 
-- access the server and add a new machine using the `add` API below
-- access connect the NextSecurity and create the OpenVPN configuration, then start the VPN on the machine
-- go back to server and invoke luci APIs: `curl http://localhost:8181/clientX/..`
+- access the controller and add a new machine using the `add` API below
+- connect the NextSecurity and execute `/etc/init.d/ns-plug start`
+- go back to the controller and retrieve a token for the NextSecurity: `curl http://localhost:8080/api/servers/login/clientX`,
+  use the token to invoke luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
+
+General workflow with waiting list:
+- connect the NextSecurity and execute `/etc/init.d/ns-plug start`
+- access the controller and check the list of waiting clients `curl http://localhost:8080/api/servers/list` (JWT auth is required)
+- add the client using the `add` API below
+- retrieve a token for the NextSecurity: `curl http://localhost:8080/api/servers/login/clientX`,
+  use the token to invoke luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
 
 ### Environment configuration
 
@@ -58,6 +66,10 @@ The following environment variables can be used to configure the containers:
 - `OVPN_TUN`: OpenVPN tun device name, default is `tunsec`
 - `API_PORT`: API server listening port, default is `5000`
 - `UI_PORT`: UI listening port, default is `3000`
+- `API_USER`: controller admin user, default is `admin`
+- `API_PASSWORD`: controller admin password, it must be passed as SHA56SUM, default is `admin`
+- `API_SECRET`: JWT secret token
+- `API_DEBUG`: enable the debug if set to `1`, default is `0`
 - `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
 - `PROXY_PORT`: proxy listening port, default is `8080`
 - `PROXY_BIND_IP`: proxy binding IP, default is `0.0.0.0`
@@ -103,46 +115,18 @@ Get VPN client config:
 curl http://localhost:5000/servers/config/client1
 ```
 
-### token
+### login
 
-Get token to join the controller.
-The token contains all required configuration to connect to the VPN.
+Login to server Luci instance and return the token.
+The token can be then used to execute API calls directly to Luci.
 
-Get the token in JSON format:
+Example:
 ```
-curl http://localhost:5000/servers/token/client1
-```
-
-Get the token in base64-encoded JSON:
-```
-curl http://localhost:5000/servers/token/client1?encoded=true
+curl http://localhost:5000/servers/login/client1
 ```
 
-
-## Add a server
-
-Execute the `add` API below, then create the OpenVPN client configuration inside NextSecurity.
-
-NextSecurity client configuration example:
+Response:
 ```
-client
-server-poll-timeout 5
-nobind
-float
-explicit-exit-notify 1
-remote nextsec-pod 1194 udp
-dev tclient1
-tls-client
-auth-nocache
-auth-user-pass credentials
-<ca>
------BEGIN CERTIFICATE-----
-58uE415umte3FL0hyTvztIHNSqu1bRUU03KJSlMLIczfMDC8ykdr3K8uZ1kAM1mh
-...
------END CERTIFICATE-----
-</ca>
-auth-nocache
-verb 3
-persist-key
-compress lz4
+{"token": "xxxxxxxxxxx"}
 ```
+

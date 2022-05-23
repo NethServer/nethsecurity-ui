@@ -44,7 +44,14 @@ def identity(payload):
     user_id = payload['identity']
     return User(user_id, 'admin', '')
 
-credentials = dict()
+# Load credentials on start
+if os.path.isfile('credentials.json'):
+    with open('credentials.json', 'r') as fp:
+        credentials = json.load(fp)
+else:
+    credentials = dict()
+
+# Reset waiting list on each start
 waiting_list = dict()
 
 api = Flask(__name__)
@@ -52,6 +59,8 @@ api.config['SECRET_KEY'] = secret
 if debug:
     api.logger.setLevel(logging.DEBUG)
 jwt = JWT(api, authenticate, identity)
+
+api.logger.debug(f'server_credentials: {credentials}')
 
 #
 # General functions

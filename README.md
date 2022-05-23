@@ -27,16 +27,14 @@ Services:
 - nextsec-api: REST API python server to manage nextsec-vpn clients, it listens on port 5000
 - nextsec-ui: lighttpd instance serving static UI files, it listens on port 3000
 
-Temporary UI available at: `http://<fqdn>:8181/ui`.
-
-After a client is connected to the VPN, you can execute remote luci API:
+After a client is connected to the VPN, you can execute remote luci API.
 ```
-curl http://localhost:8181/<client_name>/<luci_rpc_path>
+curl http://localhost:8080/<client_name>/<luci_rpc_path>
 ```
 
 Example:
 ```
-curl -k http://localhost:8181/client1/cgi-bin/luci/rpc/auth --data '{ "id": 1, "method": "login", "params": ["root", "Nethesis,1234"]}'
+curl -k http://localhost:8080/client1/cgi-bin/luci/rpc/auth --data '{ "id": 1, "method": "login", "params": ["root", "Nethesis,1234"]}'
 ```
 
 General workflow without waiting list:
@@ -48,7 +46,7 @@ General workflow without waiting list:
 
 General workflow with waiting list:
 - connect the NextSecurity and execute `/etc/init.d/ns-plug start`
-- access the controller and check the list of waiting clients `curl http://localhost:8080/api/servers/list` (JWT auth is required)
+- access the controller and check the list of waiting clients `curl http://localhost:8080/api/servers` (JWT auth is required)
 - add the client using the `add` API below
 - retrieve a token for the NextSecurity: `curl http://localhost:8080/api/servers/login/clientX`,
   use the token to invoke luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
@@ -77,8 +75,51 @@ The following environment variables can be used to configure the containers:
 ## REST API
 
 Manage server registrations using the REST API server.
+Request should be sent to the proxy server.
 
-### list
+### /login - POST
+
+Example:
+```
+curl -s http://localhost:8080/api/login -X POST -H 'Content-Type: application/json' --data '{"username": "admin", "password": "admin"}'
+```
+
+Response:
+```json
+{
+  "access_token": "eyJ0xxxxxxxxxxxxxxxxxxxxxxxx",
+  "refresh_token": "ererexxxxxxxxxxxxxxxxxxxxxxxx",
+}
+```
+
+### /refresh - POST
+
+Example:
+```
+curl http://localhost:8080/api/refresh -H "Content-Type: application/json" -X POST -H "Authorization: Bearer <refresh_token>"
+```
+
+Response:
+```json
+{
+  "access_token": "eyJ0xxxxxxxxxxxxxxxxxxxxxxxx",
+}
+```
+
+### /logout - POST
+
+Example:
+```
+curl http://localhost:8080/api/refresh -H "Content-Type: application/json" -X POST -H "Authorization: Bearer <access_token>"
+```
+
+Response:
+```json
+{"msg":"Access token revoked"}
+```
+
+
+### /servers/list - GET
 
 List servers:
 ```
@@ -86,11 +127,11 @@ curl http://localhost:5000/servers
 [{"ipaddress": "172.21.0.22", "name": "client1", "netmask": "255.255.0.0"}]r
 ```
 
-### add
+### /server/add - POST
 
 Register a new server:
 ```
-curl http://localhost:5000/servers/add/t1 -X POST
+curl http://localhost:8080/api/servers/add/t1 -X POST
 {"ipaddress": "172.21.0.2"}
 ```
 
@@ -101,28 +142,21 @@ ifconfig-push 172.21.0.2 255.255.0.0
 
 If the file named `/etc/openvpn/ccd/<client_name>` doesn't exists, the client authentication will fail.
 
-### delete
+### /servers/delete - POST
 
 Delete an existing server:
 ```
-curl http://localhost:5000/servers/delete/t1 -X POST
+curl http://localhost:8080/api/servers/delete/t1 -X POST
 ```
 
-### config
-
-Get VPN client config:
-```
-curl http://localhost:5000/servers/config/client1
-```
-
-### login
+### /servers/token - POST
 
 Login to server Luci instance and return the token.
 The token can be then used to execute API calls directly to Luci.
 
 Example:
 ```
-curl http://localhost:5000/servers/login/client1
+curl http://localhost:8080/api/servers/login/client1
 ```
 
 Response:

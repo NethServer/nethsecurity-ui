@@ -8,8 +8,15 @@ import hashlib
 import logging
 import ipaddress
 import subprocess
-from flask import Flask, json, request
-from flask_jwt import JWT, jwt_required, current_identity
+from datetime import timedelta
+
+from flask import Flask, json, request, jsonify
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_refresh_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 
 odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
@@ -24,25 +31,8 @@ admin_username = os.environ.get('API_USER', 'admin')
 admin_password = os.environ.get('API_PASSWORD', hashlib.sha256('admin'.encode('utf-8')).hexdigest())
 secret = os.environ.get('API_SECRET', 'secret')
 debug = os.environ.get('API_DEBUG', False)
+session_duration = os.environ.get('API_SESSION_DURATION', 3600*24*7) # 7 days
 proxy_port = os.environ.get('PROXY_PORT', 8080)
-
-class User(object):
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
-    def __str__(self):
-        return "User(id='%s')" % self.id
-
-def authenticate(username, password):
-    hpass = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    if username == admin_username and admin_password == hpass:
-        return User(1, username, password)
-
-def identity(payload):
-    user_id = payload['identity']
-    return User(user_id, 'admin', '')
 
 # Load credentials on start
 if os.path.isfile('credentials.json'):
@@ -51,14 +41,18 @@ if os.path.isfile('credentials.json'):
 else:
     credentials = dict()
 
-# Reset waiting list on each start
+# Reset waiting and jwt_blocklist list on each start
 waiting_list = dict()
+jwt_blocklist = dict()
 
 api = Flask(__name__)
-api.config['SECRET_KEY'] = secret
+access_expire = timedelta(hours=1)
+api.config['JWT_SECRET_KEY'] = secret
+api.config["JWT_ACCESS_TOKEN_EXPIRES"] = access_expire
+api.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(seconds=session_duration)
 if debug:
     api.logger.setLevel(logging.DEBUG)
-jwt = JWT(api, authenticate, identity)
+jwt = JWTManager(api)
 
 api.logger.debug(f'server_credentials: {credentials}')
 
@@ -143,6 +137,43 @@ def get_vpn_config(name):
     return token
 
 #
+# JWT APIs
+#
+
+@api.route("/login", methods=["POST"])
+def login():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    hpass = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    if username == admin_username and admin_password == hpass:
+        access_token = create_access_token(identity=username)
+        refresh_token = create_refresh_token(identity=username)
+        return jsonify(access_token=access_token, refresh_token=refresh_token)
+    else:
+        return jsonify({"success": "False", "reason": "Bad username or password"}), 401
+
+@api.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
+
+@api.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]
+    jwt_blocklist[jti] = access_expire
+    return jsonify(msg="Access token revoked")
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload["jti"]
+    blocked_token = jwt_blocklist.get(jti)
+    return blocked_token is not None
+
+#
 # Authenticated APIs
 #
 
@@ -201,9 +232,9 @@ def add_server(name):
 
         return json.dumps({'ipaddress': free_ip})
 
-@api.route('/servers/login/<name>', methods=['POST'])
+@api.route('/servers/token/<name>', methods=['POST'])
 @jwt_required()
-def login_server(name):
+def get_server_token(name):
     (suser, spwd) = credentials[name]
     payload = {"id": 1, "method": "login", "params": [suser, spwd]}
     data = json.dumps(payload)
@@ -212,6 +243,8 @@ def login_server(name):
     resp = json.loads(urllib.request.urlopen(req).read())
     api.logger.debug(f'login_server: response {resp}')
     return json.dumps({"token": resp["result"]})
+
+
 
 #
 # APIs without authentication

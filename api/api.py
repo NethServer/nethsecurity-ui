@@ -205,6 +205,10 @@ def delete_server(name):
 @api.route('/servers/add/<name>', methods=['POST'])
 @jwt_required()
 def add_server(name):
+    # Check for duplicates
+    if os.path.isfile(f'{cdir}/{name}'):
+        return json.dumps({'success': False, 'reason': 'Duplicate name'}), 409
+
     net = ipaddress.IPv4Network(f'{network}/{netmask}')
     used_ips = []
     free_ip = ''

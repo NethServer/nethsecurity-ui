@@ -17,6 +17,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_jwt
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
@@ -53,6 +54,7 @@ api.config["JWT_ACCESS_TOKEN_EXPIRES"] = access_expire
 api.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(seconds=session_duration)
 if debug:
     api.logger.setLevel(logging.DEBUG)
+    cors = CORS(api)
 jwt = JWTManager(api)
 
 api.logger.debug(f'server_credentials: {credentials}')

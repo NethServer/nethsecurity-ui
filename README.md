@@ -20,7 +20,7 @@ Then clone this repository and execute as root:
 ./start.sh
 ```
 
-The server will be available at ``http://<fqdn>:8080/ui`.
+The server will be available at `http://<fqdn>:8080/ui`.
 
 ## How it works
 

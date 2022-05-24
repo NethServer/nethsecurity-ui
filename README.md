@@ -24,20 +24,20 @@ The server will be available at ``http://<fqdn>:8080/ui`.
 
 ## How it works
 
-General workflow without waiting list:
+General work-flow without waiting list:
 
 - access the controller and add a new machine using the `add` API below
 - connect the NextSecurity and execute `/etc/init.d/ns-plug start`
 - go back to the controller and retrieve a token for the NextSecurity: `curl http://localhost:8080/api/servers/login/clientX`,
-  use the token to invoke luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
+  use the token to invoke Luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
 
-General workflow with waiting list:
+General work-flow with waiting list:
 
 - connect the NextSecurity and execute `/etc/init.d/ns-plug start`
 - access the controller and check the list of waiting clients `curl http://localhost:8080/api/servers` (JWT auth is required)
 - add the client using the `add` API below
 - retrieve a token for the NextSecurity: `curl http://localhost:8080/api/servers/login/clientX`,
-  use the token to invoke luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
+  use the token to invoke Luci APIs: `curl http://localhost:8080/clientX/cgi-bin/luci/rpc/...`
 
 ### Services
 
@@ -56,7 +56,7 @@ The following environment variables can be used to configure the containers:
 - `OVPN_NETMASK`: OpenVPN netmask, default is `255.255.0.0`
 - `OVPN_CN`: OpenVPN certificate CN, default is `nextsec`
 - `OVPN_UDP_PORT`: OpenVPN UDP port, default is `1194`
-- `OVPN_MGMT_PORT`: OpenVPN TCP managament port, default is `1175`
+- `OVPN_MGMT_PORT`: OpenVPN TCP management port, default is `1175`
 - `OVPN_TUN`: OpenVPN tun device name, default is `tunsec`
 - `API_PORT`: API server listening port, default is `5000`
 - `UI_PORT`: UI listening port, default is `3000`
@@ -76,10 +76,10 @@ Request should be sent to the proxy server.
 
 Almost all APIs are authenticated using [JWT](https://flask-jwt-extended.readthedocs.io/en/stable/).
 
-Authentication workflow:
+Authentication work-flow:
 
 1. send user name and password to `/login` API
-2. retrive authorization tokens:
+2. retrieve authorization tokens:
    - `access_token`: it's the token used to executed all APIs, it expires after an hour
    - `refresh_token`: this token can be used only to call the `/refresh` API and request a new `access_token`, it expires after `API_SESSION_DURATION` seconds (default to 7 days) 
 3. invoke other APIs by setting the header `Authorization: Bearer <access_token>"`
@@ -87,7 +87,7 @@ Authentication workflow:
 Unauthenticated APIs:
 
 - `/login`: execute the login and retrieve the tokens
-- `/register`: invoked by firewalls to register themselvs, this API should be always invoked using a valid HTTPS endpoint to
+- `/register`: invoked by firewalls to register themselves, this API should be always invoked using a valid HTTPS endpoint to
   ensure the identity of the server
 
 ### /login - POST
@@ -143,14 +143,14 @@ Response:
 ### /servers/list - GET
 
 List existing servers (firewalls).
-If the `registerd` flag is false, the firewall is in waiting list.
+If the `registered` flag is false, the firewall is in waiting list.
 
 This API is authenticated using the `access_token`.
 
 Example:
 ```
 curl http://localhost:8080/api/servers
-[{"ipaddress": "172.21.0.22", "name": "client1", "netmask": "255.255.0.0", "registerd": true}]r
+[{"ipaddress": "172.21.0.22", "name": "client1", "netmask": "255.255.0.0", "registered": true}]r
 ```
 
 Response:
@@ -235,7 +235,7 @@ This API is *not* authenticated.
 If the firewall is already registered, the server will check for `system_id` and `username`;
 if they match, the password will be updated and the VPN configuration returned to firewall.
 
-If the firwall is not registered, it will be added to the waiting list and the server will return a 403 HTTP error code.
+If the firewall is not registered, it will be added to the waiting list and the server will return a 403 HTTP error code.
 The firewall can continue to poll the same endpoint until the admin approves the systemd_id inside the waiting list.
 
 Example:
@@ -270,4 +270,4 @@ To load the UI from a local dir, use:
 ./start.sh <ui_path>
 ```
 
-Every time a commit us pushed to the master, a Github actions will automatically build new images.
+Every time a commit us pushed to the master, a GitHub actions will automatically build new images.

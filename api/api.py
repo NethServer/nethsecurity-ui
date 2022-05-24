@@ -1,6 +1,7 @@
 import os
 import glob
 import base64
+import asyncio
 import socket
 import urllib
 import os.path
@@ -108,19 +109,44 @@ def revoke_certificate(name):
     subprocess.run(["/usr/share/easy-rsa/easyrsa", "revoke", name], env=env, check=True)
     subprocess.run(["/usr/share/easy-rsa/easyrsa", "gen-crl"], env=env, check=True)
 
+async def list_vpn_clients():
+    clients = {}
+    reader, writer = await asyncio.open_connection('127.0.0.1', ovpn_mgmt_port)
+    greetings = await reader.readline()
+    writer.write('status 3\n'.encode())
+
+    while True:
+        line = await reader.readline()
+        if line.decode().rstrip() == 'END' or not line:
+            break
+        else:
+            if line.decode().startswith('CLIENT_LIST'):
+                fields = line.decode().split('\t')
+                clients[fields[1]] = {'real_address': fields[2],
+                        'virtual_address': fields[3],
+                        'bytes_rcvd': fields[5],
+                        'bytes_sent': fields[6],
+                        'connected_since': fields[8]}
+
+    writer.close()
+    return clients
+
 def list_servers():
     servers = []
+    vpn_clients = asyncio.run(list_vpn_clients())
+    api.logger.debug(f'list_servers: vpn_clients={vpn_clients}')
+
     for name in glob.glob(f'{cdir}/*'):
         sname=os.path.basename(name)
         with open(name, 'r') as fp:
             try:
                 line = fp.read().rstrip()
                 (cmd, ip, mask) = line.split(' ')
-                servers.append({'name': sname, 'ipaddress': ip, 'netmask': mask, 'registered': True})
+                servers.append({'name': sname, 'ipaddress': ip, 'netmask': mask, 'registered': True, 'vpn': vpn_clients.get(sname)})
             except:
                 pass
     for server in waiting_list.keys():
-        servers.append({'name': server, 'ipaddress': '', 'netmask': '', 'registered': False})
+        servers.append({'name': server, 'ipaddress': '', 'netmask': '', 'registered': False, 'vpn': None})
     return servers
 
 def get_vpn_config(name):

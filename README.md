@@ -58,7 +58,7 @@ The following environment variables can be used to configure the containers:
 - `API_USER`: controller admin user, default is `admin`
 - `API_PASSWORD`: controller admin password, it must be passed as SHA56SUM, default is `admin`
 - `API_SECRET`: JWT secret token
-- `API_DEBUG`: enable the debug if set to `1`, default is `0`
+- `API_DEBUG`: enable debug logging and CORS if set to `1`, default is `0`
 - `API_SESSION_DURATION`: JWT session duration in seconds, default is 7 days
 - `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
 - `PROXY_PORT`: proxy listening port, default is `8080`
@@ -146,6 +146,32 @@ Example:
 ```
 curl http://localhost:8080/api/servers
 [{"ipaddress": "172.21.0.22", "name": "client1", "netmask": "255.255.0.0", "registerd": true}]r
+```
+
+Response:
+```json
+[
+  {
+    "ipaddress": "172.21.0.2",
+    "name": "test1",
+    "netmask": "255.255.0.0",
+    "registered": true,
+    "vpn": {
+      "bytes_rcvd": "3383",
+      "bytes_sent": "3077",
+      "connected_since": "1653383230",
+      "real_address": "192.168.122.40:46099",
+      "virtual_address": "172.21.0.2"
+    }
+  },
+  {
+    "ipaddress": "",
+    "name": "test2",
+    "netmask": "",
+    "registered": false,
+    "vpn": null
+  }
+]
 ```
 
 ### /servers/add/_name_ - POST

@@ -22,6 +22,7 @@ odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
 pdir = f"{odir}/proxy"
 kdir = f"{odir}/pki"
+cfile = f"{odir}/credentials.json"
 network = os.environ.get('OVPN_NETWORK', '172.21.0.0')
 netmask =  os.environ.get('OVPN_NETMASK', '255.255.0.0')
 ovpn_udp_port = os.environ.get('OVPN_UDP_PORT', 1194)
@@ -35,8 +36,8 @@ session_duration = os.environ.get('API_SESSION_DURATION', 3600*24*7) # 7 days
 proxy_port = os.environ.get('PROXY_PORT', 8080)
 
 # Load credentials on start
-if os.path.isfile('credentials.json'):
-    with open('credentials.json', 'r') as fp:
+if os.path.isfile(cfile):
+    with open(cfile, 'r') as fp:
         credentials = json.load(fp)
 else:
     credentials = dict()
@@ -61,7 +62,7 @@ api.logger.debug(f'server_credentials: {credentials}')
 #
 
 def save_credentials():
-    with open('credentials.json', 'w') as fp:
+    with open(cfile, 'w') as fp:
         json.dump(credentials, fp)
 
 def update_server_credentials(name, username, password):

@@ -21,6 +21,7 @@ images+=("${repobase}/nextsec-vpn")
 
 container_p=$(buildah from docker.io/alpine:latest)
 buildah run ${container_p} apk add --no-cache python3 py3-pip easy-rsa
+buildah run ${container_p} pip install wheel
 buildah add "${container_p}" api/requirements.txt /
 buildah run ${container_p} pip install -r /requirements.txt
 buildah add "${container_p}" api/api.py /

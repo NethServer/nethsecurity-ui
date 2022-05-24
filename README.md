@@ -1,15 +1,20 @@
 # nextsecurity-controller
 
-The controller (server) is a set of containers that allow the admin to remotely manage multiple NextSecurity installations (firewalls).
+The controller (server) is a set of containers that allow the admin to remotely manage multiple [NextSecurity](https://github.com/NethServer/nextsecurity) installations (firewalls).
 
-Firewalls are registered to the server. Upon registration the server will:
+Firewalls can register to the server using [ns-plug](https://github.com/NethServer/nextsecurity/tree/master/packages/ns-plug) client. Upon registration the server will:
 - create a VPN configuration which is sent back to the firewall
 - create a route inside the proxy to access the firewall Luci RPC
 - store credentials to access the remote firewall
 
 ## Quickstart
 
-First, make sure to have [podman](https://podman.io/) installed on your server.
+You can install it on [NS8](https://github.com/NethServer/ns8-nextsec-controller):
+```
+add-module ghcr.io/nethserver/nextsec-controller:latest
+```
+
+Otherwise, first make sure to have [podman](https://podman.io/) installed on your server.
 Then clone this repository and execute as root:
 ```
 ./start.sh

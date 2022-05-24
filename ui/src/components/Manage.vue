@@ -1,23 +1,34 @@
 <template>
-<div class="sample">
+<div class="content">
   <cv-loading :active="isLoading" overlay></cv-loading>
 
-  <cv-modal v-if="!isLoading && !isLogged" id="modal-login" :size="'default'" :visible="true" @primary-click="login" :auto-hide-off="true">
-    <template slot="title">{{config.PRODUCT_NAME}} Login</template>
-    <template slot="content">
-      <cv-form>
-        <cv-text-input label="Client" placeholder="Client" v-model="client" readonly>
-        </cv-text-input>
-        <cv-text-input label="Username" placeholder="Username" v-model="username">
-        </cv-text-input>
-        <cv-text-input type="password" label="Password" placeholder="Password" v-model="password">
-        </cv-text-input>
-      </cv-form>
-    </template>
-    <template slot="primary-button">Login</template>
-  </cv-modal>
+  <cv-grid fullWidth>
+    <cv-row>
+      <cv-column>
+        <cv-breadcrumb class="page-title" :no-trailing-slash="true">
+          <cv-breadcrumb-item>
+            <cv-link href="#controller" @click="goTo('/controller')">{{$t("configuration.title")}}</cv-link>
+          </cv-breadcrumb-item>
+          <cv-breadcrumb-item>
+            <cv-link :href="'#manage/'+this.clientId" aria-current="page">{{this.clientId}}</cv-link>
+          </cv-breadcrumb-item>
+        </cv-breadcrumb>
+      </cv-column>
+    </cv-row>
+    <cv-row>
+      <cv-column>
+        <h2 class="page-title">Manage {{this.clientId}}</h2>
+      </cv-column>
+    </cv-row>
+    <cv-row>
+      <cv-column>
+        <div class="cv-grid-story__preview-col">
+          <cv-data-table v-if="!isLoading && isLogged" :columns="tableCols" :data="tableRows" ref="table"></cv-data-table>
+        </div>
+      </cv-column>
+    </cv-row>
+  </cv-grid>
 
-  <cv-data-table v-if="!isLoading && isLogged" :columns="tableCols" :data="tableRows" ref="table"></cv-data-table>
 </div>
 </template>
 
@@ -31,12 +42,14 @@ export default {
   mixins: [StorageService],
   data() {
     return {
-      client: this.$route.params.clientId,
-      username: 'root',
-      password: 'Nethesis,1234',
+      clientId: this.$route.params.clientId,
+      // username: 'root',
+      // password: 'Nethesis,1234',
       config: window.CONFIG,
       isLoading: true,
       isLogged: false,
+      // loginError: false,
+      // loginMessage: "",
       tableCols: [
         "Name",
         "Type",
@@ -50,42 +63,22 @@ export default {
   },
   mounted() {
     // set page title
-    document.title = this.$t("manage.manage_title") + " " + this.client;
+    document.title = this.$root.config.PRODUCT_NAME + " - " + this.$t("manage.title") + " " + this.clientId;
+
+    // set page
+    this.$parent.$parent.page = "[Client " + this.clientId + "]";
 
     // get dashboard info
     this.getDashboardInfo()
   },
   methods: {
+    goTo(path) {
+      this.$router.push(path);
+    },
     async login() {
       // start loading
       this.isLoading = true;
 
-      // invoke login API
-      const [loginError, loginResponse] = await to(this.axios
-        .post(`${this.$root.luciURL}/auth`.replace("_CLIENT_", this.client), {
-          "id": 1,
-          "method": "login",
-          "params": [this.username, this.password]
-        })
-      );
-
-      // check error
-      if (loginError) {
-        console.error(loginError);
-      }
-
-      // read token loginResponse
-      const loginInfo = {
-        username: this.username,
-        token: loginResponse.data.result,
-      }
-      this.saveToStorage("loginInfo", loginInfo);
-      this.isLogged = true;
-
-      // get adshboard info
-      this.getDashboardInfo();
-    },
-    async getDashboardInfo() {
       // get loginInfo
       const loginInfo = this.getFromStorage("loginInfo")
 
@@ -96,9 +89,54 @@ export default {
         return
       }
 
+      // invoke login API
+      const [loginError, loginResponse] = await to(this.axios
+        .post(`${this.$root.serverURL}/servers/token/${this.clientId}`, {}, {
+          headers: {
+            Authorization: `Bearer ${loginInfo.access_token}`,
+          }
+        })
+      );
+
+      // check error
+      if (loginError) {
+        console.error(loginError);
+      }
+
+      // check loginResponse
+      if (!loginResponse) {
+        this.isLogged = false;
+        this.isLoading = false;
+        this.loginError = true;
+        this.loginMessage = "";
+      }
+
+      // read token loginResponse
+      const clientInfo = {
+        clientId: this.clientId,
+        token: loginResponse.data.token,
+      }
+      this.saveToStorage("clientInfo-" + this.clientId, clientInfo);
+      this.isLogged = true;
+
+      // get dashboard info
+      this.getDashboardInfo();
+    },
+    async getDashboardInfo() {
+      // get clientInfo
+      const clientInfo = this.getFromStorage("clientInfo-" + this.clientId)
+
+      // check clientInfo
+      if (!clientInfo) {
+        this.isLoading = false;
+        this.isLogged = false;
+        this.login();
+        return
+      }
+
       // invoke
       const [networkError, networkResponse] = await to(this.axios
-        .post(`${this.$root.luciURL}/uci?auth=${loginInfo.token}`.replace("_CLIENT_", this.client), {
+        .post(`${this.$root.luciURL}/uci?auth=${clientInfo.token}`.replace("_CLIENT_", this.clientId), {
           "method": "get_all",
           "params": [
             "network"
@@ -110,7 +148,8 @@ export default {
       if (networkError || !networkResponse) {
         this.isLogged = false;
         this.isLoading = false;
-        this.deleteFromStorage("loginInfo")
+        this.deleteFromStorage("clientInfo-" + this.clientId)
+        this.login();
         return
       }
 
@@ -127,6 +166,7 @@ export default {
         proto: interf['proto'] || '-'
       }))
 
+      // all done
       this.isLoading = false;
       this.isLogged = true;
 
@@ -136,6 +176,18 @@ export default {
 </script>
 
 <style>
+@media (max-width: 1055px) {
+  #modal-login {
+    margin-left: 0rem;
+  }
+}
+
+@media (min-width: 1056px) {
+  #modal-login {
+    margin-left: 8rem;
+  }
+}
+
 #modal-login {
   z-index: 5000;
 }

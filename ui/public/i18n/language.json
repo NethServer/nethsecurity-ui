@@ -1,6 +1,23 @@
 {
   "common": {},
+  "main": {
+    "controller": "Controller",
+    "logs": "Logs",
+    "settings": "Settings"
+  },
   "manage": {
-    "manage_title": "Manage client:"
+    "title": "Manage"
+  },
+  "controller": {
+    "title": "Controller",
+    "manage_client": "Click to manage this client",
+    "client_registered": "Client registered",
+    "client_unregistered": "Client not registered"
+  },
+  "logs": {
+    "title": "Logs"
+  },
+  "settings": {
+    "title": "Settings"
   }
 }

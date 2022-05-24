@@ -31,6 +31,7 @@ new Vue({
     this.config = window.CONFIG;
     this.$root.luciURL = this.config.LUCI_API_ENDPOINT;
     this.$root.serverURL = this.config.SERVER_API_ENDPOINT;
+    this.$root.page = "";
   },
   render: h => h(App),
 }).$mount('#app')

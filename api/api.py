@@ -27,10 +27,10 @@ cdir = f"{odir}/ccd"
 pdir = f"{odir}/proxy"
 kdir = f"{odir}/pki"
 cfile = f"{odir}/credentials.json"
+mgmt_sock = f"{odir}/run/mgmt.sock"
 network = os.environ.get('OVPN_NETWORK', '172.21.0.0')
 netmask =  os.environ.get('OVPN_NETMASK', '255.255.0.0')
 ovpn_udp_port = os.environ.get('OVPN_UDP_PORT', 1194)
-ovpn_mgmt_port = os.environ.get('OVPN_MGMT_PORT', 1175)
 fqdn = os.environ.get('FQDN', socket.getfqdn())
 admin_username = os.environ.get('API_USER', 'admin')
 admin_password = os.environ.get('API_PASSWORD', hashlib.sha256('admin'.encode('utf-8')).hexdigest())
@@ -113,9 +113,15 @@ def revoke_certificate(name):
     subprocess.run(["/usr/share/easy-rsa/easyrsa", "revoke", name], env=env, check=True)
     subprocess.run(["/usr/share/easy-rsa/easyrsa", "gen-crl"], env=env, check=True)
 
+async def delete_vpn_client(name):
+    reader, writer = await asyncio.open_unix_connection(mgmt_sock)
+    greetings = await reader.readline()
+    writer.write(f'kill {name}\n'.encode())
+    writer.close()
+
 async def list_vpn_clients():
     clients = {}
-    reader, writer = await asyncio.open_connection('127.0.0.1', ovpn_mgmt_port)
+    reader, writer = await asyncio.open_unix_connection(mgmt_sock)
     greetings = await reader.readline()
     writer.write('status 3\n'.encode())
 
@@ -219,10 +225,7 @@ def get_servers():
 @jwt_required()
 def delete_server(name):
     # Kill existing VPN connection
-    cmd = f'kill {name}'
-    cs = socket.create_connection(("localhost",ovpn_mgmt_port));
-    cs.send(cmd.encode())
-    cs.close()
+    asyncio.run(delete_vpn_client(name))
 
     # Delete traefik config, reservation/auth file and revoke certificate
     revoke_certificate(name)

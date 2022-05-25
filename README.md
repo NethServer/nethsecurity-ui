@@ -56,7 +56,6 @@ The following environment variables can be used to configure the containers:
 - `OVPN_NETMASK`: OpenVPN netmask, default is `255.255.0.0`
 - `OVPN_CN`: OpenVPN certificate CN, default is `nextsec`
 - `OVPN_UDP_PORT`: OpenVPN UDP port, default is `1194`
-- `OVPN_MGMT_PORT`: OpenVPN TCP management port, default is `1175`
 - `OVPN_TUN`: OpenVPN tun device name, default is `tunsec`
 - `UI_PORT`: UI listening port, default is `3000`
 - `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`

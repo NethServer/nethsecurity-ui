@@ -6,7 +6,6 @@ ovpn_network=${OVPN_NETWORK:-172.21.0.0}
 ovpn_netmask=${OVPN_NETMASK:-255.255.0.0}
 cn=${OVPN_CN:-nextsec}
 ovpn_port=${OVPN_UDP_PORT:-1194}
-mport=${OVPN_MGMT_PORT:-1175}
 tun=${OVPN_TUN:-tunsec}
 ui_port=${UI_PORT:-3000}
 api_port=${API_PORT:-5000}
@@ -23,6 +22,10 @@ fi
 
 if [ ! -d /etc/openvpn/ccd ]; then
     mkdir -p /etc/openvpn/ccd
+fi
+
+if [ ! -d /etc/openvpn/run ]; then
+    mkdir -p /etc/openvpn/run
 fi
 
 if [ ! -d /etc/openvpn/proxy ]; then
@@ -59,7 +62,7 @@ client-connect /usr/local/bin/add-proxy-path
 remote-cert-ku e0 80
 remote-cert-eku "TLS Web Client Authentication"
 
-management 127.0.0.1 $mport
+management /etc/openvpn/run/mgmt.sock unix
 
 errors-to-stderr
 keepalive 20 120

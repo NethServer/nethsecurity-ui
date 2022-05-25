@@ -97,7 +97,7 @@ Execute the login and return `access_token` and `refresh_token`.
 
 Example:
 ```
-curl -s http://localhost:8080/api/login -X POST -H 'Content-Type: application/json' --data '{"username": "admin", "password": "admin"}'
+curl -H 'Content-Type: application/json' -X POST  http://localhost:8080/api/login --data '{"username": "admin", "password": "admin"}'
 ```
 
 Response:
@@ -115,7 +115,7 @@ This API is authenticated using the `refresh_token`.
 
 Example:
 ```
-curl http://localhost:8080/api/refresh -H "Content-Type: application/json" -X POST -H "Authorization: Bearer <refresh_token>"
+curl -H 'Content-Type: application/json' -X POST -H 'Authorization: Bearer <refresh_token>' http://localhost:8080/api/refresh
 ```
 
 Response:
@@ -132,7 +132,7 @@ This API is authenticated using the `refresh_token`.
 
 Example:
 ```
-curl http://localhost:8080/api/refresh -H "Content-Type: application/json" -X POST -H "Authorization: Bearer <access_token>"
+curl -H 'Content-Type: application/json' -X POST -H 'Authorization: Bearer <refresh_token>' http://localhost:8080/api/logout
 ```
 
 Response:
@@ -141,7 +141,7 @@ Response:
 ```
 
 
-### /servers/list - GET
+### /servers - GET
 
 List existing servers (firewalls).
 If the `registered` flag is false, the firewall is in waiting list.
@@ -150,8 +150,7 @@ This API is authenticated using the `access_token`.
 
 Example:
 ```
-curl http://localhost:8080/api/servers
-[{"ipaddress": "172.21.0.22", "name": "client1", "netmask": "255.255.0.0", "registered": true}]r
+curl -H 'Content-Type: application/json' -H 'Authorization: Bearer <access_token>' http://localhost:8080/api/servers
 ```
 
 Response:
@@ -159,7 +158,7 @@ Response:
 [
   {
     "ipaddress": "172.21.0.2",
-    "name": "test1",
+    "name": "fw1",
     "netmask": "255.255.0.0",
     "registered": true,
     "vpn": {
@@ -172,7 +171,7 @@ Response:
   },
   {
     "ipaddress": "",
-    "name": "test2",
+    "name": "fw2",
     "netmask": "",
     "registered": false,
     "vpn": null
@@ -180,16 +179,18 @@ Response:
 ]
 ```
 
-### /servers/add/_name_ - POST
+### /servers - POST
 
 Add a new server to the VPN and proxy configuration.
 It also reserves a new IP address.
 
-This API is authenticated using the `access_token`.
-
 Example:
 ```
-curl http://localhost:8080/api/servers/add/t1 -X POST
+curl -H 'Content-Type: application/json' -H 'Authorization: Bearer <access_token>' -X POST http://localhost:8080/api/servers --data '{"name": "fw1"}'
+```
+
+Response:
+```json
 {"ipaddress": "172.21.0.2"}
 ```
 
@@ -200,7 +201,7 @@ ifconfig-push 172.21.0.2 255.255.0.0
 
 If the file named `/etc/openvpn/ccd/<client_name>` doesn't exists, the client authentication will fail.
 
-### /servers/delete/_name_ - POST
+### /servers/_name_ - DELETE
 
 Delete an existing server.
 
@@ -208,10 +209,10 @@ This API is authenticated using the `access_token`.
 
 Example:
 ```
-curl http://localhost:8080/api/servers/delete/t1 -X POST
+curl -H 'Content-Type: application/json' -H 'Authorization: Bearer <access_token>' -X DELETE http://localhost:8080/api/servers/delete/fw1
 ```
 
-### /servers/token/_name_ - POST
+### /servers/token - POST
 
 Login to server Luci instance and return the token.
 The token can be then used to execute API calls directly to Luci.
@@ -220,7 +221,7 @@ This API is authenticated using the `access_token`.
 
 Example:
 ```
-curl http://localhost:8080/api/servers/login/client1 -X POST
+curl -H 'Content-Type: application/json' -X POST -H 'Authorization: Bearer <access_token>' http://localhost:8080/api/servers/token --data '{"name": "fw1"}'
 ```
 
 Response:

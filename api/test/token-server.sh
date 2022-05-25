@@ -7,4 +7,4 @@ SERVER=$4
 
 token=$(curl -s http://$HOST/api/login -X POST -H "Content-Type: application/json" --data '{"username": "'$USER'", "password": "'$PASS'"}' | jq -r .access_token)
 
-curl http://$HOST/api/servers/login/$SERVER -H "Content-Type: application/json" -H "Authorization: Bearer $token" -X POST
+curl http://$HOST/api/servers/token -H "Content-Type: application/json" -H "Authorization: Bearer $token" -X POST --data '{"name": "'$SERVER'"}'

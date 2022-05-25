@@ -215,10 +215,9 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
 def get_servers():
     return json.dumps(list_servers())
 
-@api.route('/servers/delete/<name>', methods=['POST'])
+@api.route('/servers/<name>', methods=['DELETE'])
 @jwt_required()
 def delete_server(name):
-
     # Kill existing VPN connection
     cmd = f'kill {name}'
     cs = socket.create_connection(("localhost",ovpn_mgmt_port));
@@ -234,9 +233,11 @@ def delete_server(name):
 
     return json.dumps({'success': True})
 
-@api.route('/servers/add/<name>', methods=['POST'])
+@api.route('/servers', methods=['POST'])
 @jwt_required()
-def add_server(name):
+def add_server():
+    data = request.json
+    name = data['name']
     # Check for duplicates
     if os.path.isfile(f'{cdir}/{name}'):
         return json.dumps({'success': False, 'reason': 'Duplicate name'}), 409
@@ -269,9 +270,13 @@ def add_server(name):
 
         return json.dumps({'ipaddress': free_ip})
 
-@api.route('/servers/token/<name>', methods=['POST'])
+@api.route('/servers/token', methods=['POST'])
 @jwt_required()
-def get_server_token(name):
+def get_server_token():
+    data = request.json
+    name = data['name']
+    if name not in credentials:
+        return json.dumps({"success": "false", "reason": "Credentials not found"}), 404
     (suser, spwd) = credentials[name]
     payload = {"id": 1, "method": "login", "params": [suser, spwd]}
     data = json.dumps(payload)
@@ -280,8 +285,6 @@ def get_server_token(name):
     resp = json.loads(urllib.request.urlopen(req).read())
     api.logger.debug(f'login_server: response {resp}')
     return json.dumps({"token": resp["result"]})
-
-
 
 #
 # APIs without authentication

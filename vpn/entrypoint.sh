@@ -59,7 +59,7 @@ client-connect /usr/local/bin/add-proxy-path
 remote-cert-ku e0 80
 remote-cert-eku "TLS Web Client Authentication"
 
-management localhost $mport
+management 127.0.0.1 $mport
 
 errors-to-stderr
 keepalive 20 120

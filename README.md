@@ -58,14 +58,15 @@ The following environment variables can be used to configure the containers:
 - `OVPN_UDP_PORT`: OpenVPN UDP port, default is `1194`
 - `OVPN_MGMT_PORT`: OpenVPN TCP management port, default is `1175`
 - `OVPN_TUN`: OpenVPN tun device name, default is `tunsec`
-- `API_PORT`: API server listening port, default is `5000`
 - `UI_PORT`: UI listening port, default is `3000`
+- `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
+- `API_PORT`: API server listening port, default is `5000`
+- `API_BIND_IP`: API server listening IP, default is `127.0.0.1`
 - `API_USER`: controller admin user, default is `admin`
 - `API_PASSWORD`: controller admin password, it must be passed as SHA56SUM, default is `admin`
 - `API_SECRET`: JWT secret token
 - `API_DEBUG`: enable debug logging and CORS if set to `1`, default is `0`
 - `API_SESSION_DURATION`: JWT session duration in seconds, default is 7 days
-- `UI_BIND_IP`: UI binding IP, default is `0.0.0.0`
 - `PROXY_PORT`: proxy listening port, default is `8080`
 - `PROXY_BIND_IP`: proxy binding IP, default is `0.0.0.0`
 

@@ -36,7 +36,8 @@ admin_username = os.environ.get('API_USER', 'admin')
 admin_password = os.environ.get('API_PASSWORD', hashlib.sha256('admin'.encode('utf-8')).hexdigest())
 secret = os.environ.get('API_SECRET', 'secret')
 debug = os.environ.get('API_DEBUG', False)
-port = os.environ.get('API_PORT', 5000)
+bind_port = int(os.environ.get('API_PORT', 5000))
+bind_ip = os.environ.get('API_BIND_IP', '127.0.0.1')
 session_duration = os.environ.get('API_SESSION_DURATION', 3600*24*7) # 7 days
 proxy_port = os.environ.get('PROXY_PORT', 8080)
 
@@ -303,5 +304,5 @@ def register():
 
 
 if __name__ == '__main__':
-    http_server = WSGIServer(('', port), api)
+    http_server = WSGIServer((bind_ip, bind_port), api)
     http_server.serve_forever()

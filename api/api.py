@@ -20,6 +20,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
+from gevent.pywsgi import WSGIServer
+
 odir = "/etc/openvpn"
 cdir = f"{odir}/ccd"
 pdir = f"{odir}/proxy"
@@ -34,6 +36,7 @@ admin_username = os.environ.get('API_USER', 'admin')
 admin_password = os.environ.get('API_PASSWORD', hashlib.sha256('admin'.encode('utf-8')).hexdigest())
 secret = os.environ.get('API_SECRET', 'secret')
 debug = os.environ.get('API_DEBUG', False)
+port = os.environ.get('API_PORT', 5000)
 session_duration = os.environ.get('API_SESSION_DURATION', 3600*24*7) # 7 days
 proxy_port = os.environ.get('PROXY_PORT', 8080)
 
@@ -300,4 +303,5 @@ def register():
 
 
 if __name__ == '__main__':
-    api.run() 
+    http_server = WSGIServer(('', port), api)
+    http_server.serve_forever()

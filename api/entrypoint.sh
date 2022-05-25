@@ -1,5 +1,8 @@
 #!/bin/sh
 
-api_port=${API_PORT:-5000}
+mkdir -p /etc/openvpn/sockets
 
-FLASK_RUN_PORT=$api_port FLASK_APP=/api flask run
+cd /nextsec-api
+source /nextsec-api/bin/activate
+
+exec python3 api.py

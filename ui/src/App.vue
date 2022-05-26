@@ -1,7 +1,7 @@
 <template>
 <div id="app">
 
-  <div class="content">
+  <div :class="['content', isLogged ? 'logged' : '']">
     <!-- LOADER -->
     <cv-loading :active="isLoading" overlay></cv-loading>
 
@@ -191,9 +191,51 @@ body {
   background-color: #ffffff;
 }
 
+.content {
+  overflow: hidden;
+}
+
 .page-title {
   margin-top: 2rem;
   margin-bottom: 1.5rem;
+}
+
+.page-subtitle {
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.basic-card h4 {
+  margin-bottom: 0.75rem;
+}
+
+.basic-card p {
+  margin-bottom: 0.5rem;
+}
+
+.small-menu {
+  float: right;
+  margin-top: -1rem;
+  margin-right: -1rem;
+}
+
+.main-button {
+  margin-bottom: 1rem !important;
+}
+
+.bx--content .bx--col-sm-2 {
+  margin-bottom: 2rem;
+}
+
+.bx--content .bx--col-md-3 {
+  margin-bottom: 2rem;
+}
+
+.bx--content .bx--col-lg-3 {
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 1055px) {
@@ -202,6 +244,18 @@ body {
     margin-top: 3rem !important;
     padding: 0px !important;
   }
+
+  .bx--content .bx--modal-container {
+    margin-left: 0rem;
+  }
+
+  .bx--content .bx--loading-overlay {
+    padding-left: 0rem;
+  }
+
+  .content .bx--loading-overlay {
+    padding-left: 0rem;
+  }
 }
 
 @media (min-width: 1056px) {
@@ -209,6 +263,22 @@ body {
     margin-left: 16rem;
     margin-top: 3rem !important;
     padding: 0px !important;
+  }
+
+  .bx--content .bx--modal-container {
+    margin-left: 16rem;
+  }
+
+  .bx--content .bx--loading-overlay {
+    padding-left: 16rem;
+  }
+
+  .content.logged .bx--loading-overlay {
+    padding-left: 16rem;
+  }
+
+  .content .bx--loading-overlay {
+    padding-left: 0rem;
   }
 }
 
@@ -248,6 +318,11 @@ body {
   height: 20px !important;
 }
 
+.bx--modal .bx--inline-loading__text {
+  font-size: 0.875rem;
+  color: #ffffff;
+}
+
 #modal-login-config {
   z-index: 5000;
 }
@@ -270,5 +345,13 @@ body {
 
 #modal-login-config .bx--modal-content {
   height: 100%;
+}
+
+.icon-success {
+  fill: #198038 !important;
+}
+
+.icon-error {
+  fill: #da1e28 !important;
 }
 </style>

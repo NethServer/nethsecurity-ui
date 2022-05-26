@@ -1,5 +1,9 @@
 {
-  "common": {},
+  "common": {
+    "cancel": "Cancel",
+    "add": "Add",
+    "delete": "Delete"
+  },
   "main": {
     "controller": "Controller",
     "logs": "Logs",
@@ -10,9 +14,23 @@
   },
   "controller": {
     "title": "Controller",
+    "clients_list": "Clients list",
     "manage_client": "Click to manage this client",
-    "client_registered": "Client registered",
-    "client_unregistered": "Client not registered"
+    "client_registered": "Client connected",
+    "client_unregistered": "Client not connected",
+    "no_clients": "No clients registered",
+    "no_clients_desc": "Click on the button below to register a new client",
+    "add_client": "Add client",
+    "client_name": "Client name",
+    "client_adding": "Adding client...",
+    "client_adding_error": "Client not added.",
+    "client_adding_success": "Client added successfully!",
+    "client_delete_ask": "Are you sure you want to delete",
+    "client_deleting": "Deleting client...",
+    "client_deleting_error": "Client not deleted.",
+    "client_deleting_success": "Client deleted successfully!",
+    "client_options": "Click to more options",
+    "delete_client": "Delete client"
   },
   "logs": {
     "title": "Logs"

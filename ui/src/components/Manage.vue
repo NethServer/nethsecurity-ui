@@ -1,13 +1,13 @@
 <template>
 <div class="content">
-  <cv-loading :active="isLoading" overlay></cv-loading>
+  <cv-loading v-if="!parentLoading" :active="isLoading" overlay></cv-loading>
 
   <cv-grid fullWidth>
     <cv-row>
       <cv-column>
         <cv-breadcrumb class="page-title" :no-trailing-slash="true">
           <cv-breadcrumb-item>
-            <cv-link href="#controller" @click="goTo('/controller')">{{$t("configuration.title")}}</cv-link>
+            <cv-link href="#controller" @click="goTo('/controller')">{{$t("controller.title")}}</cv-link>
           </cv-breadcrumb-item>
           <cv-breadcrumb-item>
             <cv-link :href="'#manage/'+this.clientId" aria-current="page">{{this.clientId}}</cv-link>
@@ -43,13 +43,10 @@ export default {
   data() {
     return {
       clientId: this.$route.params.clientId,
-      // username: 'root',
-      // password: 'Nethesis,1234',
+      parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
       config: window.CONFIG,
       isLoading: true,
       isLogged: false,
-      // loginError: false,
-      // loginMessage: "",
       tableCols: [
         "Name",
         "Type",
@@ -91,7 +88,9 @@ export default {
 
       // invoke login API
       const [loginError, loginResponse] = await to(this.axios
-        .post(`${this.$root.serverURL}/servers/token/${this.clientId}`, {}, {
+        .post(`${this.$root.serverURL}/servers/token`, {
+          name: this.clientId
+        }, {
           headers: {
             Authorization: `Bearer ${loginInfo.access_token}`,
           }
@@ -176,39 +175,4 @@ export default {
 </script>
 
 <style>
-@media (max-width: 1055px) {
-  #modal-login {
-    margin-left: 0rem;
-  }
-}
-
-@media (min-width: 1056px) {
-  #modal-login {
-    margin-left: 8rem;
-  }
-}
-
-#modal-login {
-  z-index: 5000;
-}
-
-#modal-login .bx--form .bx--form-item {
-  margin-bottom: 2rem;
-}
-
-#modal-login .bx--modal-content {
-  margin-bottom: 1rem;
-}
-
-#modal-login .bx--modal-close {
-  display: none;
-}
-
-#modal-login .bx--modal-header__heading {
-  font-size: 2rem;
-}
-
-#modal-login .bx--modal-content {
-  height: 100%;
-}
 </style>

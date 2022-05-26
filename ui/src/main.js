@@ -22,11 +22,7 @@ const langCode = navigator.language.substring(0, 2);
 i18n.setLocaleMessage(langCode, messages);
 i18n.locale = langCode;
 
-// ns8 lib
-import ns8Lib from "@nethserver/ns8-ui-lib";
-Vue.use(ns8Lib);
-
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
 
 new Vue({
   router,

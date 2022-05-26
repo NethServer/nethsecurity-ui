@@ -26,18 +26,21 @@
           <cv-tile kind="standard" class="basic-card">
             <cv-overflow-menu class="small-menu" :label="$t('controller.client_options')" :flip-menu="true" :up="false" :tip-position="'top'" :tip-alignment="'center'">
               <cv-overflow-menu-item @click="showDeleteClient(client)">
-                <NsMenuItem :icon="TrashCan20" :label="$t('controller.delete_client')" />
+                <div class="menu-item">
+                  <TrashCan20 class="menu-item-icon" />
+                  <span class="menu-item-label">{{$t('controller.delete_client')}}</span>
+                </div>
               </cv-overflow-menu-item>
             </cv-overflow-menu>
             <h4>{{client.name}}</h4>
             <p>{{client.ipaddress}} | {{client.netmask}}</p>
-            <cv-tooltip :alignment="'center'" :direction="'right'" :tip="client.valid ? $t('controller.client_registered') : $t('controller.client_unregistered')">
-              <CheckmarkFilled20 class="icon-success" v-if="client.valid" />
-              <ErrorFilled20 class="icon-error" v-if="!client.valid" />
+            <cv-tooltip :alignment="'center'" :direction="'right'" :tip="client.registered ? $t('controller.client_registered') : $t('controller.client_unregistered')">
+              <CheckmarkFilled20 class="icon-success" v-if="client.registered" />
+              <ErrorFilled20 class="icon-error" v-if="!client.registered" />
             </cv-tooltip>
             <br />
             <br />
-            <cv-button :kind="'primary'" @click="goTo('/manage/' + client.name)" :size="'sm'" :disabled="client.valid ? false : true">
+            <cv-button :kind="'primary'" @click="goTo('/manage/' + client.name)" :icon="CloudServiceManagement20" :size="'sm'" :disabled="client.registered ? false : true">
               {{$t('controller.manage_client')}}
             </cv-button>
 
@@ -105,6 +108,7 @@ import ErrorFilled20 from "@carbon/icons-vue/es/error--filled/20";
 import EdgeNode32 from "@carbon/icons-vue/es/edge-node/32"
 import Add20 from "@carbon/icons-vue/es/add/20"
 import TrashCan20 from "@carbon/icons-vue/es/trash-can/20"
+import CloudServiceManagement20 from "@carbon/icons-vue/es/cloud--service-management/20"
 
 export default {
   name: 'Controller',
@@ -113,10 +117,11 @@ export default {
     CheckmarkFilled20,
     ErrorFilled20,
     EdgeNode32,
+    TrashCan20
   },
   data() {
     return {
-      TrashCan20,
+      CloudServiceManagement20,
       Add20,
       isLoading: true,
       parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
@@ -231,10 +236,10 @@ export default {
 
         // check error
         if (loginError || !loginResponse) {
-          this.clients[c].valid = false;
+          this.clients[c].registered = false;
         } else {
           // all done
-          this.clients[c].valid = true;
+          this.clients[c].registered = true;
         }
       }
     },
@@ -372,4 +377,16 @@ export default {
 </script>
 
 <style>
+.menu-item {
+  display: flex;
+  align-items: center;
+}
+
+.menu-item-icon {
+  margin-right: 0.5rem;
+}
+
+.menu-item-label {
+  margin-top: 3px;
+}
 </style>

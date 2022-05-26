@@ -15,7 +15,7 @@
   "controller": {
     "title": "Controller",
     "clients_list": "Clients list",
-    "manage_client": "Click to manage this client",
+    "manage_client": "Manage this client",
     "client_registered": "Client connected",
     "client_unregistered": "Client not connected",
     "no_clients": "No clients registered",

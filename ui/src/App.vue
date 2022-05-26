@@ -114,6 +114,9 @@ export default {
       this.$router.push(path);
     },
     async logout() {
+      // start loading
+      this.isLoading = true;
+
       // get loginInfo
       const loginInfo = this.getFromStorage("loginInfo")
 

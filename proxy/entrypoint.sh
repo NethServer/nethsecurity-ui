@@ -78,4 +78,10 @@ http:
 
   # Add middleware
   middlewares:
+    mui-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/ui"
+EOF
+
 exec "$@"

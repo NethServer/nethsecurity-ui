@@ -110,7 +110,7 @@ http:
       middlewares:
       - mui-stripprefix
       service: service-ui
-      rule: PathPrefix(\`/ui\`)
+      rule: PathPrefix(\`/ui\`) || Path(\`/\`)
 
   # Add the service
   services:

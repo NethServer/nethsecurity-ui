@@ -62,6 +62,7 @@ if debug:
     cors = CORS(api)
 jwt = JWTManager(api)
 
+api.logger.debug(f'admin_credentials: {admin_username} {admin_password}')
 api.logger.debug(f'server_credentials: {credentials}')
 
 #
@@ -186,6 +187,7 @@ def login():
 
     hpass = hashlib.sha256(password.encode('utf-8')).hexdigest()
     if username == admin_username and admin_password == hpass:
+        api.logger.debug(f'login: parameters: {username} {hpass}')
         access_token = create_access_token(identity=username)
         refresh_token = create_refresh_token(identity=username)
         return jsonify(access_token=access_token, refresh_token=refresh_token)

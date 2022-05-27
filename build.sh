@@ -25,7 +25,8 @@ buildah run ${container_p} mkdir /nextsec-api
 buildah add "${container_p}" api/requirements.txt /nextsec-api
 buildah add "${container_p}" api/api.py /nextsec-api
 buildah run ${container_p} python3 -m venv /nextsec-api
-buildah run ${container_p} /bin/sh -c "source /nextsec-api/bin/activate; pip install wheel; pip install -r /nextsec-api/requirements.txt"
+buildah run ${container_p} /bin/sh -c "source /nextsec-api/bin/activate; pip --no-cache-dir install wheel; pip install -r /nextsec-api/requirements.txt"
+buildah run ${container_p} /bin/sh -c "apk --purge del py3-pip"
 buildah add "${container_p}" api/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"

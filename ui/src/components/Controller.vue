@@ -20,9 +20,14 @@
         </cv-button>
       </cv-column>
     </cv-row>
+    <cv-row>
+      <cv-column>
+        <h4 class="page-sub-subtitle">{{$t("controller.clients_registered")}}</h4>
+      </cv-column>
+    </cv-row>
     <cv-row v-if="clients.length > 0">
-      <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3">
-        <div class="cv-grid-story__preview-col">
+      <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="client.registered">
+        <div v-if="client.registered" class="cv-grid-story__preview-col">
           <cv-tile kind="standard" class="basic-card">
             <cv-overflow-menu class="small-menu" :label="$t('controller.client_options')" :flip-menu="true" :up="false" :tip-position="'top'" :tip-alignment="'center'">
               <cv-overflow-menu-item @click="showDeleteClient(client)">
@@ -34,14 +39,66 @@
             </cv-overflow-menu>
             <h4>{{client.name}}</h4>
             <p>{{client.ipaddress}} | {{client.netmask}}</p>
-            <cv-tooltip :alignment="'center'" :direction="'right'" :tip="client.registered ? $t('controller.client_registered') : $t('controller.client_unregistered')">
-              <CheckmarkFilled20 class="icon-success" v-if="client.registered" />
-              <ErrorFilled20 class="icon-error" v-if="!client.registered" />
+            <cv-tooltip :alignment="'center'" :direction="'right'" :tip="client.vpn ? $t('controller.client_connected') : $t('controller.client_not_connected')">
+              <CheckmarkFilled20 class="icon-success" v-if="client.vpn" />
+              <ErrorFilled20 class="icon-error" v-if="!client.vpn" />
             </cv-tooltip>
+
+            <cv-interactive-tooltip v-if="client.vpn" :alignment="'center'" :direction="'right'" :visible="false" class="card-tooltip">
+              <template slot="trigger">
+                <a>{{$t("controller.vpn_statistics")}}</a>
+              </template>
+              <template slot="content">
+                <p>
+                  <span class="margin-right">{{$t("controller.stats_bytes_rcvd")}}:</span> <span class="float-right"><strong>{{client.vpn.bytes_rcvd | byteFormat}}</strong></span>
+                  <br />
+                  <span class="margin-right">{{$t("controller.stats_bytes_sent")}}:</span> <span class="float-right"><strong>{{client.vpn.bytes_sent | byteFormat}}</strong></span>
+                  <br />
+                  <span class="margin-right">{{$t("controller.stats_connected_since")}}:</span> <span class="float-right"><strong>{{client.vpn.connected_since | timestampToDate}} ({{$t("controller.local_time")}})</strong></span>
+                  <br />
+                  <span class="margin-right">{{$t("controller.stats_real_address")}}:</span> <span class="float-right"><strong>{{client.vpn.real_address}}</strong></span>
+                  <br />
+                  <span class="margin-right">{{$t("controller.stats_virtual_address")}}:</span> <span class="float-right"><strong>{{client.vpn.virtual_address}}</strong></span>
+                </p>
+              </template>
+            </cv-interactive-tooltip>
             <br />
             <br />
-            <cv-button :kind="'primary'" @click="goTo('/manage/' + client.name)" :icon="CloudServiceManagement20" :size="'sm'" :disabled="client.registered ? false : true">
+            <cv-button :kind="'primary'" @click="goTo('/manage/' + client.name)" :icon="CloudServiceManagement20" :size="'sm'" :disabled="client.vpn ? false : true">
               {{$t('controller.manage_client')}}
+            </cv-button>
+          </cv-tile>
+        </div>
+      </cv-column>
+    </cv-row>
+    <cv-row>
+      <cv-column>
+        <h4 class="page-sub-subtitle">{{$t("controller.clients_not_registered")}}</h4>
+      </cv-column>
+    </cv-row>
+    <cv-row v-if="clients.length > 0">
+      <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="!client.registered">
+        <div v-if="!client.registered" class="cv-grid-story__preview-col">
+          <cv-tile kind="standard" class="basic-card">
+            <cv-overflow-menu class="small-menu" :label="$t('controller.client_options')" :flip-menu="true" :up="false" :tip-position="'top'" :tip-alignment="'center'">
+              <cv-overflow-menu-item @click="showDeleteClient(client)">
+                <div class="menu-item">
+                  <TrashCan20 class="menu-item-icon" />
+                  <span class="menu-item-label">{{$t('controller.delete_client')}}</span>
+                </div>
+              </cv-overflow-menu-item>
+            </cv-overflow-menu>
+            <h4>{{client.name}}</h4>
+            <p>{{$t("controller.waiting_approval")}}...</p>
+            <cv-tooltip :alignment="'center'" :direction="'right'" :tip="$t('controller.client_not_registered')">
+              <InProgress20 />
+            </cv-tooltip>
+
+            <br />
+            <br />
+
+            <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Add20" :size="'sm'">
+              {{$t('controller.approve_client')}}
             </cv-button>
 
           </cv-tile>
@@ -105,6 +162,7 @@ import StorageService from "../services/storage";
 
 import CheckmarkFilled20 from "@carbon/icons-vue/es/checkmark--filled/20";
 import ErrorFilled20 from "@carbon/icons-vue/es/error--filled/20";
+import InProgress20 from "@carbon/icons-vue/es/in-progress/20";
 import EdgeNode32 from "@carbon/icons-vue/es/edge-node/32"
 import Add20 from "@carbon/icons-vue/es/add/20"
 import TrashCan20 from "@carbon/icons-vue/es/trash-can/20"
@@ -117,7 +175,8 @@ export default {
     CheckmarkFilled20,
     ErrorFilled20,
     EdgeNode32,
-    TrashCan20
+    TrashCan20,
+    InProgress20
   },
   data() {
     return {
@@ -163,7 +222,7 @@ export default {
     // polling to get clients connestions: 15 seconds
     var context = this;
     setInterval(function() {
-      context.testClientConnections();
+      context.getClientList();
     }, 15000)
   },
   methods: {
@@ -202,50 +261,14 @@ export default {
       // set clients list
       this.clients = clientsResponse.data
 
-      // test connections
-      this.testClientConnections();
-
       // all done
       this.isLoading = false;
       this.isLogged = true;
 
     },
-    async testClientConnections() {
-      // loop clients
-      for (var c in this.clients) {
-        // test auth
-        const loginInfo = this.getFromStorage("loginInfo")
-
-        // check loginInfo
-        if (!loginInfo) {
-          this.isLoading = false;
-          this.isLogged = false;
-          return
-        }
-
-        // invoke login API
-        const [loginError, loginResponse] = await to(this.axios
-          .post(`${this.$root.serverURL}/servers/token`, {
-            name: this.clients[c].name
-          }, {
-            headers: {
-              Authorization: `Bearer ${loginInfo.access_token}`,
-            }
-          })
-        );
-
-        // check error
-        if (loginError || !loginResponse) {
-          this.clients[c].registered = false;
-        } else {
-          // all done
-          this.clients[c].registered = true;
-        }
-      }
-    },
-    showAddClient() {
+    showAddClient(name) {
       // clean object fields
-      this.newClient.name = "";
+      this.newClient.name = name ? name : "";
 
       // open modal
       this.modalAddClient.isVisible = true;

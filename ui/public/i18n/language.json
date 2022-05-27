@@ -16,8 +16,9 @@
     "title": "Controller",
     "clients_list": "Clients list",
     "manage_client": "Manage this client",
-    "client_registered": "Client connected",
-    "client_unregistered": "Client not connected",
+    "client_connected": "Client connected",
+    "client_not_connected": "Client not connected",
+    "client_not_registered": "Client not registered",
     "no_clients": "No clients registered",
     "no_clients_desc": "Click on the button below to register a new client",
     "add_client": "Add client",
@@ -30,7 +31,18 @@
     "client_deleting_error": "Client not deleted.",
     "client_deleting_success": "Client deleted successfully!",
     "client_options": "Click to more options",
-    "delete_client": "Delete client"
+    "delete_client": "Delete client",
+    "vpn_statistics": "Statistics",
+    "stats_bytes_rcvd": "Bytes received",
+    "stats_bytes_sent": "Bytes sent",
+    "stats_connected_since": "Connected since",
+    "stats_real_address": "Real address",
+    "stats_virtual_address": "Virtual address",
+    "local_time": "Local time",
+    "clients_registered": "Clients registered",
+    "clients_not_registered": "Clients not registered",
+    "waiting_approval": "Pending approval",
+    "approve_client": "Approve client"
   },
   "logs": {
     "title": "Logs"

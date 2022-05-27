@@ -114,9 +114,6 @@ export default {
       this.$router.push(path);
     },
     async logout() {
-      // start loading
-      this.isLoading = true;
-
       // get loginInfo
       const loginInfo = this.getFromStorage("loginInfo")
 
@@ -240,6 +237,10 @@ body {
   margin-bottom: 1rem;
 }
 
+.page-sub-subtitle {
+  margin-bottom: 0.75rem;
+}
+
 .empty-state {
   text-align: center;
 }
@@ -252,6 +253,26 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.align-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.margin-bottom {
+  margin-bottom: 0.5rem;
+}
+
+.margin-left {
+  margin-left: 3rem;
+}
+
+.margin-right {
+  margin-right: 3rem;
+}
+
 .small-menu {
   float: right;
   margin-top: -1rem;
@@ -260,6 +281,16 @@ body {
 
 .main-button {
   margin-bottom: 1rem !important;
+}
+
+.card-tooltip {
+  display: inline-block;
+  vertical-align: top;
+  outline: none;
+}
+
+.card-tooltip button {
+  outline: none !important;
 }
 
 .bx--content .bx--col-sm-2 {
@@ -272,6 +303,10 @@ body {
 
 .bx--content .bx--col-lg-3 {
   margin-bottom: 2rem;
+}
+
+.bx--tooltip {
+  max-width: 35rem !important;
 }
 
 @media (max-width: 1055px) {

@@ -22,6 +22,12 @@ const langCode = navigator.language.substring(0, 2);
 i18n.setLocaleMessage(langCode, messages);
 i18n.locale = langCode;
 
+// filters
+import filters from "./filters";
+for (var f in filters) {
+  Vue.filter(f, filters[f]);
+}
+
 Vue.config.productionTip = true;
 
 new Vue({

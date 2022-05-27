@@ -17,6 +17,11 @@ const routes = [{
     component: Controller,
   },
   {
+    path: "/configuration",
+    name: "Manage",
+    component: Manage,
+  },
+  {
     path: "/manage/:clientId",
     name: "Manage",
     component: Manage,

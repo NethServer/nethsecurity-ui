@@ -3,10 +3,10 @@
 
   <div :class="['content', isLogged ? 'logged' : '']">
     <!-- LOADER -->
-    <cv-loading :active="isLoading" overlay></cv-loading>
+    <cv-loading :active="isLoading" overlay :class="[isStandAlone ? 'stand-alone' : '']"></cv-loading>
 
     <!-- LOGIN MODAL -->
-    <cv-modal v-if="!isLoading && !isLogged" id="modal-login-config" :size="'default'" :visible="true" @primary-click="login" :auto-hide-off="true">
+    <cv-modal v-if="!isLoading && !isLogged && !isStandAlone" id="modal-login-config" :size="'default'" :visible="true" @primary-click="login" :auto-hide-off="true">
       <template slot="title">{{config.PRODUCT_NAME}} Controller Login</template>
       <template slot="content">
         <cv-form>
@@ -20,7 +20,7 @@
     </cv-modal>
 
     <!-- MAIN HEADER AND LEFT MENU -->
-    <cv-header v-if="!isLoading && isLogged" :aria-label="$root.config.PRODUCT_NAME + 'Controller'">
+    <cv-header v-if="!isLoading && isLogged && !isStandAlone" :aria-label="$root.config.PRODUCT_NAME + 'Controller'">
       <cv-header-menu-button aria-controls="side-nav" />
       <cv-header-name href="javascript:void(0)" :prefix="$root.config.PRODUCT_NAME">
         {{this.page}}
@@ -62,7 +62,7 @@
     <!-- END MAIN HEADER AND LEFT MENU -->
 
     <!-- MAIN CONTENT AND ROUTER -->
-    <cv-content v-if="!isLoading && isLogged" id="main-content">
+    <cv-content v-if="!isLoading && isLogged" id="main-content" :class="[isStandAlone ? 'stand-alone' : '']">
       <router-view />
     </cv-content>
     <!-- MAIN CONTENT AND ROUTER -->
@@ -96,15 +96,22 @@ export default {
       username: 'admin',
       password: 'admin',
       config: window.CONFIG,
-      isLoading: true,
-      isLogged: false,
+      isLoading: this.$route.path == '/configuration' ? false : true,
+      isLogged: this.$route.path == '/configuration' ? true : false,
       loginError: false,
       loginMessage: "",
+      isStandAlone: this.$route.path == '/configuration' ? true : false,
     };
   },
   mounted() {
-    // check token validation
-    this.verifyToken();
+    if (this.$route.path == '/configuration') {
+      this.isLoading = false;
+      this.isLogged = true;
+      this.isStandAlone = true;
+    } else {
+      // check token validation
+      this.verifyToken();
+    }
   },
   methods: {
     isLinkActive(path) {
@@ -261,6 +268,10 @@ body {
   float: right;
 }
 
+.no-margin-top {
+  margin-top: 0rem;
+}
+
 .margin-bottom {
   margin-bottom: 0.5rem;
 }
@@ -307,6 +318,24 @@ body {
 
 .bx--tooltip {
   max-width: 35rem !important;
+}
+
+.bx--content.stand-alone {
+  margin-left: 0rem !important;
+  margin-top: 3rem !important;
+  padding: 0px !important;
+}
+
+.bx--content .bx--modal-container.stand-alone {
+  margin-left: 0rem !important;
+}
+
+.bx--content .bx--loading-overlay.stand-alone {
+  padding-left: 0rem !important;
+}
+
+.content .bx--loading-overlay.stand-alone {
+  padding-left: 0rem !important;
 }
 
 @media (max-width: 1055px) {

@@ -20,7 +20,7 @@
         </cv-button>
       </cv-column>
     </cv-row>
-    <cv-row>
+    <cv-row v-if="clients.length > 0">
       <cv-column>
         <h4 class="page-sub-subtitle">{{$t("controller.clients_registered")}}</h4>
       </cv-column>
@@ -71,7 +71,7 @@
         </div>
       </cv-column>
     </cv-row>
-    <cv-row>
+    <cv-row v-if="clients.length > 0">
       <cv-column>
         <h4 class="page-sub-subtitle">{{$t("controller.clients_not_registered")}}</h4>
       </cv-column>

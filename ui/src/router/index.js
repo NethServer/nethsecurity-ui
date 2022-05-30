@@ -10,7 +10,7 @@ Vue.use(VueRouter);
 
 const routes = [{
     path: "/",
-    redirect: "/controller"
+    redirect: window.CONFIG.MODE == 'stand-alone' ? "/configuration" : "/controller"
   }, {
     path: "/controller",
     name: "Controller",
@@ -39,6 +39,7 @@ const routes = [{
 ];
 
 const router = new VueRouter({
+  mode: window.CONFIG.MODE == 'stand-alone' ? 'history' : 'hash',
   routes,
 });
 

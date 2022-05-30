@@ -124,7 +124,7 @@
     <template slot="content">
       <div class="bx--form-item">
         <label class="bx--label">{{$t("controller.client_name")}}</label>
-        <input v-model="newClient.name" type="text" class="bx--text-input" :placeholder="$t('controller.client_name')" data-modal-primary-focus>
+        <input v-model="newClient.name" type="text" class="bx--text-input" :placeholder="$t('controller.client_name')" data-modal-primary-focus :disabled="newClient.exists">
       </div>
       <cv-inline-notification v-if="modalAddClient.errorShow" kind="error" :title="modalAddClient.errorTitle" :sub-title="modalAddClient.errorDetails" :low-contrast="true" :hide-close-button="true">
       </cv-inline-notification>
@@ -186,7 +186,8 @@ export default {
       parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
       clients: [],
       newClient: {
-        name: ""
+        name: "",
+        exists: false
       },
       currentClient: {},
       modalAddClient: {
@@ -269,6 +270,7 @@ export default {
     showAddClient(name) {
       // clean object fields
       this.newClient.name = name ? name : "";
+      this.newClient.exists = name ? true : false;
 
       // open modal
       this.modalAddClient.isVisible = true;

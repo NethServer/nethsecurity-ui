@@ -1,0 +1,30 @@
+name: "Publish UI dist for nextsecurity (OpenWrt) build"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ui/**'
+    branches:
+      - main
+      - master
+
+jobs:
+  publish_images:
+    name: 'Publish UI dist'
+    runs-on: ubuntu-latest
+    env:
+      IMAGETAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: build
+        run: |
+          # Build only the UI
+          cd ui && bash build.sh
+      - uses: BetaHuhn/do-spaces-action@v2
+        with:
+          access_key: ${{ secrets.ACCESS_KEY }}
+          secret_key: ${{ secrets.SECRET_KEY }}
+          space_name: ${{ secrets.SPACE_NAME }}
+          space_region: ${{ secrets.SPACE_REGION }}
+          source: ui/ui.tar.gz

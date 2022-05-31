@@ -1,4 +1,4 @@
-name: "Publish builder image"
+name: "Publish controller images"
 
 on:
   workflow_dispatch:

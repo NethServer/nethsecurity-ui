@@ -15,13 +15,18 @@
     <template slot="primary-button">Login</template>
   </cv-modal>
 
-  <cv-header v-if="!isLoading && isLogged" id="side-header-manage" :class="[isStandAlone ? 'stand-alone' : '']">
-    <cv-header-menu-button aria-controls="side-nav" />
+  <cv-header v-if="!isLoading && isLogged" id="side-header-manage" :class="[isStandAlone ? 'stand-alone' : '']" class="sub-header">
+    <cv-header-menu-button aria-controls="side-nav-manage" />
     <cv-header-name href="javascript:void(0)" :prefix="$root.config.PRODUCT_NAME">
       [{{'STAND-ALONE'}}]
     </cv-header-name>
+    <template v-slot:header-global>
+      <cv-header-global-action aria-label="User avatar" @click="logout" label="Logout" tipPosition="left" tipAlignment="center">
+        <Logout20 />
+      </cv-header-global-action>
+    </template>
     <template v-slot:left-panels>
-      <cv-side-nav id="side-nav-manage" v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone' : '']">
+      <cv-side-nav id="side-nav-manage" v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone' : 'no-stand-alone']">
         <cv-side-nav-items>
 
           <cv-side-nav-link @click="goTo('/menu1', isStandAlone)">
@@ -50,7 +55,7 @@
     </template>
   </cv-header>
 
-  <cv-content v-if="!isLoading && isLogged" class="stand-alone-sub">
+  <cv-content v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone-sub' : 'no-stand-alone-sub']">
     <router-view></router-view>
   </cv-content>
 
@@ -91,6 +96,7 @@ import to from "await-to-js";
 
 import StorageService from "../services/storage";
 
+import Logout20 from "@carbon/icons-vue/es/logout/20";
 import Catalog20 from "@carbon/icons-vue/es/catalog/20";
 import Settings20 from "@carbon/icons-vue/es/settings/20";
 import DataVisualization20 from "@carbon/icons-vue/es/data-vis--1/20";
@@ -102,6 +108,7 @@ export default {
     DataVisualization20,
     Catalog20,
     Settings20,
+    Logout20
   },
   data() {
     return {
@@ -190,6 +197,23 @@ export default {
 
       // get dashboard info
       this.checkTokenValidity();
+    },
+    async logout() {
+      // get loginInfo
+      const loginInfo = this.getFromStorage("loginInfo")
+
+      // check loginInfo
+      if (!loginInfo) {
+        this.isLoading = false;
+        this.isLogged = false;
+        this.deleteFromStorage("loginInfo");
+        return
+      }
+
+      // set logout
+      this.deleteFromStorage("loginInfo");
+      this.isLogged = false;
+      this.isLoading = false;
     },
     async login() {
       // start loading

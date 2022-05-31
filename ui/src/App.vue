@@ -20,7 +20,7 @@
     </cv-modal>
 
     <!-- MAIN HEADER AND LEFT MENU -->
-    <cv-header v-if="!isLoading && isLogged && !isStandAlone" :aria-label="$root.config.PRODUCT_NAME + 'Controller'">
+    <cv-header v-if="!isLoading && isLogged && !isStandAlone" :aria-label="$root.config.PRODUCT_NAME + 'Controller'" class="main-header">
       <cv-header-menu-button aria-controls="side-nav" />
       <cv-header-name href="javascript:void(0)" :prefix="$root.config.PRODUCT_NAME">
         {{this.page}}

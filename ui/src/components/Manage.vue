@@ -29,21 +29,21 @@
       <cv-side-nav id="side-nav-manage" v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone' : 'no-stand-alone']">
         <cv-side-nav-items>
 
-          <cv-side-nav-link @click="goTo('/menu1', isStandAlone)">
+          <cv-side-nav-link @click="goTo('/menu1', isStandAlone)" :active="isLinkActive('menu1')">
             <template v-slot:nav-icon>
               <DataVisualization20 />
             </template>
             {{$t("main.menu_1")}}
           </cv-side-nav-link>
 
-          <cv-side-nav-link @click="goTo('/menu2', isStandAlone)">
+          <cv-side-nav-link @click="goTo('/menu2', isStandAlone)" :active="isLinkActive('menu2')">
             <template v-slot:nav-icon>
               <Catalog20 />
             </template>
             {{$t("main.menu_2")}}
           </cv-side-nav-link>
 
-          <cv-side-nav-link @click="goTo('/menu3', isStandAlone)">
+          <cv-side-nav-link @click="goTo('/menu3', isStandAlone)" :active="isLinkActive('menu3')">
             <template v-slot:nav-icon>
               <Settings20 />
             </template>
@@ -160,6 +160,9 @@ export default {
     }
   },
   methods: {
+    isLinkActive(path) {
+      return this.$route.path.includes(path);
+    },
     goTo(path, isStandAlone) {
       var fullPath = isStandAlone ? '/configuration' + path : '/manage/' + this.clientId + path
       this.$router.push(fullPath);

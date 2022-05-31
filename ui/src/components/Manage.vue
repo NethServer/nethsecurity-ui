@@ -15,7 +15,46 @@
     <template slot="primary-button">Login</template>
   </cv-modal>
 
-  <div v-if="!isLoading && isLogged">
+  <cv-header v-if="!isLoading && isLogged" id="side-header-manage" :class="[isStandAlone ? 'stand-alone' : '']">
+    <cv-header-menu-button aria-controls="side-nav" />
+    <cv-header-name href="javascript:void(0)" :prefix="$root.config.PRODUCT_NAME">
+      [{{'STAND-ALONE'}}]
+    </cv-header-name>
+    <template v-slot:left-panels>
+      <cv-side-nav id="side-nav-manage" v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone' : '']">
+        <cv-side-nav-items>
+
+          <cv-side-nav-link @click="goTo('/menu1', isStandAlone)">
+            <template v-slot:nav-icon>
+              <DataVisualization20 />
+            </template>
+            {{$t("main.menu_1")}}
+          </cv-side-nav-link>
+
+          <cv-side-nav-link @click="goTo('/menu2', isStandAlone)">
+            <template v-slot:nav-icon>
+              <Catalog20 />
+            </template>
+            {{$t("main.menu_2")}}
+          </cv-side-nav-link>
+
+          <cv-side-nav-link @click="goTo('/menu3', isStandAlone)">
+            <template v-slot:nav-icon>
+              <Settings20 />
+            </template>
+            {{$t("main.menu_3")}}
+          </cv-side-nav-link>
+
+        </cv-side-nav-items>
+      </cv-side-nav>
+    </template>
+  </cv-header>
+
+  <cv-content v-if="!isLoading && isLogged" class="stand-alone-sub">
+    <router-view></router-view>
+  </cv-content>
+
+  <!-- <div v-if="!isLoading && isLogged">
     <cv-grid fullWidth>
       <cv-row v-if="!isStandAlone">
         <cv-column>
@@ -42,7 +81,7 @@
         </cv-column>
       </cv-row>
     </cv-grid>
-  </div>
+  </div> -->
 
 </div>
 </template>
@@ -52,12 +91,21 @@ import to from "await-to-js";
 
 import StorageService from "../services/storage";
 
+import Catalog20 from "@carbon/icons-vue/es/catalog/20";
+import Settings20 from "@carbon/icons-vue/es/settings/20";
+import DataVisualization20 from "@carbon/icons-vue/es/data-vis--1/20";
+
 export default {
   name: 'Manage',
   mixins: [StorageService],
+  components: {
+    DataVisualization20,
+    Catalog20,
+    Settings20,
+  },
   data() {
     return {
-      clientId: this.$route.path == '/configuration' ? 'stand-alone' : this.$route.params.clientId,
+      clientId: this.$route.path.indexOf('/configuration') > -1 ? 'stand-alone' : this.$route.params.clientId,
       parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
       config: window.CONFIG,
       isLoading: true,
@@ -65,15 +113,15 @@ export default {
       isStandAlone: false,
       username: "root",
       password: "Nethesis,1234",
-      tableCols: [
-        "Name",
-        "Type",
-        "Device",
-        "Ip Address",
-        "Netmask",
-        "Protocol"
-      ],
-      tableRows: [],
+      // tableCols: [
+      //   "Name",
+      //   "Type",
+      //   "Device",
+      //   "Ip Address",
+      //   "Netmask",
+      //   "Protocol"
+      // ],
+      // tableRows: [],
     };
   },
   mounted() {
@@ -86,17 +134,13 @@ export default {
       this.$parent.$parent.page = "[Client " + this.clientId + "]";
 
       // get dashboard info
-      this.getDashboardInfo()
+      this.checkTokenValidity()
     } else { // stand-alone mode
       // set page title
       document.title = this.$root.config.PRODUCT_NAME + " - " + this.$t("manage.title");
 
       // set page
       this.$parent.$parent.page = "";
-
-      // show login
-      this.isLoading = false;
-      this.isLogged = false;
 
       // set stand alone
       this.isStandAlone = true;
@@ -105,16 +149,15 @@ export default {
       this.$parent.$parent.isLogged = true;
 
       // get dashboard info
-      this.getDashboardInfo()
+      this.checkTokenValidity()
     }
   },
   methods: {
-    goTo(path) {
-      this.$router.push(path);
+    goTo(path, isStandAlone) {
+      var fullPath = isStandAlone ? '/configuration' + path : '/manage/' + this.clientId + path
+      this.$router.push(fullPath);
     },
     async loginStandAlone() {
-      console.log(`${this.$root.luciURL}/auth`.replace("_CLIENT_/", ""))
-
       // invoke login API
       const [loginError, loginResponse] = await to(this.axios
         .post(`${this.$root.luciURL}/auth`.replace("_CLIENT_/", ""), {
@@ -146,7 +189,7 @@ export default {
       this.isLogged = true;
 
       // get dashboard info
-      this.getDashboardInfo();
+      this.checkTokenValidity();
     },
     async login() {
       // start loading
@@ -195,9 +238,9 @@ export default {
       this.isLogged = true;
 
       // get dashboard info
-      this.getDashboardInfo();
+      this.checkTokenValidity();
     },
-    async getDashboardInfo() {
+    async checkTokenValidity() {
       // get clientInfo
       const clientInfo = this.getFromStorage("clientInfo-" + this.clientId)
 
@@ -205,7 +248,9 @@ export default {
       if (!clientInfo) {
         this.isLoading = false;
         this.isLogged = false;
-        this.login();
+        if (!this.isStandAlone) {
+          this.login()
+        }
         return
       }
 
@@ -224,22 +269,22 @@ export default {
         this.isLogged = false;
         this.isLoading = false;
         this.deleteFromStorage("clientInfo-" + this.clientId)
-        this.login();
+        if (!this.isStandAlone) {
+          this.login()
+        }
         return
       }
 
-      console.log(networkResponse.data.result)
-
       // filter results
-      var interfaces = Object.values(networkResponse.data.result);
-      interfaces.map(interf => this.tableRows.push({
-        name: interf['.name'] || '-',
-        type: interf['.type'] || '-',
-        device: interf['device'] || '-',
-        ipaddr: interf['ipaddr'] || '-',
-        netmask: interf['netmask'] || '-',
-        proto: interf['proto'] || '-'
-      }))
+      // var interfaces = Object.values(networkResponse.data.result);
+      // interfaces.map(interf => this.tableRows.push({
+      //   name: interf['.name'] || '-',
+      //   type: interf['.type'] || '-',
+      //   device: interf['device'] || '-',
+      //   ipaddr: interf['ipaddr'] || '-',
+      //   netmask: interf['netmask'] || '-',
+      //   proto: interf['proto'] || '-'
+      // }))
 
       // all done
       this.isLoading = false;

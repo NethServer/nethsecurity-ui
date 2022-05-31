@@ -1,0 +1,224 @@
+html {
+  background-color: #ffffff;
+}
+
+body {
+  background-color: #ffffff;
+}
+
+.content {
+  overflow: hidden;
+}
+
+.page-title {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-subtitle {
+  margin-bottom: 1rem;
+}
+
+.page-sub-subtitle {
+  margin-bottom: 0.75rem;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.basic-card h4 {
+  margin-bottom: 0.75rem;
+}
+
+.basic-card p {
+  margin-bottom: 0.5rem;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.no-margin-top {
+  margin-top: 0rem;
+}
+
+.margin-bottom {
+  margin-bottom: 0.5rem;
+}
+
+.margin-left {
+  margin-left: 3rem;
+}
+
+.margin-right {
+  margin-right: 3rem;
+}
+
+.small-menu {
+  float: right;
+  margin-top: -1rem;
+  margin-right: -1rem;
+}
+
+.main-button {
+  margin-bottom: 1rem !important;
+}
+
+.card-tooltip {
+  display: inline-block;
+  vertical-align: top;
+  outline: none;
+}
+
+.card-tooltip button {
+  outline: none !important;
+}
+
+.bx--content .bx--col-sm-2 {
+  margin-bottom: 2rem;
+}
+
+.bx--content .bx--col-md-3 {
+  margin-bottom: 2rem;
+}
+
+.bx--content .bx--col-lg-3 {
+  margin-bottom: 2rem;
+}
+
+.bx--tooltip {
+  max-width: 35rem !important;
+}
+
+.bx--content.stand-alone {
+  margin-left: 0rem !important;
+  margin-top: 3rem !important;
+  padding: 0px !important;
+}
+
+.bx--content.stand-alone-sub {
+  margin-top: 0rem !important;
+}
+
+@media (max-width: 1055px) {
+  .bx--content {
+    margin-left: 0rem !important;
+    margin-top: 3rem !important;
+    padding: 0px !important;
+  }
+}
+
+@media (min-width: 1056px) {
+  .bx--content {
+    margin-left: 16rem;
+    margin-top: 3rem !important;
+    padding: 0px !important;
+  }
+}
+
+.bx--side-nav {
+  background-color: #161616 !important;
+}
+
+.bx--side-nav__submenu {
+  color: #f4f4f4 !important;
+}
+
+.bx--side-nav__submenu:hover {
+  background-color: #393939 !important;
+  cursor: pointer;
+}
+
+.bx--side-nav__link {
+  height: 3rem;
+}
+
+.bx--side-nav__link--current {
+  background-color: #393939 !important;
+}
+
+.bx--side-nav__link-text {
+  color: #f4f4f4 !important;
+}
+
+.bx--side-nav__link:hover {
+  background-color: #393939 !important;
+  cursor: pointer;
+}
+
+.bx--side-nav__icon>svg {
+  fill: #f4f4f4 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.bx--modal .bx--inline-loading__text {
+  font-size: 0.875rem;
+  color: #ffffff;
+}
+
+#side-header-manage {
+  margin-left: -16rem;
+  margin-top: -3rem;
+}
+
+#side-header-manage.stand-alone {
+  margin-left: 0rem;
+  margin-top: 0rem;
+}
+
+#side-nav-manage {
+  margin-left: 16rem;
+  margin-top: 0rem;
+  border-left: 1px solid #252525;
+}
+
+#side-nav-manage.stand-alone {
+  margin-left: 0rem;
+  margin-top: 0rem;
+}
+
+#modal-login-config {
+  z-index: 5000;
+}
+
+#modal-login-config .bx--form .bx--form-item {
+  margin-bottom: 2rem;
+}
+
+#modal-login-config .bx--modal-content {
+  margin-bottom: 1rem;
+}
+
+#modal-login-config .bx--modal-close {
+  display: none;
+}
+
+#modal-login-config .bx--modal-header__heading {
+  font-size: 2rem;
+}
+
+#modal-login-config .bx--modal-content {
+  height: 100%;
+}
+/* 
+#modal-login-config {
+  display: none;
+}
+
+#modal-login-manage {
+  display: none;
+} */
+
+.icon-success {
+  fill: #198038 !important;
+}
+
+.icon-error {
+  fill: #da1e28 !important;
+}

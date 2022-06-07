@@ -1,8 +1,9 @@
 <template>
 <div class="content">
-  <cv-loading v-if="!parentLoading" :active="isLoading" overlay :class="[isStandAlone ? 'stand-alone' : '']"></cv-loading>
+  <cv-loading v-if="!parentLoading" :active="$store.state.manage.isLoading" overlay :class="[$store.state.manage.isStandAlone ? 'stand-alone' : '']"></cv-loading>
 
-  <cv-modal v-if="!isLoading && !isLogged" id="modal-login-manage" :size="'default'" :visible="true" @primary-click="loginStandAlone" :auto-hide-off="true" :class="[isStandAlone ? 'stand-alone' : '']">
+  <cv-modal v-if="!$store.state.manage.isLoading && !$store.state.manage.isLogged" id="modal-login-manage" :size="'default'" :visible="true" @primary-click="loginStandAlone" :auto-hide-off="true"
+    :class="[$store.state.manage.isStandAlone ? 'stand-alone' : '']">
     <template slot="title">{{config.PRODUCT_NAME}} Stand-Alone Login</template>
     <template slot="content">
       <cv-form>
@@ -15,7 +16,7 @@
     <template slot="primary-button">Login</template>
   </cv-modal>
 
-  <cv-header v-if="!isLoading && isLogged" id="side-header-manage" :class="[isStandAlone ? 'stand-alone' : '']" class="sub-header">
+  <cv-header v-if="$store.state.manage.isLogged" id="side-header-manage" :class="[$store.state.manage.isStandAlone ? 'stand-alone' : '']" class="sub-header">
     <cv-header-menu-button aria-controls="side-nav-manage" />
     <cv-header-name href="javascript:void(0)" :prefix="$root.config.PRODUCT_NAME">
       [{{'STAND-ALONE'}}]
@@ -26,28 +27,28 @@
       </cv-header-global-action>
     </template>
     <template v-slot:left-panels>
-      <cv-side-nav id="side-nav-manage" v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone' : 'no-stand-alone']">
+      <cv-side-nav id="side-nav-manage" :class="[$store.state.manage.isStandAlone ? 'stand-alone' : 'no-stand-alone']">
         <cv-side-nav-items>
 
-          <cv-side-nav-link @click="goTo('/menu1', isStandAlone)" :active="isLinkActive('menu1')">
+          <cv-side-nav-link @click="goTo('/dashboard', $store.state.manage.isStandAlone)" :active="isLinkActive('dashboard')">
             <template v-slot:nav-icon>
               <DataVisualization20 />
             </template>
-            {{$t("main.menu_1")}}
+            {{$t("manage.dashboard")}}
           </cv-side-nav-link>
 
-          <cv-side-nav-link @click="goTo('/menu2', isStandAlone)" :active="isLinkActive('menu2')">
+          <cv-side-nav-link @click="goTo('/menu2', $store.state.manage.isStandAlone)" :active="isLinkActive('menu2')">
             <template v-slot:nav-icon>
               <Catalog20 />
             </template>
-            {{$t("main.menu_2")}}
+            {{$t("manage.menu_2")}}
           </cv-side-nav-link>
 
-          <cv-side-nav-link @click="goTo('/menu3', isStandAlone)" :active="isLinkActive('menu3')">
+          <cv-side-nav-link @click="goTo('/menu3', $store.state.manage.isStandAlone)" :active="isLinkActive('menu3')">
             <template v-slot:nav-icon>
               <Settings20 />
             </template>
-            {{$t("main.menu_3")}}
+            {{$t("manage.menu_3")}}
           </cv-side-nav-link>
 
         </cv-side-nav-items>
@@ -55,38 +56,9 @@
     </template>
   </cv-header>
 
-  <cv-content v-if="!isLoading && isLogged" :class="[isStandAlone ? 'stand-alone-sub' : 'no-stand-alone-sub']">
+  <cv-content v-if="$store.state.manage.isLogged" :class="[$store.state.manage.isStandAlone ? 'stand-alone-sub' : 'no-stand-alone-sub']">
     <router-view></router-view>
   </cv-content>
-
-  <!-- <div v-if="!isLoading && isLogged">
-    <cv-grid fullWidth>
-      <cv-row v-if="!isStandAlone">
-        <cv-column>
-          <cv-breadcrumb class="page-title" :no-trailing-slash="true">
-            <cv-breadcrumb-item>
-              <cv-link href="#controller" @click="goTo('/controller')">{{$t("controller.title")}}</cv-link>
-            </cv-breadcrumb-item>
-            <cv-breadcrumb-item>
-              <cv-link :href="'#manage/'+this.clientId" aria-current="page">{{this.clientId}}</cv-link>
-            </cv-breadcrumb-item>
-          </cv-breadcrumb>
-        </cv-column>
-      </cv-row>
-      <cv-row>
-        <cv-column>
-          <h2 class="page-title no-margin-top">Manage {{isStandAlone ? '' : this.clientId}}</h2>
-        </cv-column>
-      </cv-row>
-      <cv-row>
-        <cv-column>
-          <div class="cv-grid-story__preview-col">
-            <cv-data-table v-if="!isLoading && isLogged" :columns="tableCols" :data="tableRows" ref="table"></cv-data-table>
-          </div>
-        </cv-column>
-      </cv-row>
-    </cv-grid>
-  </div> -->
 
 </div>
 </template>
@@ -115,20 +87,8 @@ export default {
       clientId: this.$route.path.indexOf('/configuration') > -1 ? 'stand-alone' : this.$route.params.clientId,
       parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
       config: window.CONFIG,
-      isLoading: true,
-      isLogged: false,
-      isStandAlone: false,
       username: "root",
       password: "Nethesis,1234",
-      // tableCols: [
-      //   "Name",
-      //   "Type",
-      //   "Device",
-      //   "Ip Address",
-      //   "Netmask",
-      //   "Protocol"
-      // ],
-      // tableRows: [],
     };
   },
   mounted() {
@@ -150,7 +110,7 @@ export default {
       this.$parent.$parent.page = "";
 
       // set stand alone
-      this.isStandAlone = true;
+      this.$store.state.manage.isStandAlone = true;
       this.$parent.$parent.isStandAlone = true;
       this.$parent.$parent.isLoading = true;
       this.$parent.$parent.isLogged = true;
@@ -184,8 +144,8 @@ export default {
 
       // check loginResponse
       if (!loginResponse) {
-        this.isLogged = false;
-        this.isLoading = false;
+        this.$store.state.manage.isLogged = false;
+        this.$store.state.manage.isLoading = false;
         this.loginError = true;
         this.loginMessage = "";
       }
@@ -196,39 +156,29 @@ export default {
         token: loginResponse.data.result,
       }
       this.saveToStorage("clientInfo-" + this.clientId, clientInfo);
-      this.isLogged = true;
+      this.$store.state.manage.isLogged = true;
 
       // get dashboard info
       this.checkTokenValidity();
     },
     async logout() {
-      // get loginInfo
-      const loginInfo = this.getFromStorage("loginInfo")
-
-      // check loginInfo
-      if (!loginInfo) {
-        this.isLoading = false;
-        this.isLogged = false;
-        this.deleteFromStorage("loginInfo");
-        return
-      }
-
       // set logout
       this.deleteFromStorage("loginInfo");
-      this.isLogged = false;
-      this.isLoading = false;
+      this.deleteFromStorage("clientInfo-" + this.clientId);
+      this.$store.state.manage.isLogged = false;
+      this.$store.state.manage.isLoading = false;
     },
     async login() {
       // start loading
-      this.isLoading = true;
+      this.$store.state.manage.isLoading = true;
 
       // get loginInfo
       const loginInfo = this.getFromStorage("loginInfo")
 
       // check loginInfo
       if (!loginInfo) {
-        this.isLoading = false;
-        this.isLogged = false;
+        this.$store.state.manage.isLoading = false;
+        this.$store.state.manage.isLogged = false;
         return
       }
 
@@ -250,8 +200,8 @@ export default {
 
       // check loginResponse
       if (!loginResponse) {
-        this.isLogged = false;
-        this.isLoading = false;
+        this.$store.state.manage.isLogged = false;
+        this.$store.state.manage.isLoading = false;
         this.loginError = true;
         this.loginMessage = "";
       }
@@ -262,7 +212,7 @@ export default {
         token: loginResponse.data.token,
       }
       this.saveToStorage("clientInfo-" + this.clientId, clientInfo);
-      this.isLogged = true;
+      this.$store.state.manage.isLogged = true;
 
       // get dashboard info
       this.checkTokenValidity();
@@ -273,9 +223,9 @@ export default {
 
       // check clientInfo
       if (!clientInfo) {
-        this.isLoading = false;
-        this.isLogged = false;
-        if (!this.isStandAlone) {
+        this.$store.state.manage.isLoading = false;
+        this.$store.state.manage.isLogged = false;
+        if (!this.$store.state.manage.isStandAlone) {
           this.login()
         }
         return
@@ -293,29 +243,19 @@ export default {
 
       // check error
       if (networkError || !networkResponse) {
-        this.isLogged = false;
-        this.isLoading = false;
+        this.$store.state.manage.isLogged = false;
+        this.$store.state.manage.isLoading = false;
         this.deleteFromStorage("clientInfo-" + this.clientId)
-        if (!this.isStandAlone) {
+        if (!this.$store.state.manage.isStandAlone) {
           this.login()
         }
         return
       }
 
-      // filter results
-      // var interfaces = Object.values(networkResponse.data.result);
-      // interfaces.map(interf => this.tableRows.push({
-      //   name: interf['.name'] || '-',
-      //   type: interf['.type'] || '-',
-      //   device: interf['device'] || '-',
-      //   ipaddr: interf['ipaddr'] || '-',
-      //   netmask: interf['netmask'] || '-',
-      //   proto: interf['proto'] || '-'
-      // }))
-
       // all done
-      this.isLoading = false;
-      this.isLogged = true;
+      this.$store.state.manage.isLoading = false;
+      this.$store.state.manage.isLogged = true;
+      this.parentLoading = false;
 
     },
   },

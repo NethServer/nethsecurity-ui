@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from "./router";
+import store from "./store"
 
 // carbon styles
 import 'carbon-components/css/carbon-components.css';
@@ -31,6 +32,7 @@ for (var f in filters) {
 Vue.config.productionTip = true;
 
 new Vue({
+  store,
   router,
   i18n,
   created: function() {

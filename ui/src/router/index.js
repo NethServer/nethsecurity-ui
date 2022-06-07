@@ -4,7 +4,7 @@ import VueRouter from "vue-router";
 import Controller from "../components/Controller";
 
 import Manage from "../components/Manage";
-import ManageMenu1 from "../components/manages/Menu1";
+import ManageDashboard from "../components/manages/Dashboard";
 import ManageMenu2 from "../components/manages/Menu2";
 import ManageMenu3 from "../components/manages/Menu3";
 
@@ -24,16 +24,16 @@ const routes = [{
   // CONFIGURATION (STAND-ALONE) SECTION
   {
     path: '/configuration',
-    redirect: '/configuration/menu1'
+    redirect: '/configuration/dashboard'
   },
   {
     path: "/configuration",
     name: "Manage",
     component: Manage,
     children: [{
-        path: "menu1",
-        name: "ManageMenu1",
-        component: ManageMenu1,
+        path: "dashboard",
+        name: "ManageDashboard",
+        component: ManageDashboard,
       },
       {
         path: "menu2",
@@ -51,16 +51,16 @@ const routes = [{
   // MANAGE SECTION
   {
     path: '/manage/:clientId',
-    redirect: '/manage/:clientId/menu1'
+    redirect: '/manage/:clientId/dashboard'
   },
   {
     path: "/manage/:clientId",
     name: "Manage",
     component: Manage,
     children: [{
-        path: "menu1",
-        name: "ManageMenu1",
-        component: ManageMenu1,
+        path: "dashboard",
+        name: "ManageDashboard",
+        component: ManageDashboard,
       },
       {
         path: "menu2",

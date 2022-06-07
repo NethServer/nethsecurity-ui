@@ -35,6 +35,8 @@
         <h4 class="page-sub-subtitle">{{$t("controller.clients_registered")}}</h4>
       </cv-column>
     </cv-row>
+
+    <!-- LIST REGISTERED -->
     <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'list'">
       <cv-data-table :columns="clientColumns" :pagination="false" :overflow-menu="false" ref="table">
         <template slot="data">
@@ -87,6 +89,9 @@
         </template>
       </cv-data-table>
     </cv-row>
+    <!-- END LIST REGISTERED -->
+
+    <!-- CARD REGISTERED -->
     <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'card'">
       <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="client.registered">
         <div v-if="client.registered" class="cv-grid-story__preview-col">
@@ -133,11 +138,15 @@
         </div>
       </cv-column>
     </cv-row>
+    <!-- END CARD REGISTERED -->
     <cv-row v-if="clients.length > 0">
       <cv-column>
         <h4 class="page-sub-subtitle">{{$t("controller.clients_not_registered")}}</h4>
       </cv-column>
     </cv-row>
+
+
+    <!-- LIST NOT REGISTERED -->
     <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'list'">
       <cv-data-table :columns="clientColumns" :pagination="false" :overflow-menu="false" ref="table">
         <template slot="data">
@@ -172,6 +181,9 @@
         </template>
       </cv-data-table>
     </cv-row>
+    <!-- END LIST NOT REGISTERED -->
+
+    <!-- CARD NOT REGISTERED -->
     <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'card'">
       <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="!client.registered">
         <div v-if="!client.registered" class="cv-grid-story__preview-col">
@@ -198,6 +210,9 @@
         </div>
       </cv-column>
     </cv-row>
+    <!-- END CARD NOT REGISTERED -->
+
+
     <cv-row v-if="clients.length == 0">
       <cv-column :sm="12" :md="12" :lg="12">
         <cv-tile kind="standard" class="empty-state basic-card">

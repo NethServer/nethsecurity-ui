@@ -4,7 +4,9 @@
     "add": "Add",
     "delete": "Delete",
     "approve": "Approve",
-    "show": "Show"
+    "show": "Show",
+    "show_details": "Show details",
+    "more_info": "More info"
   },
   "main": {
     "controller": "Controller",
@@ -12,7 +14,25 @@
     "settings": "Settings"
   },
   "manage": {
-    "title": "Manage"
+    "title": "Manage",
+    "dashboard": "Dashboard",
+    "ipv4_connected": "IPv4 connected",
+    "ipv4_not_connected": "IPv4 not connected",
+    "ipv6_connected": "IPv6 connected",
+    "ipv6_not_connected": "IPv6 not connected",
+    "local_time": "Local time",
+    "connected_since": "Connected since",
+    "protocol": "Protocol",
+    "ipv4": "IPv4",
+    "gatewayv4": "Gateway",
+    "dnsv4": "DNSv4",
+    "ipv6": "IPv6",
+    "gatewayv6": "Gateway",
+    "dnsv6": "DNSv6",
+    "kernel_version": "Kernel version",
+    "model": "Model",
+    "architecture": "Architecture",
+    "firware_version": "Firware version"
   },
   "controller": {
     "title": "Controller",

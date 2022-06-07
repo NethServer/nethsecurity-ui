@@ -42,7 +42,15 @@
     "clients_registered": "Clients registered",
     "clients_not_registered": "Clients not registered",
     "waiting_approval": "Pending approval",
-    "approve_client": "Approve client"
+    "approve_client": "Approve client",
+    "client_name_disabled": "The name can't be changed. It's used to identify the client",
+    "change_view_mode": "Click to change visualization mode",
+    "column_name": "Name",
+    "column_ip_address": "IP Address",
+    "column_netmask": "Netmaks",
+    "column_status": "Status",
+    "column_statistics": "Statistics",
+    "column_actions": "Actions"
   },
   "logs": {
     "title": "Logs"

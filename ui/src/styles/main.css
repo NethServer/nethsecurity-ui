@@ -79,6 +79,10 @@ body {
   outline: none !important;
 }
 
+.bx--content .cv-data-table {
+  margin-bottom: 2rem;
+}
+
 .bx--content .bx--col-sm-2 {
   margin-bottom: 2rem;
 }
@@ -177,6 +181,15 @@ body {
 
 .sub-header {
   z-index: 10;
+}
+
+.override-spaces button {
+  display: inline-block;
+  text-align: center;
+}
+
+.override-spaces svg {
+  margin-left: 6px;
 }
 
 #side-header-manage {

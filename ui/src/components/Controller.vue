@@ -20,12 +20,74 @@
         </cv-button>
       </cv-column>
     </cv-row>
+    <cv-row>
+      <cv-column :sm="2" :md="2" :lg="2">
+        <cv-tooltip :alignment="'center'" :direction="'right'" :tip="$t('controller.change_view_mode')">
+          <cv-content-switcher class="override-spaces" :size="'sm'" @selected="selectView">
+            <cv-content-switcher-button owner-id="list" :selected="isSelected('list')" :icon="ListBoxes20"></cv-content-switcher-button>
+            <cv-content-switcher-button owner-id="card" :selected="isSelected('card')" :icon="Thumbnail20"></cv-content-switcher-button>
+          </cv-content-switcher>
+        </cv-tooltip>
+      </cv-column>
+    </cv-row>
     <cv-row v-if="clients.length > 0">
       <cv-column>
         <h4 class="page-sub-subtitle">{{$t("controller.clients_registered")}}</h4>
       </cv-column>
     </cv-row>
-    <cv-row v-if="clients.length > 0">
+    <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'list'">
+      <cv-data-table :columns="clientColumns" :pagination="false" :overflow-menu="false" ref="table">
+        <template slot="data">
+          <cv-data-table-row v-for="(client, index) in clients" :key="index" v-show="client.registered">
+            <cv-data-table-cell>{{client.name}}</cv-data-table-cell>
+            <cv-data-table-cell>{{client.ipaddress}}</cv-data-table-cell>
+            <cv-data-table-cell>{{client.netmask}}</cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-tooltip :alignment="'center'" :direction="'top'" :tip="client.vpn ? $t('controller.client_connected') : $t('controller.client_not_connected')">
+                <CheckmarkFilled20 class="icon-success" v-if="client.vpn" />
+                <ErrorFilled20 class="icon-error" v-if="!client.vpn" />
+              </cv-tooltip>
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-interactive-tooltip v-if="client.vpn" :alignment="'center'" :direction="'top'" :visible="false" class="card-tooltip">
+                <template slot="trigger">
+                  <a>{{$t("controller.vpn_statistics")}}</a>
+                </template>
+                <template slot="content">
+                  <p>
+                    <span class="margin-right">{{$t("controller.stats_bytes_rcvd")}}:</span> <span class="float-right"><strong>{{client.vpn.bytes_rcvd | byteFormat}}</strong></span>
+                    <br />
+                    <span class="margin-right">{{$t("controller.stats_bytes_sent")}}:</span> <span class="float-right"><strong>{{client.vpn.bytes_sent | byteFormat}}</strong></span>
+                    <br />
+                    <span class="margin-right">{{$t("controller.stats_connected_since")}}:</span> <span class="float-right"><strong>{{client.vpn.connected_since | timestampToDate}} ({{$t("controller.local_time")}})</strong></span>
+                    <br />
+                    <span class="margin-right">{{$t("controller.stats_real_address")}}:</span> <span class="float-right"><strong>{{client.vpn.real_address}}</strong></span>
+                    <br />
+                    <span class="margin-right">{{$t("controller.stats_virtual_address")}}:</span> <span class="float-right"><strong>{{client.vpn.virtual_address}}</strong></span>
+                  </p>
+                </template>
+              </cv-interactive-tooltip>
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-button :kind="'primary'" @click="goTo('/manage/' + client.name)" :icon="CloudServiceManagement20" :size="'sm'" :disabled="client.vpn ? false : true">
+                {{$t('controller.manage_client')}}
+              </cv-button>
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-overflow-menu class="small-menu" :label="$t('controller.client_options')" :flip-menu="true" :up="false" :tip-position="'left'" :tip-alignment="'center'">
+                <cv-overflow-menu-item @click="showDeleteClient(client)">
+                  <div class="menu-item">
+                    <TrashCan20 class="menu-item-icon" />
+                    <span class="menu-item-label">{{$t('controller.delete_client')}}</span>
+                  </div>
+                </cv-overflow-menu-item>
+              </cv-overflow-menu>
+            </cv-data-table-cell>
+          </cv-data-table-row>
+        </template>
+      </cv-data-table>
+    </cv-row>
+    <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'card'">
       <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="client.registered">
         <div v-if="client.registered" class="cv-grid-story__preview-col">
           <cv-tile kind="standard" class="basic-card">
@@ -76,7 +138,41 @@
         <h4 class="page-sub-subtitle">{{$t("controller.clients_not_registered")}}</h4>
       </cv-column>
     </cv-row>
-    <cv-row v-if="clients.length > 0">
+    <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'list'">
+      <cv-data-table :columns="clientColumns" :pagination="false" :overflow-menu="false" ref="table">
+        <template slot="data">
+          <cv-data-table-row v-for="(client, index) in clients" :key="index" v-show="!client.registered">
+            <cv-data-table-cell>{{client.name}}</cv-data-table-cell>
+            <cv-data-table-cell>-</cv-data-table-cell>
+            <cv-data-table-cell>-</cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-tooltip :alignment="'center'" :direction="'right'" :tip="$t('controller.client_not_registered')">
+                <InProgress20 />
+              </cv-tooltip>
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              -
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Add20" :size="'sm'">
+                {{$t('controller.approve_client')}}
+              </cv-button>
+            </cv-data-table-cell>
+            <cv-data-table-cell>
+              <cv-overflow-menu class="small-menu" :label="$t('controller.client_options')" :flip-menu="true" :up="false" :tip-position="'left'" :tip-alignment="'center'">
+                <cv-overflow-menu-item @click="showDeleteClient(client)">
+                  <div class="menu-item">
+                    <TrashCan20 class="menu-item-icon" />
+                    <span class="menu-item-label">{{$t('controller.delete_client')}}</span>
+                  </div>
+                </cv-overflow-menu-item>
+              </cv-overflow-menu>
+            </cv-data-table-cell>
+          </cv-data-table-row>
+        </template>
+      </cv-data-table>
+    </cv-row>
+    <cv-row v-if="clients.length > 0 && viewMode.defaultSelected == 'card'">
       <cv-column v-for="(client, index) in clients" :key="index" :sm="2" :md="3" :lg="3" v-show="!client.registered">
         <div v-if="!client.registered" class="cv-grid-story__preview-col">
           <cv-tile kind="standard" class="basic-card">
@@ -93,14 +189,11 @@
             <cv-tooltip :alignment="'center'" :direction="'right'" :tip="$t('controller.client_not_registered')">
               <InProgress20 />
             </cv-tooltip>
-
             <br />
             <br />
-
             <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Add20" :size="'sm'">
               {{$t('controller.approve_client')}}
             </cv-button>
-
           </cv-tile>
         </div>
       </cv-column>
@@ -124,7 +217,10 @@
     <template slot="content">
       <div class="bx--form-item">
         <label class="bx--label">{{$t("controller.client_name")}}</label>
-        <input v-model="newClient.name" type="text" class="bx--text-input" :placeholder="$t('controller.client_name')" data-modal-primary-focus :disabled="newClient.exists">
+        <input v-model="newClient.name" type="text" class="bx--text-input" :placeholder="$t('controller.client_name')" data-modal-primary-focus v-if="!newClient.exists">
+        <cv-tooltip v-if="newClient.exists" :alignment="'center'" :direction="'right'" :tip="$t('controller.client_name_disabled')">
+          <input v-model="newClient.name" type="text" class="bx--text-input" :placeholder="$t('controller.client_name')" data-modal-primary-focus disabled>
+        </cv-tooltip>
       </div>
       <cv-inline-notification v-if="modalAddClient.errorShow" kind="error" :title="modalAddClient.errorTitle" :sub-title="modalAddClient.errorDetails" :low-contrast="true" :hide-close-button="true">
       </cv-inline-notification>
@@ -167,6 +263,8 @@ import EdgeNode32 from "@carbon/icons-vue/es/edge-node/32"
 import Add20 from "@carbon/icons-vue/es/add/20"
 import TrashCan20 from "@carbon/icons-vue/es/trash-can/20"
 import CloudServiceManagement20 from "@carbon/icons-vue/es/cloud--service-management/20"
+import ListBoxes20 from "@carbon/icons-vue/es/list--boxes/20"
+import Thumbnail20 from "@carbon/icons-vue/es/thumbnail--2/20"
 
 export default {
   name: 'Controller',
@@ -182,6 +280,8 @@ export default {
     return {
       CloudServiceManagement20,
       Add20,
+      ListBoxes20,
+      Thumbnail20,
       isLoading: true,
       parentLoading: document.getElementsByClassName("bx--loading-overlay cv-loading").length > 0,
       clients: [],
@@ -207,7 +307,19 @@ export default {
         loadingText: "",
         loadedText: "",
         state: "loading"
-      }
+      },
+      viewMode: {
+        defaultSelected: this.getFromStorage("controller-viewMode") || 'list',
+      },
+      clientColumns: [
+        this.$t("controller.column_name"),
+        this.$t("controller.column_ip_address"),
+        this.$t("controller.column_netmask"),
+        this.$t("controller.column_status"),
+        this.$t("controller.column_statistics"),
+        this.$t("controller.column_actions"),
+        ''
+      ]
     };
   },
   mounted() {
@@ -229,6 +341,13 @@ export default {
   methods: {
     goTo(path) {
       this.$router.push(path);
+    },
+    isSelected(type) {
+      return this.viewMode.defaultSelected == type;
+    },
+    selectView(type) {
+      this.viewMode.defaultSelected = type;
+      this.saveToStorage("controller-viewMode", this.viewMode.defaultSelected);
     },
     async getClientList() {
       // get loginInfo
@@ -252,7 +371,7 @@ export default {
 
       // check error
       if (clientsError || !clientsResponse) {
-        console.log(clientsError);
+        console.error(clientsError);
         this.isLogged = false;
         this.isLoading = false;
         this.deleteFromStorage("loginInfo")

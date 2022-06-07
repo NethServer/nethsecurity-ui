@@ -51,7 +51,7 @@
             <cv-data-table-cell>
               <cv-interactive-tooltip v-if="client.vpn" :alignment="'center'" :direction="'top'" :visible="false" class="card-tooltip">
                 <template slot="trigger">
-                  <a>{{$t("controller.vpn_statistics")}}</a>
+                  <a>{{$t("common.show")}}</a>
                 </template>
                 <template slot="content">
                   <p>
@@ -146,7 +146,7 @@
             <cv-data-table-cell>-</cv-data-table-cell>
             <cv-data-table-cell>-</cv-data-table-cell>
             <cv-data-table-cell>
-              <cv-tooltip :alignment="'center'" :direction="'right'" :tip="$t('controller.client_not_registered')">
+              <cv-tooltip :alignment="'center'" :direction="'top'" :tip="$t('controller.client_not_registered')">
                 <InProgress20 />
               </cv-tooltip>
             </cv-data-table-cell>
@@ -154,7 +154,7 @@
               -
             </cv-data-table-cell>
             <cv-data-table-cell>
-              <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Add20" :size="'sm'">
+              <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Checkmark20" :size="'sm'">
                 {{$t('controller.approve_client')}}
               </cv-button>
             </cv-data-table-cell>
@@ -191,7 +191,7 @@
             </cv-tooltip>
             <br />
             <br />
-            <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Add20" :size="'sm'">
+            <cv-button :kind="'primary'" @click="showAddClient(client.name)" :icon="Checkmark20" :size="'sm'">
               {{$t('controller.approve_client')}}
             </cv-button>
           </cv-tile>
@@ -213,7 +213,7 @@
   </cv-grid>
 
   <cv-modal :visible="modalAddClient.isVisible" @primary-click="addClient" @other-btn-click="hideAddClient" @modal-hidden="hideAddClient">
-    <template slot="title">{{$t("controller.add_client")}}</template>
+    <template slot="title">{{newClient.exists ? $t("controller.approve_client") : $t("controller.add_client")}}</template>
     <template slot="content">
       <div class="bx--form-item">
         <label class="bx--label">{{$t("controller.client_name")}}</label>
@@ -227,7 +227,7 @@
     </template>
     <template slot="other-button">{{$t("common.cancel")}}</template>
     <template slot="primary-button">
-      <span v-if="!modalAddClient.isLoading">{{$t("common.add")}}</span>
+      <span v-if="!modalAddClient.isLoading">{{newClient.exists ? $t("common.approve") : $t("common.add")}}</span>
       <cv-inline-loading v-if="modalAddClient.isLoading" :ending-text="modalAddClient.endingText" :error-text="modalAddClient.errorText" :loading-text="modalAddClient.loadingText" :loaded-text="modalAddClient.loadedText"
         :state="modalAddClient.state">
       </cv-inline-loading>
@@ -256,6 +256,7 @@ import to from "await-to-js";
 
 import StorageService from "../services/storage";
 
+import Checkmark20 from "@carbon/icons-vue/es/checkmark/20";
 import CheckmarkFilled20 from "@carbon/icons-vue/es/checkmark--filled/20";
 import ErrorFilled20 from "@carbon/icons-vue/es/error--filled/20";
 import InProgress20 from "@carbon/icons-vue/es/in-progress/20";
@@ -278,6 +279,7 @@ export default {
   },
   data() {
     return {
+      Checkmark20,
       CloudServiceManagement20,
       Add20,
       ListBoxes20,

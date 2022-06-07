@@ -2,7 +2,9 @@
   "common": {
     "cancel": "Cancel",
     "add": "Add",
-    "delete": "Delete"
+    "delete": "Delete",
+    "approve": "Approve",
+    "show": "Show"
   },
   "main": {
     "controller": "Controller",
@@ -15,7 +17,7 @@
   "controller": {
     "title": "Controller",
     "clients_list": "Clients list",
-    "manage_client": "Manage this client",
+    "manage_client": "Manage client",
     "client_connected": "Client connected",
     "client_not_connected": "Client not connected",
     "client_not_registered": "Client not registered",

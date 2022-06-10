@@ -66,7 +66,13 @@ http:
       middlewares:
       - mui-stripprefix
       service: service-ui
-      rule: PathPrefix(\`/ui\`) || Path(\`/\`)
+      rule: PathPrefix(\`/ui\`)
+
+    routerui-root:
+      entryPoints:
+      - web
+      service: service-ui
+      rule: PathPrefix(\`/\`)
 
   # Add the service
   services:

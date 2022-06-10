@@ -32,12 +32,12 @@
 
           <cv-side-nav-link @click="goTo('/dashboard', $store.state.manage.isStandAlone)" :active="isLinkActive('dashboard')">
             <template v-slot:nav-icon>
-              <DataVisualization20 />
+              <Dashboard20 />
             </template>
             {{$t("manage.dashboard")}}
           </cv-side-nav-link>
 
-          <cv-side-nav-link @click="goTo('/menu2', $store.state.manage.isStandAlone)" :active="isLinkActive('menu2')">
+          <!-- <cv-side-nav-link @click="goTo('/menu2', $store.state.manage.isStandAlone)" :active="isLinkActive('menu2')">
             <template v-slot:nav-icon>
               <Catalog20 />
             </template>
@@ -49,7 +49,7 @@
               <Settings20 />
             </template>
             {{$t("manage.menu_3")}}
-          </cv-side-nav-link>
+          </cv-side-nav-link> -->
 
         </cv-side-nav-items>
       </cv-side-nav>
@@ -69,17 +69,17 @@ import to from "await-to-js";
 import StorageService from "../services/storage";
 
 import Logout20 from "@carbon/icons-vue/es/logout/20";
-import Catalog20 from "@carbon/icons-vue/es/catalog/20";
-import Settings20 from "@carbon/icons-vue/es/settings/20";
-import DataVisualization20 from "@carbon/icons-vue/es/data-vis--1/20";
+//import Catalog20 from "@carbon/icons-vue/es/catalog/20";
+//import Settings20 from "@carbon/icons-vue/es/settings/20";
+import Dashboard20 from "@carbon/icons-vue/es/dashboard/20";
 
 export default {
   name: 'Manage',
   mixins: [StorageService],
   components: {
-    DataVisualization20,
-    Catalog20,
-    Settings20,
+    Dashboard20,
+    //Catalog20,
+    //Settings20,
     Logout20
   },
   data() {

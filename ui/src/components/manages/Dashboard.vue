@@ -11,10 +11,21 @@
       <cv-column :sm="12" :md="6" :lg="6">
         <cv-tile class="dashboard-card">
           <h1>{{$t("manage.system")}}</h1>
-          <p>{{$t("manage.version")}}<span class="float-right">{{$store.state.manage.board.release && $store.state.manage.board.release.distribution || '-'}} {{$store.state.manage.board.release && $store.state.manage.board.release.version}}</span>
+          <p>{{$t("manage.version")}}
+            <span v-if="!$store.state.manage.board.release" class="float-right max-height">
+              <cv-inline-loading :state="'loading'" :loading-text="''"></cv-inline-loading>
+            </span>
+            <span v-if="$store.state.manage.board.release" class="float-right">
+              {{$store.state.manage.board.release.distribution}} {{$store.state.manage.board.release.version}}
+            </span>
           </p>
-          <p>{{$t("manage.uptime")}}<span class="float-right">{{$store.state.manage.info.uptime | secondsFormat}}</span></p>
-          <cv-interactive-tooltip :alignment="'center'" :direction="'right'" class="card-tooltip float-right" :tip="$t('controller.client_not_connected')">
+          <p>{{$t("manage.uptime")}}
+            <span v-if="!$store.state.manage.info.uptime" class="float-right max-height">
+              <cv-inline-loading :state="'loading'" :loading-text="''"></cv-inline-loading>
+            </span>
+            <span v-if="$store.state.manage.info.uptime" class="float-right">{{$store.state.manage.info.uptime | secondsFormat}}</span>
+          </p>
+          <cv-interactive-tooltip v-if="$store.state.manage.info.localtime" :alignment="'center'" :direction="'right'" class="card-tooltip float-right" :tip="$t('controller.client_not_connected')">
             <template slot="trigger">
               <a>{{$t("common.more_info")}}</a>
             </template>
@@ -41,7 +52,12 @@
       <cv-column :sm="12" :md="6" :lg="6">
         <cv-tile class="dashboard-card">
           <h1>Hostname</h1>
-          <h3><code>{{$store.state.manage.board.hostname}}</code></h3>
+          <span v-if="!$store.state.manage.board.hostname" class="max-height">
+            <cv-inline-loading :state="'loading'" :loading-text="''"></cv-inline-loading>
+          </span>
+          <h3 v-if="$store.state.manage.board.hostname">
+            <code>{{$store.state.manage.board.hostname}}</code>
+          </h3>
         </cv-tile>
       </cv-column>
       <!-- END HOSTNAME -->
@@ -157,6 +173,7 @@
           <div>
             <div id="connections-chart-legend" class="chart-legend"></div>
             <div id="connections-chart" class="chart"></div>
+            <cv-inline-loading v-if="charts.connections.length == 1" :state="'loading'" :loading-text="$t('common.loading_data')"></cv-inline-loading>
           </div>
         </cv-tile>
       </cv-column>
@@ -175,7 +192,7 @@
           </cv-tabs>
         </cv-tile>
       </cv-column>
-      <cv-column :sm="12" :md="12" :lg="12">
+      <!-- <cv-column :sm="12" :md="12" :lg="12">
         <cv-tile class="dashboard-card">
           <h1>
             {{$t("manage.dhcp_devices")}}
@@ -183,7 +200,7 @@
           <p>
           </p>
         </cv-tile>
-      </cv-column>
+      </cv-column> -->
     </cv-row>
     <!-- <cv-row>
       <cv-column :sm="12" :md="12" :lg="12">

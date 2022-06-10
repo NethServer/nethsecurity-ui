@@ -31,7 +31,7 @@
         </cv-header-global-action>
       </template>
       <template v-slot:left-panels>
-        <cv-side-nav id="side-nav">
+        <cv-side-nav id="side-nav" :class="[isStandAlone ? 'stand-alone' : 'no-stand-alone']">
           <cv-side-nav-items>
 
             <cv-side-nav-link @click="goTo('/controller')" :active="isLinkActive('/controller')">

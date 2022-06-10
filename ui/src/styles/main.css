@@ -39,6 +39,10 @@ body {
   text-align: right;
 }
 
+.max-height {
+  max-height: 15px;
+}
+
 .float-right {
   float: right;
 }
@@ -186,11 +190,11 @@ body {
 }
 
 .main-header {
-  z-index: 50;
+  z-index: 50 !important;
 }
 
 .sub-header {
-  z-index: 10;
+  z-index: 10 !important;
 }
 
 .inline-block {

@@ -1,4 +1,34 @@
 export default {
+  bitFormat: function(size) {
+    var result;
+
+    switch (true) {
+      case size === null || size === "" || isNaN(size):
+        result = "-";
+        break;
+
+      case size >= 0 && size < 1024:
+        result = Math.round(size) + " bit";
+        break;
+
+      case size >= 1024 && size < Math.pow(1024, 2):
+        result = Math.round(size / 1024 * 100) / 100 + " Kbit";
+        break;
+
+      case size >= Math.pow(1024, 2) && size < Math.pow(1024, 3):
+        result = Math.round(size / Math.pow(1024, 2) * 100) / 100 + " Mbit";
+        break;
+
+      case size >= Math.pow(1024, 3) && size < Math.pow(1024, 4):
+        result = Math.round(size / Math.pow(1024, 3) * 100) / 100 + " Gbit";
+        break;
+
+      default:
+        result = Math.round(size / Math.pow(1024, 4) * 100) / 100 + " Tbit";
+    }
+
+    return result;
+  },
   byteFormat: function(size) {
     var result;
 
@@ -8,23 +38,23 @@ export default {
         break;
 
       case size >= 0 && size < 1024:
-        result = size + " B";
+        result = size.toFixed(2) + " B";
         break;
 
       case size >= 1024 && size < Math.pow(1024, 2):
-        result = Math.round((size / 1024) * 100) / 100 + " KB";
+        result = (Math.round((size / 1024) * 100) / 100).toFixed(2) + " KB";
         break;
 
       case size >= Math.pow(1024, 2) && size < Math.pow(1024, 3):
-        result = Math.round((size / Math.pow(1024, 2)) * 100) / 100 + " MB";
+        result = (Math.round((size / Math.pow(1024, 2)) * 100) / 100).toFixed(2) + " MB";
         break;
 
       case size >= Math.pow(1024, 3) && size < Math.pow(1024, 4):
-        result = Math.round((size / Math.pow(1024, 3)) * 100) / 100 + " GB";
+        result = (Math.round((size / Math.pow(1024, 3)) * 100) / 100).toFixed(2) + " GB";
         break;
 
       default:
-        result = Math.round((size / Math.pow(1024, 4)) * 100) / 100 + " TB";
+        result = (Math.round((size / Math.pow(1024, 4)) * 100) / 100).toFixed(2) + " TB";
     }
 
     return result;

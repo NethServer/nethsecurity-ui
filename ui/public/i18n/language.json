@@ -6,7 +6,10 @@
     "approve": "Approve",
     "show": "Show",
     "show_details": "Show details",
-    "more_info": "More info"
+    "more_info": "More info",
+    "date": "Date",
+    "other": "Other",
+    "loading_data": "Loading data..."
   },
   "main": {
     "controller": "Controller",
@@ -32,7 +35,15 @@
     "kernel_version": "Kernel version",
     "model": "Model",
     "architecture": "Architecture",
-    "firware_version": "Firware version"
+    "firware_version": "Firware version",
+    "3mw_3si": "4 minute window, 5 second interval",
+    "system": "System",
+    "version": "Version",
+    "uptime": "Uptime",
+    "connections": "Connections",
+    "traffic": "Traffic",
+    "dhcp_devices": "DHCP Devices",
+    "interface": "Interface"
   },
   "controller": {
     "title": "Controller",

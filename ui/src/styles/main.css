@@ -87,6 +87,16 @@ body {
   outline: none !important;
 }
 
+.chart-legend {
+  float: right;
+  margin-top: -3rem;
+  text-align: right;
+}
+
+.dashboard-card {
+  min-height: 9rem !important;
+}
+
 .bx--content .cv-data-table {
   margin-bottom: 2rem;
 }

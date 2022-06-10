@@ -8,6 +8,10 @@ const state = {
     isLogged: false,
     isStandAlone: false,
     configs: {},
+    board: {},
+    info: {},
+    wan: {},
+    lan: {}
   }
 }
 export default new Vuex.Store({

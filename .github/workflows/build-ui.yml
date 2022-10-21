@@ -14,7 +14,7 @@ jobs:
     name: 'Publish UI dist'
     runs-on: ubuntu-latest
     env:
-      DO_SPACE_NAME: 'distfeed.nextsecurity'
+      DO_SPACE_NAME: 'distfeed-nextsecurity'
       DO_SPACE_REGION: 'fra1'
       CDN_NAME: 'distfeed.nextsecurity.nethserver.org'
     steps:

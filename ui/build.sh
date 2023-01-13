@@ -9,8 +9,8 @@
 
 set -e
 
-container_ui_build=$(buildah from -v "${PWD}:/build:z" docker.io/library/node:lts-slim)
-buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--max-old-space-size=1024'; cd /build && npm install && npm run build"
+container_ui_build=$(buildah from -v "${PWD}:/build:z" docker.io/library/node:18.13.0-alpine)
+buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=1024'; cd /build && npm install && npm run build"
 buildah rm ${container_ui_build}
 
 tar cvzf ui.tar.gz dist/

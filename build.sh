@@ -32,8 +32,8 @@ buildah config --entrypoint='["/entrypoint.sh"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"
 images+=("${repobase}/nextsec-api")
 
-container_ui_build=$(buildah from -v "${PWD}/ui:/build:z" docker.io/library/node:lts-slim)
-buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--max-old-space-size=1024'; cd /build && npm install && npm run build"
+container_ui_build=$(buildah from -v "${PWD}/ui:/build:z" docker.io/library/node:18.13.0-alpine)
+buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=1024'; cd /build && npm ci && npm run build"
 buildah rm ${container_ui_build}
 
 container_ui=$(buildah from docker.io/alpine:3.17)

@@ -25,7 +25,6 @@ server.indexfiles    = ("index.php", "index.html",
 						"index.htm", "default.htm")
 server.follow-symlink = "enable"
 static-file.exclude-extensions = (".php", ".pl", ".cgi", ".fcgi")
-accesslog.filename   = "/dev/fd/3"
 url.access-deny = ("~", ".inc")
 EOF
 

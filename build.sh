@@ -4,7 +4,7 @@ set -e
 repobase="ghcr.io/nethserver"
 
 images=()
-container=$(buildah from docker.io/alpine:latest)
+container=$(buildah from docker.io/alpine:3.16)
 
 trap "buildah rm ${container} ${container_p} ${container_ui} ${container_ui_build} ${container_proxy}" EXIT
 
@@ -19,7 +19,7 @@ buildah config --entrypoint='["/entrypoint.sh"]' --cmd='["/usr/sbin/openvpn", "/
 buildah commit "${container}" "${repobase}/nextsec-vpn"
 images+=("${repobase}/nextsec-vpn")
 
-container_p=$(buildah from docker.io/alpine:latest)
+container_p=$(buildah from docker.io/alpine:3.17)
 buildah run ${container_p} apk add --no-cache python3 py3-pip easy-rsa
 buildah run ${container_p} mkdir /nextsec-api
 buildah add "${container_p}" api/requirements.txt /nextsec-api
@@ -32,11 +32,11 @@ buildah config --entrypoint='["/entrypoint.sh"]' ${container_p}
 buildah commit "${container_p}" "${repobase}/nextsec-api"
 images+=("${repobase}/nextsec-api")
 
-container_ui_build=$(buildah from -v "${PWD}/ui:/build:z" docker.io/library/node:lts-slim)
-buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--max-old-space-size=1024'; cd /build && npm install && npm run build"
+container_ui_build=$(buildah from -v "${PWD}/ui:/build:z" docker.io/library/node:18.13.0-alpine)
+buildah run ${container_ui_build} sh -c "export NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=1024'; cd /build && npm ci && npm run build"
 buildah rm ${container_ui_build}
 
-container_ui=$(buildah from docker.io/alpine:latest)
+container_ui=$(buildah from docker.io/alpine:3.17)
 buildah run ${container_ui} apk add --no-cache lighttpd
 buildah add "${container_ui}" ui/dist/ /var/www/localhost/htdocs/
 buildah add "${container_ui}" ui/entrypoint.sh /entrypoint.sh

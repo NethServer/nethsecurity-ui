@@ -41,6 +41,10 @@ bind_ip = os.environ.get('API_BIND_IP', '127.0.0.1')
 session_duration = os.environ.get('API_SESSION_DURATION', 3600*24*7) # 7 days
 proxy_port = os.environ.get('PROXY_PORT', 8080)
 
+# Promtail variables
+promtail_address = os.environ.get('PROMTAIL_ADDRESS')
+promtail_port = os.environ.get('PROMTAIL_PORT')
+
 # Load credentials on start
 if os.path.isfile(cfile):
     with open(cfile, 'r') as fp:
@@ -173,6 +177,8 @@ def get_vpn_config(name):
     token['ca'] = read_ca()
     token['cert'] = read_cert(crt)
     token['key'] = read_cert(key)
+    token['promtail_address'] = promtail_address
+    token['promtail_port'] = promtail_port
 
     return token
 

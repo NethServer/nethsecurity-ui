@@ -54,7 +54,7 @@ cert /etc/openvpn/pki/issued/server.crt
 key /etc/openvpn/pki/private/server.key
 crl-verify /etc/openvpn/pki/crl.pem
 
-client-connect /usr/local/bin/add-proxy-path
+client-connect /usr/local/bin/handle-connection
 
 # configuration for old easy RSA certs
 remote-cert-ku e0 80

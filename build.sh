@@ -13,7 +13,7 @@ buildah run ${container} apk add --no-cache openvpn easy-rsa
 
 echo "Setup image"
 buildah add "${container}" vpn/controller-auth /usr/local/bin/controller-auth
-buildah add "${container}" vpn/add-proxy-path /usr/local/bin/add-proxy-path
+buildah add "${container}" vpn/handle-connection /usr/local/bin/handle-connection
 buildah add "${container}" vpn/entrypoint.sh /entrypoint.sh
 buildah config --entrypoint='["/entrypoint.sh"]' --cmd='["/usr/sbin/openvpn", "/etc/openvpn/server.conf"]' ${container}
 buildah commit "${container}" "${repobase}/nextsec-vpn"

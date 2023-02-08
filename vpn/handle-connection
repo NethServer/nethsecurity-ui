@@ -1,7 +1,7 @@
 #!/bin/sh
 
+# Add route to traefik
 username=$common_name
-
 cat <<EOF > /etc/openvpn/proxy/$username.yaml
 http:
   # Add the router
@@ -29,3 +29,5 @@ http:
         prefixes:
           - "/$username"
 EOF
+
+echo -n "$ifconfig_pool_remote_ip" > /etc/openvpn/clients/$username

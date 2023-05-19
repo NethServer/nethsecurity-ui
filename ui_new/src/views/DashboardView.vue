@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
-import NeButton from '../components/common/NeButton.vue' ////
+import NeButton from '../components/common/NeButton.vue'
 
 const loginUserStore = useLoginUserStore()
 
@@ -17,10 +17,11 @@ function logout() {
 <template>
   <div>Dashboard</div>
   <div>
-    <font-awesome-icon icon="fa-solid fa-user-secret" size="m" />
-    <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" />
-    <font-awesome-icon :icon="['fas', 'user-secret']" size="3x" />
-    <font-awesome-icon :icon="['fal', 'headset']" size="3x" />
+    <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />
+    <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" class="mr-2" />
+    <font-awesome-icon :icon="['fas', 'user-secret']" size="3x" class="mr-2" />
+    <font-awesome-icon :icon="['fas', 'address-book']" size="3x" class="mr-2" />
+    <font-awesome-icon :icon="['fal', 'address-book']" size="3x" class="mr-2" />
   </div>
   <NeButton @click="logout" class="mt-4">Sign out</NeButton>
 </template>

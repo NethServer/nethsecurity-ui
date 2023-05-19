@@ -26,8 +26,8 @@ function login() {
       <div class="mx-auto w-full max-w-sm lg:w-96">
         <div class="bg-gray-50 px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <!-- logo //// -->
-          <div class="text-xl text-gray-900">Welcome</div>
-          <div class="text-sm text-gray-700">
+          <div class="text-xl mb-2 text-gray-900">Welcome</div>
+          <div class="text-sm mb-4 text-gray-700">
             Sign in to Nethsecurity, secure your network and access the cloud quickly.
           </div>
           <form class="space-y-6" action="#" method="POST">

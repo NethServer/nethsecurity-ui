@@ -16,37 +16,18 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-// import { ////
-//   Bars3Icon,
-//   BellIcon,
-//   CalendarIcon,
-//   ChartPieIcon,
-//   Cog6ToothIcon,
-//   DocumentDuplicateIcon,
-//   FolderIcon,
-//   HomeIcon,
-//   UsersIcon,
-//   XMarkIcon,
-// } from '@heroicons/vue/24/outline'
-// import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-  { name: 'Documents', href: '#', current: false },
-  { name: 'Reports', href: '#', current: false }
+  { name: 'Dashboard', href: '#', icon: 'home', current: true },
+  { name: 'System', href: '#', icon: 'server', current: false },
+  { name: 'Network', href: '#', icon: 'network-wired', current: false },
+  { name: 'Users & objects', href: '#', icon: 'user-group', current: false },
+  { name: 'Firewall', href: '#', icon: 'fire', current: false },
+  { name: 'Security', href: '#', icon: 'shield-halved', current: false },
+  { name: 'VPN', href: '#', icon: 'globe', current: false },
+  { name: 'Log', href: '#', icon: 'list', current: false },
+  { name: 'Report', href: '#', icon: 'chart-line', current: false }
 ]
-
-// const navigation = [ ////
-//   { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-//   { name: 'Team', href: '#', icon: UsersIcon, current: false },
-//   { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-//   { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-//   { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
-//   { name: 'Reports', href: '#', icon: ChartPieIcon, current: false }
-// ]
 
 const teams = [
   { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
@@ -65,6 +46,7 @@ const sidebarOpen = ref(false)
 
 <template>
   <div>
+    <!-- sidebar for mobile  -->
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog as="div" class="relative z-50 lg:hidden" @close="sidebarOpen = false">
         <TransitionChild
@@ -102,7 +84,11 @@ const sidebarOpen = ref(false)
                 <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
                   <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
                     <span class="sr-only">Close sidebar</span>
-                    <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                    <font-awesome-icon
+                      :icon="['fas', 'xmark']"
+                      class="h-6 w-6 text-white"
+                      aria-hidden="true"
+                    />
                   </button>
                 </div>
               </TransitionChild>
@@ -124,27 +110,22 @@ const sidebarOpen = ref(false)
                             :href="item.href"
                             :class="[
                               item.current
-                                ? 'bg-gray-50 text-indigo-600'
-                                : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                ? 'text-gray-900'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
+                              'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                             ]"
                           >
-                            <!-- <component //// 
-                              :is="item.icon"
-                              :class="[
-                                item.current
-                                  ? 'text-indigo-600'
-                                  : 'text-gray-400 group-hover:text-indigo-600',
-                                'h-6 w-6 shrink-0'
-                              ]"
+                            <font-awesome-icon
+                              :icon="['fas', item.icon]"
+                              class="h-6 w-6 shrink-0"
                               aria-hidden="true"
-                            /> -->
+                            />
                             {{ item.name }}
                           </a>
                         </li>
                       </ul>
                     </li>
-                    <li>
+                    <!-- <li> //// 
                       <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
                       <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-for="team in teams" :key="team.name">
@@ -170,16 +151,12 @@ const sidebarOpen = ref(false)
                           </a>
                         </li>
                       </ul>
-                    </li>
+                    </li> -->
                     <li class="mt-auto">
                       <a
                         href="#"
                         class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                       >
-                        <Cog6ToothIcon
-                          class="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
-                          aria-hidden="true"
-                        />
                         Settings
                       </a>
                     </li>
@@ -208,33 +185,28 @@ const sidebarOpen = ref(false)
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <ul role="list" class="-mx-2 space-y-1">
+              <ul role="list" class="-mx-2 space-y-2">
                 <li v-for="item in navigation" :key="item.name">
                   <a
                     :href="item.href"
                     :class="[
                       item.current
-                        ? 'bg-gray-50 text-indigo-600'
-                        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                        ? 'text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
+                      'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                     ]"
                   >
-                    <!-- <component //// 
-                      :is="item.icon"
-                      :class="[
-                        item.current
-                          ? 'text-indigo-600'
-                          : 'text-gray-400 group-hover:text-indigo-600',
-                        'h-6 w-6 shrink-0'
-                      ]"
+                    <font-awesome-icon
+                      :icon="['fas', item.icon]"
+                      class="h-6 w-6 shrink-0"
                       aria-hidden="true"
-                    /> -->
-                    {{ item.name }}
+                    />
+                    <span>{{ item.name }}</span>
                   </a>
                 </li>
               </ul>
             </li>
-            <li>
+            <!-- <li> //// 
               <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
               <ul role="list" class="-mx-2 mt-2 space-y-1">
                 <li v-for="team in teams" :key="team.name">
@@ -260,16 +232,12 @@ const sidebarOpen = ref(false)
                   </a>
                 </li>
               </ul>
-            </li>
+            </li> -->
             <li class="mt-auto">
               <a
                 href="#"
                 class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
               >
-                <Cog6ToothIcon
-                  class="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
-                  aria-hidden="true"
-                />
                 Settings
               </a>
             </li>
@@ -288,7 +256,7 @@ const sidebarOpen = ref(false)
           @click="sidebarOpen = true"
         >
           <span class="sr-only">Open sidebar</span>
-          <Bars3Icon class="h-6 w-6" aria-hidden="true" />
+          <font-awesome-icon :icon="['fas', 'bars']" class="h-6 w-6 shrink-0" aria-hidden="true" />
         </button>
 
         <!-- Separator -->
@@ -297,43 +265,89 @@ const sidebarOpen = ref(false)
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form class="relative flex flex-1" action="#" method="GET">
             <label for="search-field" class="sr-only">Search</label>
-            <MagnifyingGlassIcon
-              class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
+            <font-awesome-icon
+              :icon="['fas', 'magnifying-glass']"
+              class="pointer-events-none absolute inset-y-0 left-0 h-full text-gray-600 w-4"
               aria-hidden="true"
             />
             <input
               id="search-field"
-              class="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-              placeholder="Search..."
+              class="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-600 focus:ring-0 sm:text-sm"
+              placeholder="Search"
               type="search"
               name="search"
             />
+            <!-- <div class="flex gap-3 items-center"> //// move
+              <font-awesome-icon
+                :icon="['fas', 'life-ring']"
+                class="text-gray-700 w-5 h-5"
+                aria-hidden="true"
+              />
+              <span>Help</span>
+            </div> -->
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
-            <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
-              <span class="sr-only">View notifications</span>
-              <BellIcon class="h-6 w-6" aria-hidden="true" />
+            <!-- help -->
+            <button
+              type="button"
+              class="-m-2.5 p-2.5 flex items-center gap-3 text-gray-600 hover:text-gray-900"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'life-ring']"
+                class="h-6 w-6 shrink-0"
+                aria-hidden="true"
+              />
+              <span>Help</span>
             </button>
 
             <!-- Separator -->
             <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true" />
 
+            <!-- theme switcher -->
+            <button type="button" class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900">
+              <span class="sr-only">Toggle theme</span>
+              <font-awesome-icon
+                :icon="['far', 'moon']"
+                class="h-6 w-6 shrink-0"
+                aria-hidden="true"
+              />
+            </button>
+
+            <!-- notifications -->
+            <button type="button" class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900">
+              <span class="sr-only">View notifications</span>
+              <font-awesome-icon
+                :icon="['far', 'bell']"
+                class="h-6 w-6 shrink-0"
+                aria-hidden="true"
+              />
+            </button>
+
             <!-- Profile dropdown -->
             <Menu as="div" class="relative">
-              <MenuButton class="-m-1.5 flex items-center p-1.5">
+              <MenuButton class="-m-1.5 flex items-center p-1.5 text-gray-600 hover:text-gray-900">
                 <span class="sr-only">Open user menu</span>
-                <img
+                <font-awesome-icon
+                  :icon="['fas', 'circle-user']"
+                  class="h-6 w-6 shrink-0"
+                  aria-hidden="true"
+                />
+                <!-- <img //// 
                   class="h-8 w-8 rounded-full bg-gray-50"
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt=""
-                />
+                /> -->
                 <span class="hidden lg:flex lg:items-center">
-                  <span
+                  <!-- <span //// 
                     class="ml-4 text-sm font-semibold leading-6 text-gray-900"
                     aria-hidden="true"
                     >Tom Cook</span
-                  >
-                  <ChevronDownIcon class="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  > -->
+                  <font-awesome-icon
+                    :icon="['fas', 'chevron-down']"
+                    class="ml-2 h-3 w-3 shrink-0"
+                    aria-hidden="true"
+                  />
                 </span>
               </MenuButton>
               <transition

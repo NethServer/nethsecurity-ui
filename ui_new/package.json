@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-regular-svg-icons": "github:nethesis/Font-Awesome#regular",
     "@fortawesome/free-solid-svg-icons": "github:nethesis/Font-Awesome#solid",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@headlessui/vue": "^1.7.13",

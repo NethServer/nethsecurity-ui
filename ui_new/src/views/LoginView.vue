@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2023 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useRouter } from 'vue-router'

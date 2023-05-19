@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
 

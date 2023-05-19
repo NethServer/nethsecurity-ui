@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import './assets/main.css'
 
 import { createApp } from 'vue'

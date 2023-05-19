@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2023 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script setup lang="ts">
 import AppShell from './components/AppShell.vue' ////
 import LoginView from './views/LoginView.vue' ////
@@ -14,6 +19,3 @@ const loginUserStore = useLoginUserStore()
     <LoginView />
   </template>
 </template>
-
-<!-- //// remove? -->
-<style scoped></style>

@@ -76,7 +76,7 @@ function login() {
               </div>
 
               <div class="text-sm leading-6">
-                <a href="#" class="font-semibold text-cyan-700 hover:cyan-800">Need help?</a>
+                <a href="#" class="font-semibold text-primary-700 hover:primary-800">Need help?</a>
               </div>
             </div>
 

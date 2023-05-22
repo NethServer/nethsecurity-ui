@@ -21,7 +21,7 @@ const props = defineProps({
 })
 
 const baseStyle =
-  'font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 dark:focus-visible:outline-cyan-200 disabled:text-gray-400 disabled:cursor-not-allowed'
+  'font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:focus-visible:outline-primary-200 disabled:text-gray-400 disabled:cursor-not-allowed'
 
 const sizeStyle: { [index: string]: string } = {
   xs: 'rounded px-2 py-1 text-xs',
@@ -32,10 +32,10 @@ const sizeStyle: { [index: string]: string } = {
 }
 const kindStyle: { [index: string]: string } = {
   primary:
-    'shadow-sm bg-cyan-700 text-white hover:bg-cyan-800 disabled:bg-gray-200 disabled:ring-gray-200',
+    'shadow-sm bg-primary-700 text-white hover:bg-primary-800 disabled:bg-gray-200 disabled:ring-gray-200',
   secondary:
-    'shadow-sm ring-1 ring-inset bg-white text-cyan-700 ring-gray-300 hover:bg-gray-50 hover:text-cyan-800 disabled:bg-gray-200 disabled:ring-gray-200',
-  tertiary: 'text-cyan-700 hover:text-cyan-800',
+    'shadow-sm ring-1 ring-inset bg-white text-primary-700 ring-gray-300 hover:bg-gray-50 hover:text-primary-800 disabled:bg-gray-200 disabled:ring-gray-200',
+  tertiary: 'text-primary-700 hover:text-primary-800',
   danger:
     'shadow-sm bg-rose-700 text-white hover:bg-rose-800 disabled:bg-gray-200 disabled:ring-gray-200'
 }

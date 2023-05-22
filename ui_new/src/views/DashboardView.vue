@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import NeButton from '../components/common/NeButton.vue'
+import NeTitle from '../components/common/NeTitle.vue'
 
 const loginUserStore = useLoginUserStore()
 
@@ -15,7 +16,7 @@ function logout() {
 </script>
 
 <template>
-  <h1 class="text-2xl text-gray-900 font-medium mb-6">Dashboard</h1>
+  <NeTitle>Dashboard</NeTitle>
   <!-- <div> //// 
     <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />
     <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" class="mr-2" />

@@ -19,6 +19,9 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+const template = '<NeButton v-bind="args">Button</NeButton>'
+
 /*
  *👇 Render functions are a framework specific feature to allow you control on how the component renders.
  * See https://storybook.js.org/docs/vue/api/csf
@@ -30,7 +33,7 @@ export const Secondary: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
     kind: 'secondary'
@@ -50,7 +53,7 @@ export const Primary: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
     // ...Secondary.args, ////
@@ -64,10 +67,9 @@ export const Tertiary: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
-    // ...Secondary.args, ////
     kind: 'tertiary'
   }
 }
@@ -78,10 +80,9 @@ export const Danger: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
-    // ...Secondary.args, ////
     kind: 'danger'
   }
 }
@@ -92,25 +93,10 @@ export const ExtraLarge: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
-    // ...Secondary.args, ////
     size: 'xl'
-  }
-}
-
-export const ExtraSmall: Story = {
-  render: (args) => ({
-    components: { NeButton },
-    setup() {
-      return { args }
-    },
-    template: '<NeButton v-bind="args">Button</NeButton>'
-  }),
-  args: {
-    // ...Secondary.args, ////
-    size: 'xs'
   }
 }
 
@@ -120,10 +106,9 @@ export const Disabled: Story = {
     setup() {
       return { args }
     },
-    template: '<NeButton v-bind="args">Button</NeButton>'
+    template: template
   }),
   args: {
-    // ...Secondary.args, ////
     disabled: true
   }
 }

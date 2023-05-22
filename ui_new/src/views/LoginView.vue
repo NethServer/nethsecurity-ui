@@ -6,7 +6,8 @@
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useRouter } from 'vue-router'
-import NeButton from '../components/common/NeButton.vue' ////
+import NeButton from '../components/common/NeButton.vue'
+import NeTitle from '../components/common/NeTitle.vue'
 
 const router = useRouter()
 router.push('/dashboard')
@@ -26,7 +27,7 @@ function login() {
       <div class="mx-auto w-full max-w-sm lg:w-96">
         <div class="bg-gray-50 px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <!-- logo //// -->
-          <div class="text-xl mb-2 text-gray-900">Welcome</div>
+          <NeTitle level="h2">Welcome</NeTitle>
           <div class="text-sm mb-4 text-gray-700">
             Sign in to Nethsecurity, secure your network and access the cloud quickly.
           </div>

@@ -4,11 +4,18 @@
 -->
 
 <script setup lang="ts">
-import AppShell from './components/AppShell.vue' ////
-import LoginView from './views/LoginView.vue' ////
+import AppShell from '@/components/AppShell.vue' ////
+import LoginView from '@/views/LoginView.vue' ////
 import { useLoginUserStore } from '@/stores/loginUser'
+import { useThemeStore } from '@/stores/theme'
+import { onMounted } from 'vue';
 
 const loginUserStore = useLoginUserStore()
+const themeStore = useThemeStore()
+
+onMounted(() => {
+  themeStore.loadTheme()
+})
 </script>
 
 <template>

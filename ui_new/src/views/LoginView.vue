@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useRouter } from 'vue-router'
-import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
 
 const router = useRouter()
 router.push('/dashboard')
@@ -24,42 +24,17 @@ function login() {
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <div class="mx-auto w-full max-w-sm lg:w-96">
-        <div class="bg-gray-50 px-6 py-12 shadow sm:rounded-lg sm:px-12">
+        <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
           <!-- logo //// -->
           <NeTitle level="h2">Welcome</NeTitle>
-          <div class="text-sm mb-4 text-gray-700">
+          <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">
             Sign in to Nethsecurity, secure your network and access the cloud quickly.
           </div>
           <form class="space-y-6" action="#" method="POST">
-            <div>
-              <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
-                >Username</label
-              >
-              <div class="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autocomplete="email"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            <NeTextInput label="Username" />
 
-            <div>
-              <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
-                >Password</label
-              >
-              <div class="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            <NeTextInput label="Password" />
+            <!-- <NeTextInput type="password" label="Password" /> ////  -->
 
             <div class="flex items-center justify-between">
               <div class="flex items-center">
@@ -67,26 +42,25 @@ function login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                 />
-                <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-900"
+                <label
+                  for="remember-me"
+                  class="ml-3 block text-sm leading-6 text-gray-900 dark:text-gray-100"
                   >Remember me</label
                 >
               </div>
 
               <div class="text-sm leading-6">
-                <a href="#" class="font-semibold text-primary-700 hover:primary-800">Need help?</a>
+                <a
+                  href="#"
+                  class="font-semibold text-primary-700 hover:primary-800 dark:text-primary-300 dark:hover:primary-200"
+                  >Need help?</a
+                >
               </div>
             </div>
 
             <div>
-              <!-- <button //// 
-                type="submit"
-                @click="login"
-                class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button> -->
               <NeButton kind="primary" @click="login" class="w-full">Sign in</NeButton>
             </div>
           </form>

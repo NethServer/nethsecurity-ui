@@ -10,11 +10,11 @@
 /* //// review */
 
 html {
-  @apply h-full bg-gray-50 text-gray-700;
+  @apply h-full;
 }
 
 body {
-  @apply h-full;
+  @apply h-full bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-100;
 }
 
 #app {

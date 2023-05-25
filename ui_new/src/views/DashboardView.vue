@@ -6,7 +6,13 @@
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useThemeStore } from '@/stores/theme'
-import { NeTitle, NeButton, setStringItem, sortByProperty } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeTextInput,
+  setStringItem,
+  sortByProperty
+} from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 
 let list = ref([
@@ -25,6 +31,8 @@ function logout() {
 function sort() {
   list.value = list.value.sort(sortByProperty('name'))
 }
+
+const testInput = ref('')
 </script>
 
 <template>
@@ -38,13 +46,17 @@ function sort() {
   </div> -->
   <NeButton @click="logout">Sign out</NeButton>
 
-  <!-- <MyButton>asfd</MyButton> ////  -->
-
   <div>
     <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>
   </div>
   <div>
     <NeButton @click="sort">Sort</NeButton>
+  </div>
+  <div>
+    <NeButton disabled>Disabled button</NeButton>
+  </div>
+  <div>
+    <NeTextInput label="Test" v-model="testInput" invalidMessage="Error" />
   </div>
   <div>{{ list }}</div>
   <div>theme: {{ themeStore.theme }}</div>

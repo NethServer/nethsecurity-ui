@@ -9,9 +9,43 @@ export const useThemeStore = defineStore('theme', () => {
   const theme = ref('system')
 
   function setTheme(newTheme: string) {
-    //// todo update preferences
-
     theme.value = newTheme
+
+    switch (theme.value) {
+      case 'light':
+        removeDarkClassFromDocument()
+        break
+      case 'dark':
+        addDarkClassToDocument()
+        break
+      default:
+        // system theme
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          addDarkClassToDocument()
+        } else {
+          removeDarkClassFromDocument()
+        }
+    }
+
+    //// todo update preferences
+  }
+
+  function toggleTheme() {
+    switch (theme.value) {
+      case 'light':
+        setTheme('dark')
+        break
+      case 'dark':
+        setTheme('light')
+        break
+      default:
+        // system theme
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setTheme('light')
+        } else {
+          setTheme('dark')
+        }
+    }
   }
 
   function loadTheme() {
@@ -19,27 +53,30 @@ export const useThemeStore = defineStore('theme', () => {
 
     //// TODO load theme from credentials if necessary
 
-    let theme = 'system'
+    // let theme = 'system' ////
 
     //// remove mockup:
     const preferences = { theme: 'dark' }
 
-    if (preferences.theme === 'dark') {
-      theme = 'dark'
-      addDarkClassToDocument()
-    } else if (preferences.theme === 'light') {
-      theme = 'light'
-      removeDarkClassFromDocument()
-    } else {
-      // system theme
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        addDarkClassToDocument()
-      } else {
-        removeDarkClassFromDocument()
-      }
-    }
+    setTheme(preferences.theme)
 
-    setTheme(theme)
+    ////
+    // if (preferences.theme === 'dark') {
+    //   theme = 'dark'
+    //   addDarkClassToDocument()
+    // } else if (preferences.theme === 'light') {
+    //   theme = 'light'
+    //   removeDarkClassFromDocument()
+    // } else {
+    //   // system theme
+    //   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    //     addDarkClassToDocument()
+    //   } else {
+    //     removeDarkClassFromDocument()
+    //   }
+    // }
+
+    // setTheme(theme)
   }
 
   const addDarkClassToDocument = () => {
@@ -50,5 +87,5 @@ export const useThemeStore = defineStore('theme', () => {
     document.documentElement.classList.remove('dark')
   }
 
-  return { theme, setTheme, loadTheme }
+  return { theme, setTheme, toggleTheme, loadTheme }
 })

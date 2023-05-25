@@ -21,7 +21,6 @@
     "@headlessui/vue": "^1.7.13",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#light",
     "@nethserver/vue-tailwind-lib": "^0.0.5",
-    "@tailwindcss/forms": "^0.5.3",
     "pinia": "^2.0.36",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
@@ -35,6 +34,7 @@
     "@storybook/testing-library": "^0.0.14-next.2",
     "@storybook/vue3": "^7.0.12",
     "@storybook/vue3-vite": "^7.0.12",
+    "@tailwindcss/forms": "^0.5.3",
     "@tsconfig/node18": "^2.0.1",
     "@types/node": "^18.16.8",
     "@vitejs/plugin-vue": "^4.2.3",

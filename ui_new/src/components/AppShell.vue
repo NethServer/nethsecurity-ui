@@ -16,6 +16,7 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
+import { useThemeStore } from '@/stores/theme'
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: 'home', current: true },
@@ -29,6 +30,7 @@ const navigation = [
   { name: 'Report', href: '#', icon: 'chart-line', current: false }
 ]
 
+//// remove
 const teams = [
   { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
   { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
@@ -40,6 +42,11 @@ const userNavigation = [
 ]
 
 const sidebarOpen = ref(false)
+
+const themeStore = useThemeStore()
+
+// function toggleTheme() { ////
+// }
 </script>
 
 <!-- //// review -->
@@ -304,8 +311,13 @@ const sidebarOpen = ref(false)
             <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true" />
 
             <!-- theme switcher -->
-            <button type="button" class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900">
+            <button
+              type="button"
+              @click="themeStore.toggleTheme()"
+              class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900"
+            >
               <span class="sr-only">Toggle theme</span>
+              <!-- //// use sun icon on dark theme -->
               <font-awesome-icon
                 :icon="['far', 'moon']"
                 class="h-6 w-6 shrink-0"

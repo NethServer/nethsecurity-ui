@@ -5,13 +5,25 @@
 
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
-import NeButton from '../components/common/NeButton.vue'
-import NeTitle from '../components/common/NeTitle.vue'
+import { useThemeStore } from '@/stores/theme'
+import { NeTitle, NeButton, setStringItem, sortByProperty } from '@nethserver/vue-tailwind-lib'
+import { ref } from 'vue'
+
+let list = ref([
+  { id: 1, name: 'bbb' },
+  { id: 2, name: 'aaa' }
+])
 
 const loginUserStore = useLoginUserStore()
+const themeStore = useThemeStore()
 
 function logout() {
   loginUserStore.setLoggedIn(false)
+}
+
+////
+function sort() {
+  list.value = list.value.sort(sortByProperty('name'))
 }
 </script>
 
@@ -25,4 +37,15 @@ function logout() {
     <font-awesome-icon :icon="['fal', 'address-book']" size="3x" class="mr-2" />
   </div> -->
   <NeButton @click="logout">Sign out</NeButton>
+
+  <!-- <MyButton>asfd</MyButton> ////  -->
+
+  <div>
+    <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>
+  </div>
+  <div>
+    <NeButton @click="sort">Sort</NeButton>
+  </div>
+  <div>{{ list }}</div>
+  <div>theme: {{ themeStore.theme }}</div>
 </template>

@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useRouter } from 'vue-router'
-import NeButton from '../components/common/NeButton.vue'
-import NeTitle from '../components/common/NeTitle.vue'
+import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
 
 const router = useRouter()
 router.push('/dashboard')

@@ -2,6 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import './assets/main.css'
+// import '@nethserver/vue-tailwind-lib/dist/vue-tailwind-lib.css' //// 
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

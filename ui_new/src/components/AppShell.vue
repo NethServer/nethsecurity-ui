@@ -38,6 +38,8 @@ const userNavigation = [
 const sidebarOpen = ref(false)
 
 const themeStore = useThemeStore()
+
+const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
 </script>
 
 <!-- //// review -->
@@ -56,7 +58,7 @@ const themeStore = useThemeStore()
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <div class="fixed inset-0 bg-gray-900/80" />
+          <div class="fixed inset-0 bg-gray-900/80 dark:bg-gray-900/80" />
         </TransitionChild>
 
         <div class="fixed inset-0 flex">
@@ -91,26 +93,29 @@ const themeStore = useThemeStore()
                 </div>
               </TransitionChild>
               <!-- Sidebar component, swap this element with another sidebar if you like -->
-              <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
+              <div
+                class="flex grow flex-col gap-y-5 overflow-y-auto px-2 pb-4 bg-white dark:bg-gray-950"
+              >
                 <div class="flex h-16 shrink-0 items-center">
                   <img
                     class="h-8 w-auto"
                     src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=600"
                     alt="Your Company"
+                    aria-hidden="true"
                   />
                 </div>
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <ul role="list" class="-mx-2 space-y-1">
+                      <ul role="list" class="space-y-1">
                         <li v-for="item in navigation" :key="item.name">
                           <a
                             :href="item.href"
                             :class="[
                               item.current
-                                ? 'text-gray-900'
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
-                              'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                ? 'text-gray-900 dark:text-gray-50'
+                                : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
+                              'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
                             ]"
                           >
                             <font-awesome-icon
@@ -151,11 +156,12 @@ const themeStore = useThemeStore()
                       </ul>
                     </li> -->
                     <li class="mt-auto">
+                      <!-- //// use tertiary button with icon -->
                       <a
                         href="#"
-                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-primary-600"
+                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-700 hover:bg-gray-100 hover:text-primary-800 dark:text-primary-500 dark:hover:bg-gray-900 dark:hover:text-primary-500"
                       >
-                        Settings
+                        Minimize
                       </a>
                     </li>
                   </ul>
@@ -171,7 +177,7 @@ const themeStore = useThemeStore()
     <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div
-        class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4"
+        class="flex grow flex-col gap-y-5 overflow-y-auto border-r px-2 pb-4 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
       >
         <div class="flex h-16 shrink-0 items-center">
           <img
@@ -183,15 +189,15 @@ const themeStore = useThemeStore()
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <ul role="list" class="-mx-2 space-y-2">
+              <ul role="list" class="space-y-2">
                 <li v-for="item in navigation" :key="item.name">
                   <a
                     :href="item.href"
                     :class="[
                       item.current
-                        ? 'text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
-                      'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                        ? 'text-gray-900 dark:text-gray-50'
+                        : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
+                      'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
                     ]"
                   >
                     <font-awesome-icon
@@ -232,11 +238,12 @@ const themeStore = useThemeStore()
               </ul>
             </li> -->
             <li class="mt-auto">
+              <!-- //// use tertiary button with icon -->
               <a
                 href="#"
-                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-primary-600"
+                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-700 hover:bg-gray-100 hover:text-primary-800 dark:text-primary-500 dark:hover:bg-gray-900 dark:hover:text-primary-500"
               >
-                Settings
+                Minimize
               </a>
             </li>
           </ul>
@@ -246,11 +253,11 @@ const themeStore = useThemeStore()
 
     <div class="lg:pl-72">
       <div
-        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
+        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
       >
         <button
           type="button"
-          class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+          class="-m-2.5 p-2.5 lg:hidden text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
           @click="sidebarOpen = true"
         >
           <span class="sr-only">Open sidebar</span>
@@ -258,19 +265,22 @@ const themeStore = useThemeStore()
         </button>
 
         <!-- Separator -->
-        <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
+        <div class="h-6 w-px lg:hidden bg-gray-200 dark:bg-gray-700" aria-hidden="true" />
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form class="relative flex flex-1" action="#" method="GET">
             <label for="search-field" class="sr-only">Search</label>
             <font-awesome-icon
               :icon="['fas', 'magnifying-glass']"
-              class="pointer-events-none absolute inset-y-0 left-0 h-full text-gray-600 w-4"
+              :class="[
+                'pointer-events-none absolute inset-y-0 left-0 h-full w-4',
+                topBarButtonsColorClasses
+              ]"
               aria-hidden="true"
             />
             <input
               id="search-field"
-              class="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-600 focus:ring-0 sm:text-sm"
+              class="block h-full w-full border-0 py-0 pl-8 pr-0 focus:ring-0 sm:text-sm text-gray-900 bg-white placeholder:text-gray-400 dark:text-gray-50 dark:bg-gray-950 dark:placeholder:text-gray-500"
               placeholder="Search"
               type="search"
               name="search"
@@ -288,7 +298,10 @@ const themeStore = useThemeStore()
             <!-- help -->
             <button
               type="button"
-              class="-m-2.5 p-2.5 flex items-center gap-3 text-gray-600 hover:text-gray-900"
+              :class="[
+                '-m-2.5 p-2.5 flex items-center gap-3 hover:text-gray-900 dark:hover:text-gray-50',
+                topBarButtonsColorClasses
+              ]"
             >
               <font-awesome-icon
                 :icon="['fas', 'life-ring']"
@@ -299,13 +312,19 @@ const themeStore = useThemeStore()
             </button>
 
             <!-- Separator -->
-            <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true" />
+            <div
+              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-gray-700"
+              aria-hidden="true"
+            />
 
             <!-- theme switcher -->
             <button
               type="button"
               @click="themeStore.toggleTheme()"
-              class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900"
+              :class="[
+                '-m-2.5 p-2.5 flex hover:text-gray-900 dark:hover:text-gray-50',
+                topBarButtonsColorClasses
+              ]"
             >
               <span class="sr-only">Toggle theme</span>
               <!-- //// use sun icon on dark theme -->
@@ -317,7 +336,13 @@ const themeStore = useThemeStore()
             </button>
 
             <!-- notifications -->
-            <button type="button" class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900">
+            <button
+              type="button"
+              :class="[
+                '-m-2.5 p-2.5 flex hover:text-gray-900 dark:hover:text-gray-50',
+                topBarButtonsColorClasses
+              ]"
+            >
               <span class="sr-only">View notifications</span>
               <font-awesome-icon
                 :icon="['far', 'bell']"
@@ -328,7 +353,12 @@ const themeStore = useThemeStore()
 
             <!-- Profile dropdown -->
             <Menu as="div" class="relative">
-              <MenuButton class="-m-1.5 flex items-center p-1.5 text-gray-600 hover:text-gray-900">
+              <MenuButton
+                :class="[
+                  '-m-1.5 flex items-center p-1.5 hover:text-gray-900 dark:hover:text-gray-50',
+                  topBarButtonsColorClasses
+                ]"
+              >
                 <span class="sr-only">Open user menu</span>
                 <font-awesome-icon
                   :icon="['fas', 'circle-user']"
@@ -362,14 +392,14 @@ const themeStore = useThemeStore()
                 leave-to-class="transform opacity-0 scale-95"
               >
                 <MenuItems
-                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md py-2 shadow-lg ring-1 focus:outline-none bg-white ring-gray-900/5 dark:bg-gray-950 dark:ring-gray-100/5"
                 >
                   <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                     <a
                       :href="item.href"
                       :class="[
-                        active ? 'bg-gray-50' : '',
-                        'block px-3 py-1 text-sm leading-6 text-gray-900'
+                        active ? 'bg-gray-50 dark:bg-gray-800' : '',
+                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200 '
                       ]"
                       >{{ item.name }}</a
                     >

@@ -14,8 +14,8 @@ import { faList as fasList } from '@fortawesome/free-solid-svg-icons'
 import { faChartLine as fasChartLine } from '@fortawesome/free-solid-svg-icons'
 import { faMagnifyingGlass as fasMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faLifeRing as fasLifeRing } from '@fortawesome/free-solid-svg-icons'
-import { faBell as farBell } from '@fortawesome/free-regular-svg-icons'
-import { faMoon as farMoon } from '@fortawesome/free-regular-svg-icons'
+import { faBell as fasBell } from '@fortawesome/free-solid-svg-icons'
+import { faMoon as fasMoon } from '@fortawesome/free-solid-svg-icons'
 import { faCircleUser as fasCircleUser } from '@fortawesome/free-solid-svg-icons'
 import { faChevronDown as fasChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { faXmark as fasXmark } from '@fortawesome/free-solid-svg-icons'
@@ -38,8 +38,8 @@ export async function loadFontAwesome(app: any) {
   library.add(fasChartLine)
   library.add(fasMagnifyingGlass)
   library.add(fasLifeRing)
-  library.add(farBell)
-  library.add(farMoon)
+  library.add(fasBell)
+  library.add(fasMoon)
   library.add(fasCircleUser)
   library.add(fasChevronDown)
   library.add(fasXmark)

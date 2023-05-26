@@ -329,7 +329,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
               <span class="sr-only">Toggle theme</span>
               <!-- //// use sun icon on dark theme -->
               <font-awesome-icon
-                :icon="['far', 'moon']"
+                :icon="['fas', 'moon']"
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
@@ -345,7 +345,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
             >
               <span class="sr-only">View notifications</span>
               <font-awesome-icon
-                :icon="['far', 'bell']"
+                :icon="['fas', 'bell']"
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />

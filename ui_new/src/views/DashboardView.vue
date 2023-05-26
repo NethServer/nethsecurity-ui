@@ -46,7 +46,7 @@ const testInput = ref('')
   </div> -->
   <NeButton @click="logout">Sign out</NeButton>
 
-  <div>
+  <!-- <div> //// 
     <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>
   </div>
   <div>
@@ -59,5 +59,5 @@ const testInput = ref('')
     <NeTextInput label="Test" v-model="testInput" invalidMessage="Error" />
   </div>
   <div>{{ list }}</div>
-  <div>theme: {{ themeStore.theme }}</div>
+  <div>theme: {{ themeStore.theme }}</div> -->
 </template>

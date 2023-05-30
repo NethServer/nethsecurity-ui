@@ -17,6 +17,9 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 import { useThemeStore } from '@/stores/theme'
+import { useLoginUserStore } from '@/stores/loginUser'
+
+const loginUserStore = useLoginUserStore()
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: 'home', current: true },
@@ -31,8 +34,8 @@ const navigation = [
 ]
 
 const userNavigation = [
-  { name: 'Your profile', href: '#' },
-  { name: 'Sign out', href: '#' }
+  { name: 'Your profile', action: null }, ////
+  { name: 'Sign out', action: loginUserStore.logout }
 ]
 
 const sidebarOpen = ref(false)
@@ -396,10 +399,10 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 >
                   <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                     <a
-                      :href="item.href"
+                      @click="item.action"
                       :class="[
                         active ? 'bg-gray-50 dark:bg-gray-800' : '',
-                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200 '
+                        'block px-3 py-1 text-sm leading-6 cursor-pointer text-gray-700 dark:text-gray-200'
                       ]"
                       >{{ item.name }}</a
                     >

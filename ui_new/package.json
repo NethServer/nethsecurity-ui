@@ -19,6 +19,9 @@
     "@headlessui/vue": "^1.7.13",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#light",
     "@nethserver/vue-tailwind-lib": "^0.0.9",
+    "@types/lodash": "^4.14.195",
+    "axios": "^1.4.0",
+    "lodash": "^4.17.21",
     "pinia": "^2.0.36",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"

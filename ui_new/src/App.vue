@@ -15,6 +15,7 @@ const themeStore = useThemeStore()
 
 onMounted(() => {
   themeStore.loadTheme()
+  loginUserStore.loadUserFromStorage()
 })
 </script>
 

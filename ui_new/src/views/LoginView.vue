@@ -4,17 +4,26 @@
 -->
 
 <script setup lang="ts">
-import { useLoginUserStore } from '@/stores/loginUser'
+// import { useLoginUserStore } from '@/stores/loginUser' ////
 import { useRouter } from 'vue-router'
 import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { useLoginUserStore } from '@/stores/loginUser'
+import { ref } from 'vue'
 
 const router = useRouter()
 router.push('/dashboard')
 
 const loginUserStore = useLoginUserStore()
 
+let username = ref('')
+let password = ref('')
+
 function login() {
-  loginUserStore.setLoggedIn(true)
+  console.log('login', username.value, password.value) ////
+
+  //// validation
+
+  loginUserStore.login(username.value, password.value)
 }
 </script>
 
@@ -30,10 +39,10 @@ function login() {
           <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">
             Sign in to Nethsecurity, secure your network and access the cloud quickly.
           </div>
-          <form class="space-y-6" action="#" method="POST">
-            <NeTextInput label="Username" />
+          <form class="space-y-6">
+            <NeTextInput label="Username" v-model="username" />
 
-            <NeTextInput label="Password" />
+            <NeTextInput label="Password" v-model="password" />
             <!-- <NeTextInput type="password" label="Password" /> ////  -->
 
             <div class="flex items-center justify-between">
@@ -61,7 +70,7 @@ function login() {
             </div>
 
             <div>
-              <NeButton kind="primary" @click="login" class="w-full">Sign in</NeButton>
+              <NeButton kind="primary" @click.prevent="login" class="w-full">Sign in</NeButton>
             </div>
           </form>
         </div>

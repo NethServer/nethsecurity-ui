@@ -14,25 +14,25 @@ import {
   sortByProperty
 } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
+import { getProductName } from '@/lib/config'
 
+const loginUserStore = useLoginUserStore()
+
+////
 let list = ref([
   { id: 1, name: 'bbb' },
   { id: 2, name: 'aaa' }
 ])
 
-const loginUserStore = useLoginUserStore()
-const themeStore = useThemeStore()
-
-function logout() {
-  loginUserStore.setLoggedIn(false)
-}
 
 ////
 function sort() {
   list.value = list.value.sort(sortByProperty('name'))
 }
 
-const testInput = ref('')
+// let testInput = ref('') ////
+
+const product = getProductName() ////
 </script>
 
 <template>
@@ -44,7 +44,12 @@ const testInput = ref('')
     <font-awesome-icon :icon="['fas', 'address-book']" size="3x" class="mr-2" />
     <font-awesome-icon :icon="['fal', 'address-book']" size="3x" class="mr-2" />
   </div> -->
-  <NeButton @click="logout">Sign out</NeButton>
+
+  <!-- <NeButton @click="testLogin">Test login</NeButton> ////  -->
+
+  <div>product {{ product }}</div>
+
+  <div>loginUserStore.username {{ loginUserStore.username }}</div>
 
   <!-- <div> //// 
     <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>

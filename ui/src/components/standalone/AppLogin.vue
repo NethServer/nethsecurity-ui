@@ -4,16 +4,11 @@
 -->
 
 <script setup lang="ts">
-// import { useLoginUserStore } from '@/stores/loginUser' ////
-import { useRouter } from 'vue-router'
 import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
-import { useLoginUserStore } from '@/stores/loginUser'
+import { useLoginStore } from '@/stores/standalone/login'
 import { ref } from 'vue'
 
-const router = useRouter()
-router.push('/dashboard')
-
-const loginUserStore = useLoginUserStore()
+const loginStore = useLoginStore()
 
 let username = ref('')
 let password = ref('')
@@ -23,7 +18,7 @@ function login() {
 
   //// validation
 
-  loginUserStore.login(username.value, password.value)
+  loginStore.login(username.value, password.value)
 }
 </script>
 

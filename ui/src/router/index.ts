@@ -2,29 +2,48 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { createRouter, createWebHistory } from 'vue-router'
-import DashboardView from '../views/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/dashboard' },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView
+      path: '/',
+      redirect: import.meta.env.VITE_UI_MODE === 'standalone' ? '/standalone' : '/controller'
+    },
+    // controller
+    {
+      path: '/controller',
+      redirect: '/controller/dashboard'
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue')
+      path: '/controller/dashboard',
+      name: 'controllerDashboard',
+      component: () => import('../views/controller/DashboardView.vue')
     },
     {
-      path: '/about', //// needed?
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/controller/logs',
+      name: 'controllerLogs',
+      component: () => import('../views/controller/LogsView.vue')
+    },
+    {
+      path: '/controller/settings',
+      name: 'controllerSettings',
+      component: () => import('../views/controller/SettingsView.vue')
+    },
+    // standalone
+    {
+      path: '/standalone',
+      redirect: '/standalone/dashboard'
+    },
+    {
+      path: '/standalone/dashboard',
+      name: 'standaloneDashboard',
+      component: () => import('../views/standalone/DashboardView.vue')
+    },
+    {
+      path: '/standalone/system',
+      name: 'standaloneSystem',
+      component: () => import('../views/standalone/SystemView.vue')
     }
   ]
 })

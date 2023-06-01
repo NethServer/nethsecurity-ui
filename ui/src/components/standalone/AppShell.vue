@@ -17,25 +17,25 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 import { useThemeStore } from '@/stores/theme'
-import { useLoginUserStore } from '@/stores/loginUser'
+import { useLoginStore } from '@/stores/standalone/login'
 
-const loginUserStore = useLoginUserStore()
+const loginStore = useLoginStore()
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: 'home', current: true },
-  { name: 'System', href: '#', icon: 'server', current: false },
-  { name: 'Network', href: '#', icon: 'network-wired', current: false },
-  { name: 'Users & objects', href: '#', icon: 'user-group', current: false },
-  { name: 'Firewall', href: '#', icon: 'fire', current: false },
-  { name: 'Security', href: '#', icon: 'shield-halved', current: false },
-  { name: 'VPN', href: '#', icon: 'globe', current: false },
-  { name: 'Log', href: '#', icon: 'list', current: false },
-  { name: 'Report', href: '#', icon: 'chart-line', current: false }
+  { name: 'Dashboard', to: 'dashboard', icon: 'home', current: true },
+  { name: 'System', to: 'system', icon: 'server', current: false },
+  { name: 'Network', to: 'network', icon: 'network-wired', current: false },
+  { name: 'Users & objects', to: 'users-and-objects', icon: 'user-group', current: false },
+  { name: 'Firewall', to: 'firewall', icon: 'fire', current: false },
+  { name: 'Security', to: 'security', icon: 'shield-halved', current: false },
+  { name: 'VPN', to: 'vpn', icon: 'globe', current: false },
+  { name: 'Logs', to: 'logs', icon: 'list', current: false },
+  { name: 'Report', to: 'report', icon: 'chart-line', current: false }
 ]
 
 const userNavigation = [
   { name: 'Your profile', action: null }, ////
-  { name: 'Sign out', action: loginUserStore.logout }
+  { name: 'Sign out', action: loginStore.logout }
 ]
 
 const sidebarOpen = ref(false)
@@ -112,7 +112,23 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                     <li>
                       <ul role="list" class="space-y-1">
                         <li v-for="item in navigation" :key="item.name">
-                          <a
+                          <router-link
+                            :to="`/standalone/${item.to}`"
+                            :class="[
+                              item.current
+                                ? 'text-gray-900 dark:text-gray-50'
+                                : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
+                              'cursor-pointer group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+                            ]"
+                          >
+                            <font-awesome-icon
+                              :icon="['fas', item.icon]"
+                              class="h-6 w-6 shrink-0"
+                              aria-hidden="true"
+                            />
+                            {{ item.name }}
+                          </router-link>
+                          <!-- <a //// 
                             :href="item.href"
                             :class="[
                               item.current
@@ -127,7 +143,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                               aria-hidden="true"
                             />
                             {{ item.name }}
-                          </a>
+                          </a> ////  -->
                         </li>
                       </ul>
                     </li>
@@ -194,13 +210,13 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
             <li>
               <ul role="list" class="space-y-2">
                 <li v-for="item in navigation" :key="item.name">
-                  <a
-                    :href="item.href"
+                  <router-link
+                    :to="`/standalone/${item.to}`"
                     :class="[
                       item.current
                         ? 'text-gray-900 dark:text-gray-50'
                         : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-                      'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+                      'cursor-pointer group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
                     ]"
                   >
                     <font-awesome-icon
@@ -209,7 +225,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                       aria-hidden="true"
                     />
                     <span>{{ item.name }}</span>
-                  </a>
+                  </router-link>
                 </li>
               </ul>
             </li>

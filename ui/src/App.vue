@@ -4,26 +4,27 @@
 -->
 
 <script setup lang="ts">
-import AppShell from '@/components/AppShell.vue'
-import LoginView from '@/views/LoginView.vue'
-import { useLoginUserStore } from '@/stores/loginUser'
+import ControllerApp from './ControllerApp.vue'
+import StandaloneApp from './StandaloneApp.vue'
 import { useThemeStore } from '@/stores/theme'
 import { onMounted } from 'vue'
 
-const loginUserStore = useLoginUserStore()
 const themeStore = useThemeStore()
 
 onMounted(() => {
   themeStore.loadTheme()
-  loginUserStore.loadUserFromStorage()
 })
+
+const mode = import.meta.env.VITE_UI_MODE
 </script>
 
 <template>
-  <template v-if="loginUserStore.isLoggedIn">
-    <AppShell />
+  <!-- controller -->
+  <template v-if="mode === 'controller'">
+    <ControllerApp />
   </template>
+  <!-- standalone -->
   <template v-else>
-    <LoginView />
+    <StandaloneApp />
   </template>
 </template>

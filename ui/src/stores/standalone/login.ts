@@ -6,12 +6,15 @@ import { defineStore } from 'pinia'
 import { isEmpty } from 'lodash'
 import { getJsonFromStorage } from '@/lib/storage'
 import axios from 'axios'
-import { deleteFromStorage, saveToStorage } from '../lib/storage'
-import { getApiEndpoint, getApiScheme } from '../lib/config'
+import { deleteFromStorage, saveToStorage } from '../../lib/storage'
+import { getStandaloneApiEndpoint } from '../../lib/config'
+import { useRouter } from 'vue-router'
 
-export const useLoginUserStore = defineStore('loginUser', () => {
+export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
   const token = ref('')
+
+  const router = useRouter()
 
   const isLoggedIn = computed(() => {
     return !isEmpty(username.value)
@@ -35,7 +38,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
   }
 
   const login = async (user: string, password: string) => {
-    const res = await axios.post(`${getApiScheme()}${getApiEndpoint()}/login`, {
+    const res = await axios.post(`${getStandaloneApiEndpoint()}/login`, {
       username: user,
       password
     })
@@ -52,11 +55,13 @@ export const useLoginUserStore = defineStore('loginUser', () => {
 
     username.value = user
     token.value = jwtToken
+
+    router.push('/')
   }
 
   const logout = async () => {
     const res = await axios.post(
-      `${getApiScheme()}${getApiEndpoint()}/logout`,
+      `${getStandaloneApiEndpoint()}/logout`,
       {},
       {
         headers: {
@@ -71,6 +76,8 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     deleteFromStorage('loginInfo')
     username.value = ''
     token.value = ''
+
+    router.push('/')
   }
 
   return {

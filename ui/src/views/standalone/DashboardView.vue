@@ -4,8 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { useLoginUserStore } from '@/stores/loginUser'
-import { useThemeStore } from '@/stores/theme'
+import { useLoginStore } from '@/stores/standalone/login'
 import {
   NeTitle,
   NeButton,
@@ -16,7 +15,7 @@ import {
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 
-const loginUserStore = useLoginUserStore()
+const loginStore = useLoginStore()
 
 ////
 let list = ref([
@@ -49,7 +48,7 @@ const product = getProductName() ////
 
   <div>product {{ product }}</div>
 
-  <div>loginUserStore.username {{ loginUserStore.username }}</div>
+  <div>loginStore.username {{ loginStore.username }}</div>
 
   <!-- <div> //// 
     <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>

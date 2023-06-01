@@ -1,7 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-//// DELETE FILE
-
 module.exports = {
   content: [
     './index.html',

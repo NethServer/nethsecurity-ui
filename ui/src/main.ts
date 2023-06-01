@@ -2,17 +2,16 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import './assets/main.css'
-// import '@nethserver/vue-tailwind-lib/dist/vue-tailwind-lib.css' ////
 
-import { createApp } from 'vue'
+import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 
 import { loadFontAwesome } from './fontawesome'

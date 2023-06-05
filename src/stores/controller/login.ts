@@ -22,7 +22,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   })
 
   const loadUserFromStorage = () => {
-    const loginInfo = getJsonFromStorage('loginInfo')
+    const loginInfo = getJsonFromStorage('controllerLoginInfo')
 
     if (loginInfo) {
       username.value = loginInfo.username
@@ -46,7 +46,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       accessToken: res.data.access_token,
       refreshToken: res.data.refresh_token
     }
-    saveToStorage('loginInfo', loginInfo)
+    saveToStorage('controllerLoginInfo', loginInfo)
 
     username.value = user
     accessToken.value = res.data.access_token
@@ -71,7 +71,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     console.log('logout res', res) ////
 
-    deleteFromStorage('loginInfo')
+    deleteFromStorage('controllerLoginInfo')
     username.value = ''
     accessToken.value = ''
     refreshToken.value = ''

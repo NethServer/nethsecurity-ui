@@ -32,7 +32,7 @@ function login() {
           <!-- logo //// -->
           <NeTitle level="h2">Welcome</NeTitle>
           <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">
-            Sign in to Nethsecurity, secure your network and access the cloud quickly.
+            Sign in to NethSecurity, secure your network and access the cloud quickly.
           </div>
           <form class="space-y-6">
             <NeTextInput label="Username" v-model="username" />

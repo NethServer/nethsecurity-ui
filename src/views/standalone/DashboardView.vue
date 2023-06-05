@@ -14,6 +14,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const loginStore = useLoginStore()
 
@@ -23,7 +24,6 @@ let list = ref([
   { id: 2, name: 'aaa' }
 ])
 
-
 ////
 function sort() {
   list.value = list.value.sort(sortByProperty('name'))
@@ -32,10 +32,20 @@ function sort() {
 // let testInput = ref('') ////
 
 const product = getProductName() ////
+
+function testUbus() {
+  ubusCall('luci', 'getRealtimeStats', {
+    mode: 'conntrack'
+  })
+}
 </script>
 
 <template>
   <NeTitle>Dashboard</NeTitle>
+
+  <!-- ////  -->
+  <NeButton @click="testUbus">Test ubus</NeButton>
+
   <!-- <div> //// 
     <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />
     <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" class="mr-2" />

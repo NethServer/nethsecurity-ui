@@ -22,4 +22,6 @@ export const ubusCall = async (path: string, method: any, payload: any) => {
   )
 
   console.log('ubusCall res', res) ////
+
+  return res.data
 }

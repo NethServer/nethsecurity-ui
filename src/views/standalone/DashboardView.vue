@@ -33,8 +33,10 @@ function sort() {
 
 const product = getProductName() ////
 
-function testUbus() {
-  ubusCall('luci', 'getRealtimeStats', {
+let ubusOutput = ref('')
+
+async function testUbus() {
+  ubusOutput.value = await ubusCall('luci', 'getRealtimeStats', {
     mode: 'conntrack'
   })
 }
@@ -44,7 +46,9 @@ function testUbus() {
   <NeTitle>Dashboard</NeTitle>
 
   <!-- ////  -->
-  <NeButton @click="testUbus">Test ubus</NeButton>
+  <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>
+
+  <div>Ubus output: {{ ubusOutput }}</div>
 
   <!-- <div> //// 
     <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />
@@ -56,9 +60,9 @@ function testUbus() {
 
   <!-- <NeButton @click="testLogin">Test login</NeButton> ////  -->
 
-  <div>product {{ product }}</div>
+  <!-- <div>product {{ product }}</div> ////  -->
 
-  <div>loginStore.username {{ loginStore.username }}</div>
+  <!-- <div>loginStore.username {{ loginStore.username }}</div> ////  -->
 
   <!-- <div> //// 
     <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>

@@ -37,7 +37,13 @@ function login() {
           <form class="space-y-6">
             <NeTextInput label="Username" v-model="username" />
 
-            <NeTextInput label="Password" v-model="password" />
+            <NeTextInput
+              label="Password"
+              v-model="password"
+              isPassword
+              showPasswordLabel="Show password"
+              hidePasswordLabel="Hide password"
+            />
             <!-- <NeTextInput type="password" label="Password" /> ////  -->
 
             <div class="flex items-center justify-between">
@@ -58,7 +64,7 @@ function login() {
               <div class="text-sm leading-6">
                 <a
                   href="#"
-                  class="font-semibold text-primary-700 hover:primary-800 dark:text-primary-300 dark:hover:primary-200"
+                  class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"
                   >Need help?</a
                 >
               </div>

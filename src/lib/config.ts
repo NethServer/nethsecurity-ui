@@ -11,8 +11,7 @@ export const getStandaloneApiEndpoint = () => {
       '//' +
       window.location.hostname +
       (window.location.port ? ':' + window.location.port : '') +
-      window.location.pathname +
-      'api'
+      '/api'
     )
   }
 }
@@ -27,8 +26,7 @@ export const getControllerApiEndpoint = () => {
       '//' +
       window.location.hostname +
       (window.location.port ? ':' + window.location.port : '') +
-      window.location.pathname +
-      'api'
+      '/api'
     )
   }
 }

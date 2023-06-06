@@ -14,8 +14,6 @@ let username = ref('')
 let password = ref('')
 
 function login() {
-  console.log('login', username.value, password.value) ////
-
   //// validation
 
   loginStore.login(username.value, password.value)

@@ -52,7 +52,7 @@ podman run -ti -v $(pwd):/app:Z --network=host --name nethsec-ui --replace neths
 Compiles and minifies for production:
 
 ```
-podman run -ti -v $(pwd):/app:Z --network=host --name nethsec-ui --replace nethsecurity-ui build
+./build.sh
 ```
 
 #### Use VSCode Dev Containers

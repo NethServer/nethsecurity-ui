@@ -7,8 +7,8 @@ import { isEmpty } from 'lodash'
 import { getJsonFromStorage } from '@/lib/storage'
 import axios from 'axios'
 import { deleteFromStorage, saveToStorage } from '../../lib/storage'
-import { getStandaloneApiEndpoint } from '../../lib/config'
 import { useRouter } from 'vue-router'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
@@ -30,10 +30,13 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   const login = async (user: string, password: string) => {
-    const res = await axios.post(`${getStandaloneApiEndpoint()}/login`, {
+    const res = await axios.post('/login', {
       username: user,
       password
     })
+
+    // login successful
+
     const jwtToken = res.data.token
 
     const loginInfo = {
@@ -45,24 +48,20 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     username.value = user
     token.value = jwtToken
 
+    // reconfigure axios Authorization header
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+
+    const uciChangesStore = useUciPendingChangesStore()
+    uciChangesStore.getChanges()
+
     router.push('/')
   }
 
   const logout = async () => {
-    const res = await axios.post(
-      `${getStandaloneApiEndpoint()}/logout`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token.value}`
-        }
-      }
-    )
+    const res = await axios.post('/logout', {})
     deleteFromStorage('standaloneLoginInfo')
     username.value = ''
     token.value = ''
-
     router.push('/')
   }
 

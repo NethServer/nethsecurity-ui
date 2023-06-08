@@ -10,17 +10,25 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from './stores/standalone/uciPendingChanges'
 import axios from 'axios'
+import { getStandaloneApiEndpoint } from './lib/config'
 
 const loginStore = useLoginStore()
-const uciPendingChangesStore = useUciPendingChangesStore()
+const uciChangesStore = useUciPendingChangesStore()
 
 onMounted(() => {
-  configureAxiosInterceptors()
   loginStore.loadUserFromStorage()
-  uciPendingChangesStore.getChanges()
+  configureAxios()
+
+  if (loginStore.isLoggedIn) {
+    uciChangesStore.getChanges()
+  }
 })
 
-function configureAxiosInterceptors() {
+function configureAxios() {
+  axios.defaults.baseURL = getStandaloneApiEndpoint()
+  axios.defaults.headers.post['Content-Type'] = 'application/json' //// common instead of post?
+  axios.defaults.headers.common['Authorization'] = `Bearer ${loginStore.token}`
+
   // response interceptor
   axios.interceptors.response.use(
     function (response) {

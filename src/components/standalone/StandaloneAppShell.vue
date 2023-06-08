@@ -21,7 +21,6 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
-import { storeToRefs } from 'pinia'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()

@@ -9,8 +9,6 @@ import StandaloneApp from './StandaloneApp.vue'
 import { useThemeStore } from '@/stores/theme'
 import { onMounted } from 'vue'
 
-const themeStore = useThemeStore()
-
 const welcomeMsg = [
   '  _   _      _   _      _____                      _ _         ',
   ' | \\ | |    | | | |    / ____|                    (_) |        ',
@@ -22,13 +20,13 @@ const welcomeMsg = [
   '                                                         |___/ '
 ].join('\n')
 
-onMounted(() => {
-  themeStore.loadTheme()
-
-  console.log('%c' + welcomeMsg, 'background: #0891b2; color: white;')
-})
-
+const themeStore = useThemeStore()
 const mode = import.meta.env.VITE_UI_MODE
+
+onMounted(() => {
+  console.log('%c' + welcomeMsg, 'background: #0891b2; color: white;')
+  themeStore.loadTheme()
+})
 </script>
 
 <template>

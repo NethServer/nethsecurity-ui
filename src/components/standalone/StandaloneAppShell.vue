@@ -19,8 +19,12 @@ import {
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { storeToRefs } from 'pinia'
 
 const loginStore = useLoginStore()
+const uciChangesStore = useUciPendingChangesStore()
 
 const accountMenu = [
   { name: 'Your profile', action: null }, ////
@@ -253,6 +257,16 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
             </div> -->
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
+            <div v-if="uciChangesStore.numChanges">
+              <!-- unsaved changes -->
+              <NeButton kind="primary" @click="uciChangesStore.commitChanges"
+                >Commit changes: {{ uciChangesStore.numChanges }}</NeButton
+              >
+              <!-- //// delete: revert button -->
+              <NeButton kind="danger" @click="uciChangesStore.revertChanges" class="ml-2"
+                >Revert changes</NeButton
+              >
+            </div>
             <!-- help -->
             <button
               type="button"

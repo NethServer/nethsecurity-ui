@@ -4,8 +4,9 @@
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
-export const ubusCall = async (path: string, method: any, payload: any) => {
+export const ubusCall = async (path: string, method: any, payload: any, skipGetChanges = false) => {
   console.log('ubusCall', path, method, payload) ////
 
   const loginStore = useLoginStore()
@@ -21,7 +22,13 @@ export const ubusCall = async (path: string, method: any, payload: any) => {
     }
   )
 
-  console.log('ubusCall res', res) ////
+  console.log('ubusCall res data', res.data) ////
+
+  // reload uci pending changes
+  if (method !== 'changes' && method !== 'get' && !skipGetChanges) {
+    const uciChangesStore = useUciPendingChangesStore()
+    uciChangesStore.getChanges()
+  }
 
   return res.data
 }

@@ -20,14 +20,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     return !isEmpty(username.value)
   })
 
-  // function setUsername(newUsername: string) { ////
-  //   username.value = newUsername
-  // }
-
-  // function setToken(newToken: string) { ////
-  //   token.value = newToken
-  // }
-
   const loadUserFromStorage = () => {
     const loginInfo = getJsonFromStorage('standaloneLoginInfo')
 
@@ -42,9 +34,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       username: user,
       password
     })
-
-    console.log('login res', res) ////
-
     const jwtToken = res.data.token
 
     const loginInfo = {
@@ -70,9 +59,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
         }
       }
     )
-
-    console.log('logout res', res) ////
-
     deleteFromStorage('standaloneLoginInfo')
     username.value = ''
     token.value = ''

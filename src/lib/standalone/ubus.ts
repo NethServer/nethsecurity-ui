@@ -7,8 +7,6 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export const ubusCall = async (path: string, method: any, payload: any, skipGetChanges = false) => {
-  console.log('ubusCall', path, method, payload) ////
-
   const loginStore = useLoginStore()
 
   const res = await axios.post(
@@ -22,8 +20,6 @@ export const ubusCall = async (path: string, method: any, payload: any, skipGetC
     }
   )
 
-  console.log('ubusCall res data', res.data) ////
-
   // reload uci pending changes
   if (method !== 'changes' && method !== 'get' && !skipGetChanges) {
     const uciChangesStore = useUciPendingChangesStore()
@@ -31,4 +27,22 @@ export const ubusCall = async (path: string, method: any, payload: any, skipGetC
   }
 
   return res.data
+}
+
+export const getUciConfig = async (config: string) => {
+  const res = await ubusCall('uci', 'get', {
+    config: config
+  })
+  const sections = Object.values(res.data.values)
+  const outputConfig: any = {}
+
+  sections.forEach((section: any) => {
+    const sectionType = section['.type']
+
+    if (!outputConfig[sectionType]) {
+      outputConfig[sectionType] = []
+    }
+    outputConfig[sectionType].push(section)
+  })
+  return outputConfig
 }

@@ -4,38 +4,30 @@
 -->
 
 <script setup lang="ts">
-import { ubusCall } from '@/lib/standalone/ubus'
+import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/standalone/validation'
 import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 
 let hostname = ref('')
-
-// let systemConfig = ref({}) ////
+let description = ref('')
 
 let error = ref({
-  hostname: ''
+  hostname: '',
+  description: ''
 })
 
 onMounted(async () => {
   getSystemConfig()
+
+  //// remove
+  // getUciConfig('firewall') ////
 })
 
 async function getSystemConfig() {
-  //// move to library (return specific fields!)
-  const res = await ubusCall('uci', 'get', {
-    config: 'system'
-  })
-
-  const sections = Object.values(res.data.values)
-
-  sections.forEach((section: any) => {
-    switch (section['.type']) {
-      case 'system':
-        hostname.value = section.hostname
-        break
-    }
-  })
+  const config = await getUciConfig('system')
+  hostname.value = config.system[0].hostname
+  description.value = config.system[0].description
 }
 
 function validate() {
@@ -67,6 +59,7 @@ function validate() {
 
 async function save() {
   error.value.hostname = ''
+  error.value.description = ''
 
   const isValidationOk = validate()
 
@@ -78,20 +71,11 @@ async function save() {
     config: 'system',
     section: '@system[0]',
     values: {
-      hostname: hostname.value
+      hostname: hostname.value,
+      description: description.value
     }
   })
-
-  console.log('uci set res', res) ////
-
   getSystemConfig()
-}
-
-//// move to store/library
-async function getChanges() {
-  const res = await ubusCall('uci', 'changes', {})
-
-  console.log('changes', res) ////
 }
 </script>
 
@@ -99,9 +83,14 @@ async function getChanges() {
   <div>
     <NeTitle>System settings</NeTitle>
     <!-- //// tabs -->
-    <div class="max-w-xl">
+    <div class="max-w-xl space-y-6">
       <NeTextInput label="Hostname" v-model="hostname" :invalidMessage="error.hostname" />
-      <div class="flex justify-end mt-4">
+      <NeTextInput
+        label="Short description"
+        v-model="description"
+        :invalidMessage="error.description"
+      />
+      <div class="flex justify-end">
         <NeButton @click="save">Save</NeButton>
       </div>
     </div>

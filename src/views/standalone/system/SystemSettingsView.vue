@@ -6,18 +6,24 @@
 <script setup lang="ts">
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/standalone/validation'
-import { NeTitle, NeButton, NeTextInput, NeTextArea } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeTextInput,
+  NeTextArea,
+  NeFormItemLabel
+} from '@nethserver/vue-tailwind-lib'
+import { focusElement } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 
 let hostname = ref('')
+let hostnameRef = ref(null)
 let description = ref('')
 let notes = ref('')
 let localTime = ref(0)
 
 let error = ref({
-  hostname: '',
-  description: '',
-  notes: ''
+  hostname: ''
 })
 
 onMounted(async () => {
@@ -53,7 +59,7 @@ function validate() {
     if (!valid) {
       error.value.hostname = errMessage as string
       isValidationOk = false
-      //// focus hostname
+      focusElement(hostnameRef)
     } else {
       {
         // check sintax
@@ -61,7 +67,7 @@ function validate() {
         if (!valid) {
           error.value.hostname = errMessage as string
           isValidationOk = false
-          //// focus hostname
+          focusElement(hostnameRef)
         }
       }
     }
@@ -71,9 +77,6 @@ function validate() {
 
 async function save() {
   error.value.hostname = ''
-  error.value.description = ''
-  error.value.notes = ''
-
   const isValidationOk = validate()
 
   if (!isValidationOk) {
@@ -98,26 +101,22 @@ async function save() {
     <NeTitle>System settings</NeTitle>
     <!-- //// tabs -->
     <div class="max-w-xl space-y-6">
-      <NeTextInput label="Hostname" v-model="hostname" :invalidMessage="error.hostname" />
+      <NeTextInput
+        label="Hostname"
+        v-model="hostname"
+        :invalidMessage="error.hostname"
+        ref="hostnameRef"
+      />
       <NeTextInput
         label="Short description"
         v-model="description"
-        :invalidMessage="error.description"
         placeholder="Short description about this firewall"
       />
-      <NeTextArea
-        label="Notes"
-        v-model="notes"
-        :invalidMessage="error.notes"
-        placeholder="Notes about this firewall"
-      />
+      <NeTextArea label="Notes" v-model="notes" placeholder="Notes about this firewall" />
       <!-- //// use component? -->
       <div>
-        <label class="block text-sm font-medium leading-6 text-gray-700 dark:text-gray-200"
-          >Local time</label
-        >
-        <!-- <div class="mt-2 text-sm">{{ formatDate(new Date(localTime), 'yyyy-MM-dd HH:mm') }}</div> -->
-        <div class="mt-2 text-sm">{{ new Date(localTime).toLocaleString() }}</div>
+        <NeFormItemLabel>Local time</NeFormItemLabel>
+        <div class="text-sm">{{ new Date(localTime).toLocaleString() }}</div>
       </div>
       <div class="flex justify-end">
         <NeButton @click="save">Save</NeButton>

@@ -26,7 +26,7 @@ onMounted(() => {
 
 function configureAxios() {
   axios.defaults.baseURL = getStandaloneApiEndpoint()
-  axios.defaults.headers.post['Content-Type'] = 'application/json' //// common instead of post?
+  axios.defaults.headers.post['Content-Type'] = 'application/json'
   axios.defaults.headers.common['Authorization'] = `Bearer ${loginStore.token}`
 
   // response interceptor

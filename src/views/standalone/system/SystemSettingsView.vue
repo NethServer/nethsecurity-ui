@@ -6,28 +6,40 @@
 <script setup lang="ts">
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/standalone/validation'
-import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeTextInput, NeTextArea } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 
 let hostname = ref('')
 let description = ref('')
+let notes = ref('')
+let localTime = ref(0)
 
 let error = ref({
   hostname: '',
-  description: ''
+  description: '',
+  notes: ''
 })
 
 onMounted(async () => {
+  loadData()
+})
+
+async function loadData() {
   getSystemConfig()
 
+  const res = await ubusCall('system', 'info', {})
+  localTime.value = Number(res.data.localtime * 1000)
+
   //// remove
-  // getUciConfig('firewall') ////
-})
+  // const network = await getUciConfig('network') //// ////
+  // console.log('network', network)
+}
 
 async function getSystemConfig() {
   const config = await getUciConfig('system')
   hostname.value = config.system[0].hostname
   description.value = config.system[0].description
+  notes.value = config.system[0].notes
 }
 
 function validate() {
@@ -60,6 +72,7 @@ function validate() {
 async function save() {
   error.value.hostname = ''
   error.value.description = ''
+  error.value.notes = ''
 
   const isValidationOk = validate()
 
@@ -72,10 +85,11 @@ async function save() {
     section: '@system[0]',
     values: {
       hostname: hostname.value,
-      description: description.value
+      description: description.value,
+      notes: notes.value
     }
   })
-  getSystemConfig()
+  loadData()
 }
 </script>
 
@@ -89,7 +103,22 @@ async function save() {
         label="Short description"
         v-model="description"
         :invalidMessage="error.description"
+        placeholder="Short description about this firewall"
       />
+      <NeTextArea
+        label="Notes"
+        v-model="notes"
+        :invalidMessage="error.notes"
+        placeholder="Notes about this firewall"
+      />
+      <!-- //// use component? -->
+      <div>
+        <label class="block text-sm font-medium leading-6 text-gray-700 dark:text-gray-200"
+          >Local time</label
+        >
+        <!-- <div class="mt-2 text-sm">{{ formatDate(new Date(localTime), 'yyyy-MM-dd HH:mm') }}</div> -->
+        <div class="mt-2 text-sm">{{ new Date(localTime).toLocaleString() }}</div>
+      </div>
       <div class="flex justify-end">
         <NeButton @click="save">Save</NeButton>
       </div>

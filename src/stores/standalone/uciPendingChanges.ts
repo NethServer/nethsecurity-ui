@@ -19,8 +19,6 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
   const getChanges = async () => {
     const res = await ubusCall('uci', 'changes', {})
     changes.value = res.data.changes
-
-    console.log('changes', res.data.changes) ////
   }
 
   const commitChanges = async () => {

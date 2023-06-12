@@ -3,7 +3,7 @@
 
 import './assets/main.css'
 
-import { createApp, markRaw } from 'vue'
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
@@ -16,5 +16,9 @@ app.use(router)
 
 import { loadFontAwesome } from './fontawesome'
 loadFontAwesome(app)
+
+import { loadI18n } from './i18n'
+const i18n = await loadI18n()
+app.use(i18n)
 
 app.mount('#app')

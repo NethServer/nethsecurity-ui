@@ -1,6 +1,6 @@
 {
   "common": {
-    "details": "Dettagli",
-    "see_details": "Vedi dettagli"
+    "save": "Salva",
+    "cancel": "Annulla"
   }
 }

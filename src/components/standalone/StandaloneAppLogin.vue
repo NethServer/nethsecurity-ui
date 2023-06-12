@@ -9,6 +9,9 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/standalone/validation'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const loginStore = useLoginStore()
 
@@ -30,6 +33,7 @@ onMounted(() => {
 async function login() {
   error.value.username = ''
   error.value.password = ''
+  error.value.login = ''
 
   const isValidationOk = validate()
 
@@ -41,7 +45,12 @@ async function login() {
     await loginStore.login(username.value, password.value)
   } catch (err: any) {
     console.error('login error', err)
-    error.value.login = getAxiosErrorMessage(err)
+
+    if (err?.response?.status == 401) {
+      error.value.login = 'error.incorrect_email_or_password'
+    } else {
+      error.value.login = getAxiosErrorMessage(err)
+    }
   }
 }
 
@@ -98,12 +107,12 @@ function validate() {
               v-if="error.login"
               kind="error"
               title="Cannot login"
-              :description="error.login"
+              :description="t(error.login)"
             />
             <NeTextInput
               label="Username"
               v-model="username"
-              :invalidMessage="error.username"
+              :invalidMessage="t(error.username)"
               ref="usernameRef"
             />
             <NeTextInput
@@ -112,7 +121,7 @@ function validate() {
               isPassword
               showPasswordLabel="Show password"
               hidePasswordLabel="Hide password"
-              :invalidMessage="error.password"
+              :invalidMessage="t(error.password)"
               ref="passwordRef"
             />
             <div class="flex items-center justify-between">
@@ -140,7 +149,9 @@ function validate() {
             </div>
 
             <div>
-              <NeButton kind="primary" @click.prevent="login" class="w-full">Sign in</NeButton>
+              <NeButton kind="primary" @click.prevent="login" class="w-full">{{
+                t('login.sign_in')
+              }}</NeButton>
             </div>
           </form>
         </div>

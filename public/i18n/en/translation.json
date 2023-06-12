@@ -1,6 +1,20 @@
 {
   "common": {
-    "details": "Details",
-    "see_details": "See details"
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "error": {
+    "generic_error": "Something went wrong",
+    "network_error": "Network error",
+    "network_timeout": "Network timeout",
+    "http_401": "Authentication error",
+    "http_403": "Authorization error",
+    "http_404": "Resource not found",
+    "http_500": "Server error",
+    "required": "Required",
+    "incorrect_email_or_password": "Incorrect email or password"
+  },
+  "login": {
+    "sign_in": "Sign in"
   }
 }

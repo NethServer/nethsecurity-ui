@@ -1,6 +1,6 @@
 {
-  "common": {
-    "details": "Dettagli",
-    "see_details": "Vedi dettagli"
-  }
+    "common": {
+        "details": "Dettagli",
+        "see_details": "Vedi dettaglio"
+    }
 }

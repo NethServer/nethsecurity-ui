@@ -34,9 +34,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       username: user,
       password
     })
-
-    // login successful
-
     const jwtToken = res.data.token
 
     const loginInfo = {

@@ -17,7 +17,7 @@ import { focusElement } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 
 let hostname = ref('')
-let hostnameRef = ref(null)
+let hostnameRef = ref()
 let description = ref('')
 let notes = ref('')
 let localTime = ref(0)
@@ -26,7 +26,7 @@ let error = ref({
   hostname: ''
 })
 
-onMounted(async () => {
+onMounted(() => {
   loadData()
 })
 

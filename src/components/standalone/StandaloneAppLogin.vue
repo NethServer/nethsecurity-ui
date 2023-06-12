@@ -4,19 +4,80 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { validateRequired } from '@/lib/standalone/validation'
 
 const loginStore = useLoginStore()
 
 let username = ref('')
+let usernameRef = ref()
 let password = ref('')
+let passwordRef = ref()
 
-function login() {
-  //// validation
+let error = ref({
+  username: '',
+  password: '',
+  login: ''
+})
 
-  loginStore.login(username.value, password.value)
+onMounted(() => {
+  usernameRef.value.focus()
+})
+
+async function login() {
+  error.value.username = ''
+  error.value.password = ''
+
+  const isValidationOk = validate()
+
+  if (!isValidationOk) {
+    return
+  }
+
+  try {
+    await loginStore.login(username.value, password.value)
+  } catch (err: any) {
+    console.error('login error', err)
+    error.value.login = getAxiosErrorMessage(err)
+  }
+}
+
+function validate() {
+  let isValidationOk = true
+
+  // username
+
+  {
+    // check required
+    let { valid, errMessage } = validateRequired(username.value)
+    if (!valid) {
+      error.value.username = errMessage as string
+
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(usernameRef)
+      }
+    }
+  }
+
+  // password
+
+  {
+    // check required
+    let { valid, errMessage } = validateRequired(password.value)
+    if (!valid) {
+      error.value.password = errMessage as string
+
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(passwordRef)
+      }
+    }
+  }
+  return isValidationOk
 }
 </script>
 
@@ -29,21 +90,31 @@ function login() {
         <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
           <!-- logo //// -->
           <NeTitle level="h2">Welcome</NeTitle>
-          <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">
+          <div class="text-sm mb-6 text-gray-700 dark:text-gray-100">
             Sign in to NethSecurity, secure your network and access the cloud quickly.
           </div>
           <form class="space-y-6">
-            <NeTextInput label="Username" v-model="username" />
-
+            <NeInlineNotification
+              v-if="error.login"
+              kind="error"
+              title="Cannot login"
+              :description="error.login"
+            />
+            <NeTextInput
+              label="Username"
+              v-model="username"
+              :invalidMessage="error.username"
+              ref="usernameRef"
+            />
             <NeTextInput
               label="Password"
               v-model="password"
               isPassword
               showPasswordLabel="Show password"
               hidePasswordLabel="Hide password"
+              :invalidMessage="error.password"
+              ref="passwordRef"
             />
-            <!-- <NeTextInput type="password" label="Password" /> ////  -->
-
             <div class="flex items-center justify-between">
               <div class="flex items-center">
                 <input

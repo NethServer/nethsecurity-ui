@@ -10,7 +10,7 @@ export const validateRequired = (value: String): validationOutput => {
   if (value) {
     return { valid: true }
   }
-  return { valid: false, errMessage: 'required' }
+  return { valid: false, errMessage: 'error.required' }
 }
 
 export const validateHostname = (hostname: String): validationOutput => {
@@ -22,8 +22,8 @@ export const validateHostname = (hostname: String): validationOutput => {
     if (isValid) {
       return { valid: true }
     } else {
-      return { valid: false, errMessage: 'invalid_hostname' }
+      return { valid: false, errMessage: 'error.invalid_hostname' }
     }
   }
-  return { valid: false, errMessage: 'hostname_is_too_long' }
+  return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }

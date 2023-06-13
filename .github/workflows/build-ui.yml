@@ -3,8 +3,6 @@ name: "Publish UI dist for NethSecurity build"
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'ui/**'
     branches:
       - main
 

@@ -24,10 +24,12 @@ onMounted(() => {
     <NeButton @click="unitsStore.getUnits" class="mb-4">Reload units</NeButton>
   </div>
   <div v-for="(unit, index) in unitsStore.units" :key="index" class="flex gap-8">
-    <span>{{ unit.name }}</span>
-    <span>{{ unit.ipaddress }}</span>
-    <span>{{ unit.registered ? 'registered' : 'not registered' }}</span>
-    <span>{{ unit.vpn ? 'connected' : 'not connected' }}</span>
+    <template v-if="unit">
+      <span>{{ unit.name }}</span>
+      <span>{{ unit.ipaddress }}</span>
+      <span>{{ unit.registered ? 'registered' : 'not registered' }}</span>
+      <span>{{ unit.vpn ? 'connected' : 'not connected' }}</span>
+    </template>
   </div>
   <div class="mt-4">
     {{ unitsStore.units }}

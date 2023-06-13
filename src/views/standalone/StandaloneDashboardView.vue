@@ -48,7 +48,7 @@ async function testUbus() {
   <!-- ////  -->
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>
 
-  <div>Ubus output: {{ ubusOutput }}</div>
+  <div>{{ ubusOutput }}</div>
 
   <!-- <div> //// 
     <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />

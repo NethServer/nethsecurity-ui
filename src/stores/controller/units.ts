@@ -14,18 +14,19 @@ export const useUnitsStore = defineStore('units', () => {
   const units: any = ref([])
 
   const getUnits = async () => {
-    const res = await axios.get(
-      `${getControllerApiEndpoint()}/servers`, //// rename api to "units"
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${loginStore.accessToken}`
-        }
+    const res = await axios.get(`${getControllerApiEndpoint()}/units`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${loginStore.token}`
       }
-    )
+    })
     console.log('units', res) ////
 
-    units.value = res.data
+    //// todo check errors
+
+    if (res.data.data) {
+      units.value = res.data.data
+    }
   }
 
   return {

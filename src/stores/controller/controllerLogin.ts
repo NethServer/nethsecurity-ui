@@ -12,8 +12,7 @@ import { useRouter } from 'vue-router'
 
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
-  const accessToken = ref('')
-  const refreshToken = ref('')
+  const token = ref('')
 
   const router = useRouter()
 
@@ -26,8 +25,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     if (loginInfo) {
       username.value = loginInfo.username
-      accessToken.value = loginInfo.accessToken
-      refreshToken.value = loginInfo.refreshToken
+      token.value = loginInfo.token
     }
   }
 
@@ -41,17 +39,16 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     console.log('login res', res) ////
 
+    const jwtToken = res.data.token
+
     const loginInfo = {
       username: user,
-      accessToken: res.data.access_token,
-      refreshToken: res.data.refresh_token
+      token: jwtToken
     }
     saveToStorage('controllerLoginInfo', loginInfo)
 
     username.value = user
-    accessToken.value = res.data.access_token
-    refreshToken.value = res.data.refresh_token
-
+    token.value = jwtToken
     router.push('/')
   }
 
@@ -64,7 +61,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`
+          Authorization: `Bearer ${token.value}`
         }
       }
     )
@@ -73,15 +70,13 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     deleteFromStorage('controllerLoginInfo')
     username.value = ''
-    accessToken.value = ''
-    refreshToken.value = ''
-
+    token.value = ''
     router.push('/')
   }
 
   return {
     username,
-    accessToken,
+    token,
     isLoggedIn,
     loadUserFromStorage,
     login,

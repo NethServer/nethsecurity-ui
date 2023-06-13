@@ -1,7 +1,7 @@
 window.BRANDING = {
-  PRODUCT_NAME: 'NextSecurity',
-  PRODUCT_URL: 'https://www.nethesis.it/nextsecurity',
-  DOCS_URL: 'https://www.nethesis.it/nextsecurity/documentation/',
+  PRODUCT_NAME: 'NethSecurity',
+  PRODUCT_URL: 'https://www.nethesis.it/',
+  DOCS_URL: 'https://nethserver.github.io/nethsecurity/',
   COMPANY_NAME: 'Nethesis',
   COMPANY_URL: 'https://www.nethesis.it/'
 }

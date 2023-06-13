@@ -26,4 +26,4 @@ jobs:
           space_name: ${{ env.DO_SPACE_NAME }}
           space_region: ${{ env.DO_SPACE_REGION }}
           cdn_domain: ${{ env.CDN_DOMAIN }}
-          source: ui.tar.gz
+          source: ui-dist

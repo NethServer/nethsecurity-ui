@@ -15,4 +15,6 @@ podman build -t $image .
 podman run --rm -v $(pwd):/app:Z $image build
 podman image rm $image
 
-tar cvzf ui.tar.gz dist/
+commit=$(git rev-parse HEAD)
+mkdir -p ui-dist
+tar cvzf ui-dist/ui-$commit.tar.gz dist/

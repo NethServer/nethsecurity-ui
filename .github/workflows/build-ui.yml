@@ -27,3 +27,4 @@ jobs:
           space_region: ${{ env.DO_SPACE_REGION }}
           cdn_domain: ${{ env.CDN_DOMAIN }}
           source: ui-dist
+          out_dir: ui-dist

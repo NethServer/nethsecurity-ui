@@ -12,7 +12,7 @@
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
     "required": "Richiesto",
-    "incorrect_email_or_password": "Email o password errate"
+    "incorrect_email_or_password": "Username o password errate"
   },
   "login": {
     "sign_in": "Accedi"

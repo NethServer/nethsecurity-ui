@@ -54,7 +54,6 @@ function configureAxios() {
         console.error('[interceptor]', error.response.data.message)
       }
 
-      // logout if 401 response code is intercepted
       if (error.response?.status == 401) {
         if (isStandaloneMode()) {
           console.warn('[interceptor]', 'Detected error 401, logout')

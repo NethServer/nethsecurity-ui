@@ -14,8 +14,8 @@ const loginStore = useLoginStore()
 
 <template>
   <div class="p-5">
-    <div class="mb-3">Controller shell</div>
-    <div class="flex gap-3 mb-3">
+    <div class="mb-3 text-2xl">Controller shell</div>
+    <div class="flex gap-3 mb-8">
       <router-link :to="`${getControllerRoutePrefix()}/dashboard`" class="underline"
         >Dashboard</router-link
       >

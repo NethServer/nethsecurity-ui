@@ -9,12 +9,17 @@ import { useLoginStore as useControllerLoginStore } from '@/stores/controller/co
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { getJsonFromStorage, saveToStorage } from '@/lib/storage'
 import { useRoute } from 'vue-router'
+import { useUnitsStore } from './units'
+
+//// merge with units store?
 
 export const useUnitManagementStore = defineStore('unitManagement', () => {
-  const controllerLoginStore = useControllerLoginStore()
-  const standaloneLoginStore = useStandaloneLoginStore()
   const unitName: any = ref('')
   const unitToken: any = ref('')
+
+  const controllerLoginStore = useControllerLoginStore()
+  const standaloneLoginStore = useStandaloneLoginStore()
+  const unitsStore = useUnitsStore()
 
   // const isManagingUnit = computed(() => { ////
   //   return !isEmpty(unitName.value)
@@ -30,10 +35,26 @@ export const useUnitManagementStore = defineStore('unitManagement', () => {
       unitToken.value = loginInfo.token
 
       // update standalone login store credentials
-
       standaloneLoginStore.setUsername(unitName.value)
       standaloneLoginStore.setToken(unitToken.value)
     }
+  }
+
+  const addUnit = async (unitName: string) => {
+    const res = await axios.post(
+      `${getControllerApiEndpoint()}/units`,
+      {
+        unit_name: unitName
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      }
+    )
+    console.log('addUnit res', res.data.data) ////
+
+    //// todo check errors
   }
 
   const manageUnit = async (unit: string) => {
@@ -65,6 +86,7 @@ export const useUnitManagementStore = defineStore('unitManagement', () => {
     unitName,
     // isManagingUnit, ////
     load,
+    addUnit,
     manageUnit
   }
 })

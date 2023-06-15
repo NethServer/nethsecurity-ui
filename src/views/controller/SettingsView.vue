@@ -7,6 +7,6 @@
 
 <template>
   <div>
-    <h1 class="mb-3 text-xl">Settings</h1>
+    <h1 class="mb-4 text-2xl">Settings</h1>
   </div>
 </template>

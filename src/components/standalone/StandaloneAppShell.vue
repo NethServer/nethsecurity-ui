@@ -21,13 +21,19 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { isStandaloneMode } from '@/lib/config'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 
 const accountMenu = [
   { name: 'Your profile', action: null }, ////
-  { name: 'Sign out', action: loginStore.logout }
+  {
+    name: isStandaloneMode() ? 'Sign out' : 'Cannot log out',
+    action: loginStore.logout,
+    disabled: !isStandaloneMode(),
+    class: isStandaloneMode() ? '' : 'cursor-not-allowed opacity-50'
+  }
 ]
 
 const sidebarOpen = ref(false)
@@ -366,12 +372,19 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 <MenuItems
                   class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md py-2 shadow-lg ring-1 focus:outline-none bg-white ring-gray-900/5 dark:bg-gray-950 dark:ring-gray-100/5"
                 >
-                  <MenuItem v-for="item in accountMenu" :key="item.name" v-slot="{ active }">
+                  <MenuItem
+                    v-for="item in accountMenu"
+                    :key="item.name"
+                    v-slot="{ active }"
+                    :disabled="item.disabled"
+                    class="cursor-pointer"
+                  >
                     <a
                       @click="item.action"
                       :class="[
                         active ? 'bg-gray-50 dark:bg-gray-800' : '',
-                        'block px-3 py-1 text-sm leading-6 cursor-pointer text-gray-700 dark:text-gray-200'
+                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200',
+                        item.class ? item.class : ''
                       ]"
                       >{{ item.name }}</a
                     >

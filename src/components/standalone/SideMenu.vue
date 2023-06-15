@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import { isEmpty } from 'lodash'
 
 //// remove "to" attribute on items with children
@@ -38,7 +39,7 @@ const navigation = [
     <!-- simple link -->
     <template v-if="isEmpty(item.children)">
       <router-link
-        :to="`/standalone/${item.to}`"
+        :to="`${getStandaloneRoutePrefix()}/${item.to}`"
         :class="[
           item.current
             ? 'text-gray-900 dark:text-gray-50'
@@ -80,7 +81,7 @@ const navigation = [
         <li v-for="child in item.children" :key="child.name">
           <div class="ml-10">
             <router-link
-              :to="`/standalone/${child.to}`"
+              :to="`${getStandaloneRoutePrefix()}/${child.to}`"
               :class="[
                 child.current
                   ? 'text-gray-900 dark:text-gray-50'

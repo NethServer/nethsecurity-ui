@@ -1,6 +1,7 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
+import { isStandaloneMode } from '@/lib/config'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -8,7 +9,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: import.meta.env.VITE_UI_MODE === 'standalone' ? '/standalone' : '/controller'
+      redirect: isStandaloneMode() ? '/standalone' : '/controller'
     },
     // controller
     {
@@ -29,6 +30,34 @@ const router = createRouter({
       path: '/controller/settings',
       name: 'controllerSettings',
       component: () => import('../views/controller/SettingsView.vue')
+    },
+    {
+      path: '/controller/manage/:unitName',
+      redirect: (to) => {
+        return 'dashboard'
+      }
+    },
+    {
+      path: '/controller/manage/:unitName',
+      name: 'controllerManage',
+      component: () => import('../StandaloneApp.vue'),
+      children: [
+        {
+          path: 'dashboard',
+          name: 'controllerManageDashboard',
+          component: () => import('../views/standalone/StandaloneDashboardView.vue')
+        },
+        {
+          path: 'system/registration',
+          name: 'controllerManageRegistration',
+          component: () => import('../views/standalone/system/RegistrationView.vue')
+        },
+        {
+          path: 'system/systemSettings',
+          name: 'controllerManageSystemSettings',
+          component: () => import('../views/standalone/system/SystemSettingsView.vue')
+        }
+      ]
     },
     // standalone
     {

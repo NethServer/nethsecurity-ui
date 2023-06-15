@@ -152,7 +152,8 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
     </TransitionRoot>
 
     <!-- Static sidebar for desktop -->
-    <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <!-- //// removed lg:inset-y-0 class -->
+    <div class="hidden lg:fixed lg:z-50 lg:flex lg:w-72 lg:flex-col lg:h-screen">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r px-2 pb-4 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"

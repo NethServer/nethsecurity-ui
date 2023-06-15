@@ -9,6 +9,8 @@ import axios from 'axios'
 import { deleteFromStorage, saveToStorage } from '../../lib/storage'
 import { useRouter } from 'vue-router'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { getStandaloneApiEndpoint } from '@/lib/config'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
@@ -30,7 +32,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   const login = async (user: string, password: string) => {
-    const res = await axios.post('/login', {
+    const res = await axios.post(`${getStandaloneApiEndpoint()}/login`, {
       username: user,
       password
     })
@@ -45,21 +47,36 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     username.value = user
     token.value = jwtToken
 
-    // reconfigure axios Authorization header
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+    // reconfigure axios Authorization header //// delete
+    // axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}` ////
 
     const uciChangesStore = useUciPendingChangesStore()
     uciChangesStore.getChanges()
-
-    router.push('/')
+    router.push(`${getStandaloneRoutePrefix()}/`)
   }
 
   const logout = async () => {
-    const res = await axios.post('/logout', {})
+    const res = await axios.post(
+      `${getStandaloneApiEndpoint()}/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      }
+    )
     deleteFromStorage('standaloneLoginInfo')
     username.value = ''
     token.value = ''
-    router.push('/')
+    router.push(`${getStandaloneRoutePrefix()}/`)
+  }
+
+  const setUsername = (user: string) => {
+    username.value = user
+  }
+
+  const setToken = (tok: string) => {
+    token.value = tok
   }
 
   return {
@@ -68,6 +85,8 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     isLoggedIn,
     loadUserFromStorage,
     login,
-    logout
+    logout,
+    setUsername,
+    setToken
   }
 })

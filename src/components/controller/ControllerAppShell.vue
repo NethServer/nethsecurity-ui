@@ -7,21 +7,26 @@
 import { RouterView } from 'vue-router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { getControllerRoutePrefix } from '@/lib/router'
 
 const loginStore = useLoginStore()
 </script>
-
-<!-- //// review -->
 
 <template>
   <div class="p-5">
     <div class="mb-3">Controller shell</div>
     <div class="flex gap-3 mb-3">
-      <router-link to="/controller/dashboard" class="underline">Dashboard</router-link>
-      <router-link to="/controller/logs" class="underline">Logs</router-link>
-      <router-link to="/controller/settings" class="underline">Settings</router-link>
+      <router-link :to="`${getControllerRoutePrefix()}/dashboard`" class="underline"
+        >Dashboard</router-link
+      >
+      <router-link :to="`${getControllerRoutePrefix()}/logs`" class="underline">Logs</router-link>
+      <router-link :to="`${getControllerRoutePrefix()}/settings`" class="underline"
+        >Settings</router-link
+      >
       <NeButton @click="loginStore.logout">Logout</NeButton>
     </div>
-    <RouterView />
+    <div class="relative">
+      <RouterView />
+    </div>
   </div>
 </template>

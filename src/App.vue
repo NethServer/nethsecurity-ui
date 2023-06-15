@@ -8,6 +8,7 @@ import ControllerApp from './ControllerApp.vue'
 import StandaloneApp from './StandaloneApp.vue'
 import { useThemeStore } from '@/stores/theme'
 import { onMounted } from 'vue'
+import { isStandaloneMode } from './lib/config'
 
 const welcomeMsg = [
   '  _   _      _   _      _____                      _ _         ',
@@ -21,7 +22,6 @@ const welcomeMsg = [
 ].join('\n')
 
 const themeStore = useThemeStore()
-const mode = import.meta.env.VITE_UI_MODE
 
 onMounted(() => {
   console.log('%c' + welcomeMsg, 'background: #0891b2; color: white;')
@@ -30,12 +30,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- controller -->
-  <template v-if="mode === 'controller'">
-    <ControllerApp />
-  </template>
-  <!-- standalone -->
-  <template v-else>
+  <template v-if="isStandaloneMode()">
     <StandaloneApp />
+  </template>
+  <template v-else>
+    <ControllerApp />
   </template>
 </template>

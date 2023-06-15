@@ -37,7 +37,7 @@ async function loadData() {
   localTime.value = Number(res.data.localtime * 1000)
 
   //// remove
-  // const network = await getUciConfig('network') //// ////
+  // const network = await getUciConfig('network') ////
   // console.log('network', network)
 }
 
@@ -113,7 +113,6 @@ async function save() {
         placeholder="Short description about this firewall"
       />
       <NeTextArea label="Notes" v-model="notes" placeholder="Notes about this firewall" />
-      <!-- //// use component? -->
       <div>
         <NeFormItemLabel>Local time</NeFormItemLabel>
         <div class="text-sm">{{ new Date(localTime).toLocaleString() }}</div>

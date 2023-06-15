@@ -4,19 +4,10 @@
 -->
 
 <script setup lang="ts">
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import {
-  NeTitle,
-  NeButton,
-  NeTextInput,
-  setStringItem,
-  sortByProperty
-} from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, sortByProperty } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
-
-const loginStore = useLoginStore()
 
 ////
 let list = ref([

@@ -7,7 +7,7 @@ import { getControllerApiEndpoint } from '../../lib/config'
 import { ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 
-//// review
+//// merge with unitManagement? Remove this store and only use api?
 
 export const useUnitsStore = defineStore('units', () => {
   const loginStore = useLoginStore()
@@ -16,7 +16,6 @@ export const useUnitsStore = defineStore('units', () => {
   const getUnits = async () => {
     const res = await axios.get(`${getControllerApiEndpoint()}/units`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${loginStore.token}`
       }
     })

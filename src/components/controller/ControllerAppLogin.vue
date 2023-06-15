@@ -14,8 +14,6 @@ let username = ref('')
 let password = ref('')
 
 function login() {
-  console.log('controller login', username.value, password.value) ////
-
   //// validation
 
   loginStore.login(username.value, password.value)
@@ -44,7 +42,6 @@ function login() {
               showPasswordLabel="Show password"
               hidePasswordLabel="Hide password"
             />
-            <!-- <NeTextInput type="password" label="Password" /> ////  -->
 
             <div class="flex items-center justify-between">
               <div class="flex items-center">

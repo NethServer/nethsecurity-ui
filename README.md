@@ -20,10 +20,10 @@ Follow the steps below to prepare the development environment:
 - Create a copy of `.env.development.sample` and rename your copy to `.env.development`
 - Edit `.env.development`:
   - If you need to code the Standalone UI:
-    - Set `VITE_STANDALONE_API_ENDPOINT` to the IP address or hostname of your NethSecurity
+    - Set `VITE_STANDALONE_API_HOST` to the IP address or hostname of your NethSecurity
     - Set `VITE_UI_MODE` to `"standalone"`
   - If you need to code the Controller UI:
-    - Set `VITE_CONTROLLER_API_ENDPOINT` to the IP address or hostname of your NethSecurity Controller
+    - Set `VITE_CONTROLLER_API_HOST` to the IP address or hostname of your NethSecurity Controller
     - Set `VITE_UI_MODE` to `"controller"`
 
 You can develop and build [inside a container (recommended)](#develop-and-build-inside-a-container) or [on your workstation](#develop-and-build-on-your-workstation).

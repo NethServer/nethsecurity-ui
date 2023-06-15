@@ -47,7 +47,7 @@ async function login() {
     console.error('login error', err)
 
     if (err?.response?.status == 401) {
-      error.value.login = 'error.incorrect_email_or_password'
+      error.value.login = 'error.incorrect_username_or_password'
     } else {
       error.value.login = getAxiosErrorMessage(err)
     }

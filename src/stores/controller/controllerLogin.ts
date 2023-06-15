@@ -9,6 +9,7 @@ import axios from 'axios'
 import { deleteFromStorage, saveToStorage } from '../../lib/storage'
 import { getControllerApiEndpoint } from '../../lib/config'
 import { useRouter } from 'vue-router'
+import { getControllerRoutePrefix } from '@/lib/router'
 
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
@@ -30,8 +31,6 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   }
 
   const login = async (user: string, password: string) => {
-    console.log('login') ////
-
     const res = await axios.post(`${getControllerApiEndpoint()}/login`, {
       username: user,
       password
@@ -49,18 +48,15 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     username.value = user
     token.value = jwtToken
-    router.push('/')
+    router.push(`${getControllerRoutePrefix()}/`)
   }
 
   const logout = async () => {
-    console.log('logout') ////
-
     const res = await axios.post(
       `${getControllerApiEndpoint()}/logout`,
       {},
       {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`
         }
       }
@@ -71,7 +67,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     deleteFromStorage('controllerLoginInfo')
     username.value = ''
     token.value = ''
-    router.push('/')
+    router.push(`${getControllerRoutePrefix()}/`)
   }
 
   return {

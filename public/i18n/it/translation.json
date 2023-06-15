@@ -2,5 +2,19 @@
   "common": {
     "save": "Salva",
     "cancel": "Annulla"
+  },
+  "error": {
+    "generic_error": "Qualcosa è andato storto",
+    "network_error": "Errore di rete",
+    "network_timeout": "Timeout di rete",
+    "http_401": "Errore di autenticazione",
+    "http_403": "Errore di autorizzazione",
+    "http_404": "Risorsa non trovata",
+    "http_500": "Errore del server",
+    "required": "Richiesto",
+    "incorrect_email_or_password": "Email o password errate"
+  },
+  "login": {
+    "sign_in": "Accedi"
   }
 }

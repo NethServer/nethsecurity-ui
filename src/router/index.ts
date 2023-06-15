@@ -4,13 +4,77 @@
 import { isStandaloneMode } from '@/lib/config'
 import { createRouter, createWebHistory } from 'vue-router'
 
+const standaloneRoutes = [
+  {
+    path: 'dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/standalone/StandaloneDashboardView.vue')
+  },
+  {
+    path: 'system/registration',
+    name: 'Registration',
+    component: () => import('../views/standalone/system/RegistrationView.vue')
+  },
+  {
+    path: 'system/systemSettings',
+    name: 'SystemSettings',
+    component: () => import('../views/standalone/system/SystemSettingsView.vue')
+  },
+  {
+    path: 'system/services',
+    name: 'Services',
+    component: () => import('../views/standalone/system/ServicesView.vue')
+  },
+  {
+    path: 'system/ssh',
+    name: 'SSH',
+    component: () => import('../views/standalone/system/SSHView.vue')
+  },
+  {
+    path: 'system/backup-restore',
+    name: 'BackupAndRestore',
+    component: () => import('../views/standalone/system/BackupAndRestoreView.vue')
+  },
+  {
+    path: 'system/reboot-shutdown',
+    name: 'RebootAndShutdown',
+    component: () => import('../views/standalone/system/RebootAndShutdownView.vue')
+  }
+]
+
+function getStandaloneRoutes() {
+  return standaloneRoutes.map((route) => {
+    return {
+      path: '/standalone/' + route.path,
+      name: 'Standalone' + route.name,
+      component: route.component
+    }
+  })
+}
+
+function getControllerManageRoutes() {
+  return standaloneRoutes.map((route) => {
+    return {
+      path: route.path,
+      name: 'ControllerManage' + route.name,
+      component: route.component
+    }
+  })
+}
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       redirect: isStandaloneMode() ? '/standalone' : '/controller'
     },
+    // standalone
+    {
+      path: '/standalone',
+      redirect: '/standalone/dashboard'
+    },
+    ...getStandaloneRoutes(),
     // controller
     {
       path: '/controller',
@@ -41,63 +105,7 @@ const router = createRouter({
       path: '/controller/manage/:unitName',
       name: 'controllerManage',
       component: () => import('../StandaloneApp.vue'),
-      children: [
-        {
-          path: 'dashboard',
-          name: 'controllerManageDashboard',
-          component: () => import('../views/standalone/StandaloneDashboardView.vue')
-        },
-        {
-          path: 'system/registration',
-          name: 'controllerManageRegistration',
-          component: () => import('../views/standalone/system/RegistrationView.vue')
-        },
-        {
-          path: 'system/systemSettings',
-          name: 'controllerManageSystemSettings',
-          component: () => import('../views/standalone/system/SystemSettingsView.vue')
-        }
-      ]
-    },
-    // standalone
-    {
-      path: '/standalone',
-      redirect: '/standalone/dashboard'
-    },
-    {
-      path: '/standalone/dashboard',
-      name: 'standaloneDashboard',
-      component: () => import('../views/standalone/StandaloneDashboardView.vue')
-    },
-    {
-      path: '/standalone/system/registration',
-      name: 'standaloneRegistration',
-      component: () => import('../views/standalone/system/RegistrationView.vue')
-    },
-    {
-      path: '/standalone/system/systemSettings',
-      name: 'standaloneSystemSettings',
-      component: () => import('../views/standalone/system/SystemSettingsView.vue')
-    },
-    {
-      path: '/standalone/system/services',
-      name: 'standaloneServices',
-      component: () => import('../views/standalone/system/ServicesView.vue')
-    },
-    {
-      path: '/standalone/system/ssh',
-      name: 'standaloneSSH',
-      component: () => import('../views/standalone/system/SSHView.vue')
-    },
-    {
-      path: '/standalone/system/backup-restore',
-      name: 'standaloneBackupAndRestore',
-      component: () => import('../views/standalone/system/BackupAndRestoreView.vue')
-    },
-    {
-      path: '/standalone/system/reboot-shutdown',
-      name: 'standaloneRebootAndShutdown',
-      component: () => import('../views/standalone/system/RebootAndShutdownView.vue')
+      children: getControllerManageRoutes()
     }
   ]
 })

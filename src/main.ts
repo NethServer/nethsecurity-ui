@@ -32,6 +32,7 @@ async function loadI18n() {
 
   const i18n = createI18n({
     legacy: false,
+    missingWarn: false,
     locale,
     messages
   })

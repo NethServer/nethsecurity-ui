@@ -11,11 +11,13 @@ import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib
 import { validateRequired } from '@/lib/standalone/validation'
 import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
+import { deleteFromStorage, getStringFromStorage, saveToStorage } from '@/lib/storage'
 
 let username = ref('')
 let usernameRef = ref()
 let password = ref('')
 let passwordRef = ref()
+let rememberMe = ref(false)
 
 let error = ref({
   username: '',
@@ -27,7 +29,16 @@ const { t } = useI18n()
 const loginStore = useLoginStore()
 
 onMounted(() => {
-  usernameRef.value.focus()
+  // read username from storage, if present
+  const usernameFromStorage = getStringFromStorage('username')
+
+  if (usernameFromStorage) {
+    rememberMe.value = true
+    username.value = usernameFromStorage
+    passwordRef.value.focus()
+  } else {
+    usernameRef.value.focus()
+  }
 })
 
 async function login() {
@@ -39,6 +50,13 @@ async function login() {
 
   if (!isValidationOk) {
     return
+  }
+
+  // set or remove username to/from local storage
+  if (rememberMe.value) {
+    saveToStorage('username', username.value)
+  } else {
+    deleteFromStorage('username')
   }
 
   try {
@@ -133,6 +151,7 @@ function validate() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  v-model="rememberMe"
                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                 />
                 <label

@@ -46,7 +46,11 @@ async function approveUnit(unitName: string) {
     <div class="mb-4 text-lg">Units</div>
     <NeButton @click="unitsStore.getUnits" class="mb-4">Reload units</NeButton>
   </div>
-  <div v-for="(unit, index) in unitsStore.units" :key="index" class="flex items-center mb-2">
+  <div
+    v-for="(unit, index) in unitsStore.units"
+    :key="index"
+    class="flex items-center mb-2 max-w-3xl"
+  >
     <template v-if="unit">
       <span class="w-1/5">{{ unit.name }}</span>
       <span class="w-1/5">{{ unit.ipaddress ? unit.ipaddress : '-' }}</span>

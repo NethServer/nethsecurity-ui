@@ -1,7 +1,9 @@
 {
   "common": {
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "show_password": "Show password",
+    "hide_password": "Hide password"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -11,10 +13,21 @@
     "http_403": "Authorization error",
     "http_404": "Resource not found",
     "http_500": "Server error",
-    "required": "Required",
-    "incorrect_username_or_password": "Incorrect username or password"
+    "required": "Required"
   },
   "login": {
-    "sign_in": "Sign in"
-  }
+    "welcome_title_standalone": "Welcome",
+    "welcome_description_standalone": "Sign in to {product}, secure your network and access the cloud quickly.",
+    "welcome_title_controller": "Welcome",
+    "welcome_description_controller": "{product} Controller allows you to manage your {product} units quickly and easily.",
+    "username": "Username",
+    "password": "Password",
+    "remember_me": "Remember me",
+    "need_help": "Need help?",
+    "sign_in": "Sign in",
+    "cannot_login": "Cannot login",
+    "incorrect_username_or_password": "Incorrect username or password"
+  },
+  "standalone": {},
+  "controller": {}
 }

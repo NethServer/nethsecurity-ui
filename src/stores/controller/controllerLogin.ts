@@ -35,9 +35,6 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       username: user,
       password
     })
-
-    console.log('login res', res) ////
-
     const jwtToken = res.data.token
 
     const loginInfo = {

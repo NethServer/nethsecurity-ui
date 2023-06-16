@@ -6,6 +6,8 @@ interface validationOutput {
   errMessage?: String
 }
 
+//// move to vue-tailwind library?
+
 export const validateRequired = (value: String): validationOutput => {
   if (value) {
     return { valid: true }

@@ -82,17 +82,17 @@ const router = createRouter({
     },
     {
       path: '/controller/dashboard',
-      name: 'controllerDashboard',
+      name: 'ControllerDashboard',
       component: () => import('../views/controller/ControllerDashboardView.vue')
     },
     {
       path: '/controller/logs',
-      name: 'controllerLogs',
+      name: 'ControllerLogs',
       component: () => import('../views/controller/LogsView.vue')
     },
     {
       path: '/controller/settings',
-      name: 'controllerSettings',
+      name: 'ControllerSettings',
       component: () => import('../views/controller/SettingsView.vue')
     },
     {
@@ -103,7 +103,7 @@ const router = createRouter({
     },
     {
       path: '/controller/manage/:unitName',
-      name: 'controllerManage',
+      name: 'ControllerManage',
       component: () => import('../StandaloneApp.vue'),
       children: getControllerManageRoutes()
     }

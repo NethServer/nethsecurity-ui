@@ -3,7 +3,9 @@
     "save": "Salva",
     "cancel": "Annulla",
     "show_password": "Mostra password",
-    "hide_password": "Nascondere la password"
+    "hide_password": "Nascondere la password",
+    "search": "Ricerca",
+    "help": "Aiuto"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -14,7 +16,9 @@
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
     "required": "Richiesto",
-    "incorrect_username_or_password": "Nome utente o password errati"
+    "incorrect_username_or_password": "Nome utente o password errati",
+    "invalid_hostname": "Nome host non valido",
+    "hostname_is_too_long": "Il nome host ha troppi caratteri"
   },
   "login": {
     "sign_in": "Accedi",
@@ -28,5 +32,63 @@
     "password": "Password",
     "remember_me": "Ricordati di me",
     "need_help": "Avete bisogno di aiuto?"
+  },
+  "standalone": {
+    "ssh": {
+      "title": "SSH"
+    },
+    "backup_and_restore": {
+      "title": "Backup e ripristino"
+    },
+    "reboot_and_shutdown": {
+      "title": "Riavvio e spegnimento"
+    },
+    "network": {
+      "title": "Rete"
+    },
+    "users_and_objects": {
+      "title": "Utenti e oggetti"
+    },
+    "firewall": {
+      "title": "Firewall"
+    },
+    "security": {
+      "title": "Sicurezza"
+    },
+    "vpn": {
+      "title": "VPN"
+    },
+    "logs": {
+      "title": "Registri"
+    },
+    "report": {
+      "title": "Rapporto"
+    },
+    "shell": {
+      "sign_out": "Esci",
+      "open_sidebar": "Aprire la barra laterale",
+      "close_sidebar": "Chiudere la barra laterale",
+      "toggle_theme": "Toggle theme",
+      "show_notifications": "Mostra notifiche",
+      "open_user_menu": "Aprire il menu utente"
+    },
+    "dashboard": {
+      "title": "Cruscotto"
+    },
+    "registration": {
+      "title": "Registrazione"
+    },
+    "system_settings": {
+      "title": "Impostazioni del sistema",
+      "hostname": "Nome host",
+      "short_description": "Breve descrizione",
+      "short_description_placeholder": "Breve descrizione di questa unità",
+      "notes": "Note",
+      "notes_placeholder": "Note su questa unità",
+      "local_time": "Ora locale"
+    },
+    "services": {
+      "title": "Servizi"
+    }
   }
 }

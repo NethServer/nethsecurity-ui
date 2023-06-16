@@ -66,7 +66,7 @@ async function approveUnit(unitName: string) {
   </div>
   <div class="mt-8 mb-4 text-lg">Add unit</div>
   <div class="flex items-end">
-    <NeTextInput label="Unit name" v-model="newUnitName" class="max-w-xs mr-4" />
+    <NeTextInput label="Unit name" v-model.trim="newUnitName" class="max-w-xs mr-4" />
     <NeButton @click="addUnit" size="lg" :disabled="!newUnitName.trim()">Add unit</NeButton>
   </div>
 </template>

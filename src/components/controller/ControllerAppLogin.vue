@@ -120,7 +120,7 @@ function validate() {
             />
             <NeTextInput
               :label="t('login.username')"
-              v-model="username"
+              v-model.trim="username"
               :invalidMessage="t(error.username)"
               ref="usernameRef"
             />

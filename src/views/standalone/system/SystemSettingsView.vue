@@ -106,18 +106,18 @@ async function save() {
     <div class="max-w-xl space-y-6">
       <NeTextInput
         :label="t('standalone.system_settings.hostname')"
-        v-model="hostname"
+        v-model.trim="hostname"
         :invalidMessage="error.hostname"
         ref="hostnameRef"
       />
       <NeTextInput
         :label="t('standalone.system_settings.short_description')"
-        v-model="description"
+        v-model.trim="description"
         :placeholder="t('standalone.system_settings.short_description_placeholder')"
       />
       <NeTextArea
         :label="t('standalone.system_settings.notes')"
-        v-model="notes"
+        v-model.trim="notes"
         :placeholder="t('standalone.system_settings.notes_placeholder')"
       />
       <div>

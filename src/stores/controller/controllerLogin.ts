@@ -42,7 +42,6 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       token: jwtToken
     }
     saveToStorage('controllerLoginInfo', loginInfo)
-
     username.value = user
     token.value = jwtToken
     router.push(`${getControllerRoutePrefix()}/`)
@@ -58,9 +57,6 @@ export const useLoginStore = defineStore('controllerLogin', () => {
         }
       }
     )
-
-    console.log('logout res', res) ////
-
     deleteFromStorage('controllerLoginInfo')
     username.value = ''
     token.value = ''

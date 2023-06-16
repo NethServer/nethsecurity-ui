@@ -30,7 +30,7 @@ const loginStore = useLoginStore()
 
 onMounted(() => {
   // read username from storage, if present
-  const usernameFromStorage = getStringFromStorage('username')
+  const usernameFromStorage = getStringFromStorage('standaloneUsername')
 
   if (usernameFromStorage) {
     rememberMe.value = true
@@ -54,9 +54,9 @@ async function login() {
 
   // set or remove username to/from local storage
   if (rememberMe.value) {
-    saveToStorage('username', username.value)
+    saveToStorage('standaloneUsername', username.value)
   } else {
-    deleteFromStorage('username')
+    deleteFromStorage('standaloneUsername')
   }
 
   try {

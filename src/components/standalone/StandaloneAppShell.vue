@@ -22,24 +22,23 @@ import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode } from '@/lib/config'
+import { useI18n } from 'vue-i18n'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
+const themeStore = useThemeStore()
+const { t } = useI18n()
 
 const accountMenu = [
   { name: 'Your profile', action: null }, ////
   {
-    name: isStandaloneMode() ? 'Sign out' : 'Cannot log out',
+    name: t('standalone.shell.sign_out'),
     action: loginStore.logout,
-    disabled: !isStandaloneMode(),
-    class: isStandaloneMode() ? '' : 'cursor-not-allowed opacity-50'
+    disabled: !isStandaloneMode()
   }
 ]
 
 const sidebarOpen = ref(false)
-
-const themeStore = useThemeStore()
-
 const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
 </script>
 
@@ -84,7 +83,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
               >
                 <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
                   <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
-                    <span class="sr-only">Close sidebar</span>
+                    <span class="sr-only">{{ t('standalone.shell.close_sidebar') }}</span>
                     <font-awesome-icon
                       :icon="['fas', 'xmark']"
                       class="h-6 w-6 text-white"
@@ -98,6 +97,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 class="flex grow flex-col gap-y-5 overflow-y-auto px-2 pb-4 bg-white dark:bg-gray-950"
               >
                 <div class="flex h-16 shrink-0 items-center">
+                  <!-- //// logo -->
                   <img
                     class="h-8 w-auto"
                     src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=600"
@@ -164,6 +164,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
       <div
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r px-2 pb-4 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
       >
+        <!-- //// logo -->
         <div class="flex h-16 shrink-0 items-center">
           <img
             class="h-8 w-auto"
@@ -228,7 +229,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
           class="-m-2.5 p-2.5 lg:hidden text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
           @click="sidebarOpen = true"
         >
-          <span class="sr-only">Open sidebar</span>
+          <span class="sr-only">{{ t('standalone.shell.open_sidebar') }}</span>
           <font-awesome-icon :icon="['fas', 'bars']" class="h-6 w-6 shrink-0" aria-hidden="true" />
         </button>
 
@@ -237,7 +238,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form class="relative flex flex-1" action="#" method="GET">
-            <label for="search-field" class="sr-only">Search</label>
+            <label for="search-field" class="sr-only">{{ t('common.search') }}</label>
             <font-awesome-icon
               :icon="['fas', 'magnifying-glass']"
               :class="[
@@ -249,7 +250,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
             <input
               id="search-field"
               class="block h-full w-full border-0 py-0 pl-8 pr-0 focus:ring-0 sm:text-sm text-gray-900 bg-white placeholder:text-gray-400 dark:text-gray-50 dark:bg-gray-950 dark:placeholder:text-gray-500"
-              placeholder="Search"
+              :placeholder="t('common.search')"
               type="search"
               name="search"
             />
@@ -286,7 +287,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
-              <span>Help</span>
+              <span>{{ t('common.help') }}</span>
             </button>
 
             <!-- Separator -->
@@ -304,7 +305,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 topBarButtonsColorClasses
               ]"
             >
-              <span class="sr-only">Toggle theme</span>
+              <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
               <!-- //// use sun icon on dark theme -->
               <font-awesome-icon
                 :icon="['fas', 'moon']"
@@ -321,7 +322,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                 topBarButtonsColorClasses
               ]"
             >
-              <span class="sr-only">View notifications</span>
+              <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
               <font-awesome-icon
                 :icon="['fas', 'bell']"
                 class="h-6 w-6 shrink-0"
@@ -337,7 +338,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                   topBarButtonsColorClasses
                 ]"
               >
-                <span class="sr-only">Open user menu</span>
+                <span class="sr-only">{{ t('standalone.shell.open_user_menu') }}</span>
                 <font-awesome-icon
                   :icon="['fas', 'circle-user']"
                   class="h-6 w-6 shrink-0"
@@ -377,14 +378,13 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                     :key="item.name"
                     v-slot="{ active }"
                     :disabled="item.disabled"
-                    class="cursor-pointer"
+                    :class="[item.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer']"
                   >
                     <a
                       @click="item.action"
                       :class="[
                         active ? 'bg-gray-50 dark:bg-gray-800' : '',
-                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200',
-                        item.class ? item.class : ''
+                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200'
                       ]"
                       >{{ item.name }}</a
                     >

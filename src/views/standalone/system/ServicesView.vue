@@ -3,10 +3,14 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
 
 <template>
   <div>
-    <h1>Services</h1>
+    <h1>{{ t('standalone.services.title') }}</h1>
   </div>
 </template>

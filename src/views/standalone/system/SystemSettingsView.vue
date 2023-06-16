@@ -15,6 +15,9 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { focusElement } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 let hostname = ref('')
 let hostnameRef = ref()
@@ -57,7 +60,7 @@ function validate() {
     // check required
     let { valid, errMessage } = validateRequired(hostname.value)
     if (!valid) {
-      error.value.hostname = errMessage as string
+      error.value.hostname = t(errMessage as string)
       isValidationOk = false
       focusElement(hostnameRef)
     } else {
@@ -65,7 +68,7 @@ function validate() {
         // check sintax
         let { valid, errMessage } = validateHostname(hostname.value)
         if (!valid) {
-          error.value.hostname = errMessage as string
+          error.value.hostname = t(errMessage as string)
           isValidationOk = false
           focusElement(hostnameRef)
         }
@@ -98,27 +101,31 @@ async function save() {
 
 <template>
   <div>
-    <NeTitle>System settings</NeTitle>
+    <NeTitle>{{ t('standalone.system_settings.title') }}</NeTitle>
     <!-- //// tabs -->
     <div class="max-w-xl space-y-6">
       <NeTextInput
-        label="Hostname"
+        :label="t('standalone.system_settings.hostname')"
         v-model="hostname"
         :invalidMessage="error.hostname"
         ref="hostnameRef"
       />
       <NeTextInput
-        label="Short description"
+        :label="t('standalone.system_settings.short_description')"
         v-model="description"
-        placeholder="Short description about this firewall"
+        :placeholder="t('standalone.system_settings.short_description_placeholder')"
       />
-      <NeTextArea label="Notes" v-model="notes" placeholder="Notes about this firewall" />
+      <NeTextArea
+        :label="t('standalone.system_settings.notes')"
+        v-model="notes"
+        :placeholder="t('standalone.system_settings.notes_placeholder')"
+      />
       <div>
-        <NeFormItemLabel>Local time</NeFormItemLabel>
+        <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
         <div class="text-sm">{{ new Date(localTime).toLocaleString() }}</div>
       </div>
       <div class="flex justify-end">
-        <NeButton @click="save">Save</NeButton>
+        <NeButton @click="save">{{ t('common.save') }}</NeButton>
       </div>
     </div>
   </div>

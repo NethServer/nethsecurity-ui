@@ -8,6 +8,9 @@ import { NeTitle, NeButton, sortByProperty } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 ////
 let list = ref([
@@ -34,7 +37,7 @@ async function testUbus() {
 </script>
 
 <template>
-  <NeTitle>Dashboard</NeTitle>
+  <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
 
   <!-- ////  -->
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>

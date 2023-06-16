@@ -2,6 +2,8 @@
   "common": {
     "save": "Save",
     "cancel": "Cancel",
+    "search": "Search",
+    "help": "Help",
     "show_password": "Show password",
     "hide_password": "Hide password"
   },
@@ -13,7 +15,9 @@
     "http_403": "Authorization error",
     "http_404": "Resource not found",
     "http_500": "Server error",
-    "required": "Required"
+    "required": "Required",
+    "invalid_hostname": "Invalid hostname",
+    "hostname_is_too_long": "Hostname has too many characters"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -28,6 +32,63 @@
     "cannot_login": "Cannot login",
     "incorrect_username_or_password": "Incorrect username or password"
   },
-  "standalone": {},
+  "standalone": {
+    "shell": {
+      "sign_out": "Sign out",
+      "open_sidebar": "Open sidebar",
+      "close_sidebar": "Close sidebar",
+      "toggle_theme": "Toggle theme",
+      "show_notifications": "Show notifications",
+      "open_user_menu": "Open user menu"
+    },
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "registration": {
+      "title": "Registration"
+    },
+    "system_settings": {
+      "title": "System settings",
+      "hostname": "Hostname",
+      "short_description": "Short description",
+      "short_description_placeholder": "Short description of this unit",
+      "notes": "Notes",
+      "notes_placeholder": "Notes about this unit",
+      "local_time": "Local time"
+    },
+    "services": {
+      "title": "Services"
+    },
+    "ssh": {
+      "title": "SSH"
+    },
+    "backup_and_restore": {
+      "title": "Backup & restore"
+    },
+    "reboot_and_shutdown": {
+      "title": "Reboot & shutdown"
+    },
+    "network": {
+      "title": "Network"
+    },
+    "users_and_objects": {
+      "title": "Users & objects"
+    },
+    "firewall": {
+      "title": "Firewall"
+    },
+    "security": {
+      "title": "Security"
+    },
+    "vpn": {
+      "title": "VPN"
+    },
+    "logs": {
+      "title": "Logs"
+    },
+    "report": {
+      "title": "Report"
+    }
+  },
   "controller": {}
 }

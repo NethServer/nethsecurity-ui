@@ -11,6 +11,7 @@ import { useRouter } from 'vue-router'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { getStandaloneApiEndpoint } from '@/lib/config'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import { useThemeStore } from '../theme'
 
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
@@ -46,6 +47,9 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
     username.value = user
     token.value = jwtToken
+
+    const themeStore = useThemeStore()
+    themeStore.loadTheme()
 
     // reconfigure axios Authorization header //// delete
     // axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}` ////

@@ -3,14 +3,49 @@
 
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { getPreference, getStringFromStorage, savePreference } from '@/lib/storage'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
+import { isStandaloneMode } from '@/lib/config'
+
+type ThemeType = 'light' | 'dark' | 'system'
 
 export const useThemeStore = defineStore('theme', () => {
   const theme = ref('system')
 
-  function setTheme(newTheme: string) {
+  function getUsername() {
+    let username
+
+    if (isStandaloneMode()) {
+      username = useStandaloneLoginStore().username
+    } else {
+      username = useControllerLoginStore().username
+    }
+
+    if (!username) {
+      // user is not logged, try reading remembered username from local storage
+      if (isStandaloneMode()) {
+        username = getStringFromStorage('standaloneUsername')
+      } else {
+        username = getStringFromStorage('controllerUsername')
+      }
+    }
+    return username
+  }
+
+  function setTheme(newTheme: ThemeType) {
     theme.value = newTheme
 
-    switch (theme.value) {
+    // save preference
+    const username = getUsername()
+
+    if (username) {
+      savePreference('theme', newTheme, username)
+    }
+
+    // add or remove dark class to document
+
+    switch (newTheme) {
       case 'light':
         removeDarkClassFromDocument()
         break
@@ -25,8 +60,6 @@ export const useThemeStore = defineStore('theme', () => {
           removeDarkClassFromDocument()
         }
     }
-
-    //// todo update preferences
   }
 
   function toggleTheme() {
@@ -48,34 +81,13 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function loadTheme() {
-    //// TODO load theme from preferences
+    const username = getUsername()
+    let theme = 'system' as ThemeType
 
-    //// TODO load theme from credentials if necessary
-
-    // let theme = 'system' ////
-
-    //// remove mockup:
-    const preferences = { theme: 'dark' }
-
-    setTheme(preferences.theme)
-
-    ////
-    // if (preferences.theme === 'dark') {
-    //   theme = 'dark'
-    //   addDarkClassToDocument()
-    // } else if (preferences.theme === 'light') {
-    //   theme = 'light'
-    //   removeDarkClassFromDocument()
-    // } else {
-    //   // system theme
-    //   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    //     addDarkClassToDocument()
-    //   } else {
-    //     removeDarkClassFromDocument()
-    //   }
-    // }
-
-    // setTheme(theme)
+    if (username) {
+      theme = getPreference('theme', username)
+    }
+    setTheme(theme)
   }
 
   const addDarkClassToDocument = () => {

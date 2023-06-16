@@ -1,7 +1,9 @@
 {
   "common": {
     "save": "Salva",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "show_password": "Mostra password",
+    "hide_password": "Nascondere la password"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -15,6 +17,16 @@
     "incorrect_username_or_password": "Nome utente o password errati"
   },
   "login": {
-    "sign_in": "Accedi"
+    "sign_in": "Accedi",
+    "cannot_login": "Impossibile accedere",
+    "incorrect_username_or_password": "Nome utente o password errati",
+    "welcome_title_standalone": "Benvenuti",
+    "welcome_description_standalone": "Accedete a {product}, proteggete la vostra rete e accedete rapidamente al cloud.",
+    "welcome_title_controller": "Benvenuti",
+    "welcome_description_controller": "Il controllore {product} Il controller consente di gestire le unità di {prodotto} in modo rapido e semplice.",
+    "username": "Nome utente",
+    "password": "Password",
+    "remember_me": "Ricordati di me",
+    "need_help": "Avete bisogno di aiuto?"
   }
 }

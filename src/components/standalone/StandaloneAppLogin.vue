@@ -52,15 +52,15 @@ async function login() {
     return
   }
 
-  // set or remove username to/from local storage
-  if (rememberMe.value) {
-    saveToStorage('standaloneUsername', username.value)
-  } else {
-    deleteFromStorage('standaloneUsername')
-  }
-
   try {
     await loginStore.login(username.value, password.value)
+
+    // set or remove username to/from local storage
+    if (rememberMe.value) {
+      saveToStorage('standaloneUsername', username.value)
+    } else {
+      deleteFromStorage('standaloneUsername')
+    }
   } catch (err: any) {
     console.error('login error', err)
 

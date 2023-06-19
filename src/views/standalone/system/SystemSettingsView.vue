@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
-import { validateHostname, validateRequired } from '@/lib/standalone/validation'
+import { validateHostname, validateRequired } from '@/lib/validation'
 import {
   NeTitle,
   NeButton,

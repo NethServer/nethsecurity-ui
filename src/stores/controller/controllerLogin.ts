@@ -10,6 +10,7 @@ import { deleteFromStorage, saveToStorage } from '../../lib/storage'
 import { getControllerApiEndpoint } from '../../lib/config'
 import { useRouter } from 'vue-router'
 import { getControllerRoutePrefix } from '@/lib/router'
+import { useThemeStore } from '../theme'
 
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
@@ -44,6 +45,8 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     saveToStorage('controllerLoginInfo', loginInfo)
     username.value = user
     token.value = jwtToken
+    const themeStore = useThemeStore()
+    themeStore.loadTheme()
     router.push(`${getControllerRoutePrefix()}/`)
   }
 

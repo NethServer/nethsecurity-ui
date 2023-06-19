@@ -16,12 +16,14 @@ import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
-import { validateRequired } from '@/lib/standalone/validation'
+import { validateRequired } from '@/lib/validation'
+import { deleteFromStorage, getStringFromStorage, saveToStorage } from '@/lib/storage'
 
 let username = ref('')
 let usernameRef = ref()
 let password = ref('')
 let passwordRef = ref()
+let rememberMe = ref(false)
 
 let error = ref({
   username: '',
@@ -33,7 +35,16 @@ const loginStore = useLoginStore()
 const { t } = useI18n()
 
 onMounted(() => {
-  usernameRef.value.focus()
+  // read username from storage, if present
+  const usernameFromStorage = getStringFromStorage('controllerUsername')
+
+  if (usernameFromStorage) {
+    rememberMe.value = true
+    username.value = usernameFromStorage
+    passwordRef.value.focus()
+  } else {
+    usernameRef.value.focus()
+  }
 })
 
 async function login() {
@@ -49,6 +60,13 @@ async function login() {
 
   try {
     await loginStore.login(username.value, password.value)
+
+    // set or remove username to/from local storage
+    if (rememberMe.value) {
+      saveToStorage('controllerUsername', username.value)
+    } else {
+      deleteFromStorage('controllerUsername')
+    }
   } catch (err: any) {
     console.error('login error', err)
 
@@ -139,6 +157,7 @@ function validate() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  v-model="rememberMe"
                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                 />
                 <label

@@ -8,7 +8,7 @@ import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserve
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { validateRequired } from '@/lib/standalone/validation'
+import { validateRequired } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
 import { deleteFromStorage, getStringFromStorage, saveToStorage } from '@/lib/storage'

@@ -10,12 +10,15 @@ import { onMounted, ref } from 'vue'
 import { isEmpty } from 'lodash'
 import { useUnitManagementStore } from '@/stores/controller/unitManagement'
 import { useRouter } from 'vue-router'
-
-let newUnitName = ref('')
+import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { savePreference } from '@/lib/storage'
 
 const unitsStore = useUnitsStore()
 const unitManagementStore = useUnitManagementStore()
 const router = useRouter()
+const loginStore = useLoginStore()
+
+let newUnitName = ref('')
 
 onMounted(() => {
   unitsStore.getUnits()
@@ -35,6 +38,13 @@ async function addUnit() {
 
 async function approveUnit(unitName: string) {
   await unitManagementStore.addUnit(unitName)
+}
+
+async function changeLocale(lang: string) {
+  savePreference('locale', lang, loginStore.username)
+
+  // reload page
+  location.reload()
 }
 </script>
 
@@ -68,5 +78,11 @@ async function approveUnit(unitName: string) {
   <div class="flex items-end">
     <NeTextInput label="Unit name" v-model.trim="newUnitName" class="max-w-xs mr-4" />
     <NeButton @click="addUnit" size="lg" :disabled="!newUnitName.trim()">Add unit</NeButton>
+  </div>
+  <!-- ////  -->
+  <div class="my-8">
+    <div class="mb-4">Select language</div>
+    <NeButton @click="changeLocale('it')" class="mb-4 mr-4">Italian</NeButton>
+    <NeButton @click="changeLocale('en')" class="mb-4">English</NeButton>
   </div>
 </template>

@@ -8,8 +8,10 @@ import { RouterView } from 'vue-router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { getControllerRoutePrefix } from '@/lib/router'
+import { useI18n } from 'vue-i18n'
 
 const loginStore = useLoginStore()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -20,9 +22,9 @@ const loginStore = useLoginStore()
         >Dashboard</router-link
       >
       <router-link :to="`${getControllerRoutePrefix()}/logs`" class="underline">Logs</router-link>
-      <router-link :to="`${getControllerRoutePrefix()}/settings`" class="underline"
-        >Settings</router-link
-      >
+      <router-link :to="`${getControllerRoutePrefix()}/settings`" class="underline">{{
+        t('controller.settings.title')
+      }}</router-link>
       <NeButton @click="loginStore.logout">Logout</NeButton>
     </div>
     <div class="relative">

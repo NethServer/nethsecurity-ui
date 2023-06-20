@@ -19,24 +19,19 @@ loadFontAwesome(app)
 
 // i18n
 
-import { createI18n } from 'vue-i18n'
-import { loadLanguage } from './i18n'
+import { setupI18n } from '@/lib/i18n'
 
 loadI18n()
 
 async function loadI18n() {
   const locale = navigator.language.substring(0, 2)
-  const translations = await loadLanguage(locale)
-  const messages: any = {}
-  messages[locale] = { ...translations }
 
-  const i18n = createI18n({
+  const i18n = setupI18n({
     legacy: false,
     missingWarn: false,
-    locale,
-    messages
+    fallbackWarn: false,
+    locale
   })
-
   app.use(i18n)
   app.mount('#app')
 }

@@ -13,15 +13,21 @@ import axios from 'axios'
 import { isStandaloneMode } from './lib/config'
 import { useUnitManagementStore } from './stores/controller/unitManagement'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { getPreference } from './lib/storage'
+import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 const unitManagementStore = useUnitManagementStore()
+const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+
 const isLoaded = ref(false)
 
 onMounted(async () => {
   if (isStandaloneMode()) {
     await loginStore.loadUserFromStorage()
+    await loadI18n()
   } else {
     // a controller is managing this unit
     await unitManagementStore.load()
@@ -33,6 +39,26 @@ onMounted(async () => {
   }
   isLoaded.value = true
 })
+
+async function loadI18n() {
+  // default language
+  let lang = navigator.language.substring(0, 2)
+
+  // default username
+  let username = 'root'
+
+  if (loginStore.isLoggedIn) {
+    username = loginStore.username
+  }
+
+  const preferredLanguage = getPreference('locale', username)
+
+  if (preferredLanguage) {
+    lang = preferredLanguage
+  }
+  await loadLocaleMessages(setLocaleMessage, lang)
+  setI18nLanguage(locale, lang)
+}
 
 function configureAxios() {
   // axios.defaults.baseURL = getApiEndpoint() ////

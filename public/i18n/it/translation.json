@@ -90,5 +90,16 @@
     "services": {
       "title": "Servizi"
     }
+  },
+  "controller": {
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "settings": {
+      "title": "Impostazioni"
+    },
+    "logs": {
+      "title": "Log"
+    }
   }
 }

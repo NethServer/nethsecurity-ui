@@ -9,16 +9,41 @@ import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import { getPreference } from './lib/storage'
+import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
+import { useI18n } from 'vue-i18n'
+
+const loginStore = useLoginStore()
+const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
 
 const isLoaded = ref(false)
 
-const loginStore = useLoginStore()
-
 onMounted(async () => {
   await loginStore.loadUserFromStorage()
+  await loadI18n()
   configureAxios()
   isLoaded.value = true
 })
+
+async function loadI18n() {
+  // default language
+  let lang = navigator.language.substring(0, 2)
+
+  // default username
+  let username = 'admin'
+
+  if (loginStore.isLoggedIn) {
+    username = loginStore.username
+  }
+
+  const preferredLanguage = getPreference('locale', username)
+
+  if (preferredLanguage) {
+    lang = preferredLanguage
+  }
+  await loadLocaleMessages(setLocaleMessage, lang)
+  setI18nLanguage(locale, lang)
+}
 
 function configureAxios() {
   axios.defaults.headers.post['Content-Type'] = 'application/json'

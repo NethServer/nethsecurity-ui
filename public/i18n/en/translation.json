@@ -90,5 +90,15 @@
       "title": "Report"
     }
   },
-  "controller": {}
+  "controller": {
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "logs": {
+      "title": "Logs"
+    }
+  }
 }

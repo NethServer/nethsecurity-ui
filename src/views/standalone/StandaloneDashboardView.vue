@@ -9,7 +9,10 @@ import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useI18n } from 'vue-i18n'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { savePreference } from '@/lib/storage'
 
+const loginStore = useLoginStore()
 const { t } = useI18n()
 
 ////
@@ -34,10 +37,26 @@ async function testUbus() {
     mode: 'conntrack'
   })
 }
+
+async function changeLocale(lang: string) {
+  savePreference('locale', lang, loginStore.username)
+
+  // reload page
+  location.reload()
+}
 </script>
 
 <template>
   <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
+
+  <!-- ////  -->
+  <div class="mb-8">
+    <div class="mb-4">Select language</div>
+    <NeButton @click="changeLocale('it')" class="mb-4 mr-4">Italian</NeButton>
+    <NeButton @click="changeLocale('en')" class="mb-4">English</NeButton>
+  </div>
+
+  <div class="mb-8">Test i18n label: {{ t('common.save') }}</div>
 
   <!-- ////  -->
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>

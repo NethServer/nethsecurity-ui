@@ -14,7 +14,7 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
-import { loadFontAwesome } from './fontawesome'
+import { loadFontAwesome } from './lib/fontawesome'
 loadFontAwesome(app)
 
 // i18n

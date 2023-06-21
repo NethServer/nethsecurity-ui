@@ -4,129 +4,55 @@
 -->
 
 <script setup lang="ts">
-import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
-import { validateHostname, validateRequired } from '@/lib/validation'
-import {
-  NeTitle,
-  NeButton,
-  NeTextInput,
-  NeTextArea,
-  NeFormItemLabel
-} from '@nethserver/vue-tailwind-lib'
-import { focusElement } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import GeneralSettings from '@/components/standalone/system_settings/GeneralSettings.vue'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
-let hostname = ref('')
-let hostnameRef = ref()
-let description = ref('')
-let notes = ref('')
-let localTime = ref(0)
+const tabs = ref([
+  { name: 'general', label: t('standalone.system_settings.general_settings') },
+  { name: 'logs', label: t('standalone.system_settings.logs_settings') },
+  { name: 'timeSync', label: t('standalone.system_settings.time_synchronization') }
+])
 
-let error = ref({
-  hostname: ''
-})
+let currentTab = ref('')
+let initiallySelectedTab = ref('')
 
 onMounted(() => {
-  loadData()
+  const tab = route.query.tab as string
+
+  if (!tab) {
+    initiallySelectedTab.value = 'general'
+  } else {
+    initiallySelectedTab.value = tab
+  }
 })
 
-async function loadData() {
-  getSystemConfig()
-
-  const res = await ubusCall('system', 'info', {})
-  localTime.value = Number(res.data.localtime * 1000)
-
-  //// remove
-  // const network = await getUciConfig('network') ////
-  // console.log('network', network)
-}
-
-async function getSystemConfig() {
-  const config = await getUciConfig('system')
-  hostname.value = config.system[0].hostname
-  description.value = config.system[0].description
-  notes.value = config.system[0].notes
-}
-
-function validate() {
-  let isValidationOk = true
-
-  // hostname
-
-  {
-    // check required
-    let { valid, errMessage } = validateRequired(hostname.value)
-    if (!valid) {
-      error.value.hostname = t(errMessage as string)
-      isValidationOk = false
-      focusElement(hostnameRef)
-    } else {
-      {
-        // check sintax
-        let { valid, errMessage } = validateHostname(hostname.value)
-        if (!valid) {
-          error.value.hostname = t(errMessage as string)
-          isValidationOk = false
-          focusElement(hostnameRef)
-        }
-      }
-    }
-  }
-  return isValidationOk
-}
-
-async function save() {
-  error.value.hostname = ''
-  const isValidationOk = validate()
-
-  if (!isValidationOk) {
-    return
-  }
-
-  const res = await ubusCall('uci', 'set', {
-    config: 'system',
-    section: '@system[0]',
-    values: {
-      hostname: hostname.value,
-      description: description.value,
-      notes: notes.value
-    }
-  })
-  loadData()
+function changeTab(tabName: any) {
+  currentTab.value = tabName
+  router.push({ path: route.path, query: { tab: currentTab.value } })
 }
 </script>
 
 <template>
   <div>
     <NeTitle>{{ t('standalone.system_settings.title') }}</NeTitle>
-    <!-- //// tabs -->
-    <div class="max-w-xl space-y-6">
-      <NeTextInput
-        :label="t('standalone.system_settings.hostname')"
-        v-model.trim="hostname"
-        :invalidMessage="error.hostname"
-        ref="hostnameRef"
-      />
-      <NeTextInput
-        :label="t('standalone.system_settings.short_description')"
-        v-model.trim="description"
-        :placeholder="t('standalone.system_settings.short_description_placeholder')"
-      />
-      <NeTextArea
-        :label="t('standalone.system_settings.notes')"
-        v-model.trim="notes"
-        :placeholder="t('standalone.system_settings.notes_placeholder')"
-      />
-      <div>
-        <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
-        <div class="text-sm">{{ new Date(localTime).toLocaleString() }}</div>
-      </div>
-      <div class="flex justify-end">
-        <NeButton @click="save">{{ t('common.save') }}</NeButton>
-      </div>
-    </div>
+    <NeTabs
+      :tabs="tabs"
+      :selected="initiallySelectedTab"
+      :srTabsLabel="t('common.tabs')"
+      :srSelectTabLabel="t('common.select_a_tab')"
+      @selectTab="changeTab"
+    />
+    <template v-if="currentTab === 'general'">
+      <GeneralSettings />
+    </template>
+    <template v-else-if="currentTab === 'logs'"> Logs </template>
+    <template v-else-if="currentTab === 'timeSync'"> TimeSync </template>
   </div>
 </template>

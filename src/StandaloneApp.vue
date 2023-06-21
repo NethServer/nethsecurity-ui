@@ -32,7 +32,7 @@ onMounted(async () => {
     // a controller is managing this unit
     await unitManagementStore.load()
   }
-  configureAxios() ////
+  configureAxios()
 
   if (loginStore.isLoggedIn) {
     uciChangesStore.getChanges()

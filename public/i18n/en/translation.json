@@ -5,7 +5,9 @@
     "search": "Search",
     "help": "Help",
     "show_password": "Show password",
-    "hide_password": "Hide password"
+    "hide_password": "Hide password",
+    "select_a_tab": "Select a tab",
+    "tabs": "Tabs"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -49,6 +51,9 @@
     },
     "system_settings": {
       "title": "System settings",
+      "general_settings": "General settings",
+      "logs_settings": "Logs settings",
+      "time_synchronization": "Time synchronization",
       "hostname": "Hostname",
       "short_description": "Short description",
       "short_description_placeholder": "Short description of this unit",

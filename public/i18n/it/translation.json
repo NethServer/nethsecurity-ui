@@ -18,7 +18,11 @@
     "required": "Richiesto",
     "incorrect_username_or_password": "Nome utente o password errati",
     "invalid_hostname": "Nome host non valido",
-    "hostname_is_too_long": "Il nome host ha troppi caratteri"
+    "hostname_is_too_long": "Il nome host ha troppi caratteri",
+    "cannot_save_configuration": "Impossibile salvare la configurazione",
+    "cannot_load_system_config": "Impossibile caricare le impostazioni di sistema",
+    "cannot_load_system_info": "Impossibile caricare le informazioni di sistema",
+    "cannot_load_timezones": "Impossibile caricare i fusi orari"
   },
   "login": {
     "sign_in": "Accedi",
@@ -85,7 +89,11 @@
       "short_description_placeholder": "Breve descrizione di questa unità",
       "notes": "Note",
       "notes_placeholder": "Note su questa unità",
-      "local_time": "Ora locale"
+      "local_time": "Ora locale",
+      "general_settings": "Impostazioni generali",
+      "logs_settings": "Impostazioni dei registri",
+      "time_synchronization": "Sincronizzazione temporale",
+      "timezone": "Fuso orario"
     },
     "services": {
       "title": "Servizi"
@@ -101,5 +109,17 @@
     "logs": {
       "title": "Log"
     }
+  },
+  "ne_text_input": {
+    "show_password": "Mostra password",
+    "hide_password": "Nascondere la password"
+  },
+  "ne_tabs": {
+    "select_a_tab": "Selezionare una scheda",
+    "tabs": "Schede"
+  },
+  "ne_combobox": {
+    "no_results": "Nessun risultato",
+    "limited_options_label": "Continuare a digitare per visualizzare altre opzioni"
   }
 }

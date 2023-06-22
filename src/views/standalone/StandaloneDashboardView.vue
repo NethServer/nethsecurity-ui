@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, sortByProperty } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeComboBox, sortByProperty } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -44,6 +44,14 @@ async function changeLocale(lang: string) {
   // reload page
   location.reload()
 }
+
+const cboItems = [
+  { id: '1', label: 'First' },
+  { id: '2', label: 'Second' },
+  { id: '3', label: 'Third', disabled: true },
+  { id: '4', label: 'Fourth' }
+]
+let cboSelected = ref('4')
 </script>
 
 <template>
@@ -62,33 +70,4 @@ async function changeLocale(lang: string) {
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>
 
   <div>{{ ubusOutput }}</div>
-
-  <!-- <div> //// 
-    <font-awesome-icon icon="fa-solid fa-user-secret" size="m" class="mr-2" />
-    <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" class="mr-2" />
-    <font-awesome-icon :icon="['fas', 'house']" size="3x" class="mr-2" />
-    <font-awesome-icon :icon="['fas', 'address-book']" size="3x" class="mr-2" />
-    <font-awesome-icon :icon="['fal', 'address-book']" size="3x" class="mr-2" />
-  </div> -->
-
-  <!-- <NeButton @click="testLogin">Test login</NeButton> ////  -->
-
-  <!-- <div>product {{ product }}</div> ////  -->
-
-  <!-- <div>loginStore.username {{ loginStore.username }}</div> ////  -->
-
-  <!-- <div> //// 
-    <NeButton @click="setStringItem('test', new Date().toISOString())">set to storage</NeButton>
-  </div>
-  <div>
-    <NeButton @click="sort">Sort</NeButton>
-  </div>
-  <div>
-    <NeButton disabled>Disabled button</NeButton>
-  </div>
-  <div>
-    <NeTextInput label="Test" v-model="testInput" invalidMessage="Error" />
-  </div>
-  <div>{{ list }}</div>
-  <div>theme: {{ themeStore.theme }}</div> -->
 </template>

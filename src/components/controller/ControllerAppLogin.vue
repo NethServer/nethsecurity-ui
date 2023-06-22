@@ -146,8 +146,8 @@ function validate() {
               :label="t('login.password')"
               v-model="password"
               isPassword
-              :showPasswordLabel="t('common.show_password')"
-              :hidePasswordLabel="t('common.hide_password')"
+              :showPasswordLabel="t('ne_text_input.show_password')"
+              :hidePasswordLabel="t('ne_text_input.hide_password')"
               :invalidMessage="t(error.password)"
               ref="passwordRef"
             />

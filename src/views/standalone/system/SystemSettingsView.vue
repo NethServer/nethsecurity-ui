@@ -45,8 +45,8 @@ function changeTab(tabName: any) {
     <NeTabs
       :tabs="tabs"
       :selected="initiallySelectedTab"
-      :srTabsLabel="t('common.tabs')"
-      :srSelectTabLabel="t('common.select_a_tab')"
+      :srTabsLabel="t('ne_tabs.tabs')"
+      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
       @selectTab="changeTab"
     />
     <template v-if="currentTab === 'general'">

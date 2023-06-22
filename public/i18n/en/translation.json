@@ -3,11 +3,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "search": "Search",
-    "help": "Help",
-    "show_password": "Show password",
-    "hide_password": "Hide password",
-    "select_a_tab": "Select a tab",
-    "tabs": "Tabs"
+    "help": "Help"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -19,7 +15,23 @@
     "http_500": "Server error",
     "required": "Required",
     "invalid_hostname": "Invalid hostname",
-    "hostname_is_too_long": "Hostname has too many characters"
+    "hostname_is_too_long": "Hostname has too many characters",
+    "cannot_save_configuration": "Cannot save configuration",
+    "cannot_load_system_config": "Cannot load system settings",
+    "cannot_load_system_info": "Cannot load system info",
+    "cannot_load_timezones": "Cannot load timezones"
+  },
+  "ne_text_input": {
+    "show_password": "Show password",
+    "hide_password": "Hide password"
+  },
+  "ne_tabs": {
+    "select_a_tab": "Select a tab",
+    "tabs": "Tabs"
+  },
+  "ne_combobox": {
+    "no_results": "No results",
+    "limited_options_label": "Continue typing to show more options"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -59,7 +71,8 @@
       "short_description_placeholder": "Short description of this unit",
       "notes": "Notes",
       "notes_placeholder": "Notes about this unit",
-      "local_time": "Local time"
+      "local_time": "Local time",
+      "timezone": "Timezone"
     },
     "services": {
       "title": "Services"

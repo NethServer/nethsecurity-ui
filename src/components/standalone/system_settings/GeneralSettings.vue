@@ -16,7 +16,7 @@ import {
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { focusElement } from '@nethserver/vue-tailwind-lib'
+import { focusElement, formatInTimeZoneLoc } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -26,37 +26,38 @@ let hostname = ref('')
 let hostnameRef = ref()
 let description = ref('')
 let notes = ref('')
-let localTime = ref(0)
+let localTime: any = ref(null)
 let timezone = ref('')
 let timezoneRef = ref()
 let timezones = ref([])
 let systemConfig: any = ref({})
-let isLoadedSystemConfig = ref(false)
-let isLoadedSystemInfo = ref(false)
-let isLoadedTimezones = ref(false)
+let isLoadingSystemConfig = ref(true)
+let isLoadingSystemInfo = ref(true)
+let isLoadingTimezones = ref(true)
+//// show spinner in button
+let isLoadingSyncWithBrowser = ref(false)
+let isLoadingSyncWithNtpServer = ref(false)
 
 let error = ref({
   hostname: '',
   timezone: '',
-  getSystemConfig: '',
-  getSystemInfo: '',
-  getTimezones: '',
-  saveConfig: ''
+  notificationTitle: '',
+  notificationDescription: ''
 })
 
-const isLoaded = computed(() => {
-  return isLoadedSystemConfig.value && isLoadedSystemInfo.value && isLoadedTimezones.value
+const isLoading = computed(() => {
+  return isLoadingSystemConfig.value || isLoadingSystemInfo.value || isLoadingTimezones.value
 })
 
-watch(isLoadedSystemConfig, () => {
-  if (isLoadedSystemConfig.value && isLoadedTimezones.value) {
+watch(isLoadingSystemConfig, () => {
+  if (!isLoadingSystemConfig.value && !isLoadingTimezones.value) {
     // set timezone in combobox
     timezone.value = systemConfig.value.system[0].zonename
   }
 })
 
-watch(isLoadedTimezones, () => {
-  if (isLoadedTimezones.value && isLoadedSystemConfig.value) {
+watch(isLoadingTimezones, () => {
+  if (!isLoadingTimezones.value && !isLoadingSystemConfig.value) {
     // set timezone in combobox
     timezone.value = systemConfig.value.system[0].zonename
   }
@@ -73,29 +74,38 @@ async function loadData() {
 }
 
 async function getSystemInfo() {
+  isLoadingSystemInfo.value = true
+
   try {
     const res = await ubusCall('system', 'info', {})
-    localTime.value = Number(res.data.localtime * 1000)
-    isLoadedSystemInfo.value = true
+    localTime.value = new Date(res.data.localtime * 1000)
+    isLoadingSystemInfo.value = true
   } catch (err: any) {
-    error.value.getSystemInfo = getAxiosErrorMessage(err)
+    error.value.notificationTitle = t('error.cannot_load_system_info')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
+  isLoadingSystemInfo.value = false
 }
 
 async function getSystemConfig() {
+  isLoadingSystemConfig.value = true
+
   try {
     const config = await getUciConfig('system')
     systemConfig.value = config
     hostname.value = config.system[0].hostname
     description.value = config.system[0].description
     notes.value = config.system[0].notes
-    isLoadedSystemConfig.value = true
   } catch (err: any) {
-    error.value.getSystemConfig = getAxiosErrorMessage(err)
+    error.value.notificationTitle = t('error.cannot_load_system_config')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
+  isLoadingSystemConfig.value = false
 }
 
 async function getTimezones() {
+  isLoadingTimezones.value = true
+
   try {
     const res = await ubusCall('luci', 'getTimezones', {})
     const tzList: any = []
@@ -104,10 +114,11 @@ async function getTimezones() {
       tzList.push({ id: key, label: key, timezone: value.tzstring })
     }
     timezones.value = tzList
-    isLoadedTimezones.value = true
   } catch (err: any) {
-    error.value.getTimezones = getAxiosErrorMessage(err)
+    error.value.notificationTitle = t('error.cannot_load_timezones')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
+  isLoadingTimezones.value = false
 }
 
 function validate() {
@@ -150,18 +161,10 @@ function validate() {
   return isValidationOk
 }
 
-async function save() {
-  error.value.hostname = ''
-  error.value.timezone = ''
-  const isValidationOk = validate()
-
-  if (!isValidationOk) {
-    return
-  }
-
+async function setSystemConfig() {
   const timezoneFound: any = timezones.value.find((tz: any) => tz.id === timezone.value)
 
-  const res = await ubusCall('uci', 'set', {
+  await ubusCall('uci', 'set', {
     config: 'system',
     section: '@system[0]',
     values: {
@@ -172,40 +175,77 @@ async function save() {
       timezone: timezoneFound.timezone
     }
   })
-  loadData()
+}
+
+async function enableSysntpd() {
+  await ubusCall('luci', 'setInitAction', {
+    name: 'sysntpd',
+    action: 'enable'
+  })
+}
+
+async function save() {
+  error.value.hostname = ''
+  error.value.timezone = ''
+  //// clear other errors
+  const isValidationOk = validate()
+
+  if (!isValidationOk) {
+    return
+  }
+
+  try {
+    await setSystemConfig()
+    await enableSysntpd()
+    loadData()
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_save_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+}
+
+async function syncWithBrowser() {
+  isLoadingSyncWithBrowser.value = true
+  const browserTime = Math.floor(Date.now() / 1000)
+
+  try {
+    await ubusCall('luci', 'setLocaltime', {
+      localtime: browserTime
+    })
+    getSystemInfo()
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_sync_local_time')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+  isLoadingSyncWithBrowser.value = false
+}
+
+async function syncWithNtpServer() {
+  isLoadingSyncWithNtpServer.value = true
+
+  try {
+    await ubusCall('luci', 'setInitAction', {
+      name: 'sysntpd',
+      action: 'restart'
+    })
+    getSystemInfo()
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_sync_local_time')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+  isLoadingSyncWithNtpServer.value = false
 }
 </script>
 
 <template>
   <NeInlineNotification
-    v-if="error.getSystemConfig"
+    v-if="error.notificationTitle"
     kind="error"
-    :title="t('error.cannot_load_system_config')"
-    :description="t(error.getSystemConfig)"
+    :title="error.notificationTitle"
+    :description="error.notificationDescription"
     class="mb-4"
   />
-  <NeInlineNotification
-    v-if="error.getSystemInfo"
-    kind="error"
-    :title="t('error.cannot_load_system_info')"
-    :description="t(error.getSystemInfo)"
-    class="mb-4"
-  />
-  <NeInlineNotification
-    v-if="error.getTimezones"
-    kind="error"
-    :title="t('error.cannot_load_timezones')"
-    :description="t(error.getTimezones)"
-    class="mb-4"
-  />
-  <NeInlineNotification
-    v-if="error.saveConfig"
-    kind="error"
-    :title="t('error.cannot_save_configuration')"
-    :description="t(error.saveConfig)"
-    class="mb-4"
-  />
-  <NeSkeleton v-if="!isLoaded" size="lg" :lines="12" />
+  <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
   <div v-else class="max-w-xl space-y-6">
     <!-- hostname -->
     <NeTextInput
@@ -230,7 +270,6 @@ async function save() {
     <NeComboBox
       v-model="timezone"
       :options="timezones"
-      :clearable="false"
       :label="t('standalone.system_settings.timezone')"
       :invalidMessage="error.timezone"
       :noResultsLabel="t('ne_combobox.no_results')"
@@ -240,7 +279,27 @@ async function save() {
     <!-- local time -->
     <div>
       <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
-      <div class="text-sm">{{ new Date(localTime).toLocaleString() }}</div>
+      <div class="text-sm">
+        <!-- (?) luci converts local time to UTC in order to display it -->
+        <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
+      </div>
+    </div>
+    <!-- sync buttons -->
+    <div>
+      <NeButton
+        @click="syncWithBrowser"
+        kind="tertiary"
+        :disabled="isLoadingSyncWithBrowser"
+        class="-ml-2.5"
+        >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
+      >
+      <NeButton
+        @click="syncWithNtpServer"
+        kind="tertiary"
+        :disabled="isLoadingSyncWithNtpServer"
+        class="ml-4"
+        >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
+      >
     </div>
     <!-- save button -->
     <div class="flex justify-end">

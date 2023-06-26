@@ -19,7 +19,8 @@
     "cannot_save_configuration": "Cannot save configuration",
     "cannot_load_system_config": "Cannot load system settings",
     "cannot_load_system_info": "Cannot load system info",
-    "cannot_load_timezones": "Cannot load timezones"
+    "cannot_load_timezones": "Cannot load timezones",
+    "cannot_sync_local_time": "Cannot sync local time"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -72,7 +73,9 @@
       "notes": "Notes",
       "notes_placeholder": "Notes about this unit",
       "local_time": "Local time",
-      "timezone": "Timezone"
+      "timezone": "Timezone",
+      "sync_with_browser": "Sync with browser",
+      "sync_with_ntp_server": "Sync with NTP server"
     },
     "services": {
       "title": "Services"

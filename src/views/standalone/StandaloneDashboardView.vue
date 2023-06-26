@@ -70,4 +70,7 @@ let cboSelected = ref('4')
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>
 
   <div>{{ ubusOutput }}</div>
+
+  <!-- <NeComboBox v-model="cboSelected" :options="cboItems" label="Label" /> ////
+  <NeButton @click="cboSelected = '2'" class="mb-4">Set cbo</NeButton> -->
 </template>

@@ -22,7 +22,8 @@
     "cannot_save_configuration": "Impossibile salvare la configurazione",
     "cannot_load_system_config": "Impossibile caricare le impostazioni di sistema",
     "cannot_load_system_info": "Impossibile caricare le informazioni di sistema",
-    "cannot_load_timezones": "Impossibile caricare i fusi orari"
+    "cannot_load_timezones": "Impossibile caricare i fusi orari",
+    "cannot_sync_local_time": "Impossibile sincronizzare l'ora locale"
   },
   "login": {
     "sign_in": "Accedi",
@@ -91,9 +92,11 @@
       "notes_placeholder": "Note su questa unità",
       "local_time": "Ora locale",
       "general_settings": "Impostazioni generali",
-      "logs_settings": "Impostazioni dei registri",
-      "time_synchronization": "Sincronizzazione temporale",
-      "timezone": "Fuso orario"
+      "logs_settings": "Impostazioni log",
+      "time_synchronization": "Sincronizzazione dell'orario",
+      "timezone": "Fuso orario",
+      "sync_with_browser": "Sincronizza con il browser",
+      "sync_with_ntp_server": "Sincronizza con il server NTP"
     },
     "services": {
       "title": "Servizi"
@@ -112,7 +115,7 @@
   },
   "ne_text_input": {
     "show_password": "Mostra password",
-    "hide_password": "Nascondere la password"
+    "hide_password": "Nascondi la password"
   },
   "ne_tabs": {
     "select_a_tab": "Selezionare una scheda",

@@ -3,7 +3,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "search": "Search",
-    "help": "Help"
+    "help": "Help",
+    "optional": "Optional"
   },
   "error": {
     "generic_error": "Something went wrong",

@@ -262,11 +262,11 @@ function addNtpServer() {
     <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
     <div v-else>
       <!-- settings section -->
-      <div class="flex flex-col lg:flex-row border-b py-6 border-gray-200 dark:border-gray-700">
-        <div class="w-2/5 pr-6 mb-4 lg:mb-0">
+      <div class="flex flex-col lg:flex-row border-b pb-6 border-gray-200 dark:border-gray-700">
+        <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
           <NeTitle level="h3">{{ t('standalone.system_settings.settings') }}</NeTitle>
         </div>
-        <div class="w-3/5 space-y-6">
+        <div class="w-full lg:w-3/5 space-y-6">
           <!-- enable ntp client -->
           <NeToggle
             v-model="enableNtpClient"
@@ -298,10 +298,10 @@ function addNtpServer() {
       </div>
       <!-- ntp server candidates section -->
       <div class="flex flex-col lg:flex-row border-b py-6 border-gray-200 dark:border-gray-700">
-        <div class="w-2/5 pr-6 mb-4 lg:mb-0">
+        <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
           <NeTitle level="h3">{{ t('standalone.system_settings.ntp_server_candidates') }}</NeTitle>
         </div>
-        <div class="w-3/5 space-y-6">
+        <div class="w-full lg:w-3/5 space-y-6">
           <div class="space-y-4">
             <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex gap-2">
               <NeTextInput
@@ -314,15 +314,23 @@ function addNtpServer() {
               </NeButton>
             </div>
             <!-- add ntp server -->
-            <NeButton @click="addNtpServer">{{
-              t('standalone.system_settings.add_ntp_server')
-            }}</NeButton>
+            <NeButton @click="addNtpServer">
+              <template #prefix>
+                <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
+              </template>
+              {{ t('standalone.system_settings.add_ntp_server') }}
+            </NeButton>
           </div>
         </div>
       </div>
       <!-- save button -->
       <div class="flex justify-end py-6">
-        <NeButton kind="primary" @click="save">{{ t('common.save') }}</NeButton>
+        <NeButton kind="primary" @click="save">
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('common.save') }}
+        </NeButton>
       </div>
     </div>
   </div>

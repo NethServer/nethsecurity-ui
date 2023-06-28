@@ -49,6 +49,7 @@ function changeTab(tabName: any) {
       :srTabsLabel="t('ne_tabs.tabs')"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"
       @selectTab="changeTab"
+      class="mb-6"
     />
     <template v-if="currentTab === 'general'">
       <GeneralSettings />

@@ -253,64 +253,78 @@ async function syncWithNtpServer() {
       class="mb-4"
     />
     <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
-    <div v-else class="space-y-6">
-      <!-- hostname -->
-      <NeTextInput
-        :label="t('standalone.system_settings.hostname')"
-        v-model.trim="hostname"
-        :invalidMessage="error.hostname"
-        ref="hostnameRef"
-      />
-      <!-- description -->
-      <NeTextInput
-        :label="t('standalone.system_settings.short_description')"
-        v-model.trim="description"
-        :placeholder="t('standalone.system_settings.short_description_placeholder')"
-      />
-      <!-- notes -->
-      <NeTextArea
-        :label="t('standalone.system_settings.notes')"
-        v-model.trim="notes"
-        :placeholder="t('standalone.system_settings.notes_placeholder')"
-      />
-      <!-- timezone -->
-      <NeComboBox
-        v-model="timezone"
-        :options="timezones"
-        :label="t('standalone.system_settings.timezone')"
-        :invalidMessage="error.timezone"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :ref="timezoneRef"
-      />
-      <!-- local time -->
-      <div>
-        <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
-        <div class="text-sm">
-          <!-- (?) luci converts local time to UTC in order to display it -->
-          <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
+    <div v-else>
+      <!-- main section -->
+      <div class="border-b pb-6 border-gray-200 dark:border-gray-700">
+        <div class="space-y-6">
+          <!-- hostname -->
+          <NeTextInput
+            :label="t('standalone.system_settings.hostname')"
+            v-model.trim="hostname"
+            :invalidMessage="error.hostname"
+            ref="hostnameRef"
+          />
+          <!-- description -->
+          <NeTextInput
+            :label="t('standalone.system_settings.short_description')"
+            v-model.trim="description"
+            :placeholder="t('standalone.system_settings.short_description_placeholder')"
+            optional
+            :optionalLabel="t('common.optional')"
+          />
+          <!-- notes -->
+          <NeTextArea
+            :label="t('standalone.system_settings.notes')"
+            v-model.trim="notes"
+            :placeholder="t('standalone.system_settings.notes_placeholder')"
+            optional
+            :optionalLabel="t('common.optional')"
+          />
+          <!-- timezone -->
+          <NeComboBox
+            v-model="timezone"
+            :options="timezones"
+            :label="t('standalone.system_settings.timezone')"
+            :invalidMessage="error.timezone"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :ref="timezoneRef"
+          />
+          <!-- local time -->
+          <div>
+            <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
+            <div class="text-sm">
+              <!-- (?) luci converts local time to UTC in order to display it -->
+              <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
+            </div>
+          </div>
+          <!-- sync buttons -->
+          <div>
+            <NeButton
+              @click="syncWithBrowser"
+              kind="tertiary"
+              :disabled="isLoadingSyncWithBrowser"
+              class="-ml-2.5"
+              >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
+            >
+            <NeButton
+              @click="syncWithNtpServer"
+              kind="tertiary"
+              :disabled="isLoadingSyncWithNtpServer"
+              class="ml-4"
+              >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
+            >
+          </div>
         </div>
       </div>
-      <!-- sync buttons -->
-      <div>
-        <NeButton
-          @click="syncWithBrowser"
-          kind="tertiary"
-          :disabled="isLoadingSyncWithBrowser"
-          class="-ml-2.5"
-          >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
-        >
-        <NeButton
-          @click="syncWithNtpServer"
-          kind="tertiary"
-          :disabled="isLoadingSyncWithNtpServer"
-          class="ml-4"
-          >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
-        >
-      </div>
       <!-- save button -->
-      <div class="flex justify-end">
-        <NeButton kind="primary" @click="save">{{ t('common.save') }}</NeButton>
+      <div class="flex justify-end py-6">
+        <NeButton kind="primary" @click="save">
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('common.save') }}
+        </NeButton>
       </div>
     </div>
   </div>

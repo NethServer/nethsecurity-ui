@@ -3,7 +3,7 @@
 
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getPreference, getStringFromStorage, savePreference } from '@/lib/storage'
+import { getPreference, getStringFromStorage, savePreference } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { isStandaloneMode } from '@/lib/config'

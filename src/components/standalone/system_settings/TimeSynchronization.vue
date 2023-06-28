@@ -4,9 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { NeComboboxItem } from '@/lib/interfaces'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
-import { validateHostname, validateRequired } from '@/lib/validation' ////
 import {
   NeButton,
   NeCheckbox,
@@ -19,6 +17,7 @@ import {
   getAxiosErrorMessage,
   focusElement
 } from '@nethserver/vue-tailwind-lib'
+import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref, nextTick, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -35,7 +34,7 @@ let enableNtpClient = ref(false)
 let provideNtpServer = ref(false)
 let useDhcpAdvertisedServers = ref(false)
 let ntpServerInterface = ref('')
-let interfaces: Ref<NeComboboxItem[]> = ref([])
+let interfaces: Ref<NeComboboxOption[]> = ref([])
 let ntpServerCandidates: Ref<NtpServer[]> = ref([])
 // let ntpServerCandidatesRefs: Ref<any[]> = ref([]) ////
 // let systemConfig: any = ref({}) ////
@@ -124,7 +123,7 @@ async function getNetworkInterfaces() {
 
   try {
     const res = await ubusCall('network.interface', 'dump', {})
-    let interfacesList: NeComboboxItem[] = [
+    let interfacesList: NeComboboxOption[] = [
       { id: '', label: t('standalone.system_settings.all_interfaces') }
     ]
 

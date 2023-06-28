@@ -4,13 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, sortByProperty, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, sortByProperty } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
-import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { savePreference } from '@/lib/storage'
+import { savePreference } from '@nethserver/vue-tailwind-lib'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()

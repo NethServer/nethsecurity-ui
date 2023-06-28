@@ -9,7 +9,7 @@ import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import { getPreference } from './lib/storage'
+import { getPreference } from '@nethserver/vue-tailwind-lib'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 

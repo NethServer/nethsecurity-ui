@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash'
 import { useUnitManagementStore } from '@/stores/controller/unitManagement'
 import { useRouter } from 'vue-router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { savePreference } from '@/lib/storage'
+import { savePreference } from '@nethserver/vue-tailwind-lib'
 
 const unitsStore = useUnitsStore()
 const unitManagementStore = useUnitManagementStore()

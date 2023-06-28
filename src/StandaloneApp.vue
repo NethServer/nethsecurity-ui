@@ -14,7 +14,7 @@ import { isStandaloneMode } from './lib/config'
 import { useUnitManagementStore } from './stores/controller/unitManagement'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getPreference } from './lib/storage'
+import { getPreference } from '@nethserver/vue-tailwind-lib'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 
 const loginStore = useLoginStore()

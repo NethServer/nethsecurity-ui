@@ -17,7 +17,11 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
 import { validateRequired } from '@/lib/validation'
-import { deleteFromStorage, getStringFromStorage, saveToStorage } from '@/lib/storage'
+import {
+  deleteFromStorage,
+  getStringFromStorage,
+  saveToStorage
+} from '@nethserver/vue-tailwind-lib'
 
 let username = ref('')
 let usernameRef = ref()

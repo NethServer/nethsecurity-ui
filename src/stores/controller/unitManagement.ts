@@ -7,7 +7,7 @@ import { getControllerApiEndpoint } from '../../lib/config'
 import { ref } from 'vue'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { getJsonFromStorage, saveToStorage } from '@/lib/storage'
+import { getJsonFromStorage, saveToStorage } from '@nethserver/vue-tailwind-lib'
 import { useRoute } from 'vue-router'
 import { useUnitsStore } from './units'
 

@@ -9,6 +9,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import GeneralSettings from '@/components/standalone/system_settings/GeneralSettings.vue'
+import TimeSynchronization from '@/components/standalone/system_settings/TimeSynchronization.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -53,6 +54,8 @@ function changeTab(tabName: any) {
       <GeneralSettings />
     </template>
     <template v-else-if="currentTab === 'logs'"> Logs </template>
-    <template v-else-if="currentTab === 'timeSync'"> TimeSync </template>
+    <template v-else-if="currentTab === 'timeSync'">
+      <TimeSynchronization />
+    </template>
   </div>
 </template>

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, NeComboBox, sortByProperty } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, sortByProperty, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -26,10 +26,6 @@ function sort() {
   list.value = list.value.sort(sortByProperty('name'))
 }
 
-// let testInput = ref('') ////
-
-const product = getProductName() ////
-
 let ubusOutput = ref('')
 
 async function testUbus() {
@@ -44,14 +40,6 @@ async function changeLocale(lang: string) {
   // reload page
   location.reload()
 }
-
-const cboItems = [
-  { id: '1', label: 'First' },
-  { id: '2', label: 'Second' },
-  { id: '3', label: 'Third', disabled: true },
-  { id: '4', label: 'Fourth' }
-]
-let cboSelected = ref('4')
 </script>
 
 <template>
@@ -70,7 +58,4 @@ let cboSelected = ref('4')
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>
 
   <div>{{ ubusOutput }}</div>
-
-  <!-- <NeComboBox v-model="cboSelected" :options="cboItems" label="Label" /> ////
-  <NeButton @click="cboSelected = '2'" class="mb-4">Set cbo</NeButton> -->
 </template>

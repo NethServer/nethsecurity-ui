@@ -22,6 +22,7 @@ import { faChevronUp as fasChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { faXmark as fasXmark } from '@fortawesome/free-solid-svg-icons'
 import { faGear as fasGear } from '@fortawesome/free-solid-svg-icons'
 import { faBars as fasBars } from '@fortawesome/free-solid-svg-icons'
+import { faTrash as fasTrash } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon) ////
@@ -47,4 +48,5 @@ export async function loadFontAwesome(app: any) {
   library.add(fasXmark)
   library.add(fasGear)
   library.add(fasBars)
+  library.add(fasTrash)
 }

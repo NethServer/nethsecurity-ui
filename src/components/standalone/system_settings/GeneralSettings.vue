@@ -81,6 +81,7 @@ async function getSystemInfo() {
     localTime.value = new Date(res.data.localtime * 1000)
     isLoadingSystemInfo.value = true
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_load_system_info')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -97,6 +98,7 @@ async function getSystemConfig() {
     description.value = config.system[0].description
     notes.value = config.system[0].notes
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_load_system_config')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -115,6 +117,7 @@ async function getTimezones() {
     }
     timezones.value = tzList
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_load_timezones')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -199,6 +202,7 @@ async function save() {
     await enableSysntpd()
     loadData()
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_save_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -214,6 +218,7 @@ async function syncWithBrowser() {
     })
     getSystemInfo()
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_sync_local_time')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -230,6 +235,7 @@ async function syncWithNtpServer() {
     })
     getSystemInfo()
   } catch (err: any) {
+    console.error(err)
     error.value.notificationTitle = t('error.cannot_sync_local_time')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -238,72 +244,74 @@ async function syncWithNtpServer() {
 </script>
 
 <template>
-  <NeInlineNotification
-    v-if="error.notificationTitle"
-    kind="error"
-    :title="error.notificationTitle"
-    :description="error.notificationDescription"
-    class="mb-4"
-  />
-  <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
-  <div v-else class="max-w-xl space-y-6">
-    <!-- hostname -->
-    <NeTextInput
-      :label="t('standalone.system_settings.hostname')"
-      v-model.trim="hostname"
-      :invalidMessage="error.hostname"
-      ref="hostnameRef"
+  <div class="max-w-xl">
+    <NeInlineNotification
+      v-if="error.notificationTitle"
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      class="mb-4"
     />
-    <!-- description -->
-    <NeTextInput
-      :label="t('standalone.system_settings.short_description')"
-      v-model.trim="description"
-      :placeholder="t('standalone.system_settings.short_description_placeholder')"
-    />
-    <!-- notes -->
-    <NeTextArea
-      :label="t('standalone.system_settings.notes')"
-      v-model.trim="notes"
-      :placeholder="t('standalone.system_settings.notes_placeholder')"
-    />
-    <!-- timezone -->
-    <NeComboBox
-      v-model="timezone"
-      :options="timezones"
-      :label="t('standalone.system_settings.timezone')"
-      :invalidMessage="error.timezone"
-      :noResultsLabel="t('ne_combobox.no_results')"
-      :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-      :ref="timezoneRef"
-    />
-    <!-- local time -->
-    <div>
-      <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
-      <div class="text-sm">
-        <!-- (?) luci converts local time to UTC in order to display it -->
-        <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
+    <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
+    <div v-else class="space-y-6">
+      <!-- hostname -->
+      <NeTextInput
+        :label="t('standalone.system_settings.hostname')"
+        v-model.trim="hostname"
+        :invalidMessage="error.hostname"
+        ref="hostnameRef"
+      />
+      <!-- description -->
+      <NeTextInput
+        :label="t('standalone.system_settings.short_description')"
+        v-model.trim="description"
+        :placeholder="t('standalone.system_settings.short_description_placeholder')"
+      />
+      <!-- notes -->
+      <NeTextArea
+        :label="t('standalone.system_settings.notes')"
+        v-model.trim="notes"
+        :placeholder="t('standalone.system_settings.notes_placeholder')"
+      />
+      <!-- timezone -->
+      <NeComboBox
+        v-model="timezone"
+        :options="timezones"
+        :label="t('standalone.system_settings.timezone')"
+        :invalidMessage="error.timezone"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :ref="timezoneRef"
+      />
+      <!-- local time -->
+      <div>
+        <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
+        <div class="text-sm">
+          <!-- (?) luci converts local time to UTC in order to display it -->
+          <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
+        </div>
       </div>
-    </div>
-    <!-- sync buttons -->
-    <div>
-      <NeButton
-        @click="syncWithBrowser"
-        kind="tertiary"
-        :disabled="isLoadingSyncWithBrowser"
-        class="-ml-2.5"
-        >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
-      >
-      <NeButton
-        @click="syncWithNtpServer"
-        kind="tertiary"
-        :disabled="isLoadingSyncWithNtpServer"
-        class="ml-4"
-        >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
-      >
-    </div>
-    <!-- save button -->
-    <div class="flex justify-end">
-      <NeButton @click="save">{{ t('common.save') }}</NeButton>
+      <!-- sync buttons -->
+      <div>
+        <NeButton
+          @click="syncWithBrowser"
+          kind="tertiary"
+          :disabled="isLoadingSyncWithBrowser"
+          class="-ml-2.5"
+          >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
+        >
+        <NeButton
+          @click="syncWithNtpServer"
+          kind="tertiary"
+          :disabled="isLoadingSyncWithNtpServer"
+          class="ml-4"
+          >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
+        >
+      </div>
+      <!-- save button -->
+      <div class="flex justify-end">
+        <NeButton kind="primary" @click="save">{{ t('common.save') }}</NeButton>
+      </div>
     </div>
   </div>
 </template>

@@ -20,7 +20,8 @@
     "cannot_load_system_config": "Cannot load system settings",
     "cannot_load_system_info": "Cannot load system info",
     "cannot_load_timezones": "Cannot load timezones",
-    "cannot_sync_local_time": "Cannot sync local time"
+    "cannot_sync_local_time": "Cannot sync local time",
+    "cannot_load_network_interfaces": "Cannot load network interfaces"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -75,7 +76,15 @@
       "local_time": "Local time",
       "timezone": "Timezone",
       "sync_with_browser": "Sync with browser",
-      "sync_with_ntp_server": "Sync with NTP server"
+      "sync_with_ntp_server": "Sync with NTP server",
+      "enable_ntp_client": "Enable NTP client",
+      "provide_ntp_server": "Provide NTP server",
+      "provide_ntp_server_to_interface": "Provide NTP server to interface",
+      "use_dhcp_advertised_servers": "Use DHCP advertised servers",
+      "all_interfaces": "All interfaces",
+      "settings": "Settings",
+      "ntp_server_candidates": "NTP server candidates",
+      "add_ntp_server": "Add NTP server"
     },
     "services": {
       "title": "Services"

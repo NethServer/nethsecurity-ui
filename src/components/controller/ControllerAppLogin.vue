@@ -123,7 +123,7 @@ function validate() {
       <div class="mx-auto w-full max-w-md lg:w-[26rem]">
         <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
           <!-- logo //// -->
-          <NeTitle level="h2">{{
+          <NeTitle level="h3">{{
             t('login.welcome_title_controller', { product: getProductName() })
           }}</NeTitle>
           <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">

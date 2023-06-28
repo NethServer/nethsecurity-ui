@@ -5,7 +5,8 @@
     "show_password": "Mostra password",
     "hide_password": "Nascondi password",
     "search": "Ricerca",
-    "help": "Aiuto"
+    "help": "Aiuto",
+    "optional": "Opzionale"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",

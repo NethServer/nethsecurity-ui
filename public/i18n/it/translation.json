@@ -5,7 +5,8 @@
     "show_password": "Mostra password",
     "hide_password": "Nascondi password",
     "search": "Ricerca",
-    "help": "Aiuto"
+    "help": "Aiuto",
+    "optional": "Opzionale"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -23,7 +24,8 @@
     "cannot_load_system_config": "Impossibile caricare le impostazioni di sistema",
     "cannot_load_system_info": "Impossibile caricare le informazioni di sistema",
     "cannot_load_timezones": "Impossibile caricare i fusi orari",
-    "cannot_sync_local_time": "Impossibile sincronizzare l'ora locale"
+    "cannot_sync_local_time": "Impossibile sincronizzare l'ora locale",
+    "cannot_load_network_interfaces": "Impossibile caricare le interfacce di rete"
   },
   "login": {
     "sign_in": "Accedi",
@@ -96,7 +98,15 @@
       "time_synchronization": "Sincronizzazione dell'orario",
       "timezone": "Fuso orario",
       "sync_with_browser": "Sincronizza con il browser",
-      "sync_with_ntp_server": "Sincronizza con il server NTP"
+      "sync_with_ntp_server": "Sincronizza con il server NTP",
+      "enable_ntp_client": "Abilita il client NTP",
+      "provide_ntp_server": "Fornire un server NTP",
+      "provide_ntp_server_to_interface": "Fornire un server NTP all'interfaccia",
+      "use_dhcp_advertised_servers": "Utilizzare i server DHCP pubblicizzati",
+      "all_interfaces": "Tutte le interfacce",
+      "settings": "Impostazioni",
+      "ntp_server_candidates": "Candidati server NTP",
+      "add_ntp_server": "Aggiungere un server NTP"
     },
     "services": {
       "title": "Servizi"

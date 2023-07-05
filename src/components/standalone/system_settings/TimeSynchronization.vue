@@ -33,10 +33,10 @@ let ntpServerInterface = ref('')
 let interfaces: Ref<NeComboboxOption[]> = ref([])
 let ntpServerCandidates: Ref<string[]> = ref([])
 let ntpConfig: Ref<any> = ref({})
-let isLoadingSystemConfig = ref(true)
-let isLoadingNetworkInterfaces = ref(true)
 
 let loading = ref({
+  systemConfig: true,
+  networkInterfaces: true,
   save: false
 })
 
@@ -47,22 +47,28 @@ let error = ref({
 })
 
 const isLoading = computed(() => {
-  return isLoadingSystemConfig.value || isLoadingNetworkInterfaces.value
+  return loading.value.systemConfig || loading.value.networkInterfaces
 })
 
-watch(isLoadingSystemConfig, () => {
-  if (!isLoadingSystemConfig.value && !isLoadingNetworkInterfaces.value) {
-    // set interface to combobox
-    ntpServerInterface.value = ntpConfig.value.interface || 'all'
+watch(
+  () => loading.value.systemConfig,
+  () => {
+    if (!loading.value.systemConfig && !loading.value.networkInterfaces) {
+      // set interface to combobox
+      ntpServerInterface.value = ntpConfig.value.interface || 'all'
+    }
   }
-})
+)
 
-watch(isLoadingNetworkInterfaces, () => {
-  if (!isLoadingSystemConfig.value && !isLoadingNetworkInterfaces.value) {
-    // set interface to combobox
-    ntpServerInterface.value = ntpConfig.value.interface || 'all'
+watch(
+  () => loading.value.networkInterfaces,
+  () => {
+    if (!loading.value.systemConfig && !loading.value.networkInterfaces) {
+      // set interface to combobox
+      ntpServerInterface.value = ntpConfig.value.interface || 'all'
+    }
   }
-})
+)
 
 onMounted(() => {
   loadData()
@@ -74,7 +80,7 @@ async function loadData() {
 }
 
 async function getSystemConfig() {
-  isLoadingSystemConfig.value = true
+  loading.value.systemConfig = true
 
   try {
     const config = await getUciConfig('system')
@@ -118,11 +124,11 @@ async function getSystemConfig() {
     error.value.notificationTitle = t('error.cannot_load_system_config')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingSystemConfig.value = false
+  loading.value.systemConfig = false
 }
 
 async function getNetworkInterfaces() {
-  isLoadingNetworkInterfaces.value = true
+  loading.value.networkInterfaces = true
 
   try {
     const res = await ubusCall('network.interface', 'dump')
@@ -145,7 +151,7 @@ async function getNetworkInterfaces() {
     error.value.notificationTitle = t('error.cannot_load_network_interfaces')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingNetworkInterfaces.value = false
+  loading.value.networkInterfaces = false
 }
 
 async function setSystemConfig() {

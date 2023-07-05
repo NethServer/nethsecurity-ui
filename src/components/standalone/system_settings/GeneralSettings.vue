@@ -33,13 +33,13 @@ let timezone = ref('')
 let timezoneRef = ref()
 let timezones = ref([])
 let systemConfig: any = ref({})
-let isLoadingSystemConfig = ref(true)
-let isLoadingSystemInfo = ref(true)
-let isLoadingTimezones = ref(true)
-let isLoadingSyncWithBrowser = ref(false)
-let isLoadingSyncWithNtpServer = ref(false)
 
 let loading = ref({
+  systemConfig: true,
+  systemInfo: true,
+  timezones: true,
+  syncWithBrowser: false,
+  syncWithNtpServer: false,
   save: false
 })
 
@@ -51,22 +51,28 @@ let error = ref({
 })
 
 const isLoading = computed(() => {
-  return isLoadingSystemConfig.value || isLoadingSystemInfo.value || isLoadingTimezones.value
+  return loading.value.systemConfig || loading.value.systemInfo || loading.value.timezones
 })
 
-watch(isLoadingSystemConfig, () => {
-  if (!isLoadingSystemConfig.value && !isLoadingTimezones.value) {
-    // set timezone in combobox
-    timezone.value = systemConfig.value.system[0].zonename
+watch(
+  () => loading.value.systemConfig,
+  () => {
+    if (!loading.value.systemConfig && !loading.value.timezones) {
+      // set timezone in combobox
+      timezone.value = systemConfig.value.system[0].zonename
+    }
   }
-})
+)
 
-watch(isLoadingTimezones, () => {
-  if (!isLoadingTimezones.value && !isLoadingSystemConfig.value) {
-    // set timezone in combobox
-    timezone.value = systemConfig.value.system[0].zonename
+watch(
+  () => loading.value.timezones,
+  () => {
+    if (!loading.value.systemConfig && !loading.value.timezones) {
+      // set timezone in combobox
+      timezone.value = systemConfig.value.system[0].zonename
+    }
   }
-})
+)
 
 onMounted(() => {
   loadData()
@@ -79,22 +85,22 @@ async function loadData() {
 }
 
 async function getSystemInfo() {
-  isLoadingSystemInfo.value = true
+  loading.value.systemInfo = true
 
   try {
     const res = await ubusCall('system', 'info')
     localTime.value = new Date(res.data.localtime * 1000)
-    isLoadingSystemInfo.value = true
+    loading.value.systemInfo = true
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_system_info')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingSystemInfo.value = false
+  loading.value.systemInfo = false
 }
 
 async function getSystemConfig() {
-  isLoadingSystemConfig.value = true
+  loading.value.systemConfig = true
 
   try {
     const config = await getUciConfig('system')
@@ -107,11 +113,11 @@ async function getSystemConfig() {
     error.value.notificationTitle = t('error.cannot_load_system_config')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingSystemConfig.value = false
+  loading.value.systemConfig = false
 }
 
 async function getTimezones() {
-  isLoadingTimezones.value = true
+  loading.value.timezones = true
 
   try {
     const res = await ubusCall('luci', 'getTimezones')
@@ -126,7 +132,7 @@ async function getTimezones() {
     error.value.notificationTitle = t('error.cannot_load_timezones')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingTimezones.value = false
+  loading.value.timezones = false
 }
 
 function validate() {
@@ -208,7 +214,7 @@ async function save() {
 }
 
 async function syncWithBrowser() {
-  isLoadingSyncWithBrowser.value = true
+  loading.value.syncWithBrowser = true
   const browserTime = Math.floor(Date.now() / 1000)
 
   try {
@@ -221,11 +227,11 @@ async function syncWithBrowser() {
     error.value.notificationTitle = t('error.cannot_sync_local_time')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingSyncWithBrowser.value = false
+  loading.value.syncWithBrowser = false
 }
 
 async function syncWithNtpServer() {
-  isLoadingSyncWithNtpServer.value = true
+  loading.value.syncWithNtpServer = true
 
   try {
     await ubusCall('luci', 'setInitAction', {
@@ -238,7 +244,7 @@ async function syncWithNtpServer() {
     error.value.notificationTitle = t('error.cannot_sync_local_time')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-  isLoadingSyncWithNtpServer.value = false
+  loading.value.syncWithNtpServer = false
 }
 </script>
 
@@ -261,6 +267,7 @@ async function syncWithNtpServer() {
             :label="t('standalone.system_settings.hostname')"
             v-model.trim="hostname"
             :invalidMessage="error.hostname"
+            :disabled="loading.save"
             ref="hostnameRef"
           />
           <!-- description -->
@@ -270,6 +277,7 @@ async function syncWithNtpServer() {
             :placeholder="t('standalone.system_settings.short_description_placeholder')"
             optional
             :optionalLabel="t('common.optional')"
+            :disabled="loading.save"
           />
           <!-- notes -->
           <NeTextArea
@@ -278,6 +286,7 @@ async function syncWithNtpServer() {
             :placeholder="t('standalone.system_settings.notes_placeholder')"
             optional
             :optionalLabel="t('common.optional')"
+            :disabled="loading.save"
           />
           <!-- timezone -->
           <NeComboBox
@@ -287,6 +296,7 @@ async function syncWithNtpServer() {
             :invalidMessage="error.timezone"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :disabled="loading.save"
             :ref="timezoneRef"
           />
           <!-- local time -->
@@ -302,14 +312,16 @@ async function syncWithNtpServer() {
             <NeButton
               @click="syncWithBrowser"
               kind="tertiary"
-              :disabled="isLoadingSyncWithBrowser"
+              :loading="loading.syncWithBrowser"
+              :disabled="loading.syncWithBrowser || loading.save"
               class="-ml-2.5"
               >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
             >
             <NeButton
               @click="syncWithNtpServer"
               kind="tertiary"
-              :disabled="isLoadingSyncWithNtpServer"
+              :loading="loading.syncWithNtpServer"
+              :disabled="loading.syncWithNtpServer || loading.save"
               class="ml-4"
               >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
             >

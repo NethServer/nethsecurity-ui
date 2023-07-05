@@ -49,14 +49,16 @@ function changeTab(tabName: any) {
       :srTabsLabel="t('ne_tabs.tabs')"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"
       @selectTab="changeTab"
-      class="mb-6"
+      class="mb-8"
     />
-    <template v-if="currentTab === 'general'">
-      <GeneralSettings />
-    </template>
-    <template v-else-if="currentTab === 'logs'"> Logs </template>
-    <template v-else-if="currentTab === 'timeSync'">
-      <TimeSynchronization />
-    </template>
+    <div class="px-8">
+      <template v-if="currentTab === 'general'">
+        <GeneralSettings />
+      </template>
+      <template v-else-if="currentTab === 'logs'"> Logs </template>
+      <template v-else-if="currentTab === 'timeSync'">
+        <TimeSynchronization />
+      </template>
+    </div>
   </div>
 </template>

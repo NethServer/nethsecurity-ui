@@ -2,11 +2,10 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import axios from 'axios'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
-export const ubusCall = async (path: string, method: any, payload: any, skipGetChanges = false) => {
+export const ubusCall = async (path: string, method: any, payload: any = {}) => {
   const loginStore = useLoginStore()
 
   const res = await axios.post(
@@ -18,13 +17,6 @@ export const ubusCall = async (path: string, method: any, payload: any, skipGetC
       }
     }
   )
-
-  // reload uci pending changes
-  if (method !== 'changes' && method !== 'get' && !skipGetChanges) {
-    const uciChangesStore = useUciPendingChangesStore()
-    uciChangesStore.getChanges()
-  }
-
   return res.data
 }
 

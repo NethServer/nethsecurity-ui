@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/validation'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
   NeButton,
   NeTextInput,
@@ -21,6 +22,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 
 let hostname = ref('')
 let hostnameRef = ref()
@@ -34,9 +36,12 @@ let systemConfig: any = ref({})
 let isLoadingSystemConfig = ref(true)
 let isLoadingSystemInfo = ref(true)
 let isLoadingTimezones = ref(true)
-//// show spinner in button
 let isLoadingSyncWithBrowser = ref(false)
 let isLoadingSyncWithNtpServer = ref(false)
+
+let loading = ref({
+  save: false
+})
 
 let error = ref({
   hostname: '',
@@ -77,7 +82,7 @@ async function getSystemInfo() {
   isLoadingSystemInfo.value = true
 
   try {
-    const res = await ubusCall('system', 'info', {})
+    const res = await ubusCall('system', 'info')
     localTime.value = new Date(res.data.localtime * 1000)
     isLoadingSystemInfo.value = true
   } catch (err: any) {
@@ -109,7 +114,7 @@ async function getTimezones() {
   isLoadingTimezones.value = true
 
   try {
-    const res = await ubusCall('luci', 'getTimezones', {})
+    const res = await ubusCall('luci', 'getTimezones')
     const tzList: any = []
 
     for (const [key, value] of Object.entries(res.data) as [string, any][]) {
@@ -125,6 +130,12 @@ async function getTimezones() {
 }
 
 function validate() {
+  // reset errors
+  error.value.hostname = ''
+  error.value.timezone = ''
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+
   let isValidationOk = true
 
   // hostname
@@ -148,19 +159,6 @@ function validate() {
       }
     }
   }
-
-  // timezone
-
-  {
-    // check required
-    let { valid, errMessage } = validateRequired(timezone.value)
-    if (!valid) {
-      error.value.timezone = t(errMessage as string)
-      isValidationOk = false
-      // focusElement(timezoneRef) //// fix: not working
-    }
-  }
-
   return isValidationOk
 }
 
@@ -188,14 +186,12 @@ async function enableSysntpd() {
 }
 
 async function save() {
-  error.value.hostname = ''
-  error.value.timezone = ''
-  //// clear other errors
   const isValidationOk = validate()
 
   if (!isValidationOk) {
     return
   }
+  loading.value.save = true
 
   try {
     await setSystemConfig()
@@ -205,6 +201,9 @@ async function save() {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_save_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    await uciChangesStore.getChanges()
+    loading.value.save = false
   }
 }
 
@@ -319,7 +318,7 @@ async function syncWithNtpServer() {
       </div>
       <!-- save button -->
       <div class="flex justify-end py-6">
-        <NeButton kind="primary" @click="save">
+        <NeButton kind="primary" @click="save" :loading="loading.save" :disabled="loading.save">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
           </template>

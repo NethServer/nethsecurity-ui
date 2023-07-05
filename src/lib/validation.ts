@@ -29,3 +29,58 @@ export const validateHostname = (hostname: String): validationOutput => {
   }
   return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }
+
+export const validateHost = (host: String): validationOutput => {
+  const validHostname = validateHostname(host)
+
+  if (validHostname.valid) {
+    return { valid: true }
+  }
+
+  const validIpAddress = validateIpAddress(host)
+
+  if (validIpAddress.valid) {
+    return { valid: true }
+  }
+  return { valid: false, errMessage: 'error.invalid_host' }
+}
+
+export const validateIpAddress = (ipAddr: String): validationOutput => {
+  const validIp4Addr = validateIp4Address(ipAddr)
+
+  if (validIp4Addr.valid) {
+    return { valid: true }
+  }
+
+  const validIp6Addr = validateIp6Address(ipAddr)
+
+  if (validIp6Addr.valid) {
+    return { valid: true }
+  }
+  return { valid: false, errMessage: 'error.invalid_ip_address' }
+}
+
+export const validateIp4Address = (ipAddr: String): validationOutput => {
+  const re = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/
+  const match = ipAddr.match(re)
+
+  if (!match) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_address' }
+  }
+
+  if (
+    Number(match[1]) > 255 ||
+    Number(match[2]) > 255 ||
+    Number(match[3]) > 255 ||
+    Number(match[4]) > 255
+  ) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_address' }
+  }
+
+  return { valid: true }
+}
+
+export const validateIp6Address = (ipAddr: String): validationOutput => {
+  //// TODO
+  return { valid: false, errMessage: 'error.invalid_ip_v6_address' }
+}

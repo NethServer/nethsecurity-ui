@@ -17,7 +17,7 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
   })
 
   const getChanges = async () => {
-    const res = await ubusCall('uci', 'changes', {})
+    const res = await ubusCall('uci', 'changes')
     changes.value = res.data.changes
   }
 
@@ -29,7 +29,7 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
     const commitPromises = []
 
     for (const config of configsToCommit) {
-      commitPromises.push(ubusCall('uci', 'commit', { config: config }, true))
+      commitPromises.push(ubusCall('uci', 'commit', { config: config }))
     }
     await Promise.all(commitPromises)
 
@@ -45,7 +45,7 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
     const revertPromises = []
 
     for (const config of configsToRevert) {
-      revertPromises.push(ubusCall('uci', 'revert', { config: config }, true))
+      revertPromises.push(ubusCall('uci', 'revert', { config: config }))
     }
     await Promise.all(revertPromises)
 

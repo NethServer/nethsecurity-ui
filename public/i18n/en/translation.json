@@ -22,7 +22,11 @@
     "cannot_load_system_info": "Cannot load system info",
     "cannot_load_timezones": "Cannot load timezones",
     "cannot_sync_local_time": "Cannot sync local time",
-    "cannot_load_network_interfaces": "Cannot load network interfaces"
+    "cannot_load_network_interfaces": "Cannot load network interfaces",
+    "invalid_host": "Invalid host: must be a hostname or an IP address",
+    "invalid_ip_address": "Invalid IP address",
+    "invalid_ip_v4_address": "Invalid IP v4 address",
+    "invalid_ip_v6_address": "Invalid IP v6 address"
   },
   "ne_text_input": {
     "show_password": "Show password",

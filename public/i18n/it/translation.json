@@ -105,8 +105,8 @@
       "use_dhcp_advertised_servers": "Utilizzare i server DHCP pubblicizzati",
       "all_interfaces": "Tutte le interfacce",
       "settings": "Impostazioni",
-      "ntp_server_candidates": "Candidati server NTP",
-      "add_ntp_server": "Aggiungere un server NTP"
+      "ntp_server_candidates": "Server NTP",
+      "add_ntp_server": "Aggiungi server NTP"
     },
     "services": {
       "title": "Servizi"

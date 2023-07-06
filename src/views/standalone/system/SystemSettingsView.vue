@@ -17,7 +17,7 @@ const router = useRouter()
 
 const tabs = ref([
   { name: 'general', label: t('standalone.system_settings.general_settings') },
-  { name: 'logs', label: t('standalone.system_settings.logs_settings') },
+  // { name: 'logs', label: t('standalone.system_settings.logs_settings') }, ////
   { name: 'timeSync', label: t('standalone.system_settings.time_synchronization') }
 ])
 

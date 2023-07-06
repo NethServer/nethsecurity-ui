@@ -257,7 +257,7 @@ async function syncWithNtpServer() {
       :description="error.notificationDescription"
       class="mb-4"
     />
-    <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
+    <NeSkeleton v-if="isLoading" size="lg" :lines="12" />
     <div v-else>
       <!-- main section -->
       <div class="border-b pb-6 border-gray-200 dark:border-gray-700">

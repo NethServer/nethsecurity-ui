@@ -274,7 +274,7 @@ function addNtpServer() {
       :description="error.notificationDescription"
       class="mb-4"
     />
-    <NeSkeleton v-if="isLoading" size="lg" :lines="8" />
+    <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
     <div v-else>
       <!-- settings section -->
       <div class="flex flex-col lg:flex-row border-b pb-6 border-gray-200 dark:border-gray-700">

@@ -25,7 +25,11 @@
     "cannot_load_system_info": "Impossibile caricare le informazioni di sistema",
     "cannot_load_timezones": "Impossibile caricare i fusi orari",
     "cannot_sync_local_time": "Impossibile sincronizzare l'ora locale",
-    "cannot_load_network_interfaces": "Impossibile caricare le interfacce di rete"
+    "cannot_load_network_interfaces": "Impossibile caricare le interfacce di rete",
+    "invalid_host": "Host non valido: deve essere un nome host o un indirizzo IP",
+    "invalid_ip_address": "Indirizzo IP non valido",
+    "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
+    "invalid_ip_v6_address": "Indirizzo IP v6 non valido"
   },
   "login": {
     "sign_in": "Accedi",
@@ -105,8 +109,8 @@
       "use_dhcp_advertised_servers": "Utilizzare i server DHCP pubblicizzati",
       "all_interfaces": "Tutte le interfacce",
       "settings": "Impostazioni",
-      "ntp_server_candidates": "Candidati server NTP",
-      "add_ntp_server": "Aggiungere un server NTP"
+      "ntp_server_candidates": "Server NTP",
+      "add_ntp_server": "Aggiungi server NTP"
     },
     "services": {
       "title": "Servizi"

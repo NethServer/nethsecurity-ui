@@ -26,7 +26,7 @@
     "cannot_load_timezones": "Impossibile caricare i fusi orari",
     "cannot_sync_local_time": "Impossibile sincronizzare l'ora locale",
     "cannot_load_network_interfaces": "Impossibile caricare le interfacce di rete",
-    "invalid_host": "Host non valido: deve essere un nome di host o un indirizzo IP.",
+    "invalid_host": "Host non valido: deve essere un nome host o un indirizzo IP",
     "invalid_ip_address": "Indirizzo IP non valido",
     "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido"

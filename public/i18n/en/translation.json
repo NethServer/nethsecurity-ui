@@ -88,7 +88,7 @@
       "use_dhcp_advertised_servers": "Use DHCP advertised servers",
       "all_interfaces": "All interfaces",
       "settings": "Settings",
-      "ntp_server_candidates": "NTP server candidates",
+      "ntp_server_candidates": "NTP servers",
       "add_ntp_server": "Add NTP server"
     },
     "services": {

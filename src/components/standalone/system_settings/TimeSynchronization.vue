@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { isEmpty, uniq } from 'lodash'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -187,16 +187,21 @@ async function enableSysntpd() {
 
 function validate() {
   // reset errors
-  error.value.ntpServerCandidate = []
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
 
   // remove empty ntp servers
-  ntpServerCandidates.value = ntpServerCandidates.value.filter((server) => server.trim())
+  ntpServerCandidates.value = ntpServerCandidates.value.filter((server) => server)
 
+  // remove duplicates ntp servers
+  ntpServerCandidates.value = uniq(ntpServerCandidates.value)
+
+  // reset ntp server errors
+  error.value.ntpServerCandidate = []
   for (const ntpServerCandidate of ntpServerCandidates.value) {
     error.value.ntpServerCandidate.push('')
   }
+
   let isValidationOk = true
 
   // ntp server candidates

@@ -23,6 +23,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
+import UciChangesModal from './UciChangesModal.vue'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
@@ -39,10 +40,11 @@ const accountMenu = [
 ]
 
 const sidebarOpen = ref(false)
+
+let showUciChangesModal = ref(false)
+
 const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
 </script>
-
-<!-- //// review -->
 
 <template>
   <div>
@@ -265,14 +267,28 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">
-              <!-- unsaved changes -->
-              <NeButton kind="primary" @click="uciChangesStore.commitChanges"
-                >Commit changes: {{ uciChangesStore.numChanges }}</NeButton
-              >
-              <!-- //// delete: revert button -->
-              <NeButton kind="danger" @click="uciChangesStore.revertChanges" class="ml-2"
-                >Revert changes</NeButton
-              >
+              <NeButton kind="primary" @click="showUciChangesModal = true">
+                <template #prefix>
+                  <font-awesome-icon
+                    :icon="['fas', 'pen-to-square']"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+                <span>
+                  {{
+                    t(
+                      'standalone.uci_changes.unsaved_changes',
+                      { count: uciChangesStore.numChanges },
+                      uciChangesStore.numChanges
+                    )
+                  }}
+                </span>
+              </NeButton>
+              <UciChangesModal
+                :visible="showUciChangesModal"
+                @close="showUciChangesModal = false"
+              />
             </div>
             <!-- help -->
             <button

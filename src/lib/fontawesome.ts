@@ -25,6 +25,9 @@ import { faBars as fasBars } from '@fortawesome/free-solid-svg-icons'
 import { faTrash as fasTrash } from '@fortawesome/free-solid-svg-icons'
 import { faFloppyDisk as fasFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 import { faPlus as fasPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPenToSquare as fasPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus as fasCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { faCircleMinus as fasCircleMinus } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon) ////
@@ -53,4 +56,7 @@ export async function loadFontAwesome(app: any) {
   library.add(fasTrash)
   library.add(fasFloppyDisk)
   library.add(fasPlus)
+  library.add(fasPenToSquare)
+  library.add(fasCirclePlus)
+  library.add(fasCircleMinus)
 }

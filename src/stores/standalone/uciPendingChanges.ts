@@ -3,10 +3,10 @@
 
 import { defineStore } from 'pinia'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { computed, ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 
 export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => {
-  const changes = ref({})
+  const changes: Ref<any> = ref({})
 
   const numChanges = computed(() => {
     let num = 0

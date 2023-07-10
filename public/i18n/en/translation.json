@@ -4,7 +4,8 @@
     "cancel": "Cancel",
     "search": "Search",
     "help": "Help",
-    "optional": "Optional"
+    "optional": "Optional",
+    "close": "Close"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -26,7 +27,9 @@
     "invalid_host": "Invalid host: must be a hostname or an IP address",
     "invalid_ip_address": "Invalid IP address",
     "invalid_ip_v4_address": "Invalid IP v4 address",
-    "invalid_ip_v6_address": "Invalid IP v6 address"
+    "invalid_ip_v6_address": "Invalid IP v6 address",
+    "cannot_apply_configuration_changes": "Cannot apply configuration changes",
+    "cannot_revert_configuration_changes": "Cannot revert configuration changes"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -90,6 +93,12 @@
       "settings": "Settings",
       "ntp_server_candidates": "NTP servers",
       "add_ntp_server": "Add NTP server"
+    },
+    "uci_changes": {
+      "configuration_changes": "Configuration changes",
+      "unsaved_changes": "{count} unsaved change | {count} unsaved changes",
+      "apply": "Apply",
+      "revert": "Revert"
     },
     "services": {
       "title": "Services"

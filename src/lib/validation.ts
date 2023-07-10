@@ -84,3 +84,25 @@ export const validateIp6Address = (ipAddr: String): validationOutput => {
   //// TODO
   return { valid: false, errMessage: 'error.invalid_ip_v6_address' }
 }
+
+/**
+ * Extends Map class to provide a name-array for errors
+ */
+export class MessageBag extends Map<string, Array<string>> {
+  set(key: string, value: Array<string>): this {
+    if (!super.has(key)) {
+      super.set(key, new Array<string>())
+    }
+    super.get(key)!.push(...value)
+    return this
+  }
+}
+
+/**
+ * Error class for validation errors
+ */
+export class ValidationError extends Error {
+  constructor() {
+    super('error.validation_failed')
+  }
+}

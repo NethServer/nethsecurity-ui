@@ -50,3 +50,7 @@ body {
   transform: translateY(-15px);
   opacity: 0;
 }
+
+.page-title {
+  @apply font-medium leading-normal text-gray-900 dark:text-gray-100 text-2xl mb-8;
+}

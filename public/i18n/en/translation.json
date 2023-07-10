@@ -16,6 +16,7 @@
     "http_404": "Resource not found",
     "http_500": "Server error",
     "required": "Required",
+    "validation_failed": "Validation failed",
     "invalid_hostname": "Invalid hostname",
     "hostname_is_too_long": "Hostname has too many characters",
     "cannot_save_configuration": "Cannot save configuration",
@@ -107,7 +108,18 @@
       "title": "Services"
     },
     "ssh": {
-      "title": "SSH"
+      "title": "SSH",
+      "ssh_access": {
+        "description": "Dropbear offers SSH network shell access and an integrated SCP server",
+        "title": "SSH Access",
+        "tcp_port_label": "TCP Port",
+        "allow_ssh_password_auth": "Allow SSH password authentication",
+        "allow_root_login_with_password": "Allow the root user to login with password",
+        "allow_remote_host_connection": "Allow remote hosts to connect to local SSH forwarded ports",
+        "tcp_port_too_low": "TCP port must be greater than 1",
+        "tcp_port_too_high": "TCP port must be less than 65535",
+        "tcp_port_invalid": "TCP port is invalid"
+      }
     },
     "backup_and_restore": {
       "title": "Backup & restore"

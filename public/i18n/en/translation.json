@@ -119,6 +119,27 @@
         "tcp_port_too_low": "TCP port must be greater than 1",
         "tcp_port_too_high": "TCP port must be less than 65535",
         "tcp_port_invalid": "TCP port is invalid"
+      },
+      "ssh_keys": {
+        "description": "Public keys allow for passwordless SSH logins with a higher security compared to the use of plain passwords",
+        "title": "SSH Keys",
+        "public_keys_label": "Public keys",
+        "add_key_button": "Add key",
+        "unnamed_key": "Unnamed key",
+        "add_new_ssh_key": {
+          "label": "Add new SSH key",
+          "placeholder": "Paste SSH key here..."
+        },
+        "delete_key_modal": {
+          "title": "Delete SSH key",
+          "body": "Do you really want to delete the following SSH key?",
+          "button": "Delete key"
+        },
+        "validation": {
+          "required": "Required",
+          "invalid": "Invalid key",
+          "duplicate": "Key already exists"
+        }
       }
     },
     "backup_and_restore": {

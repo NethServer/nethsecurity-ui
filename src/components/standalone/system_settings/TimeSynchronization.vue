@@ -248,8 +248,8 @@ async function save() {
     error.value.notificationTitle = t('error.cannot_save_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
-    await uciChangesStore.getChanges()
     loading.value.save = false
+    await uciChangesStore.getChanges()
   }
 }
 

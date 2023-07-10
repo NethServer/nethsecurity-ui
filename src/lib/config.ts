@@ -7,19 +7,6 @@ export const isStandaloneMode = () => {
   return import.meta.env.VITE_UI_MODE === 'standalone'
 }
 
-//// delete
-// export const getApiEndpoint = () => {
-//   if (isStandaloneMode()) {
-//     // standalone
-
-//     return getStandaloneApiEndpoint()
-//   } else {
-//     // controller
-
-//     return getControllerApiEndpoint()
-//   }
-// }
-
 export const getStandaloneApiEndpoint = () => {
   if (!isStandaloneMode()) {
     // a controller is managing this unit

@@ -9,8 +9,11 @@
 
 /* //// review */
 
-html {
-  @apply h-full;
+@layer base {
+  html {
+    font-family: Poppins, system-ui, sans-serif;
+    @apply h-full;
+  }
 }
 
 body {

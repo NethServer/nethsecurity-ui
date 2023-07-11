@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, sortByProperty } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, sortByProperty, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useI18n } from 'vue-i18n'
@@ -13,17 +13,6 @@ import { savePreference } from '@nethserver/vue-tailwind-lib'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
-
-////
-let list = ref([
-  { id: 1, name: 'bbb' },
-  { id: 2, name: 'aaa' }
-])
-
-////
-function sort() {
-  list.value = list.value.sort(sortByProperty('name'))
-}
 
 let ubusOutput = ref('')
 
@@ -46,12 +35,9 @@ async function changeLocale(lang: string) {
 
   <!-- ////  -->
   <div class="mb-8">
-    <div class="mb-4">Select language</div>
-    <NeButton @click="changeLocale('it')" class="mb-4 mr-4">Italian</NeButton>
-    <NeButton @click="changeLocale('en')" class="mb-4">English</NeButton>
+    <NeButton @click="changeLocale('it')" class="mb-4 mr-4">ITA</NeButton>
+    <NeButton @click="changeLocale('en')" class="mb-4">ENG</NeButton>
   </div>
-
-  <div class="mb-8">Test i18n label: {{ t('common.save') }}</div>
 
   <!-- ////  -->
   <NeButton @click="testUbus" class="mb-4">Test ubus</NeButton>

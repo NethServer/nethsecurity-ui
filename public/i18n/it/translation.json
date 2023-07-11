@@ -121,8 +121,8 @@
     "uci_changes": {
       "configuration_changes": "Modifiche alla configurazione",
       "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
-      "apply": "Applicare",
-      "revert": "Inversione di marcia"
+      "apply": "Applica",
+      "revert": "Ripristina"
     }
   },
   "controller": {

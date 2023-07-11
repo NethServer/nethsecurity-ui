@@ -17,9 +17,9 @@
     "http_403": "Errore di autorizzazione",
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
-    "required": "Richiesto",
+    "required": "Necessario",
     "incorrect_username_or_password": "Nome utente o password errati",
-    "invalid_hostname": "Nome host non valido",
+    "invalid_hostname": "Hostname non valido",
     "hostname_is_too_long": "Il nome host ha troppi caratteri",
     "cannot_save_configuration": "Impossibile salvare la configurazione",
     "cannot_load_system_config": "Impossibile caricare le impostazioni di sistema",
@@ -35,15 +35,15 @@
     "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione"
   },
   "login": {
-    "sign_in": "Accedi",
-    "cannot_login": "Impossibile accedere",
-    "incorrect_username_or_password": "Nome utente o password errati",
-    "welcome_title_standalone": "Benvenuti",
+    "sign_in": "Registrazione",
+    "cannot_login": "Non riesci ad accedere",
+    "incorrect_username_or_password": "nome utente o password errati",
+    "welcome_title_standalone": "Benvenuto",
     "welcome_description_standalone": "Accedi a {product}, proteggi la tua rete e accedi rapidamente al cloud.",
-    "welcome_title_controller": "Benvenuti",
+    "welcome_title_controller": "Benvenuto",
     "welcome_description_controller": "{product} Controller consente di gestire le unit di {prodotto} in modo rapido e semplice.",
     "username": "Nome utente",
-    "password": "Password",
+    "password": "Parola d'ordine",
     "remember_me": "Ricordami",
     "need_help": "Serve aiuto?"
   },
@@ -52,10 +52,10 @@
       "title": "SSH"
     },
     "backup_and_restore": {
-      "title": "Backup e ripristino"
+      "title": "Ripristinare il backup"
     },
     "reboot_and_shutdown": {
-      "title": "Riavvio e spegnimento"
+      "title": "Riavvia e spegni"
     },
     "network": {
       "title": "Rete"
@@ -79,7 +79,7 @@
       "title": "Report"
     },
     "shell": {
-      "sign_out": "Esci",
+      "sign_out": "disconnessione",
       "open_sidebar": "Apri la barra laterale",
       "close_sidebar": "Chiudi la barra laterale",
       "toggle_theme": "Cambia tema",
@@ -149,6 +149,9 @@
         "provide_ntp_server_to_interface": "Offri server NTP ad un'interfaccia"
       },
       "title": "Sistema"
+    },
+    "interfaces_and_devices": {
+      "title": "Interfacce e dispositivi"
     }
   },
   "controller": {
@@ -167,7 +170,7 @@
     "hide_password": "Nascondi la password"
   },
   "ne_tabs": {
-    "select_a_tab": "Selezionare una scheda",
+    "select_a_tab": "Seleziona una scheda",
     "tabs": "Schede"
   },
   "ne_combobox": {

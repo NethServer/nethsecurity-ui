@@ -32,7 +32,7 @@
     "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
     "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
-    "cannot_revert_configuration_changes": "Non è possibile ripristinare le modifiche alla configurazione"
+    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione"
   },
   "login": {
     "sign_in": "Accedi",

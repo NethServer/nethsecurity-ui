@@ -22,7 +22,7 @@ const navigation: Ref<any> = ref([
     children: [
       { name: t('standalone.registration.title'), to: 'system/registration' },
       {
-        name: t('standalone.system.system_settings.title'),
+        name: t('standalone.system_settings.title'),
         to: 'system/systemSettings'
       },
       { name: t('standalone.services.title'), to: 'system/services' },
@@ -38,7 +38,18 @@ const navigation: Ref<any> = ref([
     ],
     expanded: false
   },
-  { name: t('standalone.network.title'), to: 'network', icon: 'network-wired' },
+  {
+    name: t('standalone.network.title'),
+    to: 'network',
+    icon: 'network-wired',
+    children: [
+      {
+        name: t('standalone.interfaces_and_devices.title'),
+        to: 'network/interfaces-and-devices'
+      }
+    ],
+    expanded: false
+  },
   {
     name: t('standalone.users_and_objects.title'),
     to: 'users-and-objects',

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, sortByProperty, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useI18n } from 'vue-i18n'

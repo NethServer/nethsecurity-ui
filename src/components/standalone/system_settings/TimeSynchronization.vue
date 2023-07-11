@@ -133,7 +133,7 @@ async function getNetworkInterfaces() {
   try {
     const res = await ubusCall('network.interface', 'dump')
     let interfacesList: NeComboboxOption[] = [
-      { id: 'all', label: t('standalone.system.system_settings.all_interfaces') }
+      { id: 'all', label: t('standalone.system_settings.all_interfaces') }
     ]
 
     for (const iface of res.data.interface) {
@@ -279,13 +279,13 @@ function addNtpServer() {
       <!-- settings section -->
       <div class="flex flex-col lg:flex-row border-b pb-6 border-gray-200 dark:border-gray-700">
         <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
-          <NeTitle level="h3">{{ t('standalone.system.system_settings.settings') }}</NeTitle>
+          <NeTitle level="h3">{{ t('standalone.system_settings.settings') }}</NeTitle>
         </div>
         <div class="w-full lg:w-3/5 space-y-6">
           <!-- enable ntp client -->
           <NeToggle
             v-model="enableNtpClient"
-            :label="t('standalone.system.system_settings.enable_ntp_client')"
+            :label="t('standalone.system_settings.enable_ntp_client')"
             :disabled="loading.save"
           />
           <Transition name="fade">
@@ -293,7 +293,7 @@ function addNtpServer() {
               <!-- provide ntp server -->
               <NeToggle
                 v-model="provideNtpServer"
-                :label="t('standalone.system.system_settings.provide_ntp_server')"
+                :label="t('standalone.system_settings.provide_ntp_server')"
                 :disabled="loading.save"
               />
               <!-- provide ntp server to interface -->
@@ -302,7 +302,7 @@ function addNtpServer() {
                   <NeComboBox
                     v-model="ntpServerInterface"
                     :options="interfaces"
-                    :label="t('standalone.system.system_settings.provide_ntp_server_to_interface')"
+                    :label="t('standalone.system_settings.provide_ntp_server_to_interface')"
                     :noResultsLabel="t('ne_combobox.no_results')"
                     :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
                     :disabled="loading.save"
@@ -312,7 +312,7 @@ function addNtpServer() {
               <!-- use dhcp advertised servers -->
               <NeCheckbox
                 v-model="useDhcpAdvertisedServers"
-                :label="t('standalone.system.system_settings.use_dhcp_advertised_servers')"
+                :label="t('standalone.system_settings.use_dhcp_advertised_servers')"
                 :disabled="loading.save"
               />
             </div>
@@ -327,7 +327,7 @@ function addNtpServer() {
         >
           <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
             <NeTitle level="h3">{{
-              t('standalone.system.system_settings.ntp_server_candidates')
+              t('standalone.system_settings.ntp_server_candidates')
             }}</NeTitle>
           </div>
           <div class="w-full lg:w-3/5 space-y-6">
@@ -356,7 +356,7 @@ function addNtpServer() {
                 <template #prefix>
                   <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
                 </template>
-                {{ t('standalone.system.system_settings.add_ntp_server') }}
+                {{ t('standalone.system_settings.add_ntp_server') }}
               </NeButton>
             </div>
           </div>

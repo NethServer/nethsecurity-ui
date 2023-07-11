@@ -72,30 +72,30 @@
       "title": "Registration"
     },
     "system": {
-      "title": "System",
-      "system_settings": {
-        "title": "System settings",
-        "general_settings": "General settings",
-        "logs_settings": "Logs settings",
-        "time_synchronization": "Time synchronization",
-        "hostname": "Hostname",
-        "short_description": "Short description",
-        "short_description_placeholder": "Short description of this unit",
-        "notes": "Notes",
-        "notes_placeholder": "Notes about this unit",
-        "local_time": "Local time",
-        "timezone": "Timezone",
-        "sync_with_browser": "Sync with browser",
-        "sync_with_ntp_server": "Sync with NTP server",
-        "enable_ntp_client": "Enable NTP client",
-        "provide_ntp_server": "Provide NTP server",
-        "provide_ntp_server_to_interface": "Provide NTP server to interface",
-        "use_dhcp_advertised_servers": "Use DHCP advertised servers",
-        "all_interfaces": "All interfaces",
-        "settings": "Settings",
-        "ntp_server_candidates": "NTP servers",
-        "add_ntp_server": "Add NTP server"
-      }
+      "title": "System"
+    },
+    "system_settings": {
+      "title": "System settings",
+      "general_settings": "General settings",
+      "logs_settings": "Logs settings",
+      "time_synchronization": "Time synchronization",
+      "hostname": "Hostname",
+      "short_description": "Short description",
+      "short_description_placeholder": "Short description of this unit",
+      "notes": "Notes",
+      "notes_placeholder": "Notes about this unit",
+      "local_time": "Local time",
+      "timezone": "Timezone",
+      "sync_with_browser": "Sync with browser",
+      "sync_with_ntp_server": "Sync with NTP server",
+      "enable_ntp_client": "Enable NTP client",
+      "provide_ntp_server": "Provide NTP server",
+      "provide_ntp_server_to_interface": "Provide NTP server to interface",
+      "use_dhcp_advertised_servers": "Use DHCP advertised servers",
+      "all_interfaces": "All interfaces",
+      "settings": "Settings",
+      "ntp_server_candidates": "NTP servers",
+      "add_ntp_server": "Add NTP server"
     },
     "uci_changes": {
       "configuration_changes": "Configuration changes",
@@ -117,6 +117,9 @@
     },
     "network": {
       "title": "Network"
+    },
+    "interfaces_and_devices": {
+      "title": "Interfaces and devices"
     },
     "users_and_objects": {
       "title": "Users & objects"

@@ -31,14 +31,19 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/SSHView.vue')
   },
   {
-    path: 'system/backup-restore',
+    path: 'system/backup-and-restore',
     name: 'BackupAndRestore',
     component: () => import('../views/standalone/system/BackupAndRestoreView.vue')
   },
   {
-    path: 'system/reboot-shutdown',
+    path: 'system/reboot-and-shutdown',
     name: 'RebootAndShutdown',
     component: () => import('../views/standalone/system/RebootAndShutdownView.vue')
+  },
+  {
+    path: 'network/interfaces-and-devices',
+    name: 'Interfaces',
+    component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')
   }
 ]
 

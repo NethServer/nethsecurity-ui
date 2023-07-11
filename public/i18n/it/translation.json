@@ -6,7 +6,8 @@
     "hide_password": "Nascondi password",
     "search": "Ricerca",
     "help": "Aiuto",
-    "optional": "Opzionale"
+    "optional": "Opzionale",
+    "close": "Chiudi"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -29,7 +30,9 @@
     "invalid_host": "Host non valido: deve essere un nome host o un indirizzo IP",
     "invalid_ip_address": "Indirizzo IP non valido",
     "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
-    "invalid_ip_v6_address": "Indirizzo IP v6 non valido"
+    "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
+    "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
+    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione"
   },
   "login": {
     "sign_in": "Accedi",
@@ -114,6 +117,12 @@
     },
     "services": {
       "title": "Servizi"
+    },
+    "uci_changes": {
+      "configuration_changes": "Modifiche alla configurazione",
+      "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
+      "apply": "Applica",
+      "revert": "Ripristina"
     }
   },
   "controller": {

@@ -11,7 +11,7 @@ import {
   NeExpandable,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { computed, ref, watch, type Ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({

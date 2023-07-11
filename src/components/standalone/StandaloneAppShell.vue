@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import {
   Dialog,
   DialogPanel,
@@ -24,6 +24,7 @@ import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
+import { isEmpty } from 'lodash'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
@@ -43,7 +44,25 @@ const sidebarOpen = ref(false)
 
 let showUciChangesModal = ref(false)
 
+let isChangesButtonFlashing = ref(false)
+
 const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
+
+watch(
+  () => uciChangesStore.changes,
+  () => {
+    if (!isEmpty(uciChangesStore.changes)) {
+      // briefly flash unsaved changes button
+      setTimeout(() => {
+        isChangesButtonFlashing.value = true
+      }, 500)
+
+      setTimeout(() => {
+        isChangesButtonFlashing.value = false
+      }, 1000)
+    }
+  }
+)
 </script>
 
 <template>
@@ -259,7 +278,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">
-              <NeButton kind="primary" @click="showUciChangesModal = true">
+              <NeButton kind="primary" @click="showUciChangesModal = true" class="relative">
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', 'pen-to-square']"
@@ -276,6 +295,10 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
                     )
                   }}
                 </span>
+                <span
+                  v-if="isChangesButtonFlashing"
+                  class="animate-ping absolute inline-flex h-full w-3/4 rounded-md opacity-75 dark:opacity-75 bg-primary-700 dark:bg-primary-300"
+                ></span>
               </NeButton>
               <UciChangesModal
                 :visible="showUciChangesModal"

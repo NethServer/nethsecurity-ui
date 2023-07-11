@@ -41,7 +41,7 @@
     "welcome_title_standalone": "Benvenuti",
     "welcome_description_standalone": "Accedi a {product}, proteggi la tua rete e accedi rapidamente al cloud.",
     "welcome_title_controller": "Benvenuti",
-    "welcome_description_controller": "{product} Controller consente di gestire le unità di {prodotto} in modo rapido e semplice.",
+    "welcome_description_controller": "{product} Controller consente di gestire le unit di {prodotto} in modo rapido e semplice.",
     "username": "Nome utente",
     "password": "Password",
     "remember_me": "Ricordami",
@@ -123,6 +123,32 @@
       "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
       "apply": "Applica",
       "revert": "Ripristina"
+    },
+    "system": {
+      "system_settings": {
+        "use_dhcp_advertised_servers": "Utilizza i server DHCP pubblicizzati",
+        "all_interfaces": "Tutte le interfacce",
+        "settings": "Impostazioni",
+        "ntp_server_candidates": "Server NTP",
+        "add_ntp_server": "Aggiungi server NTP",
+        "title": "Impostazioni di sistema",
+        "general_settings": "Impostazioni generali",
+        "logs_settings": "Impostazioni dei log",
+        "time_synchronization": "Sincronizzazione temporale",
+        "hostname": "Nome host",
+        "short_description": "Breve descrizione",
+        "short_description_placeholder": "Breve descrizione di questa unit",
+        "notes": "Note",
+        "notes_placeholder": "Note su questa unit",
+        "local_time": "Ora locale",
+        "timezone": "Fuso orario",
+        "sync_with_browser": "Sincronizzazione con il browser",
+        "sync_with_ntp_server": "Sincronizzazione con server NTP",
+        "enable_ntp_client": "Abilita client NTP",
+        "provide_ntp_server": "Offri server NTP",
+        "provide_ntp_server_to_interface": "Offri server NTP ad un'interfaccia"
+      },
+      "title": "Sistema"
     }
   },
   "controller": {

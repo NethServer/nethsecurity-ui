@@ -16,9 +16,9 @@ const route = useRoute()
 const router = useRouter()
 
 const tabs = ref([
-  { name: 'general', label: t('standalone.system_settings.general_settings') },
-  // { name: 'logs', label: t('standalone.system_settings.logs_settings') }, ////
-  { name: 'timeSync', label: t('standalone.system_settings.time_synchronization') }
+  { name: 'general', label: t('standalone.system.system_settings.general_settings') },
+  // { name: 'logs', label: t('standalone.system.system_settings.logs_settings') }, ////
+  { name: 'timeSync', label: t('standalone.system.system_settings.time_synchronization') }
 ])
 
 let currentTab = ref('')
@@ -42,7 +42,7 @@ function changeTab(tabName: any) {
 
 <template>
   <div>
-    <NeTitle>{{ t('standalone.system_settings.title') }}</NeTitle>
+    <NeTitle>{{ t('standalone.system.system_settings.title') }}</NeTitle>
     <NeTabs
       :tabs="tabs"
       :selected="initiallySelectedTab"

@@ -264,7 +264,7 @@ async function syncWithNtpServer() {
         <div class="space-y-6">
           <!-- hostname -->
           <NeTextInput
-            :label="t('standalone.system_settings.hostname')"
+            :label="t('standalone.system.system_settings.hostname')"
             v-model.trim="hostname"
             :invalidMessage="error.hostname"
             :disabled="loading.save"
@@ -272,18 +272,18 @@ async function syncWithNtpServer() {
           />
           <!-- description -->
           <NeTextInput
-            :label="t('standalone.system_settings.short_description')"
+            :label="t('standalone.system.system_settings.short_description')"
             v-model.trim="description"
-            :placeholder="t('standalone.system_settings.short_description_placeholder')"
+            :placeholder="t('standalone.system.system_settings.short_description_placeholder')"
             optional
             :optionalLabel="t('common.optional')"
             :disabled="loading.save"
           />
           <!-- notes -->
           <NeTextArea
-            :label="t('standalone.system_settings.notes')"
+            :label="t('standalone.system.system_settings.notes')"
             v-model.trim="notes"
-            :placeholder="t('standalone.system_settings.notes_placeholder')"
+            :placeholder="t('standalone.system.system_settings.notes_placeholder')"
             optional
             :optionalLabel="t('common.optional')"
             :disabled="loading.save"
@@ -292,7 +292,7 @@ async function syncWithNtpServer() {
           <NeComboBox
             v-model="timezone"
             :options="timezones"
-            :label="t('standalone.system_settings.timezone')"
+            :label="t('standalone.system.system_settings.timezone')"
             :invalidMessage="error.timezone"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
@@ -301,7 +301,9 @@ async function syncWithNtpServer() {
           />
           <!-- local time -->
           <div>
-            <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
+            <NeFormItemLabel>{{
+              t('standalone.system.system_settings.local_time')
+            }}</NeFormItemLabel>
             <div class="text-sm">
               <!-- (?) luci converts local time to UTC in order to display it -->
               <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>
@@ -315,7 +317,7 @@ async function syncWithNtpServer() {
               :loading="loading.syncWithBrowser"
               :disabled="loading.syncWithBrowser || loading.save"
               class="-ml-2.5"
-              >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
+              >{{ t('standalone.system.system_settings.sync_with_browser') }}</NeButton
             >
             <NeButton
               @click="syncWithNtpServer"
@@ -323,7 +325,7 @@ async function syncWithNtpServer() {
               :loading="loading.syncWithNtpServer"
               :disabled="loading.syncWithNtpServer || loading.save"
               class="ml-4"
-              >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
+              >{{ t('standalone.system.system_settings.sync_with_ntp_server') }}</NeButton
             >
           </div>
         </div>

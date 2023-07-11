@@ -31,7 +31,7 @@ const themeStore = useThemeStore()
 const { t } = useI18n()
 
 const accountMenu = [
-  { name: 'Your profile', action: null }, ////
+  // { name: 'Your profile', action: null }, ////
   {
     name: t('standalone.shell.sign_out'),
     action: loginStore.logout,
@@ -256,14 +256,6 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
               type="search"
               name="search"
             />
-            <!-- <div class="flex gap-3 items-center"> //// move
-              <font-awesome-icon
-                :icon="['fas', 'life-ring']"
-                class="text-gray-700 w-5 h-5"
-                aria-hidden="true"
-              />
-              <span>Help</span>
-            </div> -->
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">
@@ -299,7 +291,7 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
               ]"
             >
               <font-awesome-icon
-                :icon="['fas', 'life-ring']"
+                :icon="['fas', 'circle-question']"
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
@@ -322,9 +314,15 @@ const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
               ]"
             >
               <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
-              <!-- //// use sun icon on dark theme -->
               <font-awesome-icon
-                :icon="['fas', 'moon']"
+                :icon="[
+                  'fas',
+                  themeStore.theme === 'light'
+                    ? 'moon'
+                    : themeStore.theme === 'dark'
+                    ? 'sun'
+                    : 'circle-half-stroke'
+                ]"
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />

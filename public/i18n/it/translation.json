@@ -123,6 +123,32 @@
       "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
       "apply": "Applica",
       "revert": "Ripristina"
+    },
+    "system": {
+      "system_settings": {
+        "use_dhcp_advertised_servers": "Utilizzare i server DHCP pubblicizzati",
+        "all_interfaces": "Tutte le interfacce",
+        "settings": "Impostazioni",
+        "ntp_server_candidates": "Server NTP",
+        "add_ntp_server": "Aggiungere un server NTP",
+        "title": "Impostazioni del sistema",
+        "general_settings": "Impostazioni generali",
+        "logs_settings": "Impostazioni dei registri",
+        "time_synchronization": "Sincronizzazione temporale",
+        "hostname": "Nome host",
+        "short_description": "Breve descrizione",
+        "short_description_placeholder": "Breve descrizione di questa unità",
+        "notes": "Note",
+        "notes_placeholder": "Note su questa unità",
+        "local_time": "Ora locale",
+        "timezone": "Fuso orario",
+        "sync_with_browser": "Sincronizzazione con il browser",
+        "sync_with_ntp_server": "Sincronizzazione con il server NTP",
+        "enable_ntp_client": "Abilita il client NTP",
+        "provide_ntp_server": "Fornire un server NTP",
+        "provide_ntp_server_to_interface": "Fornire un server NTP all'interfaccia"
+      },
+      "title": "Sistema"
     }
   },
   "controller": {

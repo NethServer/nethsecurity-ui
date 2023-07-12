@@ -121,6 +121,8 @@ function load() {
           v-model.number="port"
           :invalid-message="validationErrors.get('port')?.shift()"
           :label="t('standalone.ssh.ssh_access.tcp_port_label')"
+          max="65535"
+          min="1"
           type="number"
         />
         <h3 class="font-medium">Options</h3>

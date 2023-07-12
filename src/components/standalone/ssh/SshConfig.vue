@@ -38,6 +38,7 @@ const passwordAuth = ref(false)
 const rootPasswordAuth = ref(false)
 const gatewayPorts = ref(false)
 const loading = ref(true)
+const submitting = ref(false)
 const validationErrors = ref(new MessageBag())
 const error: Ref<Error | undefined> = ref(undefined)
 
@@ -51,7 +52,7 @@ function submit() {
   if (validationErrors.value.size > 0) {
     error.value = new ValidationError()
   } else {
-    loading.value = true
+    submitting.value = true
     ubusCall('uci', 'set', {
       config: 'dropbear',
       section: 'cfg014dd4',
@@ -69,7 +70,7 @@ function submit() {
         error.value = new Error(getAxiosErrorMessage(exception))
       })
       .finally(() => {
-        loading.value = false
+        submitting.value = false
       })
   }
 }
@@ -107,7 +108,11 @@ function load() {
 </script>
 
 <template>
-  <NeInlineNotification v-if="error != undefined" :title="t(error!.message)" kind="error" />
+  <NeInlineNotification
+    v-if="error != undefined && !(error instanceof ValidationError)"
+    :title="t(error!.message)"
+    kind="error"
+  />
   <NeSkeleton v-if="loading" :lines="10"></NeSkeleton>
   <InputLayout
     v-else
@@ -119,7 +124,7 @@ function load() {
       <div class="flex flex-col gap-y-4 mb-8">
         <NeTextInput
           v-model.number="port"
-          :invalid-message="validationErrors.get('port')?.shift()"
+          :invalid-message="validationErrors.get('port')?.[0]"
           :label="t('standalone.ssh.ssh_access.tcp_port_label')"
           max="65535"
           min="1"
@@ -142,7 +147,12 @@ function load() {
     </form>
     <!-- Save Button -->
     <div class="flex justify-end">
-      <NeButton kind="primary" @click.prevent="submit()">
+      <NeButton
+        :disabled="submitting"
+        :loading="submitting"
+        kind="primary"
+        @click.prevent="submit()"
+      >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'floppy-disk']" aria-hidden="true" />
         </template>

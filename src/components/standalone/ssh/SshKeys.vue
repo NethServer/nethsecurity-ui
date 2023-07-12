@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import {
+  focusElement,
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
@@ -28,6 +29,9 @@ type SshKeysResponse = {
   }
 }
 
+/**
+ * Helper class to parse SSH keys
+ */
 class SshKey {
   type: string
   key: string
@@ -53,6 +57,7 @@ class SshKey {
         throw new Error('Invalid SSH key type.')
     }
     this.key = splitKey[1]
+    // if there's a comment, we join the rest of the array
     if (splitKey.length > 2) {
       this.comment = splitKey
         .map((value, index) => {
@@ -70,6 +75,8 @@ const uploadSshKey = ref('')
 const sshKeys = ref(new Array<SshKey>())
 
 const loading = ref(true)
+const submitting = ref(false)
+const deleting = ref(false)
 const validationErrors = ref(new MessageBag())
 const error: Ref<Error | undefined> = ref(undefined)
 
@@ -81,24 +88,28 @@ onMounted(() => {
 
 function load() {
   error.value = undefined
+  loading.value = true
   ubusCall('file', 'read', { path: '/etc/dropbear/authorized_keys' })
     .then((response: SshKeysResponse) => {
       sshKeys.value = new Array<SshKey>()
-      // parse the response
+      // the response will be a string with all the keys separated by a newline
       response.data.data.split('\n').forEach((line) => {
+        // final end line, skipping
         if (line.length == 0) {
           return
         }
+        // If the key retrieved is invalid there's nothing we can do, so we just ignore it
         try {
           sshKeys.value.push(new SshKey(line))
         } catch (exception: any) {
-          console.log("There's an issue with the SSH key: " + exception.message)
+          console.warn("There's an issue with the SSH key: " + exception.message)
         }
       })
     })
     .catch((exception: AxiosError<SshKeyError>) => {
-      // if file is empty or not present, the response is exit status 4, so we ignore it
+      // if file is empty or not present, the response is exit status 4
       if (exception.response?.data.data != 'exit status 4') {
+        // otherwise it's a real axios error
         if (error.value instanceof AxiosError) {
           error.value = new Error(getAxiosErrorMessage(exception))
         } else {
@@ -126,10 +137,16 @@ function addKey() {
       .concat('\n')
       .concat(uploadSshKey.value)
       .concat('\n')
-    writeKeys(keys).then(() => {
-      uploadSshKey.value = ''
-    })
+    submitting.value = true
+    writeKeys(keys)
+      .then(() => {
+        uploadSshKey.value = ''
+      })
+      .finally(() => {
+        submitting.value = false
+      })
   } else {
+    focusElement('uploadSshKeyInput')
     error.value = new ValidationError()
   }
 }
@@ -148,6 +165,10 @@ function validate() {
   }
 }
 
+/**
+ * Method that sends the keys to the server
+ * @param mappedKeys string containing all the keys separated by a newline
+ */
 function writeKeys(mappedKeys: string): Promise<any> {
   error.value = undefined
   return ubusCall('file', 'write', {
@@ -180,8 +201,10 @@ function deleteKey() {
     .join('\n')
     .concat('\n')
 
+  deleting.value = true
   writeKeys(mappedKeys).finally(() => {
     keyToDelete.value = undefined
+    deleting.value = false
   })
 }
 </script>
@@ -194,13 +217,19 @@ function deleteKey() {
     :visible="keyToDelete != undefined"
     @close="keyToDelete = undefined"
     @primary-click="deleteKey()"
+    :primary-button-loading="deleting"
+    :primary-button-disabled="deleting"
   >
     <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
     <code class="break-all my-1">
       {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
     </code>
   </NeModal>
-  <NeInlineNotification v-if="error != undefined" :title="t(error.message)" kind="error" />
+  <NeInlineNotification
+    v-if="error != undefined && !(error instanceof ValidationError)"
+    :title="t(error.message)"
+    kind="error"
+  />
   <NeSkeleton v-if="loading" :lines="10" />
   <InputLayout
     v-else
@@ -229,12 +258,19 @@ function deleteKey() {
     <!-- Add Key form -->
     <form class="flex flex-col gap-y-4">
       <NeTextInput
+        ref="uploadSshKeyInput"
         v-model="uploadSshKey"
-        :invalid-message="validationErrors.get('uploadSshKey')?.shift()"
+        :invalid-message="validationErrors.get('uploadSshKey')?.[0]"
         :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
         :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
       ></NeTextInput>
-      <NeButton :size="'lg'" class="self-start" @click.prevent="addKey()">
+      <NeButton
+        :disabled="submitting"
+        :loading="submitting"
+        :size="'lg'"
+        class="self-start"
+        @click.prevent="addKey()"
+      >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'plus']" aria-hidden="true" />
         </template>

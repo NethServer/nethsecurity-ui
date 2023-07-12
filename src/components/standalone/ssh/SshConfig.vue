@@ -97,7 +97,6 @@ function load() {
       gatewayPorts.value = response.dropbear[0].GatewayPorts == 'on'
     })
     .catch((exception: AxiosError) => {
-      console.log(exception)
       error.value = new Error(getAxiosErrorMessage(exception))
     })
     .finally(() => {

@@ -156,12 +156,14 @@ async function revertChanges() {
 <template>
   <NeModal
     :visible="visible"
+    size="lg"
     :title="t('standalone.uci_changes.configuration_changes')"
     :primaryLabel="t('standalone.uci_changes.apply')"
     :secondaryLabel="t('standalone.uci_changes.revert')"
     :cancelLabel="t('common.cancel')"
     :primaryButtonDisabled="loading.isApplyingChanges || loading.isRevertingChanges"
     :primaryButtonLoading="loading.isApplyingChanges"
+    secondaryButtonKind="danger"
     :secondaryButtonDisabled="loading.isApplyingChanges || loading.isRevertingChanges"
     :secondaryButtonLoading="loading.isRevertingChanges"
     :closeAriaLabel="t('common.close')"

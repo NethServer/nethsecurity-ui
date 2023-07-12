@@ -63,8 +63,6 @@ const navigation: Ref<any> = ref([
 ])
 
 function isCurrentRoute(itemPath: string) {
-  console.log('isCurrentRoute', itemPath, route.path.includes(itemPath)) ////
-
   return route.path.includes(itemPath)
 }
 </script>

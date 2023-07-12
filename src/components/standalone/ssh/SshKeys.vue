@@ -28,10 +28,41 @@ type SshKeysResponse = {
   }
 }
 
-type SshKey = {
-  name?: string
-  key: string
+class SshKey {
   type: string
+  key: string
+  comment?: string
+
+  constructor(source: string) {
+    const splitKey = source.split(' ')
+    if (splitKey.length < 2) {
+      throw new Error(`Invalid SSH key given. (${source})`)
+    }
+    // parse multiple cases of key types
+    switch (splitKey[0]) {
+      case 'ssh-rsa':
+      case 'ssh-dss':
+      case 'ssh-ed25519':
+      case 'ecdsa-sha2':
+      case 'ecdsa-sha2-nistp256':
+      case 'sk-ecdsa-sha2-nistp256@openssh.com':
+      case 'sk-ssh-ed25519@openssh.com':
+        this.type = splitKey[0]
+        break
+      default:
+        throw new Error('Invalid SSH key type.')
+    }
+    this.key = splitKey[1]
+    if (splitKey.length > 2) {
+      this.comment = splitKey
+        .map((value, index) => {
+          if (index > 1) {
+            return value
+          }
+        })
+        .join('')
+    }
+  }
 }
 
 const { t } = useI18n()
@@ -55,20 +86,24 @@ function load() {
       sshKeys.value = new Array<SshKey>()
       // parse the response
       response.data.data.split('\n').forEach((line) => {
-        const key = line.split(' ')
-        if (key.length > 1) {
-          sshKeys.value.push({
-            type: key[0],
-            key: key[1],
-            name: key[2] ?? undefined
-          })
+        if (line.length == 0) {
+          return
+        }
+        try {
+          sshKeys.value.push(new SshKey(line))
+        } catch (exception: any) {
+          console.log("There's an issue with the SSH key: " + exception.message)
         }
       })
     })
     .catch((exception: AxiosError<SshKeyError>) => {
       // if file is empty or not present, the response is exit status 4, so we ignore it
       if (exception.response?.data.data != 'exit status 4') {
-        error.value = new Error(getAxiosErrorMessage(exception))
+        if (error.value instanceof AxiosError) {
+          error.value = new Error(getAxiosErrorMessage(exception))
+        } else {
+          error.value = exception
+        }
       }
     })
     .finally(() => {
@@ -82,8 +117,8 @@ function addKey() {
     const keys = sshKeys.value
       .map((key) => {
         let string = key.type + ' ' + key.key
-        if (key.name != undefined) {
-          string = string + ' ' + key.name
+        if (key.comment != undefined) {
+          string = string + ' ' + key.comment
         }
         return string
       })
@@ -101,21 +136,15 @@ function addKey() {
 
 function validate() {
   validationErrors.value = new MessageBag()
-  if (uploadSshKey.value == '') {
-    validationErrors.value.set('uploadSshKey', [t('standalone.ssh.ssh_keys.validation.required')])
-  } else if (uploadSshKey.value.split(' ').length < 2) {
-    validationErrors.value.set('uploadSshKey', [t('standalone.ssh.ssh_keys.validation.invalid')])
-  } else {
-    const keyToValidate = {
-      type: uploadSshKey.value.split(' ')[0],
-      key: uploadSshKey.value.split(' ')[1],
-      name: uploadSshKey.value.split(' ')[2] ?? undefined
-    }
-    if (sshKeys.value.some((key) => key.key == keyToValidate.key)) {
+  try {
+    const parsedSshKey = new SshKey(uploadSshKey.value)
+    if (sshKeys.value.some((key) => key.key == parsedSshKey.key)) {
       validationErrors.value.set('uploadSshKey', [
         t('standalone.ssh.ssh_keys.validation.duplicate')
       ])
     }
+  } catch (exception: any) {
+    validationErrors.value.set('uploadSshKey', [t('standalone.ssh.ssh_keys.validation.invalid')])
   }
 }
 
@@ -143,8 +172,8 @@ function deleteKey() {
     .filter((key) => key.key != keyToDelete.value?.key)
     .map((key) => {
       let string = key.type + ' ' + key.key
-      if (key.name != undefined) {
-        string = string + ' ' + key.name
+      if (key.comment != undefined) {
+        string = string + ' ' + key.comment
       }
       return string
     })
@@ -168,7 +197,7 @@ function deleteKey() {
   >
     <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
     <code class="break-all my-1">
-      {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.name }}
+      {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
     </code>
   </NeModal>
   <NeInlineNotification v-if="error != undefined" :title="t(error.message)" kind="error" />
@@ -182,7 +211,9 @@ function deleteKey() {
       <!-- Key Element -->
       <div v-for="key in sshKeys" :key="key.key" class="flex gap-x-2 mb-2 last:mb-0">
         <div class="w-10/12 border border-gray-200 dark:border-gray-700 rounded p-3 text-xs">
-          <p class="font-bold mb-1">{{ key.name ?? t('standalone.ssh.ssh_keys.unnamed_key') }}</p>
+          <p class="font-bold mb-1">
+            {{ key.comment ?? t('standalone.ssh.ssh_keys.unnamed_key') }}
+          </p>
           <p class="mb-1">{{ key.type }}</p>
           <code class="truncate">
             {{ key.key }}
@@ -196,24 +227,19 @@ function deleteKey() {
       </div>
     </div>
     <!-- Add Key form -->
-    <form>
-      <div class="flex gap-x-4 w-10/12">
-        <NeTextInput
-          v-model="uploadSshKey"
-          :invalid-message="validationErrors.get('uploadSshKey')?.shift()"
-          :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
-          :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
-          class="grow"
-        ></NeTextInput>
-        <div class="mt-auto shrink-0">
-          <NeButton @click.prevent="addKey()">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'plus']" aria-hidden="true" />
-            </template>
-            Add Key
-          </NeButton>
-        </div>
-      </div>
+    <form class="flex flex-col gap-y-4">
+      <NeTextInput
+        v-model="uploadSshKey"
+        :invalid-message="validationErrors.get('uploadSshKey')?.shift()"
+        :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
+        :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
+      ></NeTextInput>
+      <NeButton :size="'lg'" class="self-start" @click.prevent="addKey()">
+        <template #prefix>
+          <FontAwesomeIcon :icon="['fas', 'plus']" aria-hidden="true" />
+        </template>
+        Add Key
+      </NeButton>
     </form>
   </InputLayout>
 </template>

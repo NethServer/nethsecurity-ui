@@ -121,7 +121,7 @@ async function getTimezones() {
 
   try {
     const res = await ubusCall('luci', 'getTimezones')
-    const tzList: any = []
+    const tzList: any = [{ id: 'UTC', label: 'UTC', timezone: '' }]
 
     for (const [key, value] of Object.entries(res.data) as [string, any][]) {
       tzList.push({ id: key, label: key, timezone: value.tzstring })
@@ -301,9 +301,7 @@ async function syncWithNtpServer() {
           />
           <!-- local time -->
           <div>
-            <NeFormItemLabel>{{
-              t('standalone.system_settings.local_time')
-            }}</NeFormItemLabel>
+            <NeFormItemLabel>{{ t('standalone.system_settings.local_time') }}</NeFormItemLabel>
             <div class="text-sm">
               <!-- (?) luci converts local time to UTC in order to display it -->
               <div>{{ formatInTimeZoneLoc(localTime, 'Pp', 'UTC') }}</div>

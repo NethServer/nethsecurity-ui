@@ -33,7 +33,7 @@ type SshConfigResponse = {
   }
 }
 
-const port = ref(22)
+const port = ref('22')
 const passwordAuth = ref(false)
 const rootPasswordAuth = ref(false)
 const gatewayPorts = ref(false)
@@ -92,7 +92,7 @@ function load() {
   loading.value = true
   ubusCall('uci', 'get', { config: 'dropbear' })
     .then((response: SshConfigResponse) => {
-      port.value = Number(response.data.values.cfg014dd4.Port)
+      port.value = response.data.values.cfg014dd4.Port
       passwordAuth.value = response.data.values.cfg014dd4.PasswordAuth == 'on'
       rootPasswordAuth.value = response.data.values.cfg014dd4.RootPasswordAuth == 'on'
       gatewayPorts.value = response.data.values.cfg014dd4.GatewayPorts == 'on'

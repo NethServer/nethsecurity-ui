@@ -17,9 +17,9 @@
     "http_403": "Errore di autorizzazione",
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
-    "required": "Necessario",
+    "required": "Richiesto",
     "incorrect_username_or_password": "Nome utente o password errati",
-    "invalid_hostname": "Hostname non valido",
+    "invalid_hostname": "Nome host non valido",
     "hostname_is_too_long": "Il nome host ha troppi caratteri",
     "cannot_save_configuration": "Impossibile salvare la configurazione",
     "cannot_load_system_config": "Impossibile caricare le impostazioni di sistema",
@@ -32,30 +32,63 @@
     "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
     "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
-    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione"
+    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione",
+    "validation_failed": "Convalida fallita"
   },
   "login": {
-    "sign_in": "Registrazione",
-    "cannot_login": "Non riesci ad accedere",
-    "incorrect_username_or_password": "nome utente o password errati",
-    "welcome_title_standalone": "Benvenuto",
+    "sign_in": "Accedi",
+    "cannot_login": "Impossibile accedere",
+    "incorrect_username_or_password": "Nome utente o password errati",
+    "welcome_title_standalone": "Benvenuti",
     "welcome_description_standalone": "Accedi a {product}, proteggi la tua rete e accedi rapidamente al cloud.",
-    "welcome_title_controller": "Benvenuto",
+    "welcome_title_controller": "Benvenuti",
     "welcome_description_controller": "{product} Controller consente di gestire le unit di {prodotto} in modo rapido e semplice.",
     "username": "Nome utente",
-    "password": "Parola d'ordine",
+    "password": "Password",
     "remember_me": "Ricordami",
     "need_help": "Serve aiuto?"
   },
   "standalone": {
     "ssh": {
-      "title": "SSH"
+      "title": "SSH",
+      "ssh_access": {
+        "description": "Dropbear offre l'accesso alla shell di rete SSH e un server SCP integrato.",
+        "title": "Accesso SSH",
+        "tcp_port_label": "Porta TCP",
+        "allow_ssh_password_auth": "Consentire l'autenticazione con password SSH",
+        "allow_root_login_with_password": "Consentire all'utente root di accedere con la password",
+        "allow_remote_host_connection": "Consentire agli host remoti di connettersi alle porte locali inoltrate via SSH",
+        "tcp_port_too_low": "La porta TCP deve essere maggiore di 1",
+        "tcp_port_too_high": "La porta TCP deve essere inferiore a 65535",
+        "tcp_port_invalid": "La porta TCP non è valida"
+      },
+      "ssh_keys": {
+        "description": "Le chiavi pubbliche consentono di effettuare accessi SSH senza password con una maggiore sicurezza rispetto all'uso di semplici password.",
+        "title": "Chiavi SSH",
+        "public_keys_label": "Chiavi pubbliche",
+        "add_key_button": "Aggiungi chiave",
+        "unnamed_key": "Chiave senza nome",
+        "add_new_ssh_key": {
+          "label": "Aggiungere una nuova chiave SSH",
+          "placeholder": "Incollare qui la chiave SSH..."
+        },
+        "delete_key_modal": {
+          "title": "Cancellare la chiave SSH",
+          "body": "Si vuole davvero eliminare la seguente chiave SSH?",
+          "button": "Tasto di cancellazione"
+        },
+        "validation": {
+          "required": "Richiesto",
+          "invalid": "Chiave non valida",
+          "duplicate": "La chiave esiste già"
+        }
+      }
     },
     "backup_and_restore": {
-      "title": "Ripristinare il backup"
+      "title": "Backup e ripristino"
     },
     "reboot_and_shutdown": {
-      "title": "Riavvia e spegni"
+      "title": "Riavvio e spegnimento"
     },
     "network": {
       "title": "Rete"
@@ -79,7 +112,7 @@
       "title": "Report"
     },
     "shell": {
-      "sign_out": "disconnessione",
+      "sign_out": "Esci",
       "open_sidebar": "Apri la barra laterale",
       "close_sidebar": "Chiudi la barra laterale",
       "toggle_theme": "Cambia tema",
@@ -170,7 +203,7 @@
     "hide_password": "Nascondi la password"
   },
   "ne_tabs": {
-    "select_a_tab": "Seleziona una scheda",
+    "select_a_tab": "Selezionare una scheda",
     "tabs": "Schede"
   },
   "ne_combobox": {

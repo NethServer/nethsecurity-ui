@@ -33,7 +33,8 @@
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
     "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
     "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione",
-    "validation_failed": "Convalida fallita"
+    "validation_failed": "Convalida fallita",
+    "cannot_load_network_devices": "Impossibile caricare i dispositivi di rete"
   },
   "login": {
     "sign_in": "Accedi",
@@ -184,7 +185,10 @@
       "title": "Sistema"
     },
     "interfaces_and_devices": {
-      "title": "Interfacce e dispositivi"
+      "title": "Interfacce e dispositivi",
+      "up": "Su",
+      "down": "In basso",
+      "speed": "Velocità"
     }
   },
   "controller": {

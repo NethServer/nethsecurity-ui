@@ -102,7 +102,7 @@ function load() {
         try {
           sshKeys.value.push(new SshKey(line))
         } catch (exception: any) {
-          console.warn("There's an issue with the SSH key: " + exception.message)
+          console.error("There's an issue with the SSH key: " + exception.message)
         }
       })
     })

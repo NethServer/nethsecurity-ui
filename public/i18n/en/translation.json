@@ -30,7 +30,8 @@
     "invalid_ip_v4_address": "Invalid IP v4 address",
     "invalid_ip_v6_address": "Invalid IP v6 address",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
-    "cannot_revert_configuration_changes": "Cannot revert configuration changes"
+    "cannot_revert_configuration_changes": "Cannot revert configuration changes",
+    "cannot_load_network_devices": "Cannot load network devices"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -152,7 +153,10 @@
       "title": "Network"
     },
     "interfaces_and_devices": {
-      "title": "Interfaces and devices"
+      "title": "Interfaces and devices",
+      "up": "Up",
+      "down": "Down",
+      "speed": "Speed"
     },
     "users_and_objects": {
       "title": "Users & objects"

@@ -36,6 +36,8 @@ import { faPlus as fasPlus } from '@fortawesome/free-solid-svg-icons'
 import { faPenToSquare as fasPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCirclePlus as fasCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faCircleMinus as fasCircleMinus } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark as fasCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck as fasCircleCheck } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon) ////
@@ -75,4 +77,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasPenToSquare)
   library.add(fasCirclePlus)
   library.add(fasCircleMinus)
+  library.add(fasCircleXmark)
+  library.add(fasCircleCheck)
 }

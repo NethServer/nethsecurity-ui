@@ -12,7 +12,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import InputLayout from '@/components/standalone/InputLayout.vue'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { MessageBag, ValidationError } from '@/lib/validation'
@@ -21,16 +21,14 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 type SshConfigResponse = {
-  data: {
-    values: {
-      cfg014dd4: {
-        Port: string
-        PasswordAuth: string
-        RootPasswordAuth: string
-        GatewayPorts: string
-      }
+  dropbear: [
+    {
+      Port: string
+      PasswordAuth: string
+      RootPasswordAuth: string
+      GatewayPorts: string
     }
-  }
+  ]
 }
 
 const port = ref('22')
@@ -55,7 +53,7 @@ function submit() {
     submitting.value = true
     ubusCall('uci', 'set', {
       config: 'dropbear',
-      section: 'cfg014dd4',
+      section: '@dropbear[0]',
       values: {
         Port: port.value,
         PasswordAuth: passwordAuth.value ? 'on' : 'off',
@@ -91,14 +89,15 @@ function validate() {
 function load() {
   error.value = undefined
   loading.value = true
-  ubusCall('uci', 'get', { config: 'dropbear' })
+  getUciConfig('dropbear')
     .then((response: SshConfigResponse) => {
-      port.value = response.data.values.cfg014dd4.Port
-      passwordAuth.value = response.data.values.cfg014dd4.PasswordAuth == 'on'
-      rootPasswordAuth.value = response.data.values.cfg014dd4.RootPasswordAuth == 'on'
-      gatewayPorts.value = response.data.values.cfg014dd4.GatewayPorts == 'on'
+      port.value = response.dropbear[0].Port
+      passwordAuth.value = response.dropbear[0].PasswordAuth == 'on'
+      rootPasswordAuth.value = response.dropbear[0].RootPasswordAuth == 'on'
+      gatewayPorts.value = response.dropbear[0].GatewayPorts == 'on'
     })
     .catch((exception: AxiosError) => {
+      console.log(exception)
       error.value = new Error(getAxiosErrorMessage(exception))
     })
     .finally(() => {

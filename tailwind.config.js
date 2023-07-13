@@ -27,6 +27,13 @@ module.exports = {
           950: '#083344'
         }
       },
+      screens: {
+        '3xl': '1792px',
+        '4xl': '2048px',
+        '5xl': '2560px',
+        '6xl': '3072px',
+        '7xl': '3584px'
+      },
       animation: {
         'spin-fast': 'spin 0.5s linear infinite'
       }

@@ -5,7 +5,8 @@
     "search": "Search",
     "help": "Help",
     "optional": "Optional",
-    "close": "Close"
+    "close": "Close",
+    "edit": "Edit"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -156,7 +157,9 @@
       "title": "Interfaces and devices",
       "up": "Up",
       "down": "Down",
-      "speed": "Speed"
+      "speed": "Speed",
+      "add_vlan_device": "Add VLAN device",
+      "add_logical_interface": "Add logical interface"
     },
     "users_and_objects": {
       "title": "Users & objects"

@@ -33,7 +33,7 @@
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
     "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
     "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione",
-    "validation_failed": "Convalida fallita",
+    "validation_failed": "Validazione fallita",
     "cannot_load_network_devices": "Impossibile caricare i dispositivi di rete"
   },
   "login": {
@@ -53,30 +53,30 @@
     "ssh": {
       "title": "SSH",
       "ssh_access": {
-        "description": "Dropbear offre l'accesso alla shell di rete SSH e un server SCP integrato.",
+        "description": "Dropbear offre l'accesso alla shell di rete SSH e un server SCP integrato",
         "title": "Accesso SSH",
         "tcp_port_label": "Porta TCP",
-        "allow_ssh_password_auth": "Consentire l'autenticazione con password SSH",
-        "allow_root_login_with_password": "Consentire all'utente root di accedere con la password",
-        "allow_remote_host_connection": "Consentire agli host remoti di connettersi alle porte locali inoltrate via SSH",
+        "allow_ssh_password_auth": "Consenti l'autenticazione SSH con password",
+        "allow_root_login_with_password": "Consenti all'utente root di accedere con password",
+        "allow_remote_host_connection": "Consenti agli host remoti di connettersi alle porte SSH locali inoltrate",
         "tcp_port_too_low": "La porta TCP deve essere maggiore di 1",
         "tcp_port_too_high": "La porta TCP deve essere inferiore a 65535",
         "tcp_port_invalid": "La porta TCP non è valida"
       },
       "ssh_keys": {
-        "description": "Le chiavi pubbliche consentono di effettuare accessi SSH senza password con una maggiore sicurezza rispetto all'uso di semplici password.",
+        "description": "Le chiavi pubbliche consentono di effettuare accessi SSH senza password con una maggiore sicurezza rispetto all'uso di password",
         "title": "Chiavi SSH",
         "public_keys_label": "Chiavi pubbliche",
         "add_key_button": "Aggiungi chiave",
         "unnamed_key": "Chiave senza nome",
         "add_new_ssh_key": {
-          "label": "Aggiungere una nuova chiave SSH",
-          "placeholder": "Incollare qui la chiave SSH..."
+          "label": "Aggiungi una nuova chiave SSH",
+          "placeholder": "Incolla qui la chiave SSH..."
         },
         "delete_key_modal": {
-          "title": "Cancellare la chiave SSH",
-          "body": "Si vuole davvero eliminare la seguente chiave SSH?",
-          "button": "Tasto di cancellazione"
+          "title": "Elimina la chiave SSH",
+          "body": "Vuoi davvero eliminare la seguente chiave SSH?",
+          "button": "Elimina chiave"
         },
         "validation": {
           "required": "Richiesto",

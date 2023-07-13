@@ -12,7 +12,7 @@ defineProps({
         <h2 class="font-medium text-xl mb-2">{{ title }}</h2>
       </slot>
       <slot name="description">
-        <p class="font-normal text-sm text-gray-400 mb-8">{{ description }}</p>
+        <p class="font-normal text-sm text-gray-500 dark:text-gray-400 mb-8">{{ description }}</p>
       </slot>
     </div>
     <div class="md:w-7/12">

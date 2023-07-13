@@ -10,7 +10,7 @@ import {
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import InputLayout from '@/components/standalone/InputLayout.vue'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
@@ -112,7 +112,7 @@ function load() {
     kind="error"
   />
   <NeSkeleton v-if="loading" :lines="10"></NeSkeleton>
-  <InputLayout
+  <FormLayout
     v-else
     :description="t('standalone.ssh.ssh_access.description')"
     :title="t('standalone.ssh.ssh_access.title')"
@@ -157,5 +157,5 @@ function load() {
         {{ t('common.save') }}
       </NeButton>
     </div>
-  </InputLayout>
+  </FormLayout>
 </template>

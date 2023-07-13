@@ -14,7 +14,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import InputLayout from '@/components/standalone/InputLayout.vue'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 import { MessageBag, ValidationError } from '@/lib/validation'
 
 type SshKeyError = {
@@ -231,7 +231,7 @@ function deleteKey() {
     kind="error"
   />
   <NeSkeleton v-if="loading" :lines="10" />
-  <InputLayout
+  <FormLayout
     v-else
     :description="t('standalone.ssh.ssh_keys.description')"
     :title="t('standalone.ssh.ssh_keys.title')"
@@ -277,5 +277,5 @@ function deleteKey() {
         Add Key
       </NeButton>
     </form>
-  </InputLayout>
+  </FormLayout>
 </template>

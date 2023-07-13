@@ -22,6 +22,7 @@ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { isEmpty, uniq } from 'lodash'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -277,11 +278,8 @@ function addNtpServer() {
     <NeSkeleton v-if="isLoading" size="lg" :lines="10" />
     <div v-else>
       <!-- settings section -->
-      <div class="flex flex-col lg:flex-row border-b pb-6 border-gray-200 dark:border-gray-700">
-        <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
-          <NeTitle level="h3">{{ t('standalone.system_settings.settings') }}</NeTitle>
-        </div>
-        <div class="w-full lg:w-3/5 space-y-6">
+      <FormLayout :title="t('standalone.system_settings.settings')">
+        <div class="space-y-6">
           <!-- enable ntp client -->
           <NeToggle
             v-model="enableNtpClient"
@@ -318,48 +316,43 @@ function addNtpServer() {
             </div>
           </Transition>
         </div>
-      </div>
+      </FormLayout>
       <!-- ntp server candidates section -->
       <Transition name="fade">
-        <div
-          v-if="enableNtpClient"
-          class="flex flex-col lg:flex-row border-b py-6 border-gray-200 dark:border-gray-700"
-        >
-          <div class="w-full lg:w-2/5 pr-6 mb-4 lg:mb-0">
-            <NeTitle level="h3">{{
-              t('standalone.system_settings.ntp_server_candidates')
-            }}</NeTitle>
-          </div>
-          <div class="w-full lg:w-3/5 space-y-6">
-            <div class="space-y-4">
-              <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex gap-2 items-start">
-                <NeTextInput
-                  v-model.trim="ntpServerCandidates[i]"
-                  :invalid-message="error.ntpServerCandidate[i]"
-                  :disabled="loading.save"
-                  class="grow"
-                />
-                <NeButton
-                  kind="tertiary"
-                  @click="deleteNtpServer(ntpServer)"
-                  :disabled="loading.save"
-                >
-                  <font-awesome-icon
-                    :icon="['fas', 'trash']"
-                    class="h-4 w-4 py-1"
-                    aria-hidden="true"
+        <div v-if="enableNtpClient">
+          <hr class="my-8 border-gray-200 dark:border-gray-700" />
+          <FormLayout :title="t('standalone.system_settings.ntp_server_candidates')">
+            <div class="space-y-6">
+              <div class="space-y-4">
+                <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex gap-2 items-start">
+                  <NeTextInput
+                    v-model.trim="ntpServerCandidates[i]"
+                    :invalid-message="error.ntpServerCandidate[i]"
+                    :disabled="loading.save"
+                    class="grow"
                   />
+                  <NeButton
+                    kind="tertiary"
+                    @click="deleteNtpServer(ntpServer)"
+                    :disabled="loading.save"
+                  >
+                    <font-awesome-icon
+                      :icon="['fas', 'trash']"
+                      class="h-4 w-4 py-1"
+                      aria-hidden="true"
+                    />
+                  </NeButton>
+                </div>
+                <!-- add ntp server -->
+                <NeButton @click="addNtpServer" :disabled="loading.save">
+                  <template #prefix>
+                    <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
+                  </template>
+                  {{ t('standalone.system_settings.add_ntp_server') }}
                 </NeButton>
               </div>
-              <!-- add ntp server -->
-              <NeButton @click="addNtpServer" :disabled="loading.save">
-                <template #prefix>
-                  <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-                </template>
-                {{ t('standalone.system_settings.add_ntp_server') }}
-              </NeButton>
             </div>
-          </div>
+          </FormLayout>
         </div>
       </Transition>
       <!-- save button -->

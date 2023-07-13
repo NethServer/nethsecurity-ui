@@ -186,8 +186,8 @@
     },
     "interfaces_and_devices": {
       "title": "Interfacce e dispositivi",
-      "up": "Su",
-      "down": "In basso",
+      "up": "Accesa",
+      "down": "Spenta",
       "speed": "Velocità"
     }
   },

@@ -278,7 +278,12 @@ watch(
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">
-              <NeButton kind="primary" @click="showUciChangesModal = true" class="relative">
+              <NeButton
+                kind="primary"
+                size="md"
+                @click="showUciChangesModal = true"
+                class="relative"
+              >
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', 'pen-to-square']"

@@ -54,7 +54,7 @@ async function changeLocale(lang: string) {
   </div>
   <div class="flex items-center gap-4">
     <div class="mb-4 text-lg">Units</div>
-    <NeButton @click="unitsStore.getUnits" class="mb-4">Reload units</NeButton>
+    <NeButton size="lg" @click="unitsStore.getUnits" class="mb-4">Reload units</NeButton>
   </div>
   <div
     v-for="(unit, index) in unitsStore.units"
@@ -67,10 +67,10 @@ async function changeLocale(lang: string) {
       <span class="w-1/5">{{ unit.registered ? 'Registered' : 'Not registered' }}</span>
       <span class="w-1/5">{{ isEmpty(unit.vpn) ? 'Not connected' : 'Connected' }}</span>
       <span v-if="!unit.registered" class="w-1/5">
-        <NeButton @click="approveUnit(unit.name)">Approve unit</NeButton>
+        <NeButton size="lg" @click="approveUnit(unit.name)">Approve unit</NeButton>
       </span>
       <span v-if="unit.registered && !isEmpty(unit.vpn)" class="w-1/5">
-        <NeButton @click="manageUnit(unit.name)">Manage unit</NeButton>
+        <NeButton size="lg" @click="manageUnit(unit.name)">Manage unit</NeButton>
       </span>
     </template>
   </div>
@@ -82,7 +82,7 @@ async function changeLocale(lang: string) {
   <!-- ////  -->
   <div class="my-8">
     <div class="mb-4">Select language</div>
-    <NeButton @click="changeLocale('it')" class="mb-4 mr-4">Italian</NeButton>
-    <NeButton @click="changeLocale('en')" class="mb-4">English</NeButton>
+    <NeButton size="lg" @click="changeLocale('it')" class="mb-4 mr-4">Italian</NeButton>
+    <NeButton size="lg" @click="changeLocale('en')" class="mb-4">English</NeButton>
   </div>
 </template>

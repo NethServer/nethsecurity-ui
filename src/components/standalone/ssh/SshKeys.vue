@@ -249,7 +249,7 @@ function deleteKey() {
           </code>
         </div>
         <div class="w-2/12 grid place-content-center">
-          <NeButton kind="tertiary" @click.prevent="keyToDelete = key">
+          <NeButton kind="tertiary" size="lg" @click.prevent="keyToDelete = key">
             <font-awesome-icon :icon="['fas', 'trash']" aria-hidden="true" class="w-4 h-4" />
           </NeButton>
         </div>
@@ -267,7 +267,7 @@ function deleteKey() {
       <NeButton
         :disabled="submitting"
         :loading="submitting"
-        :size="'lg'"
+        size="lg"
         class="self-start"
         @click.prevent="addKey()"
       >

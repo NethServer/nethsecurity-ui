@@ -25,7 +25,7 @@ const { t } = useI18n()
       <router-link :to="`${getControllerRoutePrefix()}/settings`" class="underline">{{
         t('controller.settings.title')
       }}</router-link>
-      <NeButton @click="loginStore.logout">Logout</NeButton>
+      <NeButton size="lg" @click="loginStore.logout">Logout</NeButton>
     </div>
     <div class="relative">
       <RouterView />

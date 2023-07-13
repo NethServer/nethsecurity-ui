@@ -333,6 +333,7 @@ function addNtpServer() {
                   />
                   <NeButton
                     kind="tertiary"
+                    size="lg"
                     @click="deleteNtpServer(ntpServer)"
                     :disabled="loading.save"
                   >
@@ -344,7 +345,7 @@ function addNtpServer() {
                   </NeButton>
                 </div>
                 <!-- add ntp server -->
-                <NeButton @click="addNtpServer" :disabled="loading.save">
+                <NeButton size="lg" @click="addNtpServer" :disabled="loading.save">
                   <template #prefix>
                     <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
                   </template>
@@ -357,7 +358,13 @@ function addNtpServer() {
       </Transition>
       <!-- save button -->
       <div class="flex justify-end py-6">
-        <NeButton kind="primary" @click="save" :loading="loading.save" :disabled="loading.save">
+        <NeButton
+          kind="primary"
+          size="lg"
+          @click="save"
+          :loading="loading.save"
+          :disabled="loading.save"
+        >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
           </template>

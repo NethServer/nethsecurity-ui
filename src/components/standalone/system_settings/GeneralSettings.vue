@@ -312,6 +312,7 @@ async function syncWithNtpServer() {
             <NeButton
               @click="syncWithBrowser"
               kind="tertiary"
+              size="lg"
               :loading="loading.syncWithBrowser"
               :disabled="loading.syncWithBrowser || loading.save"
               class="-ml-2.5"
@@ -320,6 +321,7 @@ async function syncWithNtpServer() {
             <NeButton
               @click="syncWithNtpServer"
               kind="tertiary"
+              size="lg"
               :loading="loading.syncWithNtpServer"
               :disabled="loading.syncWithNtpServer || loading.save"
               class="ml-4"
@@ -330,7 +332,13 @@ async function syncWithNtpServer() {
       </div>
       <!-- save button -->
       <div class="flex justify-end py-6">
-        <NeButton kind="primary" @click="save" :loading="loading.save" :disabled="loading.save">
+        <NeButton
+          kind="primary"
+          size="lg"
+          @click="save"
+          :loading="loading.save"
+          :disabled="loading.save"
+        >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
           </template>

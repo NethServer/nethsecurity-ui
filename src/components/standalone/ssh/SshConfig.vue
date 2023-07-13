@@ -149,6 +149,7 @@ function load() {
         :disabled="submitting"
         :loading="submitting"
         kind="primary"
+        size="lg"
         @click.prevent="submit()"
       >
         <template #prefix>

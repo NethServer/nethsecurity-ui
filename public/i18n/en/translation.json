@@ -102,8 +102,8 @@
     "uci_changes": {
       "configuration_changes": "Configuration changes",
       "unsaved_changes": "{count} unsaved change | {count} unsaved changes",
-      "apply": "Apply",
-      "revert": "Revert"
+      "apply": "Apply changes",
+      "revert": "Revert changes"
     },
     "services": {
       "title": "Services"

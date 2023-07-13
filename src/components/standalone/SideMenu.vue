@@ -75,9 +75,9 @@ function isCurrentRoute(itemPath: string) {
         :to="`${getStandaloneRoutePrefix()}/${item.to}`"
         :class="[
           isCurrentRoute(item.to)
-            ? 'text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
+            ? 'border-l-4 border-primary-700 dark:border-primary-500 text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'cursor-pointer group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+          'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
       >
         <font-awesome-icon
@@ -93,9 +93,9 @@ function isCurrentRoute(itemPath: string) {
       <a
         :class="[
           isCurrentRoute(item.to)
-            ? 'text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
+            ? 'text-gray-900 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'cursor-pointer group flex items-center justify-between rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+          'cursor-pointer group flex items-center justify-between rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
       >
         <div class="flex items-center gap-x-3">
@@ -121,9 +121,9 @@ function isCurrentRoute(itemPath: string) {
               :to="`${getStandaloneRoutePrefix()}/${child.to}`"
               :class="[
                 isCurrentRoute(child.to)
-                  ? 'text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
+                  ? 'border-l-4 border-primary-700 dark:border-primary-500 text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
                   : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-                'cursor-pointer group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+                'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
               ]"
             >
               {{ child.name }}

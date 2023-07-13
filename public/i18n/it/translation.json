@@ -155,8 +155,8 @@
     "uci_changes": {
       "configuration_changes": "Modifiche alla configurazione",
       "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
-      "apply": "Applicare le modifiche",
-      "revert": "Annullamento delle modifiche"
+      "apply": "Applica le modifiche",
+      "revert": "Scarta le modifiche"
     },
     "system": {
       "system_settings": {

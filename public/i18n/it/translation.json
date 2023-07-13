@@ -32,7 +32,9 @@
     "invalid_ip_v4_address": "Indirizzo IP v4 non valido",
     "invalid_ip_v6_address": "Indirizzo IP v6 non valido",
     "cannot_apply_configuration_changes": "Impossibile applicare le modifiche alla configurazione",
-    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione"
+    "cannot_revert_configuration_changes": "Impossibile ripristinare le modifiche alla configurazione",
+    "validation_failed": "Validazione fallita",
+    "cannot_load_network_devices": "Impossibile caricare i dispositivi di rete"
   },
   "login": {
     "sign_in": "Accedi",
@@ -49,7 +51,39 @@
   },
   "standalone": {
     "ssh": {
-      "title": "SSH"
+      "title": "SSH",
+      "ssh_access": {
+        "description": "Dropbear offre l'accesso alla shell di rete SSH e un server SCP integrato",
+        "title": "Accesso SSH",
+        "tcp_port_label": "Porta TCP",
+        "allow_ssh_password_auth": "Consenti l'autenticazione SSH con password",
+        "allow_root_login_with_password": "Consenti all'utente root di accedere con password",
+        "allow_remote_host_connection": "Consenti agli host remoti di connettersi alle porte SSH locali inoltrate",
+        "tcp_port_too_low": "La porta TCP deve essere maggiore di 1",
+        "tcp_port_too_high": "La porta TCP deve essere inferiore a 65535",
+        "tcp_port_invalid": "La porta TCP non è valida"
+      },
+      "ssh_keys": {
+        "description": "Le chiavi pubbliche consentono di effettuare accessi SSH senza password con una maggiore sicurezza rispetto all'uso di password",
+        "title": "Chiavi SSH",
+        "public_keys_label": "Chiavi pubbliche",
+        "add_key_button": "Aggiungi chiave",
+        "unnamed_key": "Chiave senza nome",
+        "add_new_ssh_key": {
+          "label": "Aggiungi una nuova chiave SSH",
+          "placeholder": "Incolla qui la chiave SSH..."
+        },
+        "delete_key_modal": {
+          "title": "Elimina la chiave SSH",
+          "body": "Vuoi davvero eliminare la seguente chiave SSH?",
+          "button": "Elimina chiave"
+        },
+        "validation": {
+          "required": "Richiesto",
+          "invalid": "Chiave non valida",
+          "duplicate": "La chiave esiste già"
+        }
+      }
     },
     "backup_and_restore": {
       "title": "Backup e ripristino"
@@ -121,8 +155,8 @@
     "uci_changes": {
       "configuration_changes": "Modifiche alla configurazione",
       "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
-      "apply": "Applica",
-      "revert": "Ripristina"
+      "apply": "Applica le modifiche",
+      "revert": "Scarta le modifiche"
     },
     "system": {
       "system_settings": {
@@ -149,6 +183,12 @@
         "provide_ntp_server_to_interface": "Offri server NTP ad un'interfaccia"
       },
       "title": "Sistema"
+    },
+    "interfaces_and_devices": {
+      "title": "Interfacce e dispositivi",
+      "up": "Accesa",
+      "down": "Spenta",
+      "speed": "Velocità"
     }
   },
   "controller": {

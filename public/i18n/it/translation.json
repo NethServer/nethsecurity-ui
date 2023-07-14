@@ -7,7 +7,8 @@
     "search": "Ricerca",
     "help": "Aiuto",
     "optional": "Opzionale",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "edit": "Modifica"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -188,7 +189,9 @@
       "title": "Interfacce e dispositivi",
       "up": "Accesa",
       "down": "Spenta",
-      "speed": "Velocità"
+      "speed": "Velocità",
+      "add_vlan_device": "Aggiungi un dispositivo VLAN",
+      "add_logical_interface": "Aggiungi un'interfaccia logica"
     }
   },
   "controller": {

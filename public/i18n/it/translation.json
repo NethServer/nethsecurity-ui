@@ -190,8 +190,8 @@
       "up": "Accesa",
       "down": "Spenta",
       "speed": "Velocità",
-      "add_vlan_device": "Aggiungere un dispositivo VLAN",
-      "add_logical_interface": "Aggiungere un'interfaccia logica"
+      "add_vlan_device": "Aggiungi un dispositivo VLAN",
+      "add_logical_interface": "Aggiungi un'interfaccia logica"
     }
   },
   "controller": {

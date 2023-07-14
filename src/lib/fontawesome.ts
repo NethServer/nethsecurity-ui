@@ -41,6 +41,7 @@ import { faCircleCheck as fasCircleCheck } from '@fortawesome/free-solid-svg-ico
 import { faLocationDot as fasLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faEarthAmericas as fasEarthAmericas } from '@fortawesome/free-solid-svg-icons'
 import { faEllipsisVertical as fasEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { faEmptySet as fasEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon) ////
@@ -85,4 +86,5 @@ export async function loadFontAwesome(app: any) {
   library.add(fasLocationDot)
   library.add(fasEarthAmericas)
   library.add(fasEllipsisVertical)
+  library.add(fasEmptySet)
 }

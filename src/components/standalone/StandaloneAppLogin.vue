@@ -121,6 +121,7 @@ function validate() {
       <div class="mx-auto w-full max-w-md lg:w-[26rem]">
         <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
           <!-- logo //// -->
+          <img class="h-8 w-auto mb-6" src="src/assets/logo.png" alt="Your Company" />
           <NeTitle level="h3">{{
             t('login.welcome_title_standalone', { product: getProductName() })
           }}</NeTitle>

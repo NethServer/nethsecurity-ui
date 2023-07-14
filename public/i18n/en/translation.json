@@ -161,6 +161,14 @@
       "add_vlan_device": "Add VLAN device",
       "add_logical_interface": "Add logical interface"
     },
+    "routes": {
+      "title": "Routes",
+      "ipv4_routes": "IPv4 Routes",
+      "ipv6_routes": "IPv6 Routes",
+      "add_route": "Add route",
+      "description": "Routing defines over which interface and gateway a certain host or network can be reached.",
+      "main_table_active_routes": "Main table active routes"
+    },
     "users_and_objects": {
       "title": "Users & objects"
     },

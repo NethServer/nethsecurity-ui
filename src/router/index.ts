@@ -44,6 +44,11 @@ const standaloneRoutes = [
     path: 'network/interfaces-and-devices',
     name: 'Interfaces',
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')
+  },
+  {
+    path: 'network/routes',
+    name: 'Routes',
+    component: () => import('../views/standalone/network/RoutesView.vue')
   }
 ]
 

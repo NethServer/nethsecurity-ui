@@ -121,7 +121,7 @@ watch(
                   <!-- //// logo -->
                   <img
                     class="h-8 w-auto pl-3"
-                    src="src/assets/logo.png"
+                    src="/logo.png"
                     alt="Your Company"
                     aria-hidden="true"
                   />
@@ -187,7 +187,7 @@ watch(
       >
         <!-- //// logo -->
         <div class="flex h-16 shrink-0 items-center">
-          <img class="h-8 w-auto pl-3" src="src/assets/logo.png" alt="Your Company" />
+          <img class="h-8 w-auto pl-3" src="/logo.png" alt="Your Company" />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">

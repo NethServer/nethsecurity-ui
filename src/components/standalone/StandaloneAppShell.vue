@@ -298,7 +298,7 @@ watch(
                 </span>
                 <span
                   v-if="isChangesButtonFlashing"
-                  class="animate-ping absolute inline-flex h-full w-3/4 rounded-md opacity-75 dark:opacity-75 bg-primary-700 dark:bg-primary-300"
+                  class="animate-ping absolute inline-flex h-full w-3/4 rounded-md opacity-75 dark:opacity-75 bg-primary-500 dark:bg-primary-300"
                 ></span>
               </NeButton>
               <UciChangesModal
@@ -368,6 +368,7 @@ watch(
               />
             </button>
 
+            <!-- //// use NeDropdown component -->
             <!-- Profile dropdown -->
             <Menu as="div" class="relative">
               <MenuButton
@@ -421,7 +422,7 @@ watch(
                     <a
                       @click="item.action"
                       :class="[
-                        active ? 'bg-gray-50 dark:bg-gray-800' : '',
+                        active ? 'bg-gray-100 dark:bg-gray-800' : '',
                         'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200'
                       ]"
                       >{{ item.name }}</a

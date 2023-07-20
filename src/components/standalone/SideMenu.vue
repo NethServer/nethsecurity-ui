@@ -82,7 +82,7 @@ function isCurrentRoute(itemPath: string) {
       >
         <font-awesome-icon
           :icon="[isCurrentRoute(item.to) ? 'fas' : 'fal', item.icon]"
-          class="h-6 w-6 shrink-0"
+          class="h-6 w-8 shrink-0"
           aria-hidden="true"
         />
         {{ item.name }}
@@ -101,7 +101,7 @@ function isCurrentRoute(itemPath: string) {
         <div class="flex items-center gap-x-3">
           <font-awesome-icon
             :icon="[isCurrentRoute(item.to) ? 'fas' : 'fal', item.icon]"
-            class="h-6 w-6 shrink-0"
+            class="h-6 w-8 shrink-0"
             aria-hidden="true"
           />
           <span>
@@ -114,7 +114,7 @@ function isCurrentRoute(itemPath: string) {
           aria-hidden="true"
         />
       </a>
-      <ul role="list" class="space-y-1">
+      <ul role="list" class="space-y-1 mt-2">
         <li v-for="child in item.children" :key="child.name">
           <div class="ml-10">
             <router-link
@@ -123,7 +123,7 @@ function isCurrentRoute(itemPath: string) {
                 isCurrentRoute(child.to)
                   ? 'border-l-4 border-primary-700 dark:border-primary-500 text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
                   : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-                'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+                'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-1 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
               ]"
             >
               {{ child.name }}

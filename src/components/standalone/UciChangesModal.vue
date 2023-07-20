@@ -101,7 +101,7 @@ function getChangeIcon(change: any) {
     case 'add':
     case 'set':
     case 'reorder':
-    case 'add_list':
+    case 'list-add':
     case 'rename':
       return 'circle-plus'
     default:
@@ -114,7 +114,7 @@ function getChangeColor(change: any) {
     case 'add':
     case 'set':
     case 'reorder':
-    case 'add_list':
+    case 'list-add':
     case 'rename':
       return 'text-green-700 dark:text-green-500'
     default:
@@ -160,7 +160,7 @@ async function revertChanges() {
     :title="t('standalone.uci_changes.configuration_changes')"
     :primaryLabel="t('standalone.uci_changes.apply')"
     :secondaryLabel="t('standalone.uci_changes.revert')"
-    :cancelLabel="t('common.cancel')"
+    :cancelLabel="t('common.close')"
     :primaryButtonDisabled="loading.isApplyingChanges || loading.isRevertingChanges"
     :primaryButtonLoading="loading.isApplyingChanges"
     secondaryButtonKind="danger"
@@ -171,7 +171,7 @@ async function revertChanges() {
     @primaryClick="applyChanges"
     @secondaryClick="revertChanges"
   >
-    <div class="space-y-4">
+    <div class="space-y-2">
       <NeExpandable
         v-for="config in Object.keys(uciChangesStore.changes)"
         :key="config"

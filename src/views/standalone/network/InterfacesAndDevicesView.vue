@@ -17,6 +17,8 @@ import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import CreateAliasInterfaceDrawer from '@/components/standalone/interfaces_and_devices/CreateAliasInterfaceDrawer.vue'
+import DeleteAliasModal from '@/components/standalone/interfaces_and_devices/DeleteAliasModal.vue'
+import { getFirewallZone } from '@/lib/standalone/network'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t } = useI18n()
@@ -28,6 +30,10 @@ let firewallConfig: Ref<any> = ref({})
 let networkConfig: Ref<any> = ref({})
 let currentInterface: Ref<any> = ref({})
 let isShownCreateAliasInterfaceDrawer = ref(false)
+let isShownAlias: Ref<{ [index: string]: boolean }> = ref({})
+let isShownDeleteAliasModal = ref(false)
+let currentAlias: Ref<any> = ref({})
+let currenteParentInterface: Ref<any> = ref({})
 
 let loading = ref({
   networkInterfaces: true,
@@ -55,8 +61,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  console.log('unmounted') ////
-
   if (devicesIntervalId.value) {
     clearInterval(devicesIntervalId.value)
   }
@@ -76,8 +80,6 @@ async function loadData() {
 
   // reload devices periodically
   devicesIntervalId.value = setInterval(getNetworkDevices, GET_DEVICES_INTERVAL_TIME)
-
-  console.log('setInterval, devicesIntervalId', devicesIntervalId.value) ////
 }
 
 async function getFirewallConfig() {
@@ -119,6 +121,14 @@ async function getNetworkInterfaces() {
     console.log('getNetworkInterfaces res', res.data) ////
 
     interfaces.value = res.data.interface
+
+    // alias visibility
+    const isShownAliasObj: { [index: string]: boolean } = {}
+
+    for (const iface of interfaces.value) {
+      isShownAliasObj[iface.interface] = false
+    }
+    isShownAlias.value = isShownAliasObj
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_network_interfaces')
@@ -147,19 +157,6 @@ async function getNetworkDevices() {
   loading.value.networkDevices = false
 }
 
-//// move to local library?
-function getRole(iface: any) {
-  if (firewallConfig.value) {
-    const zoneFound = firewallConfig.value.zone?.find((zone: any) =>
-      zone.network.includes(iface.interface)
-    )
-
-    if (zoneFound) {
-      return zoneFound.name
-    }
-  }
-}
-
 function isAlias(iface: any) {
   const ifaceFound = networkConfig.value.interface.find(
     (ifaceElem: any) => ifaceElem['.name'] === iface.interface
@@ -183,7 +180,7 @@ function getAliasInterfaces(iface: any) {
 }
 
 function getInterfaceBorderStyle(iface: any) {
-  switch (getRole(iface)) {
+  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
     case 'lan':
       return 'border-green-700 dark:border-green-700'
     case 'wan':
@@ -197,9 +194,9 @@ function getInterfaceBorderStyle(iface: any) {
   }
 }
 
-//// add missing zones
+//// add missing zones (dmz?)
 function getInterfaceIconName(iface: any) {
-  switch (getRole(iface)) {
+  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
     case 'lan':
       return 'location-dot'
     case 'wan':
@@ -214,7 +211,7 @@ function getInterfaceIconName(iface: any) {
 }
 
 function getIconBackgroundStyle(iface: any) {
-  switch (getRole(iface)) {
+  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
     case 'lan':
       return 'bg-green-100 dark:bg-green-700'
     case 'wan':
@@ -229,7 +226,7 @@ function getIconBackgroundStyle(iface: any) {
 }
 
 function getIconForegroundStyle(iface: any) {
-  switch (getRole(iface)) {
+  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
     case 'lan':
       return 'text-green-700 dark:text-green-50'
     case 'wan':
@@ -243,21 +240,43 @@ function getIconForegroundStyle(iface: any) {
   }
 }
 
-function getKebabMenuItems(iface: any) {
+function getInterfaceKebabMenuItems(iface: any) {
   return [
     {
       id: 'createAliasInterface',
       label: t('standalone.interfaces_and_devices.create_alias_interface'),
       icon: 'copy',
       iconStyle: 'fas',
-      action: () => showCreateAliasInterfaceDrawer(iface)
+      action: () => showCreateAliasInterfaceDrawer(iface),
+      disabled: hasAlias(iface) || !getFirewallZone(iface, firewallConfig.value)
     },
     {
       id: 'releaseRole',
       label: t('standalone.interfaces_and_devices.release_role'),
       icon: 'unlock',
       iconStyle: 'fas',
-      action: () => releaseRole(iface)
+      action: () => releaseRole(iface),
+      danger: true,
+      disabled: !getFirewallZone(iface, firewallConfig.value)
+    }
+  ]
+}
+
+function showDeleteAliasModal(alias: any, parentIface: any) {
+  currentAlias.value = alias
+  currenteParentInterface.value = parentIface
+  isShownDeleteAliasModal.value = true
+}
+
+function getAliasKebabMenuItems(alias: any, parentIface: any) {
+  return [
+    {
+      id: 'deleteAlias',
+      label: t('standalone.interfaces_and_devices.delete_alias'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      action: () => showDeleteAliasModal(alias, parentIface),
+      danger: true
     }
   ]
 }
@@ -307,145 +326,202 @@ function releaseRole(iface: any) {
         </NeButton>
       </div>
       <template v-for="iface in interfaces">
-        <div
-          v-if="iface.interface !== 'loopback' && !isAlias(iface)"
-          :class="`relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getInterfaceBorderStyle(
-            iface
-          )}`"
-        >
-          <!-- overflow menu for smaller screens -->
-          <div class="3xl:hidden absolute right-4 top-4 flex items-center">
-            <NeDropdown :items="getKebabMenuItems(iface)" :alignToRight="true" />
-          </div>
+        <div v-if="iface.interface !== 'loopback' && !isAlias(iface)">
+          <!-- interface card -->
           <div
-            class="grid gap-x-4 gap-y-8 pr-6 3xl:pr-0 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-5"
+            :class="`relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getInterfaceBorderStyle(
+              iface
+            )}`"
           >
-            <!-- first column -->
+            <!-- overflow menu for smaller screens -->
+            <div class="3xl:hidden absolute right-4 top-4 flex items-center">
+              <NeDropdown :items="getInterfaceKebabMenuItems(iface)" :alignToRight="true" />
+            </div>
             <div
-              class="flex gap-4 flex-wrap items-start justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
+              class="grid gap-x-4 gap-y-8 pr-6 3xl:pr-0 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-5"
             >
-              <div class="flex items-start">
-                <!-- use component for interface icon? //// -->
-                <div
-                  :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full mr-4 ${getIconBackgroundStyle(
-                    iface
-                  )}`"
-                >
-                  <font-awesome-icon
-                    :icon="['fas', getInterfaceIconName(iface)]"
-                    aria-hidden="true"
-                    :class="`h-5 w-5 ${getIconForegroundStyle(iface)}`"
-                  />
+              <!-- first column -->
+              <div
+                class="flex gap-4 flex-wrap items-start justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
+              >
+                <div class="flex items-start">
+                  <!-- use component for interface icon? //// -->
+                  <div
+                    :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full mr-4 ${getIconBackgroundStyle(
+                      iface
+                    )}`"
+                  >
+                    <font-awesome-icon
+                      :icon="['fas', getInterfaceIconName(iface)]"
+                      aria-hidden="true"
+                      :class="`h-5 w-5 ${getIconForegroundStyle(iface)}`"
+                    />
+                  </div>
+                  <div>
+                    <div class="font-semibold">{{ iface.interface }}</div>
+                    <div>{{ iface.device }}</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="font-semibold">{{ iface.interface }}</div>
-                  <div>{{ iface.device }}</div>
+                <!-- alias -->
+                <div v-if="hasAlias(iface)">
+                  <NeButton kind="tertiary" size="sm" class="-mt-2 -mr-2">
+                    <template #suffix>
+                      <font-awesome-icon
+                        :icon="['fas', 'chevron-down']"
+                        class="h-3 w-3"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    {{
+                      t('standalone.interfaces_and_devices.num_alias', {
+                        num: getAliasInterfaces(iface).length
+                      })
+                    }}
+                  </NeButton>
+                  <!--  //// bridge -->
+                  <!-- <div>bridge</div> -->
                 </div>
               </div>
-              <!-- alias -->
-              <div v-if="hasAlias(iface)">
-                <NeButton kind="tertiary" size="sm" class="-mt-2 -mr-2">
-                  <template #suffix>
+              <!-- second column -->
+              <div>
+                <div>
+                  <span class="font-medium">MAC: </span>
+                  <span>{{ devices[iface.device]?.mac || '-' }}</span>
+                </div>
+                <div v-for="ipv4Address in iface['ipv4-address']">
+                  <span class="font-medium">IPv4: </span>
+                  <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
+                </div>
+              </div>
+              <!-- third column -->
+              <div>
+                <div>
+                  <span class="font-medium">RX: </span>
+                  <span>{{ byteFormat1000(devices[iface.device]?.stats?.rx_bytes) }}</span>
+                  <span v-if="devices[iface.device]?.stats?.rx_packets">
+                    ({{ devices[iface.device]?.stats.rx_packets || '-' }} pkts)</span
+                  >
+                </div>
+                <div>
+                  <span class="font-medium">TX: </span>
+                  <span>{{ byteFormat1000(devices[iface.device]?.stats?.tx_bytes) }}</span>
+                  <span v-if="devices[iface.device]?.stats?.tx_packets">
+                    ({{ devices[iface.device]?.stats.tx_packets || '-' }} pkts)</span
+                  >
+                </div>
+              </div>
+              <!-- fourth column -->
+              <div>
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
                     <font-awesome-icon
-                      :icon="['fas', 'chevron-down']"
-                      class="h-3 w-3"
+                      :icon="[
+                        'fas',
+                        devices[iface.device]?.flags.up ? 'circle-check' : 'circle-xmark'
+                      ]"
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                    <span>{{
+                      devices[iface.device]?.flags.up
+                        ? t('standalone.interfaces_and_devices.up')
+                        : t('standalone.interfaces_and_devices.down')
+                    }}</span>
+                  </div>
+                  <div>
+                    <span class="font-semibold"
+                      >{{ t('standalone.interfaces_and_devices.speed') }}:
+                    </span>
+                    <span>
+                      {{
+                        devices[iface.device]?.link.speed &&
+                        devices[iface.device]?.link.speed !== -1
+                          ? devices[iface.device].link.speed
+                          : '-'
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- fifth column -->
+              <div
+                class="hidden 3xl:flex items-start gap-4 justify-end border-l border-gray-200 dark:border-gray-600"
+              >
+                <NeButton kind="tertiary" size="lg">
+                  <template #prefix>
+                    <font-awesome-icon
+                      :icon="['fas', 'pen-to-square']"
+                      class="h-4 w-4"
                       aria-hidden="true"
                     />
                   </template>
-                  {{
-                    t('standalone.interfaces_and_devices.num_alias', {
-                      num: getAliasInterfaces(iface).length
-                    })
-                  }}
+                  {{ t('common.edit') }}
                 </NeButton>
-                <!--  //// bridge -->
-                <!-- <div>bridge</div> -->
+                <!-- overflow menu for larger screens -->
+                <NeDropdown :items="getInterfaceKebabMenuItems(iface)" :alignToRight="true" />
               </div>
             </div>
-            <!-- second column -->
-            <div>
-              <div>
-                <span class="font-medium">MAC: </span>
-                <span>{{ devices[iface.device]?.mac || '-' }}</span>
+          </div>
+          <!-- alias interfaces -->
+          <div v-for="alias in getAliasInterfaces(iface)" class="flex items-start group">
+            <!-- L-shaped dashed line-->
+            <div
+              class="ml-4 h-12 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+            ></div>
+            <!-- alias card -->
+            <div
+              :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getInterfaceBorderStyle(
+                iface
+              )}`"
+            >
+              <!-- overflow menu for smaller screens -->
+              <div class="3xl:hidden absolute right-4 top-4 flex items-center">
+                <NeDropdown :items="getAliasKebabMenuItems(alias, iface)" :alignToRight="true" />
               </div>
-              <div v-for="ipv4Address in iface['ipv4-address']">
-                <span class="font-medium">IPv4: </span>
-                <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
-              </div>
-            </div>
-            <!-- third column -->
-            <div>
-              <div>
-                <span class="font-medium">RX: </span>
-                <span>{{ byteFormat1000(devices[iface.device]?.stats?.rx_bytes) }}</span>
-                <span v-if="devices[iface.device]?.stats?.rx_packets">
-                  ({{ devices[iface.device]?.stats.rx_packets || '-' }} pkts)</span
-                >
-              </div>
-              <div>
-                <span class="font-medium">TX: </span>
-                <span>{{ byteFormat1000(devices[iface.device]?.stats?.tx_bytes) }}</span>
-                <span v-if="devices[iface.device]?.stats?.tx_packets">
-                  ({{ devices[iface.device]?.stats.tx_packets || '-' }} pkts)</span
-                >
-              </div>
-            </div>
-            <!-- fourth column -->
-            <div>
-              <div>
-                <div class="flex items-center gap-2 mb-2">
-                  <font-awesome-icon
-                    :icon="[
-                      'fas',
-                      devices[iface.device]?.flags.up ? 'circle-check' : 'circle-xmark'
-                    ]"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                  <span>{{
-                    devices[iface.device]?.flags.up
-                      ? t('standalone.interfaces_and_devices.up')
-                      : t('standalone.interfaces_and_devices.down')
-                  }}</span>
+              <div class="flex justify-between">
+                <div class="flex gap-x-4">
+                  <!-- alias name -->
+                  <div class="font-semibold pr-8 border-r border-gray-200 dark:border-gray-600">
+                    {{ alias['.name'] }}
+                  </div>
+                  <div class="flex flex-wrap gap-4 pr-8">
+                    <!-- ipv4 addresses -->
+                    <div v-for="ipv4 in alias.ipaddr">
+                      <span class="font-medium">
+                        {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
+                      ><span>{{ ipv4 }}</span>
+                    </div>
+                    <!-- ipv6 addresses -->
+                    <div v-for="ipv6 in alias.ip6addr">
+                      <span class="font-medium">
+                        {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
+                      ><span>{{ ipv6 }}</span>
+                    </div>
+                  </div>
                 </div>
                 <div>
-                  <span class="font-semibold"
-                    >{{ t('standalone.interfaces_and_devices.speed') }}:
-                  </span>
-                  <span>
-                    {{
-                      devices[iface.device]?.link.speed && devices[iface.device]?.link.speed !== -1
-                        ? devices[iface.device].link.speed
-                        : '-'
-                    }}
-                  </span>
+                  <!-- edit alias and overflow menu -->
+                  <div
+                    class="hidden 3xl:flex items-start gap-4 justify-end pl-8 border-l border-gray-200 dark:border-gray-600"
+                  >
+                    <NeButton kind="tertiary" size="lg">
+                      <template #prefix>
+                        <font-awesome-icon
+                          :icon="['fas', 'pen-to-square']"
+                          class="h-4 w-4"
+                          aria-hidden="true"
+                        />
+                      </template>
+                      {{ t('common.edit') }}
+                    </NeButton>
+                    <!-- overflow menu for larger screens -->
+                    <NeDropdown
+                      :items="getAliasKebabMenuItems(alias, iface)"
+                      :alignToRight="true"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <!-- fifth column -->
-            <div
-              class="hidden 3xl:flex items-start gap-4 justify-end border-l border-gray-200 dark:border-gray-600"
-            >
-              <NeButton kind="tertiary" size="lg">
-                <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                </template>
-                {{ t('common.edit') }}
-              </NeButton>
-              <!-- overflow menu for larger screens -->
-
-              <!-- <NeButton kind="tertiary" size="lg" class="py-3">
-              <font-awesome-icon
-                :icon="['fas', 'ellipsis-vertical']"
-                aria-hidden="true"
-                :class="`h-4 w-4`"
-              />
-            </NeButton> -->
-              <NeDropdown :items="getKebabMenuItems(iface)" :alignToRight="true" />
             </div>
           </div>
         </div>
@@ -459,6 +535,15 @@ function releaseRole(iface: any) {
       :isShown="isShownCreateAliasInterfaceDrawer"
       @close="hideCreateAliasInterfaceDrawer"
       @reloadData="loadData"
+    />
+    <!-- delete alias modal -->
+    <DeleteAliasModal
+      :visible="isShownDeleteAliasModal"
+      :alias="currentAlias"
+      :parentInterface="currenteParentInterface"
+      :firewallConfig="firewallConfig"
+      @close="isShownDeleteAliasModal = false"
+      @aliasDeleted="loadData"
     />
   </div>
 </template>

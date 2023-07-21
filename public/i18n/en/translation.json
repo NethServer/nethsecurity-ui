@@ -6,7 +6,8 @@
     "help": "Help",
     "optional": "Optional",
     "close": "Close",
-    "edit": "Edit"
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -181,7 +182,12 @@
       "enter_one_ipv4_or_ipv6_address": "Enter at least an IPv4 or an IPv6 address",
       "cannot_create_alias_interface": "Cannot create alias interface",
       "num_alias": "{num} alias",
-      "interface_name_already_used": "Interface name already used"
+      "interface_name_already_used": "Interface name already used",
+      "ipv4": "IPv4",
+      "ipv6": "IPv6",
+      "delete_alias": "Delete alias",
+      "cannot_delete_alias_interface": "Cannot delete alias interface",
+      "delete_alias_interface_name": "Delete alias interface '{name}'?"
     },
     "users_and_objects": {
       "title": "Users & objects"

@@ -181,9 +181,14 @@ function validate() {
             </div>
 
             <div>
-              <NeButton kind="primary" size="lg" @click.prevent="login" class="w-full">{{
-                t('login.sign_in')
-              }}</NeButton>
+              <NeButton
+                kind="primary"
+                size="lg"
+                @click.prevent="login"
+                type="submit"
+                class="w-full"
+                >{{ t('login.sign_in') }}</NeButton
+              >
             </div>
           </form>
         </div>

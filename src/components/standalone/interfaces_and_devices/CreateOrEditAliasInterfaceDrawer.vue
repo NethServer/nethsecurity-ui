@@ -22,7 +22,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { isEmpty, uniq } from 'lodash'
-import { ref, watch, type Ref } from 'vue'
+import { ref, watch, type Ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
@@ -37,6 +37,10 @@ const props = defineProps({
   interfaces: {
     type: Array,
     required: true
+  },
+  aliasToEdit: {
+    type: Object,
+    default: null
   },
   isShown: { type: Boolean, default: false }
 })
@@ -69,17 +73,31 @@ let error = ref({
   newIpv6Address: ''
 })
 
+const isCreating = computed(() => {
+  return !props.aliasToEdit
+})
+
 watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
       clearErrors()
-      name.value = props.iface.interface + '_alias'
-      ipv4Addresses.value = []
-      ipv6Addresses.value = []
       newIpv4Address.value = ''
       newIpv6Address.value = ''
-      focusElement(newIpv4AddressRef)
+
+      if (isCreating.value) {
+        // creating alias
+        name.value = props.iface.interface + '_alias'
+        ipv4Addresses.value = []
+        ipv6Addresses.value = []
+        focusElement(nameRef)
+      } else {
+        // editing alias
+        name.value = props.aliasToEdit['.name']
+        ipv4Addresses.value = props.aliasToEdit.ipaddr || []
+        ipv6Addresses.value = props.aliasToEdit.ip6addr || []
+        focusElement(newIpv4AddressRef)
+      }
     }
   }
 )
@@ -89,10 +107,10 @@ function closeDrawer() {
 }
 
 function deleteIpv4Address(ipv4Address: string) {
-  console.log('deleteIpv4Address', ipv4Address) ////
-
   // reset errors to prevent validation errors mismatch
   error.value.ipv4Addresses = []
+  error.value.newIpv4Address = ''
+  error.value.newIpv6Address = ''
 
   ipv4Addresses.value = ipv4Addresses.value.filter((elem) => elem !== ipv4Address)
 }
@@ -144,8 +162,6 @@ function validateNewIpv6Address(ipv6Address: string) {
 }
 
 function validateAndAddIpv4Address() {
-  console.log('addIpv4Address', newIpv4Address.value) ////
-
   const isValidationOk = validateNewIpv4Address(newIpv4Address.value)
 
   if (!isValidationOk) {
@@ -161,8 +177,6 @@ function validateAndAddIpv4Address() {
 }
 
 function validateAndAddIpv6Address() {
-  console.log('addIpv6Address', newIpv6Address.value) ////
-
   const isValidationOk = validateNewIpv6Address(newIpv6Address.value)
 
   if (!isValidationOk) {
@@ -178,10 +192,10 @@ function validateAndAddIpv6Address() {
 }
 
 function deleteIpv6Address(ipv6Address: string) {
-  console.log('deleteIpv6Address', ipv6Address) ////
-
   // reset errors to prevent validation errors mismatch
   error.value.ipv6Addresses = []
+  error.value.newIpv4Address = ''
+  error.value.newIpv6Address = ''
 
   ipv6Addresses.value = ipv6Addresses.value.filter((elem) => elem !== ipv6Address)
 }
@@ -244,13 +258,15 @@ function validate() {
         }
       }
 
-      // check if already used
-      const interfaceFound = props.interfaces.find((iface: any) => iface.interface === name.value)
+      if (isCreating.value) {
+        // check if already used
+        const interfaceFound = props.interfaces.find((iface: any) => iface.interface === name.value)
 
-      if (interfaceFound) {
-        error.value.name = t('standalone.interfaces_and_devices.interface_name_already_used')
-        isValidationOk = false
-        focusElement(nameRef)
+        if (interfaceFound) {
+          error.value.name = t('standalone.interfaces_and_devices.interface_name_already_used')
+          isValidationOk = false
+          focusElement(nameRef)
+        }
       }
     }
   }
@@ -357,12 +373,8 @@ async function setFirewallZone() {
     zone.network.includes(props.iface.interface)
   )
 
-  console.log('setFirewallZone, zoneFound', zoneFound) ////
-
   // add alias interface to zone interfaces
   zoneFound.network.push(name.value)
-
-  console.log('zoneFound.network updated:', zoneFound.network) ////
 
   if (zoneFound) {
     await ubusCall('uci', 'set', {
@@ -375,14 +387,11 @@ async function setFirewallZone() {
   }
 }
 
-async function createAliasInterface() {
+async function saveAliasInterface() {
   const isValidationOk = validate()
-
   if (!isValidationOk) {
     return
   }
-
-  console.log('validation OK') ////
 
   loading.value.create = true
 
@@ -395,7 +404,7 @@ async function createAliasInterface() {
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t(
-      'standalone.interfaces_and_devices.cannot_create_alias_interface'
+      'standalone.interfaces_and_devices.cannot_save_alias_interface'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
@@ -409,9 +418,11 @@ async function createAliasInterface() {
   <NeSideDrawer
     :isShown="isShown"
     :title="
-      t('standalone.interfaces_and_devices.create_alias_for_interface', {
-        interface: iface.interface
-      })
+      isCreating
+        ? t('standalone.interfaces_and_devices.create_alias_for_interface', {
+            interface: iface.interface
+          })
+        : t('standalone.interfaces_and_devices.edit_alias_interface')
     "
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     @close="closeDrawer"
@@ -422,13 +433,13 @@ async function createAliasInterface() {
           :label="t('standalone.interfaces_and_devices.name')"
           v-model.trim="name"
           :invalidMessage="t(error.name)"
-          :disabled="loading.create"
+          :disabled="loading.create || !isCreating"
           ref="nameRef"
         />
         <!-- ip v4 address list -->
         <div>
           <NeFormItemLabel>{{
-            t('standalone.interfaces_and_devices.ipv4_address')
+            t('standalone.interfaces_and_devices.ipv4_address_cidr')
           }}</NeFormItemLabel>
           <div class="space-y-4">
             <TransitionGroup name="fade">
@@ -475,7 +486,7 @@ async function createAliasInterface() {
         <!-- ip v6 address list -->
         <div>
           <NeFormItemLabel>{{
-            t('standalone.interfaces_and_devices.ipv6_address')
+            t('standalone.interfaces_and_devices.ipv6_address_cidr')
           }}</NeFormItemLabel>
           <div class="space-y-4">
             <TransitionGroup name="fade">
@@ -541,11 +552,15 @@ async function createAliasInterface() {
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="createAliasInterface()"
+          @click.prevent="saveAliasInterface"
           :disabled="loading.create"
           :loading="loading.create"
         >
-          {{ t('standalone.interfaces_and_devices.create_alias') }}
+          {{
+            isCreating
+              ? t('standalone.interfaces_and_devices.create_alias')
+              : t('standalone.interfaces_and_devices.save_alias')
+          }}
         </NeButton>
       </div>
     </form>

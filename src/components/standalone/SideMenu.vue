@@ -46,6 +46,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.interfaces_and_devices.title'),
         to: 'network/interfaces-and-devices'
+      },
+      {
+        name: t('standalone.multi_wan.title'),
+        to: 'network/multi-wan'
       }
     ],
     expanded: false

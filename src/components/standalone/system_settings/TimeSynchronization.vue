@@ -320,11 +320,11 @@ function addNtpServer() {
       <!-- ntp server candidates section -->
       <Transition name="fade">
         <div v-if="enableNtpClient">
-          <hr class="my-8 border-gray-200 dark:border-gray-700" />
+          <hr class="my-8" />
           <FormLayout :title="t('standalone.system_settings.ntp_server_candidates')">
             <div class="space-y-6">
               <div class="space-y-4">
-                <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex gap-2 items-start">
+                <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex items-start gap-2">
                   <NeTextInput
                     v-model.trim="ntpServerCandidates[i]"
                     :invalid-message="error.ntpServerCandidate[i]"

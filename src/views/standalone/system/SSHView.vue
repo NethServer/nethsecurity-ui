@@ -15,7 +15,7 @@ const { t } = useI18n()
   <h1 class="page-title">{{ t('standalone.ssh.title') }}</h1>
   <div class="max-w-3xl flex flex-col gap-y-8">
     <SshConfig />
-    <hr class="border-gray-200 dark:border-gray-700" />
+    <hr />
     <SshKeys />
   </div>
 </template>

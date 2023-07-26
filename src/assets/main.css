@@ -58,3 +58,7 @@ body {
 code {
   @apply block font-mono bg-gray-500 bg-opacity-20 dark:bg-opacity-40 rounded px-1;
 }
+
+hr {
+  @apply border-gray-200 dark:border-gray-700;
+}

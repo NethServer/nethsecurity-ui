@@ -427,7 +427,27 @@ function removeConfiguration(device: any) {
           >
             <!-- edit button and overflow menu for smaller screens -->
             <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
-              <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
+              <template v-if="getInterface(device)">
+                <!-- actions for configured devices -->
+                <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
+                  <template #prefix>
+                    <font-awesome-icon
+                      :icon="['fas', 'pen-to-square']"
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  </template>
+                  {{ t('common.edit') }}
+                </NeButton>
+                <NeDropdown :items="getDeviceKebabMenuItems(device)" :alignToRight="true" />
+              </template>
+              <!-- configure button for unconfigured devices -->
+              <NeButton
+                v-else
+                kind="secondary"
+                size="lg"
+                @click="showConfigureDeviceDrawer(device)"
+              >
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', 'pen-to-square']"
@@ -435,16 +455,15 @@ function removeConfiguration(device: any) {
                     aria-hidden="true"
                   />
                 </template>
-                {{ t('common.edit') }}
+                {{ t('standalone.interfaces_and_devices.configure') }}
               </NeButton>
-              <NeDropdown :items="getDeviceKebabMenuItems(device)" :alignToRight="true" />
             </div>
             <div
               class="grid gap-x-8 gap-y-8 pr-6 3xl:pr-0 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-5"
             >
               <!-- first column -->
               <div
-                class="flex gap-4 flex-wrap items-start justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                class="flex gap-8 flex-wrap items-start md:justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
               >
                 <div class="flex items-center">
                   <!-- use component for interface icon? //// -->
@@ -557,7 +576,27 @@ function removeConfiguration(device: any) {
               <div
                 class="hidden 3xl:flex items-start gap-2 justify-end border-l border-gray-200 dark:border-gray-600"
               >
-                <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
+                <template v-if="getInterface(device)">
+                  <!-- actions for configured devices -->
+                  <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
+                    <template #prefix>
+                      <font-awesome-icon
+                        :icon="['fas', 'pen-to-square']"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    {{ t('common.edit') }}
+                  </NeButton>
+                  <NeDropdown :items="getDeviceKebabMenuItems(device)" :alignToRight="true" />
+                </template>
+                <!-- configure button for unconfigured devices -->
+                <NeButton
+                  v-else
+                  kind="secondary"
+                  size="lg"
+                  @click="showConfigureDeviceDrawer(device)"
+                >
                   <template #prefix>
                     <font-awesome-icon
                       :icon="['fas', 'pen-to-square']"
@@ -565,12 +604,9 @@ function removeConfiguration(device: any) {
                       aria-hidden="true"
                     />
                   </template>
-                  {{ t('common.edit') }}
+                  {{ t('standalone.interfaces_and_devices.configure') }}
                 </NeButton>
-                <!-- overflow menu for larger screens -->
-                <NeDropdown :items="getDeviceKebabMenuItems(device)" :alignToRight="true" />
               </div>
-              <!-- </template> ////  -->
             </div>
           </div>
           <!-- alias interfaces -->
@@ -603,55 +639,50 @@ function removeConfiguration(device: any) {
                 </NeButton>
                 <NeDropdown :items="getAliasKebabMenuItems(alias, device)" :alignToRight="true" />
               </div>
-              <div class="flex justify-between">
-                <div class="flex gap-x-8">
-                  <!-- alias name -->
-                  <div class="pr-8 border-r border-gray-200 dark:border-gray-600">
-                    <div class="font-semibold">
-                      {{ alias['.name'] }}
-                    </div>
-                    <div>{{ t('standalone.interfaces_and_devices.alias') }}</div>
+              <div class="flex justify-between gap-8 flex-wrap">
+                <!-- alias name -->
+                <div
+                  class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                >
+                  <div class="font-semibold">
+                    {{ alias['.name'] }}
                   </div>
-                  <div class="flex flex-wrap gap-8 pr-8">
-                    <!-- ipv4 addresses -->
-                    <div v-for="ipv4 in alias.ipaddr">
-                      <span class="font-medium">
-                        {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
-                      ><span>{{ ipv4 }}</span>
-                    </div>
-                    <!-- ipv6 addresses -->
-                    <div v-for="ipv6 in alias.ip6addr">
-                      <span class="font-medium">
-                        {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
-                      ><span>{{ ipv6 }}</span>
-                    </div>
+                  <div>{{ t('standalone.interfaces_and_devices.alias') }}</div>
+                </div>
+                <div class="flex flex-wrap gap-8 pr-40 grow">
+                  <!-- ipv4 addresses -->
+                  <div v-for="ipv4 in alias.ipaddr">
+                    <span class="font-medium">
+                      {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
+                    ><span>{{ ipv4 }}</span>
+                  </div>
+                  <!-- ipv6 addresses -->
+                  <div v-for="ipv6 in alias.ip6addr">
+                    <span class="font-medium">
+                      {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
+                    ><span>{{ ipv6 }}</span>
                   </div>
                 </div>
-                <div>
-                  <!-- edit alias and overflow menu -->
-                  <div
-                    class="hidden 3xl:flex items-start gap-2 justify-end pl-8 border-l border-gray-200 dark:border-gray-600"
+                <!-- edit alias and overflow menu -->
+                <div
+                  class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
+                >
+                  <NeButton
+                    kind="tertiary"
+                    size="lg"
+                    @click="showEditAliasInterfaceDrawer(alias, device)"
                   >
-                    <NeButton
-                      kind="tertiary"
-                      size="lg"
-                      @click="showEditAliasInterfaceDrawer(alias, device)"
-                    >
-                      <template #prefix>
-                        <font-awesome-icon
-                          :icon="['fas', 'pen-to-square']"
-                          class="h-4 w-4"
-                          aria-hidden="true"
-                        />
-                      </template>
-                      {{ t('common.edit') }}
-                    </NeButton>
-                    <!-- overflow menu for larger screens -->
-                    <NeDropdown
-                      :items="getAliasKebabMenuItems(alias, device)"
-                      :alignToRight="true"
-                    />
-                  </div>
+                    <template #prefix>
+                      <font-awesome-icon
+                        :icon="['fas', 'pen-to-square']"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    {{ t('common.edit') }}
+                  </NeButton>
+                  <!-- overflow menu for larger screens -->
+                  <NeDropdown :items="getAliasKebabMenuItems(alias, device)" :alignToRight="true" />
                 </div>
               </div>
             </div>

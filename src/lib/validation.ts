@@ -4,6 +4,7 @@
 interface validationOutput {
   valid: Boolean
   errMessage?: String
+  i18Params?: Object
 }
 
 //// move general purpose functions to vue-tailwind library?
@@ -124,14 +125,62 @@ export const validateIp6Address = (ipAddr: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateUciName = (ipAddr: String): validationOutput => {
+export const validateIpv4SubnetMask = (subnetMask: String): validationOutput => {
+  const re =
+    /^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$/
+
+  const match = subnetMask.match(re)
+
+  if (!match) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_subnet_mask' }
+  }
+  return { valid: true }
+}
+
+export const validateIpv4Mtu = (mtu: String): validationOutput => {
+  // mtu: maximum transmission unit
+
+  const mtuNum = Number(mtu)
+
+  if (isNaN(mtuNum) || !Number.isInteger(mtuNum) || mtuNum < 576 || mtuNum > 9200) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_mtu' }
+  }
+  return { valid: true }
+}
+
+export const validateIpv6Mtu = (mtu: String): validationOutput => {
+  // mtu: maximum transmission unit
+
+  const mtuNum = Number(mtu)
+
+  if (isNaN(mtuNum) || !Number.isInteger(mtuNum) || mtuNum < 1280 || mtuNum > 9200) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_mtu' }
+  }
+  return { valid: true }
+}
+
+export const validateHexadecimalString = (hexValue: String): validationOutput => {
+  const re = /^([a-f0-9][a-f0-9]|[A-F0-9][A-F0-9])+$/
+  const match = hexValue.match(re)
+
+  if (!match) {
+    return { valid: false, errMessage: 'error.invalid_hexadecimal_string' }
+  }
+  return { valid: true }
+}
+
+export const validateUciName = (value: String, maxLength = 0): validationOutput => {
   // only alphanumeric and underscore characters allowed
   const re = /^[a-zA-Z0-9_]+$/
 
-  const match = ipAddr.match(re)
+  const match = value.match(re)
 
   if (!match) {
     return { valid: false, errMessage: 'error.invalid_uci_name' }
+  }
+
+  if (maxLength && value.length > maxLength) {
+    return { valid: false, errMessage: 'error.maximum_num_characters_allowed', i18Params: {num: maxLength} }
   }
   return { valid: true }
 }

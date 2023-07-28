@@ -24,7 +24,6 @@ import ConfigureDeviceDrawer from '@/components/standalone/interfaces_and_device
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t } = useI18n()
-let interfaces: any = ref([])
 let devices: any = ref({})
 // used for setInterval
 let devicesIntervalId: Ref<number> = ref(0)
@@ -39,9 +38,9 @@ let currentAlias: Ref<any> = ref({})
 let currenteParentInterface: Ref<any> = ref({})
 let aliasToEdit: Ref<any> = ref(null)
 let isShownConfigureDeviceDrawer = ref(false)
+let interfaceToEdit: Ref<any> = ref(null)
 
 let loading = ref({
-  networkInterfaces: true,
   networkDevices: true,
   networkConfig: true,
   firewallConfig: true
@@ -53,12 +52,7 @@ let error = ref({
 })
 
 const isLoading = computed(() => {
-  return (
-    loading.value.networkInterfaces ||
-    loading.value.networkDevices ||
-    loading.value.networkConfig ||
-    loading.value.firewallConfig
-  )
+  return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
 })
 
 onMounted(() => {
@@ -72,7 +66,6 @@ onUnmounted(() => {
 })
 
 async function loadData() {
-  getNetworkInterfaces()
   getNetworkDevices()
   getNetworkConfig()
   getFirewallConfig()
@@ -109,37 +102,20 @@ async function getNetworkConfig() {
     networkConfig.value = await getUciConfig('network')
 
     console.log('network config', networkConfig) ////
+
+    // alias visibility
+    const isShownAliasObj: { [index: string]: boolean } = {}
+
+    for (const iface of networkConfig.value.interface) {
+      isShownAliasObj[iface['.name']] = false
+    }
+    isShownAlias.value = isShownAliasObj
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
   loading.value.networkConfig = false
-}
-
-async function getNetworkInterfaces() {
-  loading.value.networkInterfaces = true
-
-  try {
-    const res = await ubusCall('network.interface', 'dump')
-
-    console.log('getNetworkInterfaces res', res.data) ////
-
-    interfaces.value = res.data.interface
-
-    // alias visibility
-    const isShownAliasObj: { [index: string]: boolean } = {}
-
-    for (const iface of interfaces.value) {
-      isShownAliasObj[iface.interface] = false
-    }
-    isShownAlias.value = isShownAliasObj
-  } catch (err: any) {
-    console.error(err)
-    error.value.notificationTitle = t('error.cannot_load_network_interfaces')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-  }
-  loading.value.networkInterfaces = false
 }
 
 async function getNetworkDevices() {
@@ -162,16 +138,6 @@ async function getNetworkDevices() {
   loading.value.networkDevices = false
 }
 
-function isAlias(iface: any) {
-  const ifaceFound = networkConfig.value.interface.find(
-    (ifaceElem: any) => ifaceElem['.name'] === iface.interface
-  )
-
-  if (ifaceFound) {
-    return ifaceFound.device.startsWith('@')
-  }
-}
-
 function hasAlias(device: any) {
   const iface = getInterface(device)
 
@@ -180,7 +146,7 @@ function hasAlias(device: any) {
   }
 
   return networkConfig.value?.interface.find(
-    (ifaceElem: any) => ifaceElem.device === `@${iface.interface}`
+    (ifaceElem: any) => ifaceElem.device === `@${iface['.name']}`
   )
 }
 
@@ -192,12 +158,12 @@ function getAliasInterfaces(device: any) {
   }
 
   return networkConfig.value.interface.filter(
-    (ifaceElem: any) => ifaceElem.device === `@${iface.interface}`
+    (ifaceElem: any) => ifaceElem.device === `@${iface['.name']}`
   )
 }
 
 function getInterface(device: any) {
-  return interfaces.value.find((iface: any) => iface.device === device.name)
+  return networkConfig.value.interface.find((iface: any) => iface.device === device.name)
 }
 
 function getDeviceBorderStyle(device: any) {
@@ -349,26 +315,22 @@ function hideCreateOrEditAliasInterfaceDrawer() {
 
 function showConfigureDeviceDrawer(device: any) {
   currentDevice.value = device
+
+  const iface = getInterface(device)
+
+  console.log('showConfigureDeviceDrawer', device, iface) ////
+
+  if (iface) {
+    interfaceToEdit.value = iface
+  } else {
+    interfaceToEdit.value = null
+  }
   isShownConfigureDeviceDrawer.value = true
 }
 
 function hideConfigureDeviceDrawer() {
   isShownConfigureDeviceDrawer.value = false
 }
-
-// function isIfaceMarkedForDeletion(device: any) { ////
-//   const iface = getInterface(device)
-
-//   const ifaceFound = networkConfig.value.interface.find(
-//     (el: any) => el['.name'] === iface.interface
-//   )
-
-//   if (ifaceFound) {
-//     return false
-//   } else {
-//     return true
-//   }
-// }
 
 function removeConfiguration(device: any) {
   console.log('removeConfiguration', device) ////
@@ -480,7 +442,7 @@ function removeConfiguration(device: any) {
                   </div>
                   <div>
                     <div v-if="getInterface(device)" class="font-semibold">
-                      {{ getInterface(device).interface }}
+                      {{ getInterface(device)['.name'] }}
                     </div>
                     <div>{{ device.name }}</div>
                   </div>
@@ -597,13 +559,13 @@ function removeConfiguration(device: any) {
                   size="lg"
                   @click="showConfigureDeviceDrawer(device)"
                 >
-                  <template #prefix>
+                  <!-- <template #prefix> ////
                     <font-awesome-icon
                       :icon="['fas', 'pen-to-square']"
                       class="h-4 w-4"
                       aria-hidden="true"
                     />
-                  </template>
+                  </template> -->
                   {{ t('standalone.interfaces_and_devices.configure') }}
                 </NeButton>
               </div>
@@ -694,7 +656,7 @@ function removeConfiguration(device: any) {
     <CreateOrEditAliasInterfaceDrawer
       :iface="currentInterface"
       :firewallConfig="firewallConfig"
-      :interfaces="interfaces"
+      :interfaces="networkConfig.interface"
       :isShown="isShownCreateOrEditAliasInterfaceDrawer"
       :aliasToEdit="aliasToEdit"
       @close="hideCreateOrEditAliasInterfaceDrawer"
@@ -713,7 +675,10 @@ function removeConfiguration(device: any) {
     <ConfigureDeviceDrawer
       :device="currentDevice"
       :firewallConfig="firewallConfig"
+      :networkConfig="networkConfig"
+      :interfaces="networkConfig.interface"
       :isShown="isShownConfigureDeviceDrawer"
+      :interfaceToEdit="interfaceToEdit"
       @close="hideConfigureDeviceDrawer"
       @reloadData="loadData"
     />

@@ -34,12 +34,17 @@
     "invalid_ip_v6_address": "Invalid IPv6 address",
     "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
-    "invalid_uci_name": "Only letters, numbers and underscore ('_') are allowed",
+    "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",
     "cannot_load_network_devices": "Cannot load network devices",
     "cannot_load_firewall_config": "Cannot load firewall config",
-    "cannot_load_network_config": "Cannot load network config"
+    "cannot_load_network_config": "Cannot load network config",
+    "invalid_ip_v4_subnet_mask": "Invalid IPv4 subnet mask",
+    "invalid_ip_v4_mtu": "Enter an integer number between 576 and 9200",
+    "invalid_ip_v6_mtu": "Enter an integer number between 1280 and 9200",
+    "invalid_hexadecimal_string": "Invalid hexadecimal string",
+    "maximum_num_characters_allowed": "Maximum {num} characters allowed"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -193,11 +198,12 @@
       "alias": "Alias",
       "save_alias": "Save alias",
       "this_interface_is_marked_for_deletion": "This interface is marked for deletion",
-      "configure_name": "Configure {name}",
+      "configure_interface_for_name": "Configure interface for {name}",
       "interface_name": "Interface name",
       "zone": "Zone",
       "protocol": "Protocol",
       "configure": "Configure",
+      "configure_interface": "Configure interface",
       "protocol_static": "Static",
       "ipv4_address": "IPv4 address",
       "ipv4_subnet_mask": "IPv4 subnet mask",
@@ -208,7 +214,9 @@
       "ipv4_mtu_bytes": "IPv4 MTU (bytes)",
       "ipv6_mtu_bytes": "IPv6 MTU (bytes)",
       "client_id_label": "Client ID to be sent when requesting DHCP",
-      "vendor_class_label": "Vendor class to be sent when requesting DHCP"
+      "vendor_class_label": "Vendor class to be sent when requesting DHCP",
+      "cannot_configure_device": "Cannot configure device",
+      "reconfigure_interface": "Reconfigure interface"
     },
     "users_and_objects": {
       "title": "Users & objects"

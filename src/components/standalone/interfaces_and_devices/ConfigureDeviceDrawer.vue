@@ -7,10 +7,14 @@
 import { getZoneColor, getZoneIcon, getZoneLabel } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  validateIp4Cidr,
-  validateIp6Cidr,
+  validateIp4Address,
+  validateIp6Address,
+  validateIpv4Mtu,
+  validateIpv6Mtu,
+  validateIpv4SubnetMask,
   validateRequired,
-  validateUciName
+  validateUciName,
+  validateHexadecimalString
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -24,11 +28,9 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty, uniq } from 'lodash'
-import { ref, watch, type Ref, computed } from 'vue'
+import { isEmpty } from 'lodash'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-//// review
 
 const props = defineProps({
   device: {
@@ -39,10 +41,18 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  // interfaces: { ////
-  //   type: Array,
-  //   required: true
-  // },
+  networkConfig: {
+    type: Object,
+    required: true
+  },
+  interfaces: {
+    type: Array,
+    required: true
+  },
+  interfaceToEdit: {
+    type: Object,
+    default: null
+  },
   isShown: { type: Boolean, default: false }
 })
 
@@ -51,14 +61,14 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let name = ref('')
-let labelRef = ref()
+let interfaceName = ref('')
+let interfaceNameRef = ref()
 let zone = ref('lan')
 let protocol = ref('static')
 let ipv4Address = ref('')
 let ipv4AddressRef = ref()
-let ipv4SubnetMark = ref('255.255.255.0')
-let ipv4SubnetMarkRef = ref()
+let ipv4SubnetMask = ref('255.255.255.0')
+let ipv4SubnetMaskRef = ref()
 let ipv4Gateway = ref('')
 let ipv4GatewayRef = ref()
 let isIpv6Enabled = ref(false)
@@ -71,10 +81,10 @@ let ipv4Mtu = ref('')
 let ipv4MtuRef = ref()
 let ipv6Mtu = ref('')
 let ipv6MtuRef = ref()
-let clientId = ref('')
-let clientIdRef = ref()
-let vendorClass = ref('')
-let vendorClassRef = ref()
+let dhcpClientId = ref('')
+let dhcpClientIdRef = ref()
+let dhcpVendorClass = ref('')
+let dhcpVendorClassRef = ref()
 
 let protocolBaseOptions = [
   {
@@ -103,21 +113,19 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
-  label: '',
+  interfaceName: '',
   ipv4Address: '',
-  ipv4SubnetMark: '',
+  ipv4SubnetMask: '',
   ipv4Gateway: '',
   ipv6Address: '',
   ipv6Gateway: '',
   ipv4Mtu: '',
   ipv6Mtu: '',
-  clientId: '',
-  vendorClass: ''
+  dhcpClientId: '',
+  dhcpVendorClass: ''
 })
 
 const zoneOptions = computed(() => {
-  console.log('props.firewallConfig', props.firewallConfig) ////
-
   const allowedZones = props.firewallConfig.zone.filter(
     (zone: any) => !['openvpnrw', 'dedalo'].includes(zone.name)
   )
@@ -140,15 +148,64 @@ const protocolOptions = computed(() => {
   }
 })
 
+// returns true when configuring an unassigned device, false when editing an already configured interface
+const isConfiguringFromScratch = computed(() => {
+  return !props.interfaceToEdit
+})
+
 watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
       clearErrors()
-      name.value = ''
-      zone.value = 'lan'
-      protocol.value = 'static'
-      focusElement(labelRef)
+
+      if (isConfiguringFromScratch.value) {
+        // configuring unassigned device
+        interfaceName.value = ''
+        zone.value = 'lan'
+        protocol.value = 'static'
+        ipv4Address.value = ''
+        ipv4SubnetMask.value = '255.255.255.0'
+        ipv4Gateway.value = ''
+        isIpv6Enabled.value = false
+        ipv6Address.value = ''
+        ipv6Gateway.value = ''
+        isExpandedAdvancedSettings.value = false
+        ipv4Mtu.value = ''
+        ipv6Mtu.value = ''
+        dhcpClientId.value = ''
+        dhcpVendorClass.value = ''
+        focusElement(interfaceNameRef)
+      } else {
+        // editing configuration
+
+        // uncommitted ipv4Mtu and ipv6Mtu are saved inside network configuration
+        const networkConfigDevice = props.networkConfig.device.find(
+          (d: any) => d.name === props.device.name
+        )
+
+        interfaceName.value = props.interfaceToEdit['.name']
+        const zoneFound = props.firewallConfig.zone.find((z: any) =>
+          z.network.includes(interfaceName.value)
+        )
+        zone.value = zoneFound.name
+        protocol.value = props.interfaceToEdit.proto
+        ipv4Address.value = props.interfaceToEdit.ipaddr || ''
+        ipv4SubnetMask.value = props.interfaceToEdit.netmask || ''
+        ipv4Gateway.value = props.interfaceToEdit.gateway || ''
+        isIpv6Enabled.value = !isEmpty(props.interfaceToEdit.ip6addr)
+        ipv6Address.value = props.interfaceToEdit.ip6addr ? props.interfaceToEdit.ip6addr[0] : ''
+        ipv6Gateway.value = props.interfaceToEdit.ip6gw || ''
+        isExpandedAdvancedSettings.value =
+          networkConfigDevice.mtu ||
+          networkConfigDevice.mtu6 ||
+          props.interfaceToEdit.clientid ||
+          props.interfaceToEdit.vendorid
+        ipv4Mtu.value = networkConfigDevice.mtu || ''
+        ipv6Mtu.value = networkConfigDevice.mtu6 || ''
+        dhcpClientId.value = props.interfaceToEdit.clientid || ''
+        dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
+      }
     }
   }
 )
@@ -157,8 +214,6 @@ watch(zone, () => {
   // only red interface support PPoE
   if (zone.value !== 'wan' && protocol.value === 'pppoe') {
     protocol.value = 'static'
-
-    console.log('set protocol', protocol.value) ////
   }
 })
 
@@ -179,178 +234,380 @@ function clearErrors() {
   }
 }
 
-function configureDevice() {
-  console.log('configureDevice') ////
+async function createNetworkDeviceAndSetMtu() {
+  let deviceSection = null
+
+  if (isConfiguringFromScratch.value) {
+    const res = await ubusCall('uci', 'add', {
+      config: 'network',
+      type: 'device',
+      values: { name: props.device.name }
+    })
+    deviceSection = res.data.section
+  } else {
+    // editing configuration: device already exists
+
+    const deviceFound = props.networkConfig.device.find(
+      (dev: any) => dev.name === props.device.name
+    )
+
+    if (deviceFound) {
+      deviceSection = deviceFound['.name']
+    }
+  }
+
+  ubusCall('uci', 'set', {
+    config: 'network',
+    section: deviceSection,
+    values: { mtu: ipv4Mtu.value, mtu6: ipv6Mtu.value }
+  })
+}
+
+async function addInterfaceToFirwallZone() {
+  const fwZone = props.firewallConfig.zone.find((z: any) => z.name === zone.value)
+
+  // add the new interface to zone interfaces
+  fwZone.network.push(interfaceName.value)
+
+  if (fwZone) {
+    await ubusCall('uci', 'set', {
+      config: 'firewall',
+      section: fwZone['.name'],
+      values: {
+        network: fwZone.network
+      }
+    })
+  }
+}
+
+async function removeInterfaceFromOldFirewallZone(oldZone: any) {
+  oldZone.network = oldZone.network.filter((iface: any) => iface !== interfaceName.value)
+
+  await ubusCall('uci', 'set', {
+    config: 'firewall',
+    section: oldZone['.name'],
+    values: {
+      network: oldZone.network
+    }
+  })
+}
+
+async function setFirewallZone() {
+  if (isConfiguringFromScratch.value) {
+    addInterfaceToFirwallZone()
+  } else {
+    // editing configuration: if firewall zone has changed, remove interface from the old zone
+
+    const oldZone = props.firewallConfig.zone.find((z: any) =>
+      z.network.includes(interfaceName.value)
+    )
+
+    if (oldZone.name !== zone.value) {
+      removeInterfaceFromOldFirewallZone(oldZone)
+      addInterfaceToFirwallZone()
+    }
+  }
+}
+
+async function setNetworkConfiguration() {
+  const values: any = { proto: protocol.value }
+
+  // disable "force link" on red interfaces
+  if (zone.value === 'wan') {
+    values.force_link = '0'
+  }
+
+  if (protocol.value === 'static') {
+    if (ipv4Address.value) {
+      values.ipaddr = ipv4Address.value
+      values.netmask = ipv4SubnetMask.value
+      values.gateway = ipv4Gateway.value
+    }
+
+    if (ipv6Address.value) {
+      values.ip6addr = [ipv6Address.value]
+      values.ip6gw = ipv6Gateway.value
+    }
+  } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+    values.clientid = dhcpClientId.value
+
+    if (protocol.value === 'dhcp') {
+      values.vendorid = dhcpVendorClass.value
+    }
+  }
+
+  ubusCall('uci', 'set', {
+    config: 'network',
+    section: interfaceName.value,
+    values: values
+  })
+}
+
+async function createNetworkInterface() {
+  ubusCall('uci', 'add', {
+    config: 'network',
+    type: 'interface',
+    name: interfaceName.value,
+    values: {
+      proto: protocol.value,
+      device: props.device.name
+    }
+  })
+}
+
+async function configureDevice() {
+  const isValidationOk = validate()
+
+  if (!isValidationOk) {
+    return
+  }
+  loading.value.configure = true
+
+  try {
+    if (isConfiguringFromScratch.value) {
+      await createNetworkInterface()
+    }
+    await setNetworkConfiguration()
+    await setFirewallZone()
+    await createNetworkDeviceAndSetMtu()
+    emit('reloadData')
+    closeDrawer()
+  } catch (err: any) {
+    console.error(err)
+    error.value.notificationTitle = t('error.cannot_configure_device')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.configure = false
+    await uciChangesStore.getChanges()
+  }
 }
 
 function validate() {
   clearErrors()
-
   let isValidationOk = true
 
-  // label
+  // interfaceName
 
-  // { ////
-  //   // check required
-  //   let { valid, errMessage } = validateRequired(label.value) ////
-  //   if (!valid) {
-  //     error.value.label = t(errMessage as string)
-  //     isValidationOk = false
-  //     focusElement(labelRef)
-  //   } else {
-  //     // check sintax
-  //     {
-  //       let { valid, errMessage } = validateUciName(label.value)
-  //       if (!valid) {
-  //         error.value.name = t(errMessage as string)
-  //         isValidationOk = false
-  //         focusElement(labelRef)
-  //       }
-  //     }
+  {
+    // check required
+    let { valid, errMessage } = validateRequired(interfaceName.value)
+    if (!valid) {
+      error.value.interfaceName = t(errMessage as string)
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(interfaceNameRef)
+      }
+    } else {
+      // check sintax
+      {
+        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
+        if (!valid) {
+          error.value.interfaceName = t(errMessage as string, i18Params as any)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(interfaceNameRef)
+          }
+        }
+      }
 
-  //     if (isCreating.value) {
-  //       // check if already used
-  //       const interfaceFound = props.interfaces.find(
-  //         (iface: any) => iface.interface === label.value
-  //       )
+      if (isConfiguringFromScratch.value) {
+        // check if already used
+        const interfaceFound = props.interfaces.find(
+          (iface: any) => iface['.name'] === interfaceName.value
+        )
 
-  //       if (interfaceFound) {
-  //         error.value.name = t('standalone.interfaces_and_devices.interface_name_already_used')
-  //         isValidationOk = false
-  //         focusElement(labelRef)
-  //       }
-  //     }
-  //   }
-  // }
+        if (interfaceFound) {
+          error.value.interfaceName = t(
+            'standalone.interfaces_and_devices.interface_name_already_used'
+          )
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(interfaceNameRef)
+          }
+        }
+      }
+    }
+  }
 
-  // // at least an ipv4 or a ipv6 address is needed
-  // if (isEmpty(ipv4Addresses.value) && isEmpty(ipv6Addresses.value)) {
-  //   isValidationOk = false
+  if (protocol.value === 'static') {
+    // at least an ipv4 or a ipv6 address is needed
+    if (isEmpty(ipv4Address.value) && (!isIpv6Enabled.value || isEmpty(ipv6Address.value))) {
+      error.value.ipv4Address = t(
+        'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
+      )
 
-  //   if (!error.value.newIpv4Address && !error.value.newIpv6Address) {
-  //     error.value.newIpv4Address = t(
-  //       'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-  //     )
-  //     error.value.newIpv6Address = t(
-  //       'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-  //     )
-  //   }
-  // }
+      if (isIpv6Enabled.value) {
+        error.value.ipv6Address = t(
+          'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
+        )
+      }
+      isValidationOk = false
+    }
 
-  // // ipv4 addresses
+    // ipv4 address
 
-  // for (let index = 0; index < ipv4Addresses.value.length; index++) {
-  //   const ipv4Address = ipv4Addresses.value[index]
+    if (ipv4Address.value) {
+      // check sintax
+      let { valid, errMessage } = validateIp4Address(ipv4Address.value)
+      if (!valid) {
+        error.value.ipv4Address = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(ipv4AddressRef)
+        }
+      }
+    }
 
-  //   {
-  //     // check required
-  //     let { valid, errMessage } = validateRequired(ipv4Address)
+    // ipv4 subnet mask
 
-  //     if (!valid) {
-  //       error.value.ipv4Addresses[index] = t(errMessage as string)
-  //       isValidationOk = false
-  //     } else {
-  //       {
-  //         // check sintax
-  //         let { valid, errMessage } = validateIp4Cidr(ipv4Address)
-  //         if (!valid) {
-  //           error.value.ipv4Addresses[index] = t(errMessage as string)
-  //           isValidationOk = false
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+    if (ipv4Address.value) {
+      // check required
+      let { valid, errMessage } = validateRequired(ipv4SubnetMask.value)
+      if (!valid) {
+        error.value.ipv4SubnetMask = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(ipv4SubnetMaskRef)
+        }
+      } else {
+        // check sintax
+        {
+          let { valid, errMessage } = validateIpv4SubnetMask(ipv4SubnetMask.value)
+          if (!valid) {
+            error.value.ipv4SubnetMask = t(errMessage as string)
+            if (isValidationOk) {
+              isValidationOk = false
+              focusElement(ipv4SubnetMaskRef)
+            }
+          }
+        }
+      }
+    }
 
-  // // ipv6 addresses
+    // ipv4 gateway
 
-  // for (let index = 0; index < ipv6Addresses.value.length; index++) {
-  //   const ipv6Address = ipv6Addresses.value[index]
+    if (ipv4Address.value) {
+      // check required
+      let { valid, errMessage } = validateRequired(ipv4Gateway.value)
+      if (!valid) {
+        error.value.ipv4Gateway = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(ipv4GatewayRef)
+        }
+      } else {
+        // check sintax
+        {
+          let { valid, errMessage } = validateIp4Address(ipv4Gateway.value)
+          if (!valid) {
+            error.value.ipv4Gateway = t(errMessage as string)
+            if (isValidationOk) {
+              isValidationOk = false
+              focusElement(ipv4GatewayRef)
+            }
+          }
+        }
+      }
+    }
 
-  //   {
-  //     // check required
-  //     let { valid, errMessage } = validateRequired(ipv6Address)
+    if (isIpv6Enabled.value) {
+      // ipv6 address
 
-  //     if (!valid) {
-  //       error.value.ipv6Addresses[index] = t(errMessage as string)
-  //       isValidationOk = false
-  //     } else {
-  //       {
-  //         // check sintax
-  //         let { valid, errMessage } = validateIp6Cidr(ipv6Address)
-  //         if (!valid) {
-  //           error.value.ipv6Addresses[index] = t(errMessage as string)
-  //           isValidationOk = false
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+      if (ipv6Address.value) {
+        // check sintax
+        let { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
+        if (!valid) {
+          error.value.ipv6Address = t(errMessage as string)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(ipv6AddressRef)
+          }
+        }
+      }
+
+      // ipv6 gateway
+
+      if (ipv6Address.value) {
+        // check required
+        let { valid, errMessage } = validateRequired(ipv6Gateway.value)
+        if (!valid) {
+          error.value.ipv6Gateway = t(errMessage as string)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(ipv6GatewayRef)
+          }
+        } else {
+          // check sintax
+          {
+            let { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
+            if (!valid) {
+              error.value.ipv6Gateway = t(errMessage as string)
+              if (isValidationOk) {
+                isValidationOk = false
+                focusElement(ipv6GatewayRef)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ipv4 mtu
+
+  if (ipv4Mtu.value) {
+    let { valid, errMessage } = validateIpv4Mtu(ipv4Mtu.value)
+    if (!valid) {
+      isExpandedAdvancedSettings.value = true
+      error.value.ipv4Mtu = t(errMessage as string)
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(ipv4MtuRef)
+      }
+    }
+  }
+
+  // ipv6 mtu
+
+  if (ipv6Mtu.value) {
+    let { valid, errMessage } = validateIpv6Mtu(ipv6Mtu.value)
+    if (!valid) {
+      isExpandedAdvancedSettings.value = true
+      error.value.ipv6Mtu = t(errMessage as string)
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(ipv6MtuRef)
+      }
+    }
+  }
+
+  if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+    // dhcp client id
+
+    if (dhcpClientId.value) {
+      let { valid, errMessage } = validateHexadecimalString(dhcpClientId.value)
+      if (!valid) {
+        isExpandedAdvancedSettings.value = true
+        error.value.dhcpClientId = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(dhcpClientIdRef)
+        }
+      }
+    }
+    // no validation needed for dhcp vendor class
+  }
 
   return isValidationOk
 }
-
-// async function addNetworkInterface() { ////
-//   await ubusCall('uci', 'add', {
-//     config: 'network',
-//     name: label.value,
-//     type: 'interface',
-//     values: {
-//       proto: 'static',
-//       device: `@${props.iface.interface}`
-//     }
-//   })
-// }
-
-// async function setIpAddressList() {
-//   const values: any = {}
-
-//   if (!isEmpty(ipv4Addresses.value)) {
-//     values.ipaddr = ipv4Addresses.value
-//   }
-
-//   if (!isEmpty(ipv6Addresses.value)) {
-//     values.ip6addr = ipv6Addresses.value
-//   }
-
-//   await ubusCall('uci', 'set', {
-//     config: 'network',
-//     section: label.value,
-//     values: values
-//   })
-// }
-
-// async function saveAliasInterface() { ////
-//   const isValidationOk = validate()
-//   if (!isValidationOk) {
-//     return
-//   }
-
-//   loading.value.configure = true
-
-//   try {
-//     await addNetworkInterface()
-//     await setIpAddressList()
-//     await setFirewallZone()
-//     emit('reloadData')
-//     closeDrawer()
-//   } catch (err: any) {
-//     console.error(err)
-//     error.value.notificationTitle = t(
-//       'standalone.interfaces_and_devices.cannot_save_alias_interface'
-//     )
-//     error.value.notificationDescription = t(getAxiosErrorMessage(err))
-//   } finally {
-//     loading.value.configure = false
-//     await uciChangesStore.getChanges()
-//   }
-// }
 </script>
 
 <template>
   <NeSideDrawer
     :isShown="isShown"
-    :title="t('standalone.interfaces_and_devices.configure_name', { name: device.name })"
+    :title="
+      t('standalone.interfaces_and_devices.configure_interface_for_name', { name: device.name })
+    "
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     @close="closeDrawer"
   >
@@ -359,10 +616,10 @@ function validate() {
         <!-- name -->
         <NeTextInput
           :label="t('standalone.interfaces_and_devices.interface_name')"
-          v-model.trim="name"
-          :invalidMessage="t(error.label)"
-          :disabled="loading.configure"
-          ref="labelRef"
+          v-model.trim="interfaceName"
+          :invalidMessage="t(error.interfaceName)"
+          :disabled="!isConfiguringFromScratch || loading.configure"
+          ref="interfaceNameRef"
         />
         <!-- zone -->
         <NeRadioSelection
@@ -391,10 +648,10 @@ function validate() {
             <!-- ipv4 subnet mask -->
             <NeTextInput
               :label="t('standalone.interfaces_and_devices.ipv4_subnet_mask')"
-              v-model.trim="ipv4SubnetMark"
-              :invalidMessage="t(error.ipv4SubnetMark)"
+              v-model.trim="ipv4SubnetMask"
+              :invalidMessage="t(error.ipv4SubnetMask)"
               :disabled="loading.configure"
-              ref="ipv4SubnetMarkRef"
+              ref="ipv4SubnetMaskRef"
             />
             <!-- gateway -->
             <NeTextInput
@@ -474,36 +731,40 @@ function validate() {
               :disabled="loading.configure"
               ref="ipv6MtuRef"
             />
-            <!-- dhcp fields -->
-            <template v-if="['dhcp', 'dhcpv6'].includes(protocol)">
-              <!-- client id -->
+            <!-- dhcp client id -->
+            <Transition name="fade">
               <NeTextInput
+                v-show="['dhcp', 'dhcpv6'].includes(protocol)"
                 :label="t('standalone.interfaces_and_devices.client_id_label')"
-                v-model.trim="clientId"
+                v-model.trim="dhcpClientId"
                 optional
-                :invalidMessage="t(error.clientId)"
+                :invalidMessage="t(error.dhcpClientId)"
                 :disabled="loading.configure"
-                ref="clientIdRef"
+                ref="dhcpClientIdRef"
               />
-              <!-- vendor class -->
+            </Transition>
+            <!-- dhcp vendor class -->
+            <Transition name="fade">
               <NeTextInput
+                v-show="protocol === 'dhcp'"
                 :label="t('standalone.interfaces_and_devices.vendor_class_label')"
-                v-model.trim="vendorClass"
+                v-model.trim="dhcpVendorClass"
                 optional
-                :invalidMessage="t(error.vendorClass)"
+                :invalidMessage="t(error.dhcpVendorClass)"
                 :disabled="loading.configure"
-                ref="vendorClassRef"
+                ref="dhcpVendorClassRef"
               />
-            </template>
+            </Transition>
           </div>
         </Transition>
-        <!-- //// -->
-        <NeInlineNotification
-          v-if="error.notificationTitle"
-          kind="error"
-          :title="error.notificationTitle"
-          :description="error.notificationDescription"
-        />
+        <Transition name="fade">
+          <NeInlineNotification
+            v-if="error.notificationTitle"
+            kind="error"
+            :title="error.notificationTitle"
+            :description="error.notificationDescription"
+          />
+        </Transition>
       </div>
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />
@@ -524,7 +785,11 @@ function validate() {
           :disabled="loading.configure"
           :loading="loading.configure"
         >
-          {{ t('standalone.interfaces_and_devices.configure') }}
+          {{
+            isConfiguringFromScratch
+              ? t('standalone.interfaces_and_devices.configure_interface')
+              : t('standalone.interfaces_and_devices.reconfigure_interface')
+          }}
         </NeButton>
       </div>
     </form>

@@ -4,14 +4,13 @@
 export function getFirewallZone(iface: any, firewallConfig: any) {
   if (firewallConfig) {
     const zoneFound = firewallConfig.zone?.find((zone: any) =>
-      zone.network.includes(iface.interface)
+      zone.network.includes(iface['.name'])
     )
 
     if (zoneFound) {
       return zoneFound
     }
   }
-  //   console.log('getFirewallZone', iface.interface, 'returning UNDEFINED') ////
 }
 
 export function getZoneLabel(zoneName: string) {

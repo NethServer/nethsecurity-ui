@@ -50,7 +50,7 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let name = ref('')
+let interfaceName = ref('')
 let nameRef = ref()
 let ipv4Addresses: Ref<string[]> = ref([])
 let ipv6Addresses: Ref<string[]> = ref([])
@@ -66,7 +66,7 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
-  name: '',
+  interfaceName: '',
   ipv4Addresses: [] as string[],
   ipv6Addresses: [] as string[],
   newIpv4Address: '',
@@ -87,13 +87,13 @@ watch(
 
       if (isCreating.value) {
         // creating alias
-        name.value = props.iface.interface + '_alias'
+        interfaceName.value = props.iface['.name'] + '_alias'
         ipv4Addresses.value = []
         ipv6Addresses.value = []
         focusElement(nameRef)
       } else {
         // editing alias
-        name.value = props.aliasToEdit['.name']
+        interfaceName.value = props.aliasToEdit['.name']
         ipv4Addresses.value = props.aliasToEdit.ipaddr || []
         ipv6Addresses.value = props.aliasToEdit.ip6addr || []
         focusElement(newIpv4AddressRef)
@@ -242,17 +242,17 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(name.value)
+    let { valid, errMessage } = validateRequired(interfaceName.value)
     if (!valid) {
-      error.value.name = t(errMessage as string)
+      error.value.interfaceName = t(errMessage as string)
       isValidationOk = false
       focusElement(nameRef)
     } else {
       // check sintax
       {
-        let { valid, errMessage } = validateUciName(name.value)
+        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
         if (!valid) {
-          error.value.name = t(errMessage as string)
+          error.value.interfaceName = t(errMessage as string, i18Params as any)
           isValidationOk = false
           focusElement(nameRef)
         }
@@ -260,10 +260,14 @@ function validate() {
 
       if (isCreating.value) {
         // check if already used
-        const interfaceFound = props.interfaces.find((iface: any) => iface.interface === name.value)
+        const interfaceFound = props.interfaces.find(
+          (iface: any) => iface['.name'] === interfaceName.value
+        )
 
         if (interfaceFound) {
-          error.value.name = t('standalone.interfaces_and_devices.interface_name_already_used')
+          error.value.interfaceName = t(
+            'standalone.interfaces_and_devices.interface_name_already_used'
+          )
           isValidationOk = false
           focusElement(nameRef)
         }
@@ -341,11 +345,11 @@ function validate() {
 async function addNetworkInterface() {
   await ubusCall('uci', 'add', {
     config: 'network',
-    name: name.value,
+    name: interfaceName.value,
     type: 'interface',
     values: {
       proto: 'static',
-      device: `@${props.iface.interface}`
+      device: `@${props.iface['.name']}`
     }
   })
 }
@@ -363,18 +367,18 @@ async function setIpAddressList() {
 
   await ubusCall('uci', 'set', {
     config: 'network',
-    section: name.value,
+    section: interfaceName.value,
     values: values
   })
 }
 
 async function setFirewallZone() {
   const zoneFound = props.firewallConfig.zone.find((zone: any) =>
-    zone.network.includes(props.iface.interface)
+    zone.network.includes(props.iface['.name'])
   )
 
   // add alias interface to zone interfaces
-  zoneFound.network.push(name.value)
+  zoneFound.network.push(interfaceName.value)
 
   if (zoneFound) {
     await ubusCall('uci', 'set', {
@@ -420,7 +424,7 @@ async function saveAliasInterface() {
     :title="
       isCreating
         ? t('standalone.interfaces_and_devices.create_alias_for_interface', {
-            interface: iface.interface
+            interface: iface['.name']
           })
         : t('standalone.interfaces_and_devices.edit_alias_interface')
     "
@@ -431,8 +435,8 @@ async function saveAliasInterface() {
       <div class="space-y-6">
         <NeTextInput
           :label="t('standalone.interfaces_and_devices.name')"
-          v-model.trim="name"
-          :invalidMessage="t(error.name)"
+          v-model.trim="interfaceName"
+          :invalidMessage="t(error.interfaceName)"
           :disabled="loading.create || !isCreating"
           ref="nameRef"
         />

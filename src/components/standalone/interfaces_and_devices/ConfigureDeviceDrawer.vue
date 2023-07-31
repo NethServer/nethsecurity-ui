@@ -45,10 +45,6 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  interfaces: {
-    type: Array,
-    required: true
-  },
   interfaceToEdit: {
     type: Object,
     default: null
@@ -85,6 +81,10 @@ let dhcpClientId = ref('')
 let dhcpClientIdRef = ref()
 let dhcpVendorClass = ref('')
 let dhcpVendorClassRef = ref()
+let pppoeUsername = ref('')
+let pppoeUsernameRef = ref()
+let pppoePassword = ref('')
+let pppoePasswordRef = ref()
 
 let protocolBaseOptions = [
   {
@@ -122,7 +122,9 @@ let error = ref({
   ipv4Mtu: '',
   ipv6Mtu: '',
   dhcpClientId: '',
-  dhcpVendorClass: ''
+  dhcpVendorClass: '',
+  pppoeUsername: '',
+  pppoePassword: ''
 })
 
 const zoneOptions = computed(() => {
@@ -175,11 +177,13 @@ watch(
         ipv6Mtu.value = ''
         dhcpClientId.value = ''
         dhcpVendorClass.value = ''
+        pppoeUsername.value = ''
+        pppoePassword.value = ''
         focusElement(interfaceNameRef)
       } else {
         // editing configuration
 
-        // uncommitted ipv4Mtu and ipv6Mtu are saved inside network configuration
+        // uncommitted changes such as ipv4Mtu, ipv6Mtu and ipv6Enabled are saved inside network configuration
         const networkConfigDevice = props.networkConfig.device.find(
           (d: any) => d.name === props.device.name
         )
@@ -191,20 +195,22 @@ watch(
         zone.value = zoneFound.name
         protocol.value = props.interfaceToEdit.proto
         ipv4Address.value = props.interfaceToEdit.ipaddr || ''
-        ipv4SubnetMask.value = props.interfaceToEdit.netmask || ''
+        ipv4SubnetMask.value = props.interfaceToEdit.netmask || '255.255.255.0'
         ipv4Gateway.value = props.interfaceToEdit.gateway || ''
-        isIpv6Enabled.value = !isEmpty(props.interfaceToEdit.ip6addr)
+        isIpv6Enabled.value = networkConfigDevice?.ipv6 === '1' || false
         ipv6Address.value = props.interfaceToEdit.ip6addr ? props.interfaceToEdit.ip6addr[0] : ''
         ipv6Gateway.value = props.interfaceToEdit.ip6gw || ''
         isExpandedAdvancedSettings.value =
-          networkConfigDevice.mtu ||
-          networkConfigDevice.mtu6 ||
+          networkConfigDevice?.mtu ||
+          networkConfigDevice?.mtu6 ||
           props.interfaceToEdit.clientid ||
           props.interfaceToEdit.vendorid
-        ipv4Mtu.value = networkConfigDevice.mtu || ''
-        ipv6Mtu.value = networkConfigDevice.mtu6 || ''
+        ipv4Mtu.value = networkConfigDevice?.mtu || ''
+        ipv6Mtu.value = networkConfigDevice?.mtu6 || ''
         dhcpClientId.value = props.interfaceToEdit.clientid || ''
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
+        pppoeUsername.value = props.interfaceToEdit.username
+        pppoePassword.value = props.interfaceToEdit.password
       }
     }
   }
@@ -234,7 +240,7 @@ function clearErrors() {
   }
 }
 
-async function createNetworkDeviceAndSetMtu() {
+async function createAndSetNetworkDevice() {
   let deviceSection = null
 
   if (isConfiguringFromScratch.value) {
@@ -256,10 +262,18 @@ async function createNetworkDeviceAndSetMtu() {
     }
   }
 
+  // enable/disable ipv6
+  const ipv6Value = isIpv6Enabled.value ? '1' : '0'
+  const values: any = { mtu: ipv4Mtu.value, ipv6: ipv6Value }
+
+  if (isIpv6Enabled.value) {
+    values.mtu6 = ipv6Mtu.value
+  }
+
   ubusCall('uci', 'set', {
     config: 'network',
     section: deviceSection,
-    values: { mtu: ipv4Mtu.value, mtu6: ipv6Mtu.value }
+    values: values
   })
 }
 
@@ -312,11 +326,6 @@ async function setFirewallZone() {
 async function setNetworkConfiguration() {
   const values: any = { proto: protocol.value }
 
-  // disable "force link" on red interfaces
-  if (zone.value === 'wan') {
-    values.force_link = '0'
-  }
-
   if (protocol.value === 'static') {
     if (ipv4Address.value) {
       values.ipaddr = ipv4Address.value
@@ -334,6 +343,14 @@ async function setNetworkConfiguration() {
     if (protocol.value === 'dhcp') {
       values.vendorid = dhcpVendorClass.value
     }
+  } else if (protocol.value === 'pppoe') {
+    values.username = pppoeUsername.value
+    values.password = pppoePassword.value
+  }
+
+  // disable "force link" on red interfaces
+  if (zone.value === 'wan') {
+    values.force_link = '0'
   }
 
   ubusCall('uci', 'set', {
@@ -369,7 +386,7 @@ async function configureDevice() {
     }
     await setNetworkConfiguration()
     await setFirewallZone()
-    await createNetworkDeviceAndSetMtu()
+    await createAndSetNetworkDevice()
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
@@ -412,7 +429,7 @@ function validate() {
 
       if (isConfiguringFromScratch.value) {
         // check if already used
-        const interfaceFound = props.interfaces.find(
+        const interfaceFound = props.networkConfig.interface.find(
           (iface: any) => iface['.name'] === interfaceName.value
         )
 
@@ -550,6 +567,34 @@ function validate() {
           }
         }
       }
+
+      // ipv6 mtu
+
+      if (ipv6Mtu.value) {
+        let { valid, errMessage } = validateIpv6Mtu(ipv6Mtu.value)
+        if (!valid) {
+          isExpandedAdvancedSettings.value = true
+          error.value.ipv6Mtu = t(errMessage as string)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(ipv6MtuRef)
+          }
+        }
+      }
+    }
+  } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+    // dhcp client id
+
+    if (dhcpClientId.value) {
+      let { valid, errMessage } = validateHexadecimalString(dhcpClientId.value)
+      if (!valid) {
+        isExpandedAdvancedSettings.value = true
+        error.value.dhcpClientId = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(dhcpClientIdRef)
+        }
+      }
     }
   }
 
@@ -565,37 +610,6 @@ function validate() {
         focusElement(ipv4MtuRef)
       }
     }
-  }
-
-  // ipv6 mtu
-
-  if (ipv6Mtu.value) {
-    let { valid, errMessage } = validateIpv6Mtu(ipv6Mtu.value)
-    if (!valid) {
-      isExpandedAdvancedSettings.value = true
-      error.value.ipv6Mtu = t(errMessage as string)
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(ipv6MtuRef)
-      }
-    }
-  }
-
-  if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
-    // dhcp client id
-
-    if (dhcpClientId.value) {
-      let { valid, errMessage } = validateHexadecimalString(dhcpClientId.value)
-      if (!valid) {
-        isExpandedAdvancedSettings.value = true
-        error.value.dhcpClientId = t(errMessage as string)
-        if (isValidationOk) {
-          isValidationOk = false
-          focusElement(dhcpClientIdRef)
-        }
-      }
-    }
-    // no validation needed for dhcp vendor class
   }
 
   return isValidationOk
@@ -635,104 +649,122 @@ function validate() {
           :options="protocolOptions"
         />
         <!-- fields for static protocol -->
-        <Transition name="fade">
-          <div v-show="protocol === 'static'" class="space-y-6">
-            <!-- ipv4 address -->
-            <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv4_address')"
-              v-model.trim="ipv4Address"
-              :invalidMessage="t(error.ipv4Address)"
+        <div v-show="protocol === 'static'" class="space-y-6">
+          <!-- ipv4 address -->
+          <NeTextInput
+            :label="t('standalone.interfaces_and_devices.ipv4_address')"
+            v-model.trim="ipv4Address"
+            :invalidMessage="t(error.ipv4Address)"
+            :disabled="loading.configure"
+            ref="ipv4AddressRef"
+          />
+          <!-- ipv4 subnet mask -->
+          <NeTextInput
+            :label="t('standalone.interfaces_and_devices.ipv4_subnet_mask')"
+            v-model.trim="ipv4SubnetMask"
+            :invalidMessage="t(error.ipv4SubnetMask)"
+            :disabled="loading.configure"
+            ref="ipv4SubnetMaskRef"
+          />
+          <!-- gateway -->
+          <NeTextInput
+            :label="t('standalone.interfaces_and_devices.ipv4_gateway')"
+            v-model.trim="ipv4Gateway"
+            :invalidMessage="t(error.ipv4Gateway)"
+            :disabled="loading.configure"
+            ref="ipv4GatewayRef"
+          />
+          <!-- enable ipv6 -->
+          <div>
+            <NeFormItemLabel>{{ t('standalone.interfaces_and_devices.ipv6') }}</NeFormItemLabel>
+            <NeCheckbox
+              v-model="isIpv6Enabled"
+              :label="t('standalone.interfaces_and_devices.enable_ipv6')"
               :disabled="loading.configure"
-              ref="ipv4AddressRef"
             />
-            <!-- ipv4 subnet mask -->
-            <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv4_subnet_mask')"
-              v-model.trim="ipv4SubnetMask"
-              :invalidMessage="t(error.ipv4SubnetMask)"
-              :disabled="loading.configure"
-              ref="ipv4SubnetMaskRef"
-            />
-            <!-- gateway -->
-            <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv4_gateway')"
-              v-model.trim="ipv4Gateway"
-              :invalidMessage="t(error.ipv4Gateway)"
-              :disabled="loading.configure"
-              ref="ipv4GatewayRef"
-            />
-            <!-- enable ipv6 -->
-            <div>
-              <NeFormItemLabel>{{ t('standalone.interfaces_and_devices.ipv6') }}</NeFormItemLabel>
-              <NeCheckbox
-                v-model="isIpv6Enabled"
-                :label="t('standalone.interfaces_and_devices.enable_ipv6')"
-                :disabled="loading.configure"
-              />
-            </div>
-            <!-- fields for ipv6 -->
-            <Transition name="fade">
-              <div v-show="isIpv6Enabled" class="space-y-6">
-                <!-- ipv6 address -->
-                <NeTextInput
-                  :label="t('standalone.interfaces_and_devices.ipv6_address')"
-                  v-model.trim="ipv6Address"
-                  :invalidMessage="t(error.ipv6Address)"
-                  :disabled="loading.configure"
-                  ref="ipv6AddressRef"
-                />
-                <!-- ipv6 gateway -->
-                <NeTextInput
-                  :label="t('standalone.interfaces_and_devices.ipv6_gateway')"
-                  v-model.trim="ipv6Gateway"
-                  :invalidMessage="t(error.ipv6Gateway)"
-                  :disabled="loading.configure"
-                  ref="ipv6GatewayRef"
-                />
-              </div>
-            </Transition>
           </div>
-        </Transition>
+          <!-- fields for ipv6 -->
+          <div v-show="isIpv6Enabled" class="space-y-6">
+            <!-- ipv6 address -->
+            <NeTextInput
+              :label="t('standalone.interfaces_and_devices.ipv6_address')"
+              v-model.trim="ipv6Address"
+              :invalidMessage="t(error.ipv6Address)"
+              :disabled="loading.configure"
+              ref="ipv6AddressRef"
+            />
+            <!-- ipv6 gateway -->
+            <NeTextInput
+              :label="t('standalone.interfaces_and_devices.ipv6_gateway')"
+              v-model.trim="ipv6Gateway"
+              :invalidMessage="t(error.ipv6Gateway)"
+              :disabled="loading.configure"
+              ref="ipv6GatewayRef"
+            />
+          </div>
+        </div>
+        <!-- fields for pppoe protocol -->
+        <div v-show="protocol === 'pppoe'" class="space-y-6">
+          <!-- pppoe username -->
+          <NeTextInput
+            :label="t('standalone.interfaces_and_devices.pppoe_username')"
+            v-model.trim="pppoeUsername"
+            :invalidMessage="t(error.pppoeUsername)"
+            :disabled="loading.configure"
+            ref="pppoeUsernameRef"
+          />
+          <!-- pppoe username -->
+          <NeTextInput
+            :label="t('standalone.interfaces_and_devices.pppoe_password')"
+            v-model="pppoePassword"
+            isPassword
+            :showPasswordLabel="t('ne_text_input.show_password')"
+            :hidePasswordLabel="t('ne_text_input.hide_password')"
+            :invalidMessage="t(error.pppoePassword)"
+            ref="pppoePasswordRef"
+          />
+        </div>
         <!-- advanced settings -->
-        <NeButton
-          kind="tertiary"
-          size="sm"
-          @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
-          class="-ml-2"
-        >
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
-              class="h-3 w-3"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('common.advanced_settings') }}
-        </NeButton>
-        <Transition name="slide-down">
-          <div v-show="isExpandedAdvancedSettings" class="space-y-6">
-            <!-- ipv4 MTU -->
-            <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv4_mtu_bytes')"
-              v-model.trim="ipv4Mtu"
-              placeholder="1500"
-              optional
-              :invalidMessage="t(error.ipv4Mtu)"
-              :disabled="loading.configure"
-              ref="ipv4MtuRef"
-            />
-            <!-- ipv6 MTU -->
-            <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv6_mtu_bytes')"
-              v-model.trim="ipv6Mtu"
-              placeholder="1500"
-              optional
-              :invalidMessage="t(error.ipv6Mtu)"
-              :disabled="loading.configure"
-              ref="ipv6MtuRef"
-            />
-            <!-- dhcp client id -->
-            <Transition name="fade">
+        <template v-if="protocol != 'pppoe'">
+          <NeButton
+            kind="tertiary"
+            size="sm"
+            @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
+            class="-ml-2"
+          >
+            <template #suffix>
+              <font-awesome-icon
+                :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
+                class="h-3 w-3"
+                aria-hidden="true"
+              />
+            </template>
+            {{ t('common.advanced_settings') }}
+          </NeButton>
+          <Transition name="slide-down">
+            <div v-show="isExpandedAdvancedSettings" class="space-y-6">
+              <!-- ipv4 MTU -->
+              <NeTextInput
+                :label="t('standalone.interfaces_and_devices.ipv4_mtu_bytes')"
+                v-model.trim="ipv4Mtu"
+                placeholder="1500"
+                optional
+                :invalidMessage="t(error.ipv4Mtu)"
+                :disabled="loading.configure"
+                ref="ipv4MtuRef"
+              />
+              <!-- ipv6 MTU -->
+              <NeTextInput
+                v-show="isIpv6Enabled"
+                :label="t('standalone.interfaces_and_devices.ipv6_mtu_bytes')"
+                v-model.trim="ipv6Mtu"
+                placeholder="1500"
+                optional
+                :invalidMessage="t(error.ipv6Mtu)"
+                :disabled="loading.configure"
+                ref="ipv6MtuRef"
+              />
+              <!-- dhcp client id -->
               <NeTextInput
                 v-show="['dhcp', 'dhcpv6'].includes(protocol)"
                 :label="t('standalone.interfaces_and_devices.client_id_label')"
@@ -742,9 +774,7 @@ function validate() {
                 :disabled="loading.configure"
                 ref="dhcpClientIdRef"
               />
-            </Transition>
-            <!-- dhcp vendor class -->
-            <Transition name="fade">
+              <!-- dhcp vendor class -->
               <NeTextInput
                 v-show="protocol === 'dhcp'"
                 :label="t('standalone.interfaces_and_devices.vendor_class_label')"
@@ -754,17 +784,15 @@ function validate() {
                 :disabled="loading.configure"
                 ref="dhcpVendorClassRef"
               />
-            </Transition>
-          </div>
-        </Transition>
-        <Transition name="fade">
-          <NeInlineNotification
-            v-if="error.notificationTitle"
-            kind="error"
-            :title="error.notificationTitle"
-            :description="error.notificationDescription"
-          />
-        </Transition>
+            </div>
+          </Transition>
+        </template>
+        <NeInlineNotification
+          v-if="error.notificationTitle"
+          kind="error"
+          :title="error.notificationTitle"
+          :description="error.notificationDescription"
+        />
       </div>
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />

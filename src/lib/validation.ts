@@ -180,7 +180,11 @@ export const validateUciName = (value: String, maxLength = 0): validationOutput 
   }
 
   if (maxLength && value.length > maxLength) {
-    return { valid: false, errMessage: 'error.maximum_num_characters_allowed', i18Params: {num: maxLength} }
+    return {
+      valid: false,
+      errMessage: 'error.maximum_num_characters_allowed',
+      i18Params: { num: maxLength }
+    }
   }
   return { valid: true }
 }

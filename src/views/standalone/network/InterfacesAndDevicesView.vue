@@ -22,7 +22,7 @@ import DeleteAliasModal from '@/components/standalone/interfaces_and_devices/Del
 import { getFirewallZone } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer from '@/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue'
 
-const GET_DEVICES_INTERVAL_TIME = 10000
+const GET_DEVICES_INTERVAL_TIME = 20000 //// 10000
 const { t } = useI18n()
 let devices: any = ref({})
 // used for setInterval
@@ -35,10 +35,11 @@ let isShownCreateOrEditAliasInterfaceDrawer = ref(false)
 let isShownAlias: Ref<{ [index: string]: boolean }> = ref({})
 let isShownDeleteAliasModal = ref(false)
 let currentAlias: Ref<any> = ref({})
-let currenteParentInterface: Ref<any> = ref({})
+let currentParentInterface: Ref<any> = ref({})
 let aliasToEdit: Ref<any> = ref(null)
 let isShownConfigureDeviceDrawer = ref(false)
 let interfaceToEdit: Ref<any> = ref(null)
+let currentNetworkConfigDevice: Ref<any> = ref({})
 
 let loading = ref({
   networkDevices: true,
@@ -277,19 +278,18 @@ function getDeviceKebabMenuItems(device: any) {
 function showDeleteAliasModal(alias: any, device: any) {
   const parentIface = getInterface(device)
   currentAlias.value = alias
-  currenteParentInterface.value = parentIface
+  currentParentInterface.value = parentIface
   isShownDeleteAliasModal.value = true
 }
 
 function getAliasKebabMenuItems(alias: any, device: any) {
-  const parentIface = getInterface(device)
   return [
     {
       id: 'deleteAlias',
       label: t('standalone.interfaces_and_devices.delete_alias'),
       icon: 'trash',
       iconStyle: 'fas',
-      action: () => showDeleteAliasModal(alias, parentIface),
+      action: () => showDeleteAliasModal(alias, device),
       danger: true
     }
   ]
@@ -299,6 +299,9 @@ function showCreateAliasInterfaceDrawer(device: any) {
   const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = null
+  currentNetworkConfigDevice.value = networkConfig.value.device.find(
+    (d: any) => d.name === device.name
+  )
   isShownCreateOrEditAliasInterfaceDrawer.value = true
 }
 
@@ -306,6 +309,9 @@ function showEditAliasInterfaceDrawer(alias: any, device: any) {
   const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = alias
+  currentNetworkConfigDevice.value = networkConfig.value.device.find(
+    (d: any) => d.name === device.name
+  )
   isShownCreateOrEditAliasInterfaceDrawer.value = true
 }
 
@@ -317,8 +323,6 @@ function showConfigureDeviceDrawer(device: any) {
   currentDevice.value = device
 
   const iface = getInterface(device)
-
-  console.log('showConfigureDeviceDrawer', device, iface) ////
 
   if (iface) {
     interfaceToEdit.value = iface
@@ -655,8 +659,9 @@ function removeConfiguration(device: any) {
     <!-- create/edit alias interface drawer -->
     <CreateOrEditAliasInterfaceDrawer
       :iface="currentInterface"
+      :networkConfigDevice="currentNetworkConfigDevice"
       :firewallConfig="firewallConfig"
-      :interfaces="networkConfig.interface"
+      :networkConfig="networkConfig"
       :isShown="isShownCreateOrEditAliasInterfaceDrawer"
       :aliasToEdit="aliasToEdit"
       @close="hideCreateOrEditAliasInterfaceDrawer"
@@ -666,7 +671,7 @@ function removeConfiguration(device: any) {
     <DeleteAliasModal
       :visible="isShownDeleteAliasModal"
       :alias="currentAlias"
-      :parentInterface="currenteParentInterface"
+      :parentInterface="currentParentInterface"
       :firewallConfig="firewallConfig"
       @close="isShownDeleteAliasModal = false"
       @aliasDeleted="loadData"
@@ -676,7 +681,6 @@ function removeConfiguration(device: any) {
       :device="currentDevice"
       :firewallConfig="firewallConfig"
       :networkConfig="networkConfig"
-      :interfaces="networkConfig.interface"
       :isShown="isShownConfigureDeviceDrawer"
       :interfaceToEdit="interfaceToEdit"
       @close="hideConfigureDeviceDrawer"

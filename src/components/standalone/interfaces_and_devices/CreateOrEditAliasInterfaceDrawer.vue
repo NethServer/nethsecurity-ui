@@ -30,12 +30,16 @@ const props = defineProps({
     type: Object,
     required: true
   },
+  networkConfigDevice: {
+    type: Object,
+    required: true
+  },
   firewallConfig: {
     type: Object,
     required: true
   },
-  interfaces: {
-    type: Array,
+  networkConfig: {
+    type: Object,
     required: true
   },
   aliasToEdit: {
@@ -75,6 +79,10 @@ let error = ref({
 
 const isCreating = computed(() => {
   return !props.aliasToEdit
+})
+
+const ipv6Enabled = computed(() => {
+  return props.networkConfigDevice.ipv6 === '1'
 })
 
 watch(
@@ -245,22 +253,26 @@ function validate() {
     let { valid, errMessage } = validateRequired(interfaceName.value)
     if (!valid) {
       error.value.interfaceName = t(errMessage as string)
-      isValidationOk = false
-      focusElement(nameRef)
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(nameRef)
+      }
     } else {
       // check sintax
       {
         let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
-          isValidationOk = false
-          focusElement(nameRef)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(nameRef)
+          }
         }
       }
 
       if (isCreating.value) {
         // check if already used
-        const interfaceFound = props.interfaces.find(
+        const interfaceFound = props.networkConfig.interface.find(
           (iface: any) => iface['.name'] === interfaceName.value
         )
 
@@ -268,24 +280,39 @@ function validate() {
           error.value.interfaceName = t(
             'standalone.interfaces_and_devices.interface_name_already_used'
           )
-          isValidationOk = false
-          focusElement(nameRef)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(nameRef)
+          }
         }
       }
     }
   }
 
-  // at least an ipv4 or a ipv6 address is needed
-  if (isEmpty(ipv4Addresses.value) && isEmpty(ipv6Addresses.value)) {
-    isValidationOk = false
+  if (ipv6Enabled.value) {
+    // at least an ipv4 or a ipv6 address is needed
+    if (isEmpty(ipv4Addresses.value) && isEmpty(ipv6Addresses.value)) {
+      isValidationOk = false
 
-    if (!error.value.newIpv4Address && !error.value.newIpv6Address) {
-      error.value.newIpv4Address = t(
-        'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-      )
-      error.value.newIpv6Address = t(
-        'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-      )
+      if (!error.value.newIpv4Address && !error.value.newIpv6Address) {
+        error.value.newIpv4Address = t(
+          'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
+        )
+        error.value.newIpv6Address = t(
+          'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
+        )
+      }
+    }
+  } else {
+    // ipv6 disabled: at least an ipv4 is required
+
+    if (isEmpty(ipv4Addresses.value)) {
+      error.value.newIpv4Address = t('standalone.interfaces_and_devices.enter_ipv4_address')
+
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(newIpv4AddressRef)
+      }
     }
   }
 
@@ -316,23 +343,25 @@ function validate() {
 
   // ipv6 addresses
 
-  for (let index = 0; index < ipv6Addresses.value.length; index++) {
-    const ipv6Address = ipv6Addresses.value[index]
+  if (ipv6Enabled.value) {
+    for (let index = 0; index < ipv6Addresses.value.length; index++) {
+      const ipv6Address = ipv6Addresses.value[index]
 
-    {
-      // check required
-      let { valid, errMessage } = validateRequired(ipv6Address)
+      {
+        // check required
+        let { valid, errMessage } = validateRequired(ipv6Address)
 
-      if (!valid) {
-        error.value.ipv6Addresses[index] = t(errMessage as string)
-        isValidationOk = false
-      } else {
-        {
-          // check sintax
-          let { valid, errMessage } = validateIp6Cidr(ipv6Address)
-          if (!valid) {
-            error.value.ipv6Addresses[index] = t(errMessage as string)
-            isValidationOk = false
+        if (!valid) {
+          error.value.ipv6Addresses[index] = t(errMessage as string)
+          isValidationOk = false
+        } else {
+          {
+            // check sintax
+            let { valid, errMessage } = validateIp6Cidr(ipv6Address)
+            if (!valid) {
+              error.value.ipv6Addresses[index] = t(errMessage as string)
+              isValidationOk = false
+            }
           }
         }
       }
@@ -355,21 +384,42 @@ async function addNetworkInterface() {
 }
 
 async function setIpAddressList() {
-  const values: any = {}
+  const valuesToSet: any = {}
+  const optionsToDelete = []
 
   if (!isEmpty(ipv4Addresses.value)) {
-    values.ipaddr = ipv4Addresses.value
+    valuesToSet.ipaddr = ipv4Addresses.value
+  } else if (!isCreating.value && props.aliasToEdit.ipaddr) {
+    // ip address list has been cleared
+    optionsToDelete.push('ipaddr')
   }
 
   if (!isEmpty(ipv6Addresses.value)) {
-    values.ip6addr = ipv6Addresses.value
+    valuesToSet.ip6addr = ipv6Addresses.value
+  } else if (!isCreating.value && props.aliasToEdit.ip6addr) {
+    // ip address list has been cleared
+    optionsToDelete.push('ip6addr')
   }
 
-  await ubusCall('uci', 'set', {
-    config: 'network',
-    section: interfaceName.value,
-    values: values
-  })
+  // set non-empty ip address lists
+
+  if (!isEmpty(valuesToSet)) {
+    await ubusCall('uci', 'set', {
+      config: 'network',
+      section: interfaceName.value,
+      values: valuesToSet
+    })
+  }
+
+  // delete empty ip address lists
+
+  if (!isEmpty(optionsToDelete)) {
+    await ubusCall('uci', 'delete', {
+      config: 'network',
+      section: interfaceName.value,
+      options: optionsToDelete
+    })
+  }
 }
 
 async function setFirewallZone() {
@@ -487,8 +537,8 @@ async function saveAliasInterface() {
             </div>
           </div>
         </div>
-        <!-- ip v6 address list -->
-        <div>
+        <!-- ip v6 address list (only if ipv6 is enabled) -->
+        <div v-if="ipv6Enabled">
           <NeFormItemLabel>{{
             t('standalone.interfaces_and_devices.ipv6_address_cidr')
           }}</NeFormItemLabel>

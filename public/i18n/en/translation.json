@@ -187,6 +187,7 @@
       "add_ipv6_address": "Add IPv6 address",
       "create_alias": "Create alias",
       "enter_one_ipv4_or_ipv6_address": "Enter at least an IPv4 or an IPv6 address",
+      "enter_ipv4_address": "Enter at least an IPv4 address",
       "cannot_save_alias_interface": "Cannot save alias interface",
       "num_alias": "{num} alias",
       "interface_name_already_used": "Interface name already used",
@@ -216,7 +217,9 @@
       "client_id_label": "Client ID to be sent when requesting DHCP",
       "vendor_class_label": "Vendor class to be sent when requesting DHCP",
       "cannot_configure_device": "Cannot configure device",
-      "reconfigure_interface": "Reconfigure interface"
+      "reconfigure_interface": "Reconfigure interface",
+      "pppoe_username": "Username",
+      "pppoe_password": "Password"
     },
     "users_and_objects": {
       "title": "Users & objects"

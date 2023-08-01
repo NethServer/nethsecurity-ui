@@ -1,6 +1,20 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
+export function getInterface(device: any, networkConfig: any) {
+  return networkConfig.interface.find((iface: any) => iface.device === device.name)
+}
+
+export function getAliasInterface(device: any, networkConfig: any) {
+  const iface = getInterface(device, networkConfig)
+
+  if (!iface) {
+    return
+  }
+
+  return networkConfig.interface.find((ifaceElem: any) => ifaceElem.device === `@${iface['.name']}`)
+}
+
 export function getFirewallZone(iface: any, firewallConfig: any) {
   if (firewallConfig) {
     const zoneFound = firewallConfig.zone?.find((zone: any) =>

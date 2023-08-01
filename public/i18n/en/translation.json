@@ -219,7 +219,8 @@
       "cannot_configure_device": "Cannot configure device",
       "reconfigure_interface": "Reconfigure interface",
       "pppoe_username": "Username",
-      "pppoe_password": "Password"
+      "pppoe_password": "Password",
+      "remove_configuration_explanation": "Remove '{name}' configuration? The device will become unassigned"
     },
     "users_and_objects": {
       "title": "Users & objects"

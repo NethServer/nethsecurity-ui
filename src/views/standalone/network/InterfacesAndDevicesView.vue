@@ -7,7 +7,6 @@
 import { useI18n } from 'vue-i18n'
 import {
   NeTitle,
-  NeSkeleton,
   NeButton,
   NeDropdown,
   NeInlineNotification,
@@ -19,10 +18,11 @@ import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import CreateOrEditAliasInterfaceDrawer from '@/components/standalone/interfaces_and_devices/CreateOrEditAliasInterfaceDrawer.vue'
 import DeleteAliasModal from '@/components/standalone/interfaces_and_devices/DeleteAliasModal.vue'
-import { getFirewallZone } from '@/lib/standalone/network'
+import { getFirewallZone, getInterface, getAliasInterface } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer from '@/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue'
+import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 
-const GET_DEVICES_INTERVAL_TIME = 20000 //// 10000
+const GET_DEVICES_INTERVAL_TIME = 10000
 const { t } = useI18n()
 let devices: any = ref({})
 // used for setInterval
@@ -32,7 +32,7 @@ let networkConfig: Ref<any> = ref({})
 let currentDevice: Ref<any> = ref({})
 let currentInterface: Ref<any> = ref({})
 let isShownCreateOrEditAliasInterfaceDrawer = ref(false)
-let isShownAlias: Ref<{ [index: string]: boolean }> = ref({})
+let isExpandedAlias: Ref<{ [index: string]: boolean }> = ref({})
 let isShownDeleteAliasModal = ref(false)
 let currentAlias: Ref<any> = ref({})
 let currentParentInterface: Ref<any> = ref({})
@@ -40,6 +40,7 @@ let aliasToEdit: Ref<any> = ref(null)
 let isShownConfigureDeviceDrawer = ref(false)
 let interfaceToEdit: Ref<any> = ref(null)
 let currentNetworkConfigDevice: Ref<any> = ref({})
+let isShownUnconfigureDeviceModal = ref(false)
 
 let loading = ref({
   networkDevices: true,
@@ -86,8 +87,6 @@ async function getFirewallConfig() {
 
   try {
     firewallConfig.value = await getUciConfig('firewall')
-
-    console.log('firewall config', firewallConfig) ////
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -101,16 +100,6 @@ async function getNetworkConfig() {
 
   try {
     networkConfig.value = await getUciConfig('network')
-
-    console.log('network config', networkConfig) ////
-
-    // alias visibility
-    const isShownAliasObj: { [index: string]: boolean } = {}
-
-    for (const iface of networkConfig.value.interface) {
-      isShownAliasObj[iface['.name']] = false
-    }
-    isShownAlias.value = isShownAliasObj
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -127,10 +116,16 @@ async function getNetworkDevices() {
 
   try {
     const res = await ubusCall('luci-rpc', 'getNetworkDevices')
-
-    console.log('networkDevices res', res.data) ////
-
     devices.value = res.data
+
+    // alias visibility
+    const isExpandedAliasObj: { [index: string]: boolean } = {}
+
+    for (const deviceName in devices.value) {
+      const device = devices.value[deviceName]
+      isExpandedAliasObj[device.name] = false
+    }
+    isExpandedAlias.value = isExpandedAliasObj
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_network_devices')
@@ -139,36 +134,12 @@ async function getNetworkDevices() {
   loading.value.networkDevices = false
 }
 
-function hasAlias(device: any) {
-  const iface = getInterface(device)
-
-  if (!iface) {
-    return false
-  }
-
-  return networkConfig.value?.interface.find(
-    (ifaceElem: any) => ifaceElem.device === `@${iface['.name']}`
-  )
-}
-
-function getAliasInterfaces(device: any) {
-  const iface = getInterface(device)
-
-  if (!iface) {
-    return []
-  }
-
-  return networkConfig.value.interface.filter(
-    (ifaceElem: any) => ifaceElem.device === `@${iface['.name']}`
-  )
-}
-
-function getInterface(device: any) {
-  return networkConfig.value.interface.find((iface: any) => iface.device === device.name)
+function toggleExpandAlias(device: any) {
+  isExpandedAlias.value[device.name] = !isExpandedAlias.value[device.name]
 }
 
 function getDeviceBorderStyle(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   if (!iface) {
     return 'border-gray-500 dark:border-gray-500'
@@ -190,7 +161,7 @@ function getDeviceBorderStyle(device: any) {
 
 //// add missing zones (dmz?)
 function getInterfaceIconName(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   if (!iface) {
     return 'circle-question'
@@ -211,7 +182,7 @@ function getInterfaceIconName(device: any) {
 }
 
 function getIconBackgroundStyle(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   if (!iface) {
     return 'bg-gray-100 dark:bg-gray-500'
@@ -232,7 +203,7 @@ function getIconBackgroundStyle(device: any) {
 }
 
 function getIconForegroundStyle(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   if (!iface) {
     return 'text-gray-500 dark:text-gray-50'
@@ -252,7 +223,7 @@ function getIconForegroundStyle(device: any) {
 }
 
 function getDeviceKebabMenuItems(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   return [
     {
@@ -261,14 +232,17 @@ function getDeviceKebabMenuItems(device: any) {
       icon: 'copy',
       iconStyle: 'fas',
       action: () => showCreateAliasInterfaceDrawer(device),
-      disabled: !iface || hasAlias(device) || !getFirewallZone(iface, firewallConfig.value)
+      disabled:
+        !iface ||
+        getAliasInterface(device, networkConfig.value) ||
+        !getFirewallZone(iface, firewallConfig.value)
     },
     {
       id: 'removeConfiguration',
       label: t('standalone.interfaces_and_devices.remove_configuration'),
-      icon: 'unlock',
+      icon: 'circle-minus',
       iconStyle: 'fas',
-      action: () => removeConfiguration(device),
+      action: () => showUnconfigureDeviceModal(device),
       danger: true,
       disabled: !iface || !getFirewallZone(iface, firewallConfig.value)
     }
@@ -276,7 +250,7 @@ function getDeviceKebabMenuItems(device: any) {
 }
 
 function showDeleteAliasModal(alias: any, device: any) {
-  const parentIface = getInterface(device)
+  const parentIface = getInterface(device, networkConfig.value)
   currentAlias.value = alias
   currentParentInterface.value = parentIface
   isShownDeleteAliasModal.value = true
@@ -296,7 +270,7 @@ function getAliasKebabMenuItems(alias: any, device: any) {
 }
 
 function showCreateAliasInterfaceDrawer(device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
   currentInterface.value = iface
   aliasToEdit.value = null
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -306,7 +280,7 @@ function showCreateAliasInterfaceDrawer(device: any) {
 }
 
 function showEditAliasInterfaceDrawer(alias: any, device: any) {
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
   currentInterface.value = iface
   aliasToEdit.value = alias
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -322,7 +296,7 @@ function hideCreateOrEditAliasInterfaceDrawer() {
 function showConfigureDeviceDrawer(device: any) {
   currentDevice.value = device
 
-  const iface = getInterface(device)
+  const iface = getInterface(device, networkConfig.value)
 
   if (iface) {
     interfaceToEdit.value = iface
@@ -336,8 +310,16 @@ function hideConfigureDeviceDrawer() {
   isShownConfigureDeviceDrawer.value = false
 }
 
-function removeConfiguration(device: any) {
-  console.log('removeConfiguration', device) ////
+function showUnconfigureDeviceModal(device: any) {
+  currentDevice.value = device
+  isShownUnconfigureDeviceModal.value = true
+}
+
+function getNumAlias(device: any, networkConfig: any) {
+  const alias = getAliasInterface(device, networkConfig)
+  const numIpv4Addresses = alias.ipaddr?.length || 0
+  const numIpv6Addresses = alias.ip6addr?.length || 0
+  return numIpv4Addresses + numIpv6Addresses
 }
 </script>
 
@@ -353,24 +335,21 @@ function removeConfiguration(device: any) {
       :description="error.notificationDescription"
       class="mb-4"
     />
-    <!-- //// improve skeleton -->
-    <NeSkeleton v-if="isLoading" size="lg" :lines="12" />
-    <!-- //// group interfaces by zone -->
-    <div v-else-if="!error.notificationTitle" class="text-sm space-y-6">
+    <div class="text-sm space-y-6">
       <div class="flex justify-end gap-4">
-        <NeButton kind="tertiary" size="lg">
+        <NeButton kind="tertiary" size="lg" disabled>
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.interfaces_and_devices.add_vlan_device') }}
         </NeButton>
-        <NeButton size="lg">
+        <NeButton size="lg" disabled>
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.interfaces_and_devices.add_logical_interface') }}
         </NeButton>
-        <NeButton size="lg">
+        <NeButton size="lg" disabled>
           <font-awesome-icon
             :icon="['fas', 'ellipsis-vertical']"
             aria-hidden="true"
@@ -378,22 +357,30 @@ function removeConfiguration(device: any) {
           />
         </NeButton>
       </div>
-      <template v-for="device in devices">
+      <!-- skeleton -->
+      <div v-if="isLoading" class="animate-pulse flex">
+        <div class="flex-1 space-y-6">
+          <div
+            v-for="index in 4"
+            :key="index"
+            :class="`h-24 rounded-md bg-gray-300 dark:bg-gray-700`"
+          ></div>
+        </div>
+      </div>
+      <!-- //// group interfaces by zone -->
+      <template v-else-if="!error.notificationTitle" v-for="device in devices">
         <div v-if="!['lo', 'ifb-dns'].includes(device.name)">
-          <!-- <div v-if="device.name !== 'lo' && !isAlias(device)"> ////  -->
-
           <!-- device card -->
           <div
             :class="[
               `relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
                 device
               )}`
-              // isIfaceMarkedForDeletion(device) ? 'opacity-50' : '' ////
             ]"
           >
             <!-- edit button and overflow menu for smaller screens -->
             <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
-              <template v-if="getInterface(device)">
+              <template v-if="getInterface(device, networkConfig)">
                 <!-- actions for configured devices -->
                 <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
                   <template #prefix>
@@ -445,52 +432,54 @@ function removeConfiguration(device: any) {
                     />
                   </div>
                   <div>
-                    <div v-if="getInterface(device)" class="font-semibold">
-                      {{ getInterface(device)['.name'] }}
+                    <div v-if="getInterface(device, networkConfig)" class="font-semibold">
+                      {{ getInterface(device, networkConfig)['.name'] }}
                     </div>
                     <div>{{ device.name }}</div>
                   </div>
                 </div>
                 <!-- alias -->
-                <div v-if="hasAlias(device)">
-                  <NeButton kind="tertiary" size="sm" class="-mt-2 -mr-2">
+                <div v-if="getAliasInterface(device, networkConfig)">
+                  <NeButton
+                    kind="tertiary"
+                    size="sm"
+                    @click="toggleExpandAlias(device)"
+                    class="-mt-2 -mr-2"
+                  >
                     <template #suffix>
                       <font-awesome-icon
-                        :icon="['fas', 'chevron-down']"
+                        :icon="[
+                          'fas',
+                          isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down'
+                        ]"
                         class="h-3 w-3"
                         aria-hidden="true"
                       />
                     </template>
                     {{
                       t('standalone.interfaces_and_devices.num_alias', {
-                        num: getAliasInterfaces(device).length
+                        num: getNumAlias(device, networkConfig)
                       })
                     }}
                   </NeButton>
-                  <!--  //// bridge -->
-                  <!-- <div>bridge</div> -->
                 </div>
               </div>
               <!-- second column -->
-              <!-- <div v-if="isIfaceMarkedForDeletion(device)"  //// class="xl:col-span-3 3xl:grid-cols-4">
-                {{ t('standalone.interfaces_and_devices.this_interface_is_marked_for_deletion') }}
-              </div>
-              <template v-else> -->
               <div>
                 <div>
                   <span class="font-medium">MAC: </span>
                   <span>{{ device.mac || '-' }}</span>
                 </div>
                 <div
-                  v-if="getInterface(device)"
-                  v-for="ipv4Address in getInterface(device)['ipv4-address']"
+                  v-if="getInterface(device, networkConfig)"
+                  v-for="ipv4Address in getInterface(device, networkConfig)['ipv4-address']"
                 >
                   <span class="font-medium">IPv4: </span>
                   <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
                 </div>
                 <div
-                  v-if="getInterface(device)"
-                  v-for="ipv6Address in getInterface(device)['ipv6-address']"
+                  v-if="getInterface(device, networkConfig)"
+                  v-for="ipv6Address in getInterface(device, networkConfig)['ipv6-address']"
                 >
                   <span class="font-medium">IPv6: </span>
                   <span>{{ ipv6Address.address }}/{{ ipv6Address.mask }}</span>
@@ -542,7 +531,7 @@ function removeConfiguration(device: any) {
               <div
                 class="hidden 3xl:flex items-start gap-2 justify-end border-l border-gray-200 dark:border-gray-600"
               >
-                <template v-if="getInterface(device)">
+                <template v-if="getInterface(device, networkConfig)">
                   <!-- actions for configured devices -->
                   <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
                     <template #prefix>
@@ -575,84 +564,97 @@ function removeConfiguration(device: any) {
               </div>
             </div>
           </div>
-          <!-- alias interfaces -->
-          <div v-for="alias in getAliasInterfaces(device)" class="flex items-start group">
-            <!-- L-shaped dashed line-->
-            <div
-              class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
-            ></div>
-            <!-- alias card -->
-            <div
-              :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
-                device
-              )}`"
-            >
-              <!-- edit button and overflow menu for smaller screens -->
-              <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
-                <NeButton
-                  kind="tertiary"
-                  size="lg"
-                  @click="showEditAliasInterfaceDrawer(alias, device)"
+          <!-- alias interface -->
+          <Transition name="slide-down">
+            <div v-if="getAliasInterface(device, networkConfig) && isExpandedAlias[device.name]">
+              <!-- v-for is a trick to declare 'alias' variable inside template -->
+              <div
+                v-for="alias in [getAliasInterface(device, networkConfig)]"
+                class="flex items-start group"
+              >
+                <!-- L-shaped dashed line-->
+                <div
+                  class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                ></div>
+                <!-- alias card -->
+                <div
+                  :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                    device
+                  )}`"
                 >
-                  <template #prefix>
-                    <font-awesome-icon
-                      :icon="['fas', 'pen-to-square']"
-                      class="h-4 w-4"
-                      aria-hidden="true"
+                  <!-- edit button and overflow menu for smaller screens -->
+                  <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
+                    <NeButton
+                      kind="tertiary"
+                      size="lg"
+                      @click="showEditAliasInterfaceDrawer(alias, device)"
+                    >
+                      <template #prefix>
+                        <font-awesome-icon
+                          :icon="['fas', 'pen-to-square']"
+                          class="h-4 w-4"
+                          aria-hidden="true"
+                        />
+                      </template>
+                      {{ t('common.edit') }}
+                    </NeButton>
+                    <NeDropdown
+                      :items="getAliasKebabMenuItems(alias, device)"
+                      :alignToRight="true"
                     />
-                  </template>
-                  {{ t('common.edit') }}
-                </NeButton>
-                <NeDropdown :items="getAliasKebabMenuItems(alias, device)" :alignToRight="true" />
-              </div>
-              <div class="flex justify-between gap-8 flex-wrap">
-                <!-- alias name -->
-                <div
-                  class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
-                >
-                  <div class="font-semibold">
-                    {{ alias['.name'] }}
                   </div>
-                  <div>{{ t('standalone.interfaces_and_devices.alias') }}</div>
-                </div>
-                <div class="flex flex-wrap gap-8 pr-40 grow">
-                  <!-- ipv4 addresses -->
-                  <div v-for="ipv4 in alias.ipaddr">
-                    <span class="font-medium">
-                      {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
-                    ><span>{{ ipv4 }}</span>
-                  </div>
-                  <!-- ipv6 addresses -->
-                  <div v-for="ipv6 in alias.ip6addr">
-                    <span class="font-medium">
-                      {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
-                    ><span>{{ ipv6 }}</span>
-                  </div>
-                </div>
-                <!-- edit alias and overflow menu -->
-                <div
-                  class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
-                >
-                  <NeButton
-                    kind="tertiary"
-                    size="lg"
-                    @click="showEditAliasInterfaceDrawer(alias, device)"
-                  >
-                    <template #prefix>
-                      <font-awesome-icon
-                        :icon="['fas', 'pen-to-square']"
-                        class="h-4 w-4"
-                        aria-hidden="true"
+                  <div class="flex justify-between gap-8 flex-wrap">
+                    <!-- alias name -->
+                    <div
+                      class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                    >
+                      <div class="font-semibold">
+                        {{ alias['.name'] }}
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-8 pr-40 grow">
+                      <!-- ipv4 addresses -->
+                      <div v-for="ipv4 in alias.ipaddr">
+                        <span class="font-medium">
+                          {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
+                        ><span>{{ ipv4 }}</span>
+                      </div>
+                      <!-- ipv6 addresses -->
+                      <div v-for="ipv6 in alias.ip6addr">
+                        <span class="font-medium">
+                          {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
+                        ><span>{{ ipv6 }}</span>
+                      </div>
+                    </div>
+                    <!-- edit alias and overflow menu -->
+                    <div
+                      class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
+                    >
+                      <NeButton
+                        kind="tertiary"
+                        size="lg"
+                        @click="showEditAliasInterfaceDrawer(alias, device)"
+                      >
+                        <template #prefix>
+                          <font-awesome-icon
+                            :icon="['fas', 'pen-to-square']"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                          />
+                        </template>
+                        {{ t('common.edit') }}
+                      </NeButton>
+                      <!-- overflow menu for larger screens -->
+                      <NeDropdown
+                        :items="getAliasKebabMenuItems(alias, device)"
+                        :alignToRight="true"
                       />
-                    </template>
-                    {{ t('common.edit') }}
-                  </NeButton>
-                  <!-- overflow menu for larger screens -->
-                  <NeDropdown :items="getAliasKebabMenuItems(alias, device)" :alignToRight="true" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Transition>
         </div>
       </template>
     </div>
@@ -685,6 +687,15 @@ function removeConfiguration(device: any) {
       :interfaceToEdit="interfaceToEdit"
       @close="hideConfigureDeviceDrawer"
       @reloadData="loadData"
+    />
+    <!-- unconfigure device modal -->
+    <UnconfigureDeviceModal
+      :visible="isShownUnconfigureDeviceModal"
+      :device="currentDevice"
+      :networkConfig="networkConfig"
+      :firewallConfig="firewallConfig"
+      @close="isShownUnconfigureDeviceModal = false"
+      @deviceUnconfigured="loadData"
     />
   </div>
 </template>

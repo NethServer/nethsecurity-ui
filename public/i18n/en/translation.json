@@ -6,7 +6,9 @@
     "help": "Help",
     "optional": "Optional",
     "close": "Close",
-    "edit": "Edit"
+    "edit": "Edit",
+    "delete": "Delete",
+    "advanced_settings": "Advanced settings"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -28,11 +30,21 @@
     "cannot_load_network_interfaces": "Cannot load network interfaces",
     "invalid_host": "Invalid host: must be a hostname or an IP address",
     "invalid_ip_address": "Invalid IP address",
-    "invalid_ip_v4_address": "Invalid IP v4 address",
-    "invalid_ip_v6_address": "Invalid IP v6 address",
+    "invalid_ip_v4_address": "Invalid IPv4 address",
+    "invalid_ip_v6_address": "Invalid IPv6 address",
+    "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
+    "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
+    "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",
-    "cannot_load_network_devices": "Cannot load network devices"
+    "cannot_load_network_devices": "Cannot load network devices",
+    "cannot_load_firewall_config": "Cannot load firewall config",
+    "cannot_load_network_config": "Cannot load network config",
+    "invalid_ip_v4_subnet_mask": "Invalid IPv4 subnet mask",
+    "invalid_ip_v4_mtu": "Enter an integer number between 576 and 9200",
+    "invalid_ip_v6_mtu": "Enter an integer number between 1280 and 9200",
+    "invalid_hexadecimal_string": "Invalid hexadecimal string",
+    "maximum_num_characters_allowed": "Maximum {num} characters allowed"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -45,6 +57,9 @@
   "ne_combobox": {
     "no_results": "No results",
     "limited_options_label": "Continue typing to show more options"
+  },
+  "ne_dropdown": {
+    "open_menu": "Open menu"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -66,7 +81,8 @@
       "close_sidebar": "Close sidebar",
       "toggle_theme": "Toggle theme",
       "show_notifications": "Show notifications",
-      "open_user_menu": "Open user menu"
+      "open_user_menu": "Open user menu",
+      "close_side_drawer": "Close side drawer"
     },
     "dashboard": {
       "title": "Dashboard"
@@ -159,7 +175,52 @@
       "down": "Down",
       "speed": "Speed",
       "add_vlan_device": "Add VLAN device",
-      "add_logical_interface": "Add logical interface"
+      "add_logical_interface": "Add logical interface",
+      "create_alias_interface": "Create alias interface",
+      "create_alias_for_interface": "Create alias for {interface}",
+      "edit_alias_interface": "Edit alias interface",
+      "remove_configuration": "Remove configuration",
+      "name": "Name",
+      "ipv4_address_cidr": "IPv4 address (CIDR notation)",
+      "ipv6_address_cidr": "IPv6 address (CIDR notation)",
+      "add_ipv4_address": "Add IPv4 address",
+      "add_ipv6_address": "Add IPv6 address",
+      "create_alias": "Create alias",
+      "enter_one_ipv4_or_ipv6_address": "Enter at least an IPv4 or an IPv6 address",
+      "enter_ipv4_address": "Enter at least an IPv4 address",
+      "cannot_save_alias_interface": "Cannot save alias interface",
+      "num_alias": "{num} alias",
+      "interface_name_already_used": "Interface name already used",
+      "ipv4": "IPv4",
+      "ipv6": "IPv6",
+      "delete_alias": "Delete alias",
+      "cannot_delete_alias_interface": "Cannot delete alias interface",
+      "delete_alias_interface_name": "Delete alias interface '{name}'?",
+      "alias": "Alias",
+      "save_alias": "Save alias",
+      "this_interface_is_marked_for_deletion": "This interface is marked for deletion",
+      "configure_interface_for_name": "Configure interface for {name}",
+      "interface_name": "Interface name",
+      "zone": "Zone",
+      "protocol": "Protocol",
+      "configure": "Configure",
+      "configure_interface": "Configure interface",
+      "protocol_static": "Static",
+      "ipv4_address": "IPv4 address",
+      "ipv4_subnet_mask": "IPv4 subnet mask",
+      "ipv4_gateway": "IPv4 Gateway",
+      "ipv6_address": "IPv6 address",
+      "ipv6_gateway": "IPv6 Gateway",
+      "enable_ipv6": "Enable IPv6",
+      "ipv4_mtu_bytes": "IPv4 MTU (bytes)",
+      "ipv6_mtu_bytes": "IPv6 MTU (bytes)",
+      "client_id_label": "Client ID to be sent when requesting DHCP",
+      "vendor_class_label": "Vendor class to be sent when requesting DHCP",
+      "cannot_configure_device": "Cannot configure device",
+      "reconfigure_interface": "Reconfigure interface",
+      "pppoe_username": "Username",
+      "pppoe_password": "Password",
+      "remove_configuration_explanation": "Remove '{name}' configuration? The device will become unassigned"
     },
     "users_and_objects": {
       "title": "Users & objects"

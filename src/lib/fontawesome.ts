@@ -41,9 +41,12 @@ import { faCircleCheck as fasCircleCheck } from '@fortawesome/free-solid-svg-ico
 import { faLocationDot as fasLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faEarthAmericas as fasEarthAmericas } from '@fortawesome/free-solid-svg-icons'
 import { faEllipsisVertical as fasEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { faCopy as fasCopy } from '@fortawesome/free-solid-svg-icons'
+import { faUnlock as fasUnlock } from '@fortawesome/free-solid-svg-icons'
+import { faUsers as fasUsers } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
-  app.component('font-awesome-icon', FontAwesomeIcon) ////
+  app.component('font-awesome-icon', FontAwesomeIcon)
   library.add(fasHouse)
   library.add(falHouse)
   library.add(fasServer)
@@ -85,4 +88,7 @@ export async function loadFontAwesome(app: any) {
   library.add(fasLocationDot)
   library.add(fasEarthAmericas)
   library.add(fasEllipsisVertical)
+  library.add(fasCopy)
+  library.add(fasUnlock)
+  library.add(fasUsers)
 }

@@ -83,7 +83,7 @@
         "add_key_button": "Aggiungi chiave",
         "unnamed_key": "Chiave senza nome",
         "add_new_ssh_key": {
-          "label": "Aggiungi una nuova chiave SSH",
+          "label": "Aggiungi nuova chiave SSH",
           "placeholder": "Incolla qui la chiave SSH..."
         },
         "delete_key_modal": {
@@ -203,8 +203,8 @@
       "up": "Accesa",
       "down": "Spenta",
       "speed": "Velocità",
-      "add_vlan_device": "Aggiungi un dispositivo VLAN",
-      "add_logical_interface": "Aggiungi un'interfaccia logica",
+      "add_vlan_device": "Aggiungi dispositivo VLAN",
+      "add_logical_interface": "Aggiungi interfaccia logica",
       "ipv6_gateway": "Gateway IPv6",
       "enable_ipv6": "Abilita IPv6",
       "ipv4_mtu_bytes": "MTU IPv4 (byte)",

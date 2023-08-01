@@ -402,11 +402,7 @@ function getNumAlias(device: any, networkConfig: any) {
                 @click="showConfigureDeviceDrawer(device)"
               >
                 <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
+                  <font-awesome-icon :icon="['fas', 'wrench']" class="h-4 w-4" aria-hidden="true" />
                 </template>
                 {{ t('standalone.interfaces_and_devices.configure') }}
               </NeButton>
@@ -552,13 +548,13 @@ function getNumAlias(device: any, networkConfig: any) {
                   size="lg"
                   @click="showConfigureDeviceDrawer(device)"
                 >
-                  <!-- <template #prefix> ////
+                  <template #prefix>
                     <font-awesome-icon
-                      :icon="['fas', 'pen-to-square']"
+                      :icon="['fas', 'wrench']"
                       class="h-4 w-4"
                       aria-hidden="true"
                     />
-                  </template> -->
+                  </template>
                   {{ t('standalone.interfaces_and_devices.configure') }}
                 </NeButton>
               </div>

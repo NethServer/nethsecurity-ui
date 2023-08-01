@@ -9,7 +9,7 @@
     "optional": "Opzionale",
     "close": "Chiudi",
     "edit": "Modifica",
-    "delete": "Cancellare",
+    "delete": "Elimina",
     "advanced_settings": "Impostazioni avanzate"
   },
   "error": {
@@ -40,12 +40,12 @@
     "cannot_load_network_devices": "Impossibile caricare i dispositivi di rete",
     "invalid_cidr_v4_address": "Inserire un indirizzo IPv4 valido con notazione CIDR",
     "invalid_cidr_v6_address": "Inserire un indirizzo IPv6 valido con notazione CIDR",
-    "invalid_uci_name": "Sono ammessi solo lettere, numeri e trattini bassi (_).",
+    "invalid_uci_name": "Sono ammessi solo lettere, numeri e underscore (_)",
     "cannot_load_firewall_config": "Impossibile caricare la configurazione del firewall",
     "cannot_load_network_config": "Impossibile caricare la configurazione di rete",
     "invalid_ip_v4_subnet_mask": "Maschera di sottorete IPv4 non valida",
-    "invalid_ip_v4_mtu": "Immettere un numero intero compreso tra 576 e 9200.",
-    "invalid_ip_v6_mtu": "Immettere un numero intero compreso tra 1280 e 9200.",
+    "invalid_ip_v4_mtu": "Inserire un numero intero compreso tra 576 e 9200",
+    "invalid_ip_v6_mtu": "Inserire un numero intero compreso tra 1280 e 9200",
     "invalid_hexadecimal_string": "Stringa esadecimale non valida",
     "maximum_num_characters_allowed": "Massimo {num} caratteri consentiti"
   },
@@ -132,7 +132,7 @@
       "toggle_theme": "Cambia tema",
       "show_notifications": "Mostra notifiche",
       "open_user_menu": "Apri il menu utente",
-      "close_side_drawer": "Chiudere il cassetto laterale"
+      "close_side_drawer": "Chiudi il cassetto laterale"
     },
     "dashboard": {
       "title": "Dashboard"
@@ -209,47 +209,47 @@
       "enable_ipv6": "Abilita IPv6",
       "ipv4_mtu_bytes": "MTU IPv4 (byte)",
       "ipv6_mtu_bytes": "MTU IPv6 (byte)",
-      "reconfigure_interface": "Riconfigurare l'interfaccia",
-      "create_alias_interface": "Creare un'interfaccia alias",
-      "create_alias_for_interface": "Crea alias per {interfaccia}",
-      "edit_alias_interface": "Modifica dell'interfaccia alias",
-      "remove_configuration": "Rimuovere la configurazione",
+      "reconfigure_interface": "Riconfigura interfaccia",
+      "create_alias_interface": "Crea interfaccia alias",
+      "create_alias_for_interface": "Crea alias per {interface}",
+      "edit_alias_interface": "Modifica interfaccia alias",
+      "remove_configuration": "Rimuovi configurazione",
       "name": "Nome",
       "ipv4_address_cidr": "Indirizzo IPv4 (notazione CIDR)",
       "ipv6_address_cidr": "Indirizzo IPv6 (notazione CIDR)",
       "add_ipv4_address": "Aggiungi indirizzo IPv4",
       "add_ipv6_address": "Aggiungi indirizzo IPv6",
-      "create_alias": "Creare un alias",
-      "enter_one_ipv4_or_ipv6_address": "Immettere almeno un indirizzo IPv4 o IPv6",
+      "create_alias": "Crea alias",
+      "enter_one_ipv4_or_ipv6_address": "Inserire almeno un indirizzo IPv4 o IPv6",
       "enter_ipv4_address": "Inserire almeno un indirizzo IPv4",
       "cannot_save_alias_interface": "Impossibile salvare l'interfaccia alias",
       "num_alias": "{num} alias",
-      "interface_name_already_used": "Nome dell'interfaccia già utilizzato",
+      "interface_name_already_used": "Nome interfaccia già utilizzato",
       "ipv4": "IPv4",
       "ipv6": "IPv6",
-      "delete_alias": "Cancellare l'alias",
+      "delete_alias": "Elimina alias",
       "cannot_delete_alias_interface": "Impossibile eliminare l'interfaccia alias",
-      "delete_alias_interface_name": "Cancellare l'interfaccia alias '{nome}'?",
+      "delete_alias_interface_name": "Eliminare l'interfaccia alias '{name}'?",
       "alias": "Alias",
       "save_alias": "Salva alias",
-      "this_interface_is_marked_for_deletion": "Questa interfaccia è contrassegnata per la cancellazione",
-      "configure_interface_for_name": "Configurare l'interfaccia per {nome}",
-      "interface_name": "Nome dell'interfaccia",
+      "this_interface_is_marked_for_deletion": "Questa interfaccia è contrassegnata per l'eliminazione",
+      "configure_interface_for_name": "Configura interfaccia per {name}",
+      "interface_name": "Nome interfaccia",
       "zone": "Zona",
       "protocol": "Protocollo",
-      "configure": "Configurare",
-      "configure_interface": "Configurare l'interfaccia",
+      "configure": "Configura",
+      "configure_interface": "Configura interfaccia",
       "protocol_static": "Statico",
       "ipv4_address": "Indirizzo IPv4",
       "ipv4_subnet_mask": "Maschera di sottorete IPv4",
       "ipv4_gateway": "Gateway IPv4",
       "ipv6_address": "Indirizzo IPv6",
-      "client_id_label": "ID cliente da inviare quando si richiede DHCP",
-      "vendor_class_label": "Classe del fornitore da inviare alla richiesta di DHCP",
+      "client_id_label": "Client ID da inviare quando si richiede DHCP",
+      "vendor_class_label": "Vendor class da inviare quando si richiede DHCP",
       "cannot_configure_device": "Impossibile configurare il dispositivo",
       "pppoe_username": "Nome utente",
       "pppoe_password": "Password",
-      "remove_configuration_explanation": "Rimuovere la configurazione di '{nome}'? Il dispositivo diventa non assegnato"
+      "remove_configuration_explanation": "Rimuovere la configurazione di '{name}'? Il dispositivo diventerà non assegnato"
     }
   },
   "controller": {
@@ -268,7 +268,7 @@
     "hide_password": "Nascondi la password"
   },
   "ne_tabs": {
-    "select_a_tab": "Selezionare una scheda",
+    "select_a_tab": "Seleziona una scheda",
     "tabs": "Schede"
   },
   "ne_combobox": {
@@ -276,6 +276,6 @@
     "limited_options_label": "Continuare a digitare per altre opzioni"
   },
   "ne_dropdown": {
-    "open_menu": "Aprire il menu"
+    "open_menu": "Apri menu"
   }
 }

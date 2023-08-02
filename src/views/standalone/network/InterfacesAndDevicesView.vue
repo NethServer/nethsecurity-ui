@@ -21,6 +21,7 @@ import DeleteAliasModal from '@/components/standalone/interfaces_and_devices/Del
 import { getFirewallZone, getInterface, getAliasInterface } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer from '@/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue'
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
+import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t } = useI18n()
@@ -41,6 +42,7 @@ let isShownConfigureDeviceDrawer = ref(false)
 let interfaceToEdit: Ref<any> = ref(null)
 let currentNetworkConfigDevice: Ref<any> = ref({})
 let isShownUnconfigureDeviceModal = ref(false)
+let isShownCreateVlanDeviceDrawer = ref(false)
 
 let loading = ref({
   networkDevices: true,
@@ -55,6 +57,16 @@ let error = ref({
 
 const isLoading = computed(() => {
   return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
+})
+
+const allDevices: any = computed(() => {
+  // add uncommitted devices
+
+  const uncommittedDevices = networkConfig.value.device.filter((dev: any) => {
+    return !Object.keys(devices.value).includes(dev.name)
+  })
+
+  return Object.values(devices.value).concat(uncommittedDevices)
 })
 
 onMounted(() => {
@@ -100,6 +112,8 @@ async function getNetworkConfig() {
 
   try {
     networkConfig.value = await getUciConfig('network')
+
+    console.log('networkConfig', networkConfig.value) ////
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -117,6 +131,8 @@ async function getNetworkDevices() {
   try {
     const res = await ubusCall('luci-rpc', 'getNetworkDevices')
     devices.value = res.data
+
+    console.log('devices', devices.value) ////
 
     // alias visibility
     const isExpandedAliasObj: { [index: string]: boolean } = {}
@@ -321,6 +337,14 @@ function getNumAlias(device: any, networkConfig: any) {
   const numIpv6Addresses = alias.ip6addr?.length || 0
   return numIpv4Addresses + numIpv6Addresses
 }
+
+function showCreateVlanDeviceDrawer() {
+  isShownCreateVlanDeviceDrawer.value = true
+}
+
+function hideCreateVlanDeviceDrawer() {
+  isShownCreateVlanDeviceDrawer.value = false
+}
 </script>
 
 <template>
@@ -337,7 +361,7 @@ function getNumAlias(device: any, networkConfig: any) {
     />
     <div class="text-sm space-y-6">
       <div class="flex justify-end gap-4">
-        <NeButton kind="tertiary" size="lg" disabled>
+        <NeButton kind="tertiary" size="lg" @click="showCreateVlanDeviceDrawer">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
@@ -368,7 +392,7 @@ function getNumAlias(device: any, networkConfig: any) {
         </div>
       </div>
       <!-- //// group interfaces by zone -->
-      <template v-else-if="!error.notificationTitle" v-for="device in devices">
+      <template v-else-if="!error.notificationTitle" v-for="device in allDevices">
         <div v-if="!['lo', 'ifb-dns'].includes(device.name)">
           <!-- device card -->
           <div
@@ -503,12 +527,12 @@ function getNumAlias(device: any, networkConfig: any) {
                 <div>
                   <div class="flex items-center gap-2 mb-2">
                     <font-awesome-icon
-                      :icon="['fas', device.flags.up ? 'circle-check' : 'circle-xmark']"
+                      :icon="['fas', device.flags?.up ? 'circle-check' : 'circle-xmark']"
                       class="h-4 w-4"
                       aria-hidden="true"
                     />
                     <span>{{
-                      device.flags.up
+                      device.flags?.up
                         ? t('standalone.interfaces_and_devices.up')
                         : t('standalone.interfaces_and_devices.down')
                     }}</span>
@@ -518,7 +542,9 @@ function getNumAlias(device: any, networkConfig: any) {
                       >{{ t('standalone.interfaces_and_devices.speed') }}:
                     </span>
                     <span>
-                      {{ device.link.speed && device.link.speed !== -1 ? device.link.speed : '-' }}
+                      {{
+                        device.link?.speed && device.link?.speed !== -1 ? device.link.speed : '-'
+                      }}
                     </span>
                   </div>
                 </div>
@@ -692,6 +718,13 @@ function getNumAlias(device: any, networkConfig: any) {
       :firewallConfig="firewallConfig"
       @close="isShownUnconfigureDeviceModal = false"
       @deviceUnconfigured="loadData"
+    />
+    <!-- create vlan device drawer -->
+    <CreateVlanDeviceDrawer
+      :networkConfig="networkConfig"
+      :devices="devices"
+      :isShown="isShownCreateVlanDeviceDrawer"
+      @close="hideCreateVlanDeviceDrawer"
     />
   </div>
 </template>

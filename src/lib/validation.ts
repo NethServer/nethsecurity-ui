@@ -189,6 +189,15 @@ export const validateUciName = (value: String, maxLength = 0): validationOutput 
   return { valid: true }
 }
 
+export const validateVlanId = (value: String): validationOutput => {
+  const vlanId = Number(value)
+
+  if (isNaN(vlanId) || !Number.isInteger(vlanId) || vlanId < 1 || vlanId > 4094) {
+    return { valid: false, errMessage: 'error.invalid_vlan_id' }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

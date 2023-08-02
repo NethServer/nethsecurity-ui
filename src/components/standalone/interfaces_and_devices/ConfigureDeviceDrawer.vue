@@ -199,9 +199,6 @@ watch(
       } else {
         // editing configuration
 
-        console.log('@@ interfaceToEdit', props.interfaceToEdit) ////
-        console.log('@@ hostname', props.interfaceToEdit.hostname) ////
-
         // uncommitted changes such as ipv4Mtu, ipv6Mtu and ipv6Enabled are saved inside network configuration
         const networkConfigDevice = props.networkConfig.device.find(
           (d: any) => d.name === props.device.name
@@ -400,7 +397,7 @@ async function setNetworkConfiguration() {
         values.hostname = dhcpHostname
       }
 
-      if (props.interfaceToEdit.hostname && deleteDhcpHostname) {
+      if (!isConfiguringFromScratch.value && props.interfaceToEdit.hostname && deleteDhcpHostname) {
         ubusCall('uci', 'delete', {
           config: 'network',
           section: interfaceName.value,

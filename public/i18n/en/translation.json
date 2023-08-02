@@ -44,7 +44,9 @@
     "invalid_ip_v4_mtu": "Enter an integer number between 576 and 9200",
     "invalid_ip_v6_mtu": "Enter an integer number between 1280 and 9200",
     "invalid_hexadecimal_string": "Invalid hexadecimal string",
-    "maximum_num_characters_allowed": "Maximum {num} characters allowed"
+    "maximum_num_characters_allowed": "Maximum {num} characters allowed",
+    "invalid_vlan_id": "Enter an integer number between 1 and 4094",
+    "cannot_create_device": "Cannot create device"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -225,7 +227,14 @@
       "dhcp_hostname_device": "Send the hostname of this device",
       "dhcp_hostname_do_not_send": "Do not send a hostname",
       "dhcp_hostname_custom": "Send a custom hostname",
-      "custom_hostname": "Custom hostname"
+      "custom_hostname": "Custom hostname",
+      "device_name_already_used": "Device name {name} is already used",
+      "device_type": "Device type",
+      "vlan_id": "VLAN ID",
+      "add_device": "Add device",
+      "base_device": "Base device",
+      "vlan_8021q": "VLAN 802.1q",
+      "vlan_8021ad": "VLAN 802.1ad"
     },
     "multi_wan": {
       "title": "MultiWAN",

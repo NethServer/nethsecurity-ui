@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MultiWanGeneralSettings from '@/components/standalone/multi-wan/MultiWanGeneralSettings.vue'
+import MultiWanManager from '@/components/standalone/multi-wan/MultiWanManager.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -47,6 +48,7 @@ watch(selectedTab, () => {
       class="mb-8"
       @selectTab="selectedTab = $event"
     />
+    <MultiWanManager v-if="selectedTab == 'multi-wan-manager'" />
     <MultiWanGeneralSettings v-if="selectedTab == 'general-settings'" />
   </div>
 </template>

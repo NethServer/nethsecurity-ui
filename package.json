@@ -19,7 +19,7 @@
     "@headlessui/vue": "^1.7.13",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#ns-light",
     "@nethesis/nethesis-solid-svg-icons": "github:nethesis/Font-Awesome#ns-solid",
-    "@nethserver/vue-tailwind-lib": "^0.0.55",
+    "@nethserver/vue-tailwind-lib": "^0.0.56",
     "@types/lodash": "^4.14.195",
     "axios": "^1.4.0",
     "lodash": "^4.17.21",

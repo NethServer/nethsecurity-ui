@@ -214,13 +214,18 @@
       "enable_ipv6": "Enable IPv6",
       "ipv4_mtu_bytes": "IPv4 MTU (bytes)",
       "ipv6_mtu_bytes": "IPv6 MTU (bytes)",
-      "client_id_label": "Client ID to be sent when requesting DHCP",
-      "vendor_class_label": "Vendor class to be sent when requesting DHCP",
+      "client_id_label": "Client ID to send when requesting DHCP",
+      "vendor_class_label": "Vendor class to send when requesting DHCP",
       "cannot_configure_device": "Cannot configure device",
       "reconfigure_interface": "Reconfigure interface",
       "pppoe_username": "Username",
       "pppoe_password": "Password",
-      "remove_configuration_explanation": "Remove '{name}' configuration? The device will become unassigned"
+      "remove_configuration_explanation": "Remove '{name}' configuration? The device will become unassigned",
+      "dhcp_hostname_to_send_label": "Hostname to send when requesting DHCP",
+      "dhcp_hostname_device": "Send the hostname of this device",
+      "dhcp_hostname_do_not_send": "Do not send a hostname",
+      "dhcp_hostname_custom": "Send a custom hostname",
+      "custom_hostname": "Custom hostname"
     },
     "multi_wan": {
       "title": "MultiWAN",

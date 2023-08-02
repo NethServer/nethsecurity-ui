@@ -14,7 +14,8 @@ import {
   validateIpv4SubnetMask,
   validateRequired,
   validateUciName,
-  validateHexadecimalString
+  validateHexadecimalString,
+  validateHostname
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -77,6 +78,9 @@ let ipv4Mtu = ref('')
 let ipv4MtuRef = ref()
 let ipv6Mtu = ref('')
 let ipv6MtuRef = ref()
+let dhcpHostnameToSend = ref('deviceHostname')
+let dhcpCustomHostname = ref('')
+let dhcpCustomHostnameRef = ref()
 let dhcpClientId = ref('')
 let dhcpClientIdRef = ref()
 let dhcpVendorClass = ref('')
@@ -106,6 +110,15 @@ let protocolPppoeOption = {
   label: 'PPPoE'
 }
 
+const dhcpHostnameToSendOptions = [
+  { id: 'deviceHostname', label: t('standalone.interfaces_and_devices.dhcp_hostname_device') },
+  {
+    id: 'doNotSendHostname',
+    label: t('standalone.interfaces_and_devices.dhcp_hostname_do_not_send')
+  },
+  { id: 'customHostname', label: t('standalone.interfaces_and_devices.dhcp_hostname_custom') }
+]
+
 let loading = ref({
   configure: false
 })
@@ -121,6 +134,7 @@ let error = ref({
   ipv6Gateway: '',
   ipv4Mtu: '',
   ipv6Mtu: '',
+  dhcpCustomHostname: '',
   dhcpClientId: '',
   dhcpVendorClass: '',
   pppoeUsername: '',
@@ -175,6 +189,8 @@ watch(
         isExpandedAdvancedSettings.value = false
         ipv4Mtu.value = ''
         ipv6Mtu.value = ''
+        dhcpHostnameToSend.value = 'deviceHostname'
+        dhcpCustomHostname.value = ''
         dhcpClientId.value = ''
         dhcpVendorClass.value = ''
         pppoeUsername.value = ''
@@ -182,6 +198,9 @@ watch(
         focusElement(interfaceNameRef)
       } else {
         // editing configuration
+
+        console.log('@@ interfaceToEdit', props.interfaceToEdit) ////
+        console.log('@@ hostname', props.interfaceToEdit.hostname) ////
 
         // uncommitted changes such as ipv4Mtu, ipv6Mtu and ipv6Enabled are saved inside network configuration
         const networkConfigDevice = props.networkConfig.device.find(
@@ -211,6 +230,21 @@ watch(
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
         pppoeUsername.value = props.interfaceToEdit.username
         pppoePassword.value = props.interfaceToEdit.password
+
+        // dhcp hostname to send
+        switch (props.interfaceToEdit.hostname) {
+          case '*':
+            dhcpHostnameToSend.value = 'doNotSendHostname'
+            dhcpCustomHostname.value = ''
+            break
+          case undefined:
+            dhcpHostnameToSend.value = 'deviceHostname'
+            dhcpCustomHostname.value = ''
+            break
+          default:
+            dhcpHostnameToSend.value = 'customHostname'
+            dhcpCustomHostname.value = props.interfaceToEdit.hostname
+        }
       }
     }
   }
@@ -338,10 +372,41 @@ async function setNetworkConfiguration() {
       values.ip6gw = ipv6Gateway.value
     }
   } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+    // dhcp client id
     values.clientid = dhcpClientId.value
 
     if (protocol.value === 'dhcp') {
+      // dhcp vendor class
       values.vendorid = dhcpVendorClass.value
+
+      // dhcp hostname to send
+
+      let dhcpHostname = ''
+      let deleteDhcpHostname = false
+
+      switch (dhcpHostnameToSend.value) {
+        case 'deviceHostname':
+          deleteDhcpHostname = true
+          break
+        case 'doNotSendHostname':
+          dhcpHostname = '*'
+          break
+        case 'customHostname':
+          dhcpHostname = dhcpCustomHostname.value
+          break
+      }
+
+      if (dhcpHostname) {
+        values.hostname = dhcpHostname
+      }
+
+      if (props.interfaceToEdit.hostname && deleteDhcpHostname) {
+        ubusCall('uci', 'delete', {
+          config: 'network',
+          section: interfaceName.value,
+          options: ['hostname']
+        })
+      }
     }
   } else if (protocol.value === 'pppoe') {
     values.username = pppoeUsername.value
@@ -596,6 +661,34 @@ function validate() {
         }
       }
     }
+
+    if (protocol.value === 'dhcp' && dhcpHostnameToSend.value === 'customHostname') {
+      // dhcp custom hostname
+
+      {
+        // check required
+        let { valid, errMessage } = validateRequired(dhcpCustomHostname.value)
+        if (!valid) {
+          error.value.dhcpCustomHostname = t(errMessage as string)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(dhcpCustomHostnameRef)
+          }
+        } else {
+          // check sintax
+          {
+            let { valid, errMessage, i18Params } = validateHostname(dhcpCustomHostname.value)
+            if (!valid) {
+              error.value.dhcpCustomHostname = t(errMessage as string, i18Params as any)
+              if (isValidationOk) {
+                isValidationOk = false
+                focusElement(dhcpCustomHostnameRef)
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   // ipv4 mtu
@@ -641,6 +734,7 @@ function validate() {
           card
           :label="t('standalone.interfaces_and_devices.zone')"
           :options="zoneOptions"
+          gridStyle="gap-3 grid-cols-2 md:grid-cols-3"
         />
         <!-- protocol -->
         <NeRadioSelection
@@ -722,6 +816,24 @@ function validate() {
             :hidePasswordLabel="t('ne_text_input.hide_password')"
             :invalidMessage="t(error.pppoePassword)"
             ref="pppoePasswordRef"
+          />
+        </div>
+        <!-- fields for dhcp protocol -->
+        <div v-show="protocol === 'dhcp'" class="space-y-6">
+          <!-- dhcp hostname to send -->
+          <NeRadioSelection
+            v-model="dhcpHostnameToSend"
+            :label="t('standalone.interfaces_and_devices.dhcp_hostname_to_send_label')"
+            :options="dhcpHostnameToSendOptions"
+          />
+          <!-- dhcp custom hostname -->
+          <NeTextInput
+            v-if="dhcpHostnameToSend === 'customHostname'"
+            v-model="dhcpCustomHostname"
+            :placeholder="t('standalone.interfaces_and_devices.custom_hostname')"
+            :invalidMessage="t(error.dhcpCustomHostname)"
+            ref="dhcpCustomHostnameRef"
+            class="ml-6 !mt-4"
           />
         </div>
         <!-- advanced settings -->

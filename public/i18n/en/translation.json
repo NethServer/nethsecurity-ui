@@ -237,7 +237,14 @@
       "vlan_8021ad": "VLAN 802.1ad",
       "delete_device": "Delete device",
       "cannot_delete_device": "Cannot delete device",
-      "delete_device_name": "Delete device '{name}'?"
+      "delete_device_name": "Delete device '{name}'?",
+      "zone_label_lan": "LAN (Green)",
+      "zone_label_wan": "WAN (Red)",
+      "zone_label_guests": "Guests (Blue)",
+      "zone_label_dmz": "DMZ (Orange)",
+      "zone_label_dedalo": "Dedalo (Hotspot)",
+      "zone_label_openvpnrw": "VPN (OpenVPN RW)",
+      "zone_label_unassigned": "Unassigned"
     },
     "multi_wan": {
       "title": "MultiWAN",

@@ -28,7 +28,7 @@ import { isEmpty, upperFirst } from 'lodash'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
-let devices: any = ref({})
+let physicalDevices: any = ref({})
 // used for setInterval
 let devicesIntervalId: Ref<number> = ref(0)
 let firewallConfig: Ref<any> = ref({})
@@ -67,10 +67,10 @@ const allDevices: any = computed(() => {
   // add uncommitted devices
 
   const uncommittedDevices = networkConfig.value.device.filter((dev: any) => {
-    return !Object.keys(devices.value).includes(dev.name)
+    return !Object.keys(physicalDevices.value).includes(dev.name)
   })
 
-  return Object.values(devices.value).concat(uncommittedDevices)
+  return Object.values(physicalDevices.value).concat(uncommittedDevices)
 })
 
 const sortedZonesAndDevices: any = computed(() => {
@@ -139,7 +139,7 @@ onUnmounted(() => {
 })
 
 async function loadData() {
-  getNetworkDevices()
+  getPhysicalDevices()
   getNetworkConfig()
   getFirewallConfig()
 
@@ -150,7 +150,7 @@ async function loadData() {
   }
 
   // reload devices periodically
-  devicesIntervalId.value = setInterval(getNetworkDevices, GET_DEVICES_INTERVAL_TIME)
+  devicesIntervalId.value = setInterval(getPhysicalDevices, GET_DEVICES_INTERVAL_TIME)
 }
 
 async function getFirewallConfig() {
@@ -183,7 +183,7 @@ async function getNetworkConfig() {
   loading.value.networkConfig = false
 }
 
-async function getNetworkDevices() {
+async function getPhysicalDevices() {
   // show skeleton only the first time
   if (!devicesIntervalId.value) {
     loading.value.networkDevices = true
@@ -194,22 +194,22 @@ async function getNetworkDevices() {
 
     // keep only physical devices
 
-    const physicalDevices: any = {}
+    const devices: any = {}
 
     for (const devName in res.data) {
       const dev = res.data[devName]
 
       if (!isVlan(dev) && !['lo', 'ifb-dns'].includes(devName)) {
-        physicalDevices[devName] = dev
+        devices[devName] = dev
       }
     }
-    devices.value = physicalDevices
+    physicalDevices.value = devices
 
-    console.log('devices', devices.value) ////
+    console.log('physicalDevices', physicalDevices.value) ////
 
     // alias visibility
 
-    for (const deviceName in devices.value) {
+    for (const deviceName in physicalDevices.value) {
       // set to not expanded only if needed (getNetworkDevices is called periodically)
       if (isExpandedAlias.value[deviceName] == undefined) {
         isExpandedAlias.value[deviceName] = false
@@ -863,7 +863,7 @@ function hideCreateVlanDeviceDrawer() {
     <!-- create vlan device drawer -->
     <CreateVlanDeviceDrawer
       :networkConfig="networkConfig"
-      :devices="devices"
+      :devices="physicalDevices"
       :isShown="isShownCreateVlanDeviceDrawer"
       @close="hideCreateVlanDeviceDrawer"
       @reloadData="loadData"

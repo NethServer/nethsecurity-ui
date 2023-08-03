@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { getAliasInterface, getFirewallZone, getInterface } from '@/lib/standalone/network'
+import { getAliasInterface, getFirewallZone, getInterface, isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
@@ -27,7 +27,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'deviceUnconfigured'])
+const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -110,8 +110,12 @@ async function unconfigureDevice() {
       // delete alias interface too
       await deleteNetworkInterface(aliasFound['.name'])
     }
-    await deleteNetworkDevice()
-    emit('deviceUnconfigured')
+
+    // delete device if it's a physical one //// TODO what about bond/bridges?
+    if (!isVlan(props.device)) {
+      await deleteNetworkDevice()
+    }
+    emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)

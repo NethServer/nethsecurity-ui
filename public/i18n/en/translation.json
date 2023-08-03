@@ -178,8 +178,8 @@
       "speed": "Speed",
       "add_vlan_device": "Add VLAN device",
       "add_logical_interface": "Add logical interface",
-      "create_alias_interface": "Create alias interface",
-      "create_alias_for_interface": "Create alias for {interface}",
+      "create_alias_interface": "Add alias interface",
+      "create_alias_for_interface": "Add alias for {interface}",
       "edit_alias_interface": "Edit alias interface",
       "remove_configuration": "Remove configuration",
       "name": "Name",
@@ -187,7 +187,7 @@
       "ipv6_address_cidr": "IPv6 address (CIDR notation)",
       "add_ipv4_address": "Add IPv4 address",
       "add_ipv6_address": "Add IPv6 address",
-      "create_alias": "Create alias",
+      "create_alias": "Add alias",
       "enter_one_ipv4_or_ipv6_address": "Enter at least an IPv4 or an IPv6 address",
       "enter_ipv4_address": "Enter at least an IPv4 address",
       "cannot_save_alias_interface": "Cannot save alias interface",
@@ -234,7 +234,10 @@
       "add_device": "Add device",
       "base_device": "Base device",
       "vlan_8021q": "VLAN 802.1q",
-      "vlan_8021ad": "VLAN 802.1ad"
+      "vlan_8021ad": "VLAN 802.1ad",
+      "delete_device": "Delete device",
+      "cannot_delete_device": "Cannot delete device",
+      "delete_device_name": "Delete device '{name}'?"
     },
     "multi_wan": {
       "title": "MultiWAN",

@@ -70,3 +70,11 @@ export function getZoneIcon(zoneName: string) {
       return ''
   }
 }
+
+export function isVlan(device: any) {
+  if (device.devtype === 'vlan' || device.vid) {
+    return true
+  } else {
+    return false
+  }
+}

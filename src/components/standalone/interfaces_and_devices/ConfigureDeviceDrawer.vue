@@ -274,7 +274,14 @@ function clearErrors() {
 async function createAndSetNetworkDevice() {
   let deviceSection = null
 
-  if (isConfiguringFromScratch.value) {
+  // create the device only if needed
+  const deviceAlreadyExists = props.networkConfig.device.find(
+    (dev: any) => dev.name === props.device.name
+  )
+
+  if (isConfiguringFromScratch.value && !deviceAlreadyExists) {
+    // create device
+
     const res = await ubusCall('uci', 'add', {
       config: 'network',
       type: 'device',
@@ -282,7 +289,7 @@ async function createAndSetNetworkDevice() {
     })
     deviceSection = res.data.section
   } else {
-    // editing configuration: device already exists
+    // device already exists
 
     const deviceFound = props.networkConfig.device.find(
       (dev: any) => dev.name === props.device.name

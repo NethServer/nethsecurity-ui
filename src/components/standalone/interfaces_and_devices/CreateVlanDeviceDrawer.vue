@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired, validateVlanId } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -75,7 +76,7 @@ const deviceName = computed(() => {
 const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
   // remove loopback and vlan devices
   const filteredDevices = Object.values(props.devices).filter(
-    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && dev.devtype !== 'vlan'
+    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !isVlan(dev)
   )
 
   return filteredDevices.map((dev: any) => {

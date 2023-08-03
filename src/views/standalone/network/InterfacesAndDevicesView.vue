@@ -574,7 +574,11 @@ function hideCreateVlanDeviceDrawer() {
                     >{{ t('standalone.interfaces_and_devices.speed') }}:
                   </span>
                   <span>
-                    {{ device.link?.speed && device.link?.speed !== -1 ? device.link.speed : '-' }}
+                    {{
+                      device.link?.speed && device.link?.speed !== -1
+                        ? `${device.link.speed} Mbps`
+                        : '-'
+                    }}
                   </span>
                 </div>
               </div>

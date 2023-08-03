@@ -426,167 +426,17 @@ function hideCreateVlanDeviceDrawer() {
       </div>
       <!-- //// group interfaces by zone -->
       <template v-else-if="!error.notificationTitle" v-for="device in allDevices">
-        <!-- device card -->
-        <div
-          :class="[
-            `relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
-              device
-            )}`
-          ]"
-        >
-          <!-- edit button and overflow menu for smaller screens -->
-          <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
-            <template v-if="getInterface(device, networkConfig)">
-              <!-- actions for configured devices -->
-              <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
-                <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                </template>
-                {{ t('common.edit') }}
-              </NeButton>
-              <NeDropdown :items="getConfiguredDeviceKebabMenuItems(device)" :alignToRight="true" />
-            </template>
-            <!-- configure button for unconfigured devices -->
-            <NeButton v-else kind="secondary" size="lg" @click="showConfigureDeviceDrawer(device)">
-              <template #prefix>
-                <font-awesome-icon :icon="['fas', 'wrench']" class="h-4 w-4" aria-hidden="true" />
-              </template>
-              {{ t('standalone.interfaces_and_devices.configure') }}
-            </NeButton>
-            <!-- actions for unconfigured vlan devices -->
-            <NeDropdown
-              v-if="isVlan(device) && !getInterface(device, networkConfig)"
-              :items="getUnconfiguredVlanKebabMenuItems(device)"
-              :alignToRight="true"
-            />
-          </div>
+        <div>
+          <!-- device card -->
           <div
-            class="grid gap-x-8 gap-y-8 pr-16 3xl:pr-0 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 3xl:grid-cols-5"
+            :class="[
+              `relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                device
+              )}`
+            ]"
           >
-            <!-- first column -->
-            <div
-              class="flex gap-8 flex-wrap items-start md:justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
-            >
-              <div class="flex items-center">
-                <!-- use component for interface icon? //// -->
-                <div
-                  :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full mr-4 ${getIconBackgroundStyle(
-                    device
-                  )}`"
-                >
-                  <font-awesome-icon
-                    :icon="['fas', getInterfaceIconName(device)]"
-                    aria-hidden="true"
-                    :class="`h-5 w-5 ${getIconForegroundStyle(device)}`"
-                  />
-                </div>
-                <div>
-                  <div v-if="getInterface(device, networkConfig)" class="font-semibold">
-                    {{ getInterface(device, networkConfig)['.name'] }}
-                  </div>
-                  <div>{{ device.name }}</div>
-                </div>
-              </div>
-              <!-- alias -->
-              <div v-if="getAliasInterface(device, networkConfig)">
-                <NeButton
-                  kind="tertiary"
-                  size="sm"
-                  @click="toggleExpandAlias(device)"
-                  class="-mt-2 -mr-2"
-                >
-                  <template #suffix>
-                    <font-awesome-icon
-                      :icon="['fas', isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down']"
-                      class="h-3 w-3"
-                      aria-hidden="true"
-                    />
-                  </template>
-                  {{
-                    t('standalone.interfaces_and_devices.num_alias', {
-                      num: getNumAlias(device, networkConfig)
-                    })
-                  }}
-                </NeButton>
-              </div>
-              <!-- vlan badge -->
-              <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
-            </div>
-            <!-- second column -->
-            <div>
-              <div>
-                <span class="font-medium">MAC: </span>
-                <span>{{ device.mac || '-' }}</span>
-              </div>
-              <div
-                v-if="getInterface(device, networkConfig)"
-                v-for="ipv4Address in getInterface(device, networkConfig)['ipv4-address']"
-              >
-                <span class="font-medium">IPv4: </span>
-                <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
-              </div>
-              <div
-                v-if="getInterface(device, networkConfig)"
-                v-for="ipv6Address in getInterface(device, networkConfig)['ipv6-address']"
-              >
-                <span class="font-medium">IPv6: </span>
-                <span>{{ ipv6Address.address }}/{{ ipv6Address.mask }}</span>
-              </div>
-            </div>
-            <!-- third column -->
-            <div>
-              <div>
-                <span class="font-medium">RX: </span>
-                <span>{{ byteFormat1000(device.stats?.rx_bytes) }}</span>
-                <span v-if="device.stats?.rx_packets">
-                  ({{ device.stats.rx_packets || '-' }} pkts)</span
-                >
-              </div>
-              <div>
-                <span class="font-medium">TX: </span>
-                <span>{{ byteFormat1000(device.stats?.tx_bytes) }}</span>
-                <span v-if="device.stats?.tx_packets">
-                  ({{ device.stats.tx_packets || '-' }} pkts)</span
-                >
-              </div>
-            </div>
-            <!-- fourth column -->
-            <div>
-              <div>
-                <div class="flex items-center gap-2 mb-2">
-                  <font-awesome-icon
-                    :icon="['fas', device.flags?.up ? 'circle-check' : 'circle-xmark']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                  <span>{{
-                    device.flags?.up
-                      ? t('standalone.interfaces_and_devices.up')
-                      : t('standalone.interfaces_and_devices.down')
-                  }}</span>
-                </div>
-                <div>
-                  <span class="font-medium"
-                    >{{ t('standalone.interfaces_and_devices.speed') }}:
-                  </span>
-                  <span>
-                    {{
-                      device.link?.speed && device.link?.speed !== -1
-                        ? `${device.link.speed} Mbps`
-                        : '-'
-                    }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <!-- fifth column -->
-            <div
-              class="hidden 3xl:flex items-start gap-2 justify-end border-l border-gray-200 dark:border-gray-600"
-            >
+            <!-- edit button and overflow menu for smaller screens -->
+            <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
               <template v-if="getInterface(device, networkConfig)">
                 <!-- actions for configured devices -->
                 <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
@@ -623,33 +473,135 @@ function hideCreateVlanDeviceDrawer() {
                 :alignToRight="true"
               />
             </div>
-          </div>
-        </div>
-        <!-- alias interface -->
-        <Transition name="slide-down">
-          <div v-if="getAliasInterface(device, networkConfig) && isExpandedAlias[device.name]">
-            <!-- v-for is a trick to declare 'alias' variable inside template -->
             <div
-              v-for="alias in [getAliasInterface(device, networkConfig)]"
-              class="flex items-start group"
+              class="grid gap-x-8 gap-y-8 pr-16 3xl:pr-0 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 3xl:grid-cols-5"
             >
-              <!-- L-shaped dashed line-->
+              <!-- first column -->
               <div
-                class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
-              ></div>
-              <!-- alias card -->
-              <div
-                :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
-                  device
-                )}`"
+                class="flex gap-8 flex-wrap items-start md:justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
               >
-                <!-- edit button and overflow menu for smaller screens -->
-                <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
+                <div class="flex items-center">
+                  <!-- use component for interface icon? //// -->
+                  <div
+                    :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full mr-4 ${getIconBackgroundStyle(
+                      device
+                    )}`"
+                  >
+                    <font-awesome-icon
+                      :icon="['fas', getInterfaceIconName(device)]"
+                      aria-hidden="true"
+                      :class="`h-5 w-5 ${getIconForegroundStyle(device)}`"
+                    />
+                  </div>
+                  <div>
+                    <div v-if="getInterface(device, networkConfig)" class="font-semibold">
+                      {{ getInterface(device, networkConfig)['.name'] }}
+                    </div>
+                    <div>{{ device.name }}</div>
+                  </div>
+                </div>
+                <!-- alias -->
+                <div v-if="getAliasInterface(device, networkConfig)">
                   <NeButton
                     kind="tertiary"
-                    size="lg"
-                    @click="showEditAliasInterfaceDrawer(alias, device)"
+                    size="sm"
+                    @click="toggleExpandAlias(device)"
+                    class="-mt-2 -mr-2"
                   >
+                    <template #suffix>
+                      <font-awesome-icon
+                        :icon="[
+                          'fas',
+                          isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down'
+                        ]"
+                        class="h-3 w-3"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    {{
+                      t('standalone.interfaces_and_devices.num_alias', {
+                        num: getNumAlias(device, networkConfig)
+                      })
+                    }}
+                  </NeButton>
+                </div>
+                <!-- vlan badge -->
+                <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
+              </div>
+              <!-- second column -->
+              <div>
+                <div>
+                  <span class="font-medium">MAC: </span>
+                  <span>{{ device.mac || '-' }}</span>
+                </div>
+                <div
+                  v-if="getInterface(device, networkConfig)"
+                  v-for="ipv4Address in getInterface(device, networkConfig)['ipv4-address']"
+                >
+                  <span class="font-medium">IPv4: </span>
+                  <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
+                </div>
+                <div
+                  v-if="getInterface(device, networkConfig)"
+                  v-for="ipv6Address in getInterface(device, networkConfig)['ipv6-address']"
+                >
+                  <span class="font-medium">IPv6: </span>
+                  <span>{{ ipv6Address.address }}/{{ ipv6Address.mask }}</span>
+                </div>
+              </div>
+              <!-- third column -->
+              <div>
+                <div>
+                  <span class="font-medium">RX: </span>
+                  <span>{{ byteFormat1000(device.stats?.rx_bytes) }}</span>
+                  <span v-if="device.stats?.rx_packets">
+                    ({{ device.stats.rx_packets || '-' }} pkts)</span
+                  >
+                </div>
+                <div>
+                  <span class="font-medium">TX: </span>
+                  <span>{{ byteFormat1000(device.stats?.tx_bytes) }}</span>
+                  <span v-if="device.stats?.tx_packets">
+                    ({{ device.stats.tx_packets || '-' }} pkts)</span
+                  >
+                </div>
+              </div>
+              <!-- fourth column -->
+              <div>
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <font-awesome-icon
+                      :icon="['fas', device.flags?.up ? 'circle-check' : 'circle-xmark']"
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                    <span>{{
+                      device.flags?.up
+                        ? t('standalone.interfaces_and_devices.up')
+                        : t('standalone.interfaces_and_devices.down')
+                    }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium"
+                      >{{ t('standalone.interfaces_and_devices.speed') }}:
+                    </span>
+                    <span>
+                      {{
+                        device.link?.speed && device.link?.speed !== -1
+                          ? `${device.link.speed} Mbps`
+                          : '-'
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- fifth column -->
+              <div
+                class="hidden 3xl:flex items-start gap-2 justify-end border-l border-gray-200 dark:border-gray-600"
+              >
+                <template v-if="getInterface(device, networkConfig)">
+                  <!-- actions for configured devices -->
+                  <NeButton kind="tertiary" size="lg" @click="showConfigureDeviceDrawer(device)">
                     <template #prefix>
                       <font-awesome-icon
                         :icon="['fas', 'pen-to-square']"
@@ -659,35 +611,56 @@ function hideCreateVlanDeviceDrawer() {
                     </template>
                     {{ t('common.edit') }}
                   </NeButton>
-                  <NeDropdown :items="getAliasKebabMenuItems(alias, device)" :alignToRight="true" />
-                </div>
-                <div class="flex justify-between gap-8 flex-wrap">
-                  <!-- alias name -->
-                  <div
-                    class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
-                  >
-                    <div class="font-semibold">
-                      {{ alias['.name'] }}
-                    </div>
-                  </div>
-                  <div class="flex flex-wrap gap-8 pr-40 grow">
-                    <!-- ipv4 addresses -->
-                    <div v-for="ipv4 in alias.ipaddr">
-                      <span class="font-medium">
-                        {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
-                      ><span>{{ ipv4 }}</span>
-                    </div>
-                    <!-- ipv6 addresses -->
-                    <div v-for="ipv6 in alias.ip6addr">
-                      <span class="font-medium">
-                        {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
-                      ><span>{{ ipv6 }}</span>
-                    </div>
-                  </div>
-                  <!-- edit alias and overflow menu -->
-                  <div
-                    class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
-                  >
+                  <NeDropdown
+                    :items="getConfiguredDeviceKebabMenuItems(device)"
+                    :alignToRight="true"
+                  />
+                </template>
+                <!-- configure button for unconfigured devices -->
+                <NeButton
+                  v-else
+                  kind="secondary"
+                  size="lg"
+                  @click="showConfigureDeviceDrawer(device)"
+                >
+                  <template #prefix>
+                    <font-awesome-icon
+                      :icon="['fas', 'wrench']"
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  </template>
+                  {{ t('standalone.interfaces_and_devices.configure') }}
+                </NeButton>
+                <!-- actions for unconfigured vlan devices -->
+                <NeDropdown
+                  v-if="isVlan(device) && !getInterface(device, networkConfig)"
+                  :items="getUnconfiguredVlanKebabMenuItems(device)"
+                  :alignToRight="true"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- alias interface -->
+          <Transition name="slide-down">
+            <div v-if="getAliasInterface(device, networkConfig) && isExpandedAlias[device.name]">
+              <!-- v-for is a trick to declare 'alias' variable inside template -->
+              <div
+                v-for="alias in [getAliasInterface(device, networkConfig)]"
+                class="flex items-start group"
+              >
+                <!-- L-shaped dashed line-->
+                <div
+                  class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                ></div>
+                <!-- alias card -->
+                <div
+                  :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                    device
+                  )}`"
+                >
+                  <!-- edit button and overflow menu for smaller screens -->
+                  <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
                     <NeButton
                       kind="tertiary"
                       size="lg"
@@ -702,17 +675,64 @@ function hideCreateVlanDeviceDrawer() {
                       </template>
                       {{ t('common.edit') }}
                     </NeButton>
-                    <!-- overflow menu for larger screens -->
                     <NeDropdown
                       :items="getAliasKebabMenuItems(alias, device)"
                       :alignToRight="true"
                     />
                   </div>
+                  <div class="flex justify-between gap-8 flex-wrap">
+                    <!-- alias name -->
+                    <div
+                      class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                    >
+                      <div class="font-semibold">
+                        {{ alias['.name'] }}
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-8 pr-40 grow">
+                      <!-- ipv4 addresses -->
+                      <div v-for="ipv4 in alias.ipaddr">
+                        <span class="font-medium">
+                          {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
+                        ><span>{{ ipv4 }}</span>
+                      </div>
+                      <!-- ipv6 addresses -->
+                      <div v-for="ipv6 in alias.ip6addr">
+                        <span class="font-medium">
+                          {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
+                        ><span>{{ ipv6 }}</span>
+                      </div>
+                    </div>
+                    <!-- edit alias and overflow menu -->
+                    <div
+                      class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
+                    >
+                      <NeButton
+                        kind="tertiary"
+                        size="lg"
+                        @click="showEditAliasInterfaceDrawer(alias, device)"
+                      >
+                        <template #prefix>
+                          <font-awesome-icon
+                            :icon="['fas', 'pen-to-square']"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                          />
+                        </template>
+                        {{ t('common.edit') }}
+                      </NeButton>
+                      <!-- overflow menu for larger screens -->
+                      <NeDropdown
+                        :items="getAliasKebabMenuItems(alias, device)"
+                        :alignToRight="true"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Transition>
+          </Transition>
+        </div>
       </template>
     </div>
     <!-- create/edit alias interface drawer -->

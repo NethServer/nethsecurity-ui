@@ -6,16 +6,17 @@
 <script setup lang="ts">
 import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
-import { getProductName } from '@/lib/config'
+import { getProductName, getCompanyName } from '@/lib/config'
 import {
   deleteFromStorage,
   getStringFromStorage,
   saveToStorage
 } from '@nethserver/vue-tailwind-lib'
+import { useThemeStore } from '@/stores/theme'
 
 let username = ref('')
 let usernameRef = ref()
@@ -31,6 +32,15 @@ let error = ref({
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
+const themeStore = useThemeStore()
+
+const logoFilename = computed(() => {
+  if (themeStore.isLight) {
+    return 'logo_light.svg'
+  } else {
+    return 'logo_dark.svg'
+  }
+})
 
 onMounted(() => {
   // read username from storage, if present
@@ -120,8 +130,11 @@ function validate() {
       <!-- <div class="mx-auto w-full max-w-sm lg:w-96"> //// -->
       <div class="mx-auto w-full max-w-md lg:w-[26rem]">
         <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
-          <!-- logo //// -->
-          <img class="h-8 w-auto mb-6" src="/logo.png" alt="Your Company" />
+          <img
+            class="h-8 w-auto mb-6"
+            :src="`/${logoFilename}`"
+            :alt="`${getCompanyName()} logo`"
+          />
           <NeTitle level="h3">{{
             t('login.welcome_title_standalone', { product: getProductName() })
           }}</NeTitle>

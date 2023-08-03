@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   Dialog,
   DialogPanel,
@@ -21,7 +21,7 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
 import { isEmpty } from 'lodash'
@@ -47,6 +47,14 @@ let showUciChangesModal = ref(false)
 let isChangesButtonFlashing = ref(false)
 
 const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
+
+const logoFilename = computed(() => {
+  if (themeStore.isLight) {
+    return 'logo_light.svg'
+  } else {
+    return 'logo_dark.svg'
+  }
+})
 
 watch(
   () => uciChangesStore.changes,
@@ -118,11 +126,10 @@ watch(
                 class="flex grow flex-col gap-y-5 overflow-y-auto px-2 pb-4 bg-white dark:bg-gray-950"
               >
                 <div class="flex h-16 shrink-0 items-center">
-                  <!-- //// logo -->
                   <img
-                    class="h-8 w-auto pl-3"
-                    src="/logo.png"
-                    alt="Your Company"
+                    class="h-8 w-auto px-3"
+                    :src="`/${logoFilename}`"
+                    :alt="`${getCompanyName()} logo`"
                     aria-hidden="true"
                   />
                 </div>
@@ -185,9 +192,12 @@ watch(
       <div
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r px-2 pb-4 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
       >
-        <!-- //// logo -->
         <div class="flex h-16 shrink-0 items-center">
-          <img class="h-8 w-auto pl-3" src="/logo.png" alt="Your Company" />
+          <img
+            class="h-8 w-auto px-3"
+            :src="`/${logoFilename}`"
+            :alt="`${getCompanyName()} logo`"
+          />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">

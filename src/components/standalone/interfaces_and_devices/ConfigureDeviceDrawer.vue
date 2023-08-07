@@ -308,7 +308,7 @@ async function createAndSetNetworkDevice() {
     values.mtu6 = ipv6Mtu.value
   }
 
-  ubusCall('uci', 'set', {
+  await ubusCall('uci', 'set', {
     config: 'network',
     section: deviceSection,
     values: values
@@ -365,15 +365,21 @@ async function setNetworkConfiguration() {
   const values: any = { proto: protocol.value }
 
   if (protocol.value === 'static') {
-    if (ipv4Address.value) {
-      values.ipaddr = ipv4Address.value
-      values.netmask = ipv4SubnetMask.value
-      values.gateway = ipv4Gateway.value
+    values.ipaddr = ipv4Address.value
+    values.netmask = ipv4SubnetMask.value
+
+    if (isEmpty(ipv6Address.value) || !isIpv6Enabled.value) {
+      values.ip6addr = ''
+    } else {
+      values.ip6addr = [ipv6Address.value]
     }
 
-    if (ipv6Address.value) {
-      values.ip6addr = [ipv6Address.value]
+    if (zone.value === 'wan') {
+      values.gateway = ipv4Gateway.value
       values.ip6gw = ipv6Gateway.value
+    } else {
+      values.gateway = ''
+      values.ip6gw = ''
     }
   } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
     // dhcp client id
@@ -405,7 +411,7 @@ async function setNetworkConfiguration() {
       }
 
       if (!isConfiguringFromScratch.value && props.interfaceToEdit.hostname && deleteDhcpHostname) {
-        ubusCall('uci', 'delete', {
+        await ubusCall('uci', 'delete', {
           config: 'network',
           section: interfaceName.value,
           options: ['hostname']
@@ -422,7 +428,7 @@ async function setNetworkConfiguration() {
     values.force_link = '0'
   }
 
-  ubusCall('uci', 'set', {
+  await ubusCall('uci', 'set', {
     config: 'network',
     section: interfaceName.value,
     values: values
@@ -430,7 +436,7 @@ async function setNetworkConfiguration() {
 }
 
 async function createNetworkInterface() {
-  ubusCall('uci', 'add', {
+  await ubusCall('uci', 'add', {
     config: 'network',
     type: 'interface',
     name: interfaceName.value,
@@ -460,7 +466,7 @@ async function configureDevice() {
     closeDrawer()
   } catch (err: any) {
     console.error(err)
-    error.value.notificationTitle = t('error.cannot_configure_device')
+    error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_configure_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
     loading.value.configure = false
@@ -516,18 +522,25 @@ function validate() {
   }
 
   if (protocol.value === 'static') {
-    // at least an ipv4 or a ipv6 address is needed
-    if (isEmpty(ipv4Address.value) && (!isIpv6Enabled.value || isEmpty(ipv6Address.value))) {
-      error.value.ipv4Address = t(
-        'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-      )
-
-      if (isIpv6Enabled.value) {
-        error.value.ipv6Address = t(
-          'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
-        )
+    // ipv4 and/or ipv6 address are required
+    if (!isIpv6Enabled.value) {
+      let { valid, errMessage } = validateRequired(ipv4Address.value)
+      if (!valid) {
+        error.value.ipv4Address = t(errMessage as string)
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(ipv4AddressRef)
+        }
       }
-      isValidationOk = false
+    } else if (isEmpty(ipv6Address.value)) {
+      // ipv6 enabled but no ipv6 address
+      error.value.ipv6Address = t(
+        'standalone.interfaces_and_devices.ipv6_address_required_if_ipv6_enabled'
+      )
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(ipv6AddressRef)
+      }
     }
 
     // ipv4 address
@@ -572,7 +585,7 @@ function validate() {
 
     // ipv4 gateway
 
-    if (ipv4Address.value) {
+    if (zone.value === 'wan' && ipv4Address.value) {
       // check required
       let { valid, errMessage } = validateRequired(ipv4Gateway.value)
       if (!valid) {
@@ -601,7 +614,7 @@ function validate() {
 
       if (ipv6Address.value) {
         // check sintax
-        let { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
+        let { valid, errMessage } = validateIp6Address(ipv6Address.value)
         if (!valid) {
           error.value.ipv6Address = t(errMessage as string)
           if (isValidationOk) {
@@ -613,7 +626,7 @@ function validate() {
 
       // ipv6 gateway
 
-      if (ipv6Address.value) {
+      if (zone.value === 'wan' && ipv6Address.value) {
         // check required
         let { valid, errMessage } = validateRequired(ipv6Gateway.value)
         if (!valid) {
@@ -766,6 +779,7 @@ function validate() {
           />
           <!-- gateway -->
           <NeTextInput
+            v-if="zone === 'wan'"
             :label="t('standalone.interfaces_and_devices.ipv4_gateway')"
             v-model.trim="ipv4Gateway"
             :invalidMessage="t(error.ipv4Gateway)"
@@ -793,6 +807,7 @@ function validate() {
             />
             <!-- ipv6 gateway -->
             <NeTextInput
+              v-if="zone === 'wan'"
               :label="t('standalone.interfaces_and_devices.ipv6_gateway')"
               v-model.trim="ipv6Gateway"
               :invalidMessage="t(error.ipv6Gateway)"

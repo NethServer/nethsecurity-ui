@@ -190,6 +190,7 @@
       "create_alias": "Add alias",
       "enter_one_ipv4_or_ipv6_address": "Enter at least an IPv4 or an IPv6 address",
       "enter_ipv4_address": "Enter at least an IPv4 address",
+      "ipv6_address_required_if_ipv6_enabled": "IPv6 address is required if IPv6 is enabled",
       "cannot_save_alias_interface": "Cannot save alias interface",
       "num_alias": "{num} alias",
       "interface_name_already_used": "Interface name already used",

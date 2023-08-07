@@ -166,7 +166,7 @@ async function setSystemConfig() {
   const serverValue =
     enableNtpClient.value && ntpServerCandidates.value.length ? ntpServerCandidates.value : ''
 
-  ubusCall('uci', 'set', {
+  await ubusCall('uci', 'set', {
     config: 'system',
     section: 'ntp',
     values: {

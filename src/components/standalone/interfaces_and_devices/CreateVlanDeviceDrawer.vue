@@ -14,7 +14,7 @@ import {
   NeButton,
   NeInlineNotification,
   NeRadioSelection,
-  NeComboBox,
+  NeCombobox,
   focusElement,
   getAxiosErrorMessage,
   type NeComboboxOption
@@ -238,7 +238,7 @@ function validate() {
           ref="vlanIdRef"
         />
         <!-- base device -->
-        <NeComboBox
+        <NeCombobox
           v-model="baseDevice"
           :options="baseDeviceOptions"
           :label="t('standalone.interfaces_and_devices.base_device')"

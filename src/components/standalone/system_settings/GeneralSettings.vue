@@ -13,7 +13,7 @@ import {
   NeTextArea,
   NeFormItemLabel,
   NeSkeleton,
-  NeComboBox,
+  NeCombobox,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -289,7 +289,7 @@ async function syncWithNtpServer() {
             :disabled="loading.save"
           />
           <!-- timezone -->
-          <NeComboBox
+          <NeCombobox
             v-model="timezone"
             :options="timezones"
             :label="t('standalone.system_settings.timezone')"

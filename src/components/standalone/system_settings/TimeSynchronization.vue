@@ -12,7 +12,7 @@ import {
   NeCheckbox,
   NeToggle,
   NeSkeleton,
-  NeComboBox,
+  NeCombobox,
   NeTitle,
   NeInlineNotification,
   NeTextInput,
@@ -297,7 +297,7 @@ function addNtpServer() {
               <!-- provide ntp server to interface -->
               <Transition name="fade">
                 <div v-if="provideNtpServer">
-                  <NeComboBox
+                  <NeCombobox
                     v-model="ntpServerInterface"
                     :options="interfaces"
                     :label="t('standalone.system_settings.provide_ntp_server_to_interface')"

@@ -227,7 +227,7 @@ function validate() {
           v-model="vlanType"
           :label="t('standalone.interfaces_and_devices.device_type')"
           :options="vlanTypeOptions"
-          :ref="vlanTypeRef"
+          ref="vlanTypeRef"
         />
         <!-- vlan id -->
         <NeTextInput
@@ -235,7 +235,7 @@ function validate() {
           v-model.trim="vlanId"
           :invalidMessage="t(error.vlanId)"
           :disabled="loading.create"
-          :ref="vlanIdRef"
+          ref="vlanIdRef"
         />
         <!-- base device -->
         <NeComboBox
@@ -246,7 +246,7 @@ function validate() {
           :noResultsLabel="t('ne_combobox.no_results')"
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :disabled="loading.create"
-          :ref="baseDeviceRef"
+          ref="baseDeviceRef"
         />
         <NeInlineNotification
           v-if="error.notificationTitle"

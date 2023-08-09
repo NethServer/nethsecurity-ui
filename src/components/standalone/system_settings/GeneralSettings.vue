@@ -297,7 +297,7 @@ async function syncWithNtpServer() {
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.save"
-            :ref="timezoneRef"
+            ref="timezoneRef"
           />
           <!-- local time -->
           <div>

@@ -19,8 +19,16 @@ import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import CreateOrEditAliasInterfaceDrawer from '@/components/standalone/interfaces_and_devices/CreateOrEditAliasInterfaceDrawer.vue'
 import DeleteAliasModal from '@/components/standalone/interfaces_and_devices/DeleteAliasModal.vue'
-import { getFirewallZone, getInterface, getAliasInterface, isVlan } from '@/lib/standalone/network'
-import ConfigureDeviceDrawer from '@/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue'
+import {
+  getFirewallZone,
+  getInterface,
+  getAliasInterface,
+  isVlan,
+  isBridge
+} from '@/lib/standalone/network'
+import ConfigureDeviceDrawer, {
+  type DeviceType
+} from '@/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue'
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
@@ -47,6 +55,7 @@ let currentNetworkConfigDevice: Ref<any> = ref({})
 let isShownUnconfigureDeviceModal = ref(false)
 let isShownCreateVlanDeviceDrawer = ref(false)
 let isShownDeleteDeviceModal = ref(false)
+let deviceToConfigureType = ref('physical' as DeviceType)
 
 let loading = ref({
   networkDevices: true,
@@ -66,9 +75,15 @@ const isLoading = computed(() => {
 const allDevices: any = computed(() => {
   // add uncommitted devices
 
-  const uncommittedDevices = networkConfig.value.device.filter((dev: any) => {
-    return !Object.keys(physicalDevices.value).includes(dev.name)
-  })
+  let uncommittedDevices = []
+
+  if (networkConfig.value.device) {
+    uncommittedDevices = networkConfig.value.device.filter((dev: any) => {
+      return !Object.keys(physicalDevices.value).includes(dev.name)
+    })
+  }
+
+  console.log('allDevices', Object.values(physicalDevices.value).concat(uncommittedDevices)) ////
 
   return Object.values(physicalDevices.value).concat(uncommittedDevices)
 })
@@ -122,9 +137,6 @@ const sortedZonesAndDevices: any = computed(() => {
     }
   })
   zones.push(unassignedZone)
-
-  console.log('sortedZonesAndDevices', zones) ////
-
   return zones
 })
 
@@ -204,8 +216,6 @@ async function getPhysicalDevices() {
       }
     }
     physicalDevices.value = devices
-
-    console.log('physicalDevices', physicalDevices.value) ////
 
     // alias visibility
 
@@ -410,11 +420,24 @@ function showConfigureDeviceDrawer(device: any) {
   } else {
     interfaceToEdit.value = null
   }
+
+  //// todo bond
+  if (isBridge(device)) {
+    deviceToConfigureType.value = 'logical'
+  } else {
+    deviceToConfigureType.value = 'physical'
+  }
   isShownConfigureDeviceDrawer.value = true
 }
 
 function hideConfigureDeviceDrawer() {
   isShownConfigureDeviceDrawer.value = false
+}
+
+function showCreateLogicalInterfaceDrawer() {
+  currentDevice.value = {}
+  deviceToConfigureType.value = 'logical'
+  isShownConfigureDeviceDrawer.value = true
 }
 
 function showUnconfigureDeviceModal(device: any) {
@@ -458,11 +481,11 @@ function hideCreateVlanDeviceDrawer() {
           </template>
           {{ t('standalone.interfaces_and_devices.add_vlan_device') }}
         </NeButton>
-        <NeButton size="lg" disabled>
+        <NeButton size="lg" @click="showCreateLogicalInterfaceDrawer">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
-          {{ t('standalone.interfaces_and_devices.add_logical_interface') }}
+          {{ t('standalone.interfaces_and_devices.configure_logical_interface') }}
         </NeButton>
         <NeButton size="lg" disabled>
           <font-awesome-icon
@@ -844,6 +867,8 @@ function hideCreateVlanDeviceDrawer() {
     <!-- configure interface drawer -->
     <ConfigureDeviceDrawer
       :device="currentDevice"
+      :deviceType="deviceToConfigureType"
+      :allDevices="allDevices"
       :firewallConfig="firewallConfig"
       :networkConfig="networkConfig"
       :isShown="isShownConfigureDeviceDrawer"

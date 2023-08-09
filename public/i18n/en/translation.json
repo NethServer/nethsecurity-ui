@@ -177,7 +177,6 @@
       "down": "Down",
       "speed": "Speed",
       "add_vlan_device": "Add VLAN device",
-      "add_logical_interface": "Add logical interface",
       "create_alias_interface": "Add alias interface",
       "create_alias_for_interface": "Add alias for {interface}",
       "edit_alias_interface": "Edit alias interface",
@@ -232,6 +231,7 @@
       "device_name_already_used": "Device name {name} is already used",
       "device_type": "Device type",
       "vlan_id": "VLAN ID",
+      "vlan_id_helper": "An integer number between 1 and 4094",
       "add_device": "Add device",
       "base_device": "Base device",
       "vlan_8021q": "VLAN 802.1q",
@@ -245,7 +245,15 @@
       "zone_label_dmz": "DMZ (Orange)",
       "zone_label_dedalo": "Dedalo (Hotspot)",
       "zone_label_openvpnrw": "VPN (OpenVPN RW)",
-      "zone_label_unassigned": "Unassigned"
+      "zone_label_unassigned": "Unassigned",
+      "configure_logical_interface": "Configure logical interface",
+      "bridge": "Bridge",
+      "bond": "Bond",
+      "logical_type": "Type",
+      "devices": "Devices",
+      "select_one_or_more_devices": "Select one or more devices",
+      "select_devices_for_bridge": "Select the devices to attach to the bridge",
+      "enter_a_hexadecimal_string": "Enter a hexadecimal string"
     },
     "multi_wan": {
       "title": "MultiWAN",

@@ -80,12 +80,13 @@ const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
   )
 
   return filteredDevices.map((dev: any) => {
+    // show linked interfaces near device name
     const ifacesFound = props.networkConfig.interface
       .filter((iface: any) => iface.device === dev.name)
       .map((iface: any) => iface['.name'])
 
-    const deviceLabel = isEmpty(ifacesFound) ? dev.name : `${dev.name} (${ifacesFound.join(', ')})`
-    return { id: dev.name, label: deviceLabel }
+    const description = isEmpty(ifacesFound) ? '' : ifacesFound.join(', ')
+    return { id: dev.name, label: dev.name, description }
   })
 })
 
@@ -232,7 +233,11 @@ function validate() {
         <!-- vlan id -->
         <NeTextInput
           :label="t('standalone.interfaces_and_devices.vlan_id')"
-          v-model.trim="vlanId"
+          :helperText="t('standalone.interfaces_and_devices.vlan_id_helper')"
+          v-model.number="vlanId"
+          type="number"
+          min="1"
+          max="4094"
           :invalidMessage="t(error.vlanId)"
           :disabled="loading.create"
           ref="vlanIdRef"

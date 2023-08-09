@@ -78,3 +78,25 @@ export function isVlan(device: any) {
     return false
   }
 }
+
+export function isBridge(device: any) {
+  if (device.devtype === 'bridge' || device.type === 'bridge') {
+    return true
+  } else {
+    return false
+  }
+}
+
+export function generateDeviceName(devicePrefix: string, networkConfig: any) {
+  let num = -1
+  let nameAlreadyExists = true
+  let deviceNameGenerated = ''
+
+  do {
+    num++
+    deviceNameGenerated = `${devicePrefix}${num}`
+    nameAlreadyExists = networkConfig.device.find((dev: any) => dev.name === deviceNameGenerated)
+  } while (nameAlreadyExists)
+
+  return deviceNameGenerated
+}

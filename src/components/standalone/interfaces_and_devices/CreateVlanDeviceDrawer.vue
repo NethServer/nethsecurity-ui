@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { isVlan } from '@/lib/standalone/network'
+import { isBond, isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired, validateVlanId } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { ref, watch, computed, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -28,7 +28,7 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  devices: {
+  allDevices: {
     type: Array,
     required: true
   },
@@ -46,6 +46,7 @@ let vlanId = ref('')
 let vlanIdRef = ref()
 let baseDevice = ref('')
 let baseDeviceRef = ref()
+let internalAllDevices = ref<any[]>([])
 
 let vlanTypeOptions = [
   {
@@ -75,7 +76,7 @@ const deviceName = computed(() => {
 
 const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
   // remove loopback and vlan devices
-  const filteredDevices = Object.values(props.devices).filter(
+  const filteredDevices = internalAllDevices.value.filter(
     (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !isVlan(dev)
   )
 
@@ -85,8 +86,16 @@ const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
       .filter((iface: any) => iface.device === dev.name)
       .map((iface: any) => iface['.name'])
 
-    const description = isEmpty(ifacesFound) ? '' : ifacesFound.join(', ')
-    return { id: dev.name, label: dev.name, description }
+    let description = ''
+
+    if (isBond(dev)) {
+      description = `(${t('standalone.interfaces_and_devices.bond')})`
+    } else if (ifacesFound) {
+      description = ifacesFound.join(', ')
+    }
+
+    // bond interfaces have '.name' attribute
+    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
   })
 })
 
@@ -95,10 +104,12 @@ watch(
   () => {
     if (props.isShown) {
       clearErrors()
+      // periodic devices reload can cause some glitches to NeCombobox
+      internalAllDevices.value = cloneDeep(props.allDevices)
       vlanType.value = '8021q'
       vlanId.value = ''
       baseDevice.value = ''
-      focusElement(vlanTypeRef) //// fix focus on radio buttons
+      focusElement(vlanTypeRef)
     }
   }
 )
@@ -185,7 +196,7 @@ function validate() {
 
       // check if device name is already used
 
-      if (deviceName.value in props.devices) {
+      if (deviceName.value in props.allDevices) {
         error.value.vlanId = t('standalone.interfaces_and_devices.device_name_already_used', {
           name: deviceName.value
         })

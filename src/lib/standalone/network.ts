@@ -1,8 +1,13 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-export function getInterface(device: any, networkConfig: any) {
-  return networkConfig.interface.find((iface: any) => iface.device === device.name)
+export function getInterface(deviceOrIface: any, networkConfig: any) {
+  // if deviceOrIface is an interface, just return it as it is
+  if (deviceOrIface['.type'] === 'interface') {
+    return deviceOrIface
+  }
+
+  return networkConfig.interface.find((iface: any) => iface.device === deviceOrIface.name)
 }
 
 export function getAliasInterface(device: any, networkConfig: any) {
@@ -85,6 +90,10 @@ export function isBridge(device: any) {
   } else {
     return false
   }
+}
+
+export function isBond(iface: any) {
+  return iface.proto === 'bonding'
 }
 
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {

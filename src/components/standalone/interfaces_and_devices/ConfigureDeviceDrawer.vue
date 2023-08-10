@@ -9,6 +9,7 @@ import {
   getZoneColor,
   getZoneIcon,
   getZoneLabel,
+  isBond,
   isBridge
 } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -37,7 +38,7 @@ import {
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -76,6 +77,7 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
+let internalAllDevices = ref<any[]>([])
 let interfaceName = ref('')
 let interfaceNameRef = ref()
 let zone = ref('lan')
@@ -109,9 +111,15 @@ let pppoePassword = ref('')
 let pppoePasswordRef = ref()
 let logicalIfaceType = ref('bridge')
 let logicalIfaceTypeRef = ref()
-let selectedDevicesForLogicalIface: Ref<NeComboboxOption[]> = ref([])
-let selectedDevicesForLogicalIfaceRef = ref<HTMLDivElement | null>()
+let selectedDevicesForBridge: Ref<NeComboboxOption[]> = ref([])
+let selectedDevicesForBridgeRef = ref<HTMLDivElement | null>()
+let selectedDevicesForBond: Ref<NeComboboxOption[]> = ref([])
+let selectedDevicesForBondRef = ref<HTMLDivElement | null>()
 let bridgeDeviceName = ref('')
+let bondingPolicy = ref('balance-rr')
+let bondingPolicyRef = ref<HTMLDivElement | null>()
+let bondPrimaryDevice = ref('')
+let bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
 
 let protocolBaseOptions = [
   {
@@ -147,6 +155,44 @@ const logicalIfaceTypeOptions = [
   { id: 'bond', label: t('standalone.interfaces_and_devices.bond') }
 ]
 
+const bondingPolicyOptions = [
+  {
+    id: 'balance-rr',
+    label: t('standalone.interfaces_and_devices.bond_balance_rr'),
+    description: 'balance-rr (0)'
+  },
+  {
+    id: 'active-backup',
+    label: t('standalone.interfaces_and_devices.bond_active_backup'),
+    description: 'active-backup (1)'
+  },
+  {
+    id: 'balance-xor',
+    label: t('standalone.interfaces_and_devices.bond_balance_xor'),
+    description: 'balance-xor (2)'
+  },
+  {
+    id: 'broadcast',
+    label: t('standalone.interfaces_and_devices.bond_broadcast'),
+    description: 'broadcast (3)'
+  },
+  {
+    id: '802.3ad',
+    label: t('standalone.interfaces_and_devices.bond_8023ad'),
+    description: '802.3ad (4)'
+  },
+  {
+    id: 'balance-tlb',
+    label: t('standalone.interfaces_and_devices.bond_balance_tlb'),
+    description: 'balance-tlb (5)'
+  },
+  {
+    id: 'balance-alb',
+    label: t('standalone.interfaces_and_devices.bond_balance_alb'),
+    description: 'balance-alb (6)'
+  }
+]
+
 let loading = ref({
   configure: false
 })
@@ -167,7 +213,10 @@ let error = ref({
   dhcpVendorClass: '',
   pppoeUsername: '',
   pppoePassword: '',
-  selectedDevicesForLogicalIface: ''
+  selectedDevicesForBridge: '',
+  selectedDevicesForBond: '',
+  bondingPolicy: '',
+  bondPrimaryDevice: ''
 })
 
 const zoneOptions = computed(() => {
@@ -180,7 +229,9 @@ const zoneOptions = computed(() => {
       id: zone.name,
       label: getZoneLabel(zone.name),
       description: getZoneColor(zone.name),
-      icon: getZoneIcon(zone.name)
+      icon: getZoneIcon(zone.name),
+      disabled:
+        zone.name === 'wan' && props.deviceType === 'logical' && logicalIfaceType.value === 'bond' // disable red zone when configuring bond
     }
   })
 })
@@ -198,11 +249,10 @@ const isConfiguringFromScratch = computed(() => {
   return !props.interfaceToEdit
 })
 
-const devicesOptions: Ref<NeComboboxOption[]> = computed(() => {
-  //// TODO different device list for bridge and bond
-
-  const filteredDevices = Object.values(props.allDevices).filter(
-    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name)
+const bridgeDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
+  // remove loopback, ifb-dns and bridge devices
+  const filteredDevices = internalAllDevices.value.filter(
+    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !isBridge(dev)
   )
 
   return filteredDevices.map((dev: any) => {
@@ -211,9 +261,52 @@ const devicesOptions: Ref<NeComboboxOption[]> = computed(() => {
       .filter((iface: any) => iface.device === dev.name)
       .map((iface: any) => iface['.name'])
 
-    const description = isEmpty(ifacesFound) ? '' : ifacesFound.join(', ')
-    return { id: dev.name, label: dev.name, description }
+    let description = ''
+
+    if (isBond(dev)) {
+      description = `(${t('standalone.interfaces_and_devices.bond')})`
+    } else if (ifacesFound) {
+      description = ifacesFound.join(', ')
+    }
+
+    // bond interfaces have '.name' attribute
+    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
   })
+})
+
+const bondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
+  // remove loopback, ifb-dns and devices used by other bonds
+  const filteredDevices = internalAllDevices.value.filter(
+    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !bondUsedDevices.value.includes(dev.name)
+  )
+
+  return filteredDevices.map((dev: any) => {
+    // show linked interfaces near device name
+    const ifacesFound = props.networkConfig.interface
+      .filter((iface: any) => iface.device === dev.name)
+      .map((iface: any) => iface['.name'])
+
+    let description = ''
+
+    if (isBond(dev)) {
+      description = `(${t('standalone.interfaces_and_devices.bond')})`
+    } else if (ifacesFound) {
+      description = ifacesFound.join(', ')
+    }
+
+    // bond interfaces have '.name' attribute
+    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
+  })
+})
+
+const bondUsedDevices = computed(() => {
+  const usedDevices: any[] = []
+  internalAllDevices.value.forEach((dev: any) => {
+    if (isBond(dev)) {
+      usedDevices.push(...dev.slaves)
+    }
+  })
+  return usedDevices
 })
 
 watch(
@@ -221,6 +314,8 @@ watch(
   () => {
     if (props.isShown) {
       clearErrors()
+      // periodic devices reload can cause some glitches to NeCombobox
+      internalAllDevices.value = cloneDeep(props.allDevices)
 
       if (isConfiguringFromScratch.value) {
         // configuring unassigned device
@@ -243,12 +338,15 @@ watch(
         pppoeUsername.value = ''
         pppoePassword.value = ''
         logicalIfaceType.value = 'bridge'
-        selectedDevicesForLogicalIface.value = []
+        selectedDevicesForBridge.value = []
+        selectedDevicesForBond.value = []
+        bondingPolicy.value = 'balance-rr'
+        bondPrimaryDevice.value = ''
 
         if (props.deviceType === 'physical') {
           focusElement(interfaceNameRef)
         } else {
-          focusElement(selectedDevicesForLogicalIfaceRef)
+          focusElement(logicalIfaceTypeRef)
         }
       } else {
         // editing configuration
@@ -285,13 +383,23 @@ watch(
         if (props.deviceType === 'logical') {
           if (isBridge(props.device)) {
             logicalIfaceType.value = 'bridge'
+
+            selectedDevicesForBridge.value = bridgeDevicesOptions.value.filter((dev: any) =>
+              props.device.ports.includes(dev.id)
+            )
+          } else {
+            // bond
+            logicalIfaceType.value = 'bond'
+
+            // in case of bonding, 'props.device' is actually the bond interface
+            const bondIface = props.device
+
+            selectedDevicesForBond.value = bondDevicesOptions.value.filter((dev: any) =>
+              bondIface.slaves.includes(dev.id)
+            )
+            bondingPolicy.value = bondIface.bonding_policy
+            bondPrimaryDevice.value = bondIface.primary
           }
-
-          //// bond
-
-          selectedDevicesForLogicalIface.value = devicesOptions.value.filter((dev: any) =>
-            props.device.ports.includes(dev.id)
-          )
         }
 
         // dhcp hostname to send
@@ -324,6 +432,18 @@ watch(protocol, () => {
   // enable IPv6 if DHCPv6 is selected
   if (protocol.value === 'dhcpv6') {
     isIpv6Enabled.value = true
+  }
+})
+
+watch(logicalIfaceType, () => {
+  // if bond is selected: set protocol to static, disable ipv6, disable red zone
+  if (logicalIfaceType.value === 'bond') {
+    protocol.value = 'static'
+    isIpv6Enabled.value = false
+
+    if (zone.value === 'wan') {
+      zone.value = 'lan'
+    }
   }
 })
 
@@ -370,6 +490,7 @@ async function createAndSetNetworkDevice() {
     (dev: any) => dev.name === props.device.name
   )
 
+  // create the device only if we are creating an interface and it doesn't already exists
   if (isConfiguringFromScratch.value && !deviceAlreadyExists) {
     // create device
 
@@ -400,8 +521,7 @@ async function createAndSetNetworkDevice() {
 
   if (props.deviceType === 'logical' && logicalIfaceType.value === 'bridge') {
     // attached devices
-
-    const selectedDevices = selectedDevicesForLogicalIface.value.map((option: any) => option.id)
+    const selectedDevices = selectedDevicesForBridge.value.map((option: any) => option.id)
     values.ports = selectedDevices
   }
 
@@ -412,7 +532,7 @@ async function createAndSetNetworkDevice() {
   })
 }
 
-async function addInterfaceToFirwallZone() {
+async function addInterfaceToFirewallZone() {
   const fwZone = props.firewallConfig.zone.find((z: any) => z.name === zone.value)
 
   // add the new interface to zone interfaces
@@ -443,7 +563,7 @@ async function removeInterfaceFromOldFirewallZone(oldZone: any) {
 
 async function setFirewallZone() {
   if (isConfiguringFromScratch.value) {
-    addInterfaceToFirwallZone()
+    addInterfaceToFirewallZone()
   } else {
     // editing configuration: if firewall zone has changed, remove interface from the old zone
 
@@ -453,71 +573,181 @@ async function setFirewallZone() {
 
     if (oldZone.name !== zone.value) {
       removeInterfaceFromOldFirewallZone(oldZone)
-      addInterfaceToFirwallZone()
+      addInterfaceToFirewallZone()
     }
   }
 }
 
+function getBondingValues() {
+  let values: any = {}
+
+  // ipv4 address and netmask
+  values.ipaddr = ipv4Address.value
+  values.netmask = ipv4SubnetMask.value
+
+  // attached devices
+  const selectedDevices = selectedDevicesForBond.value.map((option: any) => option.id)
+  values.slaves = selectedDevices
+
+  // bonding policy
+  values.bonding_policy = bondingPolicy.value
+
+  // need to set unused options to empty string
+  const options = [
+    'packets_per_slave',
+    'primary',
+    'primary_reselect',
+    'fail_over_mac',
+    'num_grat_arp__num_unsol_na',
+    'xmit_hash_policy',
+    'min_links',
+    'ad_actor_sys_prio',
+    'ad_select',
+    'lacp_rate',
+    'lp_interval',
+    'tlb_dynamic_lb',
+    'resend_igmp'
+  ]
+  for (const option of options) {
+    values[option] = ''
+  }
+
+  switch (bondingPolicy.value) {
+    case 'balance-rr':
+      values = { ...values, packets_per_slave: '1' }
+      break
+    case 'active-backup':
+      values = {
+        ...values,
+        primary: bondPrimaryDevice.value,
+        primary_reselect: 'always',
+        fail_over_mac: 'none',
+        num_grat_arp__num_unsol_na: '1'
+      }
+      break
+    case 'balance-xor':
+      values = { ...values, primary: '', xmit_hash_policy: 'layer2' }
+      break
+    case 'broadcast':
+      values = { ...values, primary: '' }
+      break
+    case '802.3ad':
+      values = {
+        ...values,
+        min_links: '0',
+        ad_actor_sys_prio: '65535',
+        ad_select: 'stable',
+        lacp_rate: 'slow',
+        xmit_hash_policy: 'layer2',
+        primary: ''
+      }
+      break
+    case 'balance-tlb':
+      values = {
+        ...values,
+        primary: bondPrimaryDevice.value,
+        primary_reselect: 'always',
+        lp_interval: '1',
+        tlb_dynamic_lb: '1',
+        xmit_hash_policy: 'layer2'
+      }
+      break
+    case 'balance-alb':
+      values = {
+        ...values,
+        primary: bondPrimaryDevice.value,
+        primary_reselect: 'always',
+        lp_interval: '1',
+        xmit_hash_policy: 'layer2',
+        resend_igmp: '1'
+      }
+      break
+  }
+  return values
+}
+
 async function setNetworkConfiguration() {
-  const values: any = { proto: protocol.value }
+  let values: any = {}
 
-  if (protocol.value === 'static') {
-    values.ipaddr = ipv4Address.value
-    values.netmask = ipv4SubnetMask.value
+  if (props.deviceType === 'logical' && logicalIfaceType.value === 'bond') {
+    values = getBondingValues()
+  } else {
+    // non-bond interfaces
 
-    if (isEmpty(ipv6Address.value) || !isIpv6Enabled.value) {
-      values.ip6addr = ''
-    } else {
-      values.ip6addr = [ipv6Address.value]
-    }
+    values.proto = protocol.value
 
-    if (zone.value === 'wan') {
-      values.gateway = ipv4Gateway.value
-      values.ip6gw = ipv6Gateway.value
-    } else {
-      values.gateway = ''
-      values.ip6gw = ''
-    }
-  } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
-    // dhcp client id
-    values.clientid = dhcpClientId.value
+    if (protocol.value === 'static') {
+      // ipv4 address and netmask
+      values.ipaddr = ipv4Address.value
+      values.netmask = ipv4SubnetMask.value
 
-    if (protocol.value === 'dhcp') {
-      // dhcp vendor class
-      values.vendorid = dhcpVendorClass.value
-
-      // dhcp hostname to send
-
-      let dhcpHostname = ''
-      let deleteDhcpHostname = false
-
-      switch (dhcpHostnameToSend.value) {
-        case 'deviceHostname':
-          deleteDhcpHostname = true
-          break
-        case 'doNotSendHostname':
-          dhcpHostname = '*'
-          break
-        case 'customHostname':
-          dhcpHostname = dhcpCustomHostname.value
-          break
+      // ipv6 address
+      if (ipv6Address.value && isIpv6Enabled.value) {
+        values.ip6addr = [ipv6Address.value]
+      } else {
+        values.ip6addr = ''
       }
 
-      if (dhcpHostname) {
-        values.hostname = dhcpHostname
-      }
+      if (zone.value === 'wan') {
+        // gateway
+        values.gateway = ipv4Gateway.value
 
-      if (!isConfiguringFromScratch.value && props.interfaceToEdit.hostname && deleteDhcpHostname) {
-        await ubusCall('uci', 'delete', {
-          config: 'network',
-          section: interfaceName.value,
-          options: ['hostname']
-        })
+        // ipv6 gateway
+        if (isIpv6Enabled.value) {
+          values.ip6gw = ipv6Gateway.value
+        } else {
+          values.ip6gw = ''
+        }
+      } else {
+        values.gateway = ''
+        values.ip6gw = ''
       }
+    } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+      // dhcp client id
+      values.clientid = dhcpClientId.value
+
+      if (protocol.value === 'dhcp') {
+        // dhcp vendor class
+        values.vendorid = dhcpVendorClass.value
+
+        // dhcp hostname to send
+
+        let dhcpHostname = ''
+        let deleteDhcpHostname = false
+
+        switch (dhcpHostnameToSend.value) {
+          case 'deviceHostname':
+            deleteDhcpHostname = true
+            break
+          case 'doNotSendHostname':
+            dhcpHostname = '*'
+            break
+          case 'customHostname':
+            dhcpHostname = dhcpCustomHostname.value
+            break
+        }
+
+        if (dhcpHostname) {
+          values.hostname = dhcpHostname
+        }
+
+        // delete dhcp hostname if needed
+        if (
+          !isConfiguringFromScratch.value &&
+          props.interfaceToEdit.hostname &&
+          deleteDhcpHostname
+        ) {
+          await ubusCall('uci', 'delete', {
+            config: 'network',
+            section: interfaceName.value,
+            options: ['hostname']
+          })
+        }
+      }
+    } else if (protocol.value === 'pppoe') {
+      values.username = pppoeUsername.value
+      values.password = pppoePassword.value
     }
-  } else if (protocol.value === 'pppoe') {
-    values.username = pppoeUsername.value
-    values.password = pppoePassword.value
   }
 
   // disable "force link" on red interfaces
@@ -533,23 +763,26 @@ async function setNetworkConfiguration() {
 }
 
 async function createNetworkInterface() {
-  let deviceName = ''
+  const values: any = {}
 
   if (props.deviceType === 'physical') {
-    deviceName = props.device.name
-  } else if (logicalIfaceType.value === 'bridge') {
-    bridgeDeviceName.value = generateDeviceName('br', props.networkConfig)
-    deviceName = bridgeDeviceName.value
+    values.device = props.device.name
+    values.proto = protocol.value
+  } else {
+    if (logicalIfaceType.value === 'bridge') {
+      bridgeDeviceName.value = generateDeviceName('br', props.networkConfig)
+      values.device = bridgeDeviceName.value
+      values.proto = protocol.value
+    } else if (logicalIfaceType.value === 'bond') {
+      values.proto = 'bonding'
+    }
   }
 
   await ubusCall('uci', 'add', {
     config: 'network',
     type: 'interface',
     name: interfaceName.value,
-    values: {
-      proto: protocol.value,
-      device: deviceName
-    }
+    values
   })
 }
 
@@ -567,7 +800,10 @@ async function configureDevice() {
     }
     await setNetworkConfiguration()
     await setFirewallZone()
-    await createAndSetNetworkDevice()
+
+    if (!(props.deviceType === 'logical' && logicalIfaceType.value === 'bond')) {
+      await createAndSetNetworkDevice()
+    }
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
@@ -585,15 +821,58 @@ function validate() {
   let isValidationOk = true
 
   if (props.deviceType === 'logical') {
-    // select one or more devices
+    if (logicalIfaceType.value === 'bridge') {
+      // select one or more devices for bridge
 
-    if (isEmpty(selectedDevicesForLogicalIface.value)) {
-      error.value.selectedDevicesForLogicalIface = t(
-        'standalone.interfaces_and_devices.select_one_or_more_devices'
-      )
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(selectedDevicesForLogicalIfaceRef)
+      if (isEmpty(selectedDevicesForBridge.value)) {
+        error.value.selectedDevicesForBridge = t(
+          'standalone.interfaces_and_devices.select_one_or_more_devices'
+        )
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(selectedDevicesForBridgeRef)
+        }
+      }
+    } else {
+      // select one or more devices for bond
+
+      if (isEmpty(selectedDevicesForBond.value)) {
+        error.value.selectedDevicesForBond = t(
+          'standalone.interfaces_and_devices.select_one_or_more_devices'
+        )
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(selectedDevicesForBondRef)
+        }
+      }
+
+      // bond primary device
+
+      if (['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy.value)) {
+        let { valid, errMessage } = validateRequired(bondPrimaryDevice.value)
+        if (!valid) {
+          error.value.bondPrimaryDevice = t(errMessage as string)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(bondPrimaryDeviceRef)
+          }
+        } else {
+          // ensure primary device is included in selected devices
+
+          const primaryDeviceFound = selectedDevicesForBond.value.find(
+            (option: any) => option.id === bondPrimaryDevice.value
+          )
+
+          if (!primaryDeviceFound) {
+            error.value.bondPrimaryDevice = t(
+              'standalone.interfaces_and_devices.primary_device_not_included'
+            )
+            if (isValidationOk) {
+              isValidationOk = false
+              focusElement(bondPrimaryDeviceRef)
+            }
+          }
+        }
       }
     }
   }
@@ -860,7 +1139,7 @@ function validate() {
     <form>
       <div class="space-y-6">
         <template v-if="deviceType === 'logical'">
-          <!-- interface type (for bridge and bond) -->
+          <!-- logical interface type (bridge/bond) -->
           <NeRadioSelection
             v-model="logicalIfaceType"
             :label="t('standalone.interfaces_and_devices.logical_type')"
@@ -872,19 +1151,59 @@ function validate() {
           <NeCombobox
             v-if="logicalIfaceType === 'bridge'"
             multiple
-            v-model="selectedDevicesForLogicalIface"
-            :options="devicesOptions"
+            v-model="selectedDevicesForBridge"
+            :options="bridgeDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
             :placeholder="t('standalone.interfaces_and_devices.select_one_or_more_devices')"
             :helperText="t('standalone.interfaces_and_devices.select_devices_for_bridge')"
-            :invalidMessage="error.selectedDevicesForLogicalIface"
+            :invalidMessage="error.selectedDevicesForBridge"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
-            ref="selectedDevicesForLogicalIfaceRef"
+            ref="selectedDevicesForBridgeRef"
           />
-          <!-- mode (only for bond) -->
-          <!-- ////  -->
+          <!-- bond devices -->
+          <NeCombobox
+            v-if="logicalIfaceType === 'bond'"
+            multiple
+            v-model="selectedDevicesForBond"
+            :options="bondDevicesOptions"
+            :label="t('standalone.interfaces_and_devices.devices')"
+            :placeholder="t('standalone.interfaces_and_devices.select_one_or_more_devices')"
+            :helperText="t('standalone.interfaces_and_devices.select_devices_for_bond')"
+            :invalidMessage="error.selectedDevicesForBond"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :disabled="loading.configure"
+            ref="selectedDevicesForBondRef"
+          />
+          <!-- bonding policy -->
+          <NeCombobox
+            v-if="logicalIfaceType === 'bond'"
+            v-model="bondingPolicy"
+            :options="bondingPolicyOptions"
+            :label="t('standalone.interfaces_and_devices.bonding_policy')"
+            :invalidMessage="error.bondingPolicy"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :disabled="loading.configure"
+            ref="bondingPolicyRef"
+          />
+          <!-- bond primary device -->
+          <NeCombobox
+            v-if="
+              logicalIfaceType === 'bond' &&
+              ['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy)
+            "
+            v-model="bondPrimaryDevice"
+            :options="selectedDevicesForBond"
+            :label="t('standalone.interfaces_and_devices.bond_primary_device')"
+            :invalidMessage="error.bondPrimaryDevice"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :disabled="loading.configure"
+            ref="bondPrimaryDeviceRef"
+          />
         </template>
         <!-- name -->
         <NeTextInput
@@ -902,8 +1221,9 @@ function validate() {
           :options="zoneOptions"
           gridStyle="gap-3 grid-cols-2 md:grid-cols-3"
         />
-        <!-- protocol -->
+        <!-- protocol (don't show for bond) -->
         <NeRadioSelection
+          v-if="!(deviceType === 'logical' && logicalIfaceType === 'bond')"
           v-model="protocol"
           :label="t('standalone.interfaces_and_devices.protocol')"
           :options="protocolOptions"
@@ -935,8 +1255,8 @@ function validate() {
             :disabled="loading.configure"
             ref="ipv4GatewayRef"
           />
-          <!-- enable ipv6 -->
-          <div>
+          <!-- enable ipv6 (don't show for bond) -->
+          <div v-if="!(deviceType === 'logical' && logicalIfaceType === 'bond')">
             <NeFormItemLabel>{{ t('standalone.interfaces_and_devices.ipv6') }}</NeFormItemLabel>
             <NeCheckbox
               v-model="isIpv6Enabled"
@@ -1004,8 +1324,10 @@ function validate() {
             class="ml-6 !mt-4"
           />
         </div>
-        <!-- advanced settings -->
-        <template v-if="protocol != 'pppoe'">
+        <!-- advanced settings (don't show for pppoe and bond) -->
+        <template
+          v-if="protocol !== 'pppoe' && !(deviceType === 'logical' && logicalIfaceType === 'bond')"
+        >
           <NeButton
             kind="tertiary"
             size="sm"

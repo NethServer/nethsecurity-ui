@@ -24,7 +24,8 @@ import {
   getInterface,
   getAliasInterface,
   isVlan,
-  isBridge
+  isBridge,
+  isBond
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -83,9 +84,17 @@ const allDevices: any = computed(() => {
     })
   }
 
-  console.log('allDevices', Object.values(physicalDevices.value).concat(uncommittedDevices)) ////
+  // add interfaces without device (e.g. bond interfaces)
 
-  return Object.values(physicalDevices.value).concat(uncommittedDevices)
+  let ifacesWithoutDevice = networkConfig.value.interface?.filter((iface: any) => !iface.device)
+
+  console.log(
+    'allDevices',
+    Object.values(physicalDevices.value).concat(uncommittedDevices).concat(ifacesWithoutDevice)
+  )
+  ////
+
+  return Object.values(physicalDevices.value).concat(uncommittedDevices).concat(ifacesWithoutDevice)
 })
 
 const sortedZonesAndDevices: any = computed(() => {
@@ -114,7 +123,7 @@ const sortedZonesAndDevices: any = computed(() => {
   }
 
   allDevices.value.forEach((dev: any) => {
-    const ifaceFound = networkConfig.value.interface.find((iface: any) => iface.device === dev.name)
+    const ifaceFound = getInterface(dev, networkConfig.value)
 
     if (!ifaceFound) {
       unassignedZone.devices.push(dev)
@@ -338,7 +347,10 @@ function getConfiguredDeviceKebabMenuItems(device: any) {
     },
     {
       id: 'removeConfiguration',
-      label: t('standalone.interfaces_and_devices.remove_configuration'),
+      label:
+        isBridge(device) || isBond(device)
+          ? t('standalone.interfaces_and_devices.delete_interface')
+          : t('standalone.interfaces_and_devices.remove_configuration'),
       icon: 'circle-minus',
       iconStyle: 'fas',
       action: () => showUnconfigureDeviceModal(device),
@@ -410,10 +422,9 @@ function hideCreateOrEditAliasInterfaceDrawer() {
   isShownCreateOrEditAliasInterfaceDrawer.value = false
 }
 
-function showConfigureDeviceDrawer(device: any) {
-  currentDevice.value = device
-
-  const iface = getInterface(device, networkConfig.value)
+function showConfigureDeviceDrawer(deviceOrIface: any) {
+  currentDevice.value = deviceOrIface
+  const iface = getInterface(deviceOrIface, networkConfig.value)
 
   if (iface) {
     interfaceToEdit.value = iface
@@ -421,8 +432,7 @@ function showConfigureDeviceDrawer(device: any) {
     interfaceToEdit.value = null
   }
 
-  //// todo bond
-  if (isBridge(device)) {
+  if (isBridge(deviceOrIface) || isBond(deviceOrIface)) {
     deviceToConfigureType.value = 'logical'
   } else {
     deviceToConfigureType.value = 'physical'
@@ -436,6 +446,7 @@ function hideConfigureDeviceDrawer() {
 
 function showCreateLogicalInterfaceDrawer() {
   currentDevice.value = {}
+  interfaceToEdit.value = null
   deviceToConfigureType.value = 'logical'
   isShownConfigureDeviceDrawer.value = true
 }
@@ -888,7 +899,7 @@ function hideCreateVlanDeviceDrawer() {
     <!-- create vlan device drawer -->
     <CreateVlanDeviceDrawer
       :networkConfig="networkConfig"
-      :devices="physicalDevices"
+      :allDevices="allDevices"
       :isShown="isShownCreateVlanDeviceDrawer"
       @close="hideCreateVlanDeviceDrawer"
       @reloadData="loadData"

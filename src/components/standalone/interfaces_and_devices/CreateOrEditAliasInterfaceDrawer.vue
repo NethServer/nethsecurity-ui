@@ -82,7 +82,7 @@ const isCreating = computed(() => {
 })
 
 const ipv6Enabled = computed(() => {
-  return props.networkConfigDevice.ipv6 === '1'
+  return props.networkConfigDevice?.ipv6 === '1'
 })
 
 watch(

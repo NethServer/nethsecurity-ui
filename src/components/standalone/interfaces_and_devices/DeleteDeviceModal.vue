@@ -51,8 +51,6 @@ function closeModal() {
 }
 
 async function deleteNetworkDevice() {
-  console.log('deleteNetworkDevice', props.device) ////
-
   const sectionFound = props.networkConfig.device.find((dev: any) => dev.name === props.device.name)
 
   await ubusCall('uci', 'delete', {

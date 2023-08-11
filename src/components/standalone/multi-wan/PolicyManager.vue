@@ -84,9 +84,9 @@ function badgeIcon(member: Member) {
       return ['fas', 'circle-xmark']
     case 'disconnecting':
     case 'connecting':
-      return ['fas', 'clock']
+      return ['fas', 'warning']
     default:
-      return undefined
+      return ['fas', 'clock']
   }
 }
 
@@ -130,7 +130,7 @@ function badgeType(member: Member) {
       </div>
       <div
         v-if="!mwanStatus.loading"
-        class="flex basis-full flex-col gap-y-6 md:basis-5/12 xl:w-3/12"
+        class="flex basis-full flex-col justify-center gap-y-6 md:basis-5/12 xl:w-3/12"
       >
         <div v-for="([metric, members], membersIndex) in membersGrouped" :key="metric">
           <div v-if="membersGrouped.size > 1" class="mb-2">
@@ -142,6 +142,7 @@ function badgeType(member: Member) {
                 :icon="badgeIcon(member)"
                 :kind="badgeType(member)"
                 :text="member.interface.name"
+                :label="members.length > 1 ? `weight: ${member.weight}` : ''"
               />
             </div>
           </div>

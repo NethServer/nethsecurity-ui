@@ -223,7 +223,7 @@
       "remove_configuration_explanation": "Remove '{name}' configuration? The device will become unassigned"
     },
     "multi_wan": {
-      "title": "Multi WAN",
+      "title": "MultiWAN",
       "tabs": {
         "multi_wan_manager": "MultiWAN Manager",
         "general_settings": "General Settings"
@@ -236,11 +236,24 @@
       "policy": "Policy",
       "no_policy_found": "No policy found",
       "create_default_policy": "Create default policy",
+      "create_policy": "Create {name} policy",
       "priority": "Priority {n}",
       "rules": "Rules",
       "rules_description": "Order is important: evaluation of rules will continue after a match. Route is assigned by last match.",
       "no_rule_found": "No rule found",
       "create_rule": "Create rule",
+      "label_input_label": "Label",
+      "behave_picker": {
+        "choose_behaviour": "Choose behaviour",
+        "choose_behaviour_sr": "Policy behaviour",
+        "balance": "Balance",
+        "backup": "Backup",
+        "custom": "Custom (3+ Gateways)"
+      },
+      "gateways_in_balance": "Gateways in balance",
+      "choose_gateway": "Gateway",
+      "weight": "Weight",
+      "add_gateway": "Add Gateway",
       "tracking_hostnames_or_ips": "Tracking hostname or IP address",
       "no_hostnames_or_ips": "No hostnames or IP addresses tracked by default, click below to add some defaults.",
       "add_hostname_or_ip": "Add hostname or IP",

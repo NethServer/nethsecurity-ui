@@ -228,7 +228,7 @@ function validate() {
 <template>
   <NeSideDrawer
     :isShown="isShown"
-    :title="t('standalone.interfaces_and_devices.add_vlan_device')"
+    :title="t('standalone.interfaces_and_devices.create_vlan_device')"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     @close="closeDrawer"
   >
@@ -290,7 +290,7 @@ function validate() {
           :disabled="loading.create"
           :loading="loading.create"
         >
-          {{ t('standalone.interfaces_and_devices.add_device') }}
+          {{ t('standalone.interfaces_and_devices.create_device') }}
         </NeButton>
       </div>
     </form>

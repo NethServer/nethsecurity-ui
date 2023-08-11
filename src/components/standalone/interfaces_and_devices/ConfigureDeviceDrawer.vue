@@ -1131,7 +1131,7 @@ function validate() {
     :title="
       deviceType === 'physical'
         ? t('standalone.interfaces_and_devices.configure_interface_for_name', { name: device.name })
-        : t('standalone.interfaces_and_devices.configure_logical_interface')
+        : t('standalone.interfaces_and_devices.create_logical_interface')
     "
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     @close="closeDrawer"
@@ -1154,8 +1154,7 @@ function validate() {
             v-model="selectedDevicesForBridge"
             :options="bridgeDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
-            :placeholder="t('standalone.interfaces_and_devices.select_one_or_more_devices')"
-            :helperText="t('standalone.interfaces_and_devices.select_devices_for_bridge')"
+            :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bridge')"
             :invalidMessage="error.selectedDevicesForBridge"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
@@ -1169,8 +1168,7 @@ function validate() {
             v-model="selectedDevicesForBond"
             :options="bondDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
-            :placeholder="t('standalone.interfaces_and_devices.select_one_or_more_devices')"
-            :helperText="t('standalone.interfaces_and_devices.select_devices_for_bond')"
+            :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bond')"
             :invalidMessage="error.selectedDevicesForBond"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"

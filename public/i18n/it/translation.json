@@ -203,7 +203,7 @@
       "up": "Accesa",
       "down": "Spenta",
       "speed": "Velocità",
-      "add_vlan_device": "Aggiungi dispositivo VLAN",
+      "create_vlan_device": "Crea dispositivo VLAN",
       "ipv6_gateway": "Gateway IPv6",
       "enable_ipv6": "Abilita IPv6",
       "ipv4_mtu_bytes": "MTU IPv4 (byte)",

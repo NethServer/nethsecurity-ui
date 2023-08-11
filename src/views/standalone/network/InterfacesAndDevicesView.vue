@@ -490,13 +490,13 @@ function hideCreateVlanDeviceDrawer() {
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
-          {{ t('standalone.interfaces_and_devices.add_vlan_device') }}
+          {{ t('standalone.interfaces_and_devices.create_vlan_device') }}
         </NeButton>
         <NeButton size="lg" @click="showCreateLogicalInterfaceDrawer">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
-          {{ t('standalone.interfaces_and_devices.configure_logical_interface') }}
+          {{ t('standalone.interfaces_and_devices.create_logical_interface') }}
         </NeButton>
         <NeButton size="lg" disabled>
           <font-awesome-icon
@@ -642,20 +642,23 @@ function hideCreateVlanDeviceDrawer() {
                           <span class="font-medium">MAC: </span>
                           <span>{{ device.mac || '-' }}</span>
                         </div>
-                        <div
-                          v-if="getInterface(device, networkConfig)"
-                          v-for="ipv4Address in getInterface(device, networkConfig)['ipv4-address']"
-                        >
-                          <span class="font-medium">IPv4: </span>
-                          <span>{{ ipv4Address.address }}/{{ ipv4Address.mask }}</span>
-                        </div>
-                        <div
-                          v-if="getInterface(device, networkConfig)"
-                          v-for="ipv6Address in getInterface(device, networkConfig)['ipv6-address']"
-                        >
-                          <span class="font-medium">IPv6: </span>
-                          <span>{{ ipv6Address.address }}/{{ ipv6Address.mask }}</span>
-                        </div>
+                        <!-- v-for is a trick to declare 'iface' variable inside template -->
+                        <template v-for="iface in [getInterface(device, networkConfig)]">
+                          <div v-if="iface?.ipaddr">
+                            <span class="font-medium">IPv4: </span>
+                            <span>{{ iface.ipaddr }}</span>
+                          </div>
+                          <div v-if="iface?.netmask">
+                            <span class="font-medium"
+                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                            </span>
+                            <span>{{ iface.netmask }}</span>
+                          </div>
+                          <div v-if="iface?.ip6addr?.length">
+                            <span class="font-medium">IPv6: </span>
+                            <span>{{ iface.ip6addr[0] }}</span>
+                          </div>
+                        </template>
                       </div>
                       <!-- third column -->
                       <div>

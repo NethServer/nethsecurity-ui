@@ -207,7 +207,7 @@ export function useMwanConfig() {
   /**
    * Fetches the data from the API, and sets the reactive values.
    */
-  function fetch() {
+  const fetch = function () {
     loading.value = true
     ubusCall('uci', 'get', {
       config: 'mwan3'
@@ -219,5 +219,5 @@ export function useMwanConfig() {
 
   onMounted(() => fetch())
 
-  return { data, error, loading, globals, interfaces, members, policies, rules }
+  return { data, error, loading, globals, interfaces, members, policies, rules, fetch }
 }

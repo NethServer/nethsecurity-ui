@@ -480,6 +480,17 @@ function showCreateVlanDeviceDrawer() {
 function hideCreateVlanDeviceDrawer() {
   isShownCreateVlanDeviceDrawer.value = false
 }
+
+function getProtocolLabel(protocol: string) {
+  switch (protocol) {
+    case 'static':
+      return `(${t('standalone.interfaces_and_devices.protocol_static')})`
+    case 'dhcp':
+      return '(DHCP)'
+    case 'dhcpv6':
+      return '(DHCPv6)'
+  }
+}
 </script>
 
 <template>
@@ -678,46 +689,48 @@ function hideCreateVlanDeviceDrawer() {
                         </div>
                         <!-- v-for is a trick to declare 'iface' variable inside template -->
                         <template v-for="iface in [getInterface(device, networkConfig)]">
-                          <div v-if="iface?.ipaddr">
-                            <span class="font-medium">IPv4: </span>
-                            <span>{{ iface.ipaddr }}</span>
-                          </div>
-                          <div v-if="iface?.netmask">
-                            <span class="font-medium"
-                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
-                            </span>
-                            <span>{{ iface.netmask }}</span>
+                          <div v-if="iface?.ipaddr || iface?.netmask">
+                            <div>
+                              <span class="font-medium">IPv4: </span>
+                              <span>{{ iface.ipaddr }} {{ getProtocolLabel(iface.proto) }}</span>
+                            </div>
+                            <div v-if="iface?.netmask">
+                              <span class="font-medium"
+                                >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                              </span>
+                              <span>{{ iface.netmask }}</span>
+                            </div>
                           </div>
                           <div v-if="iface?.ip6addr?.length">
                             <span class="font-medium">IPv6: </span>
-                            <span>{{ iface.ip6addr[0] }}</span>
+                            <span>{{ iface.ip6addr[0] }} {{ getProtocolLabel(iface.proto) }}</span>
+                          </div>
+                          <!-- device IP addresses (e.g. assigned by DHCP) -->
+                          <div v-for="ip4 in device.ipaddrs">
+                            <div v-if="ip4.address">
+                              <span class="font-medium">IPv4: </span>
+                              <span>{{ ip4.address }} {{ getProtocolLabel(iface.proto) }}</span>
+                            </div>
+                            <div v-if="ip4.netmask">
+                              <span class="font-medium">
+                                {{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                              </span>
+                              <span>{{ ip4.netmask }}</span>
+                            </div>
+                          </div>
+                          <div v-for="ip6 in device.ip6addrs">
+                            <div v-if="ip6.address">
+                              <span class="font-medium">IPv6: </span>
+                              <span>{{ ip6.address }} {{ getProtocolLabel(iface.proto) }}</span>
+                            </div>
+                            <div v-if="ip6.netmask">
+                              <span class="font-medium">
+                                {{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
+                              </span>
+                              <span>{{ ip6.netmask }}</span>
+                            </div>
                           </div>
                         </template>
-                        <!-- device IP addresses (e.g. assigned by DHCP) -->
-                        <div v-for="ip4 in device.ipaddrs">
-                          <div v-if="ip4.address">
-                            <span class="font-medium">IPv4: </span>
-                            <span>{{ ip4.address }}</span>
-                          </div>
-                          <div v-if="ip4.netmask">
-                            <span class="font-medium">
-                              {{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
-                            </span>
-                            <span>{{ ip4.netmask }}</span>
-                          </div>
-                        </div>
-                        <div v-for="ip6 in device.ip6addrs">
-                          <div v-if="ip6.address">
-                            <span class="font-medium">IPv6: </span>
-                            <span>{{ ip6.address }}</span>
-                          </div>
-                          <div v-if="ip6.netmask">
-                            <span class="font-medium">
-                              {{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
-                            </span>
-                            <span>{{ ip6.netmask }}</span>
-                          </div>
-                        </div>
                       </div>
                       <!-- third column -->
                       <div>

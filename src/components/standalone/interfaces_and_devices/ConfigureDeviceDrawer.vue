@@ -744,6 +744,13 @@ async function setNetworkConfiguration() {
           })
         }
       }
+
+      // reset any previous static ip address and gateway
+      values.ipaddr = ''
+      values.netmask = ''
+      values.ip6addr = ''
+      values.gateway = ''
+      values.ip6gw = ''
     } else if (protocol.value === 'pppoe') {
       values.username = pppoeUsername.value
       values.password = pppoePassword.value
@@ -1025,7 +1032,7 @@ function validate() {
 
       // ipv6 gateway
 
-      if (zone.value === 'wan' && ipv6Address.value) {
+      if (zone.value === 'wan') {
         // check required
         let { valid, errMessage } = validateRequired(ipv6Gateway.value)
         if (!valid) {

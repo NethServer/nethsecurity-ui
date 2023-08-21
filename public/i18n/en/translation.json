@@ -254,6 +254,7 @@
       "bond": "Bond",
       "logical_type": "Type",
       "devices": "Devices",
+      "devices_pl": "Device | Devices",
       "select_one_or_more_devices": "Select one or more devices",
       "select_devices_for_bridge": "Select the devices to attach to the bridge",
       "select_devices_for_bond": "Select the devices to attach to the bond",

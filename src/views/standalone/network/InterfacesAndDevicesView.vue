@@ -46,6 +46,7 @@ let currentDevice: Ref<any> = ref({})
 let currentInterface: Ref<any> = ref({})
 let isShownCreateOrEditAliasInterfaceDrawer = ref(false)
 let isExpandedAlias: Ref<{ [index: string]: boolean }> = ref({})
+let isExpandedBridge: Ref<{ [index: string]: boolean }> = ref({})
 let isShownDeleteAliasModal = ref(false)
 let currentAlias: Ref<any> = ref({})
 let currentParentInterface: Ref<any> = ref({})
@@ -230,8 +231,13 @@ async function getPhysicalDevices() {
 
     for (const deviceName in physicalDevices.value) {
       // set to not expanded only if needed (getNetworkDevices is called periodically)
+
       if (isExpandedAlias.value[deviceName] == undefined) {
         isExpandedAlias.value[deviceName] = false
+      }
+
+      if (isExpandedBridge.value[deviceName] == undefined) {
+        isExpandedBridge.value[deviceName] = false
       }
     }
   } catch (err: any) {
@@ -244,6 +250,10 @@ async function getPhysicalDevices() {
 
 function toggleExpandAlias(device: any) {
   isExpandedAlias.value[device.name] = !isExpandedAlias.value[device.name]
+}
+
+function toggleExpandBridge(device: any) {
+  isExpandedBridge.value[device.name] = !isExpandedBridge.value[device.name]
 }
 
 function getDeviceBorderStyle(device: any) {
@@ -498,13 +508,14 @@ function hideCreateVlanDeviceDrawer() {
           </template>
           {{ t('standalone.interfaces_and_devices.create_logical_interface') }}
         </NeButton>
-        <NeButton size="lg" disabled>
+        <!-- kebab menu -->
+        <!-- <NeButton size="lg" disabled>
           <font-awesome-icon
             :icon="['fas', 'ellipsis-vertical']"
             aria-hidden="true"
             :class="`h-4 w-4`"
           />
-        </NeButton>
+        </NeButton> -->
       </div>
       <!-- skeleton -->
       <div v-if="isLoading" class="animate-pulse flex">
@@ -631,6 +642,27 @@ function hideCreateVlanDeviceDrawer() {
                                 num: getNumAlias(device, networkConfig)
                               })
                             }}
+                          </NeButton>
+                        </div>
+                        <!-- bridge -->
+                        <div v-if="isBridge(device)">
+                          <NeButton
+                            kind="tertiary"
+                            size="sm"
+                            @click="toggleExpandBridge(device)"
+                            class="-mt-2 -mr-2"
+                          >
+                            <template #suffix>
+                              <font-awesome-icon
+                                :icon="[
+                                  'fas',
+                                  isExpandedBridge[device.name] ? 'chevron-up' : 'chevron-down'
+                                ]"
+                                class="h-3 w-3"
+                                aria-hidden="true"
+                              />
+                            </template>
+                            {{ t('standalone.interfaces_and_devices.bridge') }}
                           </NeButton>
                         </div>
                         <!-- vlan badge -->
@@ -805,6 +837,7 @@ function hideCreateVlanDeviceDrawer() {
                               class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
                             >
                               <div class="font-semibold">
+                                {{ t('standalone.interfaces_and_devices.alias') }}:
                                 {{ alias['.name'] }}
                               </div>
                             </div>
@@ -845,6 +878,50 @@ function hideCreateVlanDeviceDrawer() {
                                 :items="getAliasKebabMenuItems(alias, device)"
                                 :alignToRight="true"
                               />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition>
+                  <!-- bridge interface -->
+                  <Transition name="slide-down">
+                    <div
+                      v-if="isBridge(device) && isExpandedBridge[device.name]"
+                      class="flex items-start group"
+                    >
+                      <!-- L-shaped dashed line-->
+                      <div
+                        class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                      ></div>
+                      <!-- bridge card -->
+                      <div
+                        :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                          device
+                        )}`"
+                      >
+                        <div class="flex justify-between gap-8 flex-wrap">
+                          <!-- bridge name -->
+                          <div
+                            class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                          >
+                            <div class="font-semibold">
+                              {{ t('standalone.interfaces_and_devices.bridge') }}:
+                              {{ device.name }}
+                            </div>
+                          </div>
+                          <div class="flex flex-wrap gap-8 pr-40 grow">
+                            <span class="font-medium">
+                              {{
+                                t(
+                                  'standalone.interfaces_and_devices.devices_pl',
+                                  device.ports.length
+                                )
+                              }}:
+                            </span>
+                            <!-- ipv4 addresses -->
+                            <div v-for="bridgeDev in device.ports">
+                              <span class="font-medium"> {{ bridgeDev }}</span>
                             </div>
                           </div>
                         </div>

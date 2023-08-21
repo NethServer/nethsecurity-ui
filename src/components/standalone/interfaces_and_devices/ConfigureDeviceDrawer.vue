@@ -352,7 +352,7 @@ watch(
         // editing configuration
 
         // uncommitted changes such as ipv4Mtu, ipv6Mtu and ipv6Enabled are saved inside network configuration
-        const networkConfigDevice = props.networkConfig.device.find(
+        const networkConfigDevice = props.networkConfig.device?.find(
           (d: any) => d.name === props.device.name
         )
 
@@ -486,12 +486,12 @@ async function createAndSetNetworkDevice() {
   let deviceSection = null
 
   // create the device only if needed
-  const deviceAlreadyExists = props.networkConfig.device.find(
+  const deviceAlreadyExists = props.networkConfig.device?.find(
     (dev: any) => dev.name === props.device.name
   )
 
-  // create the device only if we are creating an interface and it doesn't already exists
-  if (isConfiguringFromScratch.value && !deviceAlreadyExists) {
+  // create the device only if it doesn't already exists
+  if (!deviceAlreadyExists) {
     // create device
 
     if (props.deviceType === 'physical') {
@@ -502,7 +502,7 @@ async function createAndSetNetworkDevice() {
   } else {
     // device already exists
 
-    const deviceFound = props.networkConfig.device.find(
+    const deviceFound = props.networkConfig.device?.find(
       (dev: any) => dev.name === props.device.name
     )
 

@@ -75,7 +75,9 @@ async function deleteNetworkInterface(ifaceName: string) {
 }
 
 async function deleteNetworkDevice() {
-  const sectionFound = props.networkConfig.device.find((dev: any) => dev.name === props.device.name)
+  const sectionFound = props.networkConfig.device?.find(
+    (dev: any) => dev.name === props.device.name
+  )
 
   await ubusCall('uci', 'delete', {
     config: 'network',
@@ -118,7 +120,11 @@ async function unconfigureDevice() {
       await deleteNetworkInterface(aliasFound['.name'])
     }
 
-    if (!isVlan(props.device) && !isBond(props.device)) {
+    const deviceExists = props.networkConfig.device?.find(
+      (dev: any) => dev.name === props.device.name
+    )
+
+    if (!isVlan(props.device) && !isBond(props.device) && deviceExists) {
       await deleteNetworkDevice()
     }
     emit('reloadData')

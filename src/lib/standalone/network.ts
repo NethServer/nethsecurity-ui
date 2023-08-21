@@ -104,7 +104,7 @@ export function generateDeviceName(devicePrefix: string, networkConfig: any) {
   do {
     num++
     deviceNameGenerated = `${devicePrefix}${num}`
-    nameAlreadyExists = networkConfig.device.find((dev: any) => dev.name === deviceNameGenerated)
+    nameAlreadyExists = networkConfig.device?.find((dev: any) => dev.name === deviceNameGenerated)
   } while (nameAlreadyExists)
 
   return deviceNameGenerated

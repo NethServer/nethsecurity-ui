@@ -619,51 +619,53 @@ function hideCreateVlanDeviceDrawer() {
                             <div>{{ device.name }}</div>
                           </div>
                         </div>
-                        <!-- alias -->
-                        <div v-if="getAliasInterface(device, networkConfig)">
-                          <NeButton
-                            kind="tertiary"
-                            size="sm"
-                            @click="toggleExpandAlias(device)"
-                            class="-mt-2 -mr-2"
-                          >
-                            <template #suffix>
-                              <font-awesome-icon
-                                :icon="[
-                                  'fas',
-                                  isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down'
-                                ]"
-                                class="h-3 w-3"
-                                aria-hidden="true"
-                              />
-                            </template>
-                            {{
-                              t('standalone.interfaces_and_devices.num_alias', {
-                                num: getNumAlias(device, networkConfig)
-                              })
-                            }}
-                          </NeButton>
-                        </div>
-                        <!-- bridge -->
-                        <div v-if="isBridge(device)">
-                          <NeButton
-                            kind="tertiary"
-                            size="sm"
-                            @click="toggleExpandBridge(device)"
-                            class="-mt-2 -mr-2"
-                          >
-                            <template #suffix>
-                              <font-awesome-icon
-                                :icon="[
-                                  'fas',
-                                  isExpandedBridge[device.name] ? 'chevron-up' : 'chevron-down'
-                                ]"
-                                class="h-3 w-3"
-                                aria-hidden="true"
-                              />
-                            </template>
-                            {{ t('standalone.interfaces_and_devices.bridge') }}
-                          </NeButton>
+                        <div class="flex flex-col gap-2 items-center">
+                          <!-- alias -->
+                          <div v-if="getAliasInterface(device, networkConfig)">
+                            <NeButton
+                              kind="tertiary"
+                              size="sm"
+                              @click="toggleExpandAlias(device)"
+                              class="-mt-2 -mr-2"
+                            >
+                              <template #suffix>
+                                <font-awesome-icon
+                                  :icon="[
+                                    'fas',
+                                    isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down'
+                                  ]"
+                                  class="h-3 w-3"
+                                  aria-hidden="true"
+                                />
+                              </template>
+                              {{
+                                t('standalone.interfaces_and_devices.num_alias', {
+                                  num: getNumAlias(device, networkConfig)
+                                })
+                              }}
+                            </NeButton>
+                          </div>
+                          <!-- bridge -->
+                          <div v-if="isBridge(device)">
+                            <NeButton
+                              kind="tertiary"
+                              size="sm"
+                              @click="toggleExpandBridge(device)"
+                              class="-mt-2 -mr-2"
+                            >
+                              <template #suffix>
+                                <font-awesome-icon
+                                  :icon="[
+                                    'fas',
+                                    isExpandedBridge[device.name] ? 'chevron-up' : 'chevron-down'
+                                  ]"
+                                  class="h-3 w-3"
+                                  aria-hidden="true"
+                                />
+                              </template>
+                              {{ t('standalone.interfaces_and_devices.bridge') }}
+                            </NeButton>
+                          </div>
                         </div>
                         <!-- vlan badge -->
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />

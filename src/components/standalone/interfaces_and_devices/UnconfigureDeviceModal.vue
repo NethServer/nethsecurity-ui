@@ -158,7 +158,7 @@ async function unconfigureDevice() {
     @close="closeModal"
     @primaryClick="unconfigureDevice"
   >
-    <div>
+    <div v-if="getInterface(device, networkConfig)">
       <template v-if="isBridge(device)">
         <!-- bridge -->
         {{

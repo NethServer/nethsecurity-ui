@@ -47,6 +47,7 @@ let currentInterface: Ref<any> = ref({})
 let isShownCreateOrEditAliasInterfaceDrawer = ref(false)
 let isExpandedAlias: Ref<{ [index: string]: boolean }> = ref({})
 let isExpandedBridge: Ref<{ [index: string]: boolean }> = ref({})
+let isExpandedBond: Ref<{ [index: string]: boolean }> = ref({})
 let isShownDeleteAliasModal = ref(false)
 let currentAlias: Ref<any> = ref({})
 let currentParentInterface: Ref<any> = ref({})
@@ -239,6 +240,10 @@ async function getPhysicalDevices() {
       if (isExpandedBridge.value[deviceName] == undefined) {
         isExpandedBridge.value[deviceName] = false
       }
+
+      if (isExpandedBond.value[deviceName] == undefined) {
+        isExpandedBond.value[deviceName] = false
+      }
     }
   } catch (err: any) {
     console.error(err)
@@ -254,6 +259,10 @@ function toggleExpandAlias(device: any) {
 
 function toggleExpandBridge(device: any) {
   isExpandedBridge.value[device.name] = !isExpandedBridge.value[device.name]
+}
+
+function toggleExpandBond(device: any) {
+  isExpandedBond.value[device.name] = !isExpandedBond.value[device.name]
 }
 
 function getDeviceBorderStyle(device: any) {
@@ -677,6 +686,27 @@ function getProtocolLabel(protocol: string) {
                               {{ t('standalone.interfaces_and_devices.bridge') }}
                             </NeButton>
                           </div>
+                          <!-- bond -->
+                          <div v-if="isBond(device)">
+                            <NeButton
+                              kind="tertiary"
+                              size="sm"
+                              @click="toggleExpandBond(device)"
+                              class="-mt-2 -mr-2"
+                            >
+                              <template #suffix>
+                                <font-awesome-icon
+                                  :icon="[
+                                    'fas',
+                                    isExpandedBond[device.name] ? 'chevron-up' : 'chevron-down'
+                                  ]"
+                                  class="h-3 w-3"
+                                  aria-hidden="true"
+                                />
+                              </template>
+                              {{ t('standalone.interfaces_and_devices.bond') }}
+                            </NeButton>
+                          </div>
                         </div>
                         <!-- vlan badge -->
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
@@ -959,9 +989,52 @@ function getProtocolLabel(protocol: string) {
                                 )
                               }}:
                             </span>
-                            <!-- ipv4 addresses -->
+                            <!-- devices -->
                             <div v-for="bridgeDev in device.ports">
                               <span class="font-medium"> {{ bridgeDev }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition>
+                  <!-- bond interface -->
+                  <Transition name="slide-down">
+                    <div
+                      v-if="isBond(device) && isExpandedBond[device.name]"
+                      class="flex items-start group"
+                    >
+                      <!-- L-shaped dashed line-->
+                      <div
+                        class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                      ></div>
+                      <!-- bond card -->
+                      <div
+                        :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                          device
+                        )}`"
+                      >
+                        <div class="flex justify-between gap-8 flex-wrap">
+                          <!-- bond name -->
+                          <div
+                            class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                          >
+                            <div class="font-semibold">
+                              {{ t('standalone.interfaces_and_devices.bond') }}
+                            </div>
+                          </div>
+                          <div class="flex flex-wrap gap-8 pr-40 grow">
+                            <span class="font-medium">
+                              {{
+                                t(
+                                  'standalone.interfaces_and_devices.devices_pl',
+                                  device.slaves.length
+                                )
+                              }}:
+                            </span>
+                            <!-- devices -->
+                            <div v-for="bondDev in device.slaves">
+                              <span class="font-medium"> {{ bondDev }}</span>
                             </div>
                           </div>
                         </div>

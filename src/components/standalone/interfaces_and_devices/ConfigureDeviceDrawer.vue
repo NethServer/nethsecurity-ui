@@ -302,7 +302,7 @@ const bondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
 const bondUsedDevices = computed(() => {
   const usedDevices: any[] = []
   internalAllDevices.value.forEach((dev: any) => {
-    if (isBond(dev)) {
+    if (isBond(dev) && dev['.name'] != props.device['.name']) {
       usedDevices.push(...dev.slaves)
     }
   })

@@ -671,7 +671,7 @@ function hideCreateVlanDeviceDrawer() {
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
                       </div>
                       <!-- second column -->
-                      <div>
+                      <div class="space-y-2">
                         <div>
                           <span class="font-medium">MAC: </span>
                           <span>{{ device.mac || '-' }}</span>
@@ -693,6 +693,31 @@ function hideCreateVlanDeviceDrawer() {
                             <span>{{ iface.ip6addr[0] }}</span>
                           </div>
                         </template>
+                        <!-- device IP addresses (e.g. assigned by DHCP) -->
+                        <div v-for="ip4 in device.ipaddrs">
+                          <div v-if="ip4.address">
+                            <span class="font-medium">IPv4: </span>
+                            <span>{{ ip4.address }}</span>
+                          </div>
+                          <div v-if="ip4.netmask">
+                            <span class="font-medium">
+                              {{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                            </span>
+                            <span>{{ ip4.netmask }}</span>
+                          </div>
+                        </div>
+                        <div v-for="ip6 in device.ip6addrs">
+                          <div v-if="ip6.address">
+                            <span class="font-medium">IPv6: </span>
+                            <span>{{ ip6.address }}</span>
+                          </div>
+                          <div v-if="ip6.netmask">
+                            <span class="font-medium">
+                              {{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
+                            </span>
+                            <span>{{ ip6.netmask }}</span>
+                          </div>
+                        </div>
                       </div>
                       <!-- third column -->
                       <div>

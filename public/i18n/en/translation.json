@@ -211,6 +211,7 @@
       "protocol_static": "Static",
       "ipv4_address": "IPv4 address",
       "ipv4_subnet_mask": "IPv4 subnet mask",
+      "ipv6_subnet_mask": "IPv6 subnet mask",
       "ipv4_gateway": "IPv4 Gateway",
       "ipv6_address": "IPv6 address",
       "ipv6_gateway": "IPv6 Gateway",

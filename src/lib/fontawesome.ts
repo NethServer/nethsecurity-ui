@@ -44,6 +44,11 @@ import { faEllipsisVertical as fasEllipsisVertical } from '@fortawesome/free-sol
 import { faCopy as fasCopy } from '@fortawesome/free-solid-svg-icons'
 import { faUnlock as fasUnlock } from '@fortawesome/free-solid-svg-icons'
 import { faUsers as fasUsers } from '@fortawesome/free-solid-svg-icons'
+import { faScaleBalanced as faScaleBalanced } from '@fortawesome/free-solid-svg-icons'
+import { faClock as faClock } from '@fortawesome/free-solid-svg-icons'
+import { faLayerGroup as faLayerGroup } from '@fortawesome/free-solid-svg-icons'
+import { faLock as faLock } from '@fortawesome/free-solid-svg-icons'
+import { faWarning as faWarning } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon)
@@ -91,4 +96,9 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCopy)
   library.add(fasUnlock)
   library.add(fasUsers)
+  library.add(faScaleBalanced)
+  library.add(faClock)
+  library.add(faLock)
+  library.add(faLayerGroup)
+  library.add(faWarning)
 }

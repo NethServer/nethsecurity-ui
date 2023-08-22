@@ -12,12 +12,12 @@ defineProps({
 
 <template>
   <div class="flex flex-col md:flex-row">
-    <div class="md:w-5/12 md:pr-6">
+    <div class="break-all sm:mr-6 md:w-5/12">
       <slot name="title">
-        <h2 class="font-medium text-xl mb-2">{{ title }}</h2>
+        <h2 class="mb-2 text-xl font-medium">{{ title }}</h2>
       </slot>
       <slot name="description">
-        <p class="font-normal text-sm text-gray-500 dark:text-gray-400 mb-8">{{ description }}</p>
+        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">{{ description }}</p>
       </slot>
     </div>
     <div class="md:w-7/12">

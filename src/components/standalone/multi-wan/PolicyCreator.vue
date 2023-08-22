@@ -3,7 +3,7 @@ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeComboBox,
+  NeCombobox,
   NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
@@ -358,7 +358,7 @@ function createPolicy() {
         </NeFormItemLabel>
         <template v-for="(gateway, index) in priority" :key="index">
           <div class="flex gap-x-4">
-            <NeComboBox
+            <NeCombobox
               v-model="gateway.id"
               :options="gateways"
               :placeholder="t('standalone.multi_wan.choose_gateway')"

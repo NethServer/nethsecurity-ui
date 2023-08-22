@@ -11,7 +11,7 @@ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeComboBox,
+  NeCombobox,
   NeFormItemLabel,
   NeInlineNotification,
   NeSkeleton,
@@ -223,20 +223,20 @@ onMounted(() => {
       :title="t('standalone.multi_wan.ping_settings_title')"
     >
       <div class="space-y-3">
-        <NeComboBox
+        <NeCombobox
           v-model="data.ping_timeout"
           :disabled="sending"
           :invalid-message="messageBag.get('ping.timeout')?.[0]"
           :label="t('standalone.multi_wan.ping_timeout')"
           :options="timeoutOptions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])"
         />
-        <NeComboBox
+        <NeCombobox
           v-model.number="data.ping_interval"
           :disabled="sending"
           :label="t('standalone.multi_wan.ping_interval')"
           :options="timeoutOptions([1, 3, 5, 10, 20, 30, 60, 300, 600, 900, 1800, 3600])"
         />
-        <NeComboBox
+        <NeCombobox
           v-model.number="data.ping_failure_interval"
           :disabled="sending"
           :label="t('standalone.multi_wan.ping_failure_interval')"
@@ -250,13 +250,13 @@ onMounted(() => {
       :title="t('standalone.multi_wan.interface_recovery_title')"
     >
       <div class="space-y-3">
-        <NeComboBox
+        <NeCombobox
           v-model="data.interface_down_threshold"
           :disabled="sending"
           :label="t('standalone.multi_wan.interface_down')"
           :options="pingsOptions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])"
         />
-        <NeComboBox
+        <NeCombobox
           v-model="data.interface_up_threshold"
           :disabled="sending"
           :label="t('standalone.multi_wan.interface_up')"

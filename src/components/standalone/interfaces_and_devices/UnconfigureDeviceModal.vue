@@ -4,7 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { getAliasInterface, getFirewallZone, getInterface } from '@/lib/standalone/network'
+import {
+  getAliasInterface,
+  getFirewallZone,
+  getInterface,
+  isVlan,
+  isBridge,
+  isBond
+} from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
@@ -27,7 +34,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'deviceUnconfigured'])
+const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -68,7 +75,9 @@ async function deleteNetworkInterface(ifaceName: string) {
 }
 
 async function deleteNetworkDevice() {
-  const sectionFound = props.networkConfig.device.find((dev: any) => dev.name === props.device.name)
+  const sectionFound = props.networkConfig.device?.find(
+    (dev: any) => dev.name === props.device.name
+  )
 
   await ubusCall('uci', 'delete', {
     config: 'network',
@@ -110,8 +119,15 @@ async function unconfigureDevice() {
       // delete alias interface too
       await deleteNetworkInterface(aliasFound['.name'])
     }
-    await deleteNetworkDevice()
-    emit('deviceUnconfigured')
+
+    const deviceExists = props.networkConfig.device?.find(
+      (dev: any) => dev.name === props.device.name
+    )
+
+    if (!isVlan(props.device) && !isBond(props.device) && deviceExists) {
+      await deleteNetworkDevice()
+    }
+    emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)
@@ -129,9 +145,17 @@ async function unconfigureDevice() {
 <template>
   <NeModal
     :visible="visible"
-    :title="t('standalone.interfaces_and_devices.remove_configuration')"
+    :title="
+      isBridge(device) || isBond(device)
+        ? t('standalone.interfaces_and_devices.delete_interface')
+        : t('standalone.interfaces_and_devices.remove_configuration')
+    "
     kind="warning"
-    :primaryLabel="t('standalone.interfaces_and_devices.remove_configuration')"
+    :primaryLabel="
+      isBridge(device) || isBond(device)
+        ? t('standalone.interfaces_and_devices.delete_interface')
+        : t('standalone.interfaces_and_devices.remove_configuration')
+    "
     :cancelLabel="t('common.cancel')"
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.unconfigureDevice"
@@ -140,12 +164,33 @@ async function unconfigureDevice() {
     @close="closeModal"
     @primaryClick="unconfigureDevice"
   >
-    <div>
-      {{
-        t('standalone.interfaces_and_devices.remove_configuration_explanation', {
-          name: device.name
-        })
-      }}
+    <div v-if="getInterface(device, networkConfig)">
+      <template v-if="isBridge(device)">
+        <!-- bridge -->
+        {{
+          t('standalone.interfaces_and_devices.delete_bridge_explanation', {
+            iface: getInterface(device, networkConfig)['.name'],
+            device: device.name
+          })
+        }}
+      </template>
+      <template v-else-if="isBond(device)">
+        <!-- bond -->
+        {{
+          t('standalone.interfaces_and_devices.delete_bond_explanation', {
+            iface: getInterface(device, networkConfig)['.name']
+          })
+        }}
+      </template>
+      <template v-else>
+        <!-- physical interfaces and VLAN -->
+        {{
+          t('standalone.interfaces_and_devices.remove_configuration_explanation', {
+            iface: getInterface(device, networkConfig)['.name'],
+            device: device.name
+          })
+        }}
+      </template>
     </div>
     <NeInlineNotification
       v-if="error.notificationTitle"

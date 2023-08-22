@@ -1,7 +1,7 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getPreference, getStringFromStorage, savePreference } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
@@ -12,6 +12,23 @@ type ThemeType = 'light' | 'dark' | 'system'
 
 export const useThemeStore = defineStore('theme', () => {
   const theme = ref('system')
+
+  // returns false if current theme is 'dark'; returns true if theme = 'light' or the system-preferred color scheme is light
+  const isLight = computed(() => {
+    switch (theme.value) {
+      case 'light':
+        return true
+      case 'dark':
+        return false
+      default:
+        // system theme
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return false
+        } else {
+          return true
+        }
+    }
+  })
 
   function getUsername() {
     let username
@@ -98,5 +115,5 @@ export const useThemeStore = defineStore('theme', () => {
     document.documentElement.classList.remove('dark')
   }
 
-  return { theme, setTheme, toggleTheme, loadTheme }
+  return { theme, isLight, setTheme, toggleTheme, loadTheme }
 })

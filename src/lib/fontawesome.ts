@@ -49,6 +49,7 @@ import { faClock as faClock } from '@fortawesome/free-solid-svg-icons'
 import { faLayerGroup as faLayerGroup } from '@fortawesome/free-solid-svg-icons'
 import { faLock as faLock } from '@fortawesome/free-solid-svg-icons'
 import { faWarning as faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faWrench as fasWrench } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon)
@@ -101,4 +102,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faLock)
   library.add(faLayerGroup)
   library.add(faWarning)
+  library.add(fasWrench)
 }

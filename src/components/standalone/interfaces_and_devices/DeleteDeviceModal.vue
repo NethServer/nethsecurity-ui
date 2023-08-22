@@ -4,7 +4,6 @@
 -->
 
 <script setup lang="ts">
-import { getFirewallZone } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
@@ -13,15 +12,11 @@ import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
-  alias: {
+  device: {
     type: Object,
     required: true
   },
-  parentInterface: {
-    type: Object,
-    required: true
-  },
-  firewallConfig: {
+  networkConfig: {
     type: Object,
     required: true
   }
@@ -33,7 +28,7 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 let loading = ref({
-  deleteAlias: false
+  deleteDevice: false
 })
 
 let error = ref({
@@ -55,46 +50,31 @@ function closeModal() {
   emit('close')
 }
 
-async function deleteNetworkInterface() {
+async function deleteNetworkDevice() {
+  const sectionFound = props.networkConfig.device?.find(
+    (dev: any) => dev.name === props.device.name
+  )
+
   await ubusCall('uci', 'delete', {
     config: 'network',
     options: null,
-    section: props.alias['.name']
+    section: sectionFound['.name']
   })
 }
 
-async function removeInterfaceFromZone() {
-  const zone = getFirewallZone(props.parentInterface, props.firewallConfig)
-  const sectionName = zone['.name']
-
-  // remove alias from zone interfaces
-  const zoneInterfaces = zone.network.filter((iface: any) => iface !== props.alias['.name'])
-
-  await ubusCall('uci', 'set', {
-    config: 'firewall',
-    section: sectionName,
-    values: {
-      network: zoneInterfaces
-    }
-  })
-}
-
-async function deleteAlias() {
-  loading.value.deleteAlias = true
+async function deleteDevice() {
+  loading.value.deleteDevice = true
 
   try {
-    await deleteNetworkInterface()
-    await removeInterfaceFromZone()
+    await deleteNetworkDevice()
     emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)
-    error.value.notificationTitle = t(
-      'standalone.interfaces_and_devices.cannot_delete_alias_interface'
-    )
+    error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_delete_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
-    loading.value.deleteAlias = false
+    loading.value.deleteDevice = false
     await uciChangesStore.getChanges()
   }
 }
@@ -103,21 +83,19 @@ async function deleteAlias() {
 <template>
   <NeModal
     :visible="visible"
-    :title="t('standalone.interfaces_and_devices.delete_alias')"
+    :title="t('standalone.interfaces_and_devices.delete_device')"
     kind="warning"
-    :primaryLabel="t('standalone.interfaces_and_devices.delete_alias')"
+    :primaryLabel="t('standalone.interfaces_and_devices.delete_device')"
     :cancelLabel="t('common.cancel')"
     primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.deleteAlias"
-    :primaryButtonLoading="loading.deleteAlias"
+    :primaryButtonDisabled="loading.deleteDevice"
+    :primaryButtonLoading="loading.deleteDevice"
     :closeAriaLabe="t('common.close')"
     @close="closeModal"
-    @primaryClick="deleteAlias"
+    @primaryClick="deleteDevice"
   >
     <div>
-      {{
-        t('standalone.interfaces_and_devices.delete_alias_interface_name', { name: alias['.name'] })
-      }}
+      {{ t('standalone.interfaces_and_devices.delete_device_name', { name: device.name }) }}
     </div>
     <NeInlineNotification
       v-if="error.notificationTitle"

@@ -722,24 +722,26 @@ function getProtocolLabel(protocol: string) {
                           <div v-if="iface?.ipaddr || iface?.netmask">
                             <div>
                               <span class="font-medium">IPv4: </span>
-                              <span>{{ iface.ipaddr }} {{ getProtocolLabel(iface.proto) }}</span>
+                              <span>{{ iface?.ipaddr }} {{ getProtocolLabel(iface?.proto) }}</span>
                             </div>
                             <div v-if="iface?.netmask">
                               <span class="font-medium"
                                 >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
                               </span>
-                              <span>{{ iface.netmask }}</span>
+                              <span>{{ iface?.netmask }}</span>
                             </div>
                           </div>
                           <div v-if="iface?.ip6addr?.length">
                             <span class="font-medium">IPv6: </span>
-                            <span>{{ iface.ip6addr[0] }} {{ getProtocolLabel(iface.proto) }}</span>
+                            <span
+                              >{{ iface?.ip6addr[0] }} {{ getProtocolLabel(iface?.proto) }}</span
+                            >
                           </div>
                           <!-- device IP addresses (e.g. assigned by DHCP) -->
                           <div v-for="ip4 in device.ipaddrs">
                             <div v-if="ip4.address">
                               <span class="font-medium">IPv4: </span>
-                              <span>{{ ip4.address }} {{ getProtocolLabel(iface.proto) }}</span>
+                              <span>{{ ip4.address }} {{ getProtocolLabel(iface?.proto) }}</span>
                             </div>
                             <div v-if="ip4.netmask">
                               <span class="font-medium">
@@ -751,7 +753,7 @@ function getProtocolLabel(protocol: string) {
                           <div v-for="ip6 in device.ip6addrs">
                             <div v-if="ip6.address">
                               <span class="font-medium">IPv6: </span>
-                              <span>{{ ip6.address }} {{ getProtocolLabel(iface.proto) }}</span>
+                              <span>{{ ip6.address }} {{ getProtocolLabel(iface?.proto) }}</span>
                             </div>
                             <div v-if="ip6.netmask">
                               <span class="font-medium">

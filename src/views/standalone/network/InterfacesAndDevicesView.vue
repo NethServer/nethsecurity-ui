@@ -33,7 +33,7 @@ import ConfigureDeviceDrawer, {
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
-import { isEmpty, upperFirst } from 'lodash'
+import { isEmpty, isEqual, uniqWith, upperFirst } from 'lodash'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -504,7 +504,47 @@ function getProtocolLabel(protocol: string) {
       return '(DHCP)'
     case 'dhcpv6':
       return '(DHCPv6)'
+    default:
+      return ''
   }
+}
+
+function getIpv4Addresses(device: any) {
+  const ipv4Addresses = []
+  const iface = getInterface(device, networkConfig.value)
+  const proto = getProtocolLabel(iface?.proto)
+
+  // device ip addresses
+
+  for (const ipv4 of device.ipaddrs) {
+    ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
+  }
+
+  // interface ip address
+
+  if (iface?.ipaddr) {
+    ipv4Addresses.push({ address: iface.ipaddr, netmask: iface.netmask, proto })
+  }
+  return uniqWith(ipv4Addresses, isEqual)
+}
+
+function getIpv6Addresses(device: any) {
+  const ipv6Addresses = []
+  const iface = getInterface(device, networkConfig.value)
+  const proto = getProtocolLabel(iface?.proto)
+
+  // device ip addresses
+
+  for (const ipv6 of device.ip6addrs) {
+    ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
+  }
+
+  // interface ip address
+
+  if (iface?.ip6addr) {
+    ipv6Addresses.push({ address: iface.ip6addr, netmask: iface.netmask, proto })
+  }
+  return uniqWith(ipv6Addresses, isEqual)
 }
 </script>
 
@@ -723,52 +763,30 @@ function getProtocolLabel(protocol: string) {
                           <span class="font-medium">MAC: </span>
                           <span>{{ device.mac || '-' }}</span>
                         </div>
-                        <!-- v-for is a trick to declare 'iface' variable inside template -->
-                        <template v-for="iface in [getInterface(device, networkConfig)]">
-                          <div v-if="iface?.ipaddr || iface?.netmask">
-                            <div>
-                              <span class="font-medium">IPv4: </span>
-                              <span>{{ iface?.ipaddr }} {{ getProtocolLabel(iface?.proto) }}</span>
-                            </div>
-                            <div v-if="iface?.netmask">
-                              <span class="font-medium"
-                                >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
-                              </span>
-                              <span>{{ iface?.netmask }}</span>
-                            </div>
+                        <div v-for="ipv4 in getIpv4Addresses(device)">
+                          <div>
+                            <span class="font-medium">IPv4: </span>
+                            <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
                           </div>
-                          <div v-if="iface?.ip6addr?.length">
+                          <div v-if="ipv4.netmask">
+                            <span class="font-medium"
+                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                            </span>
+                            <span>{{ ipv4.netmask }}</span>
+                          </div>
+                        </div>
+                        <div v-for="ipv6 in getIpv6Addresses(device)">
+                          <div>
                             <span class="font-medium">IPv6: </span>
-                            <span
-                              >{{ iface?.ip6addr[0] }} {{ getProtocolLabel(iface?.proto) }}</span
-                            >
+                            <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
                           </div>
-                          <!-- device IP addresses (e.g. assigned by DHCP) -->
-                          <div v-for="ip4 in device.ipaddrs">
-                            <div v-if="ip4.address">
-                              <span class="font-medium">IPv4: </span>
-                              <span>{{ ip4.address }} {{ getProtocolLabel(iface?.proto) }}</span>
-                            </div>
-                            <div v-if="ip4.netmask">
-                              <span class="font-medium">
-                                {{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
-                              </span>
-                              <span>{{ ip4.netmask }}</span>
-                            </div>
+                          <div v-if="ipv6.netmask">
+                            <span class="font-medium"
+                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                            </span>
+                            <span>{{ ipv6.netmask }}</span>
                           </div>
-                          <div v-for="ip6 in device.ip6addrs">
-                            <div v-if="ip6.address">
-                              <span class="font-medium">IPv6: </span>
-                              <span>{{ ip6.address }} {{ getProtocolLabel(iface?.proto) }}</span>
-                            </div>
-                            <div v-if="ip6.netmask">
-                              <span class="font-medium">
-                                {{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
-                              </span>
-                              <span>{{ ip6.netmask }}</span>
-                            </div>
-                          </div>
-                        </template>
+                        </div>
                       </div>
                       <!-- third column -->
                       <div>

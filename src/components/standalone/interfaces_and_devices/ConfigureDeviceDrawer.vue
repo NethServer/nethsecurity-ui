@@ -428,13 +428,6 @@ watch(zone, () => {
   }
 })
 
-watch(protocol, () => {
-  // enable IPv6 if DHCPv6 is selected
-  if (protocol.value === 'dhcpv6') {
-    isIpv6Enabled.value = true
-  }
-})
-
 watch(logicalIfaceType, () => {
   // if bond is selected: set protocol to static, disable ipv6, disable red zone
   if (logicalIfaceType.value === 'bond') {
@@ -512,6 +505,13 @@ async function createAndSetNetworkDevice() {
   }
 
   // enable/disable ipv6
+
+  if (protocol.value === 'dhcpv6') {
+    isIpv6Enabled.value = true
+  } else if (protocol.value === 'dhcp') {
+    isIpv6Enabled.value = false
+  }
+
   const ipv6Value = isIpv6Enabled.value ? '1' : '0'
   const values: any = { mtu: ipv4Mtu.value, ipv6: ipv6Value }
 

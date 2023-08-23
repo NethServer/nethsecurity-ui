@@ -90,13 +90,19 @@ const allDevices: any = computed(() => {
 
   let ifacesWithoutDevice = networkConfig.value.interface?.filter((iface: any) => !iface.device)
 
+  // remove unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
+
+  const filteredPhysicalDevices = Object.values(physicalDevices.value).filter((dev: any) => {
+    return !(isBridge(dev) && !getInterface(dev, networkConfig.value))
+  })
+
   console.log(
     'allDevices',
-    Object.values(physicalDevices.value).concat(uncommittedDevices).concat(ifacesWithoutDevice)
+    filteredPhysicalDevices.concat(uncommittedDevices).concat(ifacesWithoutDevice)
   )
   ////
 
-  return Object.values(physicalDevices.value).concat(uncommittedDevices).concat(ifacesWithoutDevice)
+  return filteredPhysicalDevices.concat(uncommittedDevices).concat(ifacesWithoutDevice)
 })
 
 const sortedZonesAndDevices: any = computed(() => {

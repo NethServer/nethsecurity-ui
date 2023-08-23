@@ -982,7 +982,7 @@ function getProtocolLabel(protocol: string) {
                               {{ device.name }}
                             </div>
                           </div>
-                          <div class="flex flex-wrap gap-8 pr-40 grow">
+                          <div class="flex flex-wrap gap-8 grow">
                             <span class="font-medium">
                               {{
                                 t(
@@ -1025,7 +1025,7 @@ function getProtocolLabel(protocol: string) {
                               {{ t('standalone.interfaces_and_devices.bond') }}
                             </div>
                           </div>
-                          <div class="flex flex-wrap gap-8 pr-40 grow">
+                          <div class="flex flex-wrap gap-8 grow">
                             <span class="font-medium">
                               {{
                                 t(

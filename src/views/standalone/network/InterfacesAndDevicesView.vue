@@ -75,34 +75,58 @@ const isLoading = computed(() => {
   return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
 })
 
-const allDevices: any = computed(() => {
-  // add uncommitted devices
+const devicesUsedByBridgesOrBonds = computed(() => {
+  const usedDevices: any[] = []
 
-  let uncommittedDevices = []
-
-  if (networkConfig.value.device) {
-    uncommittedDevices = networkConfig.value.device.filter((dev: any) => {
-      return !Object.keys(physicalDevices.value).includes(dev.name)
+  if (!isEmpty(allDevices.value)) {
+    allDevices.value.forEach((dev: any) => {
+      if (isBond(dev)) {
+        usedDevices.push(...dev.slaves)
+      } else if (isBridge(dev)) {
+        usedDevices.push(...dev.ports)
+      }
     })
   }
+  return usedDevices
+})
 
-  // add interfaces without device (e.g. bond interfaces)
+const allDevices: any = computed(() => {
+  const networkDevices = networkConfig.value.device || []
 
-  let ifacesWithoutDevice = networkConfig.value.interface?.filter((iface: any) => !iface.device)
+  // interfaces without device (e.g. bond interfaces)
+  const ifacesWithoutDevice =
+    networkConfig.value.interface?.filter((iface: any) => !iface.device) || []
 
-  // remove unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
+  const filteredPhysicalDevices = Object.values(physicalDevices.value).filter(
+    (physicalDev: any) => {
+      return (
+        // physical devices not included in network configuration
+        !networkConfig.value.device?.find(
+          (networkDev: any) => networkDev.name === physicalDev.name
+        ) &&
+        // hide unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
+        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value))
+      )
+    }
+  )
+  let devices = networkDevices.concat(ifacesWithoutDevice).concat(filteredPhysicalDevices)
+  return devices
+})
 
-  const filteredPhysicalDevices = Object.values(physicalDevices.value).filter((dev: any) => {
-    return !(isBridge(dev) && !getInterface(dev, networkConfig.value))
+const devicesToDisplay: any = computed(() => {
+  // hide devices used by bridges/bonds
+
+  const devicesUsedByBridgesOrBonds: any[] = []
+
+  allDevices.value.forEach((dev: any) => {
+    if (isBond(dev)) {
+      devicesUsedByBridgesOrBonds.push(...dev.slaves)
+    } else if (isBridge(dev)) {
+      devicesUsedByBridgesOrBonds.push(...dev.ports)
+    }
   })
 
-  console.log(
-    'allDevices',
-    filteredPhysicalDevices.concat(uncommittedDevices).concat(ifacesWithoutDevice)
-  )
-  ////
-
-  return filteredPhysicalDevices.concat(uncommittedDevices).concat(ifacesWithoutDevice)
+  return allDevices.value.filter((dev: any) => !devicesUsedByBridgesOrBonds.includes(dev.name))
 })
 
 const sortedZonesAndDevices: any = computed(() => {
@@ -130,7 +154,7 @@ const sortedZonesAndDevices: any = computed(() => {
     devices: [] as any
   }
 
-  allDevices.value.forEach((dev: any) => {
+  devicesToDisplay.value.forEach((dev: any) => {
     const ifaceFound = getInterface(dev, networkConfig.value)
 
     if (!ifaceFound) {
@@ -516,8 +540,10 @@ function getIpv4Addresses(device: any) {
 
   // device ip addresses
 
-  for (const ipv4 of device.ipaddrs) {
-    ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
+  if (!isEmpty(device.ipaddrs)) {
+    for (const ipv4 of device.ipaddrs) {
+      ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
+    }
   }
 
   // interface ip address
@@ -535,8 +561,10 @@ function getIpv6Addresses(device: any) {
 
   // device ip addresses
 
-  for (const ipv6 of device.ip6addrs) {
-    ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
+  if (!isEmpty(device.ip6addrs)) {
+    for (const ipv6 of device.ip6addrs) {
+      ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
+    }
   }
 
   // interface ip address

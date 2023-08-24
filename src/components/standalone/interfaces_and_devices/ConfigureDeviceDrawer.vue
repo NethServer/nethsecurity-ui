@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import {
   generateDeviceName,
+  getInterface,
   getZoneColor,
   getZoneIcon,
   getZoneLabel,
@@ -111,10 +112,8 @@ let pppoePassword = ref('')
 let pppoePasswordRef = ref()
 let logicalIfaceType = ref('bridge')
 let logicalIfaceTypeRef = ref()
-let selectedDevicesForBridge: Ref<NeComboboxOption[]> = ref([])
-let selectedDevicesForBridgeRef = ref<HTMLDivElement | null>()
-let selectedDevicesForBond: Ref<NeComboboxOption[]> = ref([])
-let selectedDevicesForBondRef = ref<HTMLDivElement | null>()
+let selectedDevicesForBridgeOrBond: Ref<NeComboboxOption[]> = ref([])
+let selectedDevicesForBridgeOrBondRef = ref<HTMLDivElement | null>()
 let bridgeDeviceName = ref('')
 let bondingPolicy = ref('balance-rr')
 let bondingPolicyRef = ref<HTMLDivElement | null>()
@@ -213,8 +212,7 @@ let error = ref({
   dhcpVendorClass: '',
   pppoeUsername: '',
   pppoePassword: '',
-  selectedDevicesForBridge: '',
-  selectedDevicesForBond: '',
+  selectedDevicesForBridgeOrBond: '',
   bondingPolicy: '',
   bondPrimaryDevice: ''
 })
@@ -249,35 +247,19 @@ const isConfiguringFromScratch = computed(() => {
   return !props.interfaceToEdit
 })
 
-const bridgeDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
-  // remove loopback, ifb-dns and bridge devices
-  const filteredDevices = internalAllDevices.value.filter(
-    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !isBridge(dev)
-  )
-
-  return filteredDevices.map((dev: any) => {
-    // show linked interfaces near device name
-    const ifacesFound = props.networkConfig.interface
-      .filter((iface: any) => iface.device === dev.name)
-      .map((iface: any) => iface['.name'])
-
-    let description = ''
-
-    if (isBond(dev)) {
-      description = `(${t('standalone.interfaces_and_devices.bond')})`
-    } else if (ifacesFound) {
-      description = ifacesFound.join(', ')
-    }
-
-    // bond interfaces have '.name' attribute
-    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
-  })
-})
-
-const bondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
+const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
   // remove loopback, ifb-dns and devices used by other bonds
   const filteredDevices = internalAllDevices.value.filter(
-    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !bondUsedDevices.value.includes(dev.name)
+    (dev: any) =>
+      // hide loopback and ifb-dns devices
+      !['lo', 'ifb-dns'].includes(dev.name) &&
+      // hide devices used by other bridges or bonds
+      !devicesUsedByOhterBridgesOrBonds.value.includes(dev.name) &&
+      // hide bridges/bond devices
+      !isBridge(dev) &&
+      !isBond(dev) &&
+      // hide configured devices
+      !getInterface(dev, props.networkConfig)
   )
 
   return filteredDevices.map((dev: any) => {
@@ -299,11 +281,16 @@ const bondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
   })
 })
 
-const bondUsedDevices = computed(() => {
+const devicesUsedByOhterBridgesOrBonds = computed(() => {
   const usedDevices: any[] = []
   internalAllDevices.value.forEach((dev: any) => {
-    if (isBond(dev) && dev['.name'] != props.device['.name']) {
-      usedDevices.push(...dev.slaves)
+    // always show devices used by a bridge/bond while editing it
+    if (dev.name != props.device?.name) {
+      if (isBond(dev)) {
+        usedDevices.push(...dev.slaves)
+      } else if (isBridge(dev)) {
+        usedDevices.push(...dev.ports)
+      }
     }
   })
   return usedDevices
@@ -338,8 +325,7 @@ watch(
         pppoeUsername.value = ''
         pppoePassword.value = ''
         logicalIfaceType.value = 'bridge'
-        selectedDevicesForBridge.value = []
-        selectedDevicesForBond.value = []
+        selectedDevicesForBridgeOrBond.value = []
         bondingPolicy.value = 'balance-rr'
         bondPrimaryDevice.value = ''
 
@@ -384,8 +370,8 @@ watch(
           if (isBridge(props.device)) {
             logicalIfaceType.value = 'bridge'
 
-            selectedDevicesForBridge.value = bridgeDevicesOptions.value.filter((dev: any) =>
-              props.device.ports.includes(dev.id)
+            selectedDevicesForBridgeOrBond.value = bridgeOrBondDevicesOptions.value.filter(
+              (dev: any) => props.device.ports.includes(dev.id)
             )
           } else {
             // bond
@@ -394,8 +380,8 @@ watch(
             // in case of bonding, 'props.device' is actually the bond interface
             const bondIface = props.device
 
-            selectedDevicesForBond.value = bondDevicesOptions.value.filter((dev: any) =>
-              bondIface.slaves.includes(dev.id)
+            selectedDevicesForBridgeOrBond.value = bridgeOrBondDevicesOptions.value.filter(
+              (dev: any) => bondIface.slaves.includes(dev.id)
             )
             bondingPolicy.value = bondIface.bonding_policy
             bondPrimaryDevice.value = bondIface.primary
@@ -425,13 +411,6 @@ watch(zone, () => {
   // only red interface support PPoE
   if (zone.value !== 'wan' && protocol.value === 'pppoe') {
     protocol.value = 'static'
-  }
-})
-
-watch(protocol, () => {
-  // enable IPv6 if DHCPv6 is selected
-  if (protocol.value === 'dhcpv6') {
-    isIpv6Enabled.value = true
   }
 })
 
@@ -512,6 +491,13 @@ async function createAndSetNetworkDevice() {
   }
 
   // enable/disable ipv6
+
+  if (protocol.value === 'dhcpv6') {
+    isIpv6Enabled.value = true
+  } else if (protocol.value === 'dhcp') {
+    isIpv6Enabled.value = false
+  }
+
   const ipv6Value = isIpv6Enabled.value ? '1' : '0'
   const values: any = { mtu: ipv4Mtu.value, ipv6: ipv6Value }
 
@@ -521,7 +507,7 @@ async function createAndSetNetworkDevice() {
 
   if (props.deviceType === 'logical' && logicalIfaceType.value === 'bridge') {
     // attached devices
-    const selectedDevices = selectedDevicesForBridge.value.map((option: any) => option.id)
+    const selectedDevices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
     values.ports = selectedDevices
   }
 
@@ -586,7 +572,7 @@ function getBondingValues() {
   values.netmask = ipv4SubnetMask.value
 
   // attached devices
-  const selectedDevices = selectedDevicesForBond.value.map((option: any) => option.id)
+  const selectedDevices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
   values.slaves = selectedDevices
 
   // bonding policy
@@ -828,31 +814,19 @@ function validate() {
   let isValidationOk = true
 
   if (props.deviceType === 'logical') {
-    if (logicalIfaceType.value === 'bridge') {
-      // select one or more devices for bridge
+    // select one or more devices for bridge or bond
 
-      if (isEmpty(selectedDevicesForBridge.value)) {
-        error.value.selectedDevicesForBridge = t(
-          'standalone.interfaces_and_devices.select_one_or_more_devices'
-        )
-        if (isValidationOk) {
-          isValidationOk = false
-          focusElement(selectedDevicesForBridgeRef)
-        }
+    if (isEmpty(selectedDevicesForBridgeOrBond.value)) {
+      error.value.selectedDevicesForBridgeOrBond = t(
+        'standalone.interfaces_and_devices.select_one_or_more_devices'
+      )
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(selectedDevicesForBridgeOrBondRef)
       }
-    } else {
-      // select one or more devices for bond
+    }
 
-      if (isEmpty(selectedDevicesForBond.value)) {
-        error.value.selectedDevicesForBond = t(
-          'standalone.interfaces_and_devices.select_one_or_more_devices'
-        )
-        if (isValidationOk) {
-          isValidationOk = false
-          focusElement(selectedDevicesForBondRef)
-        }
-      }
-
+    if (logicalIfaceType.value === 'bond') {
       // bond primary device
 
       if (['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy.value)) {
@@ -866,7 +840,7 @@ function validate() {
         } else {
           // ensure primary device is included in selected devices
 
-          const primaryDeviceFound = selectedDevicesForBond.value.find(
+          const primaryDeviceFound = selectedDevicesForBridgeOrBond.value.find(
             (option: any) => option.id === bondPrimaryDevice.value
           )
 
@@ -1154,33 +1128,18 @@ function validate() {
             :disabled="!isConfiguringFromScratch || loading.configure"
             ref="logicalIfaceTypeRef"
           />
-          <!-- bridge devices -->
+          <!-- bridge / bond devices -->
           <NeCombobox
-            v-if="logicalIfaceType === 'bridge'"
             multiple
-            v-model="selectedDevicesForBridge"
-            :options="bridgeDevicesOptions"
-            :label="t('standalone.interfaces_and_devices.devices')"
-            :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bridge')"
-            :invalidMessage="error.selectedDevicesForBridge"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :disabled="loading.configure"
-            ref="selectedDevicesForBridgeRef"
-          />
-          <!-- bond devices -->
-          <NeCombobox
-            v-if="logicalIfaceType === 'bond'"
-            multiple
-            v-model="selectedDevicesForBond"
-            :options="bondDevicesOptions"
+            v-model="selectedDevicesForBridgeOrBond"
+            :options="bridgeOrBondDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
             :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bond')"
-            :invalidMessage="error.selectedDevicesForBond"
+            :invalidMessage="error.selectedDevicesForBridgeOrBond"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
-            ref="selectedDevicesForBondRef"
+            ref="selectedDevicesForBridgeOrBondRef"
           />
           <!-- bonding policy -->
           <NeCombobox
@@ -1201,7 +1160,7 @@ function validate() {
               ['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy)
             "
             v-model="bondPrimaryDevice"
-            :options="selectedDevicesForBond"
+            :options="selectedDevicesForBridgeOrBond"
             :label="t('standalone.interfaces_and_devices.bond_primary_device')"
             :invalidMessage="error.bondPrimaryDevice"
             :noResultsLabel="t('ne_combobox.no_results')"

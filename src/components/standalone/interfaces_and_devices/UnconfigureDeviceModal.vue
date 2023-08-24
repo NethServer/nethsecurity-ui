@@ -15,6 +15,7 @@ import {
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { isEmpty } from 'lodash'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -98,13 +99,23 @@ async function removeInterfaceFromZone() {
     zoneInterfaces = zoneInterfaces.filter((elem: any) => elem !== aliasFound['.name'])
   }
 
-  await ubusCall('uci', 'set', {
-    config: 'firewall',
-    section: sectionName,
-    values: {
-      network: zoneInterfaces
-    }
-  })
+  if (isEmpty(zoneInterfaces)) {
+    // firewall zone is now empty, let's delete it
+    await ubusCall('uci', 'delete', {
+      config: 'firewall',
+      section: sectionName,
+      options: 'network'
+    })
+  } else {
+    // update firewall zone
+    await ubusCall('uci', 'set', {
+      config: 'firewall',
+      section: sectionName,
+      values: {
+        network: zoneInterfaces
+      }
+    })
+  }
 }
 
 async function unconfigureDevice() {

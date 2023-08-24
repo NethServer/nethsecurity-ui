@@ -7,7 +7,7 @@ export function getInterface(deviceOrIface: any, networkConfig: any) {
     return deviceOrIface
   }
 
-  return networkConfig.interface.find((iface: any) => iface.device === deviceOrIface.name)
+  return networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
 }
 
 export function getAliasInterface(device: any, networkConfig: any) {

@@ -7,6 +7,7 @@
 import {
   generateDeviceName,
   getInterface,
+  getName,
   getZoneColor,
   getZoneIcon,
   getZoneLabel,
@@ -252,9 +253,9 @@ const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
   const filteredDevices = internalAllDevices.value.filter(
     (dev: any) =>
       // hide loopback and ifb-dns devices
-      !['lo', 'ifb-dns'].includes(dev.name) &&
+      !['lo', 'ifb-dns'].includes(getName(dev)) &&
       // hide devices used by other bridges or bonds
-      !devicesUsedByOhterBridgesOrBonds.value.includes(dev.name) &&
+      !devicesUsedByOhterBridgesOrBonds.value.includes(getName(dev)) &&
       // hide bridges/bond devices
       !isBridge(dev) &&
       !isBond(dev) &&
@@ -265,7 +266,7 @@ const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
   return filteredDevices.map((dev: any) => {
     // show linked interfaces near device name
     const ifacesFound = props.networkConfig.interface
-      .filter((iface: any) => iface.device === dev.name)
+      .filter((iface: any) => iface.device === getName(dev))
       .map((iface: any) => iface['.name'])
 
     let description = ''
@@ -277,7 +278,7 @@ const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
     }
 
     // bond interfaces have '.name' attribute
-    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
+    return { id: getName(dev), label: getName(dev), description }
   })
 })
 
@@ -285,7 +286,8 @@ const devicesUsedByOhterBridgesOrBonds = computed(() => {
   const usedDevices: any[] = []
   internalAllDevices.value.forEach((dev: any) => {
     // always show devices used by a bridge/bond while editing it
-    if (dev.name != props.device?.name) {
+
+    if (getName(dev) != getName(props.device)) {
       if (isBond(dev)) {
         usedDevices.push(...dev.slaves)
       } else if (isBridge(dev)) {
@@ -1138,6 +1140,7 @@ function validate() {
             :invalidMessage="error.selectedDevicesForBridgeOrBond"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('standalone.interfaces_and_devices.no_devices_available')"
             :disabled="loading.configure"
             ref="selectedDevicesForBridgeOrBondRef"
           />

@@ -58,7 +58,8 @@
   },
   "ne_combobox": {
     "no_results": "No results",
-    "limited_options_label": "Continue typing to show more options"
+    "limited_options_label": "Continue typing to show more options",
+    "no_options_label": "No options available"
   },
   "ne_dropdown": {
     "open_menu": "Open menu"
@@ -269,7 +270,8 @@
       "bond_balance_tlb": "Adaptive transmit load balancing",
       "bond_balance_alb": "Adaptive load balancing",
       "bond_primary_device": "Primary device",
-      "primary_device_not_included": "Primary device must be included in selected devices"
+      "primary_device_not_included": "Primary device must be included in selected devices",
+      "no_devices_available": "No devices available"
     },
     "multi_wan": {
       "title": "MultiWAN",

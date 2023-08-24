@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { isBond, isVlan } from '@/lib/standalone/network'
+import { getName, isBond, isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired, validateVlanId } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -77,7 +77,7 @@ const deviceName = computed(() => {
 const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
   // remove loopback and vlan devices
   const filteredDevices = internalAllDevices.value.filter(
-    (dev: any) => !['lo', 'ifb-dns'].includes(dev.name) && !isVlan(dev)
+    (dev: any) => !['lo', 'ifb-dns'].includes(getName(dev)) && !isVlan(dev)
   )
 
   return filteredDevices.map((dev: any) => {
@@ -95,7 +95,7 @@ const baseDeviceOptions: Ref<NeComboboxOption[]> = computed(() => {
     }
 
     // bond interfaces have '.name' attribute
-    return { id: dev.name || dev['.name'], label: dev.name || dev['.name'], description }
+    return { id: getName(dev), label: getName(dev), description }
   })
 })
 

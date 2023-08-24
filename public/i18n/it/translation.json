@@ -286,7 +286,64 @@
       "devices": "Dispositivi",
       "devices_pl": "Dispositivo | Dispositivi",
       "select_one_or_more_devices": "Seleziona uno o più dispositivi",
-      "select_devices_for_bridge": "Seleziona i dispositivi da collegare al bridge"
+      "select_devices_for_bridge": "Seleziona i dispositivi da collegare al bridge",
+      "enter_a_hexadecimal_string": "Inserire una stringa esadecimale",
+      "bond_active_backup": "Active-backup",
+      "bond_balance_tlb": "Adaptive transmit load balancing",
+      "bond_primary_device": "Dispositivo primario",
+      "primary_device_not_included": "Il dispositivo primario deve appartenere ai dispositivi selezionati",
+      "select_devices_for_bond": "Seleziona i dispositivi da collegare al bond",
+      "bonding_policy": "Modalità",
+      "bond_balance_xor": "XOR",
+      "bond_broadcast": "Broadcast",
+      "bond_8023ad": "802.3ad Dynamic link aggregation",
+      "bond_balance_alb": "Adaptive load balancing",
+      "bond_balance_rr": "Round-robin"
+    },
+    "multi_wan": {
+      "create_rule": "Crea regola",
+      "hours": "{n} ora | {n} ore",
+      "ping_timeout": "Timeout ping",
+      "ping_interval": "Intervallo ping",
+      "title": "MultiWAN",
+      "tabs": {
+        "multi_wan_manager": "Gestione MultiWAN",
+        "general_settings": "Impostazioni generali"
+      },
+      "no_policy_found": "Nessuna policy trovata",
+      "create_default_policy": "Crea policy di default",
+      "rules": "Regole",
+      "no_rule_found": "Nessuna regola trovata",
+      "behave_picker": {
+        "choose_behaviour": "Scegli comportamento",
+        "custom": "Personalizzata (3+ gateways)",
+        "balance": "Bilanciamento",
+        "backup": "Backup",
+        "choose_behaviour_sr": "Comportamento policy"
+      },
+      "gateways_in_balance": "Gateway in bilanciamento",
+      "add_gateway": "Aggiungi gateway",
+      "policy": "Policy",
+      "label_input_label": "Etichetta",
+      "modes": {
+        "balance": "Bilanciamento",
+        "backup": "Backup",
+        "custom": "Personalizzata"
+      },
+      "choose_gateway": "Gateway",
+      "create_policy": "Crea policy {name}",
+      "rules_description": "L'ordine è importante: la valutazione delle regole continua dopo un match. La rotta assegnata corrisponde all'ultimo match.",
+      "priority": "Priorità {n}",
+      "seconds": "{n} secondo | {n} secondi",
+      "tracking_hostnames_or_ips": "Nome host o indirizzo IP di tracciamento",
+      "no_hostnames_or_ips": "Nessun nome host o indirizzo IP tracciato di default, clicca qui sotto per aggiungere dei valori di default.",
+      "minutes": "{n} minuto | {n} minuti",
+      "ping_failure_interval": "Intervallo di fallimento",
+      "add_hostname_or_ip": "Aggiungi nome host o IP",
+      "ping_test": "{n} test ping | {n} test ping",
+      "interface_down": "Interfaccia spenta",
+      "interface_up": "Interfaccia accesa",
+      "weight": "Peso"
     }
   },
   "controller": {

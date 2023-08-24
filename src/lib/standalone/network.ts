@@ -109,3 +109,11 @@ export function generateDeviceName(devicePrefix: string, networkConfig: any) {
 
   return deviceNameGenerated
 }
+
+export function getName(deviceOrIface: any) {
+  if (deviceOrIface['.type'] === 'interface') {
+    return deviceOrIface['.name']
+  } else {
+    return deviceOrIface.name
+  }
+}

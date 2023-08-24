@@ -25,7 +25,8 @@ import {
   getAliasInterface,
   isVlan,
   isBridge,
-  isBond
+  isBond,
+  getName
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -110,6 +111,9 @@ const allDevices: any = computed(() => {
     }
   )
   let devices = networkDevices.concat(ifacesWithoutDevice).concat(filteredPhysicalDevices)
+
+  console.log('allDevices', allDevices) ////
+
   return devices
 })
 
@@ -125,8 +129,7 @@ const devicesToDisplay: any = computed(() => {
       devicesUsedByBridgesOrBonds.push(...dev.ports)
     }
   })
-
-  return allDevices.value.filter((dev: any) => !devicesUsedByBridgesOrBonds.includes(dev.name))
+  return allDevices.value.filter((dev: any) => !devicesUsedByBridgesOrBonds.includes(getName(dev)))
 })
 
 const sortedZonesAndDevices: any = computed(() => {

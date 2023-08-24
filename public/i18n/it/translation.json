@@ -298,7 +298,8 @@
       "bond_broadcast": "Broadcast",
       "bond_8023ad": "802.3ad Dynamic link aggregation",
       "bond_balance_alb": "Adaptive load balancing",
-      "bond_balance_rr": "Round-robin"
+      "bond_balance_rr": "Round-robin",
+      "no_devices_available": "Nessun dispositivo disponibile"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -367,7 +368,8 @@
   },
   "ne_combobox": {
     "no_results": "Nessun risultato",
-    "limited_options_label": "Continuare a digitare per altre opzioni"
+    "limited_options_label": "Continuare a digitare per altre opzioni",
+    "no_options_label": "Nessuna opzione disponibile"
   },
   "ne_dropdown": {
     "open_menu": "Apri menu"

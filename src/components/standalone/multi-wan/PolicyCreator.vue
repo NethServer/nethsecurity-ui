@@ -105,7 +105,7 @@ const labelElement = ref<HTMLInputElement | null>(null)
 /**
  * Weather the button should be disabled or not once deletion.
  */
-const isTrashButtonDisabled = computed<Boolean>(() => {
+const isTrashButtonDisabled = computed<boolean>(() => {
   if (form.value.selection == 'balance') {
     return form.value.priorities[0].length < 3
   } else if (form.value.selection == 'backup') {

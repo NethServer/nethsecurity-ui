@@ -4,12 +4,17 @@ import { genericValueComparator, useMwanConfig } from '@/composables/useMwanConf
 import NeTable from '@/components/standalone/NeTable.vue'
 import { reactive, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import type { AxiosError } from 'axios'
-import { getAxiosErrorMessage, NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import {
+  getAxiosErrorMessage,
+  NeButton,
+  NeDropdown,
+  NeInlineNotification
+} from '@nethserver/vue-tailwind-lib'
 
 const { t } = useI18n()
 
@@ -46,7 +51,8 @@ const headers = [
 ]
 
 defineEmits<{
-  editRule: [rule: Rule]
+  edit: [rule: Rule]
+  delete: [rule: Rule]
 }>()
 
 const mwanConfig = reactive(useMwanConfig())
@@ -140,9 +146,25 @@ function saveState(): void {
               {{ item.protocol }}
             </td>
             <td>
-              <NeButton kind="secondary" @click="$emit('editRule', item)">
-                {{ t('Edit') }}
-              </NeButton>
+              <div class="flex justify-start gap-2">
+                <NeButton kind="tertiary" @click="$emit('edit', item)">
+                  <template #prefix>
+                    <FontAwesomeIcon :icon="['fas', 'edit']" />
+                  </template>
+                  {{ t('Edit') }}
+                </NeButton>
+                <NeDropdown
+                  align-to-right
+                  :items="[
+                    {
+                      id: 'delete',
+                      action: () => $emit('delete', item),
+                      label: t('common.delete'),
+                      disabled: item.name == 'DefaultRule'
+                    }
+                  ]"
+                />
+              </div>
             </td>
           </tr>
         </template>

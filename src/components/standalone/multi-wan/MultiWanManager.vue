@@ -8,7 +8,14 @@ import { useI18n } from 'vue-i18n'
 import { reactive, ref } from 'vue'
 import type { Rule } from '@/composables/useMwanConfig'
 import { useMwanConfig } from '@/composables/useMwanConfig'
-import { NeButton, NeSideDrawer, NeSkeleton } from '@nethserver/vue-tailwind-lib'
+import {
+  getAxiosErrorMessage,
+  NeButton,
+  NeInlineNotification,
+  NeModal,
+  NeSideDrawer,
+  NeSkeleton
+} from '@nethserver/vue-tailwind-lib'
 import PolicyManager from '@/components/standalone/multi-wan/PolicyManager.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -18,6 +25,8 @@ import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
 import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosError } from 'axios'
 
 const { t } = useI18n()
 
@@ -27,6 +36,9 @@ const uciPendingChangesStore = useUciPendingChangesStore()
 const createPolicy = ref(false)
 const createRule = ref(false)
 const editRule = ref<Rule>()
+const deleteRule = ref<Rule>()
+const deletingRule = ref(false)
+const errorDeletingRule = ref<Error>()
 
 /**
  * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
@@ -62,6 +74,20 @@ function reloadConfig() {
   mwanConfig.fetch()
   ruleTimestamp.value = Date.now()
   uciPendingChangesStore.getChanges()
+}
+
+function deleteRuleHandler() {
+  deletingRule.value = true
+  ubusCall('uc', 'delete', {
+    config: 'mwan3',
+    section: deleteRule.value?.name
+  })
+    .then(() => {
+      deleteRule.value = undefined
+      reloadConfig()
+    })
+    .catch((error: AxiosError) => (errorDeletingRule.value = error))
+    .finally(() => (deletingRule.value = false))
 }
 </script>
 
@@ -129,7 +155,11 @@ function reloadConfig() {
           </NeButton>
         </div>
         <div>
-          <RuleManager :key="ruleTimestamp" @edit-rule="(toEditRule) => (editRule = toEditRule)" />
+          <RuleManager
+            :key="ruleTimestamp"
+            @delete="(toDeleteRule) => (deleteRule = toDeleteRule)"
+            @edit="(toEditRule) => (editRule = toEditRule)"
+          />
         </div>
       </div>
     </div>
@@ -156,4 +186,22 @@ function reloadConfig() {
       <RuleEditor :rule="editRule" @cancel="editRule = undefined" @success="ruleEditedHandler()" />
     </template>
   </NeSideDrawer>
+  <!-- TODO: ask for labels for rule delete modal -->
+  <NeModal
+    :primary-button-disabled="deletingRule"
+    :primary-button-loading="deletingRule"
+    :primary-label="t('standalone.multi_wan.delete_rule_modal.button')"
+    :title="t('standalone.multi_wan.delete_rule_modal.title', { name: deleteRule?.name ?? '' })"
+    :visible="deleteRule != undefined"
+    kind="warning"
+    primary-button-kind="danger"
+    @close="deleteRule = undefined"
+    @primary-click="deleteRuleHandler()"
+  >
+    <NeInlineNotification
+      v-if="errorDeletingRule"
+      :title="t(getAxiosErrorMessage(errorDeletingRule.message))"
+      kind="error"
+    />
+  </NeModal>
 </template>

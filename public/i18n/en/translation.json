@@ -326,7 +326,10 @@
       "ping_failure_interval": "Failure interval",
       "ping_test": "{n} ping test | {n} ping tests",
       "interface_down": "Interface down",
-      "interface_up": "Interface up"
+      "interface_up": "Interface up",
+      "delete_rule_modal": {
+        "button": "@:common.delete"
+      }
     },
     "users_and_objects": {
       "title": "Users & objects"

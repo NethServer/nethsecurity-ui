@@ -304,12 +304,11 @@ function createPolicy() {
       })
     )
     // if this is the default policy, create a default rule too
-    // TODO: Rule name?
     if (props.createDefault) {
       calls.push(
         ubusCall('uci', 'add', {
           config: 'mwan3',
-          name: 'All',
+          name: 'DefaultRule',
           type: 'rule',
           values: {
             proto: 'all',

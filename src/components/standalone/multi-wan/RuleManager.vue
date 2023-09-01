@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import type { AxiosError } from 'axios'
-import { getAxiosErrorMessage, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import { getAxiosErrorMessage, NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 
 const { t } = useI18n()
 
@@ -38,8 +38,16 @@ const headers = [
   {
     label: 'Protocol',
     key: 'protocol'
+  },
+  {
+    label: 'Actions',
+    key: 'actions'
   }
 ]
+
+defineEmits<{
+  editRule: [rule: Rule]
+}>()
 
 const mwanConfig = reactive(useMwanConfig())
 const data = ref<Array<Rule>>([])
@@ -49,9 +57,7 @@ const ruleDragged = ref<number>()
 const indexOver = ref<number>()
 
 watch(mwanConfig, () => {
-  if (!mwanConfig.loading && mwanConfig.error == undefined) {
-    data.value = mwanConfig.rules
-  }
+  data.value = mwanConfig.rules
 })
 
 function drop(index: number): void {
@@ -86,6 +92,7 @@ function saveState(): void {
     {{ error.message }}
   </NeInlineNotification>
   <NeTable
+    v-else
     :data="data"
     :headers="headers"
     :loading="mwanConfig.loading"
@@ -131,6 +138,11 @@ function saveState(): void {
             </td>
             <td>
               {{ item.protocol }}
+            </td>
+            <td>
+              <NeButton kind="secondary" @click="$emit('editRule', item)">
+                {{ t('Edit') }}
+              </NeButton>
             </td>
           </tr>
         </template>

@@ -6,8 +6,9 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { reactive, ref } from 'vue'
+import type { Rule } from '@/composables/useMwanConfig'
 import { useMwanConfig } from '@/composables/useMwanConfig'
-import { NeButton, NeSkeleton } from '@nethserver/vue-tailwind-lib'
+import { NeButton, NeSideDrawer, NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import PolicyManager from '@/components/standalone/multi-wan/PolicyManager.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -15,6 +16,8 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
 import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
+import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
 
 const { t } = useI18n()
 
@@ -22,19 +25,42 @@ const mwanConfig = reactive(useMwanConfig())
 const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createPolicy = ref(false)
+const createRule = ref(false)
+const editRule = ref<Rule>()
 
 /**
  * Handler for policyCreated event.
  */
 function policyCreatedHandler() {
   createPolicy.value = false
+  reloadConfig()
+}
+
+/**
+ * Handler for the ruleCreated event.
+ */
+function ruleCreatedHandler() {
+  createRule.value = false
+  reloadConfig()
+}
+
+/**
+ * Rule Created Handler
+ */
+function ruleEditedHandler() {
+  editRule.value = undefined
+  reloadConfig()
+}
+
+function reloadConfig() {
   mwanConfig.fetch()
   uciPendingChangesStore.getChanges()
 }
 </script>
 
 <template>
-  <div class="space-y-16">
+  <NeSkeleton v-if="mwanConfig.loading" :lines="10" />
+  <div v-else class="space-y-16">
     <div class="space-y-8">
       <div class="flex">
         <div>
@@ -46,9 +72,9 @@ function policyCreatedHandler() {
           </p>
         </div>
         <NeButton
-          class="ml-auto self-start"
           v-if="mwanConfig.policies.length >= 1"
           :kind="'secondary'"
+          class="ml-auto self-start"
           @click="createPolicy = true"
         >
           <template #prefix>
@@ -79,24 +105,48 @@ function policyCreatedHandler() {
     </div>
     <div v-if="mwanConfig.policies.length > 0">
       <div class="space-y-6">
-        <div>
-          <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
-            {{ t('standalone.multi_wan.rules') }}
-          </h6>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ t('standalone.multi_wan.rules_description') }}
-          </p>
+        <div class="flex">
+          <div>
+            <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
+              {{ t('standalone.multi_wan.rules') }}
+            </h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              {{ t('standalone.multi_wan.rules_description') }}
+            </p>
+          </div>
+          <NeButton :kind="'secondary'" class="ml-auto self-start" @click="createRule = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" />
+            </template>
+            {{ t('standalone.multi_wan.create_rule') }}
+          </NeButton>
         </div>
         <div>
-          <RuleManager />
+          <RuleManager @edit-rule="(toEditRule) => (editRule = toEditRule)" />
         </div>
       </div>
     </div>
   </div>
   <PolicyCreator
+    :create-default="mwanConfig.policies.length < 1"
     :is-shown="createPolicy"
     @close="createPolicy = false"
-    :create-default="mwanConfig.policies.length < 1"
     @policy-created="policyCreatedHandler()"
   />
+  <NeSideDrawer
+    :is-shown="createRule"
+    :title="t('standalone.multi_wan.create_new_rule')"
+    @close="createRule = false"
+  >
+    <RuleCreator @cancel-creation="createRule = false" @rule-created="ruleCreatedHandler()" />
+  </NeSideDrawer>
+  <NeSideDrawer
+    :is-shown="editRule != undefined"
+    :title="t('standalone.multi_wan.edit_rule', { name: editRule?.name })"
+    @close="editRule = undefined"
+  >
+    <template v-if="editRule != undefined">
+      <RuleEditor :rule="editRule" @cancel="editRule = undefined" @success="ruleEditedHandler()" />
+    </template>
+  </NeSideDrawer>
 </template>

@@ -29,6 +29,12 @@ const createRule = ref(false)
 const editRule = ref<Rule>()
 
 /**
+ * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
+ * the component. This variable is keyed to RuleManager so, when it gets updated, triggers a redraw of the component.
+ */
+const ruleTimestamp = ref(Date.now())
+
+/**
  * Handler for policyCreated event.
  */
 function policyCreatedHandler() {
@@ -54,6 +60,7 @@ function ruleEditedHandler() {
 
 function reloadConfig() {
   mwanConfig.fetch()
+  ruleTimestamp.value = Date.now()
   uciPendingChangesStore.getChanges()
 }
 </script>
@@ -122,7 +129,7 @@ function reloadConfig() {
           </NeButton>
         </div>
         <div>
-          <RuleManager @edit-rule="(toEditRule) => (editRule = toEditRule)" />
+          <RuleManager :key="ruleTimestamp" @edit-rule="(toEditRule) => (editRule = toEditRule)" />
         </div>
       </div>
     </div>

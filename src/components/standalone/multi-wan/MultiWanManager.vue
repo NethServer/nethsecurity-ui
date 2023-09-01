@@ -16,7 +16,6 @@ import {
   NeSideDrawer,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
-import PolicyManager from '@/components/standalone/multi-wan/PolicyManager.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
@@ -27,6 +26,7 @@ import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
 import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
+import PolicyView from '@/components/standalone/multi-wan/PolicyView.vue'
 
 const { t } = useI18n()
 
@@ -119,7 +119,7 @@ function deleteRuleHandler() {
       <div class="space-y-6">
         <NeSkeleton v-if="mwanConfig.loading" :lines="3" :size="'sm'" />
         <template v-else-if="mwanConfig.policies.length > 0">
-          <PolicyManager
+          <PolicyView
             v-for="(policy, index) in mwanConfig.policies"
             :key="index"
             :policy="policy"

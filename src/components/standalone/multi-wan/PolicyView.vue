@@ -141,8 +141,8 @@ function badgeType(member: Member) {
               <NeBadge
                 :icon="badgeIcon(member)"
                 :kind="badgeType(member)"
-                :text="member.interface.name"
                 :label="members.length > 1 ? `weight: ${member.weight}` : ''"
+                :text="member.interface.name"
               />
             </div>
           </div>

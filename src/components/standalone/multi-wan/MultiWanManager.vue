@@ -145,7 +145,7 @@ function reloadConfig() {
     :title="t('standalone.multi_wan.create_new_rule')"
     @close="createRule = false"
   >
-    <RuleCreator @cancel-creation="createRule = false" @rule-created="ruleCreatedHandler()" />
+    <RuleCreator @cancel="createRule = false" @success="ruleCreatedHandler()" />
   </NeSideDrawer>
   <NeSideDrawer
     :is-shown="editRule != undefined"

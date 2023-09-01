@@ -17,7 +17,7 @@ import { MessageBag } from '@/lib/validation'
 
 const { t } = useI18n()
 
-const emit = defineEmits(['cancelCreation', 'ruleCreated'])
+const emit = defineEmits(['cancel', 'success'])
 
 const { protocolOptions, policyOptions, error: policyError, loading: policyLoading } = useRuleForm()
 
@@ -58,7 +58,7 @@ function save() {
       }
     })
       .then(() => {
-        emit('ruleCreated')
+        emit('success')
       })
       .catch((error: AxiosError) => (saveError.value = new Error(t(getAxiosErrorMessage(error)))))
       .finally(() => (saving.value = false))
@@ -111,7 +111,7 @@ function save() {
     />
     <hr />
     <div class="flex justify-end gap-4">
-      <NeButton :disabled="saving" :kind="'secondary'" @click="emit('cancelCreation')">
+      <NeButton :disabled="saving" :kind="'secondary'" @click="emit('cancel')">
         {{ t('common.cancel') }}
       </NeButton>
       <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">

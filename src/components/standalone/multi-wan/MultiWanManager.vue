@@ -6,7 +6,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { reactive, ref } from 'vue'
-import type { Rule } from '@/composables/useMwanConfig'
+import type { Policy, Rule } from '@/composables/useMwanConfig'
 import { useMwanConfig } from '@/composables/useMwanConfig'
 import {
   getAxiosErrorMessage,
@@ -39,6 +39,9 @@ const editRule = ref<Rule>()
 const deleteRule = ref<Rule>()
 const deletingRule = ref(false)
 const errorDeletingRule = ref<Error>()
+const deletePolicy = ref<Policy>()
+const deletingPolicy = ref(false)
+const errorDeletingPolicy = ref<Error>()
 
 /**
  * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
@@ -89,6 +92,20 @@ function deleteRuleHandler() {
     .catch((error: AxiosError) => (errorDeletingRule.value = error))
     .finally(() => (deletingRule.value = false))
 }
+
+function deletePolicyHandler() {
+  deletingPolicy.value = true
+  ubusCall('uci', 'delete', {
+    config: 'mwan3',
+    section: deletePolicy.value?.name
+  })
+    .then(() => {
+      deletePolicy.value = undefined
+      reloadConfig()
+    })
+    .catch((error: AxiosError) => (errorDeletingPolicy.value = error))
+    .finally(() => (deletingPolicy.value = false))
+}
 </script>
 
 <template>
@@ -122,7 +139,9 @@ function deleteRuleHandler() {
           <PolicyView
             v-for="(policy, index) in mwanConfig.policies"
             :key="index"
+            :belongs-to-rule="mwanConfig.rules.some((rule) => rule.policy.name == policy.name)"
             :policy="policy"
+            @delete="(toDeletePolicy) => (deletePolicy = toDeletePolicy)"
           />
         </template>
         <HorizontalCard v-else class="space-y-4 text-center">
@@ -201,6 +220,24 @@ function deleteRuleHandler() {
     <NeInlineNotification
       v-if="errorDeletingRule"
       :title="t(getAxiosErrorMessage(errorDeletingRule.message))"
+      kind="error"
+    />
+  </NeModal>
+  <!-- TODO: ask for labels for policy delete modal -->
+  <NeModal
+    :primary-button-disabled="deletingPolicy"
+    :primary-button-loading="deletingPolicy"
+    :primary-label="t('standalone.multi_wan.delete_policy_modal.button')"
+    :title="t('standalone.multi_wan.delete_policy_modal.title', { name: deletePolicy?.name ?? '' })"
+    :visible="deletePolicy != undefined"
+    kind="warning"
+    primary-button-kind="danger"
+    @close="deletePolicy = undefined"
+    @primary-click="deletePolicyHandler()"
+  >
+    <NeInlineNotification
+      v-if="errorDeletingPolicy"
+      :title="t(getAxiosErrorMessage(errorDeletingPolicy.message))"
       kind="error"
     />
   </NeModal>

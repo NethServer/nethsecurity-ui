@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useMwanStatus } from '@/composables/useMwanStatus'
 import type { PropType } from 'vue'
 import { computed, reactive } from 'vue'
-import { NeBadge } from '@nethserver/vue-tailwind-lib'
+import { NeBadge, NeDropdown } from '@nethserver/vue-tailwind-lib'
 
 enum PolicyType {
   BALANCED,
@@ -23,8 +23,16 @@ const props = defineProps({
   policy: {
     type: Object as PropType<Policy>,
     required: true
+  },
+  belongsToRule: {
+    type: Boolean,
+    required: true
   }
 })
+
+defineEmits<{
+  delete: [policy: Policy]
+}>()
 
 const { t } = useI18n()
 
@@ -147,6 +155,19 @@ function badgeType(member: Member) {
             </div>
           </div>
         </div>
+      </div>
+      <div class="flex items-center">
+        <NeDropdown
+          :items="[
+            {
+              id: 'delete',
+              label: t('common.delete'),
+              disabled: policy.name == 'Default' || belongsToRule,
+              action: () => $emit('delete', policy)
+            }
+          ]"
+          align-to-right
+        />
       </div>
     </div>
   </HorizontalCard>

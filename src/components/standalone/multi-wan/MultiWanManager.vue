@@ -78,7 +78,7 @@ function reloadConfig() {
 
 function deleteRuleHandler() {
   deletingRule.value = true
-  ubusCall('uc', 'delete', {
+  ubusCall('uci', 'delete', {
     config: 'mwan3',
     section: deleteRule.value?.name
   })

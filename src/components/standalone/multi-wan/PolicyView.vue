@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useMwanStatus } from '@/composables/useMwanStatus'
 import type { PropType } from 'vue'
 import { computed, reactive } from 'vue'
-import { NeBadge, NeDropdown } from '@nethserver/vue-tailwind-lib'
+import { NeBadge, NeButton, NeDropdown } from '@nethserver/vue-tailwind-lib'
 
 enum PolicyType {
   BALANCED,
@@ -32,6 +32,7 @@ const props = defineProps({
 
 defineEmits<{
   delete: [policy: Policy]
+  edit: [policy: Policy]
 }>()
 
 const { t } = useI18n()
@@ -138,7 +139,7 @@ function badgeType(member: Member) {
       </div>
       <div
         v-if="!mwanStatus.loading"
-        class="flex basis-full flex-col justify-center gap-y-6 md:basis-5/12 xl:w-3/12"
+        class="flex basis-full flex-col justify-center gap-y-6 md:basis-4/12 xl:w-3/12"
       >
         <div v-for="([metric, members], membersIndex) in membersGrouped" :key="metric">
           <div v-if="membersGrouped.size > 1" class="mb-2">
@@ -156,7 +157,13 @@ function badgeType(member: Member) {
           </div>
         </div>
       </div>
-      <div class="flex items-center">
+      <div class="ml-auto flex items-center">
+        <NeButton :kind="'tertiary'" @click="$emit('edit', policy)">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'edit']" />
+          </template>
+          {{ t('common.edit') }}
+        </NeButton>
         <NeDropdown
           :items="[
             {

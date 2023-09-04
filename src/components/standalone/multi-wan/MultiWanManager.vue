@@ -27,6 +27,7 @@ import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
 import PolicyView from '@/components/standalone/multi-wan/PolicyView.vue'
+import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
 
 const { t } = useI18n()
 
@@ -34,14 +35,16 @@ const mwanConfig = reactive(useMwanConfig())
 const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createPolicy = ref(false)
+const deletePolicy = ref<Policy>()
+const deletingPolicy = ref(false)
+const errorDeletingPolicy = ref<Error>()
+const editPolicy = ref<Policy>()
+
 const createRule = ref(false)
 const editRule = ref<Rule>()
 const deleteRule = ref<Rule>()
 const deletingRule = ref(false)
 const errorDeletingRule = ref<Error>()
-const deletePolicy = ref<Policy>()
-const deletingPolicy = ref(false)
-const errorDeletingPolicy = ref<Error>()
 
 /**
  * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
@@ -54,6 +57,14 @@ const ruleTimestamp = ref(Date.now())
  */
 function policyCreatedHandler() {
   createPolicy.value = false
+  reloadConfig()
+}
+
+/**
+ * Handler for policy edited with success event.
+ */
+function policyEditedHandler() {
+  editPolicy.value = undefined
   reloadConfig()
 }
 
@@ -142,6 +153,7 @@ function deletePolicyHandler() {
             :belongs-to-rule="mwanConfig.rules.some((rule) => rule.policy.name == policy.name)"
             :policy="policy"
             @delete="(toDeletePolicy) => (deletePolicy = toDeletePolicy)"
+            @edit="(toEditPolicy) => (editPolicy = toEditPolicy)"
           />
         </template>
         <HorizontalCard v-else class="space-y-4 text-center">
@@ -189,6 +201,18 @@ function deletePolicyHandler() {
     @close="createPolicy = false"
     @policy-created="policyCreatedHandler()"
   />
+  <NeSideDrawer
+    :is-shown="editPolicy != undefined"
+    :title="t('standalone.multi_wan.edit_policy')"
+    @close="editPolicy = undefined"
+  >
+    <PolicyEditor
+      v-if="editPolicy"
+      :policy="editPolicy"
+      @cancel="editPolicy = undefined"
+      @success="policyEditedHandler()"
+    />
+  </NeSideDrawer>
   <NeSideDrawer
     :is-shown="createRule"
     :title="t('standalone.multi_wan.create_new_rule')"

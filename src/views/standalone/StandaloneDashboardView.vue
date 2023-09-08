@@ -4,10 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeBadge } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { savePreference } from '@nethserver/vue-tailwind-lib'
+import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
+import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
+import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
+
+//// remove all mocks
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
@@ -27,5 +32,69 @@ async function changeLocale(lang: string) {
   <div class="mb-8">
     <NeButton size="lg" @click="changeLocale('it')" class="mb-4 mr-4">ITA</NeButton>
     <NeButton size="lg" @click="changeLocale('en')" class="mb-4">ENG</NeButton>
+  </div>
+
+  <!-- system -->
+  <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
+    <SystemInfoCard class="sm:col-span-2 xl:row-span-2" />
+    <!-- internet connection -->
+    <ServiceCard
+      serviceName="internet"
+      hasStatus
+      :title="t('standalone.dashboard.internet_connection')"
+      :icon="['fas', 'earth-americas']"
+    />
+    <!-- multiwan -->
+    <ServiceCard
+      serviceName="mwan"
+      hasStatus
+      :title="t('standalone.dashboard.multiwan')"
+      :icon="['fas', 'earth-americas']"
+      titleLink="network/multi-wan"
+    />
+    <!-- dpi-core -->
+    <ServiceCard
+      serviceName="netifyd"
+      hasStatus
+      :title="t('standalone.dashboard.dpi_core')"
+      :icon="['fas', 'bolt']"
+    />
+    <!-- banIP -->
+    <ServiceCard
+      serviceName="banip"
+      hasStatus
+      :title="t('standalone.dashboard.ban_ip')"
+      :icon="['fas', 'ban']"
+    />
+    <!-- adblock dns -->
+    <ServiceCard
+      serviceName="adblock"
+      hasStatus
+      :title="t('standalone.dashboard.adblock_dns')"
+      :icon="['fas', 'ban']"
+    />
+    <!-- threat shield ip -->
+    <ServiceCard
+      serviceName="threat_shield_ip"
+      hasStatus
+      :title="t('standalone.dashboard.thread_shield_ip')"
+      :icon="['fas', 'shield']"
+    />
+    <!-- threat shield dns -->
+    <ServiceCard
+      serviceName="threat_shield_dns"
+      hasStatus
+      :title="t('standalone.dashboard.thread_shield_dns')"
+      :icon="['fas', 'shield']"
+    />
+    <!-- known hosts -->
+    <ServiceCard
+      serviceName="hosts"
+      hasCounter
+      :title="t('standalone.dashboard.known_hosts')"
+      :icon="['fas', 'circle-info']"
+    />
+    <!-- realtime traffic -->
+    <RealTimeTrafficCard class="sm:col-span-2" />
   </div>
 </template>

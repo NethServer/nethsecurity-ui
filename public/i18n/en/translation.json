@@ -46,7 +46,10 @@
     "invalid_hexadecimal_string": "Invalid hexadecimal string",
     "maximum_num_characters_allowed": "Maximum {num} characters allowed",
     "invalid_vlan_id": "Enter an integer number between 1 and 4094",
-    "cannot_create_device": "Cannot create device"
+    "cannot_create_device": "Cannot create device",
+    "cannot_retrieve_realtime_traffic": "Cannot retrieve realtime traffic",
+    "cannot_retrieve_system_info": "Cannot retrieve system info",
+    "cannot_retrieve_service_status": "Cannot retrieve service status"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -63,6 +66,9 @@
   },
   "ne_dropdown": {
     "open_menu": "Open menu"
+  },
+  "ne_table": {
+    "no_items": "No items"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -88,7 +94,27 @@
       "close_side_drawer": "Close side drawer"
     },
     "dashboard": {
-      "title": "Dashboard"
+      "title": "Dashboard",
+      "system": "System",
+      "internet_connection": "Internet connection",
+      "hostname": "Hostname",
+      "operating_system": "Operating system",
+      "uptime": "Uptime",
+      "load_minutes": "Load 1 / 5 / 15 minutes",
+      "active": "Active",
+      "inactive": "Inactive",
+      "warning": "Warning",
+      "unknown": "Unknown",
+      "multiwan": "MultiWAN",
+      "dpi_core": "DPI-core",
+      "ban_ip": "BanIP",
+      "adblock_dns": "Adblock DNS",
+      "thread_shield_ip": "Threat Shield IP",
+      "thread_shield_dns": "Threat Shield DNS",
+      "known_hosts": "Known hosts",
+      "real_time_traffic": "Real time traffic",
+      "host": "Host",
+      "traffic": "Traffic"
     },
     "registration": {
       "title": "Registration"

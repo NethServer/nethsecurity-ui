@@ -60,17 +60,36 @@ defineProps({
     default: false
   },
   /**
+   * Number of lines shown for the loading skeleton
+   */
+  skeletonLines: {
+    type: Number,
+    default: 10
+  },
+  /**
    * Styling of the table.
    */
   style: {
     type: String as PropType<TableStyle>,
     default: 'basic'
+  },
+  /**
+   * Hide border and header background
+   */
+  ghost: {
+    type: Boolean
+  },
+  /**
+   * Reduce vertical padding of rows
+   */
+  condensed: {
+    type: Boolean
   }
 })
 </script>
 
 <template>
-  <div :class="['table-' + style, { 'read-only': readonly }]">
+  <div :class="['table-' + style, { ghost: ghost, condensed: condensed, 'read-only': readonly }]">
     <table v-bind="$attrs" :class="$attrs">
       <slot name="thead">
         <thead>
@@ -86,7 +105,7 @@ defineProps({
           <template v-if="loading">
             <tr>
               <td :colspan="headers.length">
-                <NeSkeleton :lines="10" />
+                <NeSkeleton :lines="skeletonLines" />
               </td>
             </tr>
           </template>
@@ -104,7 +123,7 @@ defineProps({
             </template>
             <template v-else>
               <tr>
-                <td :colspan="headers.length">{{ t('No element.') }}</td>
+                <td :colspan="headers.length">{{ t('ne_table.no_items') }}</td>
               </tr>
             </template>
           </template>
@@ -124,12 +143,20 @@ table {
   @apply -mx-4 overflow-hidden overflow-x-auto border-y border-gray-300 dark:border-gray-600 sm:mx-0 sm:rounded-lg sm:border-x;
 }
 
+.table-basic.ghost {
+  @apply border-transparent dark:border-transparent;
+}
+
 .table-basic table {
   @apply divide-y divide-gray-300 dark:divide-gray-600;
 }
 
 .table-basic thead {
   @apply hidden bg-gray-100 dark:bg-gray-800 md:table-header-group;
+}
+
+.table-basic.ghost thead {
+  @apply bg-transparent dark:bg-transparent;
 }
 
 .table-basic.read-only thead {
@@ -145,11 +172,27 @@ table {
 }
 
 .table-basic th {
-  @apply whitespace-nowrap px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-50;
+  @apply whitespace-nowrap px-6 pb-3 pt-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-50;
+}
+
+.table-basic.condensed th {
+  @apply px-4 pb-2 pt-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50;
+}
+
+.table-basic.ghost th {
+  @apply px-0;
 }
 
 .table-basic td {
-  @apply whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200;
+  @apply whitespace-nowrap px-6 py-4 text-sm text-gray-700 dark:text-gray-200;
+}
+
+.table-basic.condensed td {
+  @apply px-4 py-2;
+}
+
+.table-basic.ghost td {
+  @apply px-0;
 }
 
 /* Card style CSS. */
@@ -167,5 +210,9 @@ table {
 
 .table-card td {
   @apply bg-gray-100 px-6 py-4 first-of-type:rounded-l-md last-of-type:rounded-r-md dark:bg-gray-800;
+}
+
+.table-card.condensed td {
+  @apply px-4 py-2;
 }
 </style>

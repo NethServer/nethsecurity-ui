@@ -26,7 +26,8 @@ import {
   isVlan,
   isBridge,
   isBond,
-  getName
+  getName,
+  isBondDevice
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -76,21 +77,6 @@ const isLoading = computed(() => {
   return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
 })
 
-const devicesUsedByBridgesOrBonds = computed(() => {
-  const usedDevices: any[] = []
-
-  if (!isEmpty(allDevices.value)) {
-    allDevices.value.forEach((dev: any) => {
-      if (isBond(dev)) {
-        usedDevices.push(...dev.slaves)
-      } else if (isBridge(dev)) {
-        usedDevices.push(...dev.ports)
-      }
-    })
-  }
-  return usedDevices
-})
-
 const allDevices: any = computed(() => {
   const networkDevices = networkConfig.value.device || []
 
@@ -106,7 +92,9 @@ const allDevices: any = computed(() => {
           (networkDev: any) => networkDev.name === physicalDev.name
         ) &&
         // hide unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
-        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value))
+        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value)) &&
+        // hide unconfigured bond devices (they would appear after committing bond creation)
+        !isBondDevice(physicalDev)
       )
     }
   )
@@ -260,6 +248,8 @@ async function getPhysicalDevices() {
       }
     }
     physicalDevices.value = devices
+
+    console.log('physicalDevices', physicalDevices.value) ////
 
     // alias visibility
 
@@ -547,6 +537,16 @@ function getIpv4Addresses(device: any) {
     for (const ipv4 of device.ipaddrs) {
       ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
     }
+  } else {
+    // ip addresses from physical device
+
+    const physicalDev = physicalDevices.value[device.name]
+
+    if (physicalDev) {
+      for (const ipv4 of physicalDev.ipaddrs) {
+        ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
+      }
+    }
   }
 
   // interface ip address
@@ -558,6 +558,11 @@ function getIpv4Addresses(device: any) {
 }
 
 function getIpv6Addresses(device: any) {
+  // ensure ipv6 is enabled
+  if (device.ipv6 !== '1') {
+    return
+  }
+
   const ipv6Addresses = []
   const iface = getInterface(device, networkConfig.value)
   const proto = getProtocolLabel(iface?.proto)
@@ -568,6 +573,16 @@ function getIpv6Addresses(device: any) {
     for (const ipv6 of device.ip6addrs) {
       ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
     }
+  } else {
+    // ip addresses from physical device
+
+    const physicalDev = physicalDevices.value[device.name]
+
+    if (physicalDev) {
+      for (const ipv6 of physicalDev.ip6addrs) {
+        ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
+      }
+    }
   }
 
   // interface ip address
@@ -576,6 +591,57 @@ function getIpv6Addresses(device: any) {
     ipv6Addresses.push({ address: iface.ip6addr, netmask: iface.netmask, proto })
   }
   return uniqWith(ipv6Addresses, isEqual)
+}
+
+function getPhysicalDevice(device: any) {
+  if (device.devtype) {
+    // this is the physical device
+    return device
+  }
+
+  if (isBond(device)) {
+    const physicalDev = physicalDevices.value[`bond-${device['.name']}`]
+    return physicalDev
+  }
+
+  const physicalDev = physicalDevices.value[device.name]
+  return physicalDev
+}
+
+function isDeviceUp(device: any) {
+  const physicalDev = getPhysicalDevice(device)
+
+  if (physicalDev?.flags) {
+    return physicalDev.flags.up
+  }
+  return false
+}
+
+function getDeviceMac(device: any) {
+  const physicalDev = getPhysicalDevice(device)
+
+  if (physicalDev?.mac) {
+    return physicalDev.mac
+  }
+  return '-'
+}
+
+function getRxBytes(device: any) {
+  const physicalDev = getPhysicalDevice(device)
+
+  if (physicalDev) {
+    return byteFormat1000(physicalDev.stats?.rx_bytes)
+  }
+  return '-'
+}
+
+function getTxBytes(device: any) {
+  const physicalDev = getPhysicalDevice(device)
+
+  if (physicalDev) {
+    return byteFormat1000(physicalDev.stats?.tx_bytes)
+  }
+  return '-'
 }
 </script>
 
@@ -792,7 +858,7 @@ function getIpv6Addresses(device: any) {
                       <div class="space-y-2">
                         <div>
                           <span class="font-medium">MAC: </span>
-                          <span>{{ device.mac || '-' }}</span>
+                          <span>{{ getDeviceMac(device) }}</span>
                         </div>
                         <div v-for="ipv4 in getIpv4Addresses(device)">
                           <div>
@@ -813,7 +879,7 @@ function getIpv6Addresses(device: any) {
                           </div>
                           <div v-if="ipv6.netmask">
                             <span class="font-medium"
-                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                              >{{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
                             </span>
                             <span>{{ ipv6.netmask }}</span>
                           </div>
@@ -823,16 +889,16 @@ function getIpv6Addresses(device: any) {
                       <div>
                         <div>
                           <span class="font-medium">RX: </span>
-                          <span>{{ byteFormat1000(device.stats?.rx_bytes) }}</span>
-                          <span v-if="device.stats?.rx_packets">
-                            ({{ device.stats.rx_packets || '-' }} pkts)</span
+                          <span>{{ getRxBytes(device) }}</span>
+                          <span v-if="getPhysicalDevice(device)?.stats?.rx_packets">
+                            ({{ getPhysicalDevice(device).stats.rx_packets || '-' }} pkts)</span
                           >
                         </div>
                         <div>
                           <span class="font-medium">TX: </span>
-                          <span>{{ byteFormat1000(device.stats?.tx_bytes) }}</span>
-                          <span v-if="device.stats?.tx_packets">
-                            ({{ device.stats.tx_packets || '-' }} pkts)</span
+                          <span>{{ getTxBytes(device) }}</span>
+                          <span v-if="getPhysicalDevice(device)?.stats?.tx_packets">
+                            ({{ getPhysicalDevice(device).stats.tx_packets || '-' }} pkts)</span
                           >
                         </div>
                       </div>
@@ -841,12 +907,12 @@ function getIpv6Addresses(device: any) {
                         <div>
                           <div class="flex items-center gap-2 mb-2">
                             <font-awesome-icon
-                              :icon="['fas', device.flags?.up ? 'circle-check' : 'circle-xmark']"
+                              :icon="['fas', isDeviceUp(device) ? 'circle-check' : 'circle-xmark']"
                               class="h-4 w-4"
                               aria-hidden="true"
                             />
                             <span>{{
-                              device.flags?.up
+                              isDeviceUp(device)
                                 ? t('standalone.interfaces_and_devices.up')
                                 : t('standalone.interfaces_and_devices.down')
                             }}</span>
@@ -857,7 +923,8 @@ function getIpv6Addresses(device: any) {
                             </span>
                             <span>
                               {{
-                                device.link?.speed && device.link?.speed !== -1
+                                getPhysicalDevice(device)?.link?.speed &&
+                                getPhysicalDevice(device)?.link?.speed !== -1
                                   ? `${device.link.speed} Mbps`
                                   : '-'
                               }}

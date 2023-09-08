@@ -95,7 +95,7 @@ watch(
 
       if (isCreating.value) {
         // creating alias
-        interfaceName.value = props.iface['.name'] + '_alias'
+        interfaceName.value = 'al_' + props.iface['.name']
         ipv4Addresses.value = []
         ipv6Addresses.value = []
         focusElement(nameRef)

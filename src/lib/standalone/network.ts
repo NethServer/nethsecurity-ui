@@ -96,6 +96,10 @@ export function isBond(iface: any) {
   return iface.proto === 'bonding'
 }
 
+export function isBondDevice(device: any) {
+  return device.devtype === 'bond'
+}
+
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {
   let num = -1
   let nameAlreadyExists = true

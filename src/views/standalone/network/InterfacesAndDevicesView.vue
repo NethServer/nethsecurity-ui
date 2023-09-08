@@ -26,7 +26,8 @@ import {
   isVlan,
   isBridge,
   isBond,
-  getName
+  getName,
+  isBondDevice
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -76,21 +77,6 @@ const isLoading = computed(() => {
   return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
 })
 
-const devicesUsedByBridgesOrBonds = computed(() => {
-  const usedDevices: any[] = []
-
-  if (!isEmpty(allDevices.value)) {
-    allDevices.value.forEach((dev: any) => {
-      if (isBond(dev)) {
-        usedDevices.push(...dev.slaves)
-      } else if (isBridge(dev)) {
-        usedDevices.push(...dev.ports)
-      }
-    })
-  }
-  return usedDevices
-})
-
 const allDevices: any = computed(() => {
   const networkDevices = networkConfig.value.device || []
 
@@ -106,7 +92,9 @@ const allDevices: any = computed(() => {
           (networkDev: any) => networkDev.name === physicalDev.name
         ) &&
         // hide unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
-        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value))
+        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value)) &&
+        // hide unconfigured bond devices (they would appear after committing bond creation)
+        !isBondDevice(physicalDev)
       )
     }
   )
@@ -609,6 +597,11 @@ function getPhysicalDevice(device: any) {
   if (device.devtype) {
     // this is the physical device
     return device
+  }
+
+  if (isBond(device)) {
+    const physicalDev = physicalDevices.value[`bond-${device['.name']}`]
+    return physicalDev
   }
 
   const physicalDev = physicalDevices.value[device.name]

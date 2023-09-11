@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useMwanStatus } from '@/composables/useMwanStatus'
 import type { PropType } from 'vue'
 import { computed, reactive } from 'vue'
-import { NeBadge } from '@nethserver/vue-tailwind-lib'
+import { NeBadge, NeButton, NeDropdown } from '@nethserver/vue-tailwind-lib'
 
 enum PolicyType {
   BALANCED,
@@ -23,8 +23,17 @@ const props = defineProps({
   policy: {
     type: Object as PropType<Policy>,
     required: true
+  },
+  belongsToRule: {
+    type: Boolean,
+    required: true
   }
 })
+
+defineEmits<{
+  delete: [policy: Policy]
+  edit: [policy: Policy]
+}>()
 
 const { t } = useI18n()
 
@@ -130,7 +139,7 @@ function badgeType(member: Member) {
       </div>
       <div
         v-if="!mwanStatus.loading"
-        class="flex basis-full flex-col justify-center gap-y-6 md:basis-5/12 xl:w-3/12"
+        class="flex basis-full flex-col justify-center gap-y-6 md:basis-4/12 xl:w-3/12"
       >
         <div v-for="([metric, members], membersIndex) in membersGrouped" :key="metric">
           <div v-if="membersGrouped.size > 1" class="mb-2">
@@ -141,12 +150,31 @@ function badgeType(member: Member) {
               <NeBadge
                 :icon="badgeIcon(member)"
                 :kind="badgeType(member)"
-                :text="member.interface.name"
                 :label="members.length > 1 ? `weight: ${member.weight}` : ''"
+                :text="member.interface.name"
               />
             </div>
           </div>
         </div>
+      </div>
+      <div class="ml-auto flex items-center">
+        <NeButton :kind="'tertiary'" @click="$emit('edit', policy)">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'edit']" />
+          </template>
+          {{ t('common.edit') }}
+        </NeButton>
+        <NeDropdown
+          :items="[
+            {
+              id: 'delete',
+              label: t('common.delete'),
+              disabled: policy.name == 'Default' || belongsToRule,
+              action: () => $emit('delete', policy)
+            }
+          ]"
+          align-to-right
+        />
       </div>
     </div>
   </HorizontalCard>

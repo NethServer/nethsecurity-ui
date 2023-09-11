@@ -77,6 +77,7 @@ interface PolicyResponse extends GenericValueResponse {
  */
 interface RuleResponse extends GenericValueResponse {
   dest_ip: string
+  dest_port?: string
   proto: string
   src_ip: string
   sticky: string
@@ -116,6 +117,7 @@ export interface Rule {
   name: string
   source: string
   destination: string
+  destinationPort: string
   protocol: string
   sticky: string
   policy: Policy
@@ -197,6 +199,7 @@ export function useMwanConfig() {
         name: value['.name'],
         source: value.src_ip,
         destination: value.dest_ip,
+        destinationPort: value.dest_port ?? '',
         protocol: value.proto,
         sticky: value.sticky,
         policy: policies.value.filter((policy) => policy.name == value.use_policy)[0]
@@ -208,7 +211,6 @@ export function useMwanConfig() {
    * Fetches the data from the API, and sets the reactive values.
    */
   const fetch = function () {
-    loading.value = true
     ubusCall('uci', 'get', {
       config: 'mwan3'
     })
@@ -217,7 +219,10 @@ export function useMwanConfig() {
       .finally(() => (loading.value = false))
   }
 
-  onMounted(() => fetch())
+  onMounted(() => {
+    loading.value = true
+    fetch()
+  })
 
   return { data, error, loading, globals, interfaces, members, policies, rules, fetch }
 }

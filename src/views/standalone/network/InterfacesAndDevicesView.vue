@@ -925,7 +925,7 @@ function getTxBytes(device: any) {
                               {{
                                 getPhysicalDevice(device)?.link?.speed &&
                                 getPhysicalDevice(device)?.link?.speed !== -1
-                                  ? `${device.link.speed} Mbps`
+                                  ? `${getPhysicalDevice(device).link.speed} Mbps`
                                   : '-'
                               }}
                             </span>

@@ -285,6 +285,7 @@
         "custom": "Custom"
       },
       "policy": "Policy",
+      "policy_description": "List of available policies, if there are multiple WANs the default policy is mandatory and cannot be deleted.",
       "no_policy_found": "No policy found",
       "create_default_policy": "Create default policy",
       "create_policy": "Create {name} policy",
@@ -300,7 +301,7 @@
       "edit_rule": "Edit {name} rule",
       "priority": "Priority {n}",
       "rules": "Rules",
-      "rules_description": "Order is important: evaluation of rules will continue after a match. Route is assigned by last match.",
+      "rules_description": "Routing policies are assigned to hosts via rules. To use a different policy than the default, create a rule and place it above the default rule.",
       "no_rule_found": "No rule found",
       "create_rule": "Create rule",
       "label_input_label": "Label",
@@ -327,6 +328,12 @@
       "ping_test": "{n} ping test | {n} ping tests",
       "interface_down": "Interface down",
       "interface_up": "Interface up",
+      "tracking_hostnames_or_ips_title": "WAN monitoring",
+      "tracking_hostnames_or_ips_description": "Enter the IP addresses (or hostnames) to ping to monitor the status of the WANs. If at least one host answers to the ping, the WAN remains active.",
+      "ping_settings_title": "Ping settings",
+      "ping_settings_description": "Configure how control pings are sent. The default values should already fit well most connectivities.",
+      "interface_recovery_title": "WANs tests",
+      "interface_recovery_description": "Number of tests needed to enable or disable the single WAN interface.",
       "delete_rule_modal": {
         "button": "@:common.delete"
       },

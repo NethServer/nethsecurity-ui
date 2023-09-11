@@ -12,7 +12,7 @@ defineProps({
 
 <template>
   <div class="flex flex-col md:flex-row">
-    <div class="break-all sm:mr-6 md:w-5/12">
+    <div class="sm:mr-6 md:w-5/12">
       <slot name="title">
         <h2 class="mb-2 text-xl font-medium">{{ title }}</h2>
       </slot>

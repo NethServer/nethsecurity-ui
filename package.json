@@ -22,9 +22,11 @@
     "@nethserver/vue-tailwind-lib": "^0.0.68",
     "@types/lodash": "^4.14.195",
     "axios": "^1.4.0",
+    "chart.js": "^4.4.0",
     "lodash": "^4.17.21",
     "pinia": "^2.0.36",
     "vue": "^3.3.2",
+    "vue-chartjs": "^5.2.0",
     "vue-i18n": "^9.3.0-beta.19",
     "vue-router": "^4.2.0"
   },

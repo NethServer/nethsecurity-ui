@@ -18,8 +18,7 @@ const props = defineProps({
     type: Array<string>
   },
   loading: {
-    type: Boolean,
-    default: false
+    type: Boolean
   },
   skeletonLines: {
     type: Number,

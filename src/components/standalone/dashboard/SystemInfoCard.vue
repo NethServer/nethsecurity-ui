@@ -65,7 +65,7 @@ async function getSystemInfo() {
     :errorTitle="error.title"
     :errorDescription="error.description"
   >
-    <div class="mb-3 flex items-center">
+    <div class="mb-2 mt-3 flex items-center">
       <div
         class="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary-400 dark:bg-primary-700"
       >

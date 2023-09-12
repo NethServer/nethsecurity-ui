@@ -49,7 +49,8 @@
     "cannot_create_device": "Cannot create device",
     "cannot_retrieve_realtime_traffic": "Cannot retrieve realtime traffic",
     "cannot_retrieve_system_info": "Cannot retrieve system info",
-    "cannot_retrieve_service_status": "Cannot retrieve service status"
+    "cannot_retrieve_service_status": "Cannot retrieve service status",
+    "cannot_retrieve_traffic_summary": "Cannot retrieve traffic summary"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -114,7 +115,10 @@
       "known_hosts": "Known hosts",
       "real_time_traffic": "Real time traffic",
       "host": "Host",
-      "traffic": "Traffic"
+      "traffic": "Traffic",
+      "today_top_hosts": "Today top hosts",
+      "today_top_applications": "Today top applications",
+      "today_top_protocols": "Today top protocols"
     },
     "registration": {
       "title": "Registration"

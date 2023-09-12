@@ -4,18 +4,29 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, NeBadge } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { savePreference } from '@nethserver/vue-tailwind-lib'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
-
-//// remove all mocks
+import TrafficSummaryCard from '@/components/standalone/dashboard/TrafficSummaryCard.vue'
+import { useTrafficSummary } from '@/composables/useTrafficSummary'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
+const {
+  clientsLabels,
+  clientsDatasets,
+  protocolsLabels,
+  protocolsDatasets,
+  appsLabels,
+  appsDatasets,
+  loadingTrafficSummary,
+  errorTitle,
+  errorDescription
+} = useTrafficSummary()
 
 async function changeLocale(lang: string) {
   savePreference('locale', lang, loginStore.username)
@@ -95,6 +106,39 @@ async function changeLocale(lang: string) {
       :icon="['fas', 'circle-info']"
     />
     <!-- realtime traffic -->
-    <RealTimeTrafficCard class="sm:col-span-2" />
+    <RealTimeTrafficCard class="sm:col-span-2 xl:row-span-2" />
+    <!-- top hosts -->
+    <TrafficSummaryCard
+      :title="t('standalone.dashboard.today_top_hosts')"
+      description="Lorem ipsum ////"
+      :chartLabels="clientsLabels"
+      :chartDatasets="clientsDatasets"
+      :loading="loadingTrafficSummary"
+      :errorTitle="errorTitle"
+      :errorDescription="errorDescription"
+      class="sm:col-span-2 xl:row-span-2"
+    />
+    <!-- top applications -->
+    <TrafficSummaryCard
+      :title="t('standalone.dashboard.today_top_applications')"
+      description="Lorem ipsum ////"
+      :chartLabels="appsLabels"
+      :chartDatasets="appsDatasets"
+      :loading="loadingTrafficSummary"
+      :errorTitle="errorTitle"
+      :errorDescription="errorDescription"
+      class="sm:col-span-2 xl:row-span-2"
+    />
+    <!-- top protocols -->
+    <TrafficSummaryCard
+      :title="t('standalone.dashboard.today_top_protocols')"
+      description="Lorem ipsum ////"
+      :chartLabels="protocolsLabels"
+      :chartDatasets="protocolsDatasets"
+      :loading="loadingTrafficSummary"
+      :errorTitle="errorTitle"
+      :errorDescription="errorDescription"
+      class="sm:col-span-2 xl:row-span-2"
+    />
   </div>
 </template>

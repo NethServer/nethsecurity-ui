@@ -42,7 +42,7 @@ const options: any = {
           return byteFormat1024(value)
         },
         // font color according to theme: gray-200 or gray-700
-        color: themeStore.isLight ? '#374151' : '#e5e7eb'
+        color: themeStore.isLight ? '#374151' : '#e5e7eb',
       }
     },
     y: {

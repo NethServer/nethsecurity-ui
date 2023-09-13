@@ -43,6 +43,8 @@ async function getSystemInfo() {
   if (!systemInfoIntervalId.value) {
     loading.value.getSystemInfo = true
   }
+  error.value.title = ''
+  error.value.description = ''
 
   try {
     const res = await ubusCall('ns.dashboard', 'system-info')

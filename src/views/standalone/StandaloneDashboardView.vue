@@ -11,8 +11,10 @@ import { savePreference } from '@nethserver/vue-tailwind-lib'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
-import TrafficSummaryCard from '@/components/standalone/dashboard/TrafficSummaryCard.vue'
+import TrafficSummaryChart from '@/components/standalone/dashboard/TrafficSummaryChart.vue'
+import WanTrafficCard from '@/components/standalone/dashboard/WanTrafficCard.vue'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
+import NeCard from '@/components/NeCard.vue'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
@@ -38,12 +40,6 @@ async function changeLocale(lang: string) {
 
 <template>
   <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
-
-  <!-- ////  -->
-  <div class="mb-8">
-    <NeButton size="lg" @click="changeLocale('it')" class="mb-4 mr-4">ITA</NeButton>
-    <NeButton size="lg" @click="changeLocale('en')" class="mb-4">ENG</NeButton>
-  </div>
 
   <!-- system -->
   <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
@@ -105,40 +101,50 @@ async function changeLocale(lang: string) {
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />
+    <WanTrafficCard class="sm:col-span-2 xl:row-span-2" />
     <!-- realtime traffic -->
     <RealTimeTrafficCard class="sm:col-span-2 xl:row-span-2" />
     <!-- top hosts -->
-    <TrafficSummaryCard
+    <NeCard
       :title="t('standalone.dashboard.today_top_hosts')"
-      description="Lorem ipsum ////"
-      :chartLabels="clientsLabels"
-      :chartDatasets="clientsDatasets"
+      :description="t('standalone.dashboard.today_top_hosts_description')"
+      :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
-    />
+    >
+      <TrafficSummaryChart :labels="clientsLabels" :datasets="clientsDatasets" />
+    </NeCard>
     <!-- top applications -->
-    <TrafficSummaryCard
+    <NeCard
       :title="t('standalone.dashboard.today_top_applications')"
-      description="Lorem ipsum ////"
-      :chartLabels="appsLabels"
-      :chartDatasets="appsDatasets"
+      :description="t('standalone.dashboard.today_top_applications_description')"
+      :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
-    />
+    >
+      <TrafficSummaryChart :labels="appsLabels" :datasets="appsDatasets" />
+    </NeCard>
     <!-- top protocols -->
-    <TrafficSummaryCard
+    <NeCard
       :title="t('standalone.dashboard.today_top_protocols')"
-      description="Lorem ipsum ////"
-      :chartLabels="protocolsLabels"
-      :chartDatasets="protocolsDatasets"
+      :description="t('standalone.dashboard.today_top_protocols_description')"
+      :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
-    />
+    >
+      <TrafficSummaryChart :labels="protocolsLabels" :datasets="protocolsDatasets" />
+    </NeCard>
+  </div>
+
+  <!-- ////  -->
+  <div class="mt-12">
+    <NeButton size="lg" @click="changeLocale('it')" class="mb-4 mr-4">ITA</NeButton>
+    <NeButton size="lg" @click="changeLocale('en')" class="mb-4">ENG</NeButton>
   </div>
 </template>

@@ -50,7 +50,9 @@
     "cannot_retrieve_realtime_traffic": "Cannot retrieve realtime traffic",
     "cannot_retrieve_system_info": "Cannot retrieve system info",
     "cannot_retrieve_service_status": "Cannot retrieve service status",
-    "cannot_retrieve_traffic_summary": "Cannot retrieve traffic summary"
+    "cannot_retrieve_traffic_summary": "Cannot retrieve traffic summary",
+    "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
+    "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -116,9 +118,17 @@
       "real_time_traffic": "Real time traffic",
       "host": "Host",
       "traffic": "Traffic",
-      "today_top_hosts": "Today top hosts",
-      "today_top_applications": "Today top applications",
-      "today_top_protocols": "Today top protocols"
+      "today_top_hosts": "Top hosts",
+      "today_top_applications": "Top applications",
+      "today_top_protocols": "Top protocols",
+      "today_top_hosts_description": "Hosts that generated most traffic today",
+      "today_top_applications_description": "Applications that generated most traffic today",
+      "today_top_protocols_description": "Protocols that generated most traffic today",
+      "wan_traffic": "WAN traffic",
+      "wan_interface": "WAN interface",
+      "download": "Download",
+      "upload": "Upload",
+      "no_wan_interfaces": "No WAN interfaces"
     },
     "registration": {
       "title": "Registration"

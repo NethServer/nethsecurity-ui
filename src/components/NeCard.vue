@@ -14,6 +14,9 @@ const props = defineProps({
   title: {
     type: String
   },
+  description: {
+    type: String
+  },
   icon: {
     type: Array<string>
   },
@@ -50,7 +53,7 @@ const props = defineProps({
           :description="errorDescription"
         />
         <template v-else>
-          <h3 v-if="title" class="mb-2 font-semibold leading-6 text-gray-900 dark:text-gray-50">
+          <h3 v-if="title" class="mb-3 font-semibold leading-6 text-gray-900 dark:text-gray-50">
             <router-link
               v-if="titleLink"
               :to="`${getStandaloneRoutePrefix()}/${titleLink}`"
@@ -62,6 +65,9 @@ const props = defineProps({
               {{ title }}
             </span>
           </h3>
+          <div v-if="description" class="mb-2 text-gray-500 dark:text-gray-400">
+            {{ description }}
+          </div>
           <slot></slot>
         </template>
       </div>

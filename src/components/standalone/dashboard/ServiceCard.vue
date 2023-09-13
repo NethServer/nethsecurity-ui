@@ -10,8 +10,6 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeCard from '@/components/NeCard.vue'
 
-//// review
-
 const props = defineProps({
   serviceName: { type: String },
   hasStatus: { type: Boolean, default: false },
@@ -73,6 +71,8 @@ async function getServiceStatus() {
   if (!statusIntervalId.value) {
     loading.value.getServiceStatus = true
   }
+  error.value.title = ''
+  error.value.description = ''
 
   try {
     const res = await ubusCall('ns.dashboard', 'service-status', { service: props.serviceName })
@@ -91,6 +91,9 @@ async function getServiceCounter() {
   if (!counterIntervalId.value) {
     loading.value.getServiceCounter = true
   }
+
+  error.value.title = ''
+  error.value.description = ''
 
   try {
     const res = await ubusCall('ns.dashboard', 'counter', { service: props.serviceName })

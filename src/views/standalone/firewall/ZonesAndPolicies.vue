@@ -1,29 +1,35 @@
 <script lang="ts" setup>
 import {
-  getAxiosErrorMessage,
   NeBadge,
   NeButton,
   NeDropdown,
   NeInlineNotification,
+  NeSideDrawer,
   NeTitle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
-import type { Zone } from '@/composables/useFirewall'
-import { Forward, TrafficPolicy, useFirewall, ZoneType } from '@/composables/useFirewall'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import CreateZone from '@/components/standalone/firewall/CreateZone.vue'
+import {
+  TrafficPolicy,
+  useFirewallStore,
+  Zone,
+  ZoneType
+} from '@/stores/standalone/useFirewallStore'
 
 const { t } = useI18n()
 
-const { error, loading, zones, forwards } = useFirewall()
+const firewallConfig = useFirewallStore()
 
+const creatingZone = ref(false)
 const editZone = ref<Zone>()
 const deleteZone = ref<Zone>()
 
-function getRelatedForwards(zone: Zone): Forward[] {
-  return forwards.value.filter((forward) => forward.source.name == zone.name)
-}
+onMounted(() => {
+  firewallConfig.fetch()
+})
 
 function color(zone: Zone): string {
   switch (zone.type()) {
@@ -64,22 +70,28 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
 <template>
   <div class="space-y-8">
     <NeTitle>{{ t('standalone.zones_and_policies.title') }}</NeTitle>
-    <div class="flex">
-      <p class="text-sm font-normal dark:text-gray-400">
+    <div class="flex flex-wrap gap-6">
+      <p class="grow text-sm font-normal dark:text-gray-400">
         {{ t('standalone.zones_and_policies.description') }}
       </p>
       <div>
-        <!-- TODO: add settings and add zone -->
+        <!-- TODO: add settings -->
+        <NeButton kind="secondary" @click="creatingZone = true">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'circle-plus']" />
+          </template>
+          {{ t('standalone.zones_and_policies.add_zone') }}
+        </NeButton>
       </div>
     </div>
     <NeInlineNotification
-      v-if="error"
-      :title="t(getAxiosErrorMessage(error.message))"
+      v-if="firewallConfig.error"
+      :title="t(firewallConfig.error.message)"
       kind="error"
     />
     <NeTable
       v-else
-      :data="zones"
+      :data="firewallConfig.zones"
       :headers="[
         {
           key: 'label',
@@ -117,33 +129,35 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
           key: 'actions'
         }
       ]"
-      :loading="loading"
+      :loading="firewallConfig.loading"
     >
       <template #label="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-4">
           <div :class="color(item)" class="flex h-10 w-10 items-center justify-center rounded-full">
             <FontAwesomeIcon :icon="['fas', icon(item)]" />
           </div>
-          <span class="uppercase">{{ item.label }}</span>
+          <span class="uppercase">{{ item.name }}</span>
         </div>
       </template>
       <template #forwards="{ item }: { item: Zone }">
         <div class="flex flex-wrap gap-2">
-          <template v-for="forward in getRelatedForwards(item)" :key="forward.destination.name">
-            <NeBadge :class="color(item)" :text="forward.destination.label" />
-          </template>
-        </div>
-      </template>
-      <template #input="{ item }: { item: Zone }">
-        <div class="flex items-center gap-x-2">
-          <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
-          {{ t(`standalone.zones_and_policies.traffic_policy.${item.input}`) }}
+          <NeBadge
+            v-for="(forwarding, index) in item.forwardings"
+            :key="index"
+            :text="forwarding.name"
+          />
         </div>
       </template>
       <template #output="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-2">
           <FontAwesomeIcon :icon="['fas', trafficIcon(item.output)]" />
           {{ t(`standalone.zones_and_policies.traffic_policy.${item.output}`) }}
+        </div>
+      </template>
+      <template #input="{ item }: { item: Zone }">
+        <div class="flex items-center gap-x-2">
+          <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
+          {{ t(`standalone.zones_and_policies.traffic_policy.${item.input}`) }}
         </div>
       </template>
       <template #forward="{ item }: { item: Zone }">
@@ -153,9 +167,12 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
         </div>
       </template>
       <template #interfaces="{ item }: { item: Zone }">
-        <p v-for="(iface, index) in item.interfaces" :key="index">
-          {{ iface }}
-        </p>
+        <template v-if="item.interfaces.length > 0">
+          <p v-for="(iface, index) in item.interfaces" :key="index">
+            {{ iface }}
+          </p>
+        </template>
+        <template v-else>-</template>
       </template>
       <template #covered_subnets> -</template>
       <template #logging="{ item }: { item: Zone }">
@@ -183,5 +200,12 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
         </div>
       </template>
     </NeTable>
+    <NeSideDrawer
+      :is-shown="creatingZone"
+      :title="t('standalone.zones_and_policies.add_zone')"
+      @close="creatingZone = false"
+    >
+      <CreateZone @cancel="creatingZone = false" @success="creatingZone = false" />
+    </NeSideDrawer>
   </div>
 </template>

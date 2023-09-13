@@ -398,12 +398,21 @@
       },
       "zone": "Zone",
       "allow_forwards_to": "Allow forwards to",
+      "allow_forwards_from": "Allow forwards from",
       "traffic_to_wan": "Traffic to WAN",
       "traffic_to_firewall": "Traffic to firewall",
       "traffic_to_same_zone": "Traffic to same zone",
       "interfaces": "Interfaces",
-      "covered_subnets": "Covered Subnets",
-      "logging": "Logging"
+      "covered_subnets": "Covered @.lower:standalone.zones_and_policies.subnet",
+      "logging": "Logging",
+      "add_zone": "Add zone",
+      "name": "Name",
+      "advanced_settings": "Advanced settings",
+      "subnet": "Subnet | Subnets",
+      "no_subnets_set": "No @.lower:standalone.zones_and_policies.subnet set",
+      "add_new_subnet": "Add new @.lower:standalone.zones_and_policies.subnet",
+      "limit_log_messages": "Limit log messages",
+      "enable_logging": "Enable logging on this zone"
     },
     "firewall": {
       "title": "Firewall"

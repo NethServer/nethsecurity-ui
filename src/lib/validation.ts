@@ -203,11 +203,19 @@ export const validateVlanId = (value: String): validationOutput => {
  */
 export class MessageBag extends Map<string, Array<string>> {
   set(key: string, value: Array<string>): this {
-    if (!super.has(key)) {
+    if (!this.has(key)) {
       super.set(key, new Array<string>())
     }
-    super.get(key)!.push(...value)
+    this.get(key)!.push(...value)
     return this
+  }
+
+  /**
+   * Returns the first error message for the key, empty string if there's no message.
+   * @param key
+   */
+  getFirstFor(key: string): string {
+    return this.get(key)?.[0] ?? ''
   }
 }
 

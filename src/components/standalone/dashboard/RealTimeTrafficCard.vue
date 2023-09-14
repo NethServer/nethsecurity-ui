@@ -29,7 +29,7 @@ const tableHeaders = [
 ]
 
 let loading = ref({
-  getTopTalkers: false
+  getTopTalkers: true
 })
 
 let error = ref({
@@ -56,11 +56,6 @@ function formatTraffic(value: number) {
 }
 
 async function getTopTalkers() {
-  // show skeleton only the first time
-  if (!topTalkersIntervalId.value) {
-    loading.value.getTopTalkers = true
-  }
-
   try {
     const res = await ubusCall('ns.talkers', 'list', {
       limit: NUM_HOSTS

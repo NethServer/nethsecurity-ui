@@ -17,7 +17,7 @@ const systemInfo = ref<any>(null)
 const systemInfoIntervalId: Ref<number> = ref(0)
 
 let loading = ref({
-  getSystemInfo: false
+  getSystemInfo: true
 })
 
 let error = ref({
@@ -39,10 +39,6 @@ onUnmounted(() => {
 })
 
 async function getSystemInfo() {
-  // show skeleton only the first time
-  if (!systemInfoIntervalId.value) {
-    loading.value.getSystemInfo = true
-  }
   error.value.title = ''
   error.value.description = ''
 

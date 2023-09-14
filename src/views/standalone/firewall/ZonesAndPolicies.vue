@@ -86,7 +86,7 @@ function forwardingsByZone(zone: Zone): Array<Forwarding> {
 }
 
 function isSpecialZone(zone: Zone): boolean {
-  return Object.values(SpecialZones).indexOf(zone.name) != -1
+  return Object.values(SpecialZones).includes(zone.name as unknown as SpecialZones)
 }
 </script>
 

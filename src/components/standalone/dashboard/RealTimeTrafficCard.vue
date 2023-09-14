@@ -56,6 +56,9 @@ function formatTraffic(value: number) {
 }
 
 async function getTopTalkers() {
+  error.value.title = ''
+  error.value.description = ''
+
   try {
     const res = await ubusCall('ns.talkers', 'list', {
       limit: NUM_HOSTS
@@ -74,7 +77,13 @@ async function getTopTalkers() {
 </script>
 
 <template>
-  <NeCard :title="t('standalone.dashboard.real_time_traffic')" :skeletonLines="5">
+  <NeCard
+    :title="t('standalone.dashboard.real_time_traffic')"
+    :skeletonLines="5"
+    :loading="loading.getTopTalkers"
+    :errorTitle="error.title"
+    :errorDescription="error.description"
+  >
     <div class="mt-3">
       <NeTable
         :data="topTalkers"

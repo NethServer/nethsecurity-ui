@@ -91,7 +91,6 @@ async function getServiceCounter() {
   if (!counterIntervalId.value) {
     loading.value.getServiceCounter = true
   }
-
   error.value.title = ''
   error.value.description = ''
 

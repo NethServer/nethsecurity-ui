@@ -52,11 +52,11 @@ body {
 }
 
 .page-title {
-  @apply font-medium leading-normal text-gray-900 dark:text-gray-100 text-2xl mb-8;
+  @apply mb-8 text-2xl font-medium leading-normal text-gray-900 dark:text-gray-100;
 }
 
 code {
-  @apply block font-mono bg-gray-500 bg-opacity-20 dark:bg-opacity-40 rounded px-1;
+  @apply block rounded bg-gray-500 bg-opacity-20 px-1 font-mono dark:bg-opacity-40;
 }
 
 hr {

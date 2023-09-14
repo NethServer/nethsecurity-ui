@@ -50,6 +50,11 @@ import { faLayerGroup as faLayerGroup } from '@fortawesome/free-solid-svg-icons'
 import { faLock as faLock } from '@fortawesome/free-solid-svg-icons'
 import { faWarning as faWarning } from '@fortawesome/free-solid-svg-icons'
 import { faWrench as fasWrench } from '@fortawesome/free-solid-svg-icons'
+import { faCheck as fasCheck } from '@fortawesome/free-solid-svg-icons'
+import { faBolt as fasBolt } from '@fortawesome/free-solid-svg-icons'
+import { faBan as fasBan } from '@fortawesome/free-solid-svg-icons'
+import { faShield as fasShield } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo as fasCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('font-awesome-icon', FontAwesomeIcon)
@@ -103,4 +108,9 @@ export async function loadFontAwesome(app: any) {
   library.add(faLayerGroup)
   library.add(faWarning)
   library.add(fasWrench)
+  library.add(fasCheck)
+  library.add(fasBolt)
+  library.add(fasBan)
+  library.add(fasShield)
+  library.add(fasCircleInfo)
 }

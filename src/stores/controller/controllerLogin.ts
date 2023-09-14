@@ -50,7 +50,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   }
 
   const logout = async () => {
-    const res = await axios.post(
+    await axios.post(
       `${getControllerApiEndpoint()}/logout`,
       {},
       {

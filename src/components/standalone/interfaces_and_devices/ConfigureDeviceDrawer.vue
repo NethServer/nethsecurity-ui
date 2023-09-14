@@ -1288,7 +1288,7 @@ function validate() {
             :placeholder="t('standalone.interfaces_and_devices.custom_hostname')"
             :invalidMessage="t(error.dhcpCustomHostname)"
             ref="dhcpCustomHostnameRef"
-            class="ml-6 !mt-4"
+            class="!mt-4 ml-6"
           />
         </div>
         <!-- advanced settings (don't show for pppoe and bond) -->

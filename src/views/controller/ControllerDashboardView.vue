@@ -59,7 +59,7 @@ async function changeLocale(lang: string) {
   <div
     v-for="(unit, index) in unitsStore.units"
     :key="index"
-    class="flex items-center mb-2 max-w-3xl"
+    class="mb-2 flex max-w-3xl items-center"
   >
     <template v-if="unit">
       <span class="w-1/5">{{ unit.name }}</span>
@@ -74,9 +74,9 @@ async function changeLocale(lang: string) {
       </span>
     </template>
   </div>
-  <div class="mt-8 mb-4 text-lg">Add unit</div>
+  <div class="mb-4 mt-8 text-lg">Add unit</div>
   <div class="flex items-end">
-    <NeTextInput label="Unit name" v-model.trim="newUnitName" class="max-w-xs mr-4" />
+    <NeTextInput label="Unit name" v-model.trim="newUnitName" class="mr-4 max-w-xs" />
     <NeButton @click="addUnit" size="lg" :disabled="!newUnitName.trim()">Add unit</NeButton>
   </div>
   <!-- ////  -->

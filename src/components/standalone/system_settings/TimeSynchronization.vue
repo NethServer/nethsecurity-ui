@@ -13,7 +13,6 @@ import {
   NeToggle,
   NeSkeleton,
   NeCombobox,
-  NeTitle,
   NeInlineNotification,
   NeTextInput,
   getAxiosErrorMessage
@@ -199,9 +198,9 @@ function validate() {
 
   // reset ntp server errors
   error.value.ntpServerCandidate = []
-  for (const ntpServerCandidate of ntpServerCandidates.value) {
+  ntpServerCandidates.value.forEach(() => {
     error.value.ntpServerCandidate.push('')
-  }
+  })
 
   let isValidationOk = true
 
@@ -324,7 +323,11 @@ function addNtpServer() {
           <FormLayout :title="t('standalone.system_settings.ntp_server_candidates')">
             <div class="space-y-6">
               <div class="space-y-4">
-                <div v-for="(ntpServer, i) in ntpServerCandidates" class="flex items-start gap-2">
+                <div
+                  v-for="(ntpServer, i) in ntpServerCandidates"
+                  :key="i"
+                  class="flex items-start gap-2"
+                >
                   <NeTextInput
                     v-model.trim="ntpServerCandidates[i]"
                     :invalid-message="error.ntpServerCandidate[i]"

@@ -129,22 +129,22 @@ function validate() {
 </script>
 
 <template>
-  <div class="flex min-h-full h-screen flex-1 bg-gray-950">
+  <div class="flex h-screen min-h-full flex-1 bg-gray-950">
     <div
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <!-- <div class="mx-auto w-full max-w-sm lg:w-96"> //// -->
       <div class="mx-auto w-full max-w-md lg:w-[26rem]">
-        <div class="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-gray-50 dark:bg-gray-900">
+        <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
           <img
-            class="h-8 w-auto mb-6"
+            class="mb-6 h-8 w-auto"
             :src="`/${logoFilename}`"
             :alt="`${getCompanyName()} logo`"
           />
           <NeTitle level="h3">{{
             t('login.welcome_title_controller', { product: getProductName() })
           }}</NeTitle>
-          <div class="text-sm mb-4 text-gray-700 dark:text-gray-100">
+          <div class="mb-4 text-sm text-gray-700 dark:text-gray-100">
             {{ t('login.welcome_description_controller', { product: getProductName() }) }}
           </div>
           <form class="space-y-6">

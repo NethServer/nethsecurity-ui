@@ -4,7 +4,7 @@ import { genericValueComparator, useMwanConfig } from '@/composables/useMwanConf
 import NeTable from '@/components/standalone/NeTable.vue'
 import { reactive, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'

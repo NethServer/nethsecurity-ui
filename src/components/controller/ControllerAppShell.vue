@@ -17,7 +17,7 @@ const { t } = useI18n()
 <template>
   <div class="p-5">
     <div class="mb-3 text-2xl">Controller shell</div>
-    <div class="flex gap-3 mb-8">
+    <div class="mb-8 flex gap-3">
       <router-link :to="`${getControllerRoutePrefix()}/dashboard`" class="underline"
         >Dashboard</router-link
       >

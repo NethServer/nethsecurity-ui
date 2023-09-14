@@ -260,7 +260,7 @@ async function syncWithNtpServer() {
     <NeSkeleton v-if="isLoading" size="lg" :lines="12" />
     <div v-else>
       <!-- main section -->
-      <div class="border-b pb-6 border-gray-200 dark:border-gray-700">
+      <div class="border-b border-gray-200 pb-6 dark:border-gray-700">
         <div class="space-y-6">
           <!-- hostname -->
           <NeTextInput

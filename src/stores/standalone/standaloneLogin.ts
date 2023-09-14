@@ -59,7 +59,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   const logout = async () => {
-    const res = await axios.post(
+    await axios.post(
       `${getStandaloneApiEndpoint()}/logout`,
       {},
       {

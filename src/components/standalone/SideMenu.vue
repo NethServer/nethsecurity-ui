@@ -79,9 +79,9 @@ function isCurrentRoute(itemPath: string) {
         :to="`${getStandaloneRoutePrefix()}/${item.to}`"
         :class="[
           isCurrentRoute(item.to)
-            ? 'border-l-4 border-primary-700 dark:border-primary-500 text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
+            ? 'border-l-4 border-primary-700 bg-gray-100 text-gray-900 dark:border-primary-500 dark:bg-gray-800 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+          'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-2 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
       >
         <font-awesome-icon
@@ -99,7 +99,7 @@ function isCurrentRoute(itemPath: string) {
           isCurrentRoute(item.to)
             ? 'text-gray-900 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'cursor-pointer group flex items-center justify-between rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+          'group flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
       >
         <div class="flex items-center gap-x-3">
@@ -118,16 +118,16 @@ function isCurrentRoute(itemPath: string) {
           aria-hidden="true"
         />
       </a>
-      <ul role="list" class="space-y-1 mt-2">
+      <ul role="list" class="mt-2 space-y-1">
         <li v-for="child in item.children" :key="child.name">
           <div class="ml-10">
             <router-link
               :to="`${getStandaloneRoutePrefix()}/${child.to}`"
               :class="[
                 isCurrentRoute(child.to)
-                  ? 'border-l-4 border-primary-700 dark:border-primary-500 text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-gray-800'
+                  ? 'border-l-4 border-primary-700 bg-gray-100 text-gray-900 dark:border-primary-500 dark:bg-gray-800 dark:text-gray-50'
                   : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-                'cursor-pointer group flex items-center gap-x-3 rounded-md px-3 py-1 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
+                'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-1 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
               ]"
             >
               {{ child.name }}

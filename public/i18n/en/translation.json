@@ -46,7 +46,13 @@
     "invalid_hexadecimal_string": "Invalid hexadecimal string",
     "maximum_num_characters_allowed": "Maximum {num} characters allowed",
     "invalid_vlan_id": "Enter an integer number between 1 and 4094",
-    "cannot_create_device": "Cannot create device"
+    "cannot_create_device": "Cannot create device",
+    "cannot_retrieve_realtime_traffic": "Cannot retrieve realtime traffic",
+    "cannot_retrieve_system_info": "Cannot retrieve system info",
+    "cannot_retrieve_service_status": "Cannot retrieve service status",
+    "cannot_retrieve_traffic_summary": "Cannot retrieve traffic summary",
+    "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
+    "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -63,6 +69,9 @@
   },
   "ne_dropdown": {
     "open_menu": "Open menu"
+  },
+  "ne_table": {
+    "no_items": "No items"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -88,7 +97,42 @@
       "close_side_drawer": "Close side drawer"
     },
     "dashboard": {
-      "title": "Dashboard"
+      "title": "Dashboard",
+      "system": "System",
+      "internet_connection": "Internet connection",
+      "hostname": "Hostname",
+      "operating_system": "Operating system",
+      "uptime": "Uptime",
+      "load_minutes": "Load 1 / 5 / 15 minutes",
+      "active": "Active",
+      "inactive": "Inactive",
+      "warning": "Warning",
+      "unknown": "Unknown",
+      "multiwan": "MultiWAN",
+      "dpi_core": "DPI-core",
+      "ban_ip": "BanIP",
+      "adblock_dns": "Adblock DNS",
+      "thread_shield_ip": "Threat Shield IP",
+      "thread_shield_dns": "Threat Shield DNS",
+      "known_hosts": "Known hosts",
+      "real_time_traffic": "Real time traffic",
+      "host": "Host",
+      "traffic": "Traffic",
+      "today_top_hosts": "Top hosts",
+      "today_top_applications": "Top applications",
+      "today_top_protocols": "Top protocols",
+      "today_top_hosts_description": "Hosts that generated most traffic today",
+      "today_top_applications_description": "Applications that generated most traffic today",
+      "today_top_protocols_description": "Protocols that generated most traffic today",
+      "wan_traffic": "WAN traffic",
+      "wan_interface": "WAN interface",
+      "download": "Download",
+      "upload": "Upload",
+      "no_wan_interfaces": "No WAN interfaces",
+      "memory_usage": "Memory usage",
+      "root_usage": "Root usage",
+      "storage_usage": "Storage usage",
+      "tmpfs_usage": "Tmpfs usage"
     },
     "registration": {
       "title": "Registration"

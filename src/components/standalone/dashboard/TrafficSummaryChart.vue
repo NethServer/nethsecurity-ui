@@ -38,11 +38,11 @@ const options: any = {
     x: {
       ticks: {
         // format traffic on chart ticks
-        callback: function (value: number, index: number, ticks: any[]) {
+        callback: function (value: number) {
           return byteFormat1024(value)
         },
         // font color according to theme: gray-200 or gray-700
-        color: themeStore.isLight ? '#374151' : '#e5e7eb',
+        color: themeStore.isLight ? '#374151' : '#e5e7eb'
       }
     },
     y: {

@@ -10,7 +10,7 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 
 //// move to library
 
-const props = defineProps({
+defineProps({
   title: {
     type: String
   },

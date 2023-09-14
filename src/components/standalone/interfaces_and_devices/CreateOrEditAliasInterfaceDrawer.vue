@@ -497,7 +497,11 @@ async function saveAliasInterface() {
           }}</NeFormItemLabel>
           <div class="space-y-4">
             <TransitionGroup name="fade">
-              <div v-for="(ipv4Address, i) in ipv4Addresses" class="flex gap-2 items-start">
+              <div
+                v-for="(ipv4Address, i) in ipv4Addresses"
+                :key="i"
+                class="flex items-start gap-2"
+              >
                 <NeTextInput
                   v-model.trim="ipv4Addresses[i]"
                   :invalid-message="error.ipv4Addresses[i]"
@@ -515,7 +519,7 @@ async function saveAliasInterface() {
               </div>
             </TransitionGroup>
             <!-- add ipv4 address -->
-            <div class="flex gap-2 items-start">
+            <div class="flex items-start gap-2">
               <NeTextInput
                 v-model.trim="newIpv4Address"
                 :invalid-message="error.newIpv4Address"
@@ -544,7 +548,11 @@ async function saveAliasInterface() {
           }}</NeFormItemLabel>
           <div class="space-y-4">
             <TransitionGroup name="fade">
-              <div v-for="(ipv6Address, i) in ipv6Addresses" class="flex gap-2 items-start">
+              <div
+                v-for="(ipv6Address, i) in ipv6Addresses"
+                :key="i"
+                class="flex items-start gap-2"
+              >
                 <NeTextInput
                   v-model.trim="ipv6Addresses[i]"
                   :invalid-message="error.ipv6Addresses[i]"
@@ -562,7 +570,7 @@ async function saveAliasInterface() {
               </div>
             </TransitionGroup>
             <!-- add ipv6 address -->
-            <div class="flex gap-2 items-start">
+            <div class="flex items-start gap-2">
               <NeTextInput
                 v-model.trim="newIpv6Address"
                 :invalid-message="error.newIpv6Address"

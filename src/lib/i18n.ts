@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { createI18n, useI18n } from 'vue-i18n' ////
+import { createI18n } from 'vue-i18n'
 
 export async function loadLocaleMessages(setLocaleMessage: any, lang: string) {
   try {
@@ -27,7 +27,6 @@ export function setupI18n(options: any) {
 export function setI18nLanguage(localeObj: any, lang: string) {
   localeObj.value = lang
 
-  ////
   /**
    * NOTE:
    * If you need to specify the language setting for headers, such as the `fetch` API, set it here.

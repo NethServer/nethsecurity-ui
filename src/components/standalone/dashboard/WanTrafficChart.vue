@@ -56,7 +56,7 @@ const options: any = {
         autoSkip: true,
         // font color according to theme: gray-200 or gray-700
         color: themeStore.isLight ? '#374151' : '#e5e7eb',
-        callback: function (value: number, index: number, ticks: any[]) {
+        callback: function (value: number) {
           return formatDateLoc(value, 'HH:mm')
         }
       }
@@ -64,7 +64,7 @@ const options: any = {
     y: {
       ticks: {
         // format traffic on chart ticks
-        callback: function (value: number, index: number, ticks: any[]) {
+        callback: function (value: number) {
           return kbpsFormat(Math.abs(value))
         },
         // font color according to theme: gray-200 or gray-700

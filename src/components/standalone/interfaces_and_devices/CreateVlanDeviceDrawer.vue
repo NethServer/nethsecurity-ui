@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { ref, watch, computed, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

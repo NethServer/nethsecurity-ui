@@ -107,7 +107,7 @@ const router = createRouter({
     },
     {
       path: '/controller/manage/:unitName',
-      redirect: (to) => {
+      redirect: () => {
         return 'dashboard'
       }
     },

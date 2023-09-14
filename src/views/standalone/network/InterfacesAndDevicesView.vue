@@ -692,14 +692,14 @@ function getTxBytes(device: any) {
       </div>
       <template v-else-if="!error.notificationTitle" v-for="zone in sortedZonesAndDevices">
         <template v-if="!isEmpty(zone.devices)">
-          <div>
+          <div :key="zone.name">
             <NeTitle level="h3">{{
               te(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 ? t(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 : upperFirst(zone.name)
             }}</NeTitle>
             <div class="space-y-4">
-              <template v-for="device in zone.devices">
+              <template v-for="(device, i) in zone.devices" :key="i">
                 <div>
                   <!-- device card -->
                   <div
@@ -860,7 +860,7 @@ function getTxBytes(device: any) {
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
-                        <div v-for="ipv4 in getIpv4Addresses(device)">
+                        <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
                           <div>
                             <span class="font-medium">IPv4: </span>
                             <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
@@ -872,7 +872,7 @@ function getTxBytes(device: any) {
                             <span>{{ ipv4.netmask }}</span>
                           </div>
                         </div>
-                        <div v-for="ipv6 in getIpv6Addresses(device)">
+                        <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
                           <div>
                             <span class="font-medium">IPv6: </span>
                             <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
@@ -991,8 +991,8 @@ function getTxBytes(device: any) {
                     >
                       <!-- v-for is a trick to declare 'alias' variable inside template -->
                       <div
-                        v-for="alias in [getAliasInterface(device, networkConfig)]"
-                        class="flex items-start group"
+                        v-for="(alias, i) in [getAliasInterface(device, networkConfig)]"
+                        :key="i" class="flex items-start group"
                       >
                         <!-- L-shaped dashed line-->
                         <div
@@ -1037,13 +1037,13 @@ function getTxBytes(device: any) {
                             </div>
                             <div class="flex flex-wrap gap-8 pr-40 grow">
                               <!-- ipv4 addresses -->
-                              <div v-for="ipv4 in alias.ipaddr">
+                              <div v-for="(ipv4, i) in alias.ipaddr" :key="i">
                                 <span class="font-medium">
                                   {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
                                 ><span>{{ ipv4 }}</span>
                               </div>
                               <!-- ipv6 addresses -->
-                              <div v-for="ipv6 in alias.ip6addr">
+                              <div v-for="(ipv6, i) in alias.ip6addr" :key="i">
                                 <span class="font-medium">
                                   {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
                                 ><span>{{ ipv6 }}</span>
@@ -1114,7 +1114,7 @@ function getTxBytes(device: any) {
                               }}:
                             </span>
                             <!-- devices -->
-                            <div v-for="bridgeDev in device.ports">
+                            <div v-for="(bridgeDev, i) in device.ports" :key="i">
                               <span class="font-medium"> {{ bridgeDev }}</span>
                             </div>
                           </div>
@@ -1157,7 +1157,7 @@ function getTxBytes(device: any) {
                               }}:
                             </span>
                             <!-- devices -->
-                            <div v-for="bondDev in device.slaves">
+                            <div v-for="(bondDev, i) in device.slaves" :key="i">
                               <span class="font-medium"> {{ bondDev }}</span>
                             </div>
                           </div>

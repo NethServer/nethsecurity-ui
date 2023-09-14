@@ -9,7 +9,6 @@ import { useLoginStore as useControllerLoginStore } from '@/stores/controller/co
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { getJsonFromStorage, saveToStorage } from '@nethserver/vue-tailwind-lib'
 import { useRoute } from 'vue-router'
-import { useUnitsStore } from './units'
 
 //// merge with units store?
 
@@ -19,7 +18,6 @@ export const useUnitManagementStore = defineStore('unitManagement', () => {
 
   const controllerLoginStore = useControllerLoginStore()
   const standaloneLoginStore = useStandaloneLoginStore()
-  const unitsStore = useUnitsStore()
 
   // const isManagingUnit = computed(() => { ////
   //   return !isEmpty(unitName.value)

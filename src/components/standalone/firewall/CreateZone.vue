@@ -13,7 +13,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { TrafficPolicy, useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { SpecialZones, TrafficPolicy, useFirewallStore } from '@/stores/standalone/useFirewallStore'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -36,18 +36,20 @@ const advancedSettings = ref(false)
 const emit = defineEmits(['cancel', 'success'])
 
 const zoneComboboxOptions = computed((): NeComboboxOption[] => {
-  return firewallConfig.zones.map((zone) => {
-    return {
-      id: zone.name,
-      label: zone.name.toUpperCase()
-    }
-  })
+  return firewallConfig.zones
+    .filter((zone) => zone.name != SpecialZones.WAN)
+    .map((zone) => {
+      return {
+        id: zone.name,
+        label: zone.name.toUpperCase()
+      }
+    })
 })
 
 const forwardPlaceholder = computed((): string => {
-  return firewallConfig.zones
+  return zoneComboboxOptions.value
     .slice(0, 2)
-    .map((zone) => zone.name.toUpperCase())
+    .map((zone: NeComboboxOption) => zone.label.toUpperCase())
     .join(', ')
     .concat('...')
 })
@@ -70,9 +72,10 @@ const trafficOptions = [
 const label = ref('')
 const forwardsTo = ref<NeComboboxOption[]>([])
 const forwardsFrom = ref<NeComboboxOption[]>([])
-const trafficOutput = ref(TrafficPolicy.DROP)
 const trafficInput = ref(TrafficPolicy.DROP)
 const trafficForward = ref(TrafficPolicy.DROP)
+const trafficToWan = ref(false)
+
 const subnets = ref<string[]>([])
 const newSubnet = ref('')
 const enableLogging = ref(false)
@@ -93,8 +96,8 @@ function save() {
     ubusCall('ns.firewall', 'create_zone', {
       name: label.value,
       input: trafficInput.value.toUpperCase(),
-      output: trafficOutput.value.toUpperCase(),
       forward: trafficForward.value.toUpperCase(),
+      traffic_to_wan: trafficToWan.value,
       forwards_to: forwardsTo.value.map((item) => item.id),
       forwards_from: forwardsFrom.value.map((item) => item.id)
     })
@@ -154,11 +157,10 @@ function validate(): boolean {
       :placeholder="forwardPlaceholder"
       multiple
     />
-    <NeRadioSelection
-      v-model="trafficOutput"
+    <NeToggle
       :disabled="saving"
       :label="t('standalone.zones_and_policies.traffic_to_wan')"
-      :options="trafficOptions"
+      v-model="trafficToWan"
     />
     <NeRadioSelection
       v-model="trafficInput"

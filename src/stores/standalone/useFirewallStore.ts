@@ -55,6 +55,18 @@ export enum TrafficPolicy {
   DROP = 'drop'
 }
 
+export enum SpecialZones {
+  GUESTS = 'guests',
+  IPSEC = 'ipsec',
+  LAN = 'lan',
+  OPENVPN = 'openvpn',
+  RWOPENWRT = 'rwopenwrt',
+  RWWIREGUARD = 'rwwireguard',
+  TUNHOTSPOT = 'tunhotspot',
+  WAN = 'wan',
+  WIREGUARD = 'wireguard'
+}
+
 /**
  * Possible zone types.
  */

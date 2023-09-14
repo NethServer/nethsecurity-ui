@@ -15,6 +15,7 @@ import CreateZone from '@/components/standalone/firewall/CreateZone.vue'
 import DeleteZone from '@/components/standalone/firewall/DeleteZone.vue'
 import {
   Forwarding,
+  SpecialZones,
   TrafficPolicy,
   useFirewallStore,
   Zone,
@@ -26,7 +27,6 @@ const { t } = useI18n()
 const firewallConfig = useFirewallStore()
 
 const creatingZone = ref(false)
-const editZone = ref<Zone>()
 const deleteZone = ref<Zone>()
 
 onMounted(() => {
@@ -66,6 +66,27 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
     default:
       return 'ban'
   }
+}
+
+function trafficToWan(zone: Zone): boolean | undefined {
+  if (zone.name != SpecialZones.WAN) {
+    return firewallConfig.forwardings
+      .filter((forwarding: Forwarding) => forwarding.source == zone.name)
+      .map((forwarding: Forwarding) => forwarding.destination)
+      .some((forwardingName) => forwardingName == SpecialZones.WAN)
+  }
+  return undefined
+}
+
+function forwardingsByZone(zone: Zone): Array<Forwarding> {
+  return firewallConfig.forwardings.filter(
+    (forwarding: Forwarding) =>
+      forwarding.source == zone.name && forwarding.destination != SpecialZones.WAN
+  )
+}
+
+function isSpecialZone(zone: Zone): boolean {
+  return Object.values(SpecialZones).indexOf(zone.name) != -1
 }
 </script>
 
@@ -143,20 +164,22 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
       </template>
       <template #forwards="{ item }: { item: Zone }">
         <div class="flex flex-wrap gap-2">
-          <template
-            v-for="forward in firewallConfig.forwardings.filter(
-              (forwarding: Forwarding) => forwarding.source == item.name
-            )"
-            :key="forward.name"
-          >
+          <template v-for="forward in forwardingsByZone(item)" :key="forward.name">
             <NeBadge :text="forward.destination" />
           </template>
         </div>
       </template>
       <template #output="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-2">
-          <FontAwesomeIcon :icon="['fas', trafficIcon(item.output)]" />
-          {{ t(`standalone.zones_and_policies.traffic_policy.${item.output}`) }}
+          <template v-if="trafficToWan(item) == undefined"> -</template>
+          <template v-else-if="trafficToWan(item)">
+            <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
+            <p>{{ t('standalone.zones_and_policies.traffic_policy.accept') }}</p>
+          </template>
+          <template v-else>
+            <FontAwesomeIcon :icon="['fas', 'ban']" />
+            <p>{{ t('standalone.zones_and_policies.traffic_policy.reject') }}</p>
+          </template>
         </div>
       </template>
       <template #input="{ item }: { item: Zone }">
@@ -191,7 +214,8 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
                 id: 'delete',
                 danger: true,
                 label: t('common.delete'),
-                action: () => (deleteZone = item)
+                action: () => (deleteZone = item),
+                disabled: isSpecialZone(item)
               }
             ]"
             align-to-right

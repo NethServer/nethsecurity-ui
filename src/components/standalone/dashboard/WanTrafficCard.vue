@@ -22,8 +22,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const loginStore = useLoginStore()
 const REFRESH_INTERVAL = 10000
-const CYAN_300 = '#67e8f9'
-const CYAN_600 = '#0891b2'
+const CYAN_400 = '#22d3ee'
+const GRAY_500 = '#6b7280'
 const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
 const intervalId = ref<number>(0)
@@ -125,16 +125,16 @@ async function getInterfaceTraffic() {
     chartDatasets.value = [
       {
         label: t('standalone.dashboard.download'),
-        borderColor: CYAN_300,
-        backgroundColor: CYAN_300,
+        borderColor: CYAN_400,
+        backgroundColor: CYAN_400,
         data: downloadData,
         borderWidth: 1,
         radius: 0
       },
       {
         label: t('standalone.dashboard.upload'),
-        borderColor: CYAN_600,
-        backgroundColor: CYAN_600,
+        borderColor: GRAY_500,
+        backgroundColor: GRAY_500,
         data: uploadData,
         borderWidth: 1,
         radius: 0

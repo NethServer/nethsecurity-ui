@@ -19,8 +19,7 @@ import 'chartjs-adapter-date-fns'
 import { Line } from 'vue-chartjs'
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
-import { formatDateLoc } from '@nethserver/vue-tailwind-lib'
-import { round } from 'lodash'
+import { formatDateLoc, kbpsFormat } from '@nethserver/vue-tailwind-lib'
 
 const themeStore = useThemeStore()
 
@@ -107,28 +106,6 @@ const options: any = {
 const chartData: any = computed(() => {
   return { labels: props.labels, datasets: props.datasets }
 })
-
-//// move to library
-/**
- * Format kilobits per second (kbps, typically a network speed)
- *
- * @param kbps the number of bytes to format
- * @returns a string representing the byte size with the appropriate unit
- */
-function kbpsFormat(kbps: number) {
-  switch (true) {
-    case isNaN(kbps) || (!kbps && kbps !== 0):
-      return '-'
-    case kbps >= 0 && kbps < 1000:
-      return round(kbps, 2) + ' kbps'
-    case kbps >= 1000 && kbps < Math.pow(1000, 2):
-      return round(kbps / 1000, 2) + ' Mbps'
-    case kbps >= Math.pow(1000, 2) && kbps < Math.pow(1000, 3):
-      return round(kbps / Math.pow(1000, 2), 2) + ' Gbps'
-    default:
-      return round(kbps / Math.pow(1000, 3), 2) + ' Tbps'
-  }
-}
 
 ChartJS.register(
   CategoryScale,

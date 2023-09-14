@@ -128,7 +128,11 @@
       "wan_interface": "WAN interface",
       "download": "Download",
       "upload": "Upload",
-      "no_wan_interfaces": "No WAN interfaces"
+      "no_wan_interfaces": "No WAN interfaces",
+      "memory_usage": "Memory usage",
+      "root_usage": "Root usage",
+      "storage_usage": "Storage usage",
+      "tmpfs_usage": "Tmpfs usage"
     },
     "registration": {
       "title": "Registration"

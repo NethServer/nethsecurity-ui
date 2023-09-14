@@ -12,7 +12,9 @@ import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import CreateZone from '@/components/standalone/firewall/CreateZone.vue'
+import DeleteZone from '@/components/standalone/firewall/DeleteZone.vue'
 import {
+  Forwarding,
   TrafficPolicy,
   useFirewallStore,
   Zone,
@@ -141,11 +143,14 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
       </template>
       <template #forwards="{ item }: { item: Zone }">
         <div class="flex flex-wrap gap-2">
-          <NeBadge
-            v-for="(forwarding, index) in item.forwardings"
-            :key="index"
-            :text="forwarding.name"
-          />
+          <template
+            v-for="forward in firewallConfig.forwardings.filter(
+              (forwarding: Forwarding) => forwarding.source == item.name
+            )"
+            :key="forward.name"
+          >
+            <NeBadge :text="forward.destination" />
+          </template>
         </div>
       </template>
       <template #output="{ item }: { item: Zone }">
@@ -180,12 +185,6 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
       </template>
       <template #actions="{ item }: { item: Zone }">
         <div class="flex gap-3">
-          <NeButton kind="tertiary" @click="editZone = item">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'edit']" />
-            </template>
-            {{ t('common.edit') }}
-          </NeButton>
           <NeDropdown
             :items="[
               {
@@ -207,5 +206,10 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
     >
       <CreateZone @cancel="creatingZone = false" @success="creatingZone = false" />
     </NeSideDrawer>
+    <DeleteZone
+      :zone="deleteZone"
+      @cancel="deleteZone = undefined"
+      @success="deleteZone = undefined"
+    />
   </div>
 </template>

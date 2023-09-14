@@ -35,7 +35,6 @@ interface ZoneResponse {
   extra_dest?: string
   custom_chains?: boolean
   // helper
-  forwardings?: BaseResponse<ZoneResponse>
 }
 
 interface ForwardingResponse {
@@ -83,7 +82,6 @@ export class Zone {
   public readonly forward: TrafficPolicy
   public readonly interfaces: Array<string> = []
   public readonly logging: boolean = false
-  public readonly forwardings: Array<Zone> = []
 
   constructor(configName: string, zoneResponse: ZoneResponse) {
     this.confName = configName
@@ -93,9 +91,6 @@ export class Zone {
     this.forward = Zone.trafficPolicyParser(zoneResponse.forward ?? 'DROP')
     this.interfaces = zoneResponse.network ?? []
     this.logging = Boolean(zoneResponse.log ?? 0)
-    this.forwardings = Object.entries(zoneResponse.forwardings ?? []).map(
-      ([name, zoneResponse]) => new Zone(name, zoneResponse)
-    )
   }
 
   public type(): ZoneType {

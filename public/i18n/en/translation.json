@@ -412,7 +412,8 @@
       "no_subnets_set": "No @.lower:standalone.zones_and_policies.subnet set",
       "add_new_subnet": "Add new @.lower:standalone.zones_and_policies.subnet",
       "limit_log_messages": "Limit log messages",
-      "enable_logging": "Enable logging on this zone"
+      "enable_logging": "Enable logging on this zone",
+      "delete_zone": "Delete \"{0}\"?"
     },
     "firewall": {
       "title": "Firewall"

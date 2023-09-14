@@ -123,7 +123,7 @@ watch(
               </TransitionChild>
               <!-- Sidebar component, swap this element with another sidebar if you like -->
               <div
-                class="flex grow flex-col gap-y-5 overflow-y-auto px-2 pb-4 bg-white dark:bg-gray-950"
+                class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-2 pb-4 dark:bg-gray-950"
               >
                 <div class="flex h-16 shrink-0 items-center">
                   <img
@@ -187,10 +187,10 @@ watch(
 
     <!-- Static sidebar for desktop -->
     <!-- //// removed lg:inset-y-0 class -->
-    <div class="hidden lg:fixed lg:z-50 lg:flex lg:w-72 lg:flex-col lg:h-screen">
+    <div class="hidden lg:fixed lg:z-50 lg:flex lg:h-screen lg:w-72 lg:flex-col">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div
-        class="flex grow flex-col gap-y-5 overflow-y-auto border-r px-2 pb-4 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
+        class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-2 pb-4 dark:border-gray-700 dark:bg-gray-950"
       >
         <div class="flex h-16 shrink-0 items-center">
           <img
@@ -249,11 +249,11 @@ watch(
 
     <div class="lg:pl-72">
       <div
-        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950"
+        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm dark:border-gray-700 dark:bg-gray-950 sm:gap-x-6 sm:px-6 lg:px-8"
       >
         <button
           type="button"
-          class="-m-2.5 p-2.5 lg:hidden text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
+          class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50 lg:hidden"
           @click="sidebarOpen = true"
         >
           <span class="sr-only">{{ t('standalone.shell.open_sidebar') }}</span>
@@ -261,7 +261,7 @@ watch(
         </button>
 
         <!-- Separator -->
-        <div class="h-6 w-px lg:hidden bg-gray-200 dark:bg-gray-700" aria-hidden="true" />
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 lg:hidden" aria-hidden="true" />
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form class="relative flex flex-1" action="#" method="GET">
@@ -276,7 +276,7 @@ watch(
             />
             <input
               id="search-field"
-              class="block h-full w-full border-0 py-0 pl-8 pr-0 focus:ring-0 sm:text-sm text-gray-900 bg-white placeholder:text-gray-400 dark:text-gray-50 dark:bg-gray-950 dark:placeholder:text-gray-500"
+              class="block h-full w-full border-0 bg-white py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 dark:bg-gray-950 dark:text-gray-50 dark:placeholder:text-gray-500 sm:text-sm"
               :placeholder="t('common.search')"
               type="search"
               name="search"
@@ -308,7 +308,7 @@ watch(
                 </span>
                 <span
                   v-if="isChangesButtonFlashing"
-                  class="animate-ping absolute inline-flex h-full w-3/4 rounded-md opacity-75 dark:opacity-75 bg-primary-500 dark:bg-primary-300"
+                  class="absolute inline-flex h-full w-3/4 animate-ping rounded-md bg-primary-500 opacity-75 dark:bg-primary-300 dark:opacity-75"
                 ></span>
               </NeButton>
               <UciChangesModal
@@ -320,7 +320,7 @@ watch(
             <button
               type="button"
               :class="[
-                '-m-2.5 p-2.5 flex items-center gap-3 hover:text-gray-900 dark:hover:text-gray-50',
+                '-m-2.5 flex items-center gap-3 p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
                 topBarButtonsColorClasses
               ]"
             >
@@ -343,7 +343,7 @@ watch(
               type="button"
               @click="themeStore.toggleTheme()"
               :class="[
-                '-m-2.5 p-2.5 flex hover:text-gray-900 dark:hover:text-gray-50',
+                '-m-2.5 flex p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
                 topBarButtonsColorClasses
               ]"
             >
@@ -366,7 +366,7 @@ watch(
             <button
               type="button"
               :class="[
-                '-m-2.5 p-2.5 flex hover:text-gray-900 dark:hover:text-gray-50',
+                '-m-2.5 flex p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
                 topBarButtonsColorClasses
               ]"
             >
@@ -420,7 +420,7 @@ watch(
                 leave-to-class="transform opacity-0 scale-95"
               >
                 <MenuItems
-                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md py-2 shadow-lg ring-1 focus:outline-none bg-white ring-gray-900/5 dark:bg-gray-950 dark:ring-gray-100/5"
+                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none dark:bg-gray-950 dark:ring-gray-100/5"
                 >
                   <MenuItem
                     v-for="item in accountMenu"

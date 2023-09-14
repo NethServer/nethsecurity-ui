@@ -657,7 +657,7 @@ function getTxBytes(device: any) {
       :description="error.notificationDescription"
       class="mb-4"
     />
-    <div class="text-sm space-y-6">
+    <div class="space-y-6 text-sm">
       <div class="flex justify-end gap-4">
         <NeButton kind="tertiary" size="lg" @click="showCreateVlanDeviceDrawer">
           <template #prefix>
@@ -681,7 +681,7 @@ function getTxBytes(device: any) {
         </NeButton> -->
       </div>
       <!-- skeleton -->
-      <div v-if="isLoading" class="animate-pulse flex">
+      <div v-if="isLoading" class="flex animate-pulse">
         <div class="flex-1 space-y-8">
           <div
             v-for="index in 4"
@@ -704,13 +704,13 @@ function getTxBytes(device: any) {
                   <!-- device card -->
                   <div
                     :class="[
-                      `relative px-8 py-6 shadow rounded-md border-l-4 bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                      `relative rounded-md border-l-4 bg-white px-8 py-6 shadow dark:bg-gray-800 ${getDeviceBorderStyle(
                         device
                       )}`
                     ]"
                   >
                     <!-- edit button and overflow menu for smaller screens -->
-                    <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
+                    <div class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden">
                       <template v-if="getInterface(device, networkConfig)">
                         <!-- actions for configured devices -->
                         <NeButton
@@ -756,16 +756,16 @@ function getTxBytes(device: any) {
                       />
                     </div>
                     <div
-                      class="grid gap-x-8 gap-y-8 pr-16 3xl:pr-0 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 3xl:grid-cols-5"
+                      class="grid grid-cols-1 gap-x-8 gap-y-8 pr-16 md:grid-cols-2 2xl:grid-cols-4 3xl:grid-cols-5 3xl:pr-0"
                     >
                       <!-- first column -->
                       <div
-                        class="flex gap-8 flex-wrap items-start md:justify-between pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                        class="flex flex-wrap items-start gap-8 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
                       >
                         <div class="flex items-center">
                           <!-- use component for interface icon? //// -->
                           <div
-                            :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full mr-4 ${getIconBackgroundStyle(
+                            :class="`mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${getIconBackgroundStyle(
                               device
                             )}`"
                           >
@@ -782,14 +782,14 @@ function getTxBytes(device: any) {
                             <div>{{ device.name }}</div>
                           </div>
                         </div>
-                        <div class="flex flex-col gap-2 items-center">
+                        <div class="flex flex-col items-center gap-2">
                           <!-- alias -->
                           <div v-if="getAliasInterface(device, networkConfig)">
                             <NeButton
                               kind="tertiary"
                               size="sm"
                               @click="toggleExpandAlias(device)"
-                              class="-mt-2 -mr-2"
+                              class="-mr-2 -mt-2"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -814,7 +814,7 @@ function getTxBytes(device: any) {
                               kind="tertiary"
                               size="sm"
                               @click="toggleExpandBridge(device)"
-                              class="-mt-2 -mr-2"
+                              class="-mr-2 -mt-2"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -835,7 +835,7 @@ function getTxBytes(device: any) {
                               kind="tertiary"
                               size="sm"
                               @click="toggleExpandBond(device)"
-                              class="-mt-2 -mr-2"
+                              class="-mr-2 -mt-2"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -905,7 +905,7 @@ function getTxBytes(device: any) {
                       <!-- fourth column -->
                       <div>
                         <div>
-                          <div class="flex items-center gap-2 mb-2">
+                          <div class="mb-2 flex items-center gap-2">
                             <font-awesome-icon
                               :icon="['fas', isDeviceUp(device) ? 'circle-check' : 'circle-xmark']"
                               class="h-4 w-4"
@@ -934,7 +934,7 @@ function getTxBytes(device: any) {
                       </div>
                       <!-- fifth column -->
                       <div
-                        class="hidden 3xl:flex items-start gap-2 justify-end border-l border-gray-200 dark:border-gray-600"
+                        class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
                         <template v-if="getInterface(device, networkConfig)">
                           <!-- actions for configured devices -->
@@ -992,20 +992,21 @@ function getTxBytes(device: any) {
                       <!-- v-for is a trick to declare 'alias' variable inside template -->
                       <div
                         v-for="(alias, i) in [getAliasInterface(device, networkConfig)]"
-                        :key="i" class="flex items-start group"
+                        :key="i"
+                        class="group flex items-start"
                       >
                         <!-- L-shaped dashed line-->
                         <div
-                          class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                          class="ml-4 h-14 w-4 shrink-0 border-b border-l border-dashed border-gray-400 dark:border-gray-500"
                         ></div>
                         <!-- alias card -->
                         <div
-                          :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                          :class="`relative mt-4 grow rounded-md border-l-4 bg-white px-8 py-6 shadow dark:bg-gray-800 ${getDeviceBorderStyle(
                             device
                           )}`"
                         >
                           <!-- edit button and overflow menu for smaller screens -->
-                          <div class="3xl:hidden absolute right-4 top-4 flex items-center gap-2">
+                          <div class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden">
                             <NeButton
                               kind="tertiary"
                               size="lg"
@@ -1025,17 +1026,17 @@ function getTxBytes(device: any) {
                               :alignToRight="true"
                             />
                           </div>
-                          <div class="flex justify-between gap-8 flex-wrap">
+                          <div class="flex flex-wrap justify-between gap-8">
                             <!-- alias name -->
                             <div
-                              class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                              class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
                             >
                               <div class="font-semibold">
                                 {{ t('standalone.interfaces_and_devices.alias') }}:
                                 {{ alias['.name'] }}
                               </div>
                             </div>
-                            <div class="flex flex-wrap gap-8 pr-40 grow">
+                            <div class="flex grow flex-wrap gap-8 pr-40">
                               <!-- ipv4 addresses -->
                               <div v-for="(ipv4, i) in alias.ipaddr" :key="i">
                                 <span class="font-medium">
@@ -1051,7 +1052,7 @@ function getTxBytes(device: any) {
                             </div>
                             <!-- edit alias and overflow menu -->
                             <div
-                              class="hidden 3xl:flex items-start gap-2 justify-end pl-8 w-1/5 border-l border-gray-200 dark:border-gray-600"
+                              class="hidden w-1/5 items-start justify-end gap-2 border-l border-gray-200 pl-8 dark:border-gray-600 3xl:flex"
                             >
                               <NeButton
                                 kind="tertiary"
@@ -1082,29 +1083,29 @@ function getTxBytes(device: any) {
                   <Transition name="slide-down">
                     <div
                       v-if="isBridge(device) && isExpandedBridge[device.name]"
-                      class="flex items-start group"
+                      class="group flex items-start"
                     >
                       <!-- L-shaped dashed line-->
                       <div
-                        class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                        class="ml-4 h-14 w-4 shrink-0 border-b border-l border-dashed border-gray-400 dark:border-gray-500"
                       ></div>
                       <!-- bridge card -->
                       <div
-                        :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                        :class="`relative mt-4 grow rounded-md border-l-4 bg-white px-8 py-6 shadow dark:bg-gray-800 ${getDeviceBorderStyle(
                           device
                         )}`"
                       >
-                        <div class="flex justify-between gap-8 flex-wrap">
+                        <div class="flex flex-wrap justify-between gap-8">
                           <!-- bridge name -->
                           <div
-                            class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                            class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
                           >
                             <div class="font-semibold">
                               {{ t('standalone.interfaces_and_devices.bridge') }}:
                               {{ device.name }}
                             </div>
                           </div>
-                          <div class="flex flex-wrap gap-8 grow">
+                          <div class="flex grow flex-wrap gap-8">
                             <span class="font-medium">
                               {{
                                 t(
@@ -1126,28 +1127,28 @@ function getTxBytes(device: any) {
                   <Transition name="slide-down">
                     <div
                       v-if="isBond(device) && isExpandedBond[device.name]"
-                      class="flex items-start group"
+                      class="group flex items-start"
                     >
                       <!-- L-shaped dashed line-->
                       <div
-                        class="ml-4 h-14 w-4 border-l border-b border-dashed shrink-0 border-gray-400 dark:border-gray-500"
+                        class="ml-4 h-14 w-4 shrink-0 border-b border-l border-dashed border-gray-400 dark:border-gray-500"
                       ></div>
                       <!-- bond card -->
                       <div
-                        :class="`relative mt-4 px-8 py-6 shadow rounded-md border-l-4 grow bg-white dark:bg-gray-800 ${getDeviceBorderStyle(
+                        :class="`relative mt-4 grow rounded-md border-l-4 bg-white px-8 py-6 shadow dark:bg-gray-800 ${getDeviceBorderStyle(
                           device
                         )}`"
                       >
-                        <div class="flex justify-between gap-8 flex-wrap">
+                        <div class="flex flex-wrap justify-between gap-8">
                           <!-- bond name -->
                           <div
-                            class="w-full md:w-1/2 xl:w-1/4 3xl:w-1/5 pr-8 md:border-r border-gray-200 dark:border-gray-600"
+                            class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
                           >
                             <div class="font-semibold">
                               {{ t('standalone.interfaces_and_devices.bond') }}
                             </div>
                           </div>
-                          <div class="flex flex-wrap gap-8 grow">
+                          <div class="flex grow flex-wrap gap-8">
                             <span class="font-medium">
                               {{
                                 t(

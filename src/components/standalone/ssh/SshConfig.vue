@@ -119,7 +119,7 @@ function load() {
   >
     <form>
       <!-- Form -->
-      <div class="flex flex-col gap-y-4 mb-8">
+      <div class="mb-8 flex flex-col gap-y-4">
         <NeTextInput
           v-model.number="port"
           :invalid-message="validationErrors.get('port')?.[0]"

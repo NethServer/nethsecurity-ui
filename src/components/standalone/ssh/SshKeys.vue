@@ -221,7 +221,7 @@ function deleteKey() {
     :primary-button-disabled="deleting"
   >
     <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
-    <code class="break-all my-1">
+    <code class="my-1 break-all">
       {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
     </code>
   </NeModal>
@@ -238,9 +238,9 @@ function deleteKey() {
   >
     <div class="mb-4">
       <!-- Key Element -->
-      <div v-for="key in sshKeys" :key="key.key" class="flex gap-x-2 mb-2 last:mb-0">
-        <div class="w-10/12 border border-gray-200 dark:border-gray-700 rounded p-3 text-xs">
-          <p class="font-bold mb-1">
+      <div v-for="key in sshKeys" :key="key.key" class="mb-2 flex gap-x-2 last:mb-0">
+        <div class="w-10/12 rounded border border-gray-200 p-3 text-xs dark:border-gray-700">
+          <p class="mb-1 font-bold">
             {{ key.comment ?? t('standalone.ssh.ssh_keys.unnamed_key') }}
           </p>
           <p class="mb-1">{{ key.type }}</p>
@@ -248,9 +248,9 @@ function deleteKey() {
             {{ key.key }}
           </code>
         </div>
-        <div class="w-2/12 grid place-content-center">
+        <div class="grid w-2/12 place-content-center">
           <NeButton kind="tertiary" size="lg" @click.prevent="keyToDelete = key">
-            <font-awesome-icon :icon="['fas', 'trash']" aria-hidden="true" class="w-4 h-4" />
+            <font-awesome-icon :icon="['fas', 'trash']" aria-hidden="true" class="h-4 w-4" />
           </NeButton>
         </div>
       </div>

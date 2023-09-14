@@ -182,11 +182,11 @@ async function revertChanges() {
         <div
           v-for="(change, index) of uciChangesStore.changes[config]"
           :key="index"
-          class="flex items-center px-2 py-1.5 border-b border-gray-300 dark:border-gray-500"
+          class="flex items-center border-b border-gray-300 px-2 py-1.5 dark:border-gray-500"
         >
           <font-awesome-icon
             :icon="['fas', getChangeIcon(change)]"
-            :class="`h-5 w-5 mr-2 ${getChangeColor(change)}`"
+            :class="`mr-2 h-5 w-5 ${getChangeColor(change)}`"
             aria-hidden="true"
           />
           <div class="break-all">{{ getChangeTemplate(config, change) }}</div>

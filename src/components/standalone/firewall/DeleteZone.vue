@@ -29,7 +29,7 @@ const deleteError = ref<Error>()
 function deleteZone() {
   deleting.value = true
   ubusCall('ns.firewall', 'delete_zone', {
-    name: props.zone?.name
+    config_name: props.zone?.configName
   })
     .then(() => {
       firewallConfig.fetch()

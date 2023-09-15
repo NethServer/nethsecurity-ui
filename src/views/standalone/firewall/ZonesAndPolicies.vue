@@ -99,7 +99,7 @@ function isSpecialZone(zone: Zone): boolean {
       </p>
       <div>
         <!-- TODO: add settings -->
-        <NeButton kind="secondary" @click="creatingZone = true">
+        <NeButton kind="secondary" @click="creatingZone = true" size="lg">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" />
           </template>

@@ -57,14 +57,8 @@ export enum TrafficPolicy {
 
 export enum SpecialZones {
   GUESTS = 'guests',
-  IPSEC = 'ipsec',
   LAN = 'lan',
-  OPENVPN = 'openvpn',
-  RWOPENWRT = 'rwopenwrt',
-  RWWIREGUARD = 'rwwireguard',
-  TUNHOTSPOT = 'tunhotspot',
-  WAN = 'wan',
-  WIREGUARD = 'wireguard'
+  WAN = 'wan'
 }
 
 /**
@@ -87,7 +81,7 @@ export class InvalidConfigurationError extends Error {
  * Zone is a factory class that parses the response given by api.
  */
 export class Zone {
-  public readonly confName: string
+  public readonly configName: string
   public readonly name: string
   public readonly input: TrafficPolicy
   public readonly output: TrafficPolicy
@@ -96,7 +90,7 @@ export class Zone {
   public readonly logging: boolean = false
 
   constructor(configName: string, zoneResponse: ZoneResponse) {
-    this.confName = configName
+    this.configName = configName
     this.name = zoneResponse.name
     this.input = Zone.trafficPolicyParser(zoneResponse.input ?? 'DROP')
     this.output = Zone.trafficPolicyParser(zoneResponse.output ?? 'DROP')

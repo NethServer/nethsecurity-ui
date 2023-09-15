@@ -4,8 +4,6 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeCombobox,
-  NeExpandable,
-  NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
   NeTextInput,
@@ -14,7 +12,6 @@ import {
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore } from '@/stores/standalone/useFirewallStore'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -31,7 +28,7 @@ onMounted(() => {
   }
 })
 
-const advancedSettings = ref(false)
+/*const advancedSettings = ref(false)*/
 
 const emit = defineEmits(['cancel', 'success'])
 
@@ -76,19 +73,19 @@ const trafficInput = ref(TrafficPolicy.DROP)
 const trafficForward = ref(TrafficPolicy.DROP)
 const trafficToWan = ref(false)
 
-const subnets = ref<string[]>([])
+/*const subnets = ref<string[]>([])
 const newSubnet = ref('')
 const enableLogging = ref(false)
-const logPerSecond = ref('10')
+const logPerSecond = ref('10')*/
 
 const saving = ref(false)
 const saveError = ref<Error>()
 const errorBag = ref(new MessageBag())
 
-function addNewSubnet() {
+/*function addNewSubnet() {
   subnets.value.push(newSubnet.value)
   newSubnet.value = ''
-}
+}*/
 
 function save() {
   if (!validate()) {
@@ -158,9 +155,9 @@ function validate(): boolean {
       multiple
     />
     <NeToggle
+      v-model="trafficToWan"
       :disabled="saving"
       :label="t('standalone.zones_and_policies.traffic_to_wan')"
-      v-model="trafficToWan"
     />
     <NeRadioSelection
       v-model="trafficInput"
@@ -174,12 +171,18 @@ function validate(): boolean {
       :label="t('standalone.zones_and_policies.traffic_to_same_zone')"
       :options="trafficOptions"
     />
-    <NeExpandable
-      :expanded="advancedSettings"
-      :title="t('standalone.zones_and_policies.advanced_settings')"
-      @set-expanded="(expanded) => (advancedSettings = expanded)"
-    >
-      <div class="mt-2 space-y-4">
+    <!--    <NeButton kind="tertiary" size="sm" @click="advancedSettings = !advancedSettings" class="-ml-2">
+      <template #suffix>
+        <font-awesome-icon
+          :icon="['fas', advancedSettings ? 'chevron-up' : 'chevron-down']"
+          class="h-3 w-3"
+          aria-hidden="true"
+        />
+      </template>
+      {{ t('standalone.zones_and_policies.advanced_settings') }}
+    </NeButton>
+    <Transition name="slide-down">
+      <div class="mt-2 space-y-4" v-show="advancedSettings">
         <div>
           <NeFormItemLabel>
             {{ t('standalone.zones_and_policies.covered_subnets') }}
@@ -223,13 +226,13 @@ function validate(): boolean {
           />
         </div>
       </div>
-    </NeExpandable>
+    </Transition>-->
     <hr />
     <div class="flex justify-end gap-4">
-      <NeButton :disabled="saving" @click="$emit('cancel')">
-        {{ t('common.close') }}
+      <NeButton :disabled="saving" kind="tertiary" size="lg" @click="$emit('cancel')">
+        {{ t('common.cancel') }}
       </NeButton>
-      <NeButton :disabled="saving" :loading="saving" kind="primary" @click="save()">
+      <NeButton :disabled="saving" :loading="saving" kind="primary" size="lg" @click="save()">
         {{ t('common.save') }}
       </NeButton>
     </div>

@@ -50,8 +50,6 @@ const options: any = {
       },
       ticks: {
         source: 'auto',
-        // disable rotation for performance
-        maxRotation: 0,
         autoSkip: true,
         // font color according to theme: gray-200 or gray-700
         color: themeStore.isLight ? '#374151' : '#e5e7eb',

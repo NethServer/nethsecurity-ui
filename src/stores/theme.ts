@@ -42,9 +42,9 @@ export const useThemeStore = defineStore('theme', () => {
     if (!username) {
       // user is not logged, try reading remembered username from local storage
       if (isStandaloneMode()) {
-        username = getStringFromStorage('standaloneUsername')
+        username = getStringFromStorage('standaloneUsername') || 'root'
       } else {
-        username = getStringFromStorage('controllerUsername')
+        username = getStringFromStorage('controllerUsername') || 'admin'
       }
     }
     return username

@@ -49,7 +49,13 @@
     "invalid_hexadecimal_string": "Stringa esadecimale non valida",
     "maximum_num_characters_allowed": "Massimo {num} caratteri consentiti",
     "invalid_vlan_id": "Inserire un numero intero compreso tra 1 e 4094",
-    "cannot_create_device": "Impossibile creare il dispositivo"
+    "cannot_create_device": "Impossibile creare il dispositivo",
+    "cannot_retrieve_realtime_traffic": "Impossibile recuperare il traffico in tempo reale",
+    "cannot_retrieve_system_info": "Impossibile recuperare le informazioni di sistema",
+    "cannot_retrieve_service_status": "Impossibile recuperare lo stato del servizio",
+    "cannot_retrieve_wan_traffic": "Impossibile recuperare il traffico WAN",
+    "cannot_retrieve_wan_list": "Impossibile recuperare l'elenco delle WAN",
+    "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico"
   },
   "login": {
     "sign_in": "Accedi",
@@ -137,7 +143,42 @@
       "close_side_drawer": "Chiudi il cassetto laterale"
     },
     "dashboard": {
-      "title": "Dashboard"
+      "title": "Dashboard",
+      "storage_usage": "Utilizzo di storage",
+      "known_hosts": "Host conosciuti",
+      "today_top_applications": "Applicazioni",
+      "ban_ip": "BanIP",
+      "adblock_dns": "Adblock DNS",
+      "active": "Attivo",
+      "unknown": "Sconosciuto",
+      "today_top_applications_description": "Applicazioni che oggi hanno generato più traffico",
+      "system": "Sistema",
+      "root_usage": "Utilizzo di root",
+      "load_minutes": "Carico 1 / 5 / 15 minuti",
+      "traffic": "Traffico",
+      "thread_shield_ip": "Threat Shield IP",
+      "inactive": "Inattivo",
+      "multiwan": "MultiWAN",
+      "real_time_traffic": "Traffico in tempo reale",
+      "memory_usage": "Utilizzo di memoria",
+      "uptime": "Tempo di attività",
+      "download": "Download",
+      "today_top_hosts_description": "Host che oggi hanno generato più traffico",
+      "internet_connection": "Connessione Internet",
+      "tmpfs_usage": "Utilizzo di tmpfs",
+      "today_top_hosts": "Host",
+      "thread_shield_dns": "Threat Shield DNS",
+      "warning": "Attenzione",
+      "no_wan_interfaces": "Nessuna interfaccia WAN",
+      "operating_system": "Sistema operativo",
+      "hostname": "Nome host",
+      "wan_traffic": "Traffico WAN",
+      "today_top_protocols": "Protocolli",
+      "today_top_protocols_description": "Protocolli che oggi hanno generato più traffico",
+      "wan_interface": "Interfaccia WAN",
+      "upload": "Upload",
+      "host": "Host",
+      "dpi_core": "DPI-core"
     },
     "registration": {
       "title": "Registrazione"
@@ -333,7 +374,7 @@
       },
       "choose_gateway": "Gateway",
       "create_policy": "Crea policy {name}",
-      "rules_description": "L'ordine è importante: la valutazione delle regole continua dopo un match. La rotta assegnata corrisponde all'ultimo match.",
+      "rules_description": "Le policy di routing sono assegnate agli host tramite regole. Per utilizzare una policy diversa da quella predefinita, crea una regola e posizionala sopra la regola predefinita",
       "priority": "Priorità {n}",
       "seconds": "{n} secondo | {n} secondi",
       "tracking_hostnames_or_ips": "Nome host o indirizzo IP di tracciamento",
@@ -344,7 +385,30 @@
       "ping_test": "{n} test ping | {n} test ping",
       "interface_down": "Interfaccia spenta",
       "interface_up": "Interfaccia accesa",
-      "weight": "Peso"
+      "weight": "Peso",
+      "assigned_policy": "Policy assegnata",
+      "protocol": "Protocollo",
+      "interface_recovery_description": "Numero di test necessari per abilitare o disabilitare la singola interfaccia WAN.",
+      "delete_rule_modal": {
+        "button": "@:common.delete"
+      },
+      "all_protocols": "Tutti i protocolli",
+      "destination_address": "Indirizzo di destinazione",
+      "policy_description": "Elenco delle policy disponibili, se sono presenti più WAN la policy predefinita è obbligatoria e non può essere eliminata",
+      "edit_policy": "Modifica policy {name}",
+      "source_address": "Indirizzo sorgente",
+      "ping_settings_title": "Impostazioni ping",
+      "destination_port": "Porta di destinazione",
+      "interface_recovery_title": "Test WAN",
+      "edit_rule": "Modifica regola {name}",
+      "delete_policy_modal": {
+        "button": "@:common.delete"
+      },
+      "create_new_rule": "Crea nuova regola",
+      "rule_name": "Nome regola",
+      "tracking_hostnames_or_ips_title": "Monitoraggio WAN",
+      "tracking_hostnames_or_ips_description": "Inserisci gli indirizzi IP (o i nomi host) da pingare per monitorare lo stato delle WAN. Se almeno un host risponde al ping, il WAN rimane attivo",
+      "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività"
     }
   },
   "controller": {
@@ -373,5 +437,8 @@
   },
   "ne_dropdown": {
     "open_menu": "Apri menu"
+  },
+  "ne_table": {
+    "no_items": "Nessun elemento"
   }
 }

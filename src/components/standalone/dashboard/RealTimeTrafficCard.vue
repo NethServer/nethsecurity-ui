@@ -51,7 +51,7 @@ onUnmounted(() => {
 
 function formatTraffic(value: number) {
   value = Number(value.toFixed(2))
-  return byteFormat1000(value) + '\\s'
+  return byteFormat1000(value) + '/s'
 }
 
 async function getTopTalkers() {

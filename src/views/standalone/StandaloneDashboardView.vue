@@ -4,18 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeCard, savePreference } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { savePreference } from '@nethserver/vue-tailwind-lib'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
 import TrafficSummaryChart from '@/components/standalone/dashboard/TrafficSummaryChart.vue'
 import WanTrafficCard from '@/components/standalone/dashboard/WanTrafficCard.vue'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
-import NeCard from '@/components/NeCard.vue'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import router from '@/router'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
@@ -36,6 +35,10 @@ async function changeLocale(lang: string) {
 
   // reload page
   location.reload()
+}
+
+function goToMultiwan() {
+  router.push(`${getStandaloneRoutePrefix()}/network/multi-wan`)
 }
 </script>
 
@@ -58,7 +61,8 @@ async function changeLocale(lang: string) {
       hasStatus
       :title="t('standalone.dashboard.multiwan')"
       :icon="['fas', 'earth-americas']"
-      :titleLink="`${getStandaloneRoutePrefix()}/network/multi-wan`"
+      titleClickable
+      @titleClick="goToMultiwan"
     />
     <!-- dpi-core -->
     <ServiceCard

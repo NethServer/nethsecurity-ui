@@ -5,10 +5,9 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeBadge, NeSkeleton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeCard, NeBadge, NeSkeleton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import NeCard from '@/components/NeCard.vue'
 
 const props = defineProps({
   serviceName: { type: String },

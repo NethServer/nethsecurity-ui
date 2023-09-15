@@ -602,6 +602,9 @@ function getPhysicalDevice(device: any) {
   if (isBond(device)) {
     const physicalDev = physicalDevices.value[`bond-${device['.name']}`]
     return physicalDev
+  } else if (isVlan(device)) {
+    const physicalDev = physicalDevices.value[device.ifname]
+    return physicalDev
   }
 
   const physicalDev = physicalDevices.value[device.name]

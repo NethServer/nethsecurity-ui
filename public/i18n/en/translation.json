@@ -132,7 +132,10 @@
       "memory_usage": "Memory usage",
       "root_usage": "Root usage",
       "storage_usage": "Storage usage",
-      "tmpfs_usage": "Tmpfs usage"
+      "tmpfs_usage": "Tmpfs usage",
+      "no_hosts": "No hosts",
+      "no_applications": "No applications",
+      "no_protocols": "No protocols"
     },
     "registration": {
       "title": "Registration"

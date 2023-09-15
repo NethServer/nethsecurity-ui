@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
+  NeCard,
   NeProgressBar,
   getAxiosErrorMessage,
   formatDurationLoc
@@ -13,7 +14,6 @@ import {
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import NeCard from '@/components/NeCard.vue'
 import { round } from 'lodash'
 
 const { t } = useI18n()

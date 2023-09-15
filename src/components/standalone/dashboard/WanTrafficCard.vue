@@ -4,13 +4,13 @@
 -->
 
 <script setup lang="ts">
-import NeCard from '@/components/NeCard.vue'
 import WanTrafficChart from '@/components/standalone/dashboard/WanTrafficChart.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import {
   NeCombobox,
   NeSkeleton,
+  NeCard,
   getAxiosErrorMessage,
   getPreference,
   savePreference

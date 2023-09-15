@@ -4,17 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeCard, savePreference } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { savePreference } from '@nethserver/vue-tailwind-lib'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
 import TrafficSummaryChart from '@/components/standalone/dashboard/TrafficSummaryChart.vue'
 import WanTrafficCard from '@/components/standalone/dashboard/WanTrafficCard.vue'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
-import NeCard from '@/components/NeCard.vue'
+import { getStandaloneRoutePrefix } from '@/lib/router'
+import router from '@/router'
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
@@ -35,6 +35,10 @@ async function changeLocale(lang: string) {
 
   // reload page
   location.reload()
+}
+
+function goToMultiwan() {
+  router.push(`${getStandaloneRoutePrefix()}/network/multi-wan`)
 }
 </script>
 
@@ -57,7 +61,8 @@ async function changeLocale(lang: string) {
       hasStatus
       :title="t('standalone.dashboard.multiwan')"
       :icon="['fas', 'earth-americas']"
-      titleLink="network/multi-wan"
+      titleClickable
+      @titleClick="goToMultiwan"
     />
     <!-- dpi-core -->
     <ServiceCard
@@ -107,38 +112,62 @@ async function changeLocale(lang: string) {
     <!-- top hosts -->
     <NeCard
       :title="t('standalone.dashboard.today_top_hosts')"
-      :description="t('standalone.dashboard.today_top_hosts_description')"
+      :description="
+        clientsDatasets[0]?.data.length
+          ? t('standalone.dashboard.today_top_hosts_description')
+          : t('standalone.dashboard.no_hosts')
+      "
       :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
     >
-      <TrafficSummaryChart :labels="clientsLabels" :datasets="clientsDatasets" />
+      <TrafficSummaryChart
+        v-if="clientsDatasets[0]?.data.length"
+        :labels="clientsLabels"
+        :datasets="clientsDatasets"
+      />
     </NeCard>
     <!-- top applications -->
     <NeCard
       :title="t('standalone.dashboard.today_top_applications')"
-      :description="t('standalone.dashboard.today_top_applications_description')"
+      :description="
+        appsDatasets[0]?.data.length
+          ? t('standalone.dashboard.today_top_applications_description')
+          : t('standalone.dashboard.no_applications')
+      "
       :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
     >
-      <TrafficSummaryChart :labels="appsLabels" :datasets="appsDatasets" />
+      <TrafficSummaryChart
+        v-if="appsDatasets[0]?.data.length"
+        :labels="appsLabels"
+        :datasets="appsDatasets"
+      />
     </NeCard>
     <!-- top protocols -->
     <NeCard
       :title="t('standalone.dashboard.today_top_protocols')"
-      :description="t('standalone.dashboard.today_top_protocols_description')"
+      :description="
+        protocolsDatasets[0]?.data.length
+          ? t('standalone.dashboard.today_top_protocols_description')
+          : t('standalone.dashboard.no_protocols')
+      "
       :skeletonLines="6"
       :loading="loadingTrafficSummary"
       :errorTitle="errorTitle"
       :errorDescription="errorDescription"
       class="sm:col-span-2 xl:row-span-2"
     >
-      <TrafficSummaryChart :labels="protocolsLabels" :datasets="protocolsDatasets" />
+      <TrafficSummaryChart
+        v-if="protocolsDatasets[0]?.data.length"
+        :labels="protocolsLabels"
+        :datasets="protocolsDatasets"
+      />
     </NeCard>
   </div>
 

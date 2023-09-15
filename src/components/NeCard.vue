@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { NeSkeleton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
-import { getStandaloneRoutePrefix } from '@/lib/router'
 
 //// move to library
 
@@ -56,7 +55,7 @@ defineProps({
           <h3 v-if="title" class="mb-3 font-semibold leading-6 text-gray-900 dark:text-gray-50">
             <router-link
               v-if="titleLink"
-              :to="`${getStandaloneRoutePrefix()}/${titleLink}`"
+              :to="titleLink"
               class="text-primary-700 dark:text-primary-500"
             >
               {{ title }}

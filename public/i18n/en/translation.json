@@ -388,6 +388,33 @@
     "users_and_objects": {
       "title": "Users & objects"
     },
+    "zones_and_policies": {
+      "title": "Zones & Policies",
+      "description": "The firewall creates zones over your network interfaces to control network traffic flow.",
+      "traffic_policy": {
+        "accept": "Accept",
+        "reject": "Reject",
+        "drop": "Drop"
+      },
+      "zone": "Zone",
+      "allow_forwards_to": "Allow forwards to",
+      "allow_forwards_from": "Allow forwards from",
+      "traffic_to_wan": "Traffic to WAN",
+      "traffic_to_firewall": "Traffic to firewall",
+      "traffic_to_same_zone": "Traffic to same zone",
+      "interfaces": "Interfaces",
+      "covered_subnets": "Covered subnets",
+      "logging": "Logging",
+      "add_zone": "Add zone",
+      "name": "Name",
+      "advanced_settings": "Advanced settings",
+      "subnet": "Subnet | Subnets",
+      "no_subnets_set": "No subnet set",
+      "add_new_subnet": "Add new subnet",
+      "limit_log_messages": "Limit log messages",
+      "enable_logging": "Enable logging on this zone",
+      "delete_zone": "Delete \"{0}\"?"
+    },
     "firewall": {
       "title": "Firewall"
     },

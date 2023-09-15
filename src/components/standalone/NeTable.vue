@@ -13,13 +13,6 @@ interface Headers {
 }
 
 /**
- * Key-value data that will be rendered to the table.
- */
-interface Data {
-  [key: string]: any
-}
-
-/**
  * Table style.
  */
 type TableStyle = 'basic' | 'card'
@@ -35,14 +28,14 @@ defineProps({
    * List of headers to be viewed in the table.
    */
   headers: {
-    type: Array<Headers>,
+    type: Object as PropType<Array<Headers>>,
     required: true
   },
   /**
    * Data that will be used to populate the table, values will be extracted from the header key.
    */
   data: {
-    type: Array<Data>,
+    type: Object as PropType<Array<any>>,
     required: true
   },
   /**

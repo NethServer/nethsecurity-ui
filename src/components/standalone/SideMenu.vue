@@ -59,7 +59,17 @@ const navigation: Ref<any> = ref([
     to: 'users-and-objects',
     icon: 'user-group'
   },
-  { name: t('standalone.firewall.title'), to: 'firewall', icon: 'block-brick-fire' },
+  {
+    name: t('standalone.firewall.title'),
+    to: 'firewall',
+    icon: 'block-brick-fire',
+    children: [
+      {
+        name: t('standalone.zones_and_policies.title'),
+        to: 'firewall/zones-and-policies'
+      }
+    ]
+  },
   { name: t('standalone.security.title'), to: 'security', icon: 'shield-halved' },
   { name: t('standalone.vpn.title'), to: 'vpn', icon: 'globe' },
   { name: t('standalone.logs.title'), to: 'logs', icon: 'list' },

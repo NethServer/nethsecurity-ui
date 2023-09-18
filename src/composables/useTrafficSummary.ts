@@ -60,48 +60,6 @@ export function useTrafficSummary() {
         day: day.toString()
       })
 
-      //// remove mock data
-      // const data: any = {
-      //   total: 53431766455,
-      //   clients: [
-      //     ['172.25.5.13', 31861541373],
-      //     ['192.168.5.5', 21861541373],
-      //     ['192.168.5.9', 61541373],
-      //     ['192.168.5.10', 31541373],
-      //     ['192.168.5.2', 21541373],
-      //     ['192.168.5.3', 1541373],
-      //     ['192.168.5.4', 541373],
-      //     ['fe80::9451:4aff:fec4:42d3', 924]
-      //   ],
-      //   hours: [
-      //     ['00', 148225512],
-      //     ['23', 0]
-      //   ],
-      //   names: {
-      //     'fe80::9528:c0f8:553e:14ae': 'fe80::9528:c0f8:553e:14ae',
-      //     '192.168.5.5': 'filippo-v6.nethesis.it',
-      //     '192.168.5.10': 'test'
-      //   },
-      //   protocol: [
-      //     ['http/s', 39098676979],
-      //     ['stun', 4719233858]
-      //   ],
-      //   host: [
-      //     ['f003.backblazeb2.com', 12985715728],
-      //     ['191.meet.nethesis.it', 4618635575]
-      //   ],
-      //   application: [
-      //     ['netify.backblaze', 30906291212],
-      //     ['netify.ubuntu', 753625987],
-      //     ['netify.test1', 653625987],
-      //     ['netify.test2', 553625987],
-      //     ['netify.test3', 453625987],
-      //     ['netify.test4', 353625987],
-      //     ['netify.test5', 253625987],
-      //     ['netify.test6', 153625987]
-      //   ]
-      // }
-
       // protocols chart
 
       protocolsLabels.value = res.data.protocol

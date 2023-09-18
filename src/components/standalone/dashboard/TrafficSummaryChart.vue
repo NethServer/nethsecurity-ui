@@ -43,12 +43,20 @@ const options: any = {
         },
         // font color according to theme: gray-200 or gray-700
         color: themeStore.isLight ? '#374151' : '#e5e7eb'
+      },
+      grid: {
+        // grid color according to theme: gray-700 or gray-200
+        color: themeStore.isLight ? '#e5e7eb' : '#374151'
       }
     },
     y: {
       ticks: {
         // font color according to theme: gray-200 or gray-700
         color: themeStore.isLight ? '#374151' : '#e5e7eb'
+      },
+      grid: {
+        // grid color according to theme: gray-700 or gray-200
+        color: themeStore.isLight ? '#e5e7eb' : '#374151'
       }
     }
   },

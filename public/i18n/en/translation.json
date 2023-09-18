@@ -135,7 +135,8 @@
       "tmpfs_usage": "Tmpfs usage",
       "no_hosts": "No hosts",
       "no_applications": "No applications",
-      "no_protocols": "No protocols"
+      "no_protocols": "No protocols",
+      "openvpn_rw": "OpenVPN RW"
     },
     "registration": {
       "title": "Registration"

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, getAxiosErrorMessage, byteFormat1000 } from '@nethserver/vue-tailwind-lib'
+import { NeCard, getAxiosErrorMessage, kbpsFormat } from '@nethserver/vue-tailwind-lib'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
@@ -50,8 +50,7 @@ onUnmounted(() => {
 })
 
 function formatTraffic(value: number) {
-  value = Number(value.toFixed(2))
-  return byteFormat1000(value) + '/s'
+  return kbpsFormat(value)
 }
 
 async function getTopTalkers() {

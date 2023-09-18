@@ -137,7 +137,7 @@
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_is_updated_every_seconds": "Data is updated every {seconds} seconds",
+      "data_is_updated_every_seconds": "Data are updated every {seconds} seconds",
       "usage_free_of_total": "{free} free of {total}"
     },
     "registration": {

@@ -41,7 +41,7 @@ const GET_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
 let physicalDevices: any = ref({})
 // used for setInterval
-let devicesIntervalId: Ref<number> = ref(0)
+let devicesIntervalId = ref(0)
 let firewallConfig: Ref<any> = ref({})
 let networkConfig: Ref<any> = ref({})
 let currentDevice: Ref<any> = ref({})

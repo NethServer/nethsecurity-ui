@@ -6,14 +6,14 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeCard, getAxiosErrorMessage, kbpsFormat } from '@nethserver/vue-tailwind-lib'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
 
 const { t } = useI18n()
 const REFRESH_INTERVAL = 10000
 const NUM_HOSTS = 5
-const topTalkersIntervalId: Ref<number> = ref(0)
+const topTalkersIntervalId = ref(0)
 const topTalkers = ref([])
 
 const tableHeaders = [

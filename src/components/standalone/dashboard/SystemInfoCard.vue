@@ -12,7 +12,7 @@ import {
   formatDurationLoc,
   byteFormat1024
 } from '@nethserver/vue-tailwind-lib'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash'
@@ -20,23 +20,23 @@ import { round } from 'lodash'
 const { t } = useI18n()
 const REFRESH_INTERVAL = 10000
 const systemInfo = ref<any>(null)
-const systemInfoIntervalId: Ref<number> = ref(0)
+const systemInfoIntervalId = ref(0)
 
-const freeMemory = ref<number>(0)
-const totalMemory = ref<number>(0)
-const memoryUsagePerc = ref<number>(0)
+const freeMemory = ref(0)
+const totalMemory = ref(0)
+const memoryUsagePerc = ref(0)
 
-const freeRoot = ref<number>(0)
-const totalRoot = ref<number>(0)
-const rootUsagePerc = ref<number>(0)
+const freeRoot = ref(0)
+const totalRoot = ref(0)
+const rootUsagePerc = ref(0)
 
-const freeTmpfs = ref<number>(0)
-const totalTmpfs = ref<number>(0)
-const tmpfsUsagePerc = ref<number>(0)
+const freeTmpfs = ref(0)
+const totalTmpfs = ref(0)
+const tmpfsUsagePerc = ref(0)
 
-const freeDataStorage = ref<number>(0)
-const totalDataStorage = ref<number>(0)
-const dataStorageUsagePerc = ref<number>(0)
+const freeDataStorage = ref(0)
+const totalDataStorage = ref(0)
+const dataStorageUsagePerc = ref(0)
 
 let loading = ref({
   getSystemInfo: true

@@ -9,7 +9,7 @@ export function useTrafficSummary() {
   const REFRESH_INTERVAL = 10000
   const CHART_NUM_ITEMS = 5
   const { t } = useI18n()
-  const intervalId = ref<number>(0)
+  const intervalId = ref(0)
   const clientsLabels = ref<any>([])
   const clientsDatasets = ref<any>([])
   const protocolsLabels = ref<any[]>([])

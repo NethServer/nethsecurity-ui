@@ -25,7 +25,7 @@ const loginStore = useLoginStore()
 const REFRESH_INTERVAL = 10000
 const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
-const intervalId = ref<number>(0)
+const intervalId = ref(0)
 const wanOptions = ref<any[]>([])
 const selectedDevice = ref<any>(null)
 

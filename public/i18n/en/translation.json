@@ -129,15 +129,16 @@
       "download": "Download",
       "upload": "Upload",
       "no_wan_interfaces": "No WAN interfaces",
-      "memory_usage": "Memory usage",
-      "root_usage": "Root usage",
-      "storage_usage": "Storage usage",
-      "tmpfs_usage": "Tmpfs usage",
+      "memory_usage": "Memory",
+      "root_usage": "Root",
+      "storage_usage": "Storage",
+      "tmpfs_usage": "Tmpfs",
       "no_hosts": "No hosts",
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_is_updated_every_seconds": "Data is updated every {seconds} seconds"
+      "data_is_updated_every_seconds": "Data is updated every {seconds} seconds",
+      "usage_free_of_total": "{free} free of {total}"
     },
     "registration": {
       "title": "Registration"

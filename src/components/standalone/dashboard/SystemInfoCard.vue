@@ -34,9 +34,9 @@ const freeTmpfs = ref<number>(0)
 const totalTmpfs = ref<number>(0)
 const tmpfsUsagePerc = ref<number>(0)
 
-const freeStorage = ref<number>(0)
-const totalStorage = ref<number>(0)
-const storageUsagePerc = ref<number>(0)
+const freeDataStorage = ref<number>(0)
+const totalDataStorage = ref<number>(0)
+const dataStorageUsagePerc = ref<number>(0)
 
 let loading = ref({
   getSystemInfo: true
@@ -68,27 +68,25 @@ async function getSystemInfo() {
     const res = await ubusCall('ns.dashboard', 'system-info')
     systemInfo.value = res.data.result
 
-    console.log('memory', systemInfo.value.memory) ////
-
-    freeMemory.value = systemInfo.value.memory.available_bytes * 1024
-    const usedMemory = systemInfo.value.memory.used_bytes * 1024
+    freeMemory.value = systemInfo.value.memory.available_bytes
+    const usedMemory = systemInfo.value.memory.used_bytes
     totalMemory.value = usedMemory + freeMemory.value
     memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
 
-    freeRoot.value = systemInfo.value.storage['/'].available_bytes * 1024
-    const usedRoot = systemInfo.value.storage['/'].used_bytes * 1024
+    freeRoot.value = systemInfo.value.storage['/'].available_bytes
+    const usedRoot = systemInfo.value.storage['/'].used_bytes
     totalRoot.value = usedRoot + freeRoot.value
     rootUsagePerc.value = round((usedRoot / totalRoot.value) * 100)
 
-    freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes * 1024
-    const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes * 1024
+    freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes
+    const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes
     totalTmpfs.value = usedTmpfs + freeTmpfs.value
     tmpfsUsagePerc.value = round((usedTmpfs / totalTmpfs.value) * 100)
 
-    freeStorage.value = systemInfo.value.storage['/mnt/storage'].available_bytes * 1024
-    const usedStorage = systemInfo.value.storage['/mnt/storage'].used_bytes * 1024
-    totalStorage.value = usedStorage + freeStorage.value
-    storageUsagePerc.value = round((usedStorage / totalStorage.value) * 100)
+    freeDataStorage.value = systemInfo.value.storage['/mnt/data'].available_bytes
+    const usedDataStorage = systemInfo.value.storage['/mnt/data'].used_bytes
+    totalDataStorage.value = usedDataStorage + freeDataStorage.value
+    dataStorageUsagePerc.value = round((usedDataStorage / totalDataStorage.value) * 100)
   } catch (err: any) {
     console.error(err)
     error.value.title = t('error.cannot_retrieve_system_info')
@@ -195,18 +193,18 @@ function getProgressBarColor(progress: number) {
             class="my-1"
           />
         </div>
-        <div v-if="storageUsagePerc">
+        <div v-if="dataStorageUsagePerc">
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.storage_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {
-              free: byteFormat1024(freeStorage),
-              total: byteFormat1024(totalStorage)
+              free: byteFormat1024(freeDataStorage),
+              total: byteFormat1024(totalDataStorage)
             })
           }}</span>
           <NeProgressBar
-            :progress="storageUsagePerc"
+            :progress="dataStorageUsagePerc"
             size="sm"
-            :color="getProgressBarColor(storageUsagePerc)"
+            :color="getProgressBarColor(dataStorageUsagePerc)"
             class="my-1"
           />
         </div>

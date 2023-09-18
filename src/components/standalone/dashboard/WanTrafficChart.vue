@@ -20,6 +20,7 @@ import { Line } from 'vue-chartjs'
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { formatDateLoc, kbpsFormat } from '@nethserver/vue-tailwind-lib'
+import { GRAY_200, GRAY_700 } from '@/lib/color'
 
 const themeStore = useThemeStore()
 
@@ -51,11 +52,13 @@ const options: any = {
       ticks: {
         source: 'auto',
         autoSkip: true,
-        // font color according to theme: gray-200 or gray-700
-        color: themeStore.isLight ? '#374151' : '#e5e7eb',
+        color: themeStore.isLight ? GRAY_200 : GRAY_700,
         callback: function (value: number) {
           return formatDateLoc(value, 'HH:mm')
         }
+      },
+      grid: {
+        color: themeStore.isLight ? GRAY_700 : GRAY_200
       }
     },
     y: {
@@ -64,8 +67,10 @@ const options: any = {
         callback: function (value: number) {
           return kbpsFormat(Math.abs(value))
         },
-        // font color according to theme: gray-200 or gray-700
-        color: themeStore.isLight ? '#374151' : '#e5e7eb'
+        color: themeStore.isLight ? GRAY_200 : GRAY_700
+      },
+      grid: {
+        color: themeStore.isLight ? GRAY_700 : GRAY_200
       }
     }
   },
@@ -94,9 +99,10 @@ const options: any = {
         }
       }
     },
-    // hide legend
     legend: {
-      display: false
+      labels: {
+        color: themeStore.isLight ? GRAY_200 : GRAY_700
+      }
     }
   }
 }

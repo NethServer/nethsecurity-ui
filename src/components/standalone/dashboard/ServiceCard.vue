@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeCard, NeBadge, NeSkeleton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
@@ -26,8 +26,8 @@ const STATUS_REFRESH_INTERVAL = 10000
 const COUNTER_REFRESH_INTERVAL = 10000
 const serviceStatus = ref<any>(null)
 const serviceCounter = ref<any>(null)
-const statusIntervalId: Ref<number> = ref(0)
-const counterIntervalId: Ref<number> = ref(0)
+const statusIntervalId = ref(0)
+const counterIntervalId = ref(0)
 
 let loading = ref({
   getServiceStatus: false,

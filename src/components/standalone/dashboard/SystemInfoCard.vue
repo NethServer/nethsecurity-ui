@@ -9,9 +9,10 @@ import {
   NeCard,
   NeProgressBar,
   getAxiosErrorMessage,
-  formatDurationLoc
+  formatDurationLoc,
+  byteFormat1024
 } from '@nethserver/vue-tailwind-lib'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash'
@@ -19,11 +20,23 @@ import { round } from 'lodash'
 const { t } = useI18n()
 const REFRESH_INTERVAL = 10000
 const systemInfo = ref<any>(null)
-const systemInfoIntervalId: Ref<number> = ref(0)
-const memoryUsage = ref<number>(0)
-const rootUsage = ref<number>(0)
-const storageUsage = ref<number>(0)
-const tmpfsUsage = ref<number>(0)
+const systemInfoIntervalId = ref(0)
+
+const freeMemory = ref(0)
+const totalMemory = ref(0)
+const memoryUsagePerc = ref(0)
+
+const freeRoot = ref(0)
+const totalRoot = ref(0)
+const rootUsagePerc = ref(0)
+
+const freeTmpfs = ref(0)
+const totalTmpfs = ref(0)
+const tmpfsUsagePerc = ref(0)
+
+const freeDataStorage = ref(0)
+const totalDataStorage = ref(0)
+const dataStorageUsagePerc = ref(0)
 
 let loading = ref({
   getSystemInfo: true
@@ -55,24 +68,25 @@ async function getSystemInfo() {
     const res = await ubusCall('ns.dashboard', 'system-info')
     systemInfo.value = res.data.result
 
-    const totalMemory = systemInfo.value.memory.used_bytes + systemInfo.value.memory.available_bytes
-    memoryUsage.value = round((systemInfo.value.memory.used_bytes / totalMemory) * 100)
+    freeMemory.value = systemInfo.value.memory.available_bytes
+    const usedMemory = systemInfo.value.memory.used_bytes
+    totalMemory.value = usedMemory + freeMemory.value
+    memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
 
-    const totalRoot =
-      systemInfo.value.storage['/'].used_bytes + systemInfo.value.storage['/'].available_bytes
-    rootUsage.value = round((systemInfo.value.storage['/'].used_bytes / totalRoot) * 100)
+    freeRoot.value = systemInfo.value.storage['/'].available_bytes
+    const usedRoot = systemInfo.value.storage['/'].used_bytes
+    totalRoot.value = usedRoot + freeRoot.value
+    rootUsagePerc.value = round((usedRoot / totalRoot.value) * 100)
 
-    const totalTmpfs =
-      systemInfo.value.storage['tmpfs'].used_bytes +
-      systemInfo.value.storage['tmpfs'].available_bytes
-    tmpfsUsage.value = round((systemInfo.value.storage['tmpfs'].used_bytes / totalTmpfs) * 100)
+    freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes
+    const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes
+    totalTmpfs.value = usedTmpfs + freeTmpfs.value
+    tmpfsUsagePerc.value = round((usedTmpfs / totalTmpfs.value) * 100)
 
-    const totalStorage =
-      systemInfo.value.storage['/mnt/storage'].used_bytes +
-      systemInfo.value.storage['/mnt/storage'].available_bytes
-    storageUsage.value = round(
-      (systemInfo.value.storage['/mnt/storage'].used_bytes / totalStorage) * 100
-    )
+    freeDataStorage.value = systemInfo.value.storage['/mnt/data'].available_bytes
+    const usedDataStorage = systemInfo.value.storage['/mnt/data'].used_bytes
+    totalDataStorage.value = usedDataStorage + freeDataStorage.value
+    dataStorageUsagePerc.value = round((usedDataStorage / totalDataStorage.value) * 100)
   } catch (err: any) {
     console.error(err)
     error.value.title = t('error.cannot_retrieve_system_info')
@@ -132,45 +146,68 @@ function getProgressBarColor(progress: number) {
             : '-'
         }}</span>
       </div>
-      <div class="py-2">
-        <span class="mr-3 font-semibold">{{ t('standalone.dashboard.memory_usage') }}</span>
-        <span>{{ memoryUsage }}%</span>
-        <NeProgressBar
-          :progress="memoryUsage"
-          size="sm"
-          :color="getProgressBarColor(memoryUsage)"
-          class="my-1"
-        />
-      </div>
-      <div class="py-2">
-        <span class="mr-3 font-semibold">{{ t('standalone.dashboard.root_usage') }}</span>
-        <span>{{ rootUsage }}%</span>
-        <NeProgressBar
-          :progress="rootUsage"
-          size="sm"
-          :color="getProgressBarColor(rootUsage)"
-          class="my-1"
-        />
-      </div>
-      <div class="py-2">
-        <span class="mr-3 font-semibold">{{ t('standalone.dashboard.tmpfs_usage') }}</span>
-        <span>{{ tmpfsUsage }}%</span>
-        <NeProgressBar
-          :progress="tmpfsUsage"
-          size="sm"
-          :color="getProgressBarColor(tmpfsUsage)"
-          class="my-1"
-        />
-      </div>
-      <div v-if="storageUsage" class="py-2">
-        <span class="mr-3 font-semibold">{{ t('standalone.dashboard.storage_usage') }}</span>
-        <span>{{ storageUsage }}%</span>
-        <NeProgressBar
-          :progress="storageUsage"
-          size="sm"
-          :color="getProgressBarColor(storageUsage)"
-          class="my-1"
-        />
+      <!-- memory and storage usage -->
+      <div class="space-y-3 py-2">
+        <div>
+          <span class="mr-3 font-semibold">{{ t('standalone.dashboard.memory_usage') }}</span>
+          <span>{{
+            t('standalone.dashboard.usage_free_of_total', {
+              free: byteFormat1024(freeMemory),
+              total: byteFormat1024(totalMemory)
+            })
+          }}</span>
+          <NeProgressBar
+            :progress="memoryUsagePerc"
+            size="sm"
+            :color="getProgressBarColor(memoryUsagePerc)"
+            class="my-1"
+          />
+        </div>
+        <div>
+          <span class="mr-3 font-semibold">{{ t('standalone.dashboard.root_usage') }}</span>
+          <span>{{
+            t('standalone.dashboard.usage_free_of_total', {
+              free: byteFormat1024(freeRoot),
+              total: byteFormat1024(totalRoot)
+            })
+          }}</span>
+          <NeProgressBar
+            :progress="rootUsagePerc"
+            size="sm"
+            :color="getProgressBarColor(rootUsagePerc)"
+            class="my-1"
+          />
+        </div>
+        <div>
+          <span class="mr-3 font-semibold">{{ t('standalone.dashboard.tmpfs_usage') }}</span>
+          <span>{{
+            t('standalone.dashboard.usage_free_of_total', {
+              free: byteFormat1024(freeTmpfs),
+              total: byteFormat1024(totalTmpfs)
+            })
+          }}</span>
+          <NeProgressBar
+            :progress="tmpfsUsagePerc"
+            size="sm"
+            :color="getProgressBarColor(tmpfsUsagePerc)"
+            class="my-1"
+          />
+        </div>
+        <div v-if="dataStorageUsagePerc">
+          <span class="mr-3 font-semibold">{{ t('standalone.dashboard.storage_usage') }}</span>
+          <span>{{
+            t('standalone.dashboard.usage_free_of_total', {
+              free: byteFormat1024(freeDataStorage),
+              total: byteFormat1024(totalDataStorage)
+            })
+          }}</span>
+          <NeProgressBar
+            :progress="dataStorageUsagePerc"
+            size="sm"
+            :color="getProgressBarColor(dataStorageUsagePerc)"
+            class="my-1"
+          />
+        </div>
       </div>
     </div>
   </NeCard>

@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import WanTrafficChart from '@/components/standalone/dashboard/WanTrafficChart.vue'
+import { CYAN_400, GRAY_500 } from '@/lib/color'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import {
@@ -22,8 +23,6 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const loginStore = useLoginStore()
 const REFRESH_INTERVAL = 10000
-const CYAN_400 = '#22d3ee'
-const GRAY_500 = '#6b7280'
 const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
 const intervalId = ref<number>(0)

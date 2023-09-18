@@ -136,7 +136,8 @@
       "no_hosts": "No hosts",
       "no_applications": "No applications",
       "no_protocols": "No protocols",
-      "openvpn_rw": "OpenVPN RW"
+      "openvpn_rw": "OpenVPN RW",
+      "data_is_updated_every_seconds": "Data is updated every {seconds} seconds"
     },
     "registration": {
       "title": "Registration"

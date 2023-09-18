@@ -43,7 +43,12 @@ function goToMultiwan() {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
+  <div class="flex flex-col justify-between md:flex-row md:items-center">
+    <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
+    <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      {{ t('standalone.dashboard.data_is_updated_every_seconds', { seconds: 10 }) }}
+    </div>
+  </div>
 
   <!-- system -->
   <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
@@ -113,7 +118,7 @@ function goToMultiwan() {
       :icon="['fas', 'circle-info']"
     />
     <!-- three-column spacer (only from 3xl screen) -->
-    <div class="hidden 3xl:block col-span-3"></div>
+    <div class="col-span-3 hidden 3xl:block"></div>
     <WanTrafficCard class="sm:col-span-2 xl:row-span-2" />
     <!-- realtime traffic -->
     <RealTimeTrafficCard class="sm:col-span-2 xl:row-span-2" />

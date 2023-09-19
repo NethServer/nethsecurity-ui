@@ -28,4 +28,6 @@ coverage
 *.sw?
 
 # Development config
-.env.development
+.env*
+!.env.production
+!.env.development.sample

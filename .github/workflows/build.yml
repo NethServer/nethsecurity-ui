@@ -1,0 +1,24 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI/CD
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          ./build.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        id: dist-artifact
+        with:
+          name: dist-${{ github.sha }}
+          path: dist
+          retention-days: 7

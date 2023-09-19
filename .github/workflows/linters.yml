@@ -1,0 +1,25 @@
+name: Linters
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run linters
+        run: |
+          ./dev.sh npm ci
+          ./dev.sh npm run format:check
+  eslint:
+    name: Eslint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run eslint
+        run: |
+          ./dev.sh npm ci
+          ./dev.sh npm run lint:check

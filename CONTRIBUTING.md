@@ -57,7 +57,7 @@ You can develop and build [inside a container (recommended)](#develop-inside-a-c
 
 To enforce understandable and linear commits, the [conventional commits specification v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) is used.
 
-On every `npm install` a `commit-msg` hook that checks the contents of the commit is installed. However, if a `trash` commit or a `wip` commit needs to be provided, feel free to skip the checks with this additional `git-commit` flag: ``
+On every `npm install` a `commit-msg` hook that checks the contents of the commit is installed. However, if a `trash` commit or a `wip` commit needs to be provided, feel free to skip the checks with this additional `git-commit` flag: `--no-verify`
 
 ### Develop inside a container
 

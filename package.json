@@ -34,6 +34,8 @@
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
     "@rushstack/eslint-patch": "^1.2.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tsconfig/node18": "^2.0.1",
@@ -45,6 +47,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
+    "husky": "^8.0.3",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",

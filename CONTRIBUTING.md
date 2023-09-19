@@ -63,15 +63,8 @@ On every `npm install` a `commit-msg` hook that checks the contents of the commi
 
 You have two options:
 
-- [Welcome to the contributing guide](#welcome-to-the-contributing-guide)
-  - [New contributor](#new-contributor)
-  - [Getting started](#getting-started)
-  - [Development and building](#development-and-building)
-  - [Commit notations](#commit-notations)
-    - [Develop inside a container](#develop-inside-a-container)
-      - [Podman development container](#podman-development-container)
-      - [Use VSCode Dev Containers](#use-vscode-dev-containers)
-    - [Develop on barebone](#develop-on-barebone)
+- [Podman development container](#podman-development-container)
+- [Use VSCode Dev Containers](#use-vscode-dev-containers)
 
 #### Podman development container
 

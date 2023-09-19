@@ -144,7 +144,7 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "storage_usage": "Utilizzo di storage",
+      "storage_usage": "Archiviazione",
       "known_hosts": "Host conosciuti",
       "today_top_applications": "Applicazioni",
       "ban_ip": "BanIP",
@@ -153,19 +153,19 @@
       "unknown": "Sconosciuto",
       "today_top_applications_description": "Applicazioni che oggi hanno generato più traffico",
       "system": "Sistema",
-      "root_usage": "Utilizzo di root",
+      "root_usage": "Root",
       "load_minutes": "Carico 1 / 5 / 15 minuti",
       "traffic": "Traffico",
       "thread_shield_ip": "Threat Shield IP",
       "inactive": "Inattivo",
       "multiwan": "MultiWAN",
       "real_time_traffic": "Traffico in tempo reale",
-      "memory_usage": "Utilizzo di memoria",
+      "memory_usage": "Memoria",
       "uptime": "Tempo di attività",
       "download": "Download",
       "today_top_hosts_description": "Host che oggi hanno generato più traffico",
       "internet_connection": "Connessione Internet",
-      "tmpfs_usage": "Utilizzo di tmpfs",
+      "tmpfs_usage": "Tmpfs",
       "today_top_hosts": "Host",
       "thread_shield_dns": "Threat Shield DNS",
       "warning": "Attenzione",
@@ -178,7 +178,13 @@
       "wan_interface": "Interfaccia WAN",
       "upload": "Upload",
       "host": "Host",
-      "dpi_core": "DPI-core"
+      "dpi_core": "DPI-core",
+      "data_are_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
+      "no_protocols": "Nessun protocollo",
+      "no_hosts": "Nessun host",
+      "usage_free_of_total": "{free} liberi di {total}",
+      "no_applications": "Nessuna applicazione",
+      "openvpn_rw": "OpenVPN RW"
     },
     "registration": {
       "title": "Registrazione"
@@ -409,6 +415,33 @@
       "tracking_hostnames_or_ips_title": "Monitoraggio WAN",
       "tracking_hostnames_or_ips_description": "Inserisci gli indirizzi IP (o i nomi host) da pingare per monitorare lo stato delle WAN. Se almeno un host risponde al ping, il WAN rimane attivo",
       "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività"
+    },
+    "zones_and_policies": {
+      "traffic_policy": {
+        "drop": "Scarta (drop)",
+        "reject": "Rifiuta (reject)",
+        "accept": "Accetta"
+      },
+      "allow_forwards_to": "Consenti forward a",
+      "logging": "Logging",
+      "traffic_to_same_zone": "Traffico verso la stessa zona",
+      "description": "Il firewall associa zone alle interfacce di rete per controllare il flusso del traffico di rete.",
+      "add_new_subnet": "Aggiungi nuova sottorete",
+      "enable_logging": "Attiva logging su questa zona",
+      "name": "Nome",
+      "allow_forwards_from": "Consenti forward da",
+      "title": "Zone e policy",
+      "traffic_to_wan": "Traffico verso WAN",
+      "subnet": "Sottorete | Sottoreti",
+      "zone": "Zona",
+      "no_subnets_set": "Nessuna sottorete impostata",
+      "covered_subnets": "Sottoreti coperte",
+      "advanced_settings": "Impostazioni avanzate",
+      "add_zone": "Aggiungi zona",
+      "delete_zone": "Eliminare \"{0}\"?",
+      "interfaces": "Interfacce",
+      "traffic_to_firewall": "Traffico verso firewall",
+      "limit_log_messages": "Limita i messaggi di log"
     }
   },
   "controller": {

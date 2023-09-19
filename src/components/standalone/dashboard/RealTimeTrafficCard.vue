@@ -50,7 +50,7 @@ onUnmounted(() => {
 })
 
 function formatTraffic(value: number) {
-  return kbpsFormat(value)
+  return kbpsFormat(value/1000*8)
 }
 
 async function getTopTalkers() {

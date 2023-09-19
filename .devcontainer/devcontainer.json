@@ -3,20 +3,34 @@
 {
   "name": "nethsecurity-ui",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
+  "build": {
+    "context": "..",
+    "dockerfile": "../Containerfile",
+    "target": "dev"
+  },
 
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
-  "workspaceFolder": "/workspace",
-  "runArgs": ["--userns=keep-id", "--network=host"],
-  "containerUser": "node",
-  "remoteUser": "node",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,Z",
+  "workspaceFolder": "/app",
+  "runArgs": ["--userns=keep-id", "--name=nethsecurity-ui-dev"],
+  "appPort": "5173:5173",
   "customizations": {
     "vscode": {
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "files.associations": {
+          ".env*": "properties"
+        }
+      },
       "extensions": [
+        "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
-        "Vue.vscode-typescript-vue-plugin",
         "Vue.volar",
-        "bradlc.vscode-tailwindcss"
+        "Vue.vscode-typescript-vue-plugin",
+        "dbaeumer.vscode-eslint",
+        "GitHub.vscode-github-actions",
+        "ms-azuretools.vscode-docker",
+        "timonwong.shellcheck"
       ]
     }
   }

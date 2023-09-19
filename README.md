@@ -15,11 +15,9 @@ Contributing it's not a matter of coding, please feel free to open issues or dis
 
 ### Build
 
-To run a build, you can just do `npm run build` in whichever development instance you want ([see CONTRIBUTING](CONTRIBUTING.md)). However, the build is influenced by your ignored local files and possibly unsynced `node_modules`.
+To run a build, it's not suggested to run `npm run build` inside the development instance. Instead, a containerized build is provided to ease this process, this will only need `podman` to be installed.
 
-A containerized build is provided to ease this process, this will only need `podman` to be installed, copies only the production needed files and runs the build process inside a isolated environment.
-
-You can just:
+You can just execute:
 
 ```bash
 ./build.sh

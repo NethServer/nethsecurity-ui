@@ -10,7 +10,7 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from './stores/standalone/uciPendingChanges'
 import axios from 'axios'
-import { isStandaloneMode } from './lib/config'
+import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitManagementStore } from './stores/controller/unitManagement'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -61,11 +61,32 @@ async function loadI18n() {
 }
 
 function configureAxios() {
-  // axios.defaults.baseURL = getApiEndpoint() ////
-  // console.log('axios.defaults.baseURL', axios.defaults.baseURL) ////
-
   axios.defaults.headers.post['Content-Type'] = 'application/json'
-  // axios.defaults.headers.common['Authorization'] = `Bearer ${loginStore.token}` ////
+
+  // request interceptor
+  axios.interceptors.request.use(
+    function (config: any) {
+      // check if token needs to be refreshed
+      if (
+        ![
+          `${getStandaloneApiEndpoint()}/login`,
+          `${getStandaloneApiEndpoint()}/refresh`,
+          `${getStandaloneApiEndpoint()}/logout`
+        ].includes(config.url)
+      ) {
+        const now = new Date().getTime()
+
+        // refresh token once in a while
+        if (loginStore.tokenRefreshedTime + loginStore.TOKEN_REFRESH_INTERVAL < now) {
+          loginStore.refreshToken()
+        }
+      }
+      return config
+    },
+    function (error: any) {
+      return Promise.reject(error)
+    }
+  )
 
   // response interceptor
   axios.interceptors.response.use(
@@ -83,6 +104,7 @@ function configureAxios() {
       if (error.response?.status == 401) {
         if (isStandaloneMode()) {
           console.warn('[interceptor]', 'Detected error 401, logout')
+          //// TODO: show "Session expired, please login again"
           loginStore.logout()
         } else {
           // a controller is managing this unit

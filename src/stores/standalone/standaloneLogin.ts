@@ -15,6 +15,9 @@ import { useThemeStore } from '../theme'
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
   const token = ref('')
+  const tokenRefreshedTime = ref(0)
+  const isRefreshingToken = ref(false)
+  const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
   const router = useRouter()
 
@@ -28,6 +31,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     if (loginInfo) {
       username.value = loginInfo.username
       token.value = loginInfo.token
+      tokenRefreshedTime.value = loginInfo.tokenRefreshedTime
     }
   }
 
@@ -37,21 +41,21 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       password
     })
     const jwtToken = res.data.token
+    const refreshedTime = new Date().getTime()
 
     const loginInfo = {
       username: user,
-      token: jwtToken
+      token: jwtToken,
+      tokenRefreshedTime: refreshedTime
     }
     saveToStorage('standaloneLoginInfo', loginInfo)
 
     username.value = user
     token.value = jwtToken
+    tokenRefreshedTime.value = refreshedTime
 
     const themeStore = useThemeStore()
     themeStore.loadTheme()
-
-    // reconfigure axios Authorization header //// delete
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}` ////
 
     const uciChangesStore = useUciPendingChangesStore()
     uciChangesStore.getChanges()
@@ -71,7 +75,41 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     deleteFromStorage('standaloneLoginInfo')
     username.value = ''
     token.value = ''
+    tokenRefreshedTime.value = 0
     router.push(`${getStandaloneRoutePrefix()}/`)
+  }
+
+  const refreshToken = async () => {
+    if (isRefreshingToken.value) {
+      console.warn('refreshToken is already executing')
+      return
+    }
+    isRefreshingToken.value = true
+
+    try {
+      const res = await axios.get(`${getStandaloneApiEndpoint()}/refresh`, {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      })
+      const jwtToken = res.data.token
+      const refreshedTime = new Date().getTime()
+
+      const loginInfo = {
+        username: username.value,
+        token: jwtToken,
+        tokenRefreshedTime: refreshedTime
+      }
+      saveToStorage('standaloneLoginInfo', loginInfo)
+      token.value = jwtToken
+      tokenRefreshedTime.value = refreshedTime
+      return jwtToken
+    } catch (err) {
+      console.error(err)
+      return null
+    } finally {
+      isRefreshingToken.value = false
+    }
   }
 
   const setUsername = (user: string) => {
@@ -85,11 +123,14 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   return {
     username,
     token,
+    tokenRefreshedTime,
+    TOKEN_REFRESH_INTERVAL,
     isLoggedIn,
     loadUserFromStorage,
     login,
     logout,
     setUsername,
-    setToken
+    setToken,
+    refreshToken
   }
 })

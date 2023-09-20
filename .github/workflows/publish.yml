@@ -1,0 +1,30 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  tag:
+    name: Tag
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          ./build.sh
+      - name: Compressing and relabeling build
+        run: |
+          mkdir -p ui-dist
+          tar cvzf ui-dist/ui-${{ github.ref_name }}.tar.gz dist
+      - name: Uploading build
+        uses: BetaHuhn/do-spaces-action@v2
+        with:
+          access_key: ${{ secrets.DO_SPACE_ACCESS_KEY }}
+          secret_key: ${{ secrets.DO_SPACE_SECRET_KEY }}
+          space_name: nethsecurity
+          space_region: ams3
+          cdn_domain: updates.nethsecurity.nethserver.org
+          source: ui-dist
+          out_dir: ui-dist

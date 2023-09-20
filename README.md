@@ -1,80 +1,32 @@
 # nethsecurity-ui
 
-User interface for [NethSecurity](https://github.com/NethServer/nethsecurity) and [NethSecurity Controller](https://github.com/NethServer/nethsecurity-controller).
+This repository contains user interface for [NethSecurity](https://github.com/NethServer/nethsecurity) and [NethSecurity Controller](https://github.com/NethServer/nethsecurity-controller).
 
-This repository includes two user interfaces:
+Purpose of each interface:
 
-- **Standalone**: the UI of a NethSecurity unit
-- **Controller**: the UI of NethSecurity Controller that allows you to manage multiple NethSecurity units
+- **Standalone**: it's provided when connecting to a NethSecurity unit
+- **Controller**: allows you to manage multiple NethSecurity units
 
-## Recommended IDE Setup
+## Contributing
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+See [the contributing guide](CONTRIBUTING.md) for detailed instruction on how to get started.
 
-## Development and building
+Contributing it's not a matter of coding, please feel free to open issues or discussions if you need anything! Please be aware that off-topic conversations will be closed.
 
-Follow the steps below to prepare the development environment:
+### Build
 
-- Install NethSecurity on a development machine
-- If you need to code Controller UI install and configure [NethSecurity Controller](https://github.com/NethServer/nethsecurity-controller)
-- Create a copy of `.env.development.sample` and rename your copy to `.env.development`
-- Edit `.env.development`:
-  - If you need to code the Standalone UI:
-    - Set `VITE_STANDALONE_API_HOST` to the IP address or hostname of your NethSecurity
-    - Set `VITE_UI_MODE` to `"standalone"`
-  - If you need to code the Controller UI:
-    - Set `VITE_CONTROLLER_API_HOST` to the IP address or hostname of your NethSecurity Controller
-    - Set `VITE_UI_MODE` to `"controller"`
+To run a build, it's not suggested to run `npm run build` inside the development instance. Instead, a containerized build is provided to ease this process, this will only need `podman` to be installed.
 
-You can develop and build [inside a container (recommended)](#develop-and-build-inside-a-container) or [on your workstation](#develop-and-build-on-your-workstation).
+You can just execute:
 
-### Develop and build inside a container
-
-You have two options:
-
-- [Build and start a Podman container](#build-and-start-a-podman-container), or
-- [Use VSCode Dev Containers](#use-vscode-dev-containers)
-
-#### Build and start a Podman container
-
-Build the container defined by `Containerfile`:
-
-```
-podman build -t nethsecurity-ui .
-```
-
-Start development server (`--network=host` is required for hot-reload):
-
-```
-podman run -ti -v $(pwd):/app:Z --network=host --name nethsec-ui --replace nethsecurity-ui dev
-```
-
-Compiles and minifies for production:
-
-```
+```bash
 ./build.sh
 ```
 
-#### Use VSCode Dev Containers
+and that's all you need, if build passes you'll find the build in `./dist`, placed inside the root directory of the project.
 
-- Install VSCode extension [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) (beware: this procedure may not work on [VSCodium](https://vscodium.com/))
-- Dev Containers uses Docker by default but you can configure it to use Podman: go to `File > Preferences > Settings`, search `dev containers docker path` and type `podman` as `Docker path`
-- Open `nethsecurity-ui` directory (the repository root) in VSCode, if you haven't already
-- Open Command Palette (`CTRL+SHIFT+P`) and type `Reopen in Container` (or `Rebuild and Reopen in Container`, if needed)
-- Open VSCode integrated terminal: `View > Terminal`
-- Enter one of the following commands:
-  - `npm install`: project setup
-  - `npm run dev`: start development server with hot-reload
-  - `npm run build`: compiles and minifies for production. Build output is put inside `dist` directory
+Alternatively, you can fetch the latests builds from the "Artifacts" section of the [GitHub builds](https://github.com/NethServer/nethsecurity-ui/actions/workflows/build.yml).
 
-Container configuration is contained inside `.devcontainer/devcontainer.json`.
+## License
 
-### Develop and build on your workstation
-
-Developing inside a container is the recommended way, but if you want to do it on your workstation:
-
-- Install Node.js (LTS version, currently v18) and npm
-- Run a web server on your workstation (hot reloading enabled):
-  - `npm install`: project setup
-  - `npm run dev`: start development server with hot-reload
-  - `npm run build`: compiles and minifies for production. Build output is put inside `dist` directory
+All the repo is licensed under [GPL 3.0 or later](LICENSE) license.

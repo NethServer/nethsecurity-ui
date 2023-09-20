@@ -1,20 +1,12 @@
-#!/bin/bash
-
-#
-# Build only the UI for publishing with GH workflow
-# Output:
-# - 'dist' directory with build output
-# - 'ui.tar.gz' archive with compresses output
-#
+#!/usr/bin/env sh
 
 set -e
 
-image="builder/nethsecurity-ui:latest"
+IMAGE="nethsecurity-ui:dist"
 
-podman build -t $image .
-podman run --rm -v $(pwd):/app:Z $image build
-podman image rm $image
-
-commit=$(git rev-parse HEAD)
-mkdir -p ui-dist
-tar cvzf ui-dist/ui-$commit.tar.gz dist/
+podman build --tag "$IMAGE" --target dist --force-rm --layers .
+container_id=$(podman create nethsecurity-ui:dist /)
+trap 'podman rm -f $container_id' EXIT
+trap 'podman image rm -f $IMAGE' EXIT
+mkdir -p dist
+podman export "$container_id" | tar --extract --overwrite --directory dist

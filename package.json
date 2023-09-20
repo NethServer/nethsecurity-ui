@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "lint": "eslint --ignore-path .gitignore --fix .",
+    "lint:check": "eslint --ignore-path .gitignore --fix-dry-run .",
+    "format": "prettier --write .",
+    "format:check": "prettier --list-different ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
@@ -32,6 +34,8 @@
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
     "@rushstack/eslint-patch": "^1.2.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tsconfig/node18": "^2.0.1",
@@ -43,6 +47,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
+    "husky": "^8.0.3",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",

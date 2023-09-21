@@ -62,3 +62,20 @@ code {
 hr {
   @apply border-gray-200 dark:border-gray-700;
 }
+
+/* tailwind theme for tooltip library */
+.tippy-box[data-theme~='tailwind'] {
+  @apply border border-gray-700 bg-gray-700 text-gray-50 shadow-2xl dark:border-gray-200 dark:bg-gray-200 dark:text-gray-700;
+}
+.tippy-box[data-theme~='tailwind'][data-placement^='top'] > .tippy-arrow::before {
+  @apply border-t-gray-700 dark:border-t-gray-200;
+}
+.tippy-box[data-theme~='tailwind'][data-placement^='bottom'] > .tippy-arrow::before {
+  @apply border-b-gray-700 dark:border-b-gray-200;
+}
+.tippy-box[data-theme~='tailwind'][data-placement^='left'] > .tippy-arrow::before {
+  @apply border-l-gray-700 dark:border-l-gray-200;
+}
+.tippy-box[data-theme~='tailwind'][data-placement^='right'] > .tippy-arrow::before {
+  @apply border-r-gray-700 dark:border-r-gray-200;
+}

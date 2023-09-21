@@ -50,6 +50,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.multi_wan.title'),
         to: 'network/multi-wan'
+      },
+      {
+        name: t('standalone.routes.title'),
+        to: 'network/routes'
       }
     ],
     expanded: false

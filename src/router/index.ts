@@ -49,6 +49,10 @@ const standaloneRoutes = [
     path: 'network/multi-wan',
     name: 'MultiWAN',
     component: () => import('../views/standalone/network/MultiWanView.vue')
+  }, {
+    path: 'network/routes',
+    name: 'Routes',
+    component: () => import('../views/standalone/network/RoutesView.vue')
   },
   {
     path: 'firewall/zones-and-policies',

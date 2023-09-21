@@ -391,6 +391,31 @@
         "button": "@:common.delete"
       }
     },
+    "routes": {
+      "title": "Routes",
+      "tabs": {
+        "routes_ipv4": "IPv4 Routes",
+        "routes_ipv6": "IPv6 Routes"
+      },
+      "route_description": "Routing defines over which interface and gateway a certain host or network can be reached.",
+      "no_route_found": "No route found",
+      "create_route": "Add route",
+      "create_route_ipv4": "Add IPv4 route",
+      "route_status": "State",
+      "route_status_enabled": "Enabled",
+      "route_status_disabled": "Disabled",
+      "route_name": "Route name",
+      "route_network_address": "Network address",
+      "route_gateway": "Gateway",
+      "route_gateway_helper": "Helper Gateway",
+      "route_metric": "Metric",
+      "route_interface": "Interface",
+      "route_choose_interface": "Select interface",
+      "route_type": "Route type",
+      "route_choose_type": "Select route type",
+      "route_mtu": "MTU",
+      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix"
+    },
     "users_and_objects": {
       "title": "Users & objects"
     },

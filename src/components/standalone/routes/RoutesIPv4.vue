@@ -29,6 +29,7 @@ let createRoute = ref(false)
 let routes: any = ref({})
 let table: any = ref({})
 let loading = ref(true)
+let isExpandedMainTable = ref(false)
 
 let error = ref({
 	notificationTitle: '',
@@ -159,13 +160,21 @@ function reloadConfig() {
 			</div>
 		</div>
 		<div class="space-y-2">
-			<div class="flex">
-				<div>
-					<p class="text-sm text-primary-500 dark:text-gray-400">
-						{{ t('standalone.routes.route_toggle_table') }}
-					</p>
-				</div>
-			</div>
+			<NeButton
+				kind="tertiary"
+				size="sm"
+				@click="isExpandedMainTable = !isExpandedMainTable"
+				class="-ml-2"
+			>
+				<template #suffix>
+					<font-awesome-icon
+						:icon="['fas', isExpandedMainTable ? 'chevron-up' : 'chevron-down']"
+						class="h-3 w-3"
+						aria-hidden="true"
+					/>
+				</template>
+				{{ t('standalone.routes.route_toggle_table') }}
+			</NeButton>
 		</div>
 		<div class="space-y-6">
 			<NeSkeleton v-if="loading" :lines="3" :size="'sm'" />
@@ -253,11 +262,12 @@ function reloadConfig() {
 					</template>
 				</NeTable>
 			</template>
-			<NeTitle level="h3">{{ t('standalone.routes.main_table') }}</NeTitle>
-			<template v-if="!loading && table.length > 0">
-				<NeTable
-					:data="table"
-					:headers="[
+			<template v-if="isExpandedMainTable">
+				<NeTitle level="h3">{{ t('standalone.routes.main_table') }}</NeTitle>
+				<template v-if="!loading && isExpandedMainTable && table.length > 0">
+					<NeTable
+						:data="table"
+						:headers="[
 						{
 					 		key: 'interface',
 					 		label: t('standalone.routes.route_interface')
@@ -279,34 +289,35 @@ function reloadConfig() {
 					 		label: t('standalone.routes.route_protocol')
 					 	}
 					 ]"
-					:loading="loading"
-				>
-					<template #interface="{ item }">
-						<div class="flex items-center gap-x-4">
-							<span>{{ item.interface }}</span>
-						</div>
-					</template>
-					<template #network="{ item }">
-						<div class="flex items-center gap-x-4">
-							<span>{{ item.network }}</span>
-						</div>
-					</template>
-					<template #gateway="{ item }">
-						<div class="flex items-center gap-x-4">
-							<span>{{ item.gateway }}</span>
-						</div>
-					</template>
-					<template #metric="{ item }">
-						<div class="flex items-center gap-x-4">
-							<span>{{ item.metric }}</span>
-						</div>
-					</template>
-					<template #protocol="{ item }">
-						<div class="flex items-center gap-x-4">
-							<span>{{ item.protocol }}</span>
-						</div>
-					</template>
-				</NeTable>
+						:loading="loading"
+					>
+						<template #interface="{ item }">
+							<div class="flex items-center gap-x-4">
+								<span>{{ item.interface }}</span>
+							</div>
+						</template>
+						<template #network="{ item }">
+							<div class="flex items-center gap-x-4">
+								<span>{{ item.network }}</span>
+							</div>
+						</template>
+						<template #gateway="{ item }">
+							<div class="flex items-center gap-x-4">
+								<span>{{ item.gateway }}</span>
+							</div>
+						</template>
+						<template #metric="{ item }">
+							<div class="flex items-center gap-x-4">
+								<span>{{ item.metric }}</span>
+							</div>
+						</template>
+						<template #protocol="{ item }">
+							<div class="flex items-center gap-x-4">
+								<span>{{ item.protocol }}</span>
+							</div>
+						</template>
+					</NeTable>
+				</template>
 			</template>
 		</div>
 	</div>

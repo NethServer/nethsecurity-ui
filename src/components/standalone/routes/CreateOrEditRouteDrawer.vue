@@ -10,11 +10,10 @@ import {
     NeToggle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosError, AxiosResponse } from 'axios'
-import { useRoutesConfig } from '@/composables/useRoutesConfig'
-import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
+import type { AxiosError } from 'axios'
+import { MessageBag, validateRequired } from '@/lib/validation'
 //import { useMwanDefaults } from '@/composables/useMwanDefaults'
 
 const { t } = useI18n()
@@ -41,8 +40,6 @@ defineProps({
   }
 })
 
-const routeConfig = reactive(useRoutesConfig())
-
 const form = ref<Form>({
   name: '',
   status: true,
@@ -62,14 +59,6 @@ let saving = ref(false)
 let messageBag = ref(new MessageBag())
 let isExpandedAdvancedSettings = ref(false)
 let labelElement = ref<HTMLInputElement | null>(null)
-
-/**
- * Get error from routeConfig if any
- */
-watch(
-  () => routeConfig.error,
-  () => (error.value = routeConfig.error)
-)
 
 const emit = defineEmits(['routeCreated', 'abortCreation'])
 

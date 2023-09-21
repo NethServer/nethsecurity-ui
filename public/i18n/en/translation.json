@@ -398,7 +398,9 @@
         "routes_ipv6": "IPv6 Routes"
       },
       "route_description": "Routing defines over which interface and gateway a certain host or network can be reached.",
+      "route_toggle_table": "Main table active routes",
       "no_route_found": "No route found",
+      "main_table": "Main table active routes",
       "create_route": "Add route",
       "create_route_ipv4": "Add IPv4 route",
       "route_status": "State",
@@ -410,6 +412,7 @@
       "route_gateway_helper": "Helper Gateway",
       "route_metric": "Metric",
       "route_interface": "Interface",
+      "route_protocol": "Protocol",
       "route_choose_interface": "Select interface",
       "route_type": "Route type",
       "route_choose_type": "Select route type",

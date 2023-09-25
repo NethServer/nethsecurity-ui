@@ -125,7 +125,7 @@ onUnmounted(() => {
     </div>
   </div>
   <NeModal
-    :primary-label="t('standalone.reboot_and_shutdown.shutdown')"
+    :primary-label="t('standalone.reboot_and_shutdown.shut_down_unit')"
     :title="t('standalone.reboot_and_shutdown.shutdown')"
     :primary-button-loading="isPerformingRequest"
     :primary-button-disabled="isPerformingRequest"

@@ -11,8 +11,10 @@ import {
   NeTitle,
   NeModal,
   NeInlineNotification,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
+import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -20,10 +22,23 @@ type requestType = 'poweroff' | 'reboot'
 
 const { t } = useI18n()
 
+const hostname = ref('')
+const loading = ref(true)
 const showShutdownModal = ref(false)
 const showRebootModal = ref(false)
 const isPerformingRequest = ref(false)
-const requestError = ref('')
+const modalRequestError = ref('')
+const pageError = ref('')
+
+async function getHostname() {
+  try {
+    let systemInfo = await ubusCall('system', 'board')
+    hostname.value = systemInfo.data.hostname
+    loading.value = false
+  } catch (err: any) {
+    pageError.value = t(getAxiosErrorMessage(err))
+  }
+}
 
 async function performRequest(type: requestType) {
   try {
@@ -31,7 +46,7 @@ async function performRequest(type: requestType) {
     await ubusCall('ns.power', type)
     closeModal()
   } catch (err: any) {
-    requestError.value = t(getAxiosErrorMessage(err))
+    modalRequestError.value = t(getAxiosErrorMessage(err))
   } finally {
     isPerformingRequest.value = false
   }
@@ -40,8 +55,12 @@ async function performRequest(type: requestType) {
 function closeModal() {
   showRebootModal.value = false
   showShutdownModal.value = false
-  requestError.value = ''
+  modalRequestError.value = ''
 }
+
+onMounted(() => {
+  getHostname()
+})
 </script>
 
 <template>
@@ -49,62 +68,71 @@ function closeModal() {
     <h1 class="page-title">{{ t('standalone.reboot_and_shutdown.title') }}</h1>
     <div class="flex flex-col gap-y-4">
       <NeTitle level="h3">{{ t('standalone.reboot_and_shutdown.reboot') }}</NeTitle>
-      <div>
-        <NeButton kind="secondary" size="lg" @click="showRebootModal = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
-          </template>
-          {{ t('standalone.reboot_and_shutdown.system_reboot') }}
-        </NeButton>
-      </div>
-      <hr class="my-4" />
-      <NeTitle level="h3">{{ t('standalone.reboot_and_shutdown.shut_down') }}</NeTitle>
-      <div>
-        <NeButton kind="secondary" size="lg" @click="showShutdownModal = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'power-off']" aria-hidden="true" />
-          </template>
-          {{ t('standalone.reboot_and_shutdown.shut_down') }}
-        </NeButton>
-      </div>
+      <NeInlineNotification
+        v-if="pageError"
+        :title="t('error.generic_error')"
+        :description="pageError"
+        kind="error"
+      />
+      <NeSkeleton v-if="loading" :lines="6" />
+      <template v-else>
+        <div>
+          <NeButton kind="secondary" size="lg" @click="showRebootModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
+            </template>
+            {{ t('standalone.reboot_and_shutdown.reboot_unit') }}
+          </NeButton>
+        </div>
+        <hr class="my-4" />
+        <NeTitle level="h3">{{ t('standalone.reboot_and_shutdown.shutdown') }}</NeTitle>
+        <div>
+          <NeButton kind="secondary" size="lg" @click="showShutdownModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'power-off']" aria-hidden="true" />
+            </template>
+            {{ t('standalone.reboot_and_shutdown.shut_down_unit') }}
+          </NeButton>
+        </div>
+      </template>
     </div>
   </div>
   <NeModal
-    :primary-label="t('standalone.reboot_and_shutdown.shut_down')"
-    :title="t('standalone.reboot_and_shutdown.shut_down')"
+    :primary-label="t('standalone.reboot_and_shutdown.shutdown')"
+    :title="t('standalone.reboot_and_shutdown.shutdown')"
     :visible="showShutdownModal"
     kind="warning"
     primary-button-kind="danger"
     @close="closeModal()"
     @primary-click="performRequest('poweroff')"
   >
+    {{ t('standalone.reboot_and_shutdown.shutdown_warning', { unit: hostname }) }}
     <NeInlineNotification
-      v-if="requestError"
+      v-if="modalRequestError"
       :title="t('error.generic_error')"
-      :description="requestError"
+      :description="modalRequestError"
       kind="error"
       class="my-6"
     />
-    {{ t('standalone.reboot_and_shutdown.shutdown_warning') }}
   </NeModal>
   <NeModal
     :primary-label="t('standalone.reboot_and_shutdown.reboot_now')"
     :primary-button-loading="isPerformingRequest"
     :primary-button-disabled="isPerformingRequest"
-    :title="t('standalone.reboot_and_shutdown.system_reboot')"
+    :title="t('standalone.reboot_and_shutdown.reboot')"
     :visible="showRebootModal"
     kind="warning"
     primary-button-kind="danger"
     @close="closeModal()"
     @primary-click="performRequest('reboot')"
   >
+    {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}
     <NeInlineNotification
-      v-if="requestError"
+      v-if="modalRequestError"
       :title="t('error.generic_error')"
-      :description="requestError"
+      :description="modalRequestError"
       kind="error"
       class="my-6"
     />
-    {{ t('standalone.reboot_and_shutdown.reboot_warning') }}
   </NeModal>
 </template>

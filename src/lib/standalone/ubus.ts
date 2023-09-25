@@ -6,13 +6,7 @@ import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { MessageBag } from '../validation'
 
-type ValidationError = {
-  message: string
-  parameter: string
-  value: string
-}
-
-export class NeValidationError extends Error {
+export class ValidationError extends Error {
   errorBag: MessageBag
 
   constructor(message: string, errorBag: MessageBag) {
@@ -42,12 +36,12 @@ export const ubusCall = async (path: string, method: any, payload: any = {}) => 
     if (validationErrors?.length) {
       // it's an error validation
       const errorBag = new MessageBag()
-      validationErrors.forEach((validationError: ValidationError) => {
+      validationErrors.forEach((validationError: any) => {
         const errorMessages = errorBag.get(validationError.parameter) || []
         errorMessages.push(validationError.message)
         errorBag.set(validationError.parameter, errorMessages)
       })
-      throw new NeValidationError(err.response.data.message, errorBag)
+      throw new ValidationError(err.response.data.message, errorBag)
     } else {
       // rethrow the error as-is
       throw err

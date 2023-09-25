@@ -362,8 +362,8 @@ watch(
               />
             </button>
 
-            <!-- notifications -->
-            <button
+            <!-- notifications //// -->
+            <!-- <button
               type="button"
               :class="[
                 '-m-2.5 flex p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
@@ -376,7 +376,7 @@ watch(
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
-            </button>
+            </button> -->
 
             <!-- //// use NeDropdown component -->
             <!-- Profile dropdown -->

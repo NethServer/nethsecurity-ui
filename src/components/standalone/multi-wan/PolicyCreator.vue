@@ -170,12 +170,7 @@ function validate(): boolean {
   messageBag.value = new MessageBag()
   let errMessage = validateRequired(form.value.label).errMessage
   if (errMessage) {
-    messageBag.value.set('label', [t(errMessage.valueOf())])
-    labelElement.value?.focus()
-  }
-  errMessage = validateUciName(form.value.label).errMessage
-  if (errMessage) {
-    messageBag.value.set('label', [t(errMessage.valueOf())])
+    messageBag.value.set('name', [t(errMessage.valueOf())])
     labelElement.value?.focus()
   }
   form.value.priorities.flat().forEach((priority, index) => {

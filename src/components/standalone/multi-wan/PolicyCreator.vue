@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
-  getAxiosErrorMessage,
   NeButton,
   NeCombobox,
   NeFormItemLabel,
@@ -12,28 +11,15 @@ import {
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosError, AxiosResponse } from 'axios'
+import { computed, onMounted, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { useMwanConfig } from '@/composables/useMwanConfig'
 import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
-import { useMwanDefaults } from '@/composables/useMwanDefaults'
+import { useFirewallStore, Zone } from '@/stores/standalone/useFirewallStore'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { AxiosError } from 'axios'
 
 const { t } = useI18n()
-
-/**
- * Interface describing the get firewall response
- */
-interface FirewallResponse {
-  values: {
-    [name: string]: {
-      name: string
-      network: Array<string>
-    }
-  }
-}
 
 /**
  * Gateway definition.
@@ -75,6 +61,8 @@ const policyOptions = [
   }
 ]
 
+const firewall = useFirewallStore()
+
 const props = defineProps({
   isShown: {
     type: Boolean,
@@ -86,19 +74,11 @@ const props = defineProps({
   }
 })
 
-const mwanConfig = reactive(useMwanConfig())
-const mwanDefaults = reactive(useMwanDefaults())
+const form = ref<Form>(initForm())
 
-const form = ref<Form>({
-  label: '',
-  selection: policyOptions[0].id,
-  priorities: [[new Gateway(), new Gateway()]]
-})
-const gateways = ref<Array<NeComboboxOption>>()
-const error = ref<Error>()
-const loading = ref(false)
 const saving = ref(false)
 const messageBag = ref(new MessageBag())
+const error = ref<Error>()
 
 const labelElement = ref<HTMLInputElement | null>(null)
 
@@ -112,6 +92,19 @@ const isTrashButtonDisabled = computed<boolean>(() => {
     return form.value.priorities.length < 3
   }
   return false
+})
+
+const availableGateways = computed((): Array<NeComboboxOption> => {
+  return firewall.zones
+    .filter((zone: Zone) => zone.configName == 'ns_wan')
+    .map((zone: Zone) => zone.interfaces)
+    .flat()
+    .map((name: string) => {
+      return {
+        id: name,
+        label: name
+      }
+    })
 })
 
 /**
@@ -142,55 +135,25 @@ watch(
 watch(
   () => props.isShown,
   () => {
-    if (props.createDefault) {
-      form.value.label = 'Default'
-    }
+    form.value = initForm()
     if (props.isShown && !props.createDefault) {
       setTimeout(() => labelElement.value?.focus(), 50)
     }
   }
 )
 
-/**
- * Get error from mwanDefaults if any
- */
-watch(
-  () => mwanDefaults.error,
-  () => (error.value = mwanDefaults.error)
-)
+const emit = defineEmits(['success', 'close'])
 
-/**
- * Get error from mwanConfig if any
- */
-watch(
-  () => mwanConfig.error,
-  () => (error.value = mwanConfig.error)
-)
+onMounted(() => {
+  firewall.fetch()
+})
 
-const emit = defineEmits(['policyCreated', 'abortCreation'])
-
-onMounted(() => fetchGateways())
-
-/**
- * Get gateways from the 'wan' firewall zone.
- */
-function fetchGateways() {
-  loading.value = true
-  ubusCall('uci', 'get', { config: 'firewall', type: 'zone' })
-    .then(
-      (response: AxiosResponse<FirewallResponse>) =>
-        (gateways.value = Object.entries(response.data.values)
-          .filter((value) => value[1].name == 'wan')
-          .flatMap((value) => value[1].network)
-          .map((value) => {
-            return {
-              id: value,
-              label: value
-            }
-          }))
-    )
-    .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
-    .finally(() => (loading.value = false))
+function initForm(): Form {
+  return {
+    label: props.createDefault ? 'Default' : '',
+    selection: policyOptions[0].id,
+    priorities: [[new Gateway(), new Gateway()]]
+  }
 }
 
 /**
@@ -215,134 +178,65 @@ function validate(): boolean {
     messageBag.value.set('label', [t(errMessage.valueOf())])
     labelElement.value?.focus()
   }
-  // TODO: implement priority/gateway validation
+  form.value.priorities.flat().forEach((priority, index) => {
+    errMessage = validateRequired(priority.id).errMessage
+    if (errMessage) {
+      messageBag.value.set(`interfaces.${index}.name`, [t(errMessage.valueOf())])
+    }
+  })
   return !(messageBag.value.size > 0)
 }
 
 /**
  * Create every entity needed for the policy to work. Interfaces, Members, Policies and Default Rule (if missing)
  */
-function createPolicy() {
+function create() {
   if (validate()) {
     saving.value = true
-    // group all calls in one big promise
-    let calls: Promise<any>[] = []
-    // interface creation
-    calls.push(
-      // start with organizing the interfaces to create
-      ...form.value.priorities
-        // flatten all priorities, get only the gateways picked
-        .map((priorities) => priorities.map((gateway) => gateway))
-        .flat(1)
-        // gateways must not already exist, this filters them out
-        .filter((gateway) => !mwanConfig.interfaces.some((iface) => iface.name == gateway.id))
-        // map all in multiple calls
-        .map((gateway) =>
-          ubusCall('uci', 'add', {
-            config: 'mwan3',
-            name: gateway.id,
-            type: 'interface',
-            values: {
-              enabled: '1',
-              initial_state: mwanDefaults.data!.values.initial_state,
-              family: mwanDefaults.data!.values.protocol,
-              track_ip: mwanDefaults.data!.values.track_ip,
-              track_method: mwanDefaults.data!.values.tracking_method,
-              reliability: mwanDefaults.data!.values.tracking_reliability,
-              count: mwanDefaults.data!.values.ping_count,
-              size: mwanDefaults.data!.values.ping_size,
-              max_ttl: mwanDefaults.data!.values.ping_max_ttl,
-              timeout: mwanDefaults.data!.values.ping_timeout,
-              interval: mwanDefaults.data!.values.ping_interval,
-              failure_interval: mwanDefaults.data!.values.ping_failure_interval,
-              recovery_interval: mwanDefaults.data!.values.ping_recovery_interval,
-              down: mwanDefaults.data!.values.interface_down_threshold,
-              up: mwanDefaults.data!.values.interface_up_threshold
+    ubusCall('ns.mwan', 'store_policy', {
+      name: form.value.label,
+      interfaces: form.value.priorities
+        .map((gateways, index) =>
+          gateways.map((gateway) => {
+            return {
+              name: gateway.id,
+              metric: (index + 1) * 10,
+              weight: gateway.weight
             }
           })
         )
-    )
-    // member creation
-    calls.push(
-      // for each priority we'll have +10 metric applied
-      ...form.value.priorities
-        .map((priority, index) =>
-          // call 'add' to each gateway
-          priority.map((gateway) =>
-            ubusCall('uci', 'add', {
-              config: 'mwan3',
-              name: `${gateway.id}_M${(index + 1) * 10}_W${gateway.weight ?? 100}`,
-              type: 'member',
-              values: {
-                interface: gateway.id,
-                metric: (index + 1) * 10,
-                weight: gateway.weight ?? 100
-              }
-            })
-          )
-        )
-        // flatten array, we have nested promises here
-        .flat(1)
-    )
-    calls.push(
-      // create policy
-      ubusCall('uci', 'add', {
-        config: 'mwan3',
-        name: form.value.label,
-        type: 'policy',
-        values: {
-          // map gateways to members name
-          // TODO: reuse name generation logic from above
-          use_member: form.value.priorities
-            .map((priority, index) =>
-              priority.map(
-                (gateway) => `${gateway.id}_M${(index + 1) * 10}_W${gateway.weight ?? 100}`
-              )
-            )
-            .flat(1)
-        }
-      })
-    )
-    // if this is the default policy, create a default rule too
-    if (props.createDefault) {
-      calls.push(
-        ubusCall('uci', 'add', {
-          config: 'mwan3',
-          name: 'DefaultRule',
-          type: 'rule',
-          values: {
-            proto: 'all',
-            src_ip: '0.0.0.0/0',
-            dest_ip: '0.0.0.0/0',
-            sticky: '0',
-            use_policy: form.value.label
-          }
-        })
-      )
-    }
-    // If all calls are successful, go forth and reload the UI
-    // TODO: implement error catching, with rollback.
-    Promise.all(calls).then(() => {
-      saving.value = false
-      emit('policyCreated')
+        .flat()
     })
+      .then(() => {
+        emit('success')
+        form.value = initForm()
+      })
+      .catch((reason: ValidationError) => {
+        messageBag.value = reason.errorBag
+      })
+      .catch((reason: AxiosError) => {
+        error.value = reason
+      })
+      .finally(() => {
+        saving.value = false
+      })
   }
 }
 </script>
 
 <template>
   <NeSideDrawer
+    @close="$emit('close')"
     :is-shown="isShown"
     :title="t('standalone.multi_wan.create_policy', { name: form.label })"
   >
-    <NeSkeleton v-if="loading" :lines="10" />
-    <NeInlineNotification v-else-if="error" :kind="'error'" :title="error.message" />
+    <NeInlineNotification v-if="firewall.error" :kind="'error'" :title="firewall.error.message" />
     <div v-else class="space-y-8">
       <NeTextInput
         ref="labelElement"
         v-model="form.label"
         :disabled="createDefault"
-        :invalid-message="messageBag.get('label')?.[0]"
+        :invalid-message="messageBag.getFirstFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"
       />
       <NeRadioSelection
@@ -351,39 +245,44 @@ function createPolicy() {
         :options="policyOptions"
         :screen-reader-help-text="t('standalone.multi_wan.behave_picker.choose_behaviour_sr')"
       />
-      <div v-for="(priority, index) in form.priorities" :key="index" class="space-y-4">
-        <NeFormItemLabel v-if="form.priorities.length > 1">
-          {{ t('standalone.multi_wan.priority', index + 1) }}
-        </NeFormItemLabel>
-        <template v-for="(gateway, index) in priority" :key="index">
-          <div class="flex gap-x-4">
-            <NeCombobox
-              v-model="gateway.id"
-              :options="gateways"
-              :placeholder="t('standalone.multi_wan.choose_gateway')"
-              class="grow"
-            />
-            <NeTextInput
-              v-if="form.selection != 'backup'"
-              v-model.number="gateway.weight"
-              :placeholder="t('standalone.multi_wan.weight')"
-            />
-            <NeButton
-              :disabled="isTrashButtonDisabled"
-              @click=";[priority.splice(index, 1), cleanPriorities()]"
-            >
-              <FontAwesomeIcon :icon="['fas', 'trash']" />
-            </NeButton>
-          </div>
-        </template>
-        <NeButton
-          v-if="form.selection != 'backup'"
-          :kind="'tertiary'"
-          @click="priority.push(new Gateway())"
-        >
-          {{ t('standalone.multi_wan.add_gateway') }}
-        </NeButton>
-      </div>
+      <NeSkeleton v-if="firewall.loading" :lines="10" />
+      <template v-else>
+        <div v-for="(priority, index) in form.priorities" :key="index" class="space-y-4">
+          <NeFormItemLabel v-if="form.priorities.length > 1">
+            {{ t('standalone.multi_wan.priority', index + 1) }}
+          </NeFormItemLabel>
+          <template v-for="(gateway, index) in priority" :key="index">
+            <div class="flex gap-x-4">
+              <NeCombobox
+                v-model="gateway.id"
+                :options="availableGateways"
+                :placeholder="t('standalone.multi_wan.choose_gateway')"
+                class="grow"
+                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.name`)"
+              />
+              <NeTextInput
+                v-if="form.selection != 'backup'"
+                v-model.number="gateway.weight"
+                :placeholder="t('standalone.multi_wan.weight')"
+                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.weight`)"
+              />
+              <NeButton
+                :disabled="isTrashButtonDisabled"
+                @click=";[priority.splice(index, 1), cleanPriorities()]"
+              >
+                <FontAwesomeIcon :icon="['fas', 'trash']" />
+              </NeButton>
+            </div>
+          </template>
+          <NeButton
+            v-if="form.selection != 'backup'"
+            :kind="'tertiary'"
+            @click="priority.push(new Gateway())"
+          >
+            {{ t('standalone.multi_wan.add_gateway') }}
+          </NeButton>
+        </div>
+      </template>
       <NeButton v-if="form.selection != 'balance'" @click="form.priorities.push([new Gateway()])">
         <template #prefix>
           <FontAwesomeIcon :icon="faPlus" />
@@ -392,10 +291,10 @@ function createPolicy() {
       </NeButton>
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="saving" :kind="'tertiary'" @click="emit('abortCreation')">
+        <NeButton :disabled="saving" :kind="'tertiary'" @click="$emit('close')">
           {{ t('common.cancel') }}
         </NeButton>
-        <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="createPolicy()">
+        <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="create()">
           {{ t('common.save') }}
         </NeButton>
       </div>

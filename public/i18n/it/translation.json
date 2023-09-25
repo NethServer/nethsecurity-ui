@@ -144,7 +144,7 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "storage_usage": "Archiviazione",
+      "storage_usage": "Dati",
       "known_hosts": "Host conosciuti",
       "today_top_applications": "Applicazioni",
       "ban_ip": "BanIP",

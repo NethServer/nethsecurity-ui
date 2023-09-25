@@ -3,12 +3,14 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { padStart, upperFirst } from 'lodash'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { CYAN_600 } from '@/lib/color'
+import { useThemeStore } from '@/stores/theme'
+import { CYAN_500, CYAN_600 } from '@/lib/color'
 
 export function useTrafficSummary() {
   const REFRESH_INTERVAL = 10000
   const CHART_NUM_ITEMS = 5
   const { t } = useI18n()
+  const themeStore = useThemeStore()
   const intervalId = ref(0)
   const clientsLabels = ref<any>([])
   const clientsDatasets = ref<any>([])
@@ -22,7 +24,7 @@ export function useTrafficSummary() {
 
   const datasetProps = {
     label: t('standalone.dashboard.traffic'),
-    backgroundColor: CYAN_600,
+    backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
     borderRadius: 6,
     maxBarThickness: 25
   }

@@ -20,7 +20,6 @@ import { faChartLine as fasChartLine } from '@fortawesome/free-solid-svg-icons'
 import { faChartLine as falChartLine } from '@nethesis/nethesis-light-svg-icons'
 import { faMagnifyingGlass as fasMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faCircleQuestion as fasCircleQuestion } from '@fortawesome/free-solid-svg-icons'
-import { faBell as fasBell } from '@fortawesome/free-solid-svg-icons'
 import { faMoon as fasMoon } from '@fortawesome/free-solid-svg-icons'
 import { faSun as fasSun } from '@fortawesome/free-solid-svg-icons'
 import { faCircleHalfStroke as fasCircleHalfStroke } from '@fortawesome/free-solid-svg-icons'
@@ -79,7 +78,6 @@ export async function loadFontAwesome(app: any) {
   library.add(falChartLine)
   library.add(fasMagnifyingGlass)
   library.add(fasCircleQuestion)
-  library.add(fasBell)
   library.add(fasMoon)
   library.add(fasSun)
   library.add(fasCircleHalfStroke)

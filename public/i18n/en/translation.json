@@ -131,13 +131,13 @@
       "no_wan_interfaces": "No WAN interfaces",
       "memory_usage": "Memory",
       "root_usage": "Root",
-      "storage_usage": "Storage",
+      "storage_usage": "Data",
       "tmpfs_usage": "Tmpfs",
       "no_hosts": "No hosts",
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_are_updated_every_seconds": "Data are updated every {seconds} seconds",
+      "data_updated_every_seconds": "Data updated every {seconds} seconds",
       "usage_free_of_total": "{free} free of {total}"
     },
     "registration": {

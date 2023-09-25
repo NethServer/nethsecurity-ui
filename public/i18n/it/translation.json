@@ -179,7 +179,7 @@
       "upload": "Upload",
       "host": "Host",
       "dpi_core": "DPI-core",
-      "data_are_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
+      "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
       "no_protocols": "Nessun protocollo",
       "no_hosts": "Nessun host",
       "usage_free_of_total": "{free} liberi di {total}",

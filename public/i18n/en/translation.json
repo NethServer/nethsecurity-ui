@@ -217,7 +217,13 @@
       "title": "Backup & restore"
     },
     "reboot_and_shutdown": {
-      "title": "Reboot & shutdown"
+      "title": "Reboot & shut down",
+      "reboot": "Reboot",
+      "system_reboot": "System reboot",
+      "shut_down": "Shut down",
+      "shutdown_warning": "This action will power off the firewall.",
+      "reboot_warning": "Are you sure you want to reboot the system?",
+      "reboot_now": "Reboot now"
     },
     "network": {
       "title": "Network"

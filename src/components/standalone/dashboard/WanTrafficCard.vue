@@ -5,9 +5,10 @@
 
 <script setup lang="ts">
 import WanTrafficChart from '@/components/standalone/dashboard/WanTrafficChart.vue'
-import { CYAN_400, GRAY_500 } from '@/lib/color'
+import { CYAN_500, CYAN_600, INDIGO_400, INDIGO_600 } from '@/lib/color'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useThemeStore } from '@/stores/theme'
 import {
   NeCombobox,
   NeSkeleton,
@@ -22,6 +23,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
+const themeStore = useThemeStore()
 const REFRESH_INTERVAL = 10000
 const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
@@ -124,16 +126,16 @@ async function getInterfaceTraffic() {
     chartDatasets.value = [
       {
         label: t('standalone.dashboard.download'),
-        borderColor: CYAN_400,
-        backgroundColor: CYAN_400,
+        borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
+        backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
         data: downloadData,
         borderWidth: 1,
         radius: 0
       },
       {
         label: t('standalone.dashboard.upload'),
-        borderColor: GRAY_500,
-        backgroundColor: GRAY_500,
+        borderColor: themeStore.isLight ? INDIGO_600 : INDIGO_400,
+        backgroundColor: themeStore.isLight ? INDIGO_600 : INDIGO_400,
         data: uploadData,
         borderWidth: 1,
         radius: 0

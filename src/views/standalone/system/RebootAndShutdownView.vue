@@ -56,8 +56,6 @@ async function performRequest(type: requestType) {
     if (type == 'reboot') {
       isRebooting.value = true
       setRebootTimer()
-    } else {
-      closeModal()
     }
   } catch (err: any) {
     modalRequestError.value = t(getAxiosErrorMessage(err))

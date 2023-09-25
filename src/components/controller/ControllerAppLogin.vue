@@ -187,7 +187,9 @@ function validate() {
 
               <div class="text-sm leading-6">
                 <a
-                  href="#"
+                  href="https://docs.nethsecurity.org/"
+                  target="_blank"
+                  rel="noreferrer"
                   class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"
                   >{{ t('login.need_help') }}</a
                 >

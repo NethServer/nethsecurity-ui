@@ -317,8 +317,10 @@ watch(
               />
             </div>
             <!-- help -->
-            <button
-              type="button"
+            <a
+              href="https://docs.nethsecurity.org/"
+              target="_blank"
+              rel="noreferrer"
               :class="[
                 '-m-2.5 flex items-center gap-3 p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
                 topBarButtonsColorClasses
@@ -330,7 +332,7 @@ watch(
                 aria-hidden="true"
               />
               <span>{{ t('common.help') }}</span>
-            </button>
+            </a>
 
             <!-- Separator -->
             <div

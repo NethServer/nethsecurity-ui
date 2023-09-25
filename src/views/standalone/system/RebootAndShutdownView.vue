@@ -16,6 +16,7 @@ import {
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
+import { onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -34,6 +35,8 @@ const pageError = ref('')
 
 const rebootProgress = ref(0)
 const isRebooting = ref(false)
+const rebootIntervalRef = ref<number | undefined>()
+const rebootTimeoutRef = ref<number | undefined>()
 
 async function getHostname() {
   try {
@@ -70,17 +73,22 @@ function closeModal() {
 }
 
 function setRebootTimer() {
-  setTimeout(() => {
+  rebootTimeoutRef.value = setTimeout(() => {
     location.reload()
   }, REBOOT_WAIT_TIME)
 
-  setInterval(() => {
+  rebootIntervalRef.value = setInterval(() => {
     rebootProgress.value += 0.5
   }, REBOOT_WAIT_TIME / 200)
 }
 
 onMounted(() => {
   getHostname()
+})
+
+onUnmounted(() => {
+  if (rebootTimeoutRef.value) clearTimeout(rebootTimeoutRef.value)
+  if (rebootIntervalRef.value) clearInterval(rebootIntervalRef.value)
 })
 </script>
 

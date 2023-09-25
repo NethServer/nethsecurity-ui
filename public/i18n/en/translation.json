@@ -419,6 +419,7 @@
         "button": "@:common.delete"
       },
       "delete_policy_modal": {
+        "title": "Are you sure you want to delete \"{name}\" policy?",
         "button": "@:common.delete"
       }
     },

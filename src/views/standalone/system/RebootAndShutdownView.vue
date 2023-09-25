@@ -11,6 +11,7 @@ import {
   NeTitle,
   NeModal,
   NeInlineNotification,
+  NeProgressBar,
   getAxiosErrorMessage,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
@@ -19,6 +20,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 type requestType = 'poweroff' | 'reboot'
+const REBOOT_WAIT_TIME = 45000
 
 const { t } = useI18n()
 
@@ -29,6 +31,9 @@ const showRebootModal = ref(false)
 const isPerformingRequest = ref(false)
 const modalRequestError = ref('')
 const pageError = ref('')
+
+const rebootProgress = ref(0)
+const isRebooting = ref(false)
 
 async function getHostname() {
   try {
@@ -44,7 +49,13 @@ async function performRequest(type: requestType) {
   try {
     isPerformingRequest.value = true
     await ubusCall('ns.power', type)
-    closeModal()
+
+    if (type == 'reboot') {
+      isRebooting.value = true
+      setRebootTimer()
+    } else {
+      closeModal()
+    }
   } catch (err: any) {
     modalRequestError.value = t(getAxiosErrorMessage(err))
   } finally {
@@ -56,6 +67,16 @@ function closeModal() {
   showRebootModal.value = false
   showShutdownModal.value = false
   modalRequestError.value = ''
+}
+
+function setRebootTimer() {
+  setTimeout(() => {
+    location.reload()
+  }, REBOOT_WAIT_TIME)
+
+  setInterval(() => {
+    rebootProgress.value += 0.5
+  }, REBOOT_WAIT_TIME / 200)
 }
 
 onMounted(() => {
@@ -100,6 +121,9 @@ onMounted(() => {
   <NeModal
     :primary-label="t('standalone.reboot_and_shutdown.shutdown')"
     :title="t('standalone.reboot_and_shutdown.shutdown')"
+    :primary-button-loading="isPerformingRequest"
+    :primary-button-disabled="isPerformingRequest"
+    :cancel-label="t('common.cancel')"
     :visible="showShutdownModal"
     kind="warning"
     primary-button-kind="danger"
@@ -117,22 +141,29 @@ onMounted(() => {
   </NeModal>
   <NeModal
     :primary-label="t('standalone.reboot_and_shutdown.reboot_now')"
-    :primary-button-loading="isPerformingRequest"
-    :primary-button-disabled="isPerformingRequest"
+    :primary-button-loading="isPerformingRequest || isRebooting"
+    :primary-button-disabled="isPerformingRequest || isRebooting"
     :title="t('standalone.reboot_and_shutdown.reboot')"
+    :cancel-label="!isRebooting ? t('common.cancel') : ''"
     :visible="showRebootModal"
     kind="warning"
     primary-button-kind="danger"
-    @close="closeModal()"
+    @close="!isRebooting ? closeModal() : undefined"
     @primary-click="performRequest('reboot')"
   >
-    {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}
-    <NeInlineNotification
-      v-if="modalRequestError"
-      :title="t('error.generic_error')"
-      :description="modalRequestError"
-      kind="error"
-      class="my-6"
-    />
+    <template v-if="isRebooting">
+      {{ t('standalone.reboot_and_shutdown.reboot_in_progress') }}
+      <NeProgressBar class="my-4" :progress="rebootProgress" />
+    </template>
+    <template v-else>
+      {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}
+      <NeInlineNotification
+        v-if="modalRequestError"
+        :title="t('error.generic_error')"
+        :description="modalRequestError"
+        kind="error"
+        class="my-6"
+      />
+    </template>
   </NeModal>
 </template>

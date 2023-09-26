@@ -112,14 +112,14 @@
     "reboot_and_shutdown": {
       "title": "Riavvio e spegnimento",
       "reboot_now": "Riavvia ora",
-      "reboot_in_progress": "L'unità si sta riavviando, per favore...",
-      "system_reboot": "Riavvio sistema.",
-      "reboot_unit": "Unità di riavvio",
-      "shutdown_warning": "Stai per spegnere l'unità 'unit}'",
-      "reboot_warning": "Stai per riavviare l'unità",
-      "reboot": "Riavvia",
-      "shutdown": "Arresto",
-      "shut_down_unit": "Unità di arresto"
+      "reboot_in_progress": "L'unità si sta riavviando, attendere...",
+      "system_reboot": "Riavvio di sistema",
+      "reboot_unit": "Riavvia unità",
+      "shutdown_warning": "Stai per spegnere l'unità '{unit}'",
+      "reboot_warning": "Stai per riavviare l'unità '{unit}'",
+      "reboot": "Riavvio",
+      "shutdown": "Spegnimento",
+      "shut_down_unit": "Spegni unità"
     },
     "network": {
       "title": "Rete"

@@ -110,7 +110,16 @@
       "title": "Backup e ripristino"
     },
     "reboot_and_shutdown": {
-      "title": "Riavvio e spegnimento"
+      "title": "Riavvio e spegnimento",
+      "reboot_now": "Riavvia ora",
+      "reboot_in_progress": "L'unità si sta riavviando, per favore...",
+      "system_reboot": "Riavvio sistema.",
+      "reboot_unit": "Unità di riavvio",
+      "shutdown_warning": "Stai per spegnere l'unità 'unit}'",
+      "reboot_warning": "Stai per riavviare l'unità",
+      "reboot": "Riavvia",
+      "shutdown": "Arresto",
+      "shut_down_unit": "Unità di arresto"
     },
     "network": {
       "title": "Rete"

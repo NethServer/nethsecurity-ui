@@ -110,7 +110,16 @@
       "title": "Backup e ripristino"
     },
     "reboot_and_shutdown": {
-      "title": "Riavvio e spegnimento"
+      "title": "Riavvio e spegnimento",
+      "reboot_now": "Riavvia ora",
+      "reboot_in_progress": "L'unità si sta riavviando, attendere...",
+      "system_reboot": "Riavvio di sistema",
+      "reboot_unit": "Riavvia unità",
+      "shutdown_warning": "Stai per spegnere l'unità '{unit}'",
+      "reboot_warning": "Stai per riavviare l'unità '{unit}'",
+      "reboot": "Riavvio",
+      "shutdown": "Spegnimento",
+      "shut_down_unit": "Spegni unità"
     },
     "network": {
       "title": "Rete"
@@ -144,7 +153,7 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "storage_usage": "Archiviazione",
+      "storage_usage": "Data",
       "known_hosts": "Host conosciuti",
       "today_top_applications": "Applicazioni",
       "ban_ip": "BanIP",

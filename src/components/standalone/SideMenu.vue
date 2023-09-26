@@ -33,7 +33,7 @@ const navigation: Ref<any> = ref([
       },
       {
         name: t('standalone.reboot_and_shutdown.title'),
-        to: 'system/reboot-shutdown'
+        to: 'system/reboot-and-shutdown'
       }
     ],
     expanded: false

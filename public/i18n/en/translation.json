@@ -217,7 +217,16 @@
       "title": "Backup & restore"
     },
     "reboot_and_shutdown": {
-      "title": "Reboot & shutdown"
+      "title": "Reboot & shutdown",
+      "reboot": "Reboot",
+      "reboot_unit": "Reboot unit",
+      "system_reboot": "System reboot",
+      "shutdown": "Shutdown",
+      "shut_down_unit": "Shut down unit",
+      "shutdown_warning": "You are about to power off '{unit}' unit",
+      "reboot_warning": "You are about to reboot '{unit}' unit",
+      "reboot_now": "Reboot now",
+      "reboot_in_progress": "The unit is rebooting, please wait..."
     },
     "network": {
       "title": "Network"

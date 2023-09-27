@@ -1,6 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowRight, faHouse as fasHouse } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faClone, faHouse as fasHouse } from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
 import { faServer as falServer } from '@nethesis/nethesis-light-svg-icons'
@@ -114,4 +114,5 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCircleInfo)
   library.add(faArrowRight)
   library.add(faEmptySet)
+  library.add(faClone)
 }

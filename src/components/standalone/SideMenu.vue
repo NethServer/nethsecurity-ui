@@ -20,7 +20,7 @@ const navigation: Ref<any> = ref([
     icon: 'server',
     to: 'system',
     children: [
-      { name: t('standalone.registration.title'), to: 'system/registration' },
+      { name: t('standalone.subscription.title'), to: 'system/subscription' },
       {
         name: t('standalone.system_settings.title'),
         to: 'system/systemSettings'

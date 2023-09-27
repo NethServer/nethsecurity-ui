@@ -11,9 +11,9 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/StandaloneDashboardView.vue')
   },
   {
-    path: 'system/registration',
-    name: 'Registration',
-    component: () => import('../views/standalone/system/RegistrationView.vue')
+    path: 'system/subscription',
+    name: 'Subscription',
+    component: () => import('../views/standalone/system/SubscriptionView.vue')
   },
   {
     path: 'system/systemSettings',

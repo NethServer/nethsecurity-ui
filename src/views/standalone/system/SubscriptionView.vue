@@ -11,7 +11,6 @@ import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { getAxiosErrorMessage, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type SubscriptionDataType = {
   server_id: number
@@ -25,7 +24,6 @@ const { t } = useI18n()
 const loading = ref(true)
 const pageError = ref('')
 const subscriptionData = ref<SubscriptionDataType | null>(null)
-const uciChangesStore = useUciPendingChangesStore()
 
 async function fetchSubscription() {
   try {
@@ -36,11 +34,6 @@ async function fetchSubscription() {
   } catch (e: any) {
     pageError.value = getAxiosErrorMessage(e)
   }
-}
-
-async function reloadSubscription() {
-  await fetchSubscription()
-  await uciChangesStore.getChanges()
 }
 
 onMounted(() => {
@@ -60,13 +53,9 @@ onMounted(() => {
     <UnitSubscription
       :subscription-data="subscriptionData"
       :loading="loading"
-      @subscription-update="reloadSubscription()"
+      @subscription-update="fetchSubscription()"
     />
     <hr />
-    <RemoteSupport
-      :enable-remote-support="subscriptionData != null"
-      :loading="loading"
-      @session-update="uciChangesStore.getChanges()"
-    />
+    <RemoteSupport :enable-remote-support="subscriptionData != null" :loading="loading" />
   </div>
 </template>

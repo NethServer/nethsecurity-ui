@@ -33,18 +33,14 @@ const error = ref('')
 const isProcessingRequest = ref(false)
 const sessionId = ref('')
 
-const emit = defineEmits(['session-update'])
-
 async function startSession() {
   let startDonResponse = await makeDonRequest('start')
   sessionId.value = startDonResponse.data.session_id
-  emit('session-update')
 }
 
 async function stopSession() {
   await makeDonRequest('stop')
   sessionId.value = ''
-  emit('session-update')
 }
 
 async function getSessionStatus() {

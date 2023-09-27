@@ -4,6 +4,7 @@ import {
   faArrowRight,
   faArrowsRotate,
   faPowerOff,
+  faCircleStop,
   faHouse as fasHouse,
   faUserGear
 } from '@fortawesome/free-solid-svg-icons'
@@ -125,4 +126,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faEmptySet)
   library.add(faClone)
   library.add(faUserGear)
+  library.add(faCircleStop)
 }

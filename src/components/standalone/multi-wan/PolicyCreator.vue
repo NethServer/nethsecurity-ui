@@ -11,55 +11,16 @@ import {
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
+import { MessageBag, validateRequired } from '@/lib/validation'
 import { useFirewallStore, Zone } from '@/stores/standalone/useFirewallStore'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
+import { Gateway, usePolicyForm } from '@/composables/usePolicyForm'
 
 const { t } = useI18n()
-
-/**
- * Gateway definition.
- */
-class Gateway {
-  id: string
-  weight: string
-
-  constructor(id: string = '', weight: string = '100') {
-    this.id = id
-    this.weight = weight
-  }
-}
-
-/**
- * Reactive state interface.
- */
-interface Form {
-  label: string
-  selection: string
-  priorities: Array<Array<Gateway>>
-}
-
-/**
- * RadioSelection options
- */
-const policyOptions = [
-  {
-    id: 'balance',
-    label: t('standalone.multi_wan.behave_picker.balance')
-  },
-  {
-    id: 'backup',
-    label: t('standalone.multi_wan.behave_picker.backup')
-  },
-  {
-    id: 'custom',
-    label: t('standalone.multi_wan.behave_picker.custom')
-  }
-]
 
 const firewall = useFirewallStore()
 
@@ -74,25 +35,13 @@ const props = defineProps({
   }
 })
 
-const form = ref<Form>(initForm())
+const policyForm = reactive(usePolicyForm(toRef(() => undefined)))
 
 const saving = ref(false)
 const messageBag = ref(new MessageBag())
 const error = ref<Error>()
 
 const labelElement = ref<HTMLInputElement | null>(null)
-
-/**
- * Weather the button should be disabled or not once deletion.
- */
-const isTrashButtonDisabled = computed<boolean>(() => {
-  if (form.value.selection == 'balance') {
-    return form.value.priorities[0].length < 3
-  } else if (form.value.selection == 'backup') {
-    return form.value.priorities.length < 3
-  }
-  return false
-})
 
 const availableGateways = computed((): Array<NeComboboxOption> => {
   return firewall.zones
@@ -108,34 +57,15 @@ const availableGateways = computed((): Array<NeComboboxOption> => {
 })
 
 /**
- * Map transformation of priorities and gateways between behaviours, allows to keep previous values set.
- */
-watch(
-  () => form.value.selection,
-  () => {
-    if (form.value.selection == 'backup') {
-      form.value.priorities = form.value.priorities
-        .map((priority) => priority.map((gateway) => [gateway]))
-        .flat(1)
-      for (let i = form.value.priorities.length; i < 2; i++) {
-        form.value.priorities.push([new Gateway()])
-      }
-    } else if (form.value.selection == 'balance') {
-      form.value.priorities = [form.value.priorities.flat(1)]
-      for (let i = form.value.priorities[0].length; i < 2; i++) {
-        form.value.priorities[0].push(new Gateway())
-      }
-    }
-  }
-)
-
-/**
  * Focus and populate first element on open, delay by 50ms due to DOM creation.
  */
 watch(
   () => props.isShown,
   () => {
-    form.value = initForm()
+    policyForm.cleanForm()
+    if (props.createDefault) {
+      policyForm.label = 'Default'
+    }
     if (props.isShown && !props.createDefault) {
       setTimeout(() => labelElement.value?.focus(), 50)
     }
@@ -148,32 +78,17 @@ onMounted(() => {
   firewall.fetch()
 })
 
-function initForm(): Form {
-  return {
-    label: props.createDefault ? 'Default' : '',
-    selection: policyOptions[0].id,
-    priorities: [[new Gateway(), new Gateway()]]
-  }
-}
-
-/**
- * If there's a priority that is empty, remove it.
- */
-function cleanPriorities() {
-  form.value.priorities = form.value.priorities.filter((priority) => priority.length > 0)
-}
-
 /**
  * Validation form.
  */
 function validate(): boolean {
   messageBag.value = new MessageBag()
-  let errMessage = validateRequired(form.value.label).errMessage
+  let errMessage = validateRequired(policyForm.label).errMessage
   if (errMessage) {
     messageBag.value.set('name', [t(errMessage.valueOf())])
     labelElement.value?.focus()
   }
-  form.value.priorities.flat().forEach((priority, index) => {
+  policyForm.priorities.flat().forEach((priority, index) => {
     errMessage = validateRequired(priority.id).errMessage
     if (errMessage) {
       messageBag.value.set(`interfaces.${index}.name`, [t(errMessage.valueOf())])
@@ -189,8 +104,8 @@ function create() {
   if (validate()) {
     saving.value = true
     ubusCall('ns.mwan', 'store_policy', {
-      name: form.value.label,
-      interfaces: form.value.priorities
+      name: policyForm.label,
+      interfaces: policyForm.priorities
         .map((gateways, index) =>
           gateways.map((gateway) => {
             return {
@@ -204,7 +119,7 @@ function create() {
     })
       .then(() => {
         emit('success')
-        form.value = initForm()
+        policyForm.cleanForm()
       })
       .catch((reason: ValidationError) => {
         messageBag.value = reason.errorBag
@@ -221,56 +136,60 @@ function create() {
 
 <template>
   <NeSideDrawer
-    @close="$emit('close')"
     :is-shown="isShown"
-    :title="t('standalone.multi_wan.create_policy', { name: form.label })"
+    :title="t('standalone.multi_wan.create_policy', { name: policyForm.label })"
+    @close="$emit('close')"
   >
     <NeInlineNotification v-if="firewall.error" :kind="'error'" :title="firewall.error.message" />
     <div v-else class="space-y-8">
       <NeTextInput
         ref="labelElement"
-        v-model="form.label"
+        v-model="policyForm.label"
         :disabled="createDefault"
         :invalid-message="messageBag.getFirstFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"
       />
       <NeRadioSelection
-        v-model="form.selection"
+        v-model="policyForm.selection"
         :label="t('standalone.multi_wan.behave_picker.choose_behaviour')"
-        :options="policyOptions"
+        :options="policyForm.policyOptionSelection"
         :screen-reader-help-text="t('standalone.multi_wan.behave_picker.choose_behaviour_sr')"
       />
       <NeSkeleton v-if="firewall.loading" :lines="10" />
       <template v-else>
-        <div v-for="(priority, index) in form.priorities" :key="index" class="space-y-4">
-          <NeFormItemLabel v-if="form.priorities.length > 1">
-            {{ t('standalone.multi_wan.priority', index + 1) }}
+        <div
+          v-for="(priority, priorityIndex) in policyForm.priorities"
+          :key="priorityIndex"
+          class="space-y-4"
+        >
+          <NeFormItemLabel v-if="policyForm.priorities.length > 1">
+            {{ t('standalone.multi_wan.priority', priorityIndex + 1) }}
           </NeFormItemLabel>
           <template v-for="(gateway, index) in priority" :key="index">
             <div class="flex gap-x-4">
               <NeCombobox
                 v-model="gateway.id"
+                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.name`)"
                 :options="availableGateways"
                 :placeholder="t('standalone.multi_wan.choose_gateway')"
                 class="grow"
-                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.name`)"
               />
               <NeTextInput
-                v-if="form.selection != 'backup'"
+                v-if="policyForm.selection != 'backup'"
                 v-model.number="gateway.weight"
-                :placeholder="t('standalone.multi_wan.weight')"
                 :invalid-message="messageBag.getFirstFor(`interfaces.${index}.weight`)"
+                :placeholder="t('standalone.multi_wan.weight')"
               />
               <NeButton
-                :disabled="isTrashButtonDisabled"
-                @click=";[priority.splice(index, 1), cleanPriorities()]"
+                :disabled="policyForm.isTrashButtonDisabled"
+                @click="policyForm.removePriority(priorityIndex, index)"
               >
                 <FontAwesomeIcon :icon="['fas', 'trash']" />
               </NeButton>
             </div>
           </template>
           <NeButton
-            v-if="form.selection != 'backup'"
+            v-if="policyForm.selection != 'backup'"
             :kind="'tertiary'"
             @click="priority.push(new Gateway())"
           >
@@ -278,7 +197,10 @@ function create() {
           </NeButton>
         </div>
       </template>
-      <NeButton v-if="form.selection != 'balance'" @click="form.priorities.push([new Gateway()])">
+      <NeButton
+        v-if="policyForm.selection != 'balance'"
+        @click="policyForm.priorities.push([new Gateway()])"
+      >
         <template #prefix>
           <FontAwesomeIcon :icon="faPlus" />
         </template>

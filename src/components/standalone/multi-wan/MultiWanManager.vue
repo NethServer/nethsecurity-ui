@@ -5,23 +5,18 @@
 
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
-import type { Rule } from '@/composables/useMwanConfig'
+import { onMounted, onUnmounted, ref } from 'vue'
 import {
   getAxiosErrorMessage,
   NeBadge,
   NeButton,
   NeDropdown,
   NeInlineNotification,
-  NeModal,
-  NeSideDrawer,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosError } from 'axios'
 import type { Member, Policy } from '@/composables/useMwan'
 import { useMwan } from '@/composables/useMwan'
 import NeTable from '@/components/standalone/NeTable.vue'
@@ -29,8 +24,6 @@ import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
 import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
-import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
-import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
 
 const { t } = useI18n()
 
@@ -40,19 +33,20 @@ const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createPolicy = ref(false)
 const toDeletePolicy = ref<Policy>()
-const editPolicy = ref<Policy>()
 
-const createRule = ref(false)
-const editRule = ref<Rule>()
-const deleteRule = ref<Rule>()
-const deletingRule = ref(false)
-const errorDeletingRule = ref<Error>()
+const toEditPolicy = ref<Policy>()
 
-/**
- * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
- * the component. This variable is keyed to RuleManager so, when it gets updated, triggers a redraw of the component.
- */
-const ruleTimestamp = ref(Date.now())
+let intervalId: number
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    mwan.value.fetch()
+  }, 5000)
+})
+
+onUnmounted(() => {
+  clearInterval(intervalId)
+})
 
 /**
  * Handler for policyCreated event.
@@ -70,44 +64,14 @@ function policyDeleted() {
 /**
  * Handler for policy edited with success event.
  */
-function policyEditedHandler() {
-  editPolicy.value = undefined
-  reloadConfig()
-}
-
-/**
- * Handler for the ruleCreated event.
- */
-function ruleCreatedHandler() {
-  createRule.value = false
-  reloadConfig()
-}
-
-/**
- * Rule Created Handler
- */
-function ruleEditedHandler() {
-  editRule.value = undefined
+function policyEdited() {
+  toEditPolicy.value = undefined
   reloadConfig()
 }
 
 function reloadConfig() {
   mwan.value.fetch()
   uciPendingChangesStore.getChanges()
-}
-
-function deleteRuleHandler() {
-  deletingRule.value = true
-  ubusCall('uci', 'delete', {
-    config: 'mwan3',
-    section: deleteRule.value?.name
-  })
-    .then(() => {
-      deleteRule.value = undefined
-      reloadConfig()
-    })
-    .catch((error: AxiosError) => (errorDeletingRule.value = error))
-    .finally(() => (deletingRule.value = false))
 }
 
 function badgeIcon(member: Member) {
@@ -119,6 +83,8 @@ function badgeIcon(member: Member) {
     case 'disconnecting':
     case 'connecting':
       return ['fas', 'warning']
+    case 'disabled':
+      return ['fas', 'circle-stop']
     default:
       return ['fas', 'clock']
   }
@@ -252,7 +218,7 @@ function policyIcon(policy: Policy) {
         </template>
         <template #actions="{ item }: { item: Policy }">
           <div class="flex items-center justify-end">
-            <NeButton :kind="'tertiary'">
+            <NeButton :kind="'tertiary'" @click="toEditPolicy = item">
               <template #prefix>
                 <FontAwesomeIcon :icon="['fas', 'edit']" />
               </template>
@@ -286,19 +252,12 @@ function policyIcon(policy: Policy) {
     @close="toDeletePolicy = undefined"
     @success="policyDeleted()"
   />
+  <PolicyEditor
+    :policy="toEditPolicy"
+    @close="toEditPolicy = undefined"
+    @success="policyEdited()"
+  />
   <!--  <NeSideDrawer
-    :is-shown="editPolicy != undefined"
-    :title="t('standalone.multi_wan.edit_policy')"
-    @close="editPolicy = undefined"
-  >
-    <PolicyEditor
-      v-if="editPolicy"
-      :policy="editPolicy"
-      @cancel="editPolicy = undefined"
-      @success="policyEditedHandler()"
-    />
-  </NeSideDrawer>-->
-  <NeSideDrawer
     :is-shown="createRule"
     :title="t('standalone.multi_wan.create_new_rule')"
     @close="createRule = false"
@@ -314,7 +273,7 @@ function policyIcon(policy: Policy) {
       <RuleEditor :rule="editRule" @cancel="editRule = undefined" @success="ruleEditedHandler()" />
     </template>
   </NeSideDrawer>
-  <!-- TODO: ask for labels for rule delete modal -->
+  &lt;!&ndash; TODO: ask for labels for rule delete modal &ndash;&gt;
   <NeModal
     :primary-button-disabled="deletingRule"
     :primary-button-loading="deletingRule"
@@ -331,5 +290,5 @@ function policyIcon(policy: Policy) {
       :title="t(getAxiosErrorMessage(errorDeletingRule.message))"
       kind="error"
     />
-  </NeModal>
+  </NeModal>-->
 </template>

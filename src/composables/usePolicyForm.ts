@@ -1,19 +1,7 @@
-import { onBeforeMount, ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
-import type { AxiosError, AxiosResponse } from 'axios'
-
-/**
- * Interface describing the get firewall response
- */
-interface FirewallResponse {
-  values: {
-    [name: string]: {
-      name: string
-      network: Array<string>
-    }
-  }
-}
+import type { Ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import type { Policy } from '@/composables/useMwan'
+import { useI18n } from 'vue-i18n'
 
 /**
  * Gateway form definition.
@@ -29,15 +17,6 @@ export class Gateway {
 }
 
 /**
- * Form used to manage Policy
- */
-export interface Form {
-  label?: string
-  selection: PolicyOptions
-  priorities: Array<Array<Gateway>>
-}
-
-/**
  * Enum categorization of possible gateways configuration
  */
 export enum PolicyOptions {
@@ -46,41 +25,98 @@ export enum PolicyOptions {
   CUSTOM = 'custom'
 }
 
-export function usePolicyForm() {
-  const form = ref<Form>({
-    label: '',
-    selection: PolicyOptions.BALANCE,
-    priorities: [[new Gateway(), new Gateway()]]
+/**
+ * Translates the policyOptions into labels.
+ */
+const radioSelections = [
+  {
+    id: PolicyOptions.BALANCE,
+    label: 'standalone.multi_wan.behave_picker.balance'
+  },
+  {
+    id: PolicyOptions.BACKUP,
+    label: 'standalone.multi_wan.behave_picker.backup'
+  },
+  {
+    id: PolicyOptions.CUSTOM,
+    label: 'standalone.multi_wan.behave_picker.custom'
+  }
+]
+
+export function usePolicyForm(policy: Ref<Policy | undefined>) {
+  const { t } = useI18n()
+
+  // form inputs
+  const label = ref('')
+  const selection = ref<PolicyOptions>(PolicyOptions.BALANCE)
+  const priorities = ref([[new Gateway(), new Gateway()]])
+
+  // watcher for editable policy
+  watch(policy, () => {
+    if (policy.value != undefined) {
+      // set name of the policy if defined
+      label.value = policy.value.label ?? ''
+
+      // decode members into picker
+      const metrics = Object.values(policy.value?.members)
+        .flat()
+        .map((member) => member.metric)
+      if (metrics.every((metric, index, array) => metric == array[0])) {
+        selection.value = PolicyOptions.BALANCE
+      } else if (metrics.every((metric, index, array) => array.indexOf(metric) == index)) {
+        selection.value = PolicyOptions.BACKUP
+      } else {
+        selection.value = PolicyOptions.CUSTOM
+      }
+
+      // parse gateways
+      priorities.value = []
+      Object.values(policy.value?.members).forEach((members, index) => {
+        priorities.value[index] = members.map(
+          (member) => new Gateway(member.interface, String(member.weight))
+        )
+      })
+    }
   })
-  const loading = ref(false)
-  const error = ref<Error>()
-  const gateways = ref<NeComboboxOption[]>()
 
   /**
-   * Get gateways from the 'wan' firewall zone.
+   * Weather the button should be disabled or not once deletion.
    */
-  function fetchGateways() {
-    ubusCall('uci', 'get', { config: 'firewall', type: 'zone' })
-      .then(
-        (response: AxiosResponse<FirewallResponse>) =>
-          (gateways.value = Object.entries(response.data.values)
-            .filter((value) => value[1].name == 'wan')
-            .flatMap((value) => value[1].network)
-            .map((value) => {
-              return {
-                id: value,
-                label: value
-              }
-            }))
-      )
-      .catch((exception: AxiosError) => (error.value = exception))
-      .finally(() => (loading.value = false))
-  }
-
-  onBeforeMount(() => {
-    loading.value = true
-    fetchGateways()
+  const isTrashButtonDisabled = computed<boolean>(() => {
+    if (selection.value == 'balance') {
+      return priorities.value[0].length < 3
+    } else if (selection.value == 'backup') {
+      return priorities.value.length < 3
+    }
+    return false
   })
 
-  return { form, loading, error, gateways }
+  /**
+   * Translation of the radio selections.
+   */
+  const policyOptionSelection = radioSelections.map((entry) => {
+    entry.label = t(entry.label)
+    return entry
+  })
+
+  function removePriority(prioritiesIndex: number, priority: number) {
+    priorities.value[prioritiesIndex].splice(priority, 1)
+    priorities.value = priorities.value.filter((priority) => priority.length > 0)
+  }
+
+  function cleanForm() {
+    label.value = ''
+    selection.value = PolicyOptions.BALANCE
+    priorities.value = [[new Gateway(), new Gateway()]]
+  }
+
+  return {
+    label,
+    selection,
+    priorities,
+    policyOptionSelection,
+    isTrashButtonDisabled,
+    removePriority,
+    cleanForm
+  }
 }

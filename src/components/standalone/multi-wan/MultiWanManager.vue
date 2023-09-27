@@ -11,8 +11,7 @@ import {
   NeBadge,
   NeButton,
   NeDropdown,
-  NeInlineNotification,
-  NeSkeleton
+  NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
@@ -24,6 +23,7 @@ import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
 import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
+import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
 
 const { t } = useI18n()
 
@@ -145,100 +145,133 @@ function policyIcon(policy: Policy) {
         :title="t(getAxiosErrorMessage(mwan.error))"
         kind="error"
       />
-      <NeSkeleton v-else-if="mwan.loading" :lines="10" />
-      <HorizontalCard v-else-if="mwan.policies.length < 1" class="space-y-4 text-center">
-        <p>{{ t('standalone.multi_wan.no_policy_found') }}</p>
-        <NeButton :kind="'primary'" @click="createPolicy = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" />
+      <template v-else>
+        <HorizontalCard
+          v-if="!mwan.loading && mwan.policies.length < 1"
+          class="space-y-4 text-center"
+        >
+          <p>{{ t('standalone.multi_wan.no_policy_found') }}</p>
+          <NeButton :kind="'primary'" @click="createPolicy = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" />
+            </template>
+            {{ t('standalone.multi_wan.create_default_policy') }}
+          </NeButton>
+        </HorizontalCard>
+        <NeTable
+          v-else
+          :data="mwan.policies"
+          :headers="[
+            {
+              key: 'label',
+              label: 'Policy Name'
+            },
+            {
+              key: 'type'
+            },
+            {
+              key: 'gateways',
+              label: 'Gateways'
+            },
+            {
+              key: 'actions'
+            }
+          ]"
+          :loading="mwan.loading"
+          :skeleton-lines="3"
+          :style="'card'"
+        >
+          <template #label="{ item }: { item: Policy }">
+            <div class="flex items-center gap-4 border-r pr-8 dark:border-gray-600">
+              <div
+                v-if="item.name == 'ns_default'"
+                class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-gray-50 dark:text-gray-600"
+              >
+                <FontAwesomeIcon :icon="['fas', 'lock']" />
+              </div>
+              <p>{{ item.label ?? item.name }}</p>
+            </div>
           </template>
-          {{ t('standalone.multi_wan.create_default_policy') }}
-        </NeButton>
-      </HorizontalCard>
-      <NeTable
-        v-else
-        :data="mwan.policies"
-        :headers="[
-          {
-            key: 'label',
-            label: 'Policy Name'
-          },
-          {
-            key: 'type'
-          },
-          {
-            key: 'gateways',
-            label: 'Gateways'
-          },
-          {
-            key: 'actions'
-          }
-        ]"
-        :style="'card'"
-      >
-        <template #label="{ item }: { item: Policy }">
-          <div class="flex items-center gap-4 border-r pr-8 dark:border-gray-600">
-            <div
-              v-if="item.name == 'ns_default'"
-              class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-gray-50 dark:text-gray-600"
-            >
-              <FontAwesomeIcon :icon="['fas', 'lock']" />
+          <template #type="{ item }: { item: Policy }">
+            <div class="flex items-center">
+              <FontAwesomeIcon :icon="policyIcon(item)" class="mr-2" />
+              <p>{{ t(`standalone.multi_wan.modes.${item.type}`) }}</p>
             </div>
-            <p>{{ item.label ?? item.name }}</p>
-          </div>
-        </template>
-        <template #type="{ item }: { item: Policy }">
-          <div class="flex items-center">
-            <FontAwesomeIcon :icon="policyIcon(item)" class="mr-2" />
-            <p>{{ t(`standalone.multi_wan.modes.${item.type}`) }}</p>
-          </div>
-        </template>
-        <template #gateways="{ item }: { item: Policy }">
-          <div class="space-y-4">
-            <div
-              v-for="([metric, members], metricIndex) in Object.entries(item.members)"
-              :key="metric"
-              class="flex flex-wrap items-center gap-4"
-            >
-              <div v-if="Object.entries(item.members).length > 1">
-                {{ t('standalone.multi_wan.priority', metricIndex + 1) }}
+          </template>
+          <template #gateways="{ item }: { item: Policy }">
+            <div class="space-y-4">
+              <div
+                v-for="([metric, members], metricIndex) in Object.entries(item.members)"
+                :key="metric"
+                class="flex flex-wrap items-center gap-4"
+              >
+                <div v-if="Object.entries(item.members).length > 1">
+                  {{ t('standalone.multi_wan.priority', metricIndex + 1) }}
+                </div>
+                <div class="flex flex-wrap gap-4">
+                  <template v-for="(member, index) in members" :key="index">
+                    <NeBadge
+                      :icon="badgeIcon(member)"
+                      :kind="badgeType(member)"
+                      :label="members.length > 1 ? `weight: ${member.weight}` : ''"
+                      :text="member.interface"
+                    />
+                  </template>
+                </div>
               </div>
-              <div class="flex flex-wrap gap-4">
-                <template v-for="(member, index) in members" :key="index">
-                  <NeBadge
-                    :icon="badgeIcon(member)"
-                    :kind="badgeType(member)"
-                    :label="members.length > 1 ? `weight: ${member.weight}` : ''"
-                    :text="member.interface"
-                  />
+            </div>
+          </template>
+          <template #actions="{ item }: { item: Policy }">
+            <div class="flex items-center justify-end">
+              <NeButton :kind="'tertiary'" @click="toEditPolicy = item">
+                <template #prefix>
+                  <FontAwesomeIcon :icon="['fas', 'edit']" />
                 </template>
-              </div>
+                {{ t('common.edit') }}
+              </NeButton>
+              <NeDropdown
+                :items="[
+                  {
+                    id: 'delete',
+                    label: t('common.delete'),
+                    disabled: item.name == 'ns_default',
+                    action: () => (toDeletePolicy = item),
+                    danger: true
+                  }
+                ]"
+                align-to-right
+              />
             </div>
+          </template>
+        </NeTable>
+      </template>
+    </div>
+    <div>
+      <div class="space-y-6">
+        <div class="flex flex-wrap gap-y-4">
+          <div class="mr-auto">
+            <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
+              {{ t('standalone.multi_wan.rules') }}
+            </h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              {{ t('standalone.multi_wan.rules_description') }}
+            </p>
           </div>
-        </template>
-        <template #actions="{ item }: { item: Policy }">
-          <div class="flex items-center justify-end">
-            <NeButton :kind="'tertiary'" @click="toEditPolicy = item">
-              <template #prefix>
-                <FontAwesomeIcon :icon="['fas', 'edit']" />
-              </template>
-              {{ t('common.edit') }}
-            </NeButton>
-            <NeDropdown
-              :items="[
-                {
-                  id: 'delete',
-                  label: t('common.delete'),
-                  disabled: item.name == 'ns_default',
-                  action: () => (toDeletePolicy = item),
-                  danger: true
-                }
-              ]"
-              align-to-right
-            />
-          </div>
-        </template>
-      </NeTable>
+          <NeButton v-if="mwan.policies.length > 0" :kind="'secondary'" class="self-start">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" />
+            </template>
+            {{ t('standalone.multi_wan.create_rule') }}
+          </NeButton>
+        </div>
+        <div>
+          <RuleManager
+            :loading="mwan.loading"
+            :policies-exist="mwan.policies.length > 0"
+            :rules="mwan.rules"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <PolicyCreator

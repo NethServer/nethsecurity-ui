@@ -54,7 +54,7 @@
     "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
-    "cancel_registration_error": "Cannot cancel the unit's registration"
+    "cancel_registration_error": "Cannot cancel registration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -157,7 +157,7 @@
       "expiration": "Expiration",
       "no_expiration": "No expiration",
       "status": "Status",
-      "cancel_registration": "Cancel Registration",
+      "cancel_registration": "Cancel registration",
       "session_id": "Session ID",
       "copy_id": "Copy ID",
       "end_session": "End session",

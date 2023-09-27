@@ -43,14 +43,14 @@ const authToken = ref('')
 const isProcessingRequest = ref(false)
 const errors = ref({
   authToken: '',
-  component: ''
+  request: ''
 })
 
 const expirationDateString = computed(() => {
   if (!subscriptionData.value) return ''
 
   return subscriptionData.value.expiration == 0
-    ? 'No expiration'
+    ? t('standalone.subscription.no_expiration')
     : new Date(subscriptionData.value.expiration).toLocaleDateString()
 })
 
@@ -69,7 +69,7 @@ function validateAuthToken() {
 
 async function subscribe() {
   try {
-    errors.value.component = ''
+    errors.value.request = ''
 
     if (!validateAuthToken()) return
 
@@ -78,9 +78,9 @@ async function subscribe() {
     emit('subscription-update')
   } catch (e: any) {
     if (e.response.data.message == 'invalid_secret_or_server_not_found') {
-      errors.value.component = t('standalone.subscription.invalid_secret_or_server_not_found')
+      errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')
     } else {
-      errors.value.component = t(getAxiosErrorMessage(e))
+      errors.value.request = t(getAxiosErrorMessage(e))
     }
   } finally {
     isProcessingRequest.value = false
@@ -89,13 +89,13 @@ async function subscribe() {
 
 async function cancelSubscription() {
   try {
-    errors.value.component = ''
+    errors.value.request = ''
 
     isProcessingRequest.value = true
     await ubusCall('ns.subscription', 'unregister')
     emit('subscription-update')
   } catch (e: any) {
-    errors.value.component = t(getAxiosErrorMessage(e))
+    errors.value.request = t(getAxiosErrorMessage(e))
   } finally {
     isProcessingRequest.value = false
   }
@@ -111,12 +111,12 @@ async function cancelSubscription() {
     <NeSkeleton :lines="5" v-if="loading" />
     <template v-else>
       <NeInlineNotification
-        v-if="errors.component"
+        v-if="errors.request"
         kind="error"
         :title="
           subscriptionData ? t('error.cancel_registration_error') : t('error.register_unit_error')
         "
-        :description="errors.component"
+        :description="errors.request"
         class="mb-4"
       />
       <template v-if="subscriptionData">

@@ -12,7 +12,7 @@ import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import CreateZone from '@/components/standalone/firewall/CreateZone.vue'
-import DeleteZone from '@/components/standalone/firewall/DeleteZone.vue'
+import DeleteZoneModal from '@/components/standalone/firewall/DeleteZoneModal.vue'
 import {
   Forwarding,
   SpecialZones,
@@ -230,7 +230,7 @@ function isSpecialZone(zone: Zone): boolean {
     >
       <CreateZone @cancel="creatingZone = false" @success="creatingZone = false" />
     </NeSideDrawer>
-    <DeleteZone
+    <DeleteZoneModal
       :zone="deleteZone"
       @cancel="deleteZone = undefined"
       @success="deleteZone = undefined"

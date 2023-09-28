@@ -195,8 +195,8 @@
       "no_applications": "Nessuna applicazione",
       "openvpn_rw": "OpenVPN RW"
     },
-    "registration": {
-      "title": "Registrazione"
+    "subscription": {
+      "title": "Sottoscrizione"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",

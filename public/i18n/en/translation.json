@@ -52,7 +52,9 @@
     "cannot_retrieve_service_status": "Cannot retrieve service status",
     "cannot_retrieve_traffic_summary": "Cannot retrieve traffic summary",
     "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
-    "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic"
+    "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
+    "register_unit_error": "Cannot register unit",
+    "cancel_registration_error": "Cannot cancel registration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -131,17 +133,37 @@
       "no_wan_interfaces": "No WAN interfaces",
       "memory_usage": "Memory",
       "root_usage": "Root",
-      "storage_usage": "Storage",
+      "storage_usage": "Data",
       "tmpfs_usage": "Tmpfs",
       "no_hosts": "No hosts",
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_are_updated_every_seconds": "Data are updated every {seconds} seconds",
+      "data_updated_every_seconds": "Data updated every {seconds} seconds",
       "usage_free_of_total": "{free} free of {total}"
     },
-    "registration": {
-      "title": "Registration"
+    "subscription": {
+      "title": "Subscription",
+      "unit_subscription": "Unit subscription",
+      "unit_subscription_description": "Paste here your authentication token to enable the subscription.",
+      "remote_support": "Remote support",
+      "remote_support_description": "Only available for specific subscription plans.",
+      "authentication_token": "Authentication token",
+      "authentication_token_placeholder": "Paste token here",
+      "register": "Register",
+      "start_session": "Start session",
+      "system_id": "System ID",
+      "plan": "Plan",
+      "expiration": "Expiration",
+      "no_expiration": "No expiration",
+      "status": "Status",
+      "cancel_registration": "Cancel registration",
+      "session_id": "Session ID",
+      "copy_id": "Copy ID",
+      "end_session": "End session",
+      "invalid_secret_or_server_not_found": "Invalid token or server not found",
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "system": {
       "title": "System"
@@ -217,7 +239,16 @@
       "title": "Backup & restore"
     },
     "reboot_and_shutdown": {
-      "title": "Reboot & shutdown"
+      "title": "Reboot & shutdown",
+      "reboot": "Reboot",
+      "reboot_unit": "Reboot unit",
+      "system_reboot": "System reboot",
+      "shutdown": "Shutdown",
+      "shut_down_unit": "Shut down unit",
+      "shutdown_warning": "You are about to power off '{unit}' unit",
+      "reboot_warning": "You are about to reboot '{unit}' unit",
+      "reboot_now": "Reboot now",
+      "reboot_in_progress": "The unit is rebooting, please wait..."
     },
     "network": {
       "title": "Network"

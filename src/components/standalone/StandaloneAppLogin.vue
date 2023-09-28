@@ -128,7 +128,7 @@ function validate() {
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <!-- <div class="mx-auto w-full max-w-sm lg:w-96"> //// -->
-      <div class="mx-auto w-full max-w-md lg:w-[26rem]">
+      <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
           <img
             class="mb-6 h-8 w-auto"
@@ -180,7 +180,9 @@ function validate() {
               </div>
               <div class="text-sm leading-6">
                 <a
-                  href="#"
+                  href="https://docs.nethsecurity.org/"
+                  target="_blank"
+                  rel="noreferrer"
                   class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"
                   >{{ t('login.need_help') }}</a
                 >
@@ -203,7 +205,7 @@ function validate() {
     <div class="relative hidden w-0 flex-1 lg:block">
       <img
         class="absolute inset-0 h-full w-full object-cover"
-        src="https://images.unsplash.com/photo-1653163061406-730a0df077eb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
+        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
         alt=""
       />
     </div>

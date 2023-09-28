@@ -17,6 +17,14 @@ app.use(router)
 import { loadFontAwesome } from './lib/fontawesome'
 loadFontAwesome(app)
 
+// tooltip library
+
+import VueTippy from 'vue-tippy'
+app.use(VueTippy, {
+  defaultProps: { theme: 'tailwind' }
+})
+import 'tippy.js/dist/tippy.css'
+
 // i18n
 
 import { setupI18n } from '@/lib/i18n'

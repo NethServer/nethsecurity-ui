@@ -110,7 +110,16 @@
       "title": "Backup e ripristino"
     },
     "reboot_and_shutdown": {
-      "title": "Riavvio e spegnimento"
+      "title": "Riavvio e spegnimento",
+      "reboot_now": "Riavvia ora",
+      "reboot_in_progress": "L'unità si sta riavviando, attendere...",
+      "system_reboot": "Riavvio di sistema",
+      "reboot_unit": "Riavvia unità",
+      "shutdown_warning": "Stai per spegnere l'unità '{unit}'",
+      "reboot_warning": "Stai per riavviare l'unità '{unit}'",
+      "reboot": "Riavvio",
+      "shutdown": "Spegnimento",
+      "shut_down_unit": "Spegni unità"
     },
     "network": {
       "title": "Rete"
@@ -144,7 +153,7 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "storage_usage": "Archiviazione",
+      "storage_usage": "Data",
       "known_hosts": "Host conosciuti",
       "today_top_applications": "Applicazioni",
       "ban_ip": "BanIP",
@@ -179,15 +188,15 @@
       "upload": "Upload",
       "host": "Host",
       "dpi_core": "DPI-core",
-      "data_are_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
+      "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
       "no_protocols": "Nessun protocollo",
       "no_hosts": "Nessun host",
       "usage_free_of_total": "{free} liberi di {total}",
       "no_applications": "Nessuna applicazione",
       "openvpn_rw": "OpenVPN RW"
     },
-    "registration": {
-      "title": "Registrazione"
+    "subscription": {
+      "title": "Sottoscrizione"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",

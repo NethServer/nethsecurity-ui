@@ -1,6 +1,11 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowRight, faHouse as fasHouse } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowRight,
+  faArrowsRotate,
+  faPowerOff,
+  faHouse as fasHouse
+} from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
 import { faServer as falServer } from '@nethesis/nethesis-light-svg-icons'
@@ -20,7 +25,6 @@ import { faChartLine as fasChartLine } from '@fortawesome/free-solid-svg-icons'
 import { faChartLine as falChartLine } from '@nethesis/nethesis-light-svg-icons'
 import { faMagnifyingGlass as fasMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faCircleQuestion as fasCircleQuestion } from '@fortawesome/free-solid-svg-icons'
-import { faBell as fasBell } from '@fortawesome/free-solid-svg-icons'
 import { faMoon as fasMoon } from '@fortawesome/free-solid-svg-icons'
 import { faSun as fasSun } from '@fortawesome/free-solid-svg-icons'
 import { faCircleHalfStroke as fasCircleHalfStroke } from '@fortawesome/free-solid-svg-icons'
@@ -56,6 +60,7 @@ import { faBan as fasBan } from '@fortawesome/free-solid-svg-icons'
 import { faShield as fasShield } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo as fasCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
+import { faClone as faClone } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -79,7 +84,6 @@ export async function loadFontAwesome(app: any) {
   library.add(falChartLine)
   library.add(fasMagnifyingGlass)
   library.add(fasCircleQuestion)
-  library.add(fasBell)
   library.add(fasMoon)
   library.add(fasSun)
   library.add(fasCircleHalfStroke)
@@ -113,7 +117,10 @@ export async function loadFontAwesome(app: any) {
   library.add(fasBolt)
   library.add(fasBan)
   library.add(fasShield)
+  library.add(faPowerOff)
+  library.add(faArrowsRotate)
   library.add(fasCircleInfo)
   library.add(faArrowRight)
   library.add(faEmptySet)
+  library.add(faClone)
 }

@@ -17,7 +17,7 @@ import { Bar } from 'vue-chartjs'
 import { computed } from 'vue'
 import { byteFormat1024 } from '@nethserver/vue-tailwind-lib'
 import { useThemeStore } from '@/stores/theme'
-import { GRAY_200, GRAY_700 } from '@/lib/color'
+import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
 
 const themeStore = useThemeStore()
 
@@ -42,18 +42,18 @@ const options: any = {
         callback: function (value: number) {
           return byteFormat1024(value)
         },
-        color: themeStore.isLight ? GRAY_200 : GRAY_700
+        color: themeStore.isLight ? GRAY_700 : GRAY_200
       },
       grid: {
-        color: themeStore.isLight ? GRAY_700 : GRAY_200
+        color: themeStore.isLight ? GRAY_200 : GRAY_800
       }
     },
     y: {
       ticks: {
-        color: themeStore.isLight ? GRAY_200 : GRAY_700
+        color: themeStore.isLight ? GRAY_700 : GRAY_200
       },
       grid: {
-        color: themeStore.isLight ? GRAY_700 : GRAY_200
+        color: themeStore.isLight ? GRAY_200 : GRAY_800
       }
     }
   },

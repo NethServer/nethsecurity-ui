@@ -110,15 +110,6 @@ async function cancelSubscription() {
   >
     <NeSkeleton :lines="5" v-if="loading" />
     <template v-else>
-      <NeInlineNotification
-        v-if="errors.request"
-        kind="error"
-        :title="
-          subscriptionData ? t('error.cancel_registration_error') : t('error.register_unit_error')
-        "
-        :description="errors.request"
-        class="mb-4"
-      />
       <template v-if="subscriptionData">
         <div class="flex flex-col gap-y-8">
           <NeTextInput
@@ -152,6 +143,12 @@ async function cancelSubscription() {
               size="sm"
             />
           </div>
+          <NeInlineNotification
+            v-if="errors.request"
+            kind="error"
+            :title="t('error.cancel_registration_error')"
+            :description="errors.request"
+          />
           <div>
             <NeButton
               kind="tertiary"
@@ -172,6 +169,13 @@ async function cancelSubscription() {
           :disabled="false"
           v-model.trim="authToken"
           ref="authTokenRef"
+        />
+        <NeInlineNotification
+          v-if="errors.request"
+          kind="error"
+          :title="t('error.register_unit_error')"
+          :description="errors.request"
+          class="my-4"
         />
         <div class="mt-6 flex justify-end">
           <NeButton

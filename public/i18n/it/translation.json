@@ -55,7 +55,9 @@
     "cannot_retrieve_service_status": "Impossibile recuperare lo stato del servizio",
     "cannot_retrieve_wan_traffic": "Impossibile recuperare il traffico WAN",
     "cannot_retrieve_wan_list": "Impossibile recuperare l'elenco delle WAN",
-    "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico"
+    "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico",
+    "cancel_registration_error": "Non è possibile cancellare la registrazione",
+    "register_unit_error": "Unità di registrazione"
   },
   "login": {
     "sign_in": "Accedi",
@@ -196,7 +198,27 @@
       "openvpn_rw": "OpenVPN RW"
     },
     "subscription": {
-      "title": "Sottoscrizione"
+      "title": "Sottoscrizione",
+      "expiration": "Scadenza",
+      "remote_support": "Supporto remoto",
+      "register": "Registrati",
+      "end_session": "Sessione finale",
+      "invalid_secret_or_server_not_found": "Token non valido o server non trovato",
+      "authentication_token_placeholder": "Token Paste qui",
+      "no_expiration": "Nessuna scadenza",
+      "remote_support_description": "Disponibile solo per piani di abbonamento specifici.",
+      "session_id": "ID sessione",
+      "unit_subscription": "Abbonamento unitario",
+      "authentication_token": "Token di autenticità",
+      "status": "Stato",
+      "active": "Attivo",
+      "unit_subscription_description": "Incolla qui il token di autenticazione per abilitare l'abbonamento.",
+      "plan": "Piano",
+      "copy_id": "Copia ID",
+      "cancel_registration": "Annulla registrazione",
+      "inactive": "Inattivo",
+      "system_id": "ID di sistema",
+      "start_session": "Sessione iniziale"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",

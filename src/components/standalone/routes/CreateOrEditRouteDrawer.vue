@@ -7,7 +7,8 @@ import {
   NeSideDrawer,
   NeSkeleton,
   NeTextInput,
-  NeToggle
+  NeToggle,
+  NeTooltip
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
@@ -16,6 +17,24 @@ import type { AxiosError } from 'axios'
 import { MessageBag, validateRequired } from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const { t } = useI18n()
+
+/**
+ * Props parent component
+ */
+const props = defineProps({
+  protocol: {
+    type: String,
+    required: true
+  },
+  isShown: {
+    type: Boolean,
+    required: true
+  },
+  editRoute: {
+    type: Object,
+    required: true
+  }
+})
 
 /**
  * Reactive state interface.
@@ -43,17 +62,6 @@ interface RouteType {
   label: string
 }
 
-const props = defineProps({
-  isShown: {
-    type: Boolean,
-    required: true
-  },
-  editRoute: {
-    type: Object,
-    required: true
-  }
-})
-
 const originalForm = {
   id: '',
   name: '',
@@ -71,12 +79,19 @@ const form = ref<Form>({ ...originalForm })
 
 let routeInterfaces = ref<Array<RouteInterface>>()
 let routeTypes = ref<Array<RouteType>>()
-let error = ref<Error>()
+let titleModal = ref('')
 let loading = ref(false)
 let saving = ref(false)
 let messageBag = ref(new MessageBag())
 let isExpandedAdvancedSettings = ref(false)
 let labelElement = ref<HTMLInputElement | null>(null)
+
+let objError = {
+  notificationTitle: '',
+  notificationDescription: ''
+}
+let error = ref({ ...objError })
+let errorLoadingData = ref({ ...objError })
 
 const emit = defineEmits(['routeCreated', 'routeEdited', 'abortCreation'])
 
@@ -86,6 +101,8 @@ const emit = defineEmits(['routeCreated', 'routeEdited', 'abortCreation'])
 watch(
   () => props.editRoute,
   () => {
+    controlTypeRoute()
+
     if (props.editRoute) {
       let selectedRoute = props.editRoute
       if (selectedRoute && selectedRoute.item) {
@@ -105,36 +122,62 @@ watch(
 )
 
 onMounted(() => {
-  fetchInterfaces()
-  fetchRouteTypes()
+  getFirewallData()
+  controlTypeRoute()
 })
 
 /**
- * Get interfaces from the 'network -> interfaces and devices'.
+ * Set static string translation IPv4 or IPv6
  */
-function fetchInterfaces() {
-  loading.value = true
-  ubusCall('ns.routes', 'list-interfaces', {})
-    .then((response) => {
-      routeInterfaces.value = response.data.interfaces.map((item: RouteInterface) => ({
-        id: item,
-        label: item
-      }))
-    })
-    .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
-    .finally(() => (loading.value = false))
+function controlTypeRoute() {
+  if (props.protocol === 'ipv4') {
+    titleModal.value = t('standalone.routes.create_route_ipv4')
+    if (props.editRoute.item) titleModal.value = t('standalone.routes.edit_route_ipv4')
+  } else if (props.protocol === 'ipv6') {
+    titleModal.value = t('standalone.routes.create_route_ipv6')
+    if (props.editRoute.item) titleModal.value = t('standalone.routes.edit_route_ipv6')
+  }
 }
 
 /**
- * Get route types
+ * Get interfaces and route types
  */
-function fetchRouteTypes() {
+function getFirewallData() {
   loading.value = true
-  ubusCall('ns.routes', 'list-route-types', {})
-    .then((response) => {
-      routeTypes.value = response.data.types.map((item: RouteType) => ({ id: item, label: item }))
+  error = ref({ ...objError })
+  errorLoadingData = ref({ ...objError })
+
+  let promises: Promise<any>[] = []
+
+  // Retrive list interfaces
+  promises.push(ubusCall('ns.routes', 'list-interfaces', {}))
+
+  // Retrive list route types
+  promises.push(ubusCall('ns.routes', 'list-route-types', {}))
+
+  Promise.all(promises)
+    .then((values) => {
+      if (
+        values[0] &&
+        values[0].data &&
+        values[0].data.interfaces &&
+        values[0].data.interfaces.length
+      )
+        routeInterfaces.value = values[0].data.interfaces.map((item: RouteInterface) => ({
+          id: item,
+          label: item
+        }))
+
+      if (values[1] && values[1].data && values[1].data.types && values[1].data.types.length)
+        routeTypes.value = values[1].data.types.map((item: RouteType) => ({
+          id: item,
+          label: item
+        }))
     })
-    .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
+    .catch((exception: AxiosError) => {
+      errorLoadingData.value.notificationTitle = t('error.generic_error')
+      errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    })
     .finally(() => (loading.value = false))
 }
 
@@ -178,7 +221,7 @@ function createRoute() {
       mtu: form.value.mtu,
       onlink: form.value.onlink,
       ns_description: form.value.name,
-      protocol: 'ipv4'
+      protocol: props.protocol
     }
 
     ubusCall('ns.routes', 'add-route', payload)
@@ -192,9 +235,10 @@ function createRoute() {
           })
         }
       })
-      .catch(
-        (exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception))))
-      )
+      .catch((exception: AxiosError) => {
+        error.value.notificationTitle = t('standalone.routes.cannot_create_route')
+        error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
       .finally(() => (saving.value = false))
 
     emit('routeCreated')
@@ -217,7 +261,7 @@ function editRoute() {
       mtu: form.value.mtu,
       onlink: form.value.onlink,
       ns_description: form.value.name,
-      protocol: 'ipv4'
+      protocol: props.protocol
     }
 
     ubusCall('ns.routes', 'edit-route', payload)
@@ -231,9 +275,10 @@ function editRoute() {
           })
         }
       })
-      .catch(
-        (exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception))))
-      )
+      .catch((exception: AxiosError) => {
+        error.value.notificationTitle = t('standalone.routes.cannot_edit_route')
+        error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
       .finally(() => (saving.value = false))
 
     emit('routeEdited')
@@ -242,17 +287,15 @@ function editRoute() {
 </script>
 
 <template>
-  <NeSideDrawer
-    :is-shown="isShown"
-    :title="
-      props.editRoute.item
-        ? t('standalone.routes.edit_route_ipv4')
-        : t('standalone.routes.create_route_ipv4')
-    "
-    @close="emit('abortCreation')"
-  >
+  <NeSideDrawer :is-shown="isShown" :title="titleModal" @close="emit('abortCreation')">
     <NeSkeleton v-if="loading" :lines="10" />
-    <NeInlineNotification v-else-if="error" :kind="'error'" :title="error.message" />
+    <NeInlineNotification
+      v-if="errorLoadingData.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="errorLoadingData.notificationTitle"
+      :description="errorLoadingData.notificationDescription"
+    />
     <div v-else class="space-y-8">
       {{ t('standalone.routes.route_status') }}
       <NeToggle
@@ -272,16 +315,23 @@ function editRoute() {
       <NeTextInput
         v-model="form.network_address"
         :invalid-message="messageBag.get('label')?.[0]"
-        placeholder="0.0.0.0/0"
+        :placeholder="props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0'"
         :label="t('standalone.routes.route_network_address')"
       />
       <NeTextInput
         v-model="form.gateway"
         :invalid-message="messageBag.get('label')?.[0]"
-        placeholder="192.168.9.1"
-        :helperText="t('standalone.routes.route_gateway_helper')"
+        :placeholder="props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1'"
         :label="t('standalone.routes.route_gateway')"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.routes.route_gateway_helper') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="form.metric"
         placeholder="0"
@@ -328,6 +378,13 @@ function editRoute() {
           <NeToggle v-model="form.onlink" :label="t('standalone.routes.route_onlink')" />
         </div>
       </Transition>
+      <NeInlineNotification
+        v-if="error.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="error.notificationTitle"
+        :description="error.notificationDescription"
+      />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" :kind="'tertiary'" @click="emit('abortCreation')">
           {{ t('common.cancel') }}

@@ -32,6 +32,16 @@ import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEdit
 import { AxiosError } from 'axios'
 const uciPendingChangesStore = useUciPendingChangesStore()
 
+/**
+ * Props parent component
+ */
+const props = defineProps({
+  protocol: {
+    type: String,
+    required: true
+  }
+})
+
 let createEditRoute = ref(false)
 let routes: any = ref({})
 let table: any = ref({})
@@ -41,7 +51,6 @@ let selectedRoute = ref({})
 let deleting = ref(false)
 let deleteError = ref<Error>()
 let deleteRouteId = ref(undefined)
-
 let error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -59,7 +68,7 @@ onMounted(async () => {
 async function loadRoutes() {
   try {
     const res = await ubusCall('ns.routes', 'list-routes', {
-      protocol: 'ipv4'
+      protocol: props.protocol
     })
 
     const items: any = []
@@ -72,12 +81,9 @@ async function loadRoutes() {
     }
 
     routes.value = items
-
-    console.log('routes', routes.value)
   } catch (err: any) {
     console.error(err)
-    // TODO
-    error.value.notificationTitle = t('error.cannot_load_network_devices')
+    error.value.notificationTitle = t('standalone.routes.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
 }
@@ -88,14 +94,13 @@ async function loadRoutes() {
 async function loadMainTable() {
   try {
     const res = await ubusCall('ns.routes', 'main-table', {
-      protocol: 'ipv4'
+      protocol: props.protocol
     })
 
     if (res.data) table.value = res.data.table
   } catch (err: any) {
     console.error(err)
-    // TODO
-    error.value.notificationTitle = t('error.cannot_load_network_devices')
+    error.value.notificationTitle = t('standalone.routes.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
 }
@@ -141,7 +146,6 @@ function deleteRouteHandler() {
 
 <template>
   <NeSkeleton v-if="loading" :lines="5" />
-  <!-- TODO <NeInlineNotification v-else-if="error" :kind="'error'" :title="error.message" /-->
   <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
     <p>{{ t('standalone.routes.no_route_found') }}</p>
     <NeButton :kind="'primary'" @click="openCreateRoute()">
@@ -151,7 +155,7 @@ function deleteRouteHandler() {
       {{ t('standalone.routes.create_route') }}
     </NeButton>
   </HorizontalCard>
-  <div v-if="!loading && routes.length" class="space-y-16">
+  <div v-if="!loading && routes.length">
     <div class="space-y-8">
       <div class="flex">
         <div>
@@ -161,7 +165,7 @@ function deleteRouteHandler() {
         </div>
         <NeButton
           v-if="routes.length >= 1"
-          :kind="'secondary'"
+          kind="primary"
           class="ml-auto self-start"
           @click="openCreateRoute()"
         >
@@ -172,7 +176,16 @@ function deleteRouteHandler() {
         </NeButton>
       </div>
     </div>
-    <div class="space-y-2">
+  </div>
+  <NeInlineNotification
+    v-if="error.notificationTitle"
+    class="my-4"
+    kind="error"
+    :title="error.notificationTitle"
+    :description="error.notificationDescription"
+  />
+  <div v-if="!loading && routes.length">
+    <div class="my-4">
       <NeButton
         kind="tertiary"
         size="sm"
@@ -334,7 +347,8 @@ function deleteRouteHandler() {
             </template>
             <template #gateway="{ item }">
               <div class="flex items-center gap-x-4">
-                <span>{{ item.gateway }}</span>
+                <span v-if="item.gateway">{{ item.gateway }}</span>
+                <span v-else>-</span>
               </div>
             </template>
             <template #metric="{ item }">
@@ -353,6 +367,7 @@ function deleteRouteHandler() {
     </div>
   </div>
   <CreateOrEditRouteDrawer
+    :protocol="props.protocol"
     :create-default="routes.length < 1"
     :is-shown="createEditRoute"
     :edit-route="selectedRoute"

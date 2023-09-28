@@ -26,6 +26,7 @@ import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
 import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
 import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
 import RuleDeleter from '@/components/standalone/multi-wan/RuleDeleter.vue'
+import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
 
 const { t } = useI18n()
 
@@ -39,6 +40,7 @@ const toEditPolicy = ref<Policy>()
 
 const createRule = ref(false)
 const toDeleteRule = ref<Rule>()
+const toEditRule = ref<Rule>()
 
 let intervalId: number
 
@@ -52,9 +54,6 @@ onUnmounted(() => {
   clearInterval(intervalId)
 })
 
-/**
- * Handler for policyCreated event.
- */
 function policyCreated() {
   createPolicy.value = false
   reloadConfig()
@@ -62,6 +61,11 @@ function policyCreated() {
 
 function policyDeleted() {
   toDeletePolicy.value = undefined
+  reloadConfig()
+}
+
+function policyEdited() {
+  toEditPolicy.value = undefined
   reloadConfig()
 }
 
@@ -75,11 +79,8 @@ function ruleDeleted() {
   reloadConfig()
 }
 
-/**
- * Handler for policy edited with success event.
- */
-function policyEdited() {
-  toEditPolicy.value = undefined
+function ruleEdited() {
+  toEditRule.value = undefined
   reloadConfig()
 }
 
@@ -288,11 +289,8 @@ function policyIcon(policy: Policy) {
             :loading="mwan.loading"
             :policies-exist="mwan.policies.length > 0"
             :rules="mwan.rules"
-            @delete="
-              (rule) => {
-                toDeleteRule = rule
-              }
-            "
+            @delete="(rule) => (toDeleteRule = rule)"
+            @edit="(rule) => (toEditRule = rule)"
           />
         </div>
       </div>
@@ -314,40 +312,17 @@ function policyIcon(policy: Policy) {
     @close="toEditPolicy = undefined"
     @success="policyEdited()"
   />
-  <RuleCreator :is-shown="createRule" @cancel="createRule = false" @success="ruleCreated()" />
-  <RuleDeleter :rule="toDeleteRule" @cancel="toDeleteRule = undefined" @success="ruleDeleted()" />
-  <!--  <NeSideDrawer
+  <RuleCreator
     :is-shown="createRule"
-    :title="t('standalone.multi_wan.create_new_rule')"
-    @close="createRule = false"
-  >
-    <RuleCreator @cancel="createRule = false" @success="ruleCreatedHandler()" />
-  </NeSideDrawer>
-  <NeSideDrawer
-    :is-shown="editRule != undefined"
-    :title="t('standalone.multi_wan.edit_rule', { name: editRule?.name })"
-    @close="editRule = undefined"
-  >
-    <template v-if="editRule != undefined">
-      <RuleEditor :rule="editRule" @cancel="editRule = undefined" @success="ruleEditedHandler()" />
-    </template>
-  </NeSideDrawer>
-  &lt;!&ndash; TODO: ask for labels for rule delete modal &ndash;&gt;
-  <NeModal
-    :primary-button-disabled="deletingRule"
-    :primary-button-loading="deletingRule"
-    :primary-label="t('standalone.multi_wan.delete_rule_modal.button')"
-    :title="t('standalone.multi_wan.delete_rule_modal.title', { name: deleteRule?.name ?? '' })"
-    :visible="deleteRule != undefined"
-    kind="warning"
-    primary-button-kind="danger"
-    @close="deleteRule = undefined"
-    @primary-click="deleteRuleHandler()"
-  >
-    <NeInlineNotification
-      v-if="errorDeletingRule"
-      :title="t(getAxiosErrorMessage(errorDeletingRule.message))"
-      kind="error"
-    />
-  </NeModal>-->
+    :policies="mwan.policies"
+    @cancel="createRule = false"
+    @success="ruleCreated()"
+  />
+  <RuleDeleter :rule="toDeleteRule" @cancel="toDeleteRule = undefined" @success="ruleDeleted()" />
+  <RuleEditor
+    :policies="mwan.policies"
+    :rule="toEditRule"
+    @close="toEditRule = undefined"
+    @success="ruleEdited()"
+  />
 </template>

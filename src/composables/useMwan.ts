@@ -27,8 +27,10 @@ export interface Rule {
     label?: string
   }
   protocol?: 'tcp' | 'udp' | 'icmp' | 'all'
-  source_addresses?: string
-  destination_addresses?: string
+  source_address?: string
+  source_port?: string
+  destination_address?: string
+  destination_port?: string
 }
 
 interface ApiResponse<T> {

@@ -163,10 +163,10 @@ function saveState(): void {
                 {{ item.policy.label ?? item.policy.name }}
               </td>
               <td>
-                {{ item.source_addresses ?? t('standalone.multi_wan.any') }}
+                {{ item.source_address ?? t('standalone.multi_wan.any') }}
               </td>
               <td>
-                {{ item.destination_addresses ?? t('standalone.multi_wan.any') }}
+                {{ item.destination_address ?? t('standalone.multi_wan.any') }}
               </td>
               <td>
                 {{ item.protocol ?? t('standalone.multi_wan.all') }}

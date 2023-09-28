@@ -23,7 +23,7 @@ export function getAliasInterface(device: any, networkConfig: any) {
 export function getFirewallZone(iface: any, firewallConfig: any) {
   if (firewallConfig) {
     const zoneFound = firewallConfig.zone?.find((zone: any) =>
-      zone.network.includes(iface['.name'])
+      zone.network?.includes(iface['.name'])
     )
 
     if (zoneFound) {

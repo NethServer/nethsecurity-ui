@@ -152,7 +152,7 @@ const sortedZonesAndDevices: any = computed(() => {
       unassignedZone.devices.push(dev)
     } else {
       const zoneFound = firewallConfig.value.zone.find((z: any) =>
-        z.network.includes(ifaceFound['.name'])
+        z.network?.includes(ifaceFound['.name'])
       )
 
       if (!zoneFound) {

@@ -123,10 +123,10 @@ function openEditRoute({ item }: { item: any }) {
   selectedRoute.value = item
 }
 
-function deleteRouteHandler(idRoute: string) {
-  if (idRoute) {
+function deleteRouteHandler() {
+  if (deleteRouteId.value) {
     deleting.value = true
-    ubusCall('ns.routes', 'delete-route', { id: idRoute })
+    ubusCall('ns.routes', 'delete-route', { id: deleteRouteId.value })
       .then(() => {
         reloadConfig()
       })
@@ -370,7 +370,7 @@ function deleteRouteHandler(idRoute: string) {
     kind="warning"
     primary-button-kind="danger"
     @close="deleteRouteId = undefined"
-    @primary-click="deleteRouteHandler(deleteRouteId)"
+    @primary-click="deleteRouteHandler()"
   >
     <NeInlineNotification
       v-if="deleteError"

@@ -24,6 +24,7 @@ import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
 import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
 import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
+import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
 
 const { t } = useI18n()
 
@@ -33,8 +34,9 @@ const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createPolicy = ref(false)
 const toDeletePolicy = ref<Policy>()
-
 const toEditPolicy = ref<Policy>()
+
+const createRule = ref(false)
 
 let intervalId: number
 
@@ -58,6 +60,11 @@ function policyCreated() {
 
 function policyDeleted() {
   toDeletePolicy.value = undefined
+  reloadConfig()
+}
+
+function ruleCreated() {
+  createRule.value = false
   reloadConfig()
 }
 
@@ -257,7 +264,12 @@ function policyIcon(policy: Policy) {
               {{ t('standalone.multi_wan.rules_description') }}
             </p>
           </div>
-          <NeButton v-if="mwan.policies.length > 0" :kind="'secondary'" class="self-start">
+          <NeButton
+            v-if="mwan.policies.length > 0"
+            :kind="'secondary'"
+            class="self-start"
+            @click="createRule = true"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" />
             </template>
@@ -290,6 +302,7 @@ function policyIcon(policy: Policy) {
     @close="toEditPolicy = undefined"
     @success="policyEdited()"
   />
+  <RuleCreator :is-shown="createRule" @cancel="createRule = false" @success="ruleCreated()" />
   <!--  <NeSideDrawer
     :is-shown="createRule"
     :title="t('standalone.multi_wan.create_new_rule')"

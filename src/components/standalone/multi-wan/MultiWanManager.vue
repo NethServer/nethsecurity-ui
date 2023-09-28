@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import type { Member, Policy } from '@/composables/useMwan'
+import type { Member, Policy, Rule } from '@/composables/useMwan'
 import { useMwan } from '@/composables/useMwan'
 import NeTable from '@/components/standalone/NeTable.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
@@ -25,6 +25,7 @@ import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
 import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
 import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
 import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
+import RuleDeleter from '@/components/standalone/multi-wan/RuleDeleter.vue'
 
 const { t } = useI18n()
 
@@ -37,6 +38,7 @@ const toDeletePolicy = ref<Policy>()
 const toEditPolicy = ref<Policy>()
 
 const createRule = ref(false)
+const toDeleteRule = ref<Rule>()
 
 let intervalId: number
 
@@ -65,6 +67,11 @@ function policyDeleted() {
 
 function ruleCreated() {
   createRule.value = false
+  reloadConfig()
+}
+
+function ruleDeleted() {
+  toDeleteRule.value = undefined
   reloadConfig()
 }
 
@@ -281,6 +288,11 @@ function policyIcon(policy: Policy) {
             :loading="mwan.loading"
             :policies-exist="mwan.policies.length > 0"
             :rules="mwan.rules"
+            @delete="
+              (rule) => {
+                toDeleteRule = rule
+              }
+            "
           />
         </div>
       </div>
@@ -303,6 +315,7 @@ function policyIcon(policy: Policy) {
     @success="policyEdited()"
   />
   <RuleCreator :is-shown="createRule" @cancel="createRule = false" @success="ruleCreated()" />
+  <RuleDeleter :rule="toDeleteRule" @cancel="toDeleteRule = undefined" @success="ruleDeleted()" />
   <!--  <NeSideDrawer
     :is-shown="createRule"
     :title="t('standalone.multi_wan.create_new_rule')"

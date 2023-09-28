@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
-    getAxiosErrorMessage,
-    NeButton, NeCombobox,
-    NeInlineNotification,
-    NeSideDrawer,
-    NeSkeleton,
-    NeTextInput,
-    NeToggle
+  getAxiosErrorMessage,
+  NeButton,
+  NeCombobox,
+  NeInlineNotification,
+  NeSideDrawer,
+  NeSkeleton,
+  NeTextInput,
+  NeToggle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
@@ -22,14 +23,14 @@ const { t } = useI18n()
  * Reactive state interface.
  */
 interface Form {
-  name: string,
-  status: boolean,
-  network_address: string,
-  gateway: string,
-  metric: number,
-  routeInterface: string,
-  routeType: string,
-  mtu: number,
+  name: string
+  status: boolean
+  network_address: string
+  gateway: string
+  metric: number
+  routeInterface: string
+  routeType: string
+  mtu: number
   onlink: boolean
 }
 
@@ -63,8 +64,8 @@ let labelElement = ref<HTMLInputElement | null>(null)
 const emit = defineEmits(['routeCreated', 'abortCreation'])
 
 onMounted(() => {
-    fetchInterfaces()
-    fetchRouteTypes()
+  fetchInterfaces()
+  fetchRouteTypes()
 })
 
 /**
@@ -73,7 +74,9 @@ onMounted(() => {
 function fetchInterfaces() {
   loading.value = true
   ubusCall('ns.routes', 'list-interfaces', {})
-    .then(response => { routeInterfaces.value = response.data.interfaces.map(item => ({ id: item, label: item })) })
+    .then((response) => {
+      routeInterfaces.value = response.data.interfaces.map((item) => ({ id: item, label: item }))
+    })
     .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
     .finally(() => (loading.value = false))
 }
@@ -84,7 +87,9 @@ function fetchInterfaces() {
 function fetchRouteTypes() {
   loading.value = true
   ubusCall('ns.routes', 'list-route-types', {})
-    .then(response => { routeTypes.value = response.data.types.map(item => ({ id: item, label: item })) })
+    .then((response) => {
+      routeTypes.value = response.data.types.map((item) => ({ id: item, label: item }))
+    })
     .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
     .finally(() => (loading.value = false))
 }
@@ -130,10 +135,10 @@ function createRoute() {
       mtu: form.value.mtu,
       onlink: form.value.onlink,
       ns_description: form.value.name,
-      protocol: "ipv4"
-    };
+      protocol: 'ipv4'
+    }
 
-    ubusCall('ns.routes', 'add-route', payload);
+    ubusCall('ns.routes', 'add-route', payload)
 
     saving.value = false
     emit('routeCreated')
@@ -153,7 +158,11 @@ function createRoute() {
       {{ t('standalone.routes.route_status') }}
       <NeToggle
         v-model="form.status"
-        :label="form.status ? t('standalone.routes.route_status_enabled') : t('standalone.routes.route_status_disabled')"
+        :label="
+          form.status
+            ? t('standalone.routes.route_status_enabled')
+            : t('standalone.routes.route_status_disabled')
+        "
       />
       <NeTextInput
         v-model="form.name"
@@ -180,24 +189,24 @@ function createRoute() {
         :label="t('standalone.routes.route_metric')"
       />
       <NeCombobox
-       v-model="form.routeInterface"
-       :options="routeInterfaces"
-       :label="t('standalone.routes.route_interface')"
-       :placeholder="t('standalone.routes.route_choose_interface')"
-       :invalid-message="messageBag.get('label')?.[0]"
-       class="grow"
+        v-model="form.routeInterface"
+        :options="routeInterfaces"
+        :label="t('standalone.routes.route_interface')"
+        :placeholder="t('standalone.routes.route_choose_interface')"
+        :invalid-message="messageBag.get('label')?.[0]"
+        class="grow"
       />
       <NeButton
-       kind="tertiary"
-       size="sm"
-       @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
-       class="-ml-2"
+        kind="tertiary"
+        size="sm"
+        @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
+        class="-ml-2"
       >
         <template #suffix>
           <font-awesome-icon
-              :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
-              class="h-3 w-3"
-              aria-hidden="true"
+            :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
+            class="h-3 w-3"
+            aria-hidden="true"
           />
         </template>
         {{ t('common.advanced_settings') }}
@@ -217,10 +226,7 @@ function createRoute() {
             placeholder="1500"
             :label="t('standalone.routes.route_mtu')"
           />
-          <NeToggle
-            v-model="form.onlink"
-            :label="t('standalone.routes.route_onlink')"
-          />
+          <NeToggle v-model="form.onlink" :label="t('standalone.routes.route_onlink')" />
         </div>
       </Transition>
       <div class="flex justify-end gap-4">

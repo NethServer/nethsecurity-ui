@@ -157,7 +157,7 @@ function saveState(): void {
                 <FontAwesomeIcon :icon="faGripVertical" />
               </td>
               <td>
-                {{ item.name }}
+                {{ item.label ?? item.name }}
               </td>
               <td>
                 {{ item.policy.label ?? item.policy.name }}

@@ -75,6 +75,7 @@ async function subscribe() {
 
     isProcessingRequest.value = true
     await ubusCall('ns.subscription', 'register', { secret: authToken.value })
+    authToken.value = ''
     emit('subscription-update')
   } catch (e: any) {
     if (e.response.data.message == 'invalid_secret_or_server_not_found') {

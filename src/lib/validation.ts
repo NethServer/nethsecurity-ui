@@ -198,11 +198,41 @@ export const validateVlanId = (value: String): validationOutput => {
   return { valid: true }
 }
 
+export function validatePort(value: string, minPort = 1, maxPort = 65565): validationOutput {
+  const port = Number.parseInt(value)
+
+  if (Number.isNaN(port) || port < minPort || port > maxPort) {
+    return { valid: false, errMessage: 'error.invalid_port' }
+  }
+  return { valid: true }
+}
+
+export function validatePortRange(value: string, minRange = 1, maxRange = 65565): validationOutput {
+  let strings: string[]
+  if (value.indexOf(',')) {
+    strings = value.split(',')
+  } else if (value.indexOf('-')) {
+    strings = value.split('-')
+  } else {
+    strings = [value]
+  }
+  for (const port of strings) {
+    const validation = validatePort(port, minRange, maxRange)
+    if (!validation.valid) {
+      return { valid: false, errMessage: 'error.invalid_port_range' }
+    }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */
 export class MessageBag extends Map<string, Array<string>> {
-  set(key: string, value: Array<string>): this {
+  set(key: string, value: Array<string> | string): this {
+    if (typeof value === 'string') {
+      value = [value]
+    }
     if (!this.has(key)) {
       super.set(key, new Array<string>())
     }

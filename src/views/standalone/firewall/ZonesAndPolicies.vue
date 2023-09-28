@@ -11,7 +11,7 @@ import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
-import CreateZone from '@/components/standalone/firewall/CreateZone.vue'
+import CreateZoneDrawer from '@/components/standalone/firewall/CreateZoneDrawer.vue'
 import DeleteZoneModal from '@/components/standalone/firewall/DeleteZoneModal.vue'
 import {
   Forwarding,
@@ -228,7 +228,7 @@ function isSpecialZone(zone: Zone): boolean {
       :title="t('standalone.zones_and_policies.add_zone')"
       @close="creatingZone = false"
     >
-      <CreateZone @cancel="creatingZone = false" @success="creatingZone = false" />
+      <CreateZoneDrawer @cancel="creatingZone = false" @success="creatingZone = false" />
     </NeSideDrawer>
     <DeleteZoneModal
       :zone="deleteZone"

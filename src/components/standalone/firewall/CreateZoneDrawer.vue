@@ -90,6 +90,17 @@ const errorBag = ref(new MessageBag())
 function save() {
   if (!validate()) {
     saving.value = true
+
+    //// remove
+    console.log('@ creating', {
+      name: label.value,
+      input: trafficInput.value.toUpperCase(),
+      forward: trafficForward.value.toUpperCase(),
+      traffic_to_wan: trafficToWan.value,
+      forwards_to: forwardsTo.value.map((item) => item.id),
+      forwards_from: forwardsFrom.value.map((item) => item.id)
+    }) ////
+
     ubusCall('ns.firewall', 'create_zone', {
       name: label.value,
       input: trafficInput.value.toUpperCase(),

@@ -79,6 +79,22 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
     }
   })
 
+  watch(selection, (value) => {
+    if (value == PolicyOptions.BACKUP) {
+      priorities.value = priorities.value
+        .map((priority) => priority.map((gateway) => [gateway]))
+        .flat(1)
+      for (let i = priorities.value.length; i < 2; i++) {
+        priorities.value.push([new Gateway()])
+      }
+    } else if (value == PolicyOptions.BALANCE) {
+      priorities.value = [priorities.value.flat(1)]
+      for (let i = priorities.value[0].length; i < 2; i++) {
+        priorities.value[0].push(new Gateway())
+      }
+    }
+  })
+
   /**
    * Weather the button should be disabled or not once deletion.
    */

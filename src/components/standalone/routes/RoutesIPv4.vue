@@ -12,25 +12,35 @@ import {
   NeButton,
   NeSkeleton,
   NeDropdown,
-  NeTitle
+  NeTitle,
+  NeModal,
+  NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCirclePlus,
+  faEarthAmerica,
+  faCircleCheck,
+  faCircleXmark
+} from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
-import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEditRouteDrawer.vue'
-
 const { t } = useI18n()
-
+import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEditRouteDrawer.vue'
+import { AxiosError } from 'axios'
 const uciPendingChangesStore = useUciPendingChangesStore()
 
-let createRoute = ref(false)
+let createEditRoute = ref(false)
 let routes: any = ref({})
 let table: any = ref({})
 let loading = ref(true)
 let isExpandedMainTable = ref(false)
+let selectedRoute = ref({})
+let deleting = ref(false)
+let deleteError = ref<Error>()
+let deleteRouteId = ref(undefined)
 
 let error = ref({
   notificationTitle: '',
@@ -91,39 +101,42 @@ async function loadMainTable() {
 }
 
 /**
- * Handler for routeCreated event.
+ * Handler for routeCreatedEdited event.
  */
-function routeCreatedHandler() {
-  createRoute.value = false
+function routeCreatedEditedHandler() {
+  createEditRoute.value = false
   reloadConfig()
 }
-
-/**
- * Handler for route edited with success event.
- */
-/*function routeEditedHandler() {
-	//editPolicy.value = undefined
-	reloadConfig()
-}*/
 
 function reloadConfig() {
   loadRoutes()
   uciPendingChangesStore.getChanges()
 }
 
-/*function deleteRouteHandler() {
-	//deletingPolicy.value = true
-	//ubusCall('uci', 'delete', {
-	//  config: 'mwan3',
-	//  section: deletePolicy.value?.name
-	//})
-	//  .then(() => {
-	//    deletePolicy.value = undefined
-	//    reloadConfig()
-	//  })
-	//  .catch((error: AxiosError) => (errorDeletingPolicy.value = error))
-	//  .finally(() => (deletingPolicy.value = false))
-} */
+function openCreateRoute() {
+  createEditRoute.value = true
+  selectedRoute.value = {}
+}
+
+function openEditRoute({ item }: { item: any }) {
+  createEditRoute.value = true
+  selectedRoute.value = item
+}
+
+function deleteRouteHandler(idRoute: string) {
+  if (idRoute) {
+    deleting.value = true
+    ubusCall('ns.routes', 'delete-route', { id: idRoute })
+      .then(() => {
+        reloadConfig()
+      })
+      .catch((error: AxiosError) => (deleteError.value = error))
+      .finally(() => {
+        deleting.value = false
+        deleteRouteId.value = undefined
+      })
+  }
+}
 </script>
 
 <template>
@@ -131,7 +144,7 @@ function reloadConfig() {
   <!-- TODO <NeInlineNotification v-else-if="error" :kind="'error'" :title="error.message" /-->
   <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
     <p>{{ t('standalone.routes.no_route_found') }}</p>
-    <NeButton :kind="'primary'" @click="createRoute = true">
+    <NeButton :kind="'primary'" @click="openCreateRoute()">
       <template #prefix>
         <FontAwesomeIcon :icon="faCirclePlus" />
       </template>
@@ -150,7 +163,7 @@ function reloadConfig() {
           v-if="routes.length >= 1"
           :kind="'secondary'"
           class="ml-auto self-start"
-          @click="createRoute = true"
+          @click="openCreateRoute()"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" />
@@ -203,6 +216,10 @@ function reloadConfig() {
               label: t('standalone.routes.route_metric')
             },
             {
+              key: 'status',
+              label: t('standalone.routes.route_status_table')
+            },
+            {
               key: 'actions'
             }
           ]"
@@ -215,7 +232,10 @@ function reloadConfig() {
           </template>
           <template #interface="{ item }">
             <div class="flex items-center gap-x-4">
-              <span>{{ item.interface }}</span>
+              <span>
+                <FontAwesomeIcon v-if="item.interface" :icon="faEarthAmerica" />
+                {{ item.interface }}
+              </span>
             </div>
           </template>
           <template #target="{ item }">
@@ -233,9 +253,21 @@ function reloadConfig() {
               <span>{{ item.metric }}</span>
             </div>
           </template>
-          <template #actions>
+          <template #status="{ item }">
+            <div class="flex items-center gap-x-4">
+              <span v-if="item.disabled === '0'">
+                <FontAwesomeIcon :icon="faCircleCheck" />
+                {{ t('standalone.routes.route_status_enabled') }}
+              </span>
+              <span v-else>
+                <FontAwesomeIcon :icon="faCircleXmark" />
+                {{ t('standalone.routes.route_status_disabled') }}
+              </span>
+            </div>
+          </template>
+          <template #actions="{ item }">
             <div class="flex justify-end gap-3">
-              <NeButton kind="tertiary" size="lg">
+              <NeButton kind="tertiary" size="lg" @click="openEditRoute({ item: { item: item } })">
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', 'pen-to-square']"
@@ -250,7 +282,8 @@ function reloadConfig() {
                   {
                     id: 'delete',
                     danger: true,
-                    label: t('common.delete')
+                    label: t('common.delete'),
+                    action: () => (deleteRouteId = item.id)
                   }
                 ]"
                 align-to-right
@@ -321,26 +354,28 @@ function reloadConfig() {
   </div>
   <CreateOrEditRouteDrawer
     :create-default="routes.length < 1"
-    :is-shown="createRoute"
-    @abort-creation="createRoute = false"
-    @route-created="routeCreatedHandler()"
+    :is-shown="createEditRoute"
+    :edit-route="selectedRoute"
+    @abort-creation="createEditRoute = false"
+    @route-created="routeCreatedEditedHandler()"
+    @route-edited="routeCreatedEditedHandler()"
   />
-
-  <!--NeModal
-		:primary-button-disabled="deletingPolicy"
-		:primary-button-loading="deletingPolicy"
-		:primary-label="t('standalone.multi_wan.delete_policy_modal.button')"
-		:title="t('standalone.multi_wan.delete_policy_modal.title', { name: deletePolicy?.name ?? '' })"
-		:visible="deletePolicy != undefined"
-		kind="warning"
-		primary-button-kind="danger"
-		@close="deletePolicy = undefined"
-		@primary-click="deletePolicyHandler()"
-	>
-		<NeInlineNotification
-			v-if="errorDeletingPolicy"
-			:title="t(getAxiosErrorMessage(errorDeletingPolicy.message))"
-			kind="error"
-		/>
-	</NeModal-->
+  <NeModal
+    :primary-button-disabled="deleting"
+    :primary-button-loading="deleting"
+    :primary-label="t('common.delete')"
+    :secondary-button-disabled="deleting"
+    :title="t('standalone.routes.delete_route_ipv4')"
+    :visible="deleteRouteId !== undefined"
+    kind="warning"
+    primary-button-kind="danger"
+    @close="deleteRouteId = undefined"
+    @primary-click="deleteRouteHandler(deleteRouteId)"
+  >
+    <NeInlineNotification
+      v-if="deleteError"
+      :title="t(getAxiosErrorMessage(deleteError.message))"
+      kind="error"
+    />
+  </NeModal>
 </template>

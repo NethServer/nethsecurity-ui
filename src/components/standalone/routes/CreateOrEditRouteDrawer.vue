@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
   getAxiosErrorMessage,
   NeButton,
@@ -11,37 +10,52 @@ import {
   NeToggle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
 import { MessageBag, validateRequired } from '@/lib/validation'
-//import { useMwanDefaults } from '@/composables/useMwanDefaults'
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const { t } = useI18n()
 
 /**
  * Reactive state interface.
  */
 interface Form {
+  id: string
   name: string
   status: boolean
   network_address: string
   gateway: string
-  metric: number
+  metric: string
   routeInterface: string
   routeType: string
-  mtu: number
+  mtu: string
   onlink: boolean
 }
 
-defineProps({
+interface RouteInterface {
+  id: string
+  label: string
+}
+
+interface RouteType {
+  id: string
+  label: string
+}
+
+const props = defineProps({
   isShown: {
     type: Boolean,
+    required: true
+  },
+  editRoute: {
+    type: Object,
     required: true
   }
 })
 
-const form = ref<Form>({
+const originalForm = {
+  id: '',
   name: '',
   status: true,
   network_address: '',
@@ -51,9 +65,12 @@ const form = ref<Form>({
   routeType: '',
   mtu: '',
   onlink: false
-})
-let routeInterfaces = ref<Array<NeComboboxOption>>()
-let routeTypes = ref<Array<NeComboboxOption>>()
+}
+
+const form = ref<Form>({ ...originalForm })
+
+let routeInterfaces = ref<Array<RouteInterface>>()
+let routeTypes = ref<Array<RouteType>>()
 let error = ref<Error>()
 let loading = ref(false)
 let saving = ref(false)
@@ -61,7 +78,31 @@ let messageBag = ref(new MessageBag())
 let isExpandedAdvancedSettings = ref(false)
 let labelElement = ref<HTMLInputElement | null>(null)
 
-const emit = defineEmits(['routeCreated', 'abortCreation'])
+const emit = defineEmits(['routeCreated', 'routeEdited', 'abortCreation'])
+
+/**
+ * Watch props.editRoute for edit route
+ */
+watch(
+  () => props.editRoute,
+  () => {
+    if (props.editRoute) {
+      let selectedRoute = props.editRoute
+      if (selectedRoute && selectedRoute.item) {
+        if (selectedRoute.item.id) form.value.id = selectedRoute.item.id
+        if (selectedRoute.item.disabled) form.value.status = selectedRoute.item.disabled === '0'
+        if (selectedRoute.item.ns_description) form.value.name = selectedRoute.item.ns_description
+        if (selectedRoute.item.target) form.value.network_address = selectedRoute.item.target
+        if (selectedRoute.item.gateway) form.value.gateway = selectedRoute.item.gateway
+        if (selectedRoute.item.metric) form.value.metric = selectedRoute.item.metric
+        if (selectedRoute.item.interface) form.value.routeInterface = selectedRoute.item.interface
+        if (selectedRoute.item.type) form.value.routeType = selectedRoute.item.type
+        if (selectedRoute.item.mtu) form.value.mtu = selectedRoute.item.mtu
+        if (selectedRoute.item.onlink) form.value.onlink = selectedRoute.item.mtu === '0'
+      } else form.value = originalForm
+    }
+  }
+)
 
 onMounted(() => {
   fetchInterfaces()
@@ -75,7 +116,10 @@ function fetchInterfaces() {
   loading.value = true
   ubusCall('ns.routes', 'list-interfaces', {})
     .then((response) => {
-      routeInterfaces.value = response.data.interfaces.map((item) => ({ id: item, label: item }))
+      routeInterfaces.value = response.data.interfaces.map((item: RouteInterface) => ({
+        id: item,
+        label: item
+      }))
     })
     .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
     .finally(() => (loading.value = false))
@@ -88,7 +132,7 @@ function fetchRouteTypes() {
   loading.value = true
   ubusCall('ns.routes', 'list-route-types', {})
     .then((response) => {
-      routeTypes.value = response.data.types.map((item) => ({ id: item, label: item }))
+      routeTypes.value = response.data.types.map((item: RouteType) => ({ id: item, label: item }))
     })
     .catch((exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception)))))
     .finally(() => (loading.value = false))
@@ -129,7 +173,6 @@ function createRoute() {
       target: form.value.network_address,
       gateway: form.value.gateway,
       metric: form.value.metric,
-      //table: ,
       interface: form.value.routeInterface,
       type: form.value.routeType,
       mtu: form.value.mtu,
@@ -139,9 +182,61 @@ function createRoute() {
     }
 
     ubusCall('ns.routes', 'add-route', payload)
+      .then((response) => {
+        if (response.data && response.data.id) {
+          let methodUpdateStatus = 'enable-route'
+          if (!form.value.status) methodUpdateStatus = 'disable-route'
 
-    saving.value = false
+          ubusCall('ns.routes', methodUpdateStatus, {
+            id: response.data.id
+          })
+        }
+      })
+      .catch(
+        (exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception))))
+      )
+      .finally(() => (saving.value = false))
+
     emit('routeCreated')
+  }
+}
+
+function editRoute() {
+  if (validate()) {
+    saving.value = true
+
+    // create payload
+    let payload = {
+      id: form.value.id,
+      disabled: form.value.status ? 1 : 0,
+      target: form.value.network_address,
+      gateway: form.value.gateway,
+      metric: form.value.metric,
+      interface: form.value.routeInterface,
+      type: form.value.routeType,
+      mtu: form.value.mtu,
+      onlink: form.value.onlink,
+      ns_description: form.value.name,
+      protocol: 'ipv4'
+    }
+
+    ubusCall('ns.routes', 'edit-route', payload)
+      .then((response) => {
+        if (response.data && response.data.id) {
+          let methodUpdateStatus = 'enable-route'
+          if (!form.value.status) methodUpdateStatus = 'disable-route'
+
+          ubusCall('ns.routes', methodUpdateStatus, {
+            id: response.data.id
+          })
+        }
+      })
+      .catch(
+        (exception: AxiosError) => (error.value = new Error(t(getAxiosErrorMessage(exception))))
+      )
+      .finally(() => (saving.value = false))
+
+    emit('routeEdited')
   }
 }
 </script>
@@ -149,7 +244,11 @@ function createRoute() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    :title="t('standalone.routes.create_route_ipv4', { name: form.label })"
+    :title="
+      props.editRoute.item
+        ? t('standalone.routes.edit_route_ipv4')
+        : t('standalone.routes.create_route_ipv4')
+    "
     @close="emit('abortCreation')"
   >
     <NeSkeleton v-if="loading" :lines="10" />
@@ -203,7 +302,7 @@ function createRoute() {
         class="-ml-2"
       >
         <template #suffix>
-          <font-awesome-icon
+          <FontAwesomeIcon
             :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
             class="h-3 w-3"
             aria-hidden="true"
@@ -233,8 +332,23 @@ function createRoute() {
         <NeButton :disabled="saving" :kind="'tertiary'" @click="emit('abortCreation')">
           {{ t('common.cancel') }}
         </NeButton>
-        <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="createRoute()">
+        <NeButton
+          v-if="!props.editRoute.item"
+          :disabled="saving"
+          :kind="'primary'"
+          :loading="saving"
+          @click="createRoute()"
+        >
           {{ t('common.save') }}
+        </NeButton>
+        <NeButton
+          v-else
+          :disabled="saving"
+          :kind="'primary'"
+          :loading="saving"
+          @click="editRoute()"
+        >
+          {{ t('common.edit') }}
         </NeButton>
       </div>
     </div>

@@ -20,7 +20,7 @@ import {
   ZoneType
 } from '@/stores/standalone/useFirewallStore'
 import { isEmpty } from 'lodash'
-import { getTrafficToWan, forwardingsToByZone } from '@/lib/standalone/network'
+import { getTrafficToWan, forwardingsToByZone, getZoneColorClasses } from '@/lib/standalone/network'
 
 const { t } = useI18n()
 
@@ -33,19 +33,6 @@ const zoneToEdit = ref<Zone>()
 onMounted(() => {
   firewallConfig.fetch()
 })
-
-function color(zone: Zone): string {
-  switch (zone.type()) {
-    case ZoneType.WAN:
-      return 'bg-rose-700'
-    case ZoneType.LAN:
-      return 'bg-green-700'
-    case ZoneType.GUEST:
-      return 'bg-blue-700'
-    case ZoneType.CUSTOM:
-      return 'bg-indigo-700'
-  }
-}
 
 function icon(zone: Zone): string {
   switch (zone.type()) {
@@ -150,7 +137,10 @@ function editZone(zone: Zone) {
     >
       <template #label="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-4">
-          <div :class="color(item)" class="flex h-10 w-10 items-center justify-center rounded-full">
+          <div
+            :class="getZoneColorClasses(item.name)"
+            class="flex h-10 w-10 items-center justify-center rounded-full"
+          >
             <FontAwesomeIcon :icon="['fas', icon(item)]" />
           </div>
           <span class="uppercase">{{ item.name }}</span>
@@ -162,7 +152,11 @@ function editZone(zone: Zone) {
             v-for="forward in forwardingsToByZone(item, firewallConfig.forwardings)"
             :key="forward.name"
           >
-            <NeBadge :text="forward.destination" />
+            <NeBadge
+              :text="forward.destination.toUpperCase()"
+              kind="custom"
+              :customColorClasses="getZoneColorClasses(forward.destination)"
+            />
           </template>
           <span v-if="isEmpty(forwardingsToByZone(item, firewallConfig.forwardings))">-</span>
         </div>

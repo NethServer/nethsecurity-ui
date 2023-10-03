@@ -64,6 +64,19 @@ export function getZoneColor(zoneName: string) {
   }
 }
 
+export function getZoneColorClasses(zoneName: string) {
+  switch (zoneName) {
+    case 'wan':
+      return 'bg-rose-100 text-rose-700 dark:bg-rose-700 dark:text-rose-50'
+    case 'lan':
+      return 'bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-50'
+    case 'guests':
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
+    default:
+      return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-50'
+  }
+}
+
 export function getZoneIcon(zoneName: string) {
   switch (zoneName) {
     case 'lan':

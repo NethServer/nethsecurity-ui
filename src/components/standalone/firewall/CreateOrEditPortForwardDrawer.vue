@@ -19,6 +19,7 @@ import type {
 } from '@/views/standalone/firewall/PortForward.vue'
 import { watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ZoneType, useFirewallStore } from '@/stores/standalone/useFirewallStore'
 import { computed } from 'vue'
 import {
@@ -157,12 +158,8 @@ onMounted(() => {
   firewallConfig.fetch()
 })
 
-function deleteRestrictedIP(restrictedIP: string) {
-  restrict.value = restrict.value.filter((elem) => elem !== restrictedIP)
-}
-
-function addRestrictedIP() {
-  restrict.value.push('')
+function resetRestrictIPValidationErrors() {
+  restrictIPValidationErrors.value = []
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -350,46 +347,23 @@ async function performRequest() {
           v-model="wan"
         />
 
-        <!-- TODO: isolate into separate component -->
-        <div>
-          <div>
-            <p
-              class="mb-2 mr-2 inline-block text-sm font-medium leading-6 text-gray-700 dark:text-gray-200"
-            >
-              {{ t('standalone.port_forward.restrict_access_to') }}
-            </p>
+        <NeMultiTextInput
+          :title="t('standalone.port_forward.restrict_access_to')"
+          :optional="true"
+          :optional-label="t('common.optional')"
+          :add-item-label="t('standalone.port_forward.add_ip_address')"
+          :invalid-messages="restrictIPValidationErrors"
+          v-model="restrict"
+          @delete-item="resetRestrictIPValidationErrors"
+        >
+          <template #tooltip>
             <NeTooltip
               ><template #content>{{
                 t('standalone.port_forward.restrict_access_to_tooltip')
               }}</template></NeTooltip
             >
-          </div>
-
-          <div class="space-y-6">
-            <div class="space-y-4">
-              <div v-for="(restrictedIP, i) in restrict" :key="i" class="flex items-start gap-2">
-                <NeTextInput
-                  v-model.trim="restrict[i]"
-                  class="grow"
-                  :invalid-message="restrictIPValidationErrors[i]"
-                />
-                <NeButton kind="tertiary" size="md" @click="deleteRestrictedIP(restrictedIP)">
-                  <font-awesome-icon
-                    :icon="['fas', 'trash']"
-                    class="h-4 w-4 py-1"
-                    aria-hidden="true"
-                  />
-                </NeButton>
-              </div>
-              <NeButton size="md" @click="addRestrictedIP">
-                <template #prefix>
-                  <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-                </template>
-                {{ t('standalone.port_forward.add_ip_address') }}
-              </NeButton>
-            </div>
-          </div>
-        </div>
+          </template>
+        </NeMultiTextInput>
 
         <NeToggle :label="t('standalone.port_forward.log')" v-model="log" />
         <NeToggle :label="t('standalone.port_forward.hairpin_nat')" v-model="reflection" />

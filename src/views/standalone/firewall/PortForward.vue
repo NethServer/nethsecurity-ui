@@ -203,17 +203,47 @@ onMounted(() => {
       v-if="error.notificationDescription"
     />
     <NeSkeleton v-if="loading" :lines="10" />
-    <PortForwardTable
-      v-else
-      v-for="(portForward, key) in filteredPortForwards"
-      :key="key"
-      :port-forwards="portForward"
-      :header="key"
-      @port-forward-delete="openDeleteModal"
-      @port-forward-duplicate="duplicateRedirect"
-      @port-forward-edit="openCreateEditDrawer"
-      @port-forward-toggle-enable="toggleEnableRedirect"
-    />
+    <template v-else>
+      <div
+        v-if="Object.keys(portForwards).length == 0"
+        class="flex flex-col items-center justify-center rounded-md p-10 dark:bg-gray-800"
+      >
+        <p class="mb-4 text-sm">
+          <strong>{{ t('standalone.port_forward.no_port_forward_configured') }}</strong>
+        </p>
+        <NeButton kind="primary" @click="openCreateEditDrawer(null)"
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'circle-plus']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('standalone.port_forward.add_port_forward') }}</NeButton
+        >
+      </div>
+      <div
+        v-else-if="Object.keys(filteredPortForwards).length == 0"
+        class="flex flex-col items-center justify-center rounded-md p-10 dark:bg-gray-800"
+      >
+        <p class="mb-4 text-sm">
+          <strong>{{ t('standalone.port_forward.no_port_forward_found') }}</strong>
+        </p>
+        <p class="text-sm">
+          <strong>{{ t('standalone.port_forward.filter_change_suggestion') }}</strong>
+        </p>
+      </div>
+      <PortForwardTable
+        v-else
+        v-for="(portForward, key) in filteredPortForwards"
+        :key="key"
+        :port-forwards="portForward"
+        :header="key"
+        @port-forward-delete="openDeleteModal"
+        @port-forward-duplicate="duplicateRedirect"
+        @port-forward-edit="openCreateEditDrawer"
+        @port-forward-toggle-enable="toggleEnableRedirect"
+      />
+    </template>
   </div>
   <CreateOrEditPortForwardDrawer
     :is-shown="showCreateEditDrawer"

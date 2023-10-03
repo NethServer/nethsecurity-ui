@@ -92,7 +92,7 @@ function getDropdownItems(item: PortForward) {
 }
 
 function getCellClasses(item: PortForward) {
-  return !item.enabled ? ['text-gray-300', 'dark:text-gray-700'] : []
+  return !item.enabled ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
 </script>
 
@@ -144,14 +144,7 @@ function getCellClasses(item: PortForward) {
         <p :class="[...getCellClasses(item)]" v-else>-</p>
       </template>
       <template #enabled="{ item }: { item: PortForward }">
-        <div
-          :class="[
-            'flex',
-            'flex-row',
-            'items-center',
-            !item.enabled ? 'text-gray-200 dark:text-gray-700' : ''
-          ]"
-        >
+        <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
           <font-awesome-icon
             :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
             class="mr-2 h-5 w-5"

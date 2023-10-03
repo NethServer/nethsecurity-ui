@@ -110,7 +110,7 @@ async function reloadPortForwards() {
   await fetchPortForwards()
 }
 
-async function toggleEnableRedirect(item: PortForward) {
+async function toggleEnablePortForward(item: PortForward) {
   try {
     cleanError()
     await ubusCall('ns.redirects', item.enabled ? 'disable-redirect' : 'enable-redirect', {
@@ -125,7 +125,7 @@ async function toggleEnableRedirect(item: PortForward) {
   }
 }
 
-async function duplicateRedirect(item: PortForward) {
+async function duplicatePortForward(item: PortForward) {
   try {
     cleanError()
     let payload: CreateEditPortForwardPayload = {
@@ -134,7 +134,7 @@ async function duplicateRedirect(item: PortForward) {
       src_dport: item.source_port,
       src_dip: item.wan,
       dest_port: item.destination_port,
-      name: item.name,
+      name: `${item.name} (${t('standalone.port_forward.copy')})`,
       enabled: item.enabled ? '1' : '0',
       log: item.log ? '1' : '0',
       restrict: item.restrict,
@@ -229,7 +229,7 @@ onMounted(() => {
           <strong>{{ t('standalone.port_forward.no_port_forward_found') }}</strong>
         </p>
         <p class="text-sm">
-          <strong>{{ t('standalone.port_forward.filter_change_suggestion') }}</strong>
+          {{ t('standalone.port_forward.filter_change_suggestion') }}
         </p>
       </div>
       <PortForwardTable
@@ -239,9 +239,9 @@ onMounted(() => {
         :port-forwards="portForward"
         :header="key"
         @port-forward-delete="openDeleteModal"
-        @port-forward-duplicate="duplicateRedirect"
+        @port-forward-duplicate="duplicatePortForward"
         @port-forward-edit="openCreateEditDrawer"
-        @port-forward-toggle-enable="toggleEnableRedirect"
+        @port-forward-toggle-enable="toggleEnablePortForward"
       />
     </template>
   </div>

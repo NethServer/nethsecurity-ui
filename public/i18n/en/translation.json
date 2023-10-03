@@ -501,9 +501,10 @@
       "any": "Any",
       "destination_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "restrict_access_to_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "no_port_forward_configured": "No port forward has been configured.",
-      "no_port_forward_found": "No port forward has been found.",
-      "filter_change_suggestion": "Try using a different filter value."
+      "no_port_forward_configured": "No port forward has been configured",
+      "no_port_forward_found": "No port forward has been found",
+      "filter_change_suggestion": "Try using a different filter value",
+      "copy": "Copy"
     },
     "firewall": {
       "title": "Firewall"

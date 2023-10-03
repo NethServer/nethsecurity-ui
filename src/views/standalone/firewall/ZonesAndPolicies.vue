@@ -4,30 +4,31 @@ import {
   NeButton,
   NeDropdown,
   NeInlineNotification,
-  NeSideDrawer,
   NeTitle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
-import CreateZoneDrawer from '@/components/standalone/firewall/CreateZoneDrawer.vue'
+import CreateOrEditZoneDrawer from '@/components/standalone/firewall/CreateOrEditZoneDrawer.vue'
 import DeleteZoneModal from '@/components/standalone/firewall/DeleteZoneModal.vue'
 import {
-  Forwarding,
   SpecialZones,
   TrafficPolicy,
   useFirewallStore,
   Zone,
   ZoneType
 } from '@/stores/standalone/useFirewallStore'
+import { isEmpty } from 'lodash'
+import { getTrafficToWan, forwardingsToByZone } from '@/lib/standalone/network'
 
 const { t } = useI18n()
 
 const firewallConfig = useFirewallStore()
 
-const creatingZone = ref(false)
-const deleteZone = ref<Zone>()
+const creatingOrEditingZone = ref(false)
+const zoneToDelete = ref<Zone>()
+const zoneToEdit = ref<Zone>()
 
 onMounted(() => {
   firewallConfig.fetch()
@@ -68,25 +69,18 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
   }
 }
 
-function trafficToWan(zone: Zone): boolean | undefined {
-  if (zone.name != SpecialZones.WAN) {
-    return firewallConfig.forwardings
-      .filter((forwarding: Forwarding) => forwarding.source == zone.name)
-      .map((forwarding: Forwarding) => forwarding.destination)
-      .some((forwardingName) => forwardingName == SpecialZones.WAN)
-  }
-  return undefined
-}
-
-function forwardingsByZone(zone: Zone): Array<Forwarding> {
-  return firewallConfig.forwardings.filter(
-    (forwarding: Forwarding) =>
-      forwarding.source == zone.name && forwarding.destination != SpecialZones.WAN
-  )
-}
-
 function isSpecialZone(zone: Zone): boolean {
   return Object.values(SpecialZones).includes(zone.name as unknown as SpecialZones)
+}
+
+function createZone() {
+  zoneToEdit.value = undefined
+  creatingOrEditingZone.value = true
+}
+
+function editZone(zone: Zone) {
+  zoneToEdit.value = zone
+  creatingOrEditingZone.value = true
 }
 </script>
 
@@ -99,7 +93,7 @@ function isSpecialZone(zone: Zone): boolean {
       </p>
       <div>
         <!-- TODO: add settings -->
-        <NeButton kind="secondary" @click="creatingZone = true" size="lg">
+        <NeButton kind="secondary" @click="createZone" size="lg">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" />
           </template>
@@ -164,15 +158,21 @@ function isSpecialZone(zone: Zone): boolean {
       </template>
       <template #forwards="{ item }: { item: Zone }">
         <div class="flex flex-wrap gap-2">
-          <template v-for="forward in forwardingsByZone(item)" :key="forward.name">
+          <template
+            v-for="forward in forwardingsToByZone(item, firewallConfig.forwardings)"
+            :key="forward.name"
+          >
             <NeBadge :text="forward.destination" />
           </template>
+          <span v-if="isEmpty(forwardingsToByZone(item, firewallConfig.forwardings))">-</span>
         </div>
       </template>
       <template #output="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-2">
-          <template v-if="trafficToWan(item) == undefined"> -</template>
-          <template v-else-if="trafficToWan(item)">
+          <template v-if="getTrafficToWan(item, firewallConfig.forwardings) == undefined">
+            -</template
+          >
+          <template v-else-if="getTrafficToWan(item, firewallConfig.forwardings)">
             <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
             <p>{{ t('standalone.zones_and_policies.traffic_policy.accept') }}</p>
           </template>
@@ -211,10 +211,18 @@ function isSpecialZone(zone: Zone): boolean {
           <NeDropdown
             :items="[
               {
+                id: 'edit',
+                label: t('common.edit'),
+                action: () => editZone(item),
+                icon: 'pen-to-square',
+                disabled: isSpecialZone(item)
+              },
+              {
                 id: 'delete',
                 danger: true,
                 label: t('common.delete'),
-                action: () => (deleteZone = item),
+                action: () => (zoneToDelete = item),
+                icon: 'trash',
                 disabled: isSpecialZone(item)
               }
             ]"
@@ -223,17 +231,16 @@ function isSpecialZone(zone: Zone): boolean {
         </div>
       </template>
     </NeTable>
-    <NeSideDrawer
-      :is-shown="creatingZone"
-      :title="t('standalone.zones_and_policies.add_zone')"
-      @close="creatingZone = false"
-    >
-      <CreateZoneDrawer @cancel="creatingZone = false" @success="creatingZone = false" />
-    </NeSideDrawer>
+    <CreateOrEditZoneDrawer
+      :isShown="creatingOrEditingZone"
+      :zoneToEdit="zoneToEdit"
+      @close="creatingOrEditingZone = false"
+      @success="creatingOrEditingZone = false"
+    />
     <DeleteZoneModal
-      :zone="deleteZone"
-      @cancel="deleteZone = undefined"
-      @success="deleteZone = undefined"
+      :zone="zoneToDelete"
+      @cancel="zoneToDelete = undefined"
+      @success="zoneToDelete = undefined"
     />
   </div>
 </template>

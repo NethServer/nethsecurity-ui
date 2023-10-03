@@ -1,6 +1,8 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
+import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/useFirewallStore'
+
 export function getInterface(deviceOrIface: any, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
@@ -120,4 +122,28 @@ export function getName(deviceOrIface: any) {
   } else {
     return deviceOrIface.name
   }
+}
+
+// if traffic from input zone to WAN is allowed return the specific forwarding, return undefined otherwise
+export function getTrafficToWan(zone: Zone, forwardings: Forwarding[]) {
+  if (zone.name != SpecialZones.WAN) {
+    return forwardings
+      .filter((forwarding: Forwarding) => forwarding.source == zone.name)
+      .map((forwarding: Forwarding) => forwarding.destination)
+      .some((forwardingName) => forwardingName == SpecialZones.WAN)
+  }
+  return undefined
+}
+
+// return the forwardings that have input zone as source and don't have WAN as destination
+export function forwardingsToByZone(zone: Zone, forwardings: Forwarding[]): Array<Forwarding> {
+  return forwardings.filter(
+    (forwarding: Forwarding) =>
+      forwarding.source == zone.name && forwarding.destination != SpecialZones.WAN
+  )
+}
+
+// return the forwardings that have input zone as destination
+export function forwardingsFromByZone(zone: Zone, forwardings: Forwarding[]): Array<Forwarding> {
+  return forwardings.filter((forwarding: Forwarding) => forwarding.destination == zone.name)
 }

@@ -428,7 +428,9 @@
       "add_new_subnet": "Add new subnet",
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
-      "delete_zone": "Delete \"{0}\"?"
+      "delete_zone": "Delete \"{0}\"?",
+      "edit_zone_name": "Edit zone {name}",
+      "zone_already_exists": "Zone already exists"
     },
     "firewall": {
       "title": "Firewall"

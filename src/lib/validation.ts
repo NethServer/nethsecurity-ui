@@ -217,6 +217,18 @@ export class MessageBag extends Map<string, Array<string>> {
   getFirstFor(key: string): string {
     return this.get(key)?.[0] ?? ''
   }
+
+  /**
+   * Returns the i18n key associate to the first error message for the key (if any).
+   * @param key key of the messageBag, e.g. 'zoneName'
+   * @param prefix string prefix to build the i18n key, e.g. 'standalone.zones_and_policies'
+   */
+  getFirstI18nKeyFor(key: string, prefix: string): string {
+    if (this.get(key)) {
+      return `${prefix}.${this.get(key)?.[0]}`
+    }
+    return ''
+  }
 }
 
 /**

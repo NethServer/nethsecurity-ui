@@ -35,7 +35,7 @@
     "invalid_ip_v6_address": "Invalid IPv6 address",
     "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
-    "invalid_port": "Enter an integer number between 0 and 65535",
+    "invalid_port": "Enter an integer number between 1 and 65565",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",

@@ -59,13 +59,13 @@ const supportedDestinationZones = computed<NeComboboxOption[]>(() => {
   if (firewallConfig.loading) return []
   else {
     return [
+      { id: 'any', label: t('standalone.port_forward.any_zone') },
       ...firewallConfig.zones
         .filter((zone) => zone.type() != ZoneType.WAN)
         .map((zone) => ({
           id: zone.name,
           label: zone.name.toUpperCase()
-        })),
-      { id: 'any', label: t('standalone.port_forward.any_zone') }
+        }))
     ]
   }
 })
@@ -129,13 +129,14 @@ async function fetchOptions() {
       })
     )
     wanInterfaces.value = [
+      { id: 'any', label: t('standalone.port_forward.any') },
       ...(await ubusCall('ns.redirects', 'list-wans')).data.wans.map(
         (iface: { device: string; ipaddr: string }) => ({
           id: iface.ipaddr,
-          label: iface.ipaddr
+          label: iface.ipaddr,
+          description: iface.device
         })
-      ),
-      { id: 'any', label: t('standalone.port_forward.any') }
+      )
     ]
     loading.value = false
   } catch (err: any) {
@@ -284,10 +285,6 @@ async function performRequest() {
         v-model="name"
         :invalid-message="validationErrorBag.getFirstFor('name')"
       />
-      <div>
-        <p class="mb-2 text-sm">{{ t('standalone.port_forward.source_zone') }}</p>
-        <p class="text-sm">WAN</p>
-      </div>
       <NeCombobox
         :label="t('standalone.port_forward.protocols')"
         :placeholder="t('standalone.port_forward.choose_protocol')"

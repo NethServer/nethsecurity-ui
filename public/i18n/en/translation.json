@@ -481,7 +481,6 @@
       "delete_port_forward_message": "You are about to delete port forward {name}",
       "destination": "Destination",
       "edit_port_forward": "Edit port forward",
-      "source_zone": "Source zone",
       "destination_address": "Destination address",
       "destination_zone": "Destination zone",
       "advanced_settings": "Advanced settings",

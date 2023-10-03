@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
-import type { PropType } from 'vue'
 import { toRefs } from 'vue'
 import NeTable from '../NeTable.vue'
 import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
 
 const { t } = useI18n()
 
-const props = defineProps({
-  portForwards: {
-    type: Object as PropType<PortForward[]>,
-    required: true
-  },
-  header: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{
+  portForwards: PortForward[]
+  header: string
+}>()
 
 const { portForwards, header } = toRefs(props)
 

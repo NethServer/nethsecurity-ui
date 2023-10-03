@@ -90,6 +90,10 @@ function getDropdownItems(item: PortForward) {
     }
   ]
 }
+
+function getCellClasses(item: PortForward) {
+  return !item.enabled ? ['text-gray-300', 'dark:text-gray-700'] : []
+}
 </script>
 
 <template>
@@ -100,24 +104,54 @@ function getDropdownItems(item: PortForward) {
       {{ t('standalone.port_forward.destination') }}: <strong>{{ header }}</strong>
     </p>
     <NeTable :data="portForwards" :headers="tableHeaders" class="z-10">
+      <template #name="{ item }: { item: PortForward }">
+        <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+      </template>
       <template #source_port="{ item }: { item: PortForward }">
-        {{ item.source_port }} {{ item.source_port_name ? `(${item.source_port_name})` : '' }}
+        <p :class="[...getCellClasses(item)]">
+          {{ item.source_port }} {{ item.source_port_name ? `(${item.source_port_name})` : '' }}
+        </p>
+      </template>
+      <template #destination_port="{ item }: { item: PortForward }">
+        <p :class="[...getCellClasses(item)]">
+          {{ item.destination_port }}
+        </p>
       </template>
       <template #protocols="{ item }: { item: PortForward }">
-        <p v-for="(prot, idx) in item.protocol.slice(0, 2)" :key="prot">
+        <p
+          v-for="(prot, idx) in item.protocol.slice(0, 2)"
+          :key="prot"
+          :class="[...getCellClasses(item)]"
+        >
           {{ prot.toUpperCase() }}{{ item.protocol.length > 2 && idx == 1 ? '...' : '' }}
+        </p>
+      </template>
+      <template #wan="{ item }: { item: PortForward }">
+        <p :class="[...getCellClasses(item)]">
+          {{ item.wan === 'any' ? t('standalone.port_forward.any') : item.wan }}
         </p>
       </template>
       <template #restrict="{ item }: { item: PortForward }">
         <template v-if="item.restrict.length > 0">
-          <p v-for="(restrictIP, idx) in item.restrict.slice(0, 2)" :key="restrictIP">
+          <p
+            v-for="(restrictIP, idx) in item.restrict.slice(0, 2)"
+            :key="restrictIP"
+            :class="[...getCellClasses(item)]"
+          >
             {{ restrictIP }}{{ item.restrict.length > 2 && idx == 1 ? '...' : '' }}
           </p>
         </template>
-        <p v-else>-</p>
+        <p :class="[...getCellClasses(item)]" v-else>-</p>
       </template>
       <template #enabled="{ item }: { item: PortForward }">
-        <div class="flex flex-row items-center">
+        <div
+          :class="[
+            'flex',
+            'flex-row',
+            'items-center',
+            !item.enabled ? 'text-gray-200 dark:text-gray-700' : ''
+          ]"
+        >
           <font-awesome-icon
             :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
             class="mr-2 h-5 w-5"

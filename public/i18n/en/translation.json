@@ -383,7 +383,9 @@
       "create_new_rule": "Create new rule",
       "rule_name": "Rule name",
       "assigned_policy": "Assigned policy",
+      "select_policy": "Select policy",
       "source_address": "Source Address",
+      "source_port": "Source Port",
       "destination_address": "Destination Address",
       "destination_port": "Destination Port",
       "protocol": "Protocol",
@@ -392,6 +394,7 @@
       "rules": "Rules",
       "rules_description": "Routing policies are assigned to hosts via rules. To use a different policy than the default, create a rule and place it above the default rule.",
       "no_rule_found": "No rule found",
+      "create_policy_before": "Please create a policy before continuing",
       "create_rule": "Create rule",
       "label_input_label": "Label",
       "behave_picker": {
@@ -424,11 +427,15 @@
       "interface_recovery_title": "WANs tests",
       "interface_recovery_description": "Number of tests needed to enable or disable the single WAN interface.",
       "delete_rule_modal": {
+        "title": "Are you sure you want to delete '{name}' rule?",
         "button": "@:common.delete"
       },
       "delete_policy_modal": {
+        "title": "Are you sure you want to delete '{name}' policy?",
         "button": "@:common.delete"
-      }
+      },
+      "any": "any",
+      "all": "all"
     },
     "users_and_objects": {
       "title": "Users & objects"

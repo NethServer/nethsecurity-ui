@@ -4,7 +4,9 @@ import {
   faArrowRight,
   faArrowsRotate,
   faPowerOff,
-  faHouse as fasHouse
+  faCircleStop,
+  faHouse as fasHouse,
+  faUserGear
 } from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
@@ -127,4 +129,6 @@ export async function loadFontAwesome(app: any) {
   library.add(faClone)
   library.add(faAngleUp)
   library.add(faAngleDown)
+  library.add(faUserGear)
+  library.add(faCircleStop)
 }

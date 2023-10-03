@@ -1,20 +1,21 @@
 <script lang="ts" setup>
-import type { Rule } from '@/composables/useMwanConfig'
-import { genericValueComparator, useMwanConfig } from '@/composables/useMwanConfig'
 import NeTable from '@/components/standalone/NeTable.vue'
-import { reactive, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import type { AxiosError } from 'axios'
 import {
   getAxiosErrorMessage,
   NeButton,
   NeDropdown,
-  NeInlineNotification
+  NeInlineNotification,
+  NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
+import type { Rule } from '@/composables/useMwan'
+import { ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosError } from 'axios'
+import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 
 const { t } = useI18n()
 
@@ -51,20 +52,33 @@ const headers = [
 ]
 
 defineEmits<{
+  create: any
   edit: [rule: Rule]
   delete: [rule: Rule]
 }>()
 
-const mwanConfig = reactive(useMwanConfig())
+interface Props {
+  rules: Array<Rule>
+  policiesExist: boolean
+  loading: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  loading: false
+})
+
 const data = ref<Array<Rule>>([])
 const error = ref<Error>()
 
 const ruleDragged = ref<number>()
 const indexOver = ref<number>()
 
-watch(mwanConfig, () => {
-  data.value = mwanConfig.rules
-})
+watch(
+  () => props.rules,
+  () => {
+    data.value = props.rules
+  }
+)
 
 function drop(index: number): void {
   indexOver.value = undefined
@@ -79,14 +93,8 @@ function drop(index: number): void {
 }
 
 function saveState(): void {
-  const sorted = Object.values(mwanConfig.data?.values ?? [])
-    .filter((value) => value['.type'] != 'rule')
-    .sort(genericValueComparator)
-    .map((value) => value['.name'])
-  data.value.forEach((value) => sorted.push(value['name']))
-  ubusCall('uci', 'order', {
-    config: 'mwan3',
-    sections: sorted
+  ubusCall('ns.mwan', 'order_rules', {
+    rules: data.value.map((rule) => rule.name)
   })
     .then(() => uciPendingChangesStore.getChanges())
     .catch((exception: AxiosError) => (error.value = new Error(getAxiosErrorMessage(exception))))
@@ -97,76 +105,96 @@ function saveState(): void {
   <NeInlineNotification v-if="error" :kind="'error'" class="mb-4">
     {{ error.message }}
   </NeInlineNotification>
+  <HorizontalCard class="space-y-4 text-center" v-else-if="!loading && rules.length < 1">
+    <p>{{ t('standalone.multi_wan.no_rule_found') }}</p>
+    <NeButton v-if="policiesExist" :kind="'primary'" @click="$emit('create')">
+      <template #prefix>
+        <FontAwesomeIcon :icon="faCirclePlus" />
+      </template>
+      {{ t('standalone.multi_wan.create_default_policy') }}
+    </NeButton>
+    <p v-else>{{ t('standalone.multi_wan.create_policy_before') }}</p>
+  </HorizontalCard>
   <NeTable
     v-else
-    :data="data"
+    :data="rules"
     :headers="headers"
-    :loading="mwanConfig.loading"
+    :loading="loading"
     :style="'card'"
     class="!border-spacing-y-1"
   >
     <template #tbody>
       <tbody>
-        <template v-for="(item, index) in data" :key="item.key">
-          <tr
-            :class="[
-              indexOver == index ? 'drop-over drop-target' : '',
-              ruleDragged != undefined ? 'drop-active' : ''
-            ]"
-            class="drop-target"
-            @dragenter="indexOver = index"
-            @dragleave="indexOver = undefined"
-            @drop.prevent="drop(index)"
-            @dragover.prevent
-          >
-            <td :colspan="headers.length"></td>
-          </tr>
-          <tr
-            :class="{ 'opacity-30': ruleDragged == index }"
-            draggable="true"
-            @dragend="ruleDragged = undefined"
-            @dragstart="ruleDragged = index"
-          >
-            <td class="cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70">
-              <FontAwesomeIcon :icon="faGripVertical" />
-            </td>
-            <td>
-              {{ item.name }}
-            </td>
-            <td>
-              {{ item.policy.name }}
-            </td>
-            <td>
-              {{ item.source }}
-            </td>
-            <td>
-              {{ item.destination }}
-            </td>
-            <td>
-              {{ item.protocol }}
-            </td>
-            <td>
-              <div class="flex justify-start gap-2">
-                <NeButton kind="tertiary" @click="$emit('edit', item)">
-                  <template #prefix>
-                    <FontAwesomeIcon :icon="['fas', 'edit']" />
-                  </template>
-                  {{ t('Edit') }}
-                </NeButton>
-                <NeDropdown
-                  align-to-right
-                  :items="[
-                    {
-                      id: 'delete',
-                      action: () => $emit('delete', item),
-                      label: t('common.delete'),
-                      disabled: item.name == 'DefaultRule'
-                    }
-                  ]"
-                />
-              </div>
+        <template v-if="loading">
+          <tr>
+            <td :colspan="headers.length">
+              <NeSkeleton :lines="3" />
             </td>
           </tr>
+        </template>
+        <template v-else>
+          <template v-for="(item, index) in data" :key="item.key">
+            <tr
+              :class="[
+                indexOver == index ? 'drop-over drop-target' : '',
+                ruleDragged != undefined ? 'drop-active' : ''
+              ]"
+              class="drop-target"
+              @dragenter="indexOver = index"
+              @dragleave="indexOver = undefined"
+              @drop.prevent="drop(index)"
+              @dragover.prevent
+            >
+              <td :colspan="headers.length"></td>
+            </tr>
+            <tr
+              :class="{ 'opacity-30': ruleDragged == index }"
+              draggable="true"
+              @dragend="ruleDragged = undefined"
+              @dragstart="ruleDragged = index"
+            >
+              <td class="cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70">
+                <FontAwesomeIcon :icon="faGripVertical" />
+              </td>
+              <td>
+                {{ item.label ?? item.name }}
+              </td>
+              <td>
+                {{ item.policy.label ?? item.policy.name }}
+              </td>
+              <td>
+                {{ item.source_address ?? t('standalone.multi_wan.any') }}
+              </td>
+              <td>
+                {{ item.destination_address ?? t('standalone.multi_wan.any') }}
+              </td>
+              <td>
+                {{ item.protocol ?? t('standalone.multi_wan.all') }}
+              </td>
+              <td>
+                <div class="flex justify-start gap-2">
+                  <NeButton kind="tertiary" @click="$emit('edit', item)">
+                    <template #prefix>
+                      <FontAwesomeIcon :icon="['fas', 'edit']" />
+                    </template>
+                    {{ t('Edit') }}
+                  </NeButton>
+                  <NeDropdown
+                    :items="[
+                      {
+                        id: 'delete',
+                        action: () => $emit('delete', item),
+                        label: t('common.delete'),
+                        disabled: item.name == 'ns_default_rule',
+                        danger: true
+                      }
+                    ]"
+                    align-to-right
+                  />
+                </div>
+              </td>
+            </tr>
+          </template>
         </template>
         <tr
           :class="[

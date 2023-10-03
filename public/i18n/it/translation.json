@@ -427,7 +427,8 @@
       "protocol": "Protocollo",
       "interface_recovery_description": "Numero di test necessari per abilitare o disabilitare la singola interfaccia WAN.",
       "delete_rule_modal": {
-        "button": "@:common.delete"
+        "button": "@:common.delete",
+        "title": "Sei sicuro di voler eliminare la regola '{name}'?"
       },
       "all_protocols": "Tutti i protocolli",
       "destination_address": "Indirizzo di destinazione",
@@ -439,13 +440,19 @@
       "interface_recovery_title": "Test WAN",
       "edit_rule": "Modifica regola {name}",
       "delete_policy_modal": {
-        "button": "@:common.delete"
+        "button": "@:common.delete",
+        "title": "Sei sicuro di voler eliminare '{name}' policy?"
       },
       "create_new_rule": "Crea nuova regola",
       "rule_name": "Nome regola",
       "tracking_hostnames_or_ips_title": "Monitoraggio WAN",
       "tracking_hostnames_or_ips_description": "Inserisci gli indirizzi IP (o i nomi host) da pingare per monitorare lo stato delle WAN. Se almeno un host risponde al ping, il WAN rimane attivo",
-      "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività"
+      "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività",
+      "create_policy_before": "Si prega di creare una politica prima di continuare",
+      "all": "tutto",
+      "source_port": "Porto di origine",
+      "any": "qualsiasi",
+      "select_policy": "Selezionare la politica"
     },
     "zones_and_policies": {
       "traffic_policy": {

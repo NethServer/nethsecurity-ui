@@ -21,6 +21,14 @@ import { watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { ZoneType, useFirewallStore } from '@/stores/standalone/useFirewallStore'
 import { computed } from 'vue'
+import {
+  MessageBag,
+  validateIpAddress,
+  validateRequired,
+  validatePort,
+  validateRequiredOption,
+  type validationOutput
+} from '@/lib/validation'
 
 const props = defineProps<{
   isShown: boolean
@@ -39,6 +47,8 @@ const error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
+const validationErrorBag = ref(new MessageBag())
+const restrictIPValidationErrors = ref<string[]>([])
 
 // Options
 const supportedProtocols = ref<NeComboboxOption[]>([])
@@ -75,6 +85,8 @@ const reflectionZones = ref<NeComboboxOption[]>([])
 const destinationZone = ref('')
 
 function resetForm() {
+  validationErrorBag.value.clear()
+
   id.value = props.initialItem?.id ?? ''
   name.value = props.initialItem?.name ?? ''
   sourcePort.value = props.initialItem?.source_port ?? ''
@@ -82,7 +94,7 @@ function resetForm() {
   destinationPort.value = props.initialItem?.destination_port ?? ''
   wan.value = props.initialItem?.wan ?? 'any'
   enabled.value = props.initialItem?.enabled ?? false
-  restrict.value = props.initialItem?.restrict ?? []
+  restrict.value = props.initialItem?.restrict.map((x) => x) ?? []
   protocols.value =
     props.initialItem?.protocol.map((proto: string) => ({
       id: proto,
@@ -153,9 +165,59 @@ function addRestrictedIP() {
   restrict.value.push('')
 }
 
+function runValidators(validators: validationOutput[], label: string): boolean {
+  for (let validator of validators) {
+    if (!validator.valid) {
+      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+    }
+  }
+
+  return validators.every((validator) => validator.valid)
+}
+
 function validate(): boolean {
-  //TODO: implement validation
-  return true
+  validationErrorBag.value.clear()
+
+  restrictIPValidationErrors.value = []
+  restrict.value.forEach(() => {
+    restrictIPValidationErrors.value.push('')
+  })
+
+  let validRestrict = true
+  for (let [index, restrictValue] of restrict.value.entries()) {
+    for (let validator of [validateRequired(restrictValue), validateIpAddress(restrictValue)]) {
+      if (!validator.valid) {
+        restrictIPValidationErrors.value[index] = t(validator.errMessage as string)
+        validRestrict = false
+        break
+      }
+    }
+  }
+
+  if (!validRestrict) {
+    showAdvancedSettings.value = true
+  }
+
+  let validators: [validationOutput[], string][] = [
+    [[validateRequired(name.value)], 'name'],
+    [[validateRequired(sourcePort.value), validatePort(sourcePort.value)], 'sourcePort'],
+    [[validateRequiredOption(protocols.value)], 'protocols'],
+    [
+      [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
+      'destinationIP'
+    ],
+    [
+      [validateRequired(destinationPort.value), validatePort(destinationPort.value)],
+      'destinationPort'
+    ],
+    [reflection.value ? [validateRequiredOption(reflectionZones.value)] : [], 'reflectionZones']
+  ]
+
+  return (
+    validators
+      .map(([validator, label]) => runValidators(validator, label))
+      .every((result) => result) && validRestrict
+  )
 }
 
 async function performRequest() {
@@ -189,8 +251,8 @@ async function performRequest() {
     }
   } catch (err: any) {
     error.value.notificationTitle = isEditing
-      ? t('standalone.port_forward.cannot_edit_port_forward')
-      : t('standalone.port_forward.cannot_add_port_forward')
+      ? t('error.cannot_edit_port_forward')
+      : t('error.cannot_create_port_forward')
 
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
@@ -220,6 +282,11 @@ async function performRequest() {
     <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
     <div v-else class="flex flex-col gap-y-6">
       <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
+      <NeTextInput
+        :label="t('standalone.port_forward.name')"
+        v-model="name"
+        :invalid-message="validationErrorBag.getFirstFor('name')"
+      />
       <div>
         <p class="mb-2 text-sm">{{ t('standalone.port_forward.source_zone') }}</p>
         <p class="text-sm">WAN</p>
@@ -230,11 +297,18 @@ async function performRequest() {
         :multiple="true"
         :options="supportedProtocols"
         v-model="protocols"
+        :invalid-message="validationErrorBag.getFirstFor('protocols')"
       />
-      <NeTextInput :label="t('standalone.port_forward.source_port')" v-model="sourcePort" />
+      <NeTextInput
+        :label="t('standalone.port_forward.source_port')"
+        v-model="sourcePort"
+        :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
+        type="number"
+      />
       <NeTextInput
         :label="t('standalone.port_forward.destination_address')"
         v-model="destinationIP"
+        :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
       >
         <template #tooltip
           ><NeTooltip
@@ -254,6 +328,8 @@ async function performRequest() {
       <NeTextInput
         :label="t('standalone.port_forward.destination_port')"
         v-model="destinationPort"
+        :invalid-message="validationErrorBag.getFirstFor('destinationPort')"
+        type="number"
       />
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
@@ -291,8 +367,12 @@ async function performRequest() {
 
           <div class="space-y-6">
             <div class="space-y-4">
-              <div v-for="(restrictedIP, i) in restrict" :key="i" class="flex items-center gap-2">
-                <NeTextInput v-model.trim="restrict[i]" class="grow" />
+              <div v-for="(restrictedIP, i) in restrict" :key="i" class="flex items-start gap-2">
+                <NeTextInput
+                  v-model.trim="restrict[i]"
+                  class="grow"
+                  :invalid-message="restrictIPValidationErrors[i]"
+                />
                 <NeButton kind="tertiary" size="md" @click="deleteRestrictedIP(restrictedIP)">
                   <font-awesome-icon
                     :icon="['fas', 'trash']"
@@ -319,6 +399,7 @@ async function performRequest() {
           :placeholder="t('standalone.port_forward.choose_zone')"
           :options="supportedReflectionZones"
           v-model="reflectionZones"
+          :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
         />
       </template>
       <hr />

@@ -1,7 +1,9 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-interface validationOutput {
+import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+
+export interface validationOutput {
   valid: Boolean
   errMessage?: String
   i18Params?: Object
@@ -194,6 +196,22 @@ export const validateVlanId = (value: String): validationOutput => {
 
   if (isNaN(vlanId) || !Number.isInteger(vlanId) || vlanId < 1 || vlanId > 4094) {
     return { valid: false, errMessage: 'error.invalid_vlan_id' }
+  }
+  return { valid: true }
+}
+
+export const validatePort = (value: String): validationOutput => {
+  const port = Number(value)
+
+  if (isNaN(port) || !Number.isInteger(port) || port < 0 || port > 65535) {
+    return { valid: false, errMessage: 'error.invalid_port' }
+  }
+  return { valid: true }
+}
+
+export const validateRequiredOption = (value: NeComboboxOption[]): validationOutput => {
+  if (value.length == 0) {
+    return { valid: false, errMessage: 'error.required_option' }
   }
   return { valid: true }
 }

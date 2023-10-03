@@ -111,10 +111,17 @@ function getDropdownItems(item: PortForward) {
         {{ item.source_port }} {{ item.source_port_name ? `(${item.source_port_name})` : '' }}
       </template>
       <template #protocols="{ item }: { item: PortForward }">
-        {{ item.protocol.map((prot) => prot.toUpperCase()).join(', ') }}
+        <p v-for="(prot, idx) in item.protocol.slice(0, 2)" :key="prot">
+          {{ prot.toUpperCase() }}{{ item.protocol.length > 2 && idx == 1 ? '...' : '' }}
+        </p>
       </template>
       <template #restrict="{ item }: { item: PortForward }">
-        {{ item.restrict.length > 0 ? item.restrict.join(', ') : '-' }}
+        <template v-if="item.restrict.length > 0">
+          <p v-for="(restrictIP, idx) in item.restrict.slice(0, 2)" :key="restrictIP">
+            {{ restrictIP }}{{ item.restrict.length > 2 && idx == 1 ? '...' : '' }}
+          </p>
+        </template>
+        <p v-else>-</p>
       </template>
       <template #enabled="{ item }: { item: PortForward }">
         <div class="flex flex-row items-center">

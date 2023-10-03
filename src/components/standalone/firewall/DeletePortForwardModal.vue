@@ -39,7 +39,7 @@ async function deletePortForward() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('common.delete')"
+    :title="t('standalone.port_forward.delete_port_forward')"
     :primaryLabel="t('standalone.port_forward.delete_port_forward')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"

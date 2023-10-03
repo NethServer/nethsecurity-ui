@@ -144,23 +144,9 @@ function getDropdownItems(item: PortForward) {
             </template>
             {{ t('common.edit') }}
           </NeButton>
-          <NeDropdown
-            class="item-dropdown"
-            :items="getDropdownItems(item)"
-            :align-to-right="true"
-          />
+          <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
         </div>
       </template>
     </NeTable>
   </div>
 </template>
-
-<style scoped>
-.item-dropdown {
-  position: static;
-}
-
-.item-dropdown:deep(div[role='menu']) {
-  right: 10px;
-}
-</style>

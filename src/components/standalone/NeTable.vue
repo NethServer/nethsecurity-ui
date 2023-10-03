@@ -133,7 +133,7 @@ table {
 
 /* Base style CSS. */
 .table-basic {
-  @apply -mx-4 overflow-hidden overflow-x-auto border-y border-gray-300 dark:border-gray-600 sm:mx-0 sm:rounded-lg sm:border-x;
+  @apply -mx-4 overflow-x-auto border-y border-gray-300 dark:border-gray-600 sm:mx-0 sm:rounded-lg sm:border-x;
 }
 
 .table-basic.ghost {

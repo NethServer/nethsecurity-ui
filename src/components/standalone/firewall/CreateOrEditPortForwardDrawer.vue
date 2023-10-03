@@ -384,11 +384,7 @@ async function performRequest() {
           @click="performRequest()"
           :disabled="isSubmittingRequest"
           :loading="isSubmittingRequest"
-          >{{
-            id
-              ? t('standalone.port_forward.edit_port_forward')
-              : t('standalone.port_forward.add_port_forward')
-          }}</NeButton
+          >{{ id ? t('common.save') : t('standalone.port_forward.add_port_forward') }}</NeButton
         >
       </div>
     </div>

@@ -419,11 +419,11 @@
       "interface_recovery_title": "WANs tests",
       "interface_recovery_description": "Number of tests needed to enable or disable the single WAN interface.",
       "delete_rule_modal": {
-        "title": "Are you sure you want to delete {name} policy?",
+        "title": "Are you sure you want to delete '{name}' rule?",
         "button": "@:common.delete"
       },
       "delete_policy_modal": {
-        "title": "Are you sure you want to delete {name} policy?",
+        "title": "Are you sure you want to delete '{name}' policy?",
         "button": "@:common.delete"
       },
       "any": "any",

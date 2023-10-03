@@ -96,7 +96,7 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
   })
 
   /**
-   * Weather the button should be disabled or not once deletion.
+   * Whether the button should be disabled or not once deletion.
    */
   const isTrashButtonDisabled = computed<boolean>(() => {
     if (selection.value == 'balance') {

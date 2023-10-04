@@ -1,7 +1,9 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-interface validationOutput {
+import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+
+export interface validationOutput {
   valid: Boolean
   errMessage?: String
   i18Params?: Object
@@ -198,7 +200,7 @@ export const validateVlanId = (value: String): validationOutput => {
   return { valid: true }
 }
 
-export function validatePort(value: string, minPort = 1, maxPort = 65565): validationOutput {
+export function validatePort(value: string, minPort = 1, maxPort = 65535): validationOutput {
   const port = Number.parseInt(value)
 
   if (Number.isNaN(port) || port < minPort || port > maxPort) {
@@ -207,7 +209,7 @@ export function validatePort(value: string, minPort = 1, maxPort = 65565): valid
   return { valid: true }
 }
 
-export function validatePortRange(value: string, minRange = 1, maxRange = 65565): validationOutput {
+export function validatePortRange(value: string, minRange = 1, maxRange = 65535): validationOutput {
   let strings: string[]
   if (value.indexOf(',')) {
     strings = value.split(',')
@@ -221,6 +223,13 @@ export function validatePortRange(value: string, minRange = 1, maxRange = 65565)
     if (!validation.valid) {
       return { valid: false, errMessage: 'error.invalid_port_range' }
     }
+  }
+  return { valid: true }
+}
+
+export const validateRequiredOption = (value: NeComboboxOption[]): validationOutput => {
+  if (value.length == 0) {
+    return { valid: false, errMessage: 'error.required_option' }
   }
   return { valid: true }
 }

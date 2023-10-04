@@ -14,7 +14,6 @@ import {
   NeSkeleton,
   NeCombobox,
   NeInlineNotification,
-  NeTextInput,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
@@ -22,6 +21,7 @@ import { isEmpty, uniq } from 'lodash'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import NeMultiTextInput from '../NeMultiTextInput.vue'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -253,15 +253,9 @@ async function save() {
   }
 }
 
-function deleteNtpServer(ntpServerName: string) {
+function resetNtpServerErrors() {
   // reset errors to prevent validation errors mismatch
   error.value.ntpServerCandidate = []
-
-  ntpServerCandidates.value = ntpServerCandidates.value.filter((elem) => elem !== ntpServerName)
-}
-
-function addNtpServer() {
-  ntpServerCandidates.value.push('')
 }
 </script>
 
@@ -321,41 +315,14 @@ function addNtpServer() {
         <div v-if="enableNtpClient">
           <hr class="my-8" />
           <FormLayout :title="t('standalone.system_settings.ntp_server_candidates')">
-            <div class="space-y-6">
-              <div class="space-y-4">
-                <div
-                  v-for="(ntpServer, i) in ntpServerCandidates"
-                  :key="i"
-                  class="flex items-start gap-2"
-                >
-                  <NeTextInput
-                    v-model.trim="ntpServerCandidates[i]"
-                    :invalid-message="error.ntpServerCandidate[i]"
-                    :disabled="loading.save"
-                    class="grow"
-                  />
-                  <NeButton
-                    kind="tertiary"
-                    size="lg"
-                    @click="deleteNtpServer(ntpServer)"
-                    :disabled="loading.save"
-                  >
-                    <font-awesome-icon
-                      :icon="['fas', 'trash']"
-                      class="h-4 w-4 py-1"
-                      aria-hidden="true"
-                    />
-                  </NeButton>
-                </div>
-                <!-- add ntp server -->
-                <NeButton size="lg" @click="addNtpServer" :disabled="loading.save">
-                  <template #prefix>
-                    <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-                  </template>
-                  {{ t('standalone.system_settings.add_ntp_server') }}
-                </NeButton>
-              </div>
-            </div>
+            <NeMultiTextInput
+              :add-item-label="t('standalone.system_settings.add_ntp_server')"
+              :invalid-messages="error.ntpServerCandidate"
+              :disable-inputs="loading.save"
+              :disable-add-button="loading.save"
+              v-model="ntpServerCandidates"
+              @delete-item="resetNtpServerErrors()"
+            />
           </FormLayout>
         </div>
       </Transition>

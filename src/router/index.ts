@@ -54,6 +54,11 @@ const standaloneRoutes = [
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')
+  },
+  {
+    path: 'firewall/port-forward',
+    name: 'PortForward',
+    component: () => import('../views/standalone/firewall/PortForward.vue')
   }
 ]
 

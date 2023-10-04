@@ -200,7 +200,7 @@ export const validateVlanId = (value: String): validationOutput => {
   return { valid: true }
 }
 
-export function validatePort(value: string, minPort = 1, maxPort = 65565): validationOutput {
+export function validatePort(value: string, minPort = 1, maxPort = 65535): validationOutput {
   const port = Number.parseInt(value)
 
   if (Number.isNaN(port) || port < minPort || port > maxPort) {
@@ -209,7 +209,7 @@ export function validatePort(value: string, minPort = 1, maxPort = 65565): valid
   return { valid: true }
 }
 
-export function validatePortRange(value: string, minRange = 1, maxRange = 65565): validationOutput {
+export function validatePortRange(value: string, minRange = 1, maxRange = 65535): validationOutput {
   let strings: string[]
   if (value.indexOf(',')) {
     strings = value.split(',')

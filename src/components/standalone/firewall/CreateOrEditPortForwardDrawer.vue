@@ -330,7 +330,7 @@ async function performRequest() {
           {{ t('standalone.port_forward.advanced_settings') }}
           <template #suffix>
             <font-awesome-icon
-              :icon="['fas', showAdvancedSettings ? 'angle-up' : 'angle-down']"
+              :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"
               class="h-4 w-4"
               aria-hidden="true"
             />

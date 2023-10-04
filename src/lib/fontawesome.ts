@@ -63,8 +63,6 @@ import { faShield as fasShield } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo as fasCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { faClone as faClone } from '@fortawesome/free-solid-svg-icons'
-import { faAngleUp as faAngleUp } from '@fortawesome/free-solid-svg-icons'
-import { faAngleDown as faAngleDown } from '@fortawesome/free-solid-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -127,8 +125,6 @@ export async function loadFontAwesome(app: any) {
   library.add(faArrowRight)
   library.add(faEmptySet)
   library.add(faClone)
-  library.add(faAngleUp)
-  library.add(faAngleDown)
   library.add(faUserGear)
   library.add(faCircleStop)
 }

@@ -479,7 +479,9 @@
       "delete_zone": "Eliminare \"{0}\"?",
       "interfaces": "Interfacce",
       "traffic_to_firewall": "Traffico verso firewall",
-      "limit_log_messages": "Limita i messaggi di log"
+      "limit_log_messages": "Limita i messaggi di log",
+      "edit_zone_name": "Modifica zona {nome}",
+      "zone_already_exists": "Zone già esistenti"
     }
   },
   "controller": {

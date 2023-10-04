@@ -62,7 +62,10 @@
     "cannot_edit_port_forward": "Cannot edit port forward",
     "cannot_duplicate_port_forward": "Cannot duplicate port forward",
     "cannot_enable_port_forward": "Cannot enable port forward",
-    "cannot_disable_port_forward": "Cannot disable port forward"
+    "cannot_disable_port_forward": "Cannot disable port forward",
+    "cannot_retrieve_protocols": "Cannot retrieve protocols",
+    "cannot_retrieve_zones": "Cannot retrieve zones",
+    "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces"
   },
   "ne_text_input": {
     "show_password": "Show password",

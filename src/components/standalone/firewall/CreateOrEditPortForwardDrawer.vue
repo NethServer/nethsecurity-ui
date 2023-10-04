@@ -114,20 +114,34 @@ function resetForm() {
 const { t } = useI18n()
 
 async function fetchOptions() {
+  loading.value = true
   try {
-    loading.value = true
     supportedProtocols.value = (
       await ubusCall('ns.redirects', 'list-protocols')
     ).data.protocols.map((proto: string) => ({
       id: proto,
       label: proto.toUpperCase()
     }))
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_protocols')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    return
+  }
+
+  try {
     supportedReflectionZones.value = (await ubusCall('ns.redirects', 'list-zones')).data.zones.map(
       (zone: string) => ({
         id: zone,
         label: zone.toUpperCase()
       })
     )
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_zones')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    return
+  }
+
+  try {
     wanInterfaces.value = [
       { id: 'any', label: t('standalone.port_forward.any') },
       ...(await ubusCall('ns.redirects', 'list-wans')).data.wans.map(
@@ -138,11 +152,12 @@ async function fetchOptions() {
         })
       )
     ]
-    loading.value = false
   } catch (err: any) {
-    error.value.notificationTitle = t('error.generic_error')
+    error.value.notificationTitle = t('error.cannot_retrieve_wan_interfaces')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    return
   }
+  loading.value = false
 }
 
 watchEffect(() => {
@@ -218,7 +233,7 @@ function validate(): boolean {
   )
 }
 
-async function performRequest() {
+async function createOrEditPortForward() {
   const isEditing = id.value != ''
 
   try {
@@ -378,7 +393,7 @@ async function performRequest() {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="performRequest()"
+          @click="createOrEditPortForward()"
           :disabled="isSubmittingRequest"
           :loading="isSubmittingRequest"
           >{{ id ? t('common.save') : t('standalone.port_forward.add_port_forward') }}</NeButton

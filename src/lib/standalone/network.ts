@@ -1,6 +1,8 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
+import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/useFirewallStore'
+
 export function getInterface(deviceOrIface: any, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
@@ -23,7 +25,7 @@ export function getAliasInterface(device: any, networkConfig: any) {
 export function getFirewallZone(iface: any, firewallConfig: any) {
   if (firewallConfig) {
     const zoneFound = firewallConfig.zone?.find((zone: any) =>
-      zone.network.includes(iface['.name'])
+      zone.network?.includes(iface['.name'])
     )
 
     if (zoneFound) {
@@ -59,6 +61,19 @@ export function getZoneColor(zoneName: string) {
     //// dmz
     default:
       return ''
+  }
+}
+
+export function getZoneColorClasses(zoneName: string) {
+  switch (zoneName) {
+    case 'wan':
+      return 'bg-rose-100 text-rose-700 dark:bg-rose-700 dark:text-rose-50'
+    case 'lan':
+      return 'bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-50'
+    case 'guests':
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
+    default:
+      return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-50'
   }
 }
 
@@ -120,4 +135,28 @@ export function getName(deviceOrIface: any) {
   } else {
     return deviceOrIface.name
   }
+}
+
+// if traffic from input zone to WAN is allowed return the specific forwarding, return undefined otherwise
+export function getTrafficToWan(zone: Zone, forwardings: Forwarding[]) {
+  if (zone.name != SpecialZones.WAN) {
+    return forwardings
+      .filter((forwarding: Forwarding) => forwarding.source == zone.name)
+      .map((forwarding: Forwarding) => forwarding.destination)
+      .some((forwardingName) => forwardingName == SpecialZones.WAN)
+  }
+  return undefined
+}
+
+// return the forwardings that have input zone as source and don't have WAN as destination
+export function forwardingsToByZone(zone: Zone, forwardings: Forwarding[]): Array<Forwarding> {
+  return forwardings.filter(
+    (forwarding: Forwarding) =>
+      forwarding.source == zone.name && forwarding.destination != SpecialZones.WAN
+  )
+}
+
+// return the forwardings that have input zone as destination
+export function forwardingsFromByZone(zone: Zone, forwardings: Forwarding[]): Array<Forwarding> {
+  return forwardings.filter((forwarding: Forwarding) => forwarding.destination == zone.name)
 }

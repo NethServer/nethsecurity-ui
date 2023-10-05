@@ -346,7 +346,7 @@ watch(
 
         interfaceName.value = props.interfaceToEdit['.name']
         const zoneFound = props.firewallConfig.zone.find((z: any) =>
-          z.network.includes(interfaceName.value)
+          z.network?.includes(interfaceName.value)
         )
         zone.value = zoneFound.name
         protocol.value = props.interfaceToEdit.proto
@@ -556,7 +556,7 @@ async function setFirewallZone() {
     // editing configuration: if firewall zone has changed, remove interface from the old zone
 
     const oldZone = props.firewallConfig.zone.find((z: any) =>
-      z.network.includes(interfaceName.value)
+      z.network?.includes(interfaceName.value)
     )
 
     if (oldZone.name !== zone.value) {

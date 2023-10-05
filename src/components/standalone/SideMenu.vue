@@ -73,6 +73,10 @@ const navigation: Ref<any> = ref([
     icon: 'block-brick-fire',
     children: [
       {
+        name: t('standalone.port_forward.title'),
+        to: 'firewall/port-forward'
+      },
+      {
         name: t('standalone.zones_and_policies.title'),
         to: 'firewall/zones-and-policies'
       }

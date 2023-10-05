@@ -22,11 +22,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
   faEarthAmerica,
-  faMinus,
   faLocationDot,
   faCircleCheck,
   faCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
+import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
 const { t } = useI18n()
@@ -239,81 +239,86 @@ function scrollToMainTable() {
           ]"
           :loading="loading"
         >
-          <template #ns_description="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span>{{ item.ns_description }}</span>
-            </div>
-          </template>
-          <template #interface="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span>
-                <FontAwesomeIcon v-if="!item.interface" :icon="faMinus" />
-                <FontAwesomeIcon
-                  v-if="item.interface && item.interface === 'wan'"
-                  :icon="faEarthAmerica"
-                />
-                <FontAwesomeIcon
-                  v-if="item.interface && item.interface === 'lan'"
-                  :icon="faLocationDot"
-                />
-                {{ item.interface }}
-              </span>
-            </div>
-          </template>
-          <template #target="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span>{{ item.target }}</span>
-            </div>
-          </template>
-          <template #gateway="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span>{{ item.gateway }}</span>
-            </div>
-          </template>
-          <template #metric="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span>{{ item.metric }}</span>
-            </div>
-          </template>
-          <template #status="{ item }">
-            <div class="flex items-center gap-x-4">
-              <span v-if="item.disabled === '0'">
-                <FontAwesomeIcon :icon="faCircleCheck" />
-                {{ t('standalone.routes.route_status_enabled') }}
-              </span>
-              <span v-else>
-                <FontAwesomeIcon :icon="faCircleXmark" />
-                {{ t('standalone.routes.route_status_disabled') }}
-              </span>
-            </div>
-          </template>
-          <template #actions="{ item }">
-            <div class="flex justify-end gap-3">
-              <NeButton kind="tertiary" size="lg" @click="openEditRoute({ item: { item: item } })">
-                <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                </template>
-                {{ t('common.edit') }}
-              </NeButton>
-              <NeDropdown
-                :items="[
-                  {
-                    id: 'delete',
-                    danger: true,
-                    label: t('common.delete'),
-                    action: () => {
-                      deleteRouteId = item.id
-                      deleteRouteName = item.ns_description
-                    }
-                  }
-                ]"
-                align-to-right
-              />
-            </div>
+          <template #tbody>
+            <tbody>
+              <template v-for="item in routes" :key="item.id">
+                <tr :class="{ 'opacity-30': item.disabled !== '0' }">
+                  <td>
+                    {{ item.ns_description }}
+                  </td>
+                  <td>
+                    <span>
+                      <FontAwesomeIcon v-if="!item.interface" :icon="faEmptySet" />
+                      <FontAwesomeIcon
+                        v-if="item.interface && item.interface === 'wan'"
+                        :icon="faEarthAmerica"
+                      />
+                      <FontAwesomeIcon
+                        v-if="
+                          item.interface &&
+                          (item.interface === 'lan' || item.interface === 'loopback')
+                        "
+                        :icon="faLocationDot"
+                      />
+                      {{
+                        item.interface
+                          ? item.interface
+                          : t('standalone.routes.interface_unspecified')
+                      }}
+                    </span>
+                  </td>
+                  <td>
+                    {{ item.target }}
+                  </td>
+                  <td>
+                    {{ item.gateway }}
+                  </td>
+                  <td>
+                    {{ item.metric }}
+                  </td>
+                  <td>
+                    <span v-if="item.disabled === '0'">
+                      <FontAwesomeIcon :icon="faCircleCheck" />
+                      {{ t('standalone.routes.route_status_enabled') }}
+                    </span>
+                    <span v-else>
+                      <FontAwesomeIcon :icon="faCircleXmark" />
+                      {{ t('standalone.routes.route_status_disabled') }}
+                    </span>
+                  </td>
+                  <td class="flex justify-end">
+                    <NeButton
+                      kind="tertiary"
+                      size="lg"
+                      @click="openEditRoute({ item: { item: item } })"
+                    >
+                      <template #prefix>
+                        <font-awesome-icon
+                          :icon="['fas', 'pen-to-square']"
+                          class="h-4 w-4"
+                          aria-hidden="true"
+                        />
+                      </template>
+                      {{ t('common.edit') }}
+                    </NeButton>
+                    <NeDropdown
+                      :items="[
+                        {
+                          id: 'delete',
+                          danger: true,
+                          label: t('common.delete'),
+                          action: () => {
+                            deleteRouteId = item.id
+                            deleteRouteName = item.ns_description
+                          }
+                        }
+                      ]"
+                      align-to-right
+                    />
+                  </td>
+                </tr>
+              </template>
+            </tbody>
           </template>
         </NeTable>
       </template>
@@ -365,7 +370,8 @@ function scrollToMainTable() {
             </template>
             <template #metric="{ item }">
               <div class="flex items-center gap-x-4">
-                <span>{{ item.metric }}</span>
+                <span v-if="item.metric">{{ item.metric }}</span>
+                <span v-else>-</span>
               </div>
             </template>
             <template #protocol="{ item }">

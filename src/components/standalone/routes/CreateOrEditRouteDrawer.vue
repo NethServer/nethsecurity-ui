@@ -14,7 +14,15 @@ import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
-import { MessageBag, validateRequired } from '@/lib/validation'
+import {
+  validateRequired,
+  validateIp4Address,
+  validateIp6Address,
+  validateIp4Cidr,
+  validateIp6Cidr,
+  validateIpv4Mtu,
+  validateIpv6Mtu
+} from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const { t } = useI18n()
 
@@ -81,13 +89,15 @@ let routeInterfaces = ref<Array<RouteInterface>>()
 let routeTypes = ref<Array<RouteType>>()
 let loading = ref(false)
 let saving = ref(false)
-let messageBag = ref(new MessageBag())
 let isExpandedAdvancedSettings = ref(false)
-let labelElement = ref<HTMLInputElement | null>(null)
 
 let objError = {
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  networkAddress: '',
+  gateway: '',
+  metric: '',
+  mtu: ''
 }
 let error = ref({ ...objError })
 let errorLoadingData = ref({ ...objError })
@@ -140,61 +150,161 @@ function getDrawerTitle() {
 /**
  * Get interfaces and route types
  */
-function getFirewallData() {
+async function getFirewallData() {
   loading.value = true
   error = ref({ ...objError })
   errorLoadingData = ref({ ...objError })
 
-  let promises: Promise<any>[] = []
-
-  // Retrive list interfaces
-  promises.push(ubusCall('ns.routes', 'list-interfaces', {}))
-
-  // Retrive list route types
-  promises.push(ubusCall('ns.routes', 'list-route-types', {}))
-
-  Promise.all(promises)
-    .then((values) => {
+  // Retrive list interfaces && route types
+  try {
+    let getInterfaces = await ubusCall('ns.routes', 'list-interfaces', {})
+    if (
+      getInterfaces &&
+      getInterfaces.data &&
+      getInterfaces.data.interfaces &&
+      getInterfaces.data.interfaces.length
+    ) {
+      routeInterfaces.value = getInterfaces.data.interfaces.map((item: RouteInterface) => ({
+        id: item,
+        label: item
+      }))
+      if (routeInterfaces.value) {
+        routeInterfaces.value.unshift({
+          id: '',
+          label: t('standalone.routes.interface_unspecified')
+        })
+      }
+    }
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('standalone.routes.cannot_retrive_interfaces')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    try {
+      let getRouteTypes = await ubusCall('ns.routes', 'list-route-types', {})
       if (
-        values[0] &&
-        values[0].data &&
-        values[0].data.interfaces &&
-        values[0].data.interfaces.length
+        getRouteTypes &&
+        getRouteTypes.data &&
+        getRouteTypes.data.types &&
+        getRouteTypes.data.types.length
       )
-        routeInterfaces.value = values[0].data.interfaces.map((item: RouteInterface) => ({
+        routeTypes.value = getRouteTypes.data.types.map((item: RouteType) => ({
           id: item,
           label: item
         }))
-
-      if (values[1] && values[1].data && values[1].data.types && values[1].data.types.length)
-        routeTypes.value = values[1].data.types.map((item: RouteType) => ({
-          id: item,
-          label: item
-        }))
-    })
-    .catch((exception: AxiosError) => {
-      errorLoadingData.value.notificationTitle = t('standalone.routes.retrive_error')
+    } catch (exception: any) {
+      errorLoadingData.value.notificationTitle = t('standalone.routes.cannot_retrive_route_types')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    })
-    .finally(() => (loading.value = false))
+    } finally {
+      loading.value = false
+    }
+  }
 }
 
 /**
  * Validation form.
  */
 function validate(): boolean {
-  messageBag.value = new MessageBag()
-  let errMessage = validateRequired(form.value.network_address).errMessage
-  if (errMessage) {
-    messageBag.value.set('label', [t(errMessage.valueOf())])
-    labelElement.value?.focus()
+  let isValidationOk = true
+
+  // NETWORK ADDRESS
+  if (form.value.network_address) {
+    if (props.protocol === 'ipv4') {
+      let { valid, errMessage } = validateIp4Cidr(form.value.network_address)
+      if (!valid) {
+        error.value.networkAddress = t(errMessage as string)
+        isValidationOk = false
+      }
+    }
+    if (props.protocol === 'ipv6') {
+      let { valid, errMessage } = validateIp6Cidr(form.value.network_address)
+      if (!valid) {
+        error.value.networkAddress = t(errMessage as string)
+        isValidationOk = false
+      }
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(form.value.network_address)
+    if (!valid) {
+      error.value.networkAddress = t(errMessage as string)
+      isValidationOk = false
+    }
   }
-  errMessage = validateRequired(form.value.gateway).errMessage
-  if (errMessage) {
-    messageBag.value.set('label', [t(errMessage.valueOf())])
-    labelElement.value?.focus()
+
+  // GATEWAY
+  if (form.value.gateway) {
+    if (props.protocol === 'ipv4') {
+      let { valid, errMessage } = validateIp4Address(form.value.gateway)
+      if (!valid) {
+        error.value.gateway = t(errMessage as string)
+        isValidationOk = false
+      }
+    }
+    if (props.protocol === 'ipv6') {
+      let { valid, errMessage } = validateIp6Address(form.value.gateway)
+      if (!valid) {
+        error.value.gateway = t(errMessage as string)
+        isValidationOk = false
+      }
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(form.value.gateway)
+    if (!valid) {
+      error.value.gateway = t(errMessage as string)
+      isValidationOk = false
+    }
   }
-  return !(messageBag.value.size > 0)
+
+  // METRIC
+  if (form.value.metric) {
+    let validMetric = false
+    if (
+      form.value.metric &&
+      Number(form.value.metric) &&
+      !isNaN(Number(form.value.metric)) &&
+      Number(form.value.metric) >= 0
+    )
+      validMetric = true
+
+    if (!validMetric) {
+      error.value.metric = t('standalone.routes.invalid_metric')
+      isValidationOk = false
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(form.value.metric)
+    if (!valid) {
+      error.value.metric = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  // MTU
+  if (form.value.mtu) {
+    if (props.protocol === 'ipv4') {
+      let { valid, errMessage } = validateIpv4Mtu(form.value.mtu)
+      if (!valid) {
+        error.value.mtu = t(errMessage as string)
+        isValidationOk = false
+        isExpandedAdvancedSettings.value = true
+      }
+    }
+    if (props.protocol === 'ipv6') {
+      let { valid, errMessage } = validateIpv6Mtu(form.value.mtu)
+      if (!valid) {
+        error.value.mtu = t(errMessage as string)
+        isValidationOk = false
+        isExpandedAdvancedSettings.value = true
+      }
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(form.value.mtu)
+    if (!valid) {
+      error.value.mtu = t(errMessage as string)
+      isValidationOk = false
+      isExpandedAdvancedSettings.value = true
+    }
+  }
+
+  return isValidationOk
 }
 
 /**
@@ -307,13 +417,13 @@ function editRoute() {
       />
       <NeTextInput
         v-model="form.network_address"
-        :invalid-message="messageBag.get('label')?.[0]"
+        :invalid-message="error.networkAddress"
         :placeholder="props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0'"
         :label="t('standalone.routes.route_network_address')"
       />
       <NeTextInput
         v-model="form.gateway"
-        :invalid-message="messageBag.get('label')?.[0]"
+        :invalid-message="error.gateway"
         :placeholder="props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1'"
         :label="t('standalone.routes.route_gateway')"
       >
@@ -327,6 +437,7 @@ function editRoute() {
       </NeTextInput>
       <NeTextInput
         v-model="form.metric"
+        :invalid-message="error.metric"
         placeholder="0"
         :label="t('standalone.routes.route_metric')"
       />
@@ -363,7 +474,7 @@ function editRoute() {
           />
           <NeTextInput
             v-model="form.mtu"
-            invalid-message=""
+            :invalid-message="error.mtu"
             placeholder="1500"
             :label="t('standalone.routes.route_mtu')"
           />

@@ -439,11 +439,13 @@
       "edit_route_ipv6": "Edit IPv6 route",
       "delete_route_ipv4": "Delete IPv4 route",
       "delete_route_ipv6": "Delete IPv6 route",
-      "delete_route_name": "Do you really want to delete the route '{name}'?",
+      "delete_route_name": "Delete route '{name}'?",
       "cannot_load_routes": "Cannot retrive routes",
       "cannot_create_route": "Cannot create route",
       "cannot_edit_route": "Cannot edit route",
-      "retrive_error": "Failed to retrieve interfaces and route types",
+      "cannot_retrive_interfaces": "Cannot retrieve interfaces",
+      "cannot_retrive_route_types": "Cannot retrieve route types",
+      "interface_unspecified": "Unspecified",
       "route_status": "State",
       "route_status_table": "Status",
       "route_status_enabled": "Enabled",
@@ -451,7 +453,7 @@
       "route_name": "Route name",
       "route_network_address": "Network address",
       "route_gateway": "Gateway",
-      "route_gateway_helper": "Helper Gateway",
+      "route_gateway_helper": "Lorem ipsum, or lipsum as it is sometimes known",
       "route_metric": "Metric",
       "route_interface": "Interface",
       "route_protocol": "Protocol",
@@ -459,7 +461,8 @@
       "route_type": "Route type",
       "route_choose_type": "Select route type",
       "route_mtu": "MTU",
-      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix"
+      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix",
+      "invalid_metric": "Enter an integer number >= 0"
     },
     "users_and_objects": {
       "title": "Users & objects"

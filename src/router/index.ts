@@ -46,6 +46,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')
   },
   {
+    path: 'network/dns-dhcp',
+    name: 'DNSAndDHCP',
+    component: () => import('../views/standalone/network/DnsDhcpView.vue')
+  },
+  {
     path: 'network/multi-wan',
     name: 'MultiWAN',
     component: () => import('../views/standalone/network/MultiWanView.vue')

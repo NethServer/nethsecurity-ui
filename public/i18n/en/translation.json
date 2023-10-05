@@ -439,7 +439,7 @@
       "edit_route_ipv6": "Edit IPv6 route",
       "delete_route_ipv4": "Delete IPv4 route",
       "delete_route_ipv6": "Delete IPv6 route",
-      "delete_route_name": "Delete route '{name}'?",
+      "delete_route_name": "Delete route {name}?",
       "cannot_load_routes": "Cannot retrive routes",
       "cannot_create_route": "Cannot create route",
       "cannot_edit_route": "Cannot edit route",
@@ -463,6 +463,37 @@
       "route_mtu": "MTU",
       "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix",
       "invalid_metric": "Enter an integer number >= 0"
+    },
+    "hotspot": {
+      "title": "Hotspot",
+      "tabs": {
+        "status": "Status",
+        "settings": "Settings"
+      },
+      "settings": {
+        "login": "Login",
+        "login_description": "Authenticate to edit hotspot configuration or unregister your hotspot.",
+        "login_hostname": "Host name",
+        "login_username": "Username",
+        "login_password": "Password",
+        "login_helper_username": "Lorem ipsum, or lipsum as it is sometimes known",
+        "configurtion": "Hotspot configuration",
+        "configurtion_unit_name": "Unit name",
+        "configurtion_unit_name_placeholder": "Samplename",
+        "configurtion_unit_description": "Unit description",
+        "configurtion_unit_description_placeholder": "Unit description",
+        "configurtion_network_address": "Network address",
+        "configurtion_network_address_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+        "configurtion_network_address_placeholder": "192.168.0.0/24",
+        "configurtion_dhcp_range_start": "DHCP range start",
+        "configurtion_dhcp_range_start_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+        "configurtion_dhcp_range_start_placeholder": "192.168.0.2",
+        "configurtion_dhcp_range_end": "DHCP range end",
+        "configurtion_dhcp_range_end_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+        "configurtion_dhcp_range_end_placeholder": "192.168.0.254",
+        "configurtion_max_client_allowed": "Max clients allowed",
+        "configurtion_max_client_allowed_placeholder": "253"
+      }
     },
     "users_and_objects": {
       "title": "Users & objects"

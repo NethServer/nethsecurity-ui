@@ -158,7 +158,7 @@ function scrollToMainTable() {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="5" />
+  <NeSkeleton v-if="loading" :lines="15" />
   <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
     <p>{{ t('standalone.routes.no_route_found') }}</p>
     <NeButton :kind="'primary'" @click="openCreateRoute()">
@@ -244,7 +244,8 @@ function scrollToMainTable() {
               <template v-for="item in routes" :key="item.id">
                 <tr :class="{ 'opacity-30': item.disabled !== '0' }">
                   <td>
-                    {{ item.ns_description }}
+										<span v-if="item.ns_description">{{ item.ns_description }}</span>
+										<span v-else>-</span>
                   </td>
                   <td>
                     <span>

@@ -462,7 +462,7 @@
       "route_choose_type": "Select route type",
       "route_mtu": "MTU",
       "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix",
-      "invalid_metric": "Enter an integer number >= 0"
+      "invalid_metric": "Enter an integer number greater than or equal to zero"
     },
     "users_and_objects": {
       "title": "Users & objects"

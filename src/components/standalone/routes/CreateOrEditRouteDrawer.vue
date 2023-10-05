@@ -257,13 +257,8 @@ function validate(): boolean {
   // METRIC
   if (form.value.metric) {
     let validMetric = false
-    if (
-      form.value.metric &&
-      Number(form.value.metric) &&
-      !isNaN(Number(form.value.metric)) &&
-      Number(form.value.metric) >= 0
-    )
-      validMetric = true
+
+    if (!isNaN(Number(form.value.metric)) && Number(form.value.metric) >= 0) validMetric = true
 
     if (!validMetric) {
       error.value.metric = t('standalone.routes.invalid_metric')

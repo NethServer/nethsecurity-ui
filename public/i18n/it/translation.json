@@ -57,7 +57,18 @@
     "cannot_retrieve_wan_list": "Impossibile recuperare l'elenco delle WAN",
     "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico",
     "cancel_registration_error": "Impossibile annullare la registrazione",
-    "register_unit_error": "Impossibile registrare l'unità"
+    "register_unit_error": "Impossibile registrare l'unità",
+    "cannot_retrieve_zones": "Impossibile recuperare le zone",
+    "cannot_retrieve_protocols": "Impossibile recuperare i protocolli",
+    "required_option": "Selezionare almeno una opzione",
+    "cannot_retrieve_wan_interfaces": "Impossibile recuperare le interfacce WAN",
+    "cannot_disable_port_forward": "Impossibile disabilitare il port forward",
+    "invalid_port": "Inserire un numero intero compreso tra 1 e 65535",
+    "cannot_create_port_forward": "Impossibile creare port forward",
+    "cannot_enable_port_forward": "Impossibile abilitare il port forward",
+    "cannot_duplicate_port_forward": "Impossibile duplicare il port forward",
+    "cannot_edit_port_forward": "Impossibile modificare il port forward",
+    "cannot_delete_port_forward": "Impossibile eliminare il port forward"
   },
   "login": {
     "sign_in": "Accedi",
@@ -427,7 +438,8 @@
       "protocol": "Protocollo",
       "interface_recovery_description": "Numero di test necessari per abilitare o disabilitare la singola interfaccia WAN.",
       "delete_rule_modal": {
-        "button": "@:common.delete"
+        "button": "@:common.delete",
+        "title": "Eliminare la regola '{name}'?"
       },
       "all_protocols": "Tutti i protocolli",
       "destination_address": "Indirizzo di destinazione",
@@ -439,13 +451,19 @@
       "interface_recovery_title": "Test WAN",
       "edit_rule": "Modifica regola {name}",
       "delete_policy_modal": {
-        "button": "@:common.delete"
+        "button": "@:common.delete",
+        "title": "Eliminare la policy '{name}'?"
       },
       "create_new_rule": "Crea nuova regola",
       "rule_name": "Nome regola",
       "tracking_hostnames_or_ips_title": "Monitoraggio WAN",
       "tracking_hostnames_or_ips_description": "Inserisci gli indirizzi IP (o i nomi host) da pingare per monitorare lo stato delle WAN. Se almeno un host risponde al ping, il WAN rimane attivo",
-      "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività"
+      "ping_settings_description": "Configura come vengono inviati i ping di controllo. I valori predefiniti dovrebbero essere adatti alla maggior parte delle connettività",
+      "create_policy_before": "Creare una policy prima di continuare",
+      "all": "Tutti",
+      "source_port": "Porta sorgente",
+      "any": "Qualsiasi",
+      "select_policy": "Seleziona la policy"
     },
     "zones_and_policies": {
       "traffic_policy": {
@@ -472,7 +490,48 @@
       "delete_zone": "Eliminare \"{0}\"?",
       "interfaces": "Interfacce",
       "traffic_to_firewall": "Traffico verso firewall",
-      "limit_log_messages": "Limita i messaggi di log"
+      "limit_log_messages": "Limita i messaggi di log",
+      "edit_zone_name": "Modifica zona {name}",
+      "zone_already_exists": "Zona esistente"
+    },
+    "port_forward": {
+      "disable": "Disabilita",
+      "restrict_access_to": "Limitare l'accesso a",
+      "advanced_settings": "Impostazioni avanzate",
+      "edit_port_forward": "Modifica port forward",
+      "protocols": "Protocolli",
+      "enabled": "Abilitato",
+      "destination_address": "Indirizzo di destinazione",
+      "enable": "Abilita",
+      "choose_zone": "Scegli zona",
+      "no_port_forward_found": "Nessun port forward trovato",
+      "add_ip_address": "Aggiungi indirizzo IP",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "destination": "Destinazione",
+      "copy": "Copia",
+      "delete_port_forward": "Elimina port forward",
+      "any": "Qualsiasi",
+      "hairpin_nat": "Hairpin NAT",
+      "name": "Nome",
+      "any_zone": "Qualsiasi zona",
+      "delete_port_forward_message": "Stai per eliminare il port forward '{name} '",
+      "source_port": "Porta sorgente",
+      "filter_change_suggestion": "Prova a modificare il filtro",
+      "duplicate": "Duplica",
+      "destination_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "status": "Stato",
+      "title": "Port forward",
+      "hairpin_nat_zones": "Hairpin NAT abilitato sulle seguenti zone",
+      "log": "Log",
+      "wan_ip": "IP WAN",
+      "destination_port": "Porta di destinazione",
+      "add_port_forward": "Aggiungi port forward",
+      "no_port_forward_configured": "Nessun port forward configurato",
+      "destination_zone": "Zona di destinazione",
+      "restrict_access_to_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "disabled": "Disabilitato",
+      "choose_protocol": "Scegli protocollo",
+      "filter": "Filtra"
     }
   },
   "controller": {

@@ -244,8 +244,8 @@ function scrollToMainTable() {
               <template v-for="item in routes" :key="item.id">
                 <tr :class="{ 'opacity-30': item.disabled !== '0' }">
                   <td>
-										<span v-if="item.ns_description">{{ item.ns_description }}</span>
-										<span v-else>-</span>
+                    <span v-if="item.ns_description">{{ item.ns_description }}</span>
+                    <span v-else>-</span>
                   </td>
                   <td>
                     <span>

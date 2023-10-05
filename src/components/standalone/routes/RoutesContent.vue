@@ -22,6 +22,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
   faEarthAmerica,
+  faMinus,
+  faLocationDot,
   faCircleCheck,
   faCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
@@ -46,11 +48,11 @@ let createEditRoute = ref(false)
 let routes: any = ref({})
 let table: any = ref({})
 let loading = ref(true)
-let isExpandedMainTable = ref(false)
 let selectedRoute = ref({})
 let deleting = ref(false)
 let deleteError = ref<Error>()
 let deleteRouteId = ref(undefined)
+let deleteRouteName = ref(undefined)
 let error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -139,7 +141,18 @@ function deleteRouteHandler() {
       .finally(() => {
         deleting.value = false
         deleteRouteId.value = undefined
+        deleteRouteName.value = undefined
       })
+  }
+}
+
+function scrollToMainTable() {
+  let element = document.getElementById('divMainTable')
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
   }
 }
 </script>
@@ -186,19 +199,7 @@ function deleteRouteHandler() {
   />
   <div v-if="!loading && routes.length">
     <div class="my-4">
-      <NeButton
-        kind="tertiary"
-        size="sm"
-        @click="isExpandedMainTable = !isExpandedMainTable"
-        class="-ml-2"
-      >
-        <template #suffix>
-          <font-awesome-icon
-            :icon="['fas', isExpandedMainTable ? 'chevron-up' : 'chevron-down']"
-            class="h-3 w-3"
-            aria-hidden="true"
-          />
-        </template>
+      <NeButton kind="tertiary" size="sm" class="-ml-2" @click="scrollToMainTable()">
         {{ t('standalone.routes.route_toggle_table') }}
       </NeButton>
     </div>
@@ -246,7 +247,15 @@ function deleteRouteHandler() {
           <template #interface="{ item }">
             <div class="flex items-center gap-x-4">
               <span>
-                <FontAwesomeIcon v-if="item.interface" :icon="faEarthAmerica" />
+                <FontAwesomeIcon v-if="!item.interface" :icon="faMinus" />
+                <FontAwesomeIcon
+                  v-if="item.interface && item.interface === 'wan'"
+                  :icon="faEarthAmerica"
+                />
+                <FontAwesomeIcon
+                  v-if="item.interface && item.interface === 'lan'"
+                  :icon="faLocationDot"
+                />
                 {{ item.interface }}
               </span>
             </div>
@@ -296,7 +305,10 @@ function deleteRouteHandler() {
                     id: 'delete',
                     danger: true,
                     label: t('common.delete'),
-                    action: () => (deleteRouteId = item.id)
+                    action: () => {
+                      deleteRouteId = item.id
+                      deleteRouteName = item.ns_description
+                    }
                   }
                 ]"
                 align-to-right
@@ -305,9 +317,9 @@ function deleteRouteHandler() {
           </template>
         </NeTable>
       </template>
-      <template v-if="isExpandedMainTable">
+      <div id="divMainTable">
         <NeTitle level="h3">{{ t('standalone.routes.main_table') }}</NeTitle>
-        <template v-if="!loading && isExpandedMainTable && table.length > 0">
+        <template v-if="!loading && table.length > 0">
           <NeTable
             :data="table"
             :readonly="true"
@@ -363,7 +375,7 @@ function deleteRouteHandler() {
             </template>
           </NeTable>
         </template>
-      </template>
+      </div>
     </div>
   </div>
   <CreateOrEditRouteDrawer
@@ -387,6 +399,9 @@ function deleteRouteHandler() {
     @close="deleteRouteId = undefined"
     @primary-click="deleteRouteHandler()"
   >
+    <div>
+      {{ t('standalone.routes.delete_route_name', { name: deleteRouteName }) }}
+    </div>
     <NeInlineNotification
       v-if="deleteError"
       :title="t(getAxiosErrorMessage(deleteError.message))"

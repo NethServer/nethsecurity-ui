@@ -8,7 +8,7 @@ import { NeTabs, NeTitle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import RoutesManager from '@/components/standalone/routes/RoutesManager.vue'
+import RoutesContent from '@/components/standalone/routes/RoutesContent.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -47,7 +47,7 @@ watch(selectedTab, () => {
       class="mb-8"
       @selectTab="selectedTab = $event"
     />
-    <RoutesManager v-if="selectedTab == 'routes-ipv4'" :protocol="'ipv4'" />
-    <RoutesManager v-if="selectedTab == 'routes-ipv6'" :protocol="'ipv6'" />
+    <RoutesContent v-if="selectedTab == 'routes-ipv4'" :protocol="'ipv4'" />
+    <RoutesContent v-if="selectedTab == 'routes-ipv6'" :protocol="'ipv6'" />
   </div>
 </template>

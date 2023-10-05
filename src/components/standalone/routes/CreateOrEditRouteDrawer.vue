@@ -66,12 +66,12 @@ const originalForm = {
   id: '',
   name: '',
   status: true,
-  network_address: '',
-  gateway: '',
-  metric: '',
+  network_address: props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0',
+  gateway: props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1',
+  metric: '0',
   routeInterface: '',
-  routeType: '',
-  mtu: '',
+  routeType: 'unicast',
+  mtu: '1500',
   onlink: false
 }
 
@@ -79,7 +79,6 @@ const form = ref<Form>({ ...originalForm })
 
 let routeInterfaces = ref<Array<RouteInterface>>()
 let routeTypes = ref<Array<RouteType>>()
-let titleModal = ref('')
 let loading = ref(false)
 let saving = ref(false)
 let messageBag = ref(new MessageBag())
@@ -101,8 +100,6 @@ const emit = defineEmits(['routeCreated', 'routeEdited', 'abortCreation'])
 watch(
   () => props.editRoute,
   () => {
-    controlTypeRoute()
-
     if (props.editRoute) {
       let selectedRoute = props.editRoute
       if (selectedRoute && selectedRoute.item) {
@@ -116,27 +113,28 @@ watch(
         if (selectedRoute.item.type) form.value.routeType = selectedRoute.item.type
         if (selectedRoute.item.mtu) form.value.mtu = selectedRoute.item.mtu
         if (selectedRoute.item.onlink) form.value.onlink = selectedRoute.item.mtu === '0'
-      } else form.value = originalForm
-    }
+      } else form.value = { ...originalForm }
+    } else form.value = { ...originalForm }
   }
 )
 
 onMounted(() => {
   getFirewallData()
-  controlTypeRoute()
 })
 
 /**
  * Set static string translation IPv4 or IPv6
  */
-function controlTypeRoute() {
+function getDrawerTitle() {
+  let title = ''
   if (props.protocol === 'ipv4') {
-    titleModal.value = t('standalone.routes.create_route_ipv4')
-    if (props.editRoute.item) titleModal.value = t('standalone.routes.edit_route_ipv4')
+    title = t('standalone.routes.create_route_ipv4')
+    if (props.editRoute.item) title = t('standalone.routes.edit_route_ipv4')
   } else if (props.protocol === 'ipv6') {
-    titleModal.value = t('standalone.routes.create_route_ipv6')
-    if (props.editRoute.item) titleModal.value = t('standalone.routes.edit_route_ipv6')
+    title = t('standalone.routes.create_route_ipv6')
+    if (props.editRoute.item) title = t('standalone.routes.edit_route_ipv6')
   }
+  return title
 }
 
 /**
@@ -175,7 +173,7 @@ function getFirewallData() {
         }))
     })
     .catch((exception: AxiosError) => {
-      errorLoadingData.value.notificationTitle = t('error.generic_error')
+      errorLoadingData.value.notificationTitle = t('standalone.routes.retrive_error')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
     })
     .finally(() => (loading.value = false))
@@ -192,11 +190,6 @@ function validate(): boolean {
     labelElement.value?.focus()
   }
   errMessage = validateRequired(form.value.gateway).errMessage
-  if (errMessage) {
-    messageBag.value.set('label', [t(errMessage.valueOf())])
-    labelElement.value?.focus()
-  }
-  errMessage = validateRequired(form.value.routeInterface).errMessage
   if (errMessage) {
     messageBag.value.set('label', [t(errMessage.valueOf())])
     labelElement.value?.focus()
@@ -287,7 +280,7 @@ function editRoute() {
 </script>
 
 <template>
-  <NeSideDrawer :is-shown="isShown" :title="titleModal" @close="emit('abortCreation')">
+  <NeSideDrawer :is-shown="isShown" :title="getDrawerTitle()" @close="emit('abortCreation')">
     <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
       v-if="errorLoadingData.notificationTitle"
@@ -342,7 +335,6 @@ function editRoute() {
         :options="routeInterfaces"
         :label="t('standalone.routes.route_interface')"
         :placeholder="t('standalone.routes.route_choose_interface')"
-        :invalid-message="messageBag.get('label')?.[0]"
         class="grow"
       />
       <NeButton

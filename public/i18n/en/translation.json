@@ -54,7 +54,14 @@
     "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
-    "cancel_registration_error": "Cannot cancel registration"
+    "cancel_registration_error": "Cannot cancel registration",
+    "cannot_load_routes": "Cannot retrive routes",
+    "cannot_create_route": "Cannot create route",
+    "cannot_edit_route": "Cannot edit route",
+    "cannot_retrive_interfaces": "Cannot retrieve interfaces",
+    "cannot_retrive_route_types": "Cannot retrieve route types",
+    "invalid_metric": "Enter an integer number greater or equal than 0",
+    "cannot_update_status_route": "Cannot update status route"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -425,12 +432,11 @@
     "routes": {
       "title": "Routes",
       "tabs": {
-        "routes_ipv4": "IPv4 Routes",
-        "routes_ipv6": "IPv6 Routes"
+        "routes_ipv4": "IPv4 routes",
+        "routes_ipv6": "IPv6 routes"
       },
       "route_description": "Routing defines over which interface and gateway a certain host or network can be reached.",
-      "route_toggle_table": "Main table active routes",
-      "no_route_found": "No route found",
+      "no_route_found": "No routes found",
       "main_table": "Main table active routes",
       "create_route": "Add route",
       "create_route_ipv4": "Add IPv4 route",
@@ -440,13 +446,8 @@
       "delete_route_ipv4": "Delete IPv4 route",
       "delete_route_ipv6": "Delete IPv6 route",
       "delete_route_name": "Delete route '{name}'?",
-      "cannot_load_routes": "Cannot retrive routes",
-      "cannot_create_route": "Cannot create route",
-      "cannot_edit_route": "Cannot edit route",
-      "cannot_retrive_interfaces": "Cannot retrieve interfaces",
-      "cannot_retrive_route_types": "Cannot retrieve route types",
       "interface_unspecified": "Unspecified",
-      "route_status": "State",
+      "route_status": "Status",
       "route_status_table": "Status",
       "route_status_enabled": "Enabled",
       "route_status_disabled": "Disabled",
@@ -461,8 +462,7 @@
       "route_type": "Route type",
       "route_choose_type": "Select route type",
       "route_mtu": "MTU",
-      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix",
-      "invalid_metric": "Enter an integer number greater than or equal to zero"
+      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix"
     },
     "users_and_objects": {
       "title": "Users & objects"

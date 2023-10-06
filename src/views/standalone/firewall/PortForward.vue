@@ -206,7 +206,7 @@ onMounted(() => {
     <template v-else>
       <div
         v-if="Object.keys(portForwards).length == 0"
-        class="flex flex-col items-center justify-center rounded-md p-10 dark:bg-gray-800"
+        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
       >
         <p class="mb-4 text-sm">
           <strong>{{ t('standalone.port_forward.no_port_forward_configured') }}</strong>
@@ -223,7 +223,7 @@ onMounted(() => {
       </div>
       <div
         v-else-if="Object.keys(filteredPortForwards).length == 0"
-        class="flex flex-col items-center justify-center rounded-md p-10 dark:bg-gray-800"
+        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
       >
         <p class="mb-4 text-sm">
           <strong>{{ t('standalone.port_forward.no_port_forward_found') }}</strong>

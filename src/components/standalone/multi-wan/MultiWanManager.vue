@@ -5,126 +5,137 @@
 
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { reactive, ref } from 'vue'
-import type { Policy, Rule } from '@/composables/useMwanConfig'
-import { useMwanConfig } from '@/composables/useMwanConfig'
+import { onMounted, onUnmounted, ref } from 'vue'
 import {
   getAxiosErrorMessage,
+  NeBadge,
   NeButton,
-  NeInlineNotification,
-  NeModal,
-  NeSideDrawer,
-  NeSkeleton
+  NeDropdown,
+  NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
-import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
-import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
-import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosError } from 'axios'
-import PolicyView from '@/components/standalone/multi-wan/PolicyView.vue'
+import type { Member, Policy, Rule } from '@/composables/useMwan'
+import { useMwan } from '@/composables/useMwan'
+import NeTable from '@/components/standalone/NeTable.vue'
+import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
+import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
+import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
 import PolicyEditor from '@/components/standalone/multi-wan/PolicyEditor.vue'
+import RuleManager from '@/components/standalone/multi-wan/RuleManager.vue'
+import RuleCreator from '@/components/standalone/multi-wan/RuleCreator.vue'
+import RuleDeleter from '@/components/standalone/multi-wan/RuleDeleter.vue'
+import RuleEditor from '@/components/standalone/multi-wan/RuleEditor.vue'
 
 const { t } = useI18n()
 
-const mwanConfig = reactive(useMwanConfig())
+const mwan = ref(useMwan())
+
 const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createPolicy = ref(false)
-const deletePolicy = ref<Policy>()
-const deletingPolicy = ref(false)
-const errorDeletingPolicy = ref<Error>()
-const editPolicy = ref<Policy>()
+const toDeletePolicy = ref<Policy>()
+const toEditPolicy = ref<Policy>()
 
 const createRule = ref(false)
-const editRule = ref<Rule>()
-const deleteRule = ref<Rule>()
-const deletingRule = ref(false)
-const errorDeletingRule = ref<Error>()
+const toDeleteRule = ref<Rule>()
+const toEditRule = ref<Rule>()
 
-/**
- * Due to the component nature of the RuleManager, there's no way to notify the component of a change unless refactoring
- * the component. This variable is keyed to RuleManager so, when it gets updated, triggers a redraw of the component.
- */
-const ruleTimestamp = ref(Date.now())
+let intervalId: number
 
-/**
- * Handler for policyCreated event.
- */
-function policyCreatedHandler() {
+onMounted(() => {
+  intervalId = setInterval(() => {
+    mwan.value.fetch()
+  }, 5000)
+})
+
+onUnmounted(() => {
+  clearInterval(intervalId)
+})
+
+function policyCreated() {
   createPolicy.value = false
   reloadConfig()
 }
 
-/**
- * Handler for policy edited with success event.
- */
-function policyEditedHandler() {
-  editPolicy.value = undefined
+function policyDeleted() {
+  toDeletePolicy.value = undefined
   reloadConfig()
 }
 
-/**
- * Handler for the ruleCreated event.
- */
-function ruleCreatedHandler() {
+function policyEdited() {
+  toEditPolicy.value = undefined
+  reloadConfig()
+}
+
+function ruleCreated() {
   createRule.value = false
   reloadConfig()
 }
 
-/**
- * Rule Created Handler
- */
-function ruleEditedHandler() {
-  editRule.value = undefined
+function ruleDeleted() {
+  toDeleteRule.value = undefined
+  reloadConfig()
+}
+
+function ruleEdited() {
+  toEditRule.value = undefined
   reloadConfig()
 }
 
 function reloadConfig() {
-  mwanConfig.fetch()
-  ruleTimestamp.value = Date.now()
+  mwan.value.fetch()
   uciPendingChangesStore.getChanges()
 }
 
-function deleteRuleHandler() {
-  deletingRule.value = true
-  ubusCall('uci', 'delete', {
-    config: 'mwan3',
-    section: deleteRule.value?.name
-  })
-    .then(() => {
-      deleteRule.value = undefined
-      reloadConfig()
-    })
-    .catch((error: AxiosError) => (errorDeletingRule.value = error))
-    .finally(() => (deletingRule.value = false))
+function badgeIcon(member: Member) {
+  switch (member.status) {
+    case 'online':
+      return ['fas', 'circle-check']
+    case 'offline':
+      return ['fas', 'circle-xmark']
+    case 'disconnecting':
+    case 'connecting':
+      return ['fas', 'warning']
+    case 'disabled':
+      return ['fas', 'circle-stop']
+    default:
+      return ['fas', 'clock']
+  }
 }
 
-function deletePolicyHandler() {
-  deletingPolicy.value = true
-  ubusCall('uci', 'delete', {
-    config: 'mwan3',
-    section: deletePolicy.value?.name
-  })
-    .then(() => {
-      deletePolicy.value = undefined
-      reloadConfig()
-    })
-    .catch((error: AxiosError) => (errorDeletingPolicy.value = error))
-    .finally(() => (deletingPolicy.value = false))
+function badgeType(member: Member) {
+  switch (member.status) {
+    case 'online':
+      return 'success'
+    case 'offline':
+      return 'error'
+    case 'disconnecting':
+    case 'connecting':
+      return 'warning'
+    default:
+      return undefined
+  }
+}
+
+function policyIcon(policy: Policy) {
+  switch (policy.type) {
+    case 'balance':
+      return ['fas', 'scale-balanced']
+    case 'backup':
+      return ['fas', 'layer-group']
+    default:
+      return ['fas', 'user-gear']
+  }
 }
 </script>
 
 <template>
-  <NeSkeleton v-if="mwanConfig.loading" :lines="10" />
-  <div v-else class="space-y-16">
+  <div class="space-y-16">
     <div class="space-y-8">
-      <div class="flex">
-        <div>
+      <div class="flex flex-wrap gap-y-4">
+        <div class="mr-auto">
           <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
             {{ t('standalone.multi_wan.policy') }}
           </h6>
@@ -133,9 +144,9 @@ function deletePolicyHandler() {
           </p>
         </div>
         <NeButton
-          v-if="mwanConfig.policies.length >= 1"
-          :kind="'secondary'"
-          class="ml-auto self-start"
+          v-if="mwan.policies.length > 0"
+          class="self-start"
+          kind="secondary"
           @click="createPolicy = true"
         >
           <template #prefix>
@@ -144,19 +155,16 @@ function deletePolicyHandler() {
           {{ t('standalone.multi_wan.create_policy') }}
         </NeButton>
       </div>
-      <div class="space-y-6">
-        <NeSkeleton v-if="mwanConfig.loading" :lines="3" :size="'sm'" />
-        <template v-else-if="mwanConfig.policies.length > 0">
-          <PolicyView
-            v-for="(policy, index) in mwanConfig.policies"
-            :key="index"
-            :belongs-to-rule="mwanConfig.rules.some((rule) => rule.policy.name == policy.name)"
-            :policy="policy"
-            @delete="(toDeletePolicy) => (deletePolicy = toDeletePolicy)"
-            @edit="(toEditPolicy) => (editPolicy = toEditPolicy)"
-          />
-        </template>
-        <HorizontalCard v-else class="space-y-4 text-center">
+      <NeInlineNotification
+        v-if="mwan.error"
+        :title="t(getAxiosErrorMessage(mwan.error))"
+        kind="error"
+      />
+      <template v-else>
+        <HorizontalCard
+          v-if="!mwan.loading && mwan.policies.length < 1"
+          class="space-y-4 text-center"
+        >
           <p>{{ t('standalone.multi_wan.no_policy_found') }}</p>
           <NeButton :kind="'primary'" @click="createPolicy = true">
             <template #prefix>
@@ -165,12 +173,98 @@ function deletePolicyHandler() {
             {{ t('standalone.multi_wan.create_default_policy') }}
           </NeButton>
         </HorizontalCard>
-      </div>
+        <NeTable
+          v-else
+          :data="mwan.policies"
+          :headers="[
+            {
+              key: 'label',
+              label: 'Policy Name'
+            },
+            {
+              key: 'type'
+            },
+            {
+              key: 'gateways',
+              label: 'Gateways'
+            },
+            {
+              key: 'actions'
+            }
+          ]"
+          :loading="mwan.loading"
+          :skeleton-lines="3"
+          :style="'card'"
+        >
+          <template #label="{ item }: { item: Policy }">
+            <div class="flex items-center gap-4 border-r pr-8 dark:border-gray-600">
+              <div
+                v-if="item.name == 'ns_default'"
+                class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-gray-50 dark:text-gray-600"
+              >
+                <FontAwesomeIcon :icon="['fas', 'lock']" />
+              </div>
+              <p>{{ item.label ?? item.name }}</p>
+            </div>
+          </template>
+          <template #type="{ item }: { item: Policy }">
+            <div class="flex items-center">
+              <FontAwesomeIcon :icon="policyIcon(item)" class="mr-2" />
+              <p>{{ t(`standalone.multi_wan.modes.${item.type}`) }}</p>
+            </div>
+          </template>
+          <template #gateways="{ item }: { item: Policy }">
+            <div class="space-y-4">
+              <div
+                v-for="([metric, members], metricIndex) in Object.entries(item.members)"
+                :key="metric"
+                class="flex flex-wrap items-center gap-4"
+              >
+                <div v-if="Object.entries(item.members).length > 1">
+                  {{ t('standalone.multi_wan.priority', metricIndex + 1) }}
+                </div>
+                <div class="flex flex-wrap gap-4">
+                  <template v-for="(member, index) in members" :key="index">
+                    <NeBadge
+                      :icon="badgeIcon(member)"
+                      :kind="badgeType(member)"
+                      :label="members.length > 1 ? `weight: ${member.weight}` : ''"
+                      :text="member.interface"
+                    />
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template #actions="{ item }: { item: Policy }">
+            <div class="flex items-center justify-end">
+              <NeButton :kind="'tertiary'" @click="toEditPolicy = item">
+                <template #prefix>
+                  <FontAwesomeIcon :icon="['fas', 'edit']" />
+                </template>
+                {{ t('common.edit') }}
+              </NeButton>
+              <NeDropdown
+                :items="[
+                  {
+                    id: 'delete',
+                    label: t('common.delete'),
+                    disabled: item.name == 'ns_default',
+                    action: () => (toDeletePolicy = item),
+                    danger: true
+                  }
+                ]"
+                align-to-right
+              />
+            </div>
+          </template>
+        </NeTable>
+      </template>
     </div>
-    <div v-if="mwanConfig.policies.length > 0">
+    <div>
       <div class="space-y-6">
-        <div class="flex">
-          <div>
+        <div class="flex flex-wrap gap-y-4">
+          <div class="mr-auto">
             <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
               {{ t('standalone.multi_wan.rules') }}
             </h6>
@@ -178,7 +272,12 @@ function deletePolicyHandler() {
               {{ t('standalone.multi_wan.rules_description') }}
             </p>
           </div>
-          <NeButton :kind="'secondary'" class="ml-auto self-start" @click="createRule = true">
+          <NeButton
+            v-if="mwan.policies.length > 0"
+            :kind="'secondary'"
+            class="self-start"
+            @click="createRule = true"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" />
             </template>
@@ -187,82 +286,43 @@ function deletePolicyHandler() {
         </div>
         <div>
           <RuleManager
-            :key="ruleTimestamp"
-            @delete="(toDeleteRule) => (deleteRule = toDeleteRule)"
-            @edit="(toEditRule) => (editRule = toEditRule)"
+            :loading="mwan.loading"
+            :policies-exist="mwan.policies.length > 0"
+            :rules="mwan.rules"
+            @delete="(rule) => (toDeleteRule = rule)"
+            @edit="(rule) => (toEditRule = rule)"
           />
         </div>
       </div>
     </div>
   </div>
   <PolicyCreator
-    :create-default="mwanConfig.policies.length < 1"
+    :create-default="mwan.policies.length < 1"
     :is-shown="createPolicy"
     @close="createPolicy = false"
-    @policy-created="policyCreatedHandler()"
+    @success="policyCreated()"
   />
-  <NeSideDrawer
-    :is-shown="editPolicy != undefined"
-    :title="t('standalone.multi_wan.edit_policy')"
-    @close="editPolicy = undefined"
-  >
-    <PolicyEditor
-      v-if="editPolicy"
-      :policy="editPolicy"
-      @cancel="editPolicy = undefined"
-      @success="policyEditedHandler()"
-    />
-  </NeSideDrawer>
-  <NeSideDrawer
+  <PolicyDeleter
+    :policy="toDeletePolicy"
+    @close="toDeletePolicy = undefined"
+    @success="policyDeleted()"
+  />
+  <PolicyEditor
+    :policy="toEditPolicy"
+    @close="toEditPolicy = undefined"
+    @success="policyEdited()"
+  />
+  <RuleCreator
     :is-shown="createRule"
-    :title="t('standalone.multi_wan.create_new_rule')"
-    @close="createRule = false"
-  >
-    <RuleCreator @cancel="createRule = false" @success="ruleCreatedHandler()" />
-  </NeSideDrawer>
-  <NeSideDrawer
-    :is-shown="editRule != undefined"
-    :title="t('standalone.multi_wan.edit_rule', { name: editRule?.name })"
-    @close="editRule = undefined"
-  >
-    <template v-if="editRule != undefined">
-      <RuleEditor :rule="editRule" @cancel="editRule = undefined" @success="ruleEditedHandler()" />
-    </template>
-  </NeSideDrawer>
-  <!-- TODO: ask for labels for rule delete modal -->
-  <NeModal
-    :primary-button-disabled="deletingRule"
-    :primary-button-loading="deletingRule"
-    :primary-label="t('standalone.multi_wan.delete_rule_modal.button')"
-    :title="t('standalone.multi_wan.delete_rule_modal.title', { name: deleteRule?.name ?? '' })"
-    :visible="deleteRule != undefined"
-    kind="warning"
-    primary-button-kind="danger"
-    @close="deleteRule = undefined"
-    @primary-click="deleteRuleHandler()"
-  >
-    <NeInlineNotification
-      v-if="errorDeletingRule"
-      :title="t(getAxiosErrorMessage(errorDeletingRule.message))"
-      kind="error"
-    />
-  </NeModal>
-  <!-- TODO: ask for labels for policy delete modal -->
-  <NeModal
-    :primary-button-disabled="deletingPolicy"
-    :primary-button-loading="deletingPolicy"
-    :primary-label="t('standalone.multi_wan.delete_policy_modal.button')"
-    :title="t('standalone.multi_wan.delete_policy_modal.title', { name: deletePolicy?.name ?? '' })"
-    :visible="deletePolicy != undefined"
-    kind="warning"
-    primary-button-kind="danger"
-    @close="deletePolicy = undefined"
-    @primary-click="deletePolicyHandler()"
-  >
-    <NeInlineNotification
-      v-if="errorDeletingPolicy"
-      :title="t(getAxiosErrorMessage(errorDeletingPolicy.message))"
-      kind="error"
-    />
-  </NeModal>
+    :policies="mwan.policies"
+    @cancel="createRule = false"
+    @success="ruleCreated()"
+  />
+  <RuleDeleter :rule="toDeleteRule" @cancel="toDeleteRule = undefined" @success="ruleDeleted()" />
+  <RuleEditor
+    :policies="mwan.policies"
+    :rule="toEditRule"
+    @close="toEditRule = undefined"
+    @success="ruleEdited()"
+  />
 </template>

@@ -19,6 +19,7 @@
     "http_404": "Resource not found",
     "http_500": "Server error",
     "required": "Required",
+    "required_option": "Select at least one option",
     "validation_failed": "Validation failed",
     "invalid_hostname": "Invalid hostname",
     "hostname_is_too_long": "Hostname has too many characters",
@@ -34,6 +35,7 @@
     "invalid_ip_v6_address": "Invalid IPv6 address",
     "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
+    "invalid_port": "Enter an integer number between 1 and 65535",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",
@@ -62,6 +64,15 @@
     "cannot_retrive_route_types": "Cannot retrieve route types",
     "invalid_metric": "Enter an integer number greater or equal than 0",
     "cannot_update_status_route": "Cannot update status route"
+    "cannot_delete_port_forward": "Cannot delete port forward",
+    "cannot_create_port_forward": "Cannot create port forward",
+    "cannot_edit_port_forward": "Cannot edit port forward",
+    "cannot_duplicate_port_forward": "Cannot duplicate port forward",
+    "cannot_enable_port_forward": "Cannot enable port forward",
+    "cannot_disable_port_forward": "Cannot disable port forward",
+    "cannot_retrieve_protocols": "Cannot retrieve protocols",
+    "cannot_retrieve_zones": "Cannot retrieve zones",
+    "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -382,7 +393,9 @@
       "create_new_rule": "Create new rule",
       "rule_name": "Rule name",
       "assigned_policy": "Assigned policy",
+      "select_policy": "Select policy",
       "source_address": "Source Address",
+      "source_port": "Source Port",
       "destination_address": "Destination Address",
       "destination_port": "Destination Port",
       "protocol": "Protocol",
@@ -391,6 +404,7 @@
       "rules": "Rules",
       "rules_description": "Routing policies are assigned to hosts via rules. To use a different policy than the default, create a rule and place it above the default rule.",
       "no_rule_found": "No rule found",
+      "create_policy_before": "Please create a policy before continuing",
       "create_rule": "Create rule",
       "label_input_label": "Label",
       "behave_picker": {
@@ -423,11 +437,15 @@
       "interface_recovery_title": "WANs tests",
       "interface_recovery_description": "Number of tests needed to enable or disable the single WAN interface.",
       "delete_rule_modal": {
+        "title": "Are you sure you want to delete '{name}' rule?",
         "button": "@:common.delete"
       },
       "delete_policy_modal": {
+        "title": "Are you sure you want to delete '{name}' policy?",
         "button": "@:common.delete"
-      }
+      },
+      "any": "any",
+      "all": "all"
     },
     "routes": {
       "title": "Routes",
@@ -492,7 +510,48 @@
       "add_new_subnet": "Add new subnet",
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
-      "delete_zone": "Delete \"{0}\"?"
+      "delete_zone": "Delete \"{0}\"?",
+      "edit_zone_name": "Edit zone {name}",
+      "zone_already_exists": "Zone already exists"
+    },
+    "port_forward": {
+      "title": "Port forward",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "add_port_forward": "Add port forward",
+      "name": "Name",
+      "source_port": "Source port",
+      "destination_port": "Destination port",
+      "protocols": "Protocols",
+      "wan_ip": "WAN IP",
+      "restrict_access_to": "Restrict access to",
+      "status": "Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "filter": "Filter",
+      "enable": "Enable",
+      "disable": "Disable",
+      "duplicate": "Duplicate",
+      "delete_port_forward": "Delete port forward",
+      "delete_port_forward_message": "You are about to delete port forward '{name}'",
+      "destination": "Destination",
+      "edit_port_forward": "Edit port forward",
+      "destination_address": "Destination address",
+      "destination_zone": "Destination zone",
+      "advanced_settings": "Advanced settings",
+      "add_ip_address": "Add IP address",
+      "log": "Log",
+      "hairpin_nat": "Hairpin NAT",
+      "hairpin_nat_zones": "Hairpin NAT enabled on following zones",
+      "choose_zone": "Choose zone",
+      "choose_protocol": "Choose protocol",
+      "any_zone": "Any zone",
+      "any": "Any",
+      "destination_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "restrict_access_to_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "no_port_forward_configured": "No port forward configured",
+      "no_port_forward_found": "No port forward found",
+      "filter_change_suggestion": "Try changing filter value",
+      "copy": "Copy"
     },
     "firewall": {
       "title": "Firewall"

@@ -1,7 +1,9 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-interface validationOutput {
+import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+
+export interface validationOutput {
   valid: Boolean
   errMessage?: String
   i18Params?: Object
@@ -198,11 +200,48 @@ export const validateVlanId = (value: String): validationOutput => {
   return { valid: true }
 }
 
+export function validatePort(value: string, minPort = 1, maxPort = 65535): validationOutput {
+  const port = Number.parseInt(value)
+
+  if (Number.isNaN(port) || port < minPort || port > maxPort) {
+    return { valid: false, errMessage: 'error.invalid_port' }
+  }
+  return { valid: true }
+}
+
+export function validatePortRange(value: string, minRange = 1, maxRange = 65535): validationOutput {
+  let strings: string[]
+  if (value.indexOf(',')) {
+    strings = value.split(',')
+  } else if (value.indexOf('-')) {
+    strings = value.split('-')
+  } else {
+    strings = [value]
+  }
+  for (const port of strings) {
+    const validation = validatePort(port, minRange, maxRange)
+    if (!validation.valid) {
+      return { valid: false, errMessage: 'error.invalid_port_range' }
+    }
+  }
+  return { valid: true }
+}
+
+export const validateRequiredOption = (value: NeComboboxOption[]): validationOutput => {
+  if (value.length == 0) {
+    return { valid: false, errMessage: 'error.required_option' }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */
 export class MessageBag extends Map<string, Array<string>> {
-  set(key: string, value: Array<string>): this {
+  set(key: string, value: Array<string> | string): this {
+    if (typeof value === 'string') {
+      value = [value]
+    }
     if (!this.has(key)) {
       super.set(key, new Array<string>())
     }
@@ -216,6 +255,18 @@ export class MessageBag extends Map<string, Array<string>> {
    */
   getFirstFor(key: string): string {
     return this.get(key)?.[0] ?? ''
+  }
+
+  /**
+   * Returns the i18n key associate to the first error message for the key (if any).
+   * @param key key of the messageBag, e.g. 'zoneName'
+   * @param prefix string prefix to build the i18n key, e.g. 'standalone.zones_and_policies'
+   */
+  getFirstI18nKeyFor(key: string, prefix: string): string {
+    if (this.has(key)) {
+      return `${prefix}.${this.getFirstFor(key)}`
+    }
+    return ''
   }
 }
 

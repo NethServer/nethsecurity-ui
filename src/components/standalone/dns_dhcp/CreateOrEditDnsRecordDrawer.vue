@@ -117,6 +117,7 @@ async function createOrEditDnsRecord() {
 }
 
 function close() {
+  validationErrorBag.value.clear()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   resetForm()

@@ -8,6 +8,7 @@
     "close": "Close",
     "edit": "Edit",
     "delete": "Delete",
+    "filter": "Filter",
     "advanced_settings": "Advanced settings"
   },
   "error": {
@@ -30,6 +31,7 @@
     "cannot_sync_local_time": "Cannot sync local time",
     "cannot_load_network_interfaces": "Cannot load network interfaces",
     "invalid_host": "Invalid host: must be a hostname or an IP address",
+    "invalid_mac_address": "Invalid MAC address",
     "invalid_ip_address": "Invalid IP address",
     "invalid_ip_v4_address": "Invalid IPv4 address",
     "invalid_ip_v6_address": "Invalid IPv6 address",
@@ -71,7 +73,11 @@
     "cannot_retrieve_dns_records": "Cannot retrieve DNS records",
     "cannot_delete_dns_record": "Cannot delete DNS record",
     "cannot_create_dns_record": "Cannot create DNS record",
-    "cannot_edit_dns_record": "Cannot edit DNS record"
+    "cannot_edit_dns_record": "Cannot edit DNS record",
+    "cannot_retrieve_static_leases": "Cannot retrieve static leases",
+    "cannot_delete_static_lease": "Cannot delete static lease",
+    "cannot_create_static_lease": "Cannot create static lease",
+    "cannot_edit_static_lease": "Cannot edit static lease"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -464,7 +470,7 @@
       "domain_whitelist": "Domain whitelist",
       "add_domain": "Add domain",
       "log_dns_queries": "Log DNS queries",
-      "dns_records_description": "Routing defines over which interface and gateway a certain host or network can be reached.",
+      "dns_records_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "filter": "Filter",
       "add_dns_record": "Add DNS record",
       "edit_dns_record": "Edit DNS record",
@@ -474,7 +480,21 @@
       "wildcard_dns_record": "Wildcard DNS record",
       "enabled": "Enabled",
       "disabled": "Disabled",
-      "delete_dns_record_message": "You are about to delete DNS record '{name}'"
+      "delete_dns_record_message": "You are about to delete DNS record '{name}'",
+      "no_dns_record_configured": "No DNS record configured",
+      "no_dns_record_found": "No DNS record found",
+      "interface": "Interface",
+      "reservation_name": "Reservation name",
+      "mac_address": "MAC address",
+      "static_leases_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dynamic_leases_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "delete_static_lease_message": "You are about to delete '{hostname}'",
+      "delete_reservation": "Delete reservation",
+      "add_reservation": "Add reservation",
+      "edit_reservation": "Edit reservation",
+      "no_reservation_configured": "No reservation configured",
+      "no_reservation_found": "No reservation found",
+      "timestamp": "Timestamp"
     },
     "users_and_objects": {
       "title": "Users & objects"

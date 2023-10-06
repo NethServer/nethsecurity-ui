@@ -63,7 +63,7 @@
     "cannot_retrive_interfaces": "Cannot retrieve interfaces",
     "cannot_retrive_route_types": "Cannot retrieve route types",
     "invalid_metric": "Enter an integer number greater or equal than 0",
-    "cannot_update_status_route": "Cannot update status route"
+    "cannot_update_status_route": "Cannot update status route",
     "cannot_delete_port_forward": "Cannot delete port forward",
     "cannot_create_port_forward": "Cannot create port forward",
     "cannot_edit_port_forward": "Cannot edit port forward",

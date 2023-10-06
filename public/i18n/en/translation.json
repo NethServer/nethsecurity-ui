@@ -74,10 +74,10 @@
     "cannot_delete_dns_record": "Cannot delete DNS record",
     "cannot_create_dns_record": "Cannot create DNS record",
     "cannot_edit_dns_record": "Cannot edit DNS record",
-    "cannot_retrieve_static_leases": "Cannot retrieve static leases",
-    "cannot_delete_static_lease": "Cannot delete static lease",
-    "cannot_create_static_lease": "Cannot create static lease",
-    "cannot_edit_static_lease": "Cannot edit static lease"
+    "cannot_retrieve_reservations": "Cannot retrieve reservations",
+    "cannot_delete_reservation": "Cannot delete reservation",
+    "cannot_create_reservation": "Cannot create reservation",
+    "cannot_edit_reservation": "Cannot edit reservation"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -488,7 +488,7 @@
       "mac_address": "MAC address",
       "static_leases_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "dynamic_leases_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "delete_static_lease_message": "You are about to delete '{hostname}'",
+      "delete_reservation_message": "You are about to delete '{hostname}'",
       "delete_reservation": "Delete reservation",
       "add_reservation": "Add reservation",
       "edit_reservation": "Edit reservation",

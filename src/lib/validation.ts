@@ -33,6 +33,16 @@ export const validateHostname = (hostname: String): validationOutput => {
   return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }
 
+export const validateMacAddress = (macAddress: String): validationOutput => {
+  const isValid = macAddress.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/) != null
+
+  if (isValid) {
+    return { valid: true }
+  } else {
+    return { valid: false, errMessage: 'error.invalid_mac_address' }
+  }
+}
+
 export const validateHost = (host: String): validationOutput => {
   const validHostname = validateHostname(host)
 

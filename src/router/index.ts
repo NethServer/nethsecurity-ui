@@ -56,6 +56,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/RoutesView.vue')
   },
   {
+    path: 'network/hotspot',
+    name: 'Hotspot',
+    component: () => import('../views/standalone/network/HotspotView.vue')
+  },
+  {
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')

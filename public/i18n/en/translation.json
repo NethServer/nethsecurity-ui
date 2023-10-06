@@ -63,6 +63,9 @@
     "cannot_retrive_interfaces": "Cannot retrieve interfaces",
     "cannot_retrive_route_types": "Cannot retrieve route types",
     "cannot_retrive_parent_hotspot": "Cannot retrieve parent hotspot",
+    "cannot_retrive_network_device": "Cannot retrieve network device",
+    "cannot_retrive_configuration": "Cannot retrieve hotspot configuration",
+    "cannot_retrive_dhcp_range": "Cannot retrieve default DHCP range",
     "invalid_metric": "Enter an integer number greater than or equal to 0",
     "cannot_update_status_route": "Cannot update route status",
     "cannot_delete_port_forward": "Cannot delete port forward",
@@ -74,7 +77,9 @@
     "cannot_retrieve_protocols": "Cannot retrieve protocols",
     "cannot_retrieve_zones": "Cannot retrieve zones",
     "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
-    "cannot_login_hotspot": "Cannot login"
+    "cannot_login_hotspot": "Cannot login",
+    "cannot_login_hotspot_description": "Login failed",
+    "cannot_unregister_hotspot": "Cannot unregister"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -512,7 +517,15 @@
         "configurtion_dhcp_range_end_helper": "Lorem ipsum, or lipsum as it is sometimes known",
         "configurtion_dhcp_range_end_placeholder": "192.168.0.254",
         "configurtion_max_client_allowed": "Max clients allowed",
-        "configurtion_max_client_allowed_placeholder": "253"
+        "configurtion_max_client_allowed_placeholder": "253",
+        "configurtion_parent_hotspot": "Parent hotspot",
+        "configurtion_parent_hotspot_placeholder": "samplename-office",
+        "configurtion_network_device": "Network device",
+        "configurtion_network_device_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+        "configurtion_network_device_placeholder": "eth1",
+        "configurtion_use_default_dhcp_range": "Use default DHCP range",
+        "unregister": "Unregister",
+        "unregister_unit": "Unregister unit"
       }
     },
     "users_and_objects": {

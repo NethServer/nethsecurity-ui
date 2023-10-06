@@ -4,7 +4,9 @@ import {
   focusElement,
   getAxiosErrorMessage,
   NeButton,
+  NeCombobox,
   NeInlineNotification,
+  NeSkeleton,
   NeTextInput,
   NeTooltip
 } from '@nethserver/vue-tailwind-lib'
@@ -12,7 +14,7 @@ import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import { validateRequired } from '@/lib/validation'
+import { validateIp4Cidr, validateIp4Address, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 
@@ -31,8 +33,10 @@ const loginForm = ref<Login>({
 })
 
 interface Configuration {
+  parentHotspot: string
   unitName: string
   unitDescription: string
+  networkDevice: string
   networkAddress: string
   dhcpRangeStart: string
   dhcpRangeEnd: string
@@ -41,12 +45,21 @@ interface Configuration {
 
 interface ParentHotspot {
   id: string
+  label: string
   name: string
 }
 
+interface NetworkDevice {
+  id: string
+  name: string
+  label: string
+}
+
 const configurationForm = ref<Configuration>({
+  parentHotspot: '',
   unitName: '',
   unitDescription: '',
+  networkDevice: '',
   networkAddress: '',
   dhcpRangeStart: '',
   dhcpRangeEnd: '',
@@ -54,13 +67,22 @@ const configurationForm = ref<Configuration>({
 })
 
 let isLoggedIn = ref(false)
+let activeConficuration = ref(false)
 let loading = ref(false)
 let logging = ref(false)
+let loadingUnregister = ref(false)
+let loadingDhcpRange = ref(false)
 let saving = ref(false)
 let hostnameRef = ref()
 let usernameRef = ref()
 let passwordRef = ref()
-let parentHotspot = ref<Array<ParentHotspot>>()
+let unitNameRef = ref()
+let unitDescriptionRef = ref()
+let networkAddressRef = ref()
+let dhcpRangeStartRef = ref()
+let dhcpRangeEndRef = ref()
+let parentHotspotList = ref<Array<ParentHotspot>>()
+let networkDeviceList = ref<Array<NetworkDevice>>()
 
 let objError = {
   notificationTitle: '',
@@ -77,9 +99,13 @@ let objError = {
 }
 let error = ref({ ...objError })
 let errorLoadingData = ref({ ...objError })
+let errorSave = ref({ ...objError })
+let errorUnregister = ref({ ...objError })
+let errorDhcpRange = ref({ ...objError })
 
 onMounted(() => {
   getFirewallData()
+  getConfiguration()
 })
 
 async function getFirewallData() {
@@ -95,39 +121,64 @@ async function getFirewallData() {
       getParentHotspot.data.parents &&
       getParentHotspot.data.parents.length
     ) {
-      parentHotspot.value = getParentHotspot.data.interfaces.map((item: ParentHotspot) => ({
+      isLoggedIn.value = true
+      parentHotspotList.value = getParentHotspot.data.parents.map((item: ParentHotspot) => ({
         id: item.id,
         label: item.name
       }))
-      /*if (parentHotspot.value) {
-				parentHotspot.value.unshift({
-					id: '',
-					label: t('standalone.routes.interface_unspecified')
-				})
-			} */
+      configurationForm.value.parentHotspot = getParentHotspot.data.parents[0].id
     }
   } catch (exception: any) {
     errorLoadingData.value.notificationTitle = t('error.cannot_retrive_parent_hotspot')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    /*try {
-			let getRouteTypes = await ubusCall('ns.routes', 'list-route-types', {})
-			if (
-				getRouteTypes &&
-				getRouteTypes.data &&
-				getRouteTypes.data.types &&
-				getRouteTypes.data.types.length
-			)
-				routeTypes.value = getRouteTypes.data.types.map((item: RouteType) => ({
-					id: item,
-					label: item
-				}))
-		} catch (exception: any) {
-			errorLoadingData.value.notificationTitle = t('error.cannot_retrive_route_types')
-			errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
-		} finally {
-			loading.value = false
-		}*/
+    try {
+      let getNetworkDevice = await ubusCall('ns.dedalo', 'list-devices', {})
+      if (
+        getNetworkDevice &&
+        getNetworkDevice.data &&
+        getNetworkDevice.data.devices &&
+        getNetworkDevice.data.devices.length
+      ) {
+        networkDeviceList.value = getNetworkDevice.data.devices.map((item: NetworkDevice) => ({
+          id: item,
+          label: item
+        }))
+        configurationForm.value.networkDevice = getNetworkDevice.data.devices[0]
+      }
+    } catch (exception: any) {
+      errorLoadingData.value.notificationTitle = t('error.cannot_retrive_network_device')
+      errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    } finally {
+      loading.value = false
+    }
+  }
+}
+
+async function getConfiguration() {
+  try {
+    let getDataConfiguration = await ubusCall('ns.dedalo', 'get-configuration', {})
+    if (
+      getDataConfiguration &&
+      getDataConfiguration.data &&
+      getDataConfiguration.data.configuration &&
+      getDataConfiguration.data.configuration.connected
+    ) {
+      activeConficuration.value = true
+      let configuration = getDataConfiguration.data.configuration
+      if (configuration.hotspot_id) configurationForm.value.parentHotspot = configuration.hotspot_id
+      if (configuration.unit_name) configurationForm.value.unitName = configuration.unit_name
+      if (configuration.unit_description)
+        configurationForm.value.unitDescription = configuration.unit_description
+      if (configuration.interface) configurationForm.value.networkDevice = configuration.interface
+      if (configuration.network) configurationForm.value.networkAddress = configuration.network
+      if (configuration.dhcp_start)
+        configurationForm.value.dhcpRangeStart = configuration.dhcp_start
+      if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
+    } else isLoggedIn.value = false
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_configuration')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
 
@@ -185,41 +236,201 @@ function login() {
     }
     ubusCall('ns.dedalo', 'login', payload)
       .then((response) => {
-        if (response.data) {
-          console.log(response.data)
+        if (response.data && response.data.response && response.data.response === 'success')
+          isLoggedIn.value = true
+        else {
+          error.value.notificationTitle = t('error.cannot_login_hotspot')
+          error.value.notificationDescription = t('error.cannot_login_hotspot_description')
         }
       })
       .catch((exception: AxiosError) => {
         error.value.notificationTitle = t('error.cannot_login_hotspot')
         error.value.notificationDescription = t(getAxiosErrorMessage(exception))
       })
-      .finally(() => (logging.value = false))
+      .finally(() => {
+        logging.value = false
+        getConfiguration()
+      })
   }
 }
 
 function validateConfiguration(): boolean {
   let isValidationOk = true
-  // TODO
+  let isFocusInput = false
+
+  if (!configurationForm.value.unitName) {
+    let { valid, errMessage } = validateRequired(configurationForm.value.unitName)
+    if (!valid) {
+      error.value.unitName = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk) {
+    focusElement(unitNameRef)
+    isFocusInput = true
+  }
+
+  if (!configurationForm.value.unitDescription) {
+    let { valid, errMessage } = validateRequired(configurationForm.value.unitDescription)
+    if (!valid) {
+      error.value.unitDescription = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(unitDescriptionRef)
+    isFocusInput = true
+  }
+
+  if (configurationForm.value.networkAddress) {
+    let { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
+    if (!valid) {
+      error.value.networkAddress = t(errMessage as string)
+      isValidationOk = false
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
+    if (!valid) {
+      error.value.networkAddress = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(networkAddressRef)
+    isFocusInput = true
+  }
+
+  if (configurationForm.value.dhcpRangeStart) {
+    let { valid, errMessage } = validateIp4Address(configurationForm.value.dhcpRangeStart)
+    if (!valid) {
+      error.value.dhcpRangeStart = t(errMessage as string)
+      isValidationOk = false
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpRangeStart)
+    if (!valid) {
+      error.value.dhcpRangeStart = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (configurationForm.value.dhcpRangeEnd) {
+    let { valid, errMessage } = validateIp4Address(configurationForm.value.dhcpRangeEnd)
+    if (!valid) {
+      error.value.dhcpRangeEnd = t(errMessage as string)
+      isValidationOk = false
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpRangeEnd)
+    if (!valid) {
+      error.value.dhcpRangeEnd = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) focusElement(dhcpRangeStartRef)
+
   return isValidationOk
 }
 
 function saveConfiguration() {
   if (validateConfiguration()) {
     saving.value = true
-    // TODO
+
+    let payload = {
+      network: configurationForm.value.networkAddress,
+      hotspot_id: String(configurationForm.value.parentHotspot),
+      unit_name: configurationForm.value.unitName,
+      unit_description: configurationForm.value.unitDescription,
+      interface: configurationForm.value.networkDevice,
+      dhcp_start: configurationForm.value.dhcpRangeStart,
+      dhcp_end: configurationForm.value.dhcpRangeEnd
+    }
+
+    ubusCall('ns.dedalo', 'set-configuration', payload)
+      .then((response) => {
+        if (response.data) {
+          console.log(response)
+        }
+      })
+      .catch((exception: AxiosError) => {
+        errorSave.value.notificationTitle = t('error.cannot_save_configuration')
+        errorSave.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
+      .finally(() => (saving.value = false))
+  }
+}
+
+function unregisterUnit() {
+  loadingUnregister.value = true
+
+  ubusCall('ns.dedalo', 'unregister')
+    .then((response) => {
+      if (response.data && response.data.result && response.data.result === 'success')
+        isLoggedIn.value = false
+    })
+    .catch((exception: AxiosError) => {
+      errorUnregister.value.notificationTitle = t('error.cannot_unregister_hotspot')
+      errorUnregister.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    })
+    .finally(() => (loadingUnregister.value = false))
+}
+
+function getDhcpRange() {
+  loadingDhcpRange.value = true
+
+  let isValidationOk = true
+
+  if (configurationForm.value.networkAddress) {
+    let { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
+    if (!valid) {
+      error.value.networkAddress = t(errMessage as string)
+      isValidationOk = false
+    }
+  } else {
+    let { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
+    if (!valid) {
+      error.value.networkAddress = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk) {
+    focusElement(networkAddressRef)
+    loadingDhcpRange.value = false
+  } else {
+    let payload = {
+      network: configurationForm.value.networkAddress
+    }
+    ubusCall('ns.dedalo', 'get-dhcp-range', payload)
+      .then((response) => {
+        if (response.data) {
+          console.log(response.data)
+          if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
+          if (response.data.end) configurationForm.value.dhcpRangeEnd = response.data.end
+        }
+      })
+      .catch((exception: AxiosError) => {
+        errorDhcpRange.value.notificationTitle = t('error.cannot_retrive_dhcp_range')
+        errorDhcpRange.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
+      .finally(() => (loadingDhcpRange.value = false))
   }
 }
 </script>
 
 <template>
   <div>
+    <NeSkeleton v-if="loading" :lines="15" />
     <FormLayout
-      v-if="!isLoggedIn"
+      v-if="!isLoggedIn && !loading"
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
     >
       <form>
-        <!-- Form -->
         <div class="mb-8 flex flex-col gap-y-4">
           <NeTextInput
             v-model="loginForm.hostname"
@@ -243,11 +454,19 @@ function saveConfiguration() {
           </NeTextInput>
           <NeTextInput
             v-model="loginForm.password"
+            isPassword
             :invalid-message="error.password"
             :label="t('standalone.hotspot.settings.login_password')"
             ref="passwordRef"
           />
         </div>
+        <NeInlineNotification
+          v-if="error.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="error.notificationTitle"
+          :description="error.notificationDescription"
+        />
         <div class="flex justify-end">
           <NeButton
             :disabled="logging"
@@ -263,15 +482,11 @@ function saveConfiguration() {
           </NeButton>
         </div>
       </form>
-      <NeInlineNotification
-        v-if="error.notificationTitle"
-        class="my-4"
-        kind="error"
-        :title="error.notificationTitle"
-        :description="error.notificationDescription"
-      />
     </FormLayout>
-    <FormLayout v-else :title="t('standalone.hotspot.settings.configurtion')">
+    <FormLayout
+      v-if="!loading && activeConficuration"
+      :title="t('standalone.hotspot.settings.configurtion')"
+    >
       <NeInlineNotification
         v-if="errorLoadingData.notificationTitle"
         class="my-4"
@@ -280,14 +495,22 @@ function saveConfiguration() {
         :description="errorLoadingData.notificationDescription"
       />
       <form v-else>
-        <!-- Form -->
         <div class="mb-8 flex flex-col gap-y-4">
-          <!-- TODO PARENT HOTSPOT -->
+          <NeCombobox
+            v-model="configurationForm.parentHotspot"
+            :options="parentHotspotList"
+            :placeholder="t('standalone.hotspot.settings.configurtion_parent_hotspot_placeholder')"
+            :label="t('standalone.hotspot.settings.configurtion_parent_hotspot')"
+            class="grow"
+            :disabled="!isLoggedIn"
+          />
           <NeTextInput
             v-model="configurationForm.unitName"
             :invalid-message="error.unitName"
             :placeholder="t('standalone.hotspot.settings.configurtion_unit_name_placeholder')"
             :label="t('standalone.hotspot.settings.configurtion_unit_name')"
+            :disabled="!isLoggedIn"
+            ref="unitNameRef"
           />
           <NeTextInput
             v-model="configurationForm.unitDescription"
@@ -296,13 +519,32 @@ function saveConfiguration() {
               t('standalone.hotspot.settings.configurtion_unit_description_placeholder')
             "
             :label="t('standalone.hotspot.settings.configurtion_unit_description')"
+            :disabled="!isLoggedIn"
+            ref="unitDescriptionRef"
           />
-          <!-- TODO NETWORK DEVICE -->
+          <NeCombobox
+            v-model="configurationForm.networkDevice"
+            :options="networkDeviceList"
+            :placeholder="t('standalone.hotspot.settings.configurtion_network_device_placeholder')"
+            :label="t('standalone.hotspot.settings.configurtion_network_device')"
+            :disabled="!isLoggedIn"
+            class="grow"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.hotspot.settings.configurtion_network_device_helper') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeCombobox>
           <NeTextInput
             v-model="configurationForm.networkAddress"
             :invalid-message="error.networkAddress"
             :placeholder="t('standalone.hotspot.settings.configurtion_network_address_placeholder')"
             :label="t('standalone.hotspot.settings.configurtion_network_address')"
+            :disabled="!isLoggedIn"
+            ref="networkAddressRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -312,7 +554,23 @@ function saveConfiguration() {
               </NeTooltip>
             </template>
           </NeTextInput>
-          <!-- TODO BUTTON USE DEFAULT-->
+          <NeInlineNotification
+            v-if="errorDhcpRange.notificationTitle"
+            class="my-4"
+            kind="error"
+            :title="errorDhcpRange.notificationTitle"
+            :description="errorDhcpRange.notificationDescription"
+          />
+          <div v-if="isLoggedIn" class="flex justify-end">
+            <NeButton
+              size="md"
+              :disabled="loadingDhcpRange"
+              :loading="loadingDhcpRange"
+              @click="getDhcpRange()"
+            >
+              {{ t('standalone.hotspot.settings.configurtion_use_default_dhcp_range') }}
+            </NeButton>
+          </div>
           <NeTextInput
             v-model="configurationForm.dhcpRangeStart"
             :invalid-message="error.dhcpRangeStart"
@@ -320,6 +578,8 @@ function saveConfiguration() {
               t('standalone.hotspot.settings.configurtion_dhcp_range_start_placeholder')
             "
             :label="t('standalone.hotspot.settings.configurtion_dhcp_range_start')"
+            :disabled="!isLoggedIn"
+            ref="dhcpRangeStartRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -334,6 +594,8 @@ function saveConfiguration() {
             :invalid-message="error.dhcpRangeEnd"
             :placeholder="t('standalone.hotspot.settings.configurtion_dhcp_range_end_placeholder')"
             :label="t('standalone.hotspot.settings.configurtion_dhcp_range_end')"
+            :disabled="!isLoggedIn"
+            ref="dhcpRangeEndRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -343,17 +605,25 @@ function saveConfiguration() {
               </NeTooltip>
             </template>
           </NeTextInput>
-          <NeTextInput
-            v-model="configurationForm.maxClientsAllowed"
-            :invalid-message="error.maxClientsAllowed"
-            :placeholder="
-              t('standalone.hotspot.settings.configurtion_max_client_allowed_placeholder')
-            "
-            :label="t('standalone.hotspot.settings.configurtion_max_client_allowed')"
-          />
+          <!--NeTextInput
+						v-model="configurationForm.maxClientsAllowed"
+						:invalid-message="error.maxClientsAllowed"
+						:placeholder="
+							t('standalone.hotspot.settings.configurtion_max_client_allowed_placeholder')
+						"
+						:label="t('standalone.hotspot.settings.configurtion_max_client_allowed')"
+					/-->
         </div>
+        <NeInlineNotification
+          v-if="errorSave.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="errorSave.notificationTitle"
+          :description="errorSave.notificationDescription"
+        />
         <div class="flex justify-end">
           <NeButton
+            v-if="isLoggedIn"
             :disabled="saving"
             :loading="saving"
             kind="primary"
@@ -367,6 +637,26 @@ function saveConfiguration() {
           </NeButton>
         </div>
       </form>
+    </FormLayout>
+    <hr class="my-8" />
+    <FormLayout v-if="!loading && isLoggedIn" :title="t('standalone.hotspot.settings.unregister')">
+      <div>
+        <NeInlineNotification
+          v-if="errorUnregister.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="errorUnregister.notificationTitle"
+          :description="errorUnregister.notificationDescription"
+        />
+        <NeButton
+          size="md"
+          :disabled="loadingUnregister"
+          :loading="loadingUnregister"
+          @click="unregisterUnit()"
+        >
+          {{ t('standalone.hotspot.settings.unregister_unit') }}
+        </NeButton>
+      </div>
     </FormLayout>
   </div>
 </template>

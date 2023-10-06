@@ -68,7 +68,8 @@
     "cannot_enable_port_forward": "Impossibile abilitare il port forward",
     "cannot_duplicate_port_forward": "Impossibile duplicare il port forward",
     "cannot_edit_port_forward": "Impossibile modificare il port forward",
-    "cannot_delete_port_forward": "Impossibile eliminare il port forward"
+    "cannot_delete_port_forward": "Impossibile eliminare il port forward",
+    "cannot_retrive_interfaces": "Impossibile recuperare le interfacce WAN"
   },
   "login": {
     "sign_in": "Accedi",
@@ -532,6 +533,20 @@
       "disabled": "Disabilitato",
       "choose_protocol": "Scegli protocollo",
       "filter": "Filtra"
+    },
+    "routes": {
+      "route_type": "Tipi di percorso",
+      "route_choose_interface": "Seleziona interfaccia",
+      "route_status_enabled": "Attivato",
+      "route_metric": "Metrico",
+      "route_status": "Stato",
+      "interface_unspecified": "Non specificato",
+      "route_gateway": "Gateway",
+      "title": "Percorsi",
+      "route_status_table": "Stato",
+      "route_interface": "Interfaccia",
+      "route_protocol": "Protocollo",
+      "route_status_disabled": "Disabilitato"
     }
   },
   "controller": {

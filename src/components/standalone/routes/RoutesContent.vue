@@ -85,7 +85,7 @@ async function loadRoutes() {
     routes.value = items
   } catch (err: any) {
     console.error(err)
-    error.value.notificationTitle = t('standalone.routes.cannot_load_routes')
+    error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
 }
@@ -102,7 +102,7 @@ async function loadMainTable() {
     if (res.data) table.value = res.data.table
   } catch (err: any) {
     console.error(err)
-    error.value.notificationTitle = t('standalone.routes.cannot_load_routes')
+    error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
 }
@@ -158,7 +158,7 @@ function scrollToMainTable() {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="5" />
+  <NeSkeleton v-if="loading" :lines="15" />
   <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
     <p>{{ t('standalone.routes.no_route_found') }}</p>
     <NeButton :kind="'primary'" @click="openCreateRoute()">
@@ -200,7 +200,7 @@ function scrollToMainTable() {
   <div v-if="!loading && routes.length">
     <div class="my-4">
       <NeButton kind="tertiary" size="sm" class="-ml-2" @click="scrollToMainTable()">
-        {{ t('standalone.routes.route_toggle_table') }}
+        {{ t('standalone.routes.main_table') }}
       </NeButton>
     </div>
     <div class="space-y-6">
@@ -244,7 +244,8 @@ function scrollToMainTable() {
               <template v-for="item in routes" :key="item.id">
                 <tr :class="{ 'opacity-30': item.disabled !== '0' }">
                   <td>
-                    {{ item.ns_description }}
+                    <span v-if="item.ns_description">{{ item.ns_description }}</span>
+                    <span v-else>-</span>
                   </td>
                   <td>
                     <span>
@@ -352,32 +353,30 @@ function scrollToMainTable() {
             ]"
             :loading="loading"
           >
-            <template #interface="{ item }">
-              <div class="flex items-center gap-x-4">
-                <span>{{ item.interface }}</span>
-              </div>
-            </template>
-            <template #network="{ item }">
-              <div class="flex items-center gap-x-4">
-                <span>{{ item.network }}</span>
-              </div>
-            </template>
-            <template #gateway="{ item }">
-              <div class="flex items-center gap-x-4">
-                <span v-if="item.gateway">{{ item.gateway }}</span>
-                <span v-else>-</span>
-              </div>
-            </template>
-            <template #metric="{ item }">
-              <div class="flex items-center gap-x-4">
-                <span v-if="item.metric">{{ item.metric }}</span>
-                <span v-else>-</span>
-              </div>
-            </template>
-            <template #protocol="{ item }">
-              <div class="flex items-center gap-x-4">
-                <span>{{ item.protocol }}</span>
-              </div>
+            <template #tbody>
+              <tbody>
+                <template v-for="item in table" :key="item.id">
+                  <tr>
+                    <td>
+                      {{ item.interface }}
+                    </td>
+                    <td>
+                      {{ item.network }}
+                    </td>
+                    <td>
+                      <span v-if="item.gateway">{{ item.gateway }}</span>
+                      <span v-else>-</span>
+                    </td>
+                    <td>
+                      <span v-if="item.metric">{{ item.metric }}</span>
+                      <span v-else>-</span>
+                    </td>
+                    <td>
+                      {{ item.protocol }}
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
             </template>
           </NeTable>
         </template>

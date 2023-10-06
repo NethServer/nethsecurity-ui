@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {
   getAxiosErrorMessage,
+  focusElement,
   NeButton,
   NeCombobox,
   NeInlineNotification,
@@ -90,6 +91,10 @@ let routeTypes = ref<Array<RouteType>>()
 let loading = ref(false)
 let saving = ref(false)
 let isExpandedAdvancedSettings = ref(false)
+let networkAddressRef = ref()
+let gatewayRef = ref()
+let metricRef = ref()
+let mtuRef = ref()
 
 let objError = {
   notificationTitle: '',
@@ -110,6 +115,9 @@ const emit = defineEmits(['routeCreated', 'routeEdited', 'abortCreation'])
 watch(
   () => props.editRoute,
   () => {
+    error = ref({ ...objError })
+    errorLoadingData = ref({ ...objError })
+
     if (props.editRoute) {
       let selectedRoute = props.editRoute
       if (selectedRoute && selectedRoute.item) {
@@ -176,7 +184,7 @@ async function getFirewallData() {
       }
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('standalone.routes.cannot_retrive_interfaces')
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_interfaces')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     try {
@@ -192,7 +200,7 @@ async function getFirewallData() {
           label: item
         }))
     } catch (exception: any) {
-      errorLoadingData.value.notificationTitle = t('standalone.routes.cannot_retrive_route_types')
+      errorLoadingData.value.notificationTitle = t('error.cannot_retrive_route_types')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
     } finally {
       loading.value = false
@@ -205,6 +213,7 @@ async function getFirewallData() {
  */
 function validate(): boolean {
   let isValidationOk = true
+  let isFocusInput = false
 
   // NETWORK ADDRESS
   if (form.value.network_address) {
@@ -214,8 +223,7 @@ function validate(): boolean {
         error.value.networkAddress = t(errMessage as string)
         isValidationOk = false
       }
-    }
-    if (props.protocol === 'ipv6') {
+    } else if (props.protocol === 'ipv6') {
       let { valid, errMessage } = validateIp6Cidr(form.value.network_address)
       if (!valid) {
         error.value.networkAddress = t(errMessage as string)
@@ -230,6 +238,11 @@ function validate(): boolean {
     }
   }
 
+  if (!isValidationOk) {
+    focusElement(networkAddressRef)
+    isFocusInput = true
+  }
+
   // GATEWAY
   if (form.value.gateway) {
     if (props.protocol === 'ipv4') {
@@ -238,8 +251,7 @@ function validate(): boolean {
         error.value.gateway = t(errMessage as string)
         isValidationOk = false
       }
-    }
-    if (props.protocol === 'ipv6') {
+    } else if (props.protocol === 'ipv6') {
       let { valid, errMessage } = validateIp6Address(form.value.gateway)
       if (!valid) {
         error.value.gateway = t(errMessage as string)
@@ -254,19 +266,19 @@ function validate(): boolean {
     }
   }
 
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(gatewayRef)
+    isFocusInput = true
+  }
+
   // METRIC
   if (form.value.metric) {
     let validMetric = false
-    if (
-      form.value.metric &&
-      Number(form.value.metric) &&
-      !isNaN(Number(form.value.metric)) &&
-      Number(form.value.metric) >= 0
-    )
-      validMetric = true
+
+    if (!isNaN(Number(form.value.metric)) && Number(form.value.metric) >= 0) validMetric = true
 
     if (!validMetric) {
-      error.value.metric = t('standalone.routes.invalid_metric')
+      error.value.metric = t('error.invalid_metric')
       isValidationOk = false
     }
   } else {
@@ -275,6 +287,11 @@ function validate(): boolean {
       error.value.metric = t(errMessage as string)
       isValidationOk = false
     }
+  }
+
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(metricRef)
+    isFocusInput = true
   }
 
   // MTU
@@ -286,8 +303,7 @@ function validate(): boolean {
         isValidationOk = false
         isExpandedAdvancedSettings.value = true
       }
-    }
-    if (props.protocol === 'ipv6') {
+    } else if (props.protocol === 'ipv6') {
       let { valid, errMessage } = validateIpv6Mtu(form.value.mtu)
       if (!valid) {
         error.value.mtu = t(errMessage as string)
@@ -304,6 +320,8 @@ function validate(): boolean {
     }
   }
 
+  if (!isValidationOk && !isFocusInput) focusElement(mtuRef)
+
   return isValidationOk
 }
 
@@ -313,6 +331,8 @@ function validate(): boolean {
 function createRoute() {
   if (validate()) {
     saving.value = true
+    let isValidCreate = true
+
     // create payload
     let payload = {
       disabled: form.value.status ? 1 : 0,
@@ -335,22 +355,28 @@ function createRoute() {
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id
+          }).catch((exception: AxiosError) => {
+            error.value.notificationTitle = t('error.cannot_update_status_route')
+            error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+            isValidCreate = false
           })
         }
       })
       .catch((exception: AxiosError) => {
-        error.value.notificationTitle = t('standalone.routes.cannot_create_route')
+        error.value.notificationTitle = t('error.cannot_create_route')
         error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+        isValidCreate = false
       })
       .finally(() => (saving.value = false))
 
-    emit('routeCreated')
+    if (isValidCreate) emit('routeCreated')
   }
 }
 
 function editRoute() {
   if (validate()) {
     saving.value = true
+    let isValidUpdate = true
 
     // create payload
     let payload = {
@@ -375,16 +401,21 @@ function editRoute() {
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id
+          }).catch((exception: AxiosError) => {
+            error.value.notificationTitle = t('error.cannot_update_status_route')
+            error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+            isValidUpdate = false
           })
         }
       })
       .catch((exception: AxiosError) => {
-        error.value.notificationTitle = t('standalone.routes.cannot_edit_route')
+        error.value.notificationTitle = t('error.cannot_edit_route')
         error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+        isValidUpdate = false
       })
       .finally(() => (saving.value = false))
 
-    emit('routeEdited')
+    if (isValidUpdate) emit('routeEdited')
   }
 }
 </script>
@@ -420,12 +451,14 @@ function editRoute() {
         :invalid-message="error.networkAddress"
         :placeholder="props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0'"
         :label="t('standalone.routes.route_network_address')"
+        ref="networkAddressRef"
       />
       <NeTextInput
         v-model="form.gateway"
         :invalid-message="error.gateway"
         :placeholder="props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1'"
         :label="t('standalone.routes.route_gateway')"
+        ref="gatewayRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -440,6 +473,7 @@ function editRoute() {
         :invalid-message="error.metric"
         placeholder="0"
         :label="t('standalone.routes.route_metric')"
+        ref="metricRef"
       />
       <NeCombobox
         v-model="form.routeInterface"
@@ -477,6 +511,7 @@ function editRoute() {
             :invalid-message="error.mtu"
             placeholder="1500"
             :label="t('standalone.routes.route_mtu')"
+            ref="mtuRef"
           />
           <NeToggle v-model="form.onlink" :label="t('standalone.routes.route_onlink')" />
         </div>

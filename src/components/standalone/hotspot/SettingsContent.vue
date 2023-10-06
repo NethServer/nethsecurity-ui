@@ -1,11 +1,19 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { NeButton, NeTextInput, NeTooltip } from '@nethserver/vue-tailwind-lib'
+import {
+  focusElement,
+  getAxiosErrorMessage,
+  NeButton,
+  NeTextInput,
+  NeTooltip
+} from '@nethserver/vue-tailwind-lib'
 import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
 import { validateRequired } from '@/lib/validation'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { AxiosError } from 'axios'
 
 const { t } = useI18n()
 
@@ -39,10 +47,16 @@ const configurationForm = ref<Configuration>({
   maxClientsAllowed: ''
 })
 
+let isLoggedIn = ref(false)
 let logging = ref(false)
 let saving = ref(false)
+let hostnameRef = ref()
+let usernameRef = ref()
+let passwordRef = ref()
 
 let objError = {
+  notificationTitle: '',
+  notificationDescription: '',
   hostname: '',
   username: '',
   password: '',
@@ -57,6 +71,7 @@ let error = ref({ ...objError })
 
 function validateLogin(): boolean {
   let isValidationOk = true
+  let isFocusInput = false
 
   if (!loginForm.value.hostname) {
     let { valid, errMessage } = validateRequired(loginForm.value.hostname)
@@ -64,6 +79,11 @@ function validateLogin(): boolean {
       error.value.hostname = t(errMessage as string)
       isValidationOk = false
     }
+  }
+
+  if (!isValidationOk) {
+    focusElement(hostnameRef)
+    isFocusInput = true
   }
 
   if (!loginForm.value.username) {
@@ -74,6 +94,11 @@ function validateLogin(): boolean {
     }
   }
 
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(usernameRef)
+    isFocusInput = true
+  }
+
   if (!loginForm.value.password) {
     let { valid, errMessage } = validateRequired(loginForm.value.password)
     if (!valid) {
@@ -82,13 +107,31 @@ function validateLogin(): boolean {
     }
   }
 
+  if (!isValidationOk && !isFocusInput) focusElement(passwordRef)
+
   return isValidationOk
 }
 
 function login() {
   if (validateLogin()) {
     logging.value = true
-    // TODO
+
+    let payload = {
+      host: loginForm.value.hostname,
+      username: loginForm.value.username,
+      password: loginForm.value.password
+    }
+    ubusCall('ns.dedalo', 'login', payload)
+      .then((response) => {
+        if (response.data) {
+          console.log(response.data)
+        }
+      })
+      .catch((exception: AxiosError) => {
+        error.value.notificationTitle = t('error.cannot_login_hotspot')
+        error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
+      .finally(() => (logging.value = false))
   }
 }
 
@@ -109,6 +152,7 @@ function saveConfiguration() {
 <template>
   <div>
     <FormLayout
+      v-if="!isLoggedIn"
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
     >
@@ -119,11 +163,13 @@ function saveConfiguration() {
             v-model="loginForm.hostname"
             :invalid-message="error.hostname"
             :label="t('standalone.hotspot.settings.login_hostname')"
+            ref="hostnameRef"
           />
           <NeTextInput
             v-model="loginForm.username"
             :invalid-message="error.username"
             :label="t('standalone.hotspot.settings.login_username')"
+            ref="usernameRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -137,6 +183,7 @@ function saveConfiguration() {
             v-model="loginForm.password"
             :invalid-message="error.password"
             :label="t('standalone.hotspot.settings.login_password')"
+            ref="passwordRef"
           />
         </div>
       </form>
@@ -156,7 +203,7 @@ function saveConfiguration() {
         </NeButton>
       </div>
     </FormLayout>
-    <FormLayout :title="t('standalone.hotspot.settings.configurtion')">
+    <FormLayout v-else :title="t('standalone.hotspot.settings.configurtion')">
       <form>
         <!-- Form -->
         <div class="mb-8 flex flex-col gap-y-4">

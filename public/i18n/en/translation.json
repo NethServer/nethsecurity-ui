@@ -72,7 +72,8 @@
     "cannot_disable_port_forward": "Cannot disable port forward",
     "cannot_retrieve_protocols": "Cannot retrieve protocols",
     "cannot_retrieve_zones": "Cannot retrieve zones",
-    "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces"
+    "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
+    "cannot_login_hotspot": "Cannot login"
   },
   "ne_text_input": {
     "show_password": "Show password",

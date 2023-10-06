@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import {
   focusElement,
   getAxiosErrorMessage,
   NeButton,
+  NeInlineNotification,
   NeTextInput,
   NeTooltip
 } from '@nethserver/vue-tailwind-lib'
@@ -38,6 +39,8 @@ interface Configuration {
   maxClientsAllowed: string
 }
 
+interface ParentHotspot {}
+
 const configurationForm = ref<Configuration>({
   unitName: '',
   unitDescription: '',
@@ -48,11 +51,13 @@ const configurationForm = ref<Configuration>({
 })
 
 let isLoggedIn = ref(false)
+let loading = ref(false)
 let logging = ref(false)
 let saving = ref(false)
 let hostnameRef = ref()
 let usernameRef = ref()
 let passwordRef = ref()
+let parentHotspot = ref<Array<ParentHotspot>>()
 
 let objError = {
   notificationTitle: '',
@@ -68,6 +73,61 @@ let objError = {
   maxClientsAllowed: ''
 }
 let error = ref({ ...objError })
+let errorLoadingData = ref({ ...objError })
+
+onMounted(() => {
+  getFirewallData()
+})
+
+async function getFirewallData() {
+  loading.value = true
+  error = ref({ ...objError })
+  errorLoadingData = ref({ ...objError })
+
+  // Retrive parent hotspot
+  try {
+    let getParentHotspot = await ubusCall('ns.dedalo', 'list-parents', {})
+    if (
+      getParentHotspot &&
+      getParentHotspot.data &&
+      getParentHotspot.data.parents &&
+      getParentHotspot.data.parents.length
+    ) {
+      parentHotspot.value = getParentHotspot.data.interfaces.map((item: ParentHotspot) => ({
+        id: item,
+        label: item
+      }))
+      /*if (parentHotspot.value) {
+				parentHotspot.value.unshift({
+					id: '',
+					label: t('standalone.routes.interface_unspecified')
+				})
+			} */
+    }
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_interfaces')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    /*try {
+			let getRouteTypes = await ubusCall('ns.routes', 'list-route-types', {})
+			if (
+				getRouteTypes &&
+				getRouteTypes.data &&
+				getRouteTypes.data.types &&
+				getRouteTypes.data.types.length
+			)
+				routeTypes.value = getRouteTypes.data.types.map((item: RouteType) => ({
+					id: item,
+					label: item
+				}))
+		} catch (exception: any) {
+			errorLoadingData.value.notificationTitle = t('error.cannot_retrive_route_types')
+			errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+		} finally {
+			loading.value = false
+		}*/
+  }
+}
 
 function validateLogin(): boolean {
   let isValidationOk = true
@@ -187,6 +247,13 @@ function saveConfiguration() {
           />
         </div>
       </form>
+      <NeInlineNotification
+        v-if="error.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="error.notificationTitle"
+        :description="error.notificationDescription"
+      />
       <!-- Save Button -->
       <div class="flex justify-end">
         <NeButton
@@ -203,7 +270,15 @@ function saveConfiguration() {
         </NeButton>
       </div>
     </FormLayout>
-    <FormLayout v-else :title="t('standalone.hotspot.settings.configurtion')">
+    <FormLayout :title="t('standalone.hotspot.settings.configurtion')">
+      {{ errorLoadingData }}
+      <NeInlineNotification
+        v-if="errorLoadingData.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorLoadingData.notificationTitle"
+        :description="errorLoadingData.notificationDescription"
+      />
       <form>
         <!-- Form -->
         <div class="mb-8 flex flex-col gap-y-4">

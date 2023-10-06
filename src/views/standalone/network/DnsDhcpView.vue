@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
-import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
 import DhcpManager from '@/components/standalone/dns_dhcp/DhcpManager.vue'
 import StaticLeases from '@/components/standalone/dns_dhcp/StaticLeases.vue'
 import DynamicLeases from '@/components/standalone/dns_dhcp/DynamicLeases.vue'
 import DnsManager from '@/components/standalone/dns_dhcp/DnsManager.vue'
 import DnsRecords from '@/components/standalone/dns_dhcp/DnsRecords.vue'
+import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
-//TODO: create composable for tabs
-const route = useRoute()
-const router = useRouter()
 
-const tabs = ref([
+const { tabs, selectedTab } = useTabs([
   {
     name: 'dhcp',
     label: t('standalone.dns_dhcp.dhcp')
@@ -36,15 +32,6 @@ const tabs = ref([
     label: t('standalone.dns_dhcp.dns_records')
   }
 ])
-const selectedTab = ref('')
-
-onMounted(() => {
-  selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
-})
-
-watch(selectedTab, () => {
-  router.push({ path: route.path, query: { tab: selectedTab.value } })
-})
 </script>
 
 <template>

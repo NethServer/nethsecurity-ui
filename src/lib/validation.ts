@@ -156,7 +156,7 @@ export const validateIpv6Mtu = (mtu: String): validationOutput => {
   const mtuNum = Number(mtu)
 
   if (isNaN(mtuNum) || !Number.isInteger(mtuNum) || mtuNum < 1280 || mtuNum > 9200) {
-    return { valid: false, errMessage: 'error.invalid_ip_v4_mtu' }
+    return { valid: false, errMessage: 'error.invalid_ip_v6_mtu' }
   }
   return { valid: true }
 }

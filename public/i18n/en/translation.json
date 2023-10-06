@@ -67,7 +67,11 @@
     "cannot_retrieve_zones": "Cannot retrieve zones",
     "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
     "cannot_retrieve_dns_configuration": "Cannot retrieve DNS configuration",
-    "cannot_update_dns_configuration": "Cannot update DNS configuration"
+    "cannot_update_dns_configuration": "Cannot update DNS configuration",
+    "cannot_retrieve_dns_records": "Cannot retrieve DNS records",
+    "cannot_delete_dns_record": "Cannot delete DNS record",
+    "cannot_create_dns_record": "Cannot create DNS record",
+    "cannot_edit_dns_record": "Cannot edit DNS record"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -459,7 +463,18 @@
       "exclude_localhost_rebinding_checks": "Exclude localhost from rebinding checks",
       "domain_whitelist": "Domain whitelist",
       "add_domain": "Add domain",
-      "log_dns_queries": "Log DNS queries"
+      "log_dns_queries": "Log DNS queries",
+      "dns_records_description": "Routing defines over which interface and gateway a certain host or network can be reached.",
+      "filter": "Filter",
+      "add_dns_record": "Add DNS record",
+      "edit_dns_record": "Edit DNS record",
+      "hostname": "Hostname",
+      "name": "Name",
+      "ip_address": "IP address",
+      "wildcard_dns_record": "Wildcard DNS record",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "delete_dns_record_message": "You are about to delete DNS record '{name}'"
     },
     "users_and_objects": {
       "title": "Users & objects"

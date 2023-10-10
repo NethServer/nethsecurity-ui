@@ -29,7 +29,10 @@ async function deleteStaticLease() {
       emit('lease-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value =
+        err.response.data.message == 'lease_not_found'
+          ? t('standalone.dns_dhcp.lease_not_found')
+          : t(getAxiosErrorMessage(err))
     } finally {
       isDeleting.value = false
     }
@@ -46,7 +49,7 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.port_forward.delete_reservation')"
+    :title="t('standalone.dns_dhcp.delete_reservation')"
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"

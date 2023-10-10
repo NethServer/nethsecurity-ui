@@ -68,7 +68,7 @@ async function getUciChanges() {
     <template #create-edit-item-drawer="{ isDrawerShown, itemToEdit, closeDrawer, reloadItems }">
       <CreateOrEditDnsRecordDrawer
         :is-shown="isDrawerShown"
-        :initial-item="itemToEdit"
+        :item-to-edit="itemToEdit"
         @close="closeDrawer()"
         @add-edit-record="reloadItems()"
       />

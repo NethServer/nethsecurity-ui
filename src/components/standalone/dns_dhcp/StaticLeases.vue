@@ -55,7 +55,6 @@ async function getUciChanges() {
     <template #item-list-view="{ items, openDeleteModal, openEditItemDrawer }">
       <LeasesTable
         :leases="items"
-        :is-read-only="false"
         :show-dynamic-leases="false"
         @lease-delete="openDeleteModal"
         @lease-edit="openEditItemDrawer"
@@ -69,17 +68,10 @@ async function getUciChanges() {
         @lease-deleted="reloadItems"
       />
     </template>
-    <template
-      #create-edit-item-drawer="{
-        isDrawerShown,
-        itemToEdit: initialItem,
-        closeDrawer,
-        reloadItems
-      }"
-    >
+    <template #create-edit-item-drawer="{ isDrawerShown, itemToEdit, closeDrawer, reloadItems }">
       <CreateOrEditStaticLeaseDrawer
         :is-shown="isDrawerShown"
-        :initial-item="initialItem"
+        :item-to-edit="itemToEdit"
         @close="closeDrawer()"
         @add-edit-lease="reloadItems()"
       />

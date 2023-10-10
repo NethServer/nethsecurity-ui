@@ -23,7 +23,7 @@ import type { StaticLease } from './StaticLeases.vue'
 
 const props = defineProps<{
   isShown: boolean
-  initialItem: StaticLease | null
+  itemToEdit: StaticLease | null
 }>()
 const { isShown } = toRefs(props)
 
@@ -46,11 +46,11 @@ const macAddress = ref('')
 const reservationName = ref('')
 
 function resetForm() {
-  id.value = props.initialItem?.lease ?? ''
-  hostname.value = props.initialItem?.hostname ?? ''
-  ipAddress.value = props.initialItem?.ipaddr ?? ''
-  macAddress.value = props.initialItem?.macaddr ?? ''
-  reservationName.value = props.initialItem?.description ?? ''
+  id.value = props.itemToEdit?.lease ?? ''
+  hostname.value = props.itemToEdit?.hostname ?? ''
+  ipAddress.value = props.itemToEdit?.ipaddr ?? ''
+  macAddress.value = props.itemToEdit?.macaddr ?? ''
+  reservationName.value = props.itemToEdit?.description ?? ''
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -111,7 +111,10 @@ async function createOrEditStaticLease() {
       ? t('error.cannot_edit_reservation')
       : t('error.cannot_create_reservation')
 
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDescription =
+      err.response.data.message == 'lease_not_found'
+        ? t('standalone.dns_dhcp.lease_not_found')
+        : t(getAxiosErrorMessage(err))
   } finally {
     isCreatingOrEditing.value = false
   }

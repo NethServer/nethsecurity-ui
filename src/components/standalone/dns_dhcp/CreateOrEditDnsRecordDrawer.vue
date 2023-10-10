@@ -23,7 +23,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
-  initialItem: DnsRecord | null
+  itemToEdit: DnsRecord | null
 }>()
 const { isShown } = toRefs(props)
 
@@ -46,11 +46,11 @@ const name = ref('')
 const wildcard = ref(false)
 
 function resetForm() {
-  id.value = props.initialItem?.record ?? ''
-  hostname.value = props.initialItem?.name ?? ''
-  ipAddress.value = props.initialItem?.ip ?? ''
-  name.value = props.initialItem?.description ?? ''
-  wildcard.value = props.initialItem?.wildcard ?? false
+  id.value = props.itemToEdit?.record ?? ''
+  hostname.value = props.itemToEdit?.name ?? ''
+  ipAddress.value = props.itemToEdit?.ip ?? ''
+  name.value = props.itemToEdit?.description ?? ''
+  wildcard.value = props.itemToEdit?.wildcard ?? false
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -110,7 +110,10 @@ async function createOrEditDnsRecord() {
       ? t('error.cannot_edit_dns_record')
       : t('error.cannot_create_dns_record')
 
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDescription =
+      err.response.data.message == 'record_not_found'
+        ? t('standalone.dns_dhcp.record_not_found')
+        : t(getAxiosErrorMessage(err))
   } finally {
     isCreatingOrEditing.value = false
   }

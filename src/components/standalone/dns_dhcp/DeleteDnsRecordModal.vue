@@ -18,7 +18,7 @@ const { visible, itemToDelete } = toRefs(props)
 const error = ref('')
 const isDeleting = ref(false)
 
-async function deletePortForward() {
+async function deleteDnsRecord() {
   if (itemToDelete.value) {
     try {
       error.value = ''
@@ -29,7 +29,10 @@ async function deletePortForward() {
       emit('record-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value =
+        err.response.data.message == 'record_not_found'
+          ? t('standalone.dns_dhcp.record_not_found')
+          : t(getAxiosErrorMessage(err))
     } finally {
       isDeleting.value = false
     }
@@ -46,11 +49,11 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.port_forward.delete_port_forward')"
-    :primaryLabel="t('standalone.port_forward.delete_port_forward')"
+    :title="t('standalone.dns_dhcp.delete_dns_record')"
+    :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
-    @primaryClick="deletePortForward()"
+    @primaryClick="deleteDnsRecord()"
     @close="close()"
   >
     {{

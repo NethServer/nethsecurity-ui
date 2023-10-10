@@ -111,10 +111,10 @@ onMounted(() => {
         v-if="items.length == 0"
         class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
       >
-        <p class="mb-4 text-sm">
+        <p class="text-sm">
           <strong>{{ noItemsFoundMessage }}</strong>
         </p>
-        <NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)"
+        <NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)" class="mt-4"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"
@@ -128,10 +128,10 @@ onMounted(() => {
         v-else-if="filteredItems.length == 0"
         class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
       >
-        <p class="mb-4 text-sm">
+        <p class="text-sm">
           <strong>{{ noFilteredItemsFoundMessage }}</strong>
         </p>
-        <p class="text-sm">
+        <p class="mt-4 text-sm">
           {{ t('standalone.port_forward.filter_change_suggestion') }}
         </p>
       </div>

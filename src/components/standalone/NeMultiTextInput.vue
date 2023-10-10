@@ -1,47 +1,104 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import { NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import {
+  NeButton,
+  NeTextInput,
+  type NeComboboxOption,
+  NeCombobox
+} from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
+import _ from 'lodash'
 
-const props = defineProps<{
-  modelValue: string[]
-  addItemLabel: string
-  invalidMessages?: string[]
-  title?: string
-  optional?: boolean
-  disableInputs?: boolean
-  disableAddButton?: boolean
-  optionalLabel?: string
-}>()
+export type KeyValueItem = {
+  key: string
+  value: string
+}
+
+const props = withDefaults(
+  defineProps<{
+    useKeyCombobox: boolean
+    modelValue: string[] | KeyValueItem[]
+    addItemLabel: string
+    invalidMessages?: string[]
+    invalidKeyMessages?: string[]
+    keyOptions?: NeComboboxOption[]
+    title?: string
+    optional?: boolean
+    disableInputs?: boolean
+    disableAddButton?: boolean
+    optionalLabel?: string
+    comboboxPlaceholder?: string
+    textInputPlaceholder?: string
+  }>(),
+  { useKeyCombobox: false }
+)
 
 const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
 
+const keys = ref<string[]>([])
 const items = ref<string[]>([])
+
+function refreshKeysAndItems() {
+  items.value = [
+    ...(!props.useKeyCombobox
+      ? (props.modelValue as string[])
+      : (props.modelValue as KeyValueItem[]).map((x) => x.value))
+  ]
+  if (props.useKeyCombobox) {
+    keys.value = [...(props.modelValue as KeyValueItem[]).map((x) => x.key)]
+  }
+}
+
+function emitUpdate() {
+  if (props.useKeyCombobox) {
+    emit(
+      'update:modelValue',
+      _.zip(keys.value, items.value).map(([k, v]) => ({ key: k, value: v }))
+    )
+  } else {
+    emit('update:modelValue', items.value)
+  }
+}
 
 function deleteItem(idx: number) {
   items.value.splice(idx, 1)
-  emit('update:modelValue', items.value)
+  if (props.useKeyCombobox) {
+    keys.value.splice(idx, 1)
+  }
+  emitUpdate()
   emit('delete-item')
 }
 
 function addItem() {
   items.value.push('')
-  emit('update:modelValue', items.value)
+  if (props.useKeyCombobox) {
+    keys.value.push('')
+  }
+  emitUpdate()
   emit('add-item')
 }
 
 function updateModelValue(idx: number, newValue: string) {
   items.value[idx] = newValue
-  emit('update:modelValue', items.value)
+  emitUpdate()
 }
 
-watch(props.modelValue, () => {
-  items.value = [...props.modelValue]
-})
+function updateModelKey(idx: number, newValue: string) {
+  keys.value[idx] = newValue
+  emitUpdate()
+}
+
+watch(
+  () => props.modelValue,
+  () => {
+    refreshKeysAndItems()
+  },
+  { deep: true }
+)
 
 onMounted(() => {
-  items.value = [...props.modelValue]
+  refreshKeysAndItems()
 })
 </script>
 
@@ -60,12 +117,20 @@ onMounted(() => {
     <div class="space-y-6">
       <div class="space-y-4">
         <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
+          <NeCombobox
+            :options="keyOptions"
+            :model-value="keys[i]"
+            @update:model-value="(e) => updateModelKey(i, e)"
+            :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+            v-if="useKeyCombobox"
+          />
           <NeTextInput
-            :value="items[i]"
+            :value="useKeyCombobox ? items[i] : items[i]"
             @input="updateModelValue(i, $event.target.value)"
             class="grow"
             :invalid-message="invalidMessages ? invalidMessages[i] : ''"
             :disabled="disableInputs"
+            :placeholder="textInputPlaceholder"
           />
           <NeButton kind="tertiary" size="md" @click="deleteItem(i)">
             <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />

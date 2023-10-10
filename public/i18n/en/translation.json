@@ -77,7 +77,10 @@
     "cannot_retrieve_reservations": "Cannot retrieve reservations",
     "cannot_delete_reservation": "Cannot delete reservation",
     "cannot_create_reservation": "Cannot create reservation",
-    "cannot_edit_reservation": "Cannot edit reservation"
+    "cannot_edit_reservation": "Cannot edit reservation",
+    "cannot_edit_interface": "Cannot edit interface",
+    "cannot_retrieve_dhcp_options": "Cannot retrieve DHCP options",
+    "cannot_retrieve_interface_details": "Cannot retrieve interface details"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -480,6 +483,7 @@
       "wildcard_dns_record": "Wildcard DNS record",
       "enabled": "Enabled",
       "disabled": "Disabled",
+      "delete_dns_record": "Delete DNS record",
       "delete_dns_record_message": "You are about to delete DNS record '{name}'",
       "no_dns_record_configured": "No DNS record configured",
       "no_dns_record_found": "No DNS record found",
@@ -494,7 +498,30 @@
       "edit_reservation": "Edit reservation",
       "no_reservation_configured": "No reservation configured",
       "no_reservation_found": "No reservation found",
-      "timestamp": "Timestamp"
+      "timestamp": "Timestamp",
+      "interfaces": "Interfaces",
+      "active": "Active",
+      "not_active": "Not active",
+      "options": "Options",
+      "expand_all_cards": "Expand all cards",
+      "collapse_all_cards": "Collapse all cards",
+      "gateway_ip": "Gateway IP",
+      "domain": "Domain",
+      "wins_server": "WINS server",
+      "edit_interface": "Edit {interface}",
+      "enable_dhcp": "Enable DHCP",
+      "range_ip_start": "Range IP start",
+      "range_ip_end": "Range IP end",
+      "lease_time": "Lease time",
+      "lease_time_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "advanced_settings": "Advanced settings",
+      "dhcp_option": "DHCP option",
+      "dhcp_option_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "add_dhcp_option": "Add DHCP option",
+      "no_interface_configured": "No interface configured",
+      "record_not_found": "Record not found",
+      "lease_not_found": "Lease not found",
+      "interface_not_found": "Interface not found"
     },
     "users_and_objects": {
       "title": "Users & objects"

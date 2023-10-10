@@ -52,6 +52,10 @@ const navigation: Ref<any> = ref([
         to: 'network/dns-dhcp'
       },
       {
+        name: t('standalone.routes.title'),
+        to: 'network/routes'
+      },
+      {
         name: t('standalone.multi_wan.title'),
         to: 'network/multi-wan'
       }

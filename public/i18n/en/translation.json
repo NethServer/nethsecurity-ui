@@ -80,7 +80,8 @@
     "cannot_edit_reservation": "Cannot edit reservation",
     "cannot_edit_interface": "Cannot edit interface",
     "cannot_retrieve_dhcp_options": "Cannot retrieve DHCP options",
-    "cannot_retrieve_interface_details": "Cannot retrieve interface details"
+    "cannot_retrieve_interface_details": "Cannot retrieve interface details",
+    "cannot_retrieve_dynamic_leases": "Cannot retrieve dynamic leases"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -521,7 +522,8 @@
       "no_interface_configured": "No interface configured",
       "record_not_found": "Record not found",
       "lease_not_found": "Lease not found",
-      "interface_not_found": "Interface not found"
+      "interface_not_found": "Interface not found",
+      "no_dynamic_lease_found": "No dynamic lease found"
     },
     "users_and_objects": {
       "title": "Users & objects"

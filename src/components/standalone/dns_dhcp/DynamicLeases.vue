@@ -34,11 +34,11 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
 <template>
   <FilterableListItemLayout
     :fetch-items-function="fetchDynamicLeases"
-    :fetch-error-notification-title="t('error.cannot_retrieve_reservations')"
+    :fetch-error-notification-title="t('error.cannot_retrieve_dynamic_leases')"
     :apply-filter-to-items-function="applyFilterToDynamicLeases"
     :readonly="true"
-    :no-items-found-message="t('standalone.dns_dhcp.no_reservation_configured')"
-    :no-filtered-items-found-message="t('standalone.dns_dhcp.no_reservation_found')"
+    :no-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
+    :no-filtered-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
     :description="t('standalone.dns_dhcp.dynamic_leases_description')"
   >
     <template #item-list-view="{ items }">

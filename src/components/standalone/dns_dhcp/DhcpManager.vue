@@ -14,6 +14,7 @@ import { useI18n } from 'vue-i18n'
 import EditDhcpInterfaceDrawer from './EditDhcpInterfaceDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ZoneType, useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { computed } from 'vue'
 
 export type DhcpInterface = {
   device: string
@@ -32,15 +33,22 @@ const firewallConfig = useFirewallStore()
 
 const loading = ref(true)
 const error = ref('')
-const expandAllCards = ref(false)
 const selectedInterface = ref<string>('')
 const showEditInterfaceDrawer = ref(false)
 const interfaces = ref<Record<string, DhcpInterface>>({})
+const isInterfaceCardExpanded = ref<Record<string, boolean>>({})
+
+const areAllCardsExpanded = computed(() => {
+  return Object.keys(isInterfaceCardExpanded.value).every((k) => isInterfaceCardExpanded.value[k])
+})
 
 async function fetchDhcpInterfaces() {
   try {
     loading.value = true
     interfaces.value = (await ubusCall('ns.dhcp', 'list-interfaces')).data
+    isInterfaceCardExpanded.value = Object.fromEntries(
+      Object.keys(interfaces.value).map((iface) => [iface, false])
+    )
     loading.value = false
   } catch (err: any) {
     error.value = t(getAxiosErrorMessage(err))
@@ -71,7 +79,13 @@ function closeEditInterfaceDrawer() {
 }
 
 function toggleExpandAllCards() {
-  expandAllCards.value = !expandAllCards.value
+  for (let key of Object.keys(isInterfaceCardExpanded.value)) {
+    isInterfaceCardExpanded.value[key] = areAllCardsExpanded.value ? false : true
+  }
+}
+
+function toggleExpandSingleCard(interfaceName: string) {
+  isInterfaceCardExpanded.value[interfaceName] = !isInterfaceCardExpanded.value[interfaceName]
 }
 
 async function reloadDhcpInterfaces() {
@@ -80,6 +94,7 @@ async function reloadDhcpInterfaces() {
 }
 
 onMounted(() => {
+  //TODO: handle firewallconfig error state
   firewallConfig.fetch()
   fetchDhcpInterfaces()
 })
@@ -105,7 +120,7 @@ onMounted(() => {
           <font-awesome-icon
             :icon="[
               'fas',
-              expandAllCards
+              areAllCardsExpanded
                 ? 'down-left-and-up-right-to-center'
                 : 'up-right-and-down-left-from-center'
             ]"
@@ -113,7 +128,7 @@ onMounted(() => {
             aria-hidden="true"
           /> </template
         >{{
-          expandAllCards
+          areAllCardsExpanded
             ? t('standalone.dns_dhcp.collapse_all_cards')
             : t('standalone.dns_dhcp.expand_all_cards')
         }}</NeButton
@@ -159,7 +174,7 @@ onMounted(() => {
               <NeButton size="sm" kind="tertiary" @click="openEditInterfaceDrawer(ifaceName)">
                 <template #prefix>
                   <font-awesome-icon
-                    :icon="['fas', 'floppy-disk']"
+                    :icon="['fas', 'pen-to-square']"
                     class="h-4 w-4"
                     aria-hidden="true"
                   /> </template
@@ -167,15 +182,21 @@ onMounted(() => {
               >
             </div>
             <div class="flex flex-col gap-y-3 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
-              <div class="flex flex-row items-center">
+              <div
+                class="flex cursor-pointer flex-row items-center"
+                @click="toggleExpandSingleCard(ifaceName)"
+              >
                 <font-awesome-icon
-                  :icon="['fas', expandAllCards ? 'circle-chevron-up' : 'circle-chevron-down']"
+                  :icon="[
+                    'fas',
+                    isInterfaceCardExpanded[ifaceName] ? 'circle-chevron-up' : 'circle-chevron-down'
+                  ]"
                   class="mr-2 h-4 w-4"
                   aria-hidden="true"
                 />
                 <p>{{ t('standalone.dns_dhcp.options') }}</p>
               </div>
-              <template v-if="expandAllCards"
+              <template v-if="isInterfaceCardExpanded[ifaceName]"
                 ><div
                   class="text-sm"
                   v-for="(ifaceOption, optionName) in iface.options"

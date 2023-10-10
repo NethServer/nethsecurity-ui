@@ -18,7 +18,7 @@ import { MessageBag, validateRequired } from '@/lib/validation'
 import { useFirewallStore, Zone } from '@/stores/standalone/useFirewallStore'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
-import { Gateway, usePolicyForm } from '@/composables/usePolicyForm'
+import { usePolicyForm } from '@/composables/usePolicyForm'
 
 const { t } = useI18n()
 
@@ -191,16 +191,13 @@ function create() {
           <NeButton
             v-if="policyForm.selection != 'backup'"
             :kind="'tertiary'"
-            @click="priority.push(new Gateway())"
+            @click="policyForm.addGateway(priorityIndex)"
           >
             {{ t('standalone.multi_wan.add_gateway') }}
           </NeButton>
         </div>
       </template>
-      <NeButton
-        v-if="policyForm.selection != 'balance'"
-        @click="policyForm.priorities.push([new Gateway()])"
-      >
+      <NeButton v-if="policyForm.selection != 'balance'" @click="policyForm.addPriority()">
         <template #prefix>
           <FontAwesomeIcon :icon="faPlus" />
         </template>

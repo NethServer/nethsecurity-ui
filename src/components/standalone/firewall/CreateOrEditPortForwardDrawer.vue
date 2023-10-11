@@ -327,13 +327,6 @@ async function createOrEditPortForward() {
           ></template
         >
       </NeTextInput>
-      <NeCombobox
-        :label="t('standalone.port_forward.destination_zone')"
-        :placeholder="t('standalone.port_forward.choose_zone')"
-        :options="supportedDestinationZones"
-        :selected-label="t('standalone.port_forward.any_zone')"
-        v-model="destinationZone"
-      />
       <NeTextInput
         :label="t('standalone.port_forward.destination_port')"
         v-model="destinationPort"
@@ -354,11 +347,17 @@ async function createOrEditPortForward() {
       </div>
       <template v-if="showAdvancedSettings">
         <NeCombobox
+          :label="t('standalone.port_forward.destination_zone')"
+          :placeholder="t('standalone.port_forward.choose_zone')"
+          :options="supportedDestinationZones"
+          :selected-label="t('standalone.port_forward.any_zone')"
+          v-model="destinationZone"
+        />
+        <NeCombobox
           :label="t('standalone.port_forward.wan_ip')"
           :options="wanInterfaces"
           v-model="wan"
         />
-
         <NeMultiTextInput
           :title="t('standalone.port_forward.restrict_access_to')"
           :optional="true"

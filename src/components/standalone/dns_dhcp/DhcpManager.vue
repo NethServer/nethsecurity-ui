@@ -6,7 +6,8 @@ import {
   NeSkeleton,
   NeTitle,
   NeBadge,
-  NeButton
+  NeButton,
+  NeEmptyState
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -134,14 +135,11 @@ onMounted(() => {
         }}</NeButton
       >
     </div>
-    <div
+    <NeEmptyState
       v-if="Object.keys(interfaces).length == 0"
-      class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
-    >
-      <p class="text-sm">
-        <strong>{{ t('standalone.dns_dhcp.no_interface_configured') }}</strong>
-      </p>
-    </div>
+      :title="t('standalone.dns_dhcp.no_interface_configured')"
+      :icon="['fas', 'circle-info']"
+    />
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" v-else>
       <div
         v-for="(iface, ifaceName) in interfaces"

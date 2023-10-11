@@ -530,7 +530,8 @@
       "record_not_found": "Record not found",
       "lease_not_found": "Lease not found",
       "interface_not_found": "Interface not found",
-      "no_dynamic_lease_found": "No dynamic lease found"
+      "no_dynamic_lease_found": "No dynamic lease found",
+      "filter_change_suggestion": "Try changing filter value"
     },
     "routes": {
       "title": "Routes",

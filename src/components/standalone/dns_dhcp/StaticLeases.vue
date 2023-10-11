@@ -49,6 +49,7 @@ async function getUciChanges() {
     :readonly="false"
     :no-items-found-message="t('standalone.dns_dhcp.no_reservation_configured')"
     :no-filtered-items-found-message="t('standalone.dns_dhcp.no_reservation_found')"
+    :no-filtered-items-found-description="t('standalone.dns_dhcp.filter_change_suggestion')"
     :description="t('standalone.dns_dhcp.static_leases_description')"
     @reload-items="getUciChanges()"
   >

@@ -39,6 +39,7 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
     :readonly="true"
     :no-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
     :no-filtered-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
+    :no-filtered-items-found-description="t('standalone.dns_dhcp.filter_change_suggestion')"
     :description="t('standalone.dns_dhcp.dynamic_leases_description')"
   >
     <template #item-list-view="{ items }">

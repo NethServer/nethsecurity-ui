@@ -7,7 +7,8 @@ import {
   NeButton,
   NeTextInput,
   NeInlineNotification,
-  NeSkeleton
+  NeSkeleton,
+  NeEmptyState
 } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const props = defineProps<{
   description: string
   noItemsFoundMessage: string
   noFilteredItemsFoundMessage: string
+  noFilteredItemsFoundDescription?: string
 }>()
 const emit = defineEmits(['reload-items'])
 
@@ -107,14 +109,12 @@ onMounted(() => {
     />
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
-      <div
+      <NeEmptyState
         v-if="items.length == 0"
-        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
-      >
-        <p class="text-sm">
-          <strong>{{ noItemsFoundMessage }}</strong>
-        </p>
-        <NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)" class="mt-4"
+        :title="noItemsFoundMessage"
+        :icon="['fas', 'circle-info']"
+        :class="[readonly ? 'pb-2' : '']"
+        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"
@@ -122,19 +122,14 @@ onMounted(() => {
               aria-hidden="true"
             /> </template
           >{{ addItemButtonLabel }}</NeButton
-        >
-      </div>
-      <div
-        v-else-if="filteredItems.length == 0"
-        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
+        ></NeEmptyState
       >
-        <p class="text-sm">
-          <strong>{{ noFilteredItemsFoundMessage }}</strong>
-        </p>
-        <p class="mt-4 text-sm">
-          {{ t('standalone.port_forward.filter_change_suggestion') }}
-        </p>
-      </div>
+      <NeEmptyState
+        v-else-if="filteredItems.length == 0"
+        :title="noFilteredItemsFoundMessage"
+        :description="noFilteredItemsFoundDescription"
+        :icon="['fas', 'circle-info']"
+      />
       <slot
         v-else
         name="item-list-view"

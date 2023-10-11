@@ -165,8 +165,13 @@ watchEffect(() => {
 })
 
 function close() {
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
+  if (
+    error.value.notificationTitle === t('error.cannot_edit_port_forward') ||
+    error.value.notificationTitle === t('error.cannot_create_port_forward')
+  ) {
+    error.value.notificationTitle = ''
+    error.value.notificationDescription = ''
+  }
   validationErrorBag.value.clear()
   restrictIPValidationErrors.value = []
 

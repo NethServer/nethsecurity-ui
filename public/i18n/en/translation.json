@@ -516,7 +516,7 @@
     },
     "port_forward": {
       "title": "Port forward",
-      "description": "Port forwarding redirects incoming network traffic from the firewall's public IP address to a device on a local network, enabling access to services or applications hosted on that device.",
+      "description": "Port forwarding redirects incoming network traffic from the public IP address of the firewall to a device on a local network, enabling access to services or applications hosted on that device.",
       "add_port_forward": "Add port forward",
       "name": "Name",
       "source_port": "Source port",

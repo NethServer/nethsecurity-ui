@@ -171,7 +171,9 @@ function close() {
 
 onMounted(() => {
   fetchOptions()
-  firewallConfig.fetch()
+  if (firewallConfig.loading || firewallConfig.error) {
+    firewallConfig.fetch()
+  }
 })
 
 function resetRestrictIPValidationErrors() {
@@ -286,13 +288,17 @@ async function createOrEditPortForward() {
     "
   >
     <NeInlineNotification
-      v-if="error.notificationTitle"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
+      v-if="error.notificationTitle || firewallConfig.error"
+      :title="firewallConfig.error ? t('error.cannot_retrieve_zones') : error.notificationTitle"
+      :description="
+        firewallConfig.error
+          ? t(getAxiosErrorMessage(firewallConfig.error))
+          : error.notificationDescription
+      "
       class="mb-6"
       kind="error"
     />
-    <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
+    <NeSkeleton v-if="loading || firewallConfig.loading || firewallConfig.error" :lines="10" />
     <div v-else class="flex flex-col gap-y-6">
       <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
       <NeTextInput

@@ -80,8 +80,8 @@ function getDropdownItems(item: StaticLease) {
       <p v-else>{{ item.interface }}<br />{{ item.device }}</p>
     </template>
     <template v-if="showDynamicLeases" #timestamp="{ item }: { item: DynamicLease }">
-      {{ new Date(Number.parseInt(item.timestamp)).toLocaleDateString() }}
-      {{ new Date(Number.parseInt(item.timestamp)).toLocaleTimeString() }}
+      {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
+      {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
     </template>
     <template v-if="!showDynamicLeases" #menu="{ item }: { item: StaticLease }">
       <div class="align-center flex justify-end">

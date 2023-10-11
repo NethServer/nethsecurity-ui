@@ -165,6 +165,11 @@ watchEffect(() => {
 })
 
 function close() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  validationErrorBag.value.clear()
+  restrictIPValidationErrors.value = []
+
   resetForm()
   emit('close')
 }

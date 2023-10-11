@@ -255,7 +255,7 @@ export const validateLeaseTime = (value: string): validationOutput => {
   if (value != 'infinity') {
     const unit = value.charAt(value.length - 1)
     if (
-      (unit === 's' && Number.parseInt(value.slice(0, value.length - 1)) < 60) ||
+      (unit === 's' && Number.parseInt(value.slice(0, value.length - 1)) < 120) ||
       (unit === 'm' && Number.parseInt(value.slice(0, value.length - 1)) < 2)
     ) {
       return { valid: false, errMessage: 'error.invalid_lease_time_duration' }

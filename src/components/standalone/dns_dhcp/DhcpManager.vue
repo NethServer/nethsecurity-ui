@@ -95,8 +95,9 @@ async function reloadDhcpInterfaces() {
 }
 
 onMounted(() => {
-  //TODO: handle firewallconfig error state
-  firewallConfig.fetch()
+  if (firewallConfig.loading || firewallConfig.error) {
+    firewallConfig.fetch()
+  }
   fetchDhcpInterfaces()
 })
 </script>
@@ -104,12 +105,16 @@ onMounted(() => {
 <template>
   <NeInlineNotification
     kind="error"
-    :title="t('error.generic_error')"
-    :description="error"
-    v-if="error"
+    :title="
+      firewallConfig.error
+        ? t('error.cannot_retrieve_zones')
+        : t('error.cannot_retrieve_dhcp_interfaces')
+    "
+    :description="firewallConfig.error ? t(getAxiosErrorMessage(firewallConfig.error)) : error"
+    v-if="error || firewallConfig.error"
   />
   <NeSkeleton :lines="10" v-if="loading || firewallConfig.loading" />
-  <template v-else>
+  <template v-else-if="!firewallConfig.error">
     <div class="mb-4 flex flex-row items-center justify-between">
       <NeTitle level="h4" class="grow">{{ t('standalone.dns_dhcp.interfaces') }}</NeTitle>
       <NeButton
@@ -179,7 +184,7 @@ onMounted(() => {
                 >{{ t('common.edit') }}</NeButton
               >
             </div>
-            <div class="flex flex-col gap-y-3 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
+            <div class="flex flex-col gap-y-4 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
               <div
                 class="flex cursor-pointer flex-row items-center"
                 @click="toggleExpandSingleCard(ifaceName)"
@@ -195,21 +200,23 @@ onMounted(() => {
                 <p>{{ t('standalone.dns_dhcp.options') }}</p>
               </div>
               <template v-if="isInterfaceCardExpanded[ifaceName]"
-                ><div
-                  class="text-sm"
-                  v-for="(ifaceOption, optionName) in iface.options"
-                  :key="optionName"
-                >
-                  <strong
-                    >{{
-                      t(
-                        `standalone.dns_dhcp.dhcp_options.${optionName
-                          .toLowerCase()
-                          .replace(/-/g, '_')}`
-                      )
-                    }}:</strong
+                ><div class="flex flex-col gap-y-2">
+                  <div
+                    class="text-sm"
+                    v-for="(ifaceOption, optionName) in iface.options"
+                    :key="optionName"
                   >
-                  {{ ifaceOption }}
+                    <strong
+                      >{{
+                        t(
+                          `standalone.dns_dhcp.dhcp_options.${optionName
+                            .toLowerCase()
+                            .replace(/-/g, '_')}`
+                        )
+                      }}:</strong
+                    >
+                    {{ ifaceOption }}
+                  </div>
                 </div></template
               >
             </div>

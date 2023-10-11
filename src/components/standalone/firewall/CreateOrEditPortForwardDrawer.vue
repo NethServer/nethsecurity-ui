@@ -12,7 +12,7 @@ import {
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { toRefs, ref, onMounted } from 'vue'
+import { toRefs, ref, watch } from 'vue'
 import type {
   CreateEditPortForwardPayload,
   PortForward
@@ -165,13 +165,8 @@ watchEffect(() => {
 })
 
 function close() {
-  if (
-    error.value.notificationTitle === t('error.cannot_edit_port_forward') ||
-    error.value.notificationTitle === t('error.cannot_create_port_forward')
-  ) {
-    error.value.notificationTitle = ''
-    error.value.notificationDescription = ''
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
   validationErrorBag.value.clear()
   restrictIPValidationErrors.value = []
 
@@ -179,12 +174,17 @@ function close() {
   emit('close')
 }
 
-onMounted(() => {
-  fetchOptions()
-  if (firewallConfig.loading || firewallConfig.error) {
-    firewallConfig.fetch()
+watch(
+  () => props.isShown,
+  () => {
+    if (props.isShown) {
+      fetchOptions()
+      if (firewallConfig.loading || firewallConfig.error) {
+        firewallConfig.fetch()
+      }
+    }
   }
-})
+)
 
 function resetRestrictIPValidationErrors() {
   restrictIPValidationErrors.value = []
@@ -308,8 +308,8 @@ async function createOrEditPortForward() {
       class="mb-6"
       kind="error"
     />
-    <NeSkeleton v-if="loading || firewallConfig.loading || firewallConfig.error" :lines="10" />
-    <div v-else class="flex flex-col gap-y-6">
+    <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
+    <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
       <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
       <NeTextInput
         :label="t('standalone.port_forward.name')"

@@ -61,14 +61,13 @@ function goToMultiwan() {
       :icon="['fas', 'earth-americas']"
     />
     <!-- multiwan -->
-    <ServiceCard
-      serviceName="mwan"
-      hasStatus
-      :title="t('standalone.dashboard.multiwan')"
-      :icon="['fas', 'earth-americas']"
-      titleClickable
-      @titleClick="goToMultiwan"
-    />
+    <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
+      <template #title>
+        <a @click="goToMultiwan" class="cursor-pointer text-primary-700 dark:text-primary-500">
+          {{ t('standalone.dashboard.multiwan') }}
+        </a>
+      </template>
+    </ServiceCard>
     <!-- dpi-core -->
     <ServiceCard
       serviceName="netifyd"

@@ -6,7 +6,8 @@ import {
   NeButton,
   NeTextInput,
   NeSkeleton,
-  NeInlineNotification
+  NeInlineNotification,
+  NeEmptyState
 } from '@nethserver/vue-tailwind-lib'
 import PortForwardTable from '@/components/standalone/firewall/PortForwardTable.vue'
 import { onMounted, ref } from 'vue'
@@ -204,14 +205,11 @@ onMounted(() => {
     />
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
-      <div
+      <NeEmptyState
+        :title="t('standalone.port_forward.no_port_forward_configured')"
+        :icon="['fas', 'circle-info']"
         v-if="Object.keys(portForwards).length == 0"
-        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
-      >
-        <p class="mb-4 text-sm">
-          <strong>{{ t('standalone.port_forward.no_port_forward_configured') }}</strong>
-        </p>
-        <NeButton kind="primary" @click="openCreateEditDrawer(null)"
+        ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"
@@ -219,19 +217,14 @@ onMounted(() => {
               aria-hidden="true"
             /> </template
           >{{ t('standalone.port_forward.add_port_forward') }}</NeButton
-        >
-      </div>
-      <div
-        v-else-if="Object.keys(filteredPortForwards).length == 0"
-        class="flex flex-col items-center justify-center rounded-md bg-gray-200 p-10 dark:bg-gray-800"
+        ></NeEmptyState
       >
-        <p class="mb-4 text-sm">
-          <strong>{{ t('standalone.port_forward.no_port_forward_found') }}</strong>
-        </p>
-        <p class="text-sm">
-          {{ t('standalone.port_forward.filter_change_suggestion') }}
-        </p>
-      </div>
+      <NeEmptyState
+        :title="t('standalone.port_forward.no_port_forward_found')"
+        :description="t('standalone.port_forward.filter_change_suggestion')"
+        :icon="['fas', 'circle-info']"
+        v-else-if="Object.keys(filteredPortForwards).length == 0"
+      />
       <PortForwardTable
         v-else
         v-for="(portForward, key) in filteredPortForwards"

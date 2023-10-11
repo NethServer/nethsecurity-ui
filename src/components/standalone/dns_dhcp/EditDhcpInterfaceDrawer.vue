@@ -102,7 +102,10 @@ async function loadDhcpOptions() {
     loading.value = true
     const dhcpOptionsResponse = (await ubusCall('ns.dhcp', 'list-dhcp-options')).data
     availableDhcpOptions.value = Object.keys(dhcpOptionsResponse).map((k) => {
-      return { id: dhcpOptionsResponse[k], label: k }
+      return {
+        id: k,
+        label: t(`standalone.dns_dhcp.dhcp_options.${k.toLowerCase().replace(/-/g, '_')}`)
+      }
     })
     loading.value = false
   } catch (err: any) {

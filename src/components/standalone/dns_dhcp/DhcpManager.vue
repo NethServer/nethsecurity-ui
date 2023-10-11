@@ -200,7 +200,16 @@ onMounted(() => {
                   v-for="(ifaceOption, optionName) in iface.options"
                   :key="optionName"
                 >
-                  <strong>{{ optionName }}:</strong> {{ ifaceOption }}
+                  <strong
+                    >{{
+                      t(
+                        `standalone.dns_dhcp.dhcp_options.${optionName
+                          .toLowerCase()
+                          .replace(/-/g, '_')}`
+                      )
+                    }}:</strong
+                  >
+                  {{ ifaceOption }}
                 </div></template
               >
             </div>

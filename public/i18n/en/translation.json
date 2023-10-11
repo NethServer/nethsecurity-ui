@@ -468,11 +468,13 @@
     },
     "dns_dhcp": {
       "title": "DNS & DHCP",
-      "dhcp": "DHCP",
-      "static_leases": "Static leases",
-      "dynamic_leases": "Dynamic leases",
-      "dns": "DNS",
-      "dns_records": "DNS records",
+      "tabs": {
+        "dhcp": "DHCP",
+        "dns": "DNS",
+        "static_leases": "Static leases",
+        "dynamic_leases": "Dynamic leases",
+        "dns_records": "DNS records"
+      },
       "dns_forwarding_servers": "DNS forwarding servers",
       "dns_forwarding_servers_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "add_dns_server": "Add DNS server",

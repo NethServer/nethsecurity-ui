@@ -13,23 +13,23 @@ const { t } = useI18n()
 const { tabs, selectedTab } = useTabs([
   {
     name: 'dhcp',
-    label: t('standalone.dns_dhcp.dhcp')
+    label: t('standalone.dns_dhcp.tabs.dhcp')
   },
   {
     name: 'static-leases',
-    label: t('standalone.dns_dhcp.static_leases')
+    label: t('standalone.dns_dhcp.tabs.static_leases')
   },
   {
     name: 'dynamic-leases',
-    label: t('standalone.dns_dhcp.dynamic_leases')
+    label: t('standalone.dns_dhcp.tabs.dynamic_leases')
   },
   {
     name: 'dns',
-    label: t('standalone.dns_dhcp.dns')
+    label: t('standalone.dns_dhcp.tabs.dns')
   },
   {
     name: 'dns-records',
-    label: t('standalone.dns_dhcp.dns_records')
+    label: t('standalone.dns_dhcp.tabs.dns_records')
   }
 ])
 </script>

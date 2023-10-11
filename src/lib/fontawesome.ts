@@ -7,7 +7,9 @@ import {
   faCircleStop,
   faHouse as fasHouse,
   faUserGear,
-  faWifi
+  faWifi,
+  faDiagramProject as fasDiagramProject,
+  faArrowsLeftRight as fasArrowsLeftRight
 } from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
@@ -69,6 +71,24 @@ import { faCircleChevronDown } from '@fortawesome/free-solid-svg-icons/faCircleC
 import { faCircleChevronUp } from '@fortawesome/free-solid-svg-icons/faCircleChevronUp'
 import { faDownLeftAndUpRightToCenter } from '@fortawesome/free-solid-svg-icons/faDownLeftAndUpRightToCenter'
 import { faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons/faUpRightAndDownLeftFromCenter'
+import { faShapes as fasShapes } from '@fortawesome/free-solid-svg-icons'
+import { faTrafficCone as fasTrafficCone } from '@nethesis/nethesis-solid-svg-icons'
+import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons'
+
+import {
+  faAmazon,
+  faFacebook,
+  faFacebookMessenger,
+  faInstagram,
+  faPinterest,
+  faSnapchat,
+  faTelegram,
+  faTiktok,
+  faTwitch,
+  faVimeo,
+  faWhatsapp,
+  faYoutube
+} from '@nethesis/nethesis-brands-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -139,4 +159,24 @@ export async function loadFontAwesome(app: any) {
   library.add(faCircleChevronUp)
   library.add(faDownLeftAndUpRightToCenter)
   library.add(faUpRightAndDownLeftFromCenter)
+  library.add(fasShapes)
+  library.add(fasDiagramProject)
+  library.add(fasArrowsLeftRight)
+  library.add(faFacebook)
+  library.add(faAmazon)
+  library.add(faWhatsapp)
+  library.add(faInstagram)
+  // library.add(faNetflix) ////
+  // library.add(faXTwitter) ////
+  library.add(faTelegram)
+  library.add(faTiktok)
+  library.add(faYoutube)
+  library.add(faFacebookMessenger)
+  library.add(faVimeo)
+  library.add(faSnapchat)
+  library.add(faPinterest)
+  // library.add(faNordVpn) ////
+  library.add(faTwitch)
+  library.add(fasTrafficCone)
+  library.add(fasStar)
 }

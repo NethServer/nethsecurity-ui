@@ -9,7 +9,12 @@
     "edit": "Edit",
     "delete": "Delete",
     "filter": "Filter",
-    "advanced_settings": "Advanced settings"
+    "advanced_settings": "Advanced settings",
+    "enable": "Enable",
+    "disable": "Disable",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "page_under_construction": "Page under construction"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -111,7 +116,15 @@
     "cannot_retrieve_storage_configuration": "Cannot retrieve storage configuration",
     "cannot_configure_storage": "Cannot configure storage",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
-    "cannot_remove_storage": "Cannot remove storage"
+    "cannot_remove_storage": "Cannot remove storage",
+    "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
+    "cannot_create_dpi_rule": "Cannot create DPI rule",
+    "cannot_edit_dpi_rule": "Cannot edit DPI rule",
+    "cannot_retrieve_popular_apps": "Cannot retrieve popular apps",
+    "cannot_retrieve_devices": "Cannot retrieve devices",
+    "cannot_retrieve_applications": "Cannot retrieve applications",
+    "zone_already_exists": "Zone already exists",
+    "cannot_delete_rule": "Cannote delete rule"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -429,7 +442,8 @@
       "bond_balance_alb": "Adaptive load balancing",
       "bond_primary_device": "Primary device",
       "primary_device_not_included": "Primary device must be included in selected devices",
-      "no_devices_available": "No devices available"
+      "no_devices_available": "No devices available",
+      "custom_zone": "Custom"
     },
     "multi_wan": {
       "title": "MultiWAN",
@@ -702,8 +716,7 @@
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
       "delete_zone": "Delete \"{0}\"?",
-      "edit_zone_name": "Edit zone {name}",
-      "zone_already_exists": "Zone already exists"
+      "edit_zone_name": "Edit zone {name}"
     },
     "port_forward": {
       "title": "Port forward",
@@ -765,6 +778,38 @@
       "sourcebypass": "Bypass source IPs or networks",
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
       "add_sourcebypass": "Add source bypass"
+    },
+    "dpi": {
+      "title": "DPI filter",
+      "rules": "Rules",
+      "exceptions": "Exceptions",
+      "rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "no_rules_found": "No rules found",
+      "create_rule": "Create rule",
+      "edit_rule": "Edit rule",
+      "save_rule": "Save rule",
+      "enable_rule": "Enable rule",
+      "source": "Source",
+      "choose_interface": "Choose interface",
+      "source_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "no_interfaces_available": "No interfaces available",
+      "apps_and_protocols": "Apps and protocols to block",
+      "apps_and_protocols_placeholder": "Search {num} apps, protocols and categories",
+      "no_apps": "No apps or protocols",
+      "clear_search": "Clear search",
+      "num_apps_and_protocols_selected": "{num} apps and protocols selected",
+      "search_results": "Search results",
+      "no_apps_or_protocols_found": "No apps or protocols found",
+      "try_changing_search_filter": "Try changing your search filter",
+      "available_with_subscription": "Available with subscription",
+      "continue_typing_to_show_other_search_results": "Continue typing your search query to show other search results",
+      "select_at_least_one_app_or_protocol": "Select at least one app or protocol",
+      "type_application": "App",
+      "type_protocol": "Protocol",
+      "confirm_delete_rule": "You are about to delete DPI rule on interface '{iface}'",
+      "delete_rule": "Delete rule",
+      "blocked_apps_and_protocols": "Blocked apps and protocols",
+      "plus_num_others": "+{num} others"
     },
     "vpn": {
       "title": "VPN"

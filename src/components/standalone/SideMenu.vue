@@ -98,6 +98,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.flashstart.title'),
         to: 'security/flashstart'
+      },
+      {
+        name: t('standalone.dpi.title'),
+        to: 'security/dpi'
       }
     ]
   },

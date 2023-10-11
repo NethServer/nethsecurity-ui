@@ -48,7 +48,7 @@ const tableHeaders = [
       ]
     : [
         {
-          label: t('standalone.dns_dhcp.timestamp'),
+          label: t('standalone.dns_dhcp.lease_expiration'),
           key: 'timestamp'
         }
       ])

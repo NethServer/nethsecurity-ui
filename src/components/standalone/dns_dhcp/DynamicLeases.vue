@@ -43,7 +43,7 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
     :description="t('standalone.dns_dhcp.dynamic_leases_description')"
   >
     <template #item-list-view="{ items }">
-      <LeasesTable :leases="items" :show-dynamic-leases="true" :is-read-only="true" />
+      <LeasesTable :leases="items" :show-dynamic-leases="true" />
     </template>
   </FilterableListItemLayout>
 </template>

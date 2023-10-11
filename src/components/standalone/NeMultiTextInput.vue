@@ -122,6 +122,7 @@ onMounted(() => {
             :model-value="keys[i]"
             @update:model-value="(e) => updateModelKey(i, e)"
             :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+            :placeholder="comboboxPlaceholder"
             v-if="useKeyCombobox"
           />
           <NeTextInput

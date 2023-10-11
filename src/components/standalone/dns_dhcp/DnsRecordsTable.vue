@@ -60,7 +60,14 @@ function getDropdownItems(item: DnsRecord) {
       {{ item.description ? item.description : '-' }}
     </template>
     <template #wildcard="{ item }: { item: DnsRecord }">
-      {{ item.wildcard ? t('standalone.dns_dhcp.enabled') : t('standalone.dns_dhcp.disabled') }}
+      <div :class="['flex', 'flex-row', 'items-center']">
+        <font-awesome-icon
+          :icon="['fas', item.wildcard ? 'circle-check' : 'circle-xmark']"
+          class="mr-2 h-5 w-5"
+          aria-hidden="true"
+        />
+        {{ item.wildcard ? t('standalone.dns_dhcp.enabled') : t('standalone.dns_dhcp.disabled') }}
+      </div>
     </template>
     <template #menu="{ item }: { item: DnsRecord }">
       <div class="align-center flex justify-end">

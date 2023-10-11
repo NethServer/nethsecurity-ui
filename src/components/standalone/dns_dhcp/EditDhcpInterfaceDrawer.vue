@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, watch } from 'vue'
 import {
   MessageBag,
   validateIpAddress,
@@ -7,7 +7,6 @@ import {
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
-import { onMounted } from 'vue'
 import { watchEffect } from 'vue'
 import {
   NeSideDrawer,
@@ -16,6 +15,7 @@ import {
   NeTextInput,
   NeButton,
   NeSkeleton,
+  NeTooltip,
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
@@ -102,10 +102,12 @@ async function loadDhcpOptions() {
   try {
     loading.value = true
     const dhcpOptionsResponse = (await ubusCall('ns.dhcp', 'list-dhcp-options')).data
-    availableDhcpOptions.value = Object.keys(dhcpOptionsResponse).map((k) => {
+    availableDhcpOptions.value = Object.keys(dhcpOptionsResponse).map((dhcpOptionKey) => {
       return {
-        id: k,
-        label: t(`standalone.dns_dhcp.dhcp_options.${k.toLowerCase().replace(/-/g, '_')}`)
+        id: dhcpOptionKey,
+        label: t(
+          `standalone.dns_dhcp.dhcp_options.${dhcpOptionKey.toLowerCase().replace(/-/g, '_')}`
+        )
       }
     })
     loading.value = false
@@ -206,9 +208,14 @@ watchEffect(() => {
   resetForm()
 })
 
-onMounted(() => {
-  loadDhcpOptions()
-})
+watch(
+  () => props.isShown,
+  () => {
+    if (props.isShown) {
+      loadDhcpOptions()
+    }
+  }
+)
 </script>
 
 <template>
@@ -242,7 +249,14 @@ onMounted(() => {
         v-model="leaseTime"
         :label="t('standalone.dns_dhcp.lease_time')"
         :invalid-message="validationErrorBag.getFirstFor('leaseTime')"
-      />
+        ><template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.dns_dhcp.lease_time_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('standalone.dns_dhcp.advanced_settings') }}
@@ -266,7 +280,16 @@ onMounted(() => {
           :key-options="availableDhcpOptions"
           :invalid-messages="dhcpOptionValueErrors"
           :invalid-key-messages="dhcpOptionKeyErrors"
-        />
+          :combobox-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
+          :text-input-placeholder="t('standalone.dns_dhcp.dhcp_option_text_input_placeholder')"
+          ><template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.dns_dhcp.dhcp_option_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template></NeMultiTextInput
+        >
       </template>
       <hr />
       <div class="flex justify-end">

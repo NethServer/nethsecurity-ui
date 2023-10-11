@@ -31,7 +31,7 @@ const { t } = useI18n()
 
 const emit = defineEmits(['close', 'add-edit-lease'])
 
-const isCreatingOrEditing = ref(false)
+const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -83,7 +83,7 @@ async function createOrEditStaticLease() {
   const isEditing = id.value != ''
 
   try {
-    isCreatingOrEditing.value = true
+    isSavingChanges.value = true
     const requestType = isEditing ? 'edit-static-lease' : 'add-static-lease'
 
     if (validate()) {
@@ -116,7 +116,7 @@ async function createOrEditStaticLease() {
         ? t('standalone.dns_dhcp.lease_not_found')
         : t(getAxiosErrorMessage(err))
   } finally {
-    isCreatingOrEditing.value = false
+    isSavingChanges.value = false
   }
 }
 
@@ -181,8 +181,8 @@ onMounted(() => {
         <NeButton
           kind="primary"
           @click="createOrEditStaticLease()"
-          :disabled="isCreatingOrEditing"
-          :loading="isCreatingOrEditing"
+          :disabled="isSavingChanges"
+          :loading="isSavingChanges"
           >{{ t('common.save') }}</NeButton
         >
       </div>

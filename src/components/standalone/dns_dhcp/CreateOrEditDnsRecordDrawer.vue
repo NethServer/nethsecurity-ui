@@ -16,7 +16,8 @@ import {
   NeToggle,
   NeTextInput,
   NeButton,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeTooltip
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -31,7 +32,7 @@ const { t } = useI18n()
 
 const emit = defineEmits(['close', 'add-edit-record'])
 
-const isCreatingOrEditing = ref(false)
+const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -82,7 +83,7 @@ async function createOrEditDnsRecord() {
   const isEditing = id.value != ''
 
   try {
-    isCreatingOrEditing.value = true
+    isSavingChanges.value = true
     const requestType = isEditing ? 'edit-record' : 'add-record'
 
     if (validate()) {
@@ -115,7 +116,7 @@ async function createOrEditDnsRecord() {
         ? t('standalone.dns_dhcp.record_not_found')
         : t(getAxiosErrorMessage(err))
   } finally {
-    isCreatingOrEditing.value = false
+    isSavingChanges.value = false
   }
 }
 
@@ -168,15 +169,23 @@ onMounted(() => {
         :optional="true"
         :optional-label="t('common.optional')"
       />
-      <NeToggle v-model="wildcard" :label="t('standalone.dns_dhcp.wildcard_dns_record')" />
+      <NeToggle v-model="wildcard" :label="t('standalone.dns_dhcp.wildcard_dns_record')">
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.dns_dhcp.wildcard_dns_record_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeToggle
+      >
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
           @click="createOrEditDnsRecord()"
-          :disabled="isCreatingOrEditing"
-          :loading="isCreatingOrEditing"
+          :disabled="isSavingChanges"
+          :loading="isSavingChanges"
           >{{ t('common.save') }}</NeButton
         >
       </div>

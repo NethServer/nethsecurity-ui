@@ -3,6 +3,7 @@ import { ref, toRefs } from 'vue'
 import {
   MessageBag,
   validateIpAddress,
+  validateLeaseTime,
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
@@ -150,7 +151,7 @@ function validate() {
   const validators: [validationOutput[], string][] = [
     [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'rangeIpStart'],
     [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'rangeIpEnd'],
-    [[validateRequired(leaseTime.value)], 'leaseTime']
+    [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leaseTime']
   ]
 
   return (

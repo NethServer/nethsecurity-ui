@@ -39,6 +39,8 @@
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
     "invalid_port": "Enter an integer number between 1 and 65535",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
+    "invalid_lease_time": "Invalid lease time",
+    "invalid_lease_time_duration": "Lease time must be at least 2 minutes long",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",
     "cannot_load_network_devices": "Cannot load network devices",

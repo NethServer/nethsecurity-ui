@@ -244,6 +244,26 @@ export const validateRequiredOption = (value: NeComboboxOption[]): validationOut
   return { valid: true }
 }
 
+export const validateLeaseTime = (value: string): validationOutput => {
+  const re = /^([1-9][0-9]*[smhdw]|infinity)$/
+
+  const match = value.match(re)
+
+  if (!match) {
+    return { valid: false, errMessage: 'error.invalid_lease_time' }
+  }
+  if (value != 'infinity') {
+    const unit = value.charAt(value.length - 1)
+    if (
+      (unit === 's' && Number.parseInt(value.slice(0, value.length - 1)) < 60) ||
+      (unit === 'm' && Number.parseInt(value.slice(0, value.length - 1)) < 2)
+    ) {
+      return { valid: false, errMessage: 'error.invalid_lease_time_duration' }
+    }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

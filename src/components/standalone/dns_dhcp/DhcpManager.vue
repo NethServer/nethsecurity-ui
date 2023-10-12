@@ -14,7 +14,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import EditDhcpInterfaceDrawer from './EditDhcpInterfaceDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { ZoneType, useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { useFirewallStore } from '@/stores/standalone/useFirewallStore'
 import { computed } from 'vue'
 
 export type DhcpInterface = {
@@ -56,16 +56,20 @@ async function fetchDhcpInterfaces() {
   }
 }
 
-function getColorForInterface(iface: string) {
+function getBorderColorForInterface(iface: string) {
   const interfaceZone = firewallConfig.zones.find((zone) => zone.interfaces.includes(iface))
 
-  switch (interfaceZone?.type()) {
-    case ZoneType.LAN:
-      return 'bg-green-100 dark:bg-green-700'
-    case ZoneType.WAN:
-      return 'bg-rose-100 dark:bg-rose-700'
-    case ZoneType.GUEST:
-      return 'bg-blue-100 dark:bg-blue-700'
+  switch (interfaceZone?.name) {
+    case 'lan':
+      return 'border-green-700 dark:border-green-700'
+    case 'wan':
+      return 'border-rose-700 dark:border-rose-700'
+    case 'guests':
+      return 'border-blue-700 dark:border-blue-700'
+    case 'openvpnrw':
+      return 'border-teal-700 dark:border-teal-700'
+    default:
+      return 'border-gray-500 dark:border-gray-500'
   }
 }
 
@@ -149,77 +153,76 @@ onMounted(() => {
       <div
         v-for="(iface, ifaceName) in interfaces"
         :key="ifaceName"
-        class="bg-whitetext-sm overflow-hidden text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow"
+        :class="`bg-whitetext-sm overflow-hidden rounded-md border-l-4 text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow ${getBorderColorForInterface(
+          ifaceName
+        )}`"
       >
-        <div class="flex h-full flex-row">
-          <div :class="['w-1.5', getColorForInterface(ifaceName)]"></div>
-          <div class="flex grow flex-col gap-y-4 p-5">
-            <div class="flex flex-col">
-              <div class="flex flex-row items-start justify-between">
-                <p class="text-sm">
-                  <strong>{{ ifaceName }}</strong>
-                  <br />
-                  {{ iface.device }}
-                </p>
-                <NeBadge
-                  size="sm"
-                  :text="
-                    iface.active
-                      ? t('standalone.dns_dhcp.active')
-                      : t('standalone.dns_dhcp.not_active')
-                  "
-                  :kind="iface.active ? 'success' : 'error'"
-                />
-              </div>
+        <div class="flex grow flex-col gap-y-4 p-5">
+          <div class="flex flex-col">
+            <div class="flex flex-row items-start justify-between">
+              <p class="text-sm">
+                <strong>{{ ifaceName }}</strong>
+                <br />
+                {{ iface.device }}
+              </p>
+              <NeBadge
+                size="sm"
+                :text="
+                  iface.active
+                    ? t('standalone.dns_dhcp.active')
+                    : t('standalone.dns_dhcp.not_active')
+                "
+                :kind="iface.active ? 'success' : 'error'"
+              />
             </div>
-            <div class="flex flex-row content-start items-center">
-              <p class="grow text-sm">{{ iface.first }} - {{ iface.last }}</p>
-              <NeButton size="sm" kind="tertiary" @click="openEditInterfaceDrawer(ifaceName)">
-                <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  /> </template
-                >{{ t('common.edit') }}</NeButton
-              >
-            </div>
-            <div class="flex flex-col gap-y-4 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
-              <div
-                class="flex cursor-pointer flex-row items-center"
-                @click="toggleExpandSingleCard(ifaceName)"
-              >
+          </div>
+          <div class="flex flex-row content-start items-center">
+            <p class="grow text-sm">{{ iface.first }} - {{ iface.last }}</p>
+            <NeButton size="sm" kind="tertiary" @click="openEditInterfaceDrawer(ifaceName)">
+              <template #prefix>
                 <font-awesome-icon
-                  :icon="[
-                    'fas',
-                    isInterfaceCardExpanded[ifaceName] ? 'circle-chevron-up' : 'circle-chevron-down'
-                  ]"
-                  class="mr-2 h-4 w-4"
+                  :icon="['fas', 'pen-to-square']"
+                  class="h-4 w-4"
                   aria-hidden="true"
-                />
-                <p>{{ t('standalone.dns_dhcp.options') }}</p>
-              </div>
-              <template v-if="isInterfaceCardExpanded[ifaceName]"
-                ><div class="flex flex-col gap-y-2">
-                  <div
-                    class="text-sm"
-                    v-for="(ifaceOption, optionName) in iface.options"
-                    :key="optionName"
-                  >
-                    <strong
-                      >{{
-                        t(
-                          `standalone.dns_dhcp.dhcp_options.${optionName
-                            .toLowerCase()
-                            .replace(/-/g, '_')}`
-                        )
-                      }}:</strong
-                    >
-                    {{ ifaceOption }}
-                  </div>
-                </div></template
-              >
+                /> </template
+              >{{ t('common.edit') }}</NeButton
+            >
+          </div>
+          <div class="flex flex-col gap-y-4 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
+            <div
+              class="flex cursor-pointer flex-row items-center"
+              @click="toggleExpandSingleCard(ifaceName)"
+            >
+              <font-awesome-icon
+                :icon="[
+                  'fas',
+                  isInterfaceCardExpanded[ifaceName] ? 'circle-chevron-up' : 'circle-chevron-down'
+                ]"
+                class="mr-2 h-4 w-4"
+                aria-hidden="true"
+              />
+              <p>{{ t('standalone.dns_dhcp.options') }}</p>
             </div>
+            <template v-if="isInterfaceCardExpanded[ifaceName]"
+              ><div class="flex flex-col gap-y-2">
+                <div
+                  class="text-sm"
+                  v-for="(ifaceOption, optionName) in iface.options"
+                  :key="optionName"
+                >
+                  <strong
+                    >{{
+                      t(
+                        `standalone.dns_dhcp.dhcp_options.${optionName
+                          .toLowerCase()
+                          .replace(/-/g, '_')}`
+                      )
+                    }}:</strong
+                  >
+                  {{ ifaceOption }}
+                </div>
+              </div></template
+            >
           </div>
         </div>
       </div>

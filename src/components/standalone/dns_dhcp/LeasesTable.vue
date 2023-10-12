@@ -77,7 +77,7 @@ function getDropdownItems(item: StaticLease) {
     </template>
     <template #interface="{ item }: { item: DynamicLease | StaticLease }">
       <p v-if="!item.interface && !item.device">-</p>
-      <p v-else>{{ item.interface }}<br />{{ item.device }}</p>
+      <p v-else>{{ item.interface }} ({{ item.device }})</p>
     </template>
     <template v-if="showDynamicLeases" #timestamp="{ item }: { item: DynamicLease }">
       {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}

@@ -162,7 +162,7 @@ onMounted(() => {
                     ? t('standalone.dns_dhcp.active')
                     : t('standalone.dns_dhcp.not_active')
                 "
-                :kind="iface.active ? 'success' : 'error'"
+                :kind="iface.active ? 'success' : 'secondary'"
               />
             </div>
           </div>

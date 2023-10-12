@@ -69,7 +69,7 @@ const configurationForm = ref<Configuration>({
 })
 
 let isLoggedIn = ref(false)
-let activeConficuration = ref(false)
+let activeConfiguration = ref(false)
 let loading = ref(false)
 let logging = ref(false)
 let loadingUnregister = ref(false)
@@ -166,14 +166,17 @@ async function getConfiguration() {
       getDataConfiguration.data.configuration &&
       getDataConfiguration.data.configuration.connected
     ) {
-      activeConficuration.value = true
+      activeConfiguration.value = true
       let configuration = getDataConfiguration.data.configuration
       if (configuration.hotspot_id) configurationForm.value.parentHotspot = configuration.hotspot_id
       if (configuration.unit_name) configurationForm.value.unitName = configuration.unit_name
       if (configuration.unit_description)
         configurationForm.value.unitDescription = configuration.unit_description
       if (configuration.interface) configurationForm.value.networkDevice = configuration.interface
-      if (configuration.network) configurationForm.value.networkAddress = configuration.network
+      if (configuration.network) {
+        configurationForm.value.networkAddress = configuration.network
+        getDhcpRange()
+      }
       if (configuration.dhcp_start)
         configurationForm.value.dhcpRangeStart = configuration.dhcp_start
       if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
@@ -370,8 +373,10 @@ function unregisterUnit() {
 
   ubusCall('ns.dedalo', 'unregister')
     .then((response) => {
-      if (response.data && response.data.result && response.data.result === 'success')
+      if (response.data && response.data.result && response.data.result === 'success') {
         isLoggedIn.value = false
+        activeConfiguration.value = false
+      }
     })
     .catch((exception: AxiosError) => {
       errorUnregister.value.notificationTitle = t('error.cannot_unregister_hotspot')
@@ -382,6 +387,8 @@ function unregisterUnit() {
 
 function getDhcpRange() {
   loadingDhcpRange.value = true
+  errorDhcpRange.value.notificationTitle = ''
+  error.value.networkAddress = ''
 
   let isValidationOk = true
 
@@ -411,6 +418,8 @@ function getDhcpRange() {
         if (response.data) {
           if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
           if (response.data.end) configurationForm.value.dhcpRangeEnd = response.data.end
+          if (response.data.max_entries)
+            configurationForm.value.maxClientsAllowed = response.data.max_entries
         }
       })
       .catch((exception: AxiosError) => {
@@ -429,8 +438,9 @@ function getDhcpRange() {
       v-if="!isLoggedIn && !loading"
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
+      class="max-w-6xl"
     >
-      <form>
+      <form @submit="login()">
         <div class="mb-8 flex flex-col gap-y-4">
           <NeTextInput
             v-model="loginForm.hostname"
@@ -468,13 +478,7 @@ function getDhcpRange() {
           :description="error.notificationDescription"
         />
         <div class="flex justify-end">
-          <NeButton
-            :disabled="logging"
-            :loading="logging"
-            kind="primary"
-            size="lg"
-            @click.prevent="login()"
-          >
+          <NeButton :disabled="logging" :loading="logging" kind="primary" size="lg" type="submit">
             <template #prefix>
               <FontAwesomeIcon :icon="faRightToBracket" />
             </template>
@@ -484,8 +488,9 @@ function getDhcpRange() {
       </form>
     </FormLayout>
     <FormLayout
-      v-if="!loading && activeConficuration"
+      v-if="!loading && activeConfiguration"
       :title="t('standalone.hotspot.settings.configurtion')"
+      class="max-w-6xl"
     >
       <NeInlineNotification
         v-if="errorLoadingData.notificationTitle"
@@ -545,6 +550,7 @@ function getDhcpRange() {
             :label="t('standalone.hotspot.settings.configurtion_network_address')"
             :disabled="!isLoggedIn"
             ref="networkAddressRef"
+            @change="getDhcpRange()"
           >
             <template #tooltip>
               <NeTooltip>
@@ -561,16 +567,10 @@ function getDhcpRange() {
             :title="errorDhcpRange.notificationTitle"
             :description="errorDhcpRange.notificationDescription"
           />
-          <div v-if="isLoggedIn" class="flex justify-end">
-            <NeButton
-              size="md"
-              :disabled="loadingDhcpRange"
-              :loading="loadingDhcpRange"
-              @click="getDhcpRange()"
-            >
-              {{ t('standalone.hotspot.settings.configurtion_use_default_dhcp_range') }}
-            </NeButton>
-          </div>
+          <small class="opacity-60"
+            >{{ t('standalone.hotspot.settings.configurtion_max_client_allowed') }}
+            {{ configurationForm.maxClientsAllowed }}</small
+          >
           <NeTextInput
             v-model="configurationForm.dhcpRangeStart"
             :invalid-message="error.dhcpRangeStart"
@@ -605,14 +605,6 @@ function getDhcpRange() {
               </NeTooltip>
             </template>
           </NeTextInput>
-          <!--NeTextInput
-						v-model="configurationForm.maxClientsAllowed"
-						:invalid-message="error.maxClientsAllowed"
-						:placeholder="
-							t('standalone.hotspot.settings.configurtion_max_client_allowed_placeholder')
-						"
-						:label="t('standalone.hotspot.settings.configurtion_max_client_allowed')"
-					/-->
         </div>
         <NeInlineNotification
           v-if="errorSave.notificationTitle"
@@ -646,8 +638,9 @@ function getDhcpRange() {
     </FormLayout>
     <hr class="my-8" />
     <FormLayout
-      v-if="!loading && isLoggedIn && activeConficuration"
+      v-if="!loading && isLoggedIn && activeConfiguration"
       :title="t('standalone.hotspot.settings.unregister')"
+      class="max-w-6xl"
     >
       <div>
         <NeInlineNotification

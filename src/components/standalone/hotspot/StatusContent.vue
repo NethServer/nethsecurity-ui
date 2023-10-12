@@ -18,15 +18,33 @@ const emit = defineEmits(['goToSetting'])
 
 let hotspotSession: any = ref({})
 let loading = ref(true)
+let activeConfiguration = ref(false)
 let error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
 
 onMounted(async () => {
+  await getConfiguration()
   await loadListSessions()
   loading.value = false
 })
+
+async function getConfiguration() {
+  try {
+    let getDataConfiguration = await ubusCall('ns.dedalo', 'get-configuration', {})
+    if (
+      getDataConfiguration &&
+      getDataConfiguration.data &&
+      getDataConfiguration.data.configuration &&
+      getDataConfiguration.data.configuration.connected
+    )
+      activeConfiguration.value = true
+  } catch (exception: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  }
+}
 
 async function loadListSessions() {
   try {
@@ -78,21 +96,36 @@ function autoConvertSize(sizeInBytes: number): string {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
     />
-    <NeEmptyState
-      v-if="!loading && !error.notificationTitle && !hotspotSession.length"
-      :title="t('standalone.hotspot.status.no_hotspot_configuration_found')"
-      :description="t('standalone.hotspot.status.no_hotspot_configuration_found_description')"
-      :icon="['fa', 'wifi']"
-    >
-      <NeButton kind="primary" size="lg" @click="emit('goToSetting')">
-        <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-        </template>
-        {{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
-      </NeButton>
-    </NeEmptyState>
-    <div>
-      <template v-if="!loading && hotspotSession.length > 0">
+    <template v-if="!loading && !error.notificationTitle">
+      <!-- IF CONFIGURATION NOT CONNECTED -->
+      <NeEmptyState
+        v-if="!activeConfiguration"
+        :title="t('standalone.hotspot.status.no_hotspot_configuration_found')"
+        :description="t('standalone.hotspot.status.no_hotspot_configuration_found_description')"
+        :icon="['fa', 'wifi']"
+      >
+        <NeButton kind="primary" size="lg" @click="emit('goToSetting')">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+          </template>
+          {{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
+        </NeButton>
+      </NeEmptyState>
+      <!-- IF CONFIGURATION CONNECTED && EMPTY SESSIIONS -->
+      <NeEmptyState
+        v-if="activeConfiguration && !hotspotSession.length"
+        :title="t('standalone.hotspot.status.empty_sessions')"
+        :description="t('standalone.hotspot.status.empty_sessions_description')"
+        :icon="['fas', 'circle-info']"
+      >
+        <!--NeButton kind="primary" size="lg" @click="emit('goToSetting')">
+					<template #prefix>
+						<FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+					</template>
+					{{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
+				</NeButton-->
+      </NeEmptyState>
+      <div v-if="activeConfiguration && hotspotSession.length > 0">
         <NeTable
           :data="hotspotSession"
           :headers="[
@@ -173,7 +206,7 @@ function autoConvertSize(sizeInBytes: number): string {
             {{ autoConvertSize(item.outputOctetsUploaded) }}
           </template>
         </NeTable>
-      </template>
-    </div>
+      </div>
+    </template>
   </div>
 </template>

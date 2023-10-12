@@ -39,7 +39,7 @@ watch(selectedTab, () => {
 
 <template>
   <NeTitle>{{ t('standalone.hotspot.title') }}</NeTitle>
-  <div>
+  <div class="flex flex-col gap-y-6">
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

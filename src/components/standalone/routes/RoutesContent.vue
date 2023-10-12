@@ -14,10 +14,10 @@ import {
   NeDropdown,
   NeTitle,
   NeModal,
+  NeEmptyState,
   NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
-import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
@@ -68,6 +68,7 @@ onMounted(async () => {
  * get all routes
  */
 async function loadRoutes() {
+  loading.value = true
   try {
     const res = await ubusCall('ns.routes', 'list-routes', {
       protocol: props.protocol
@@ -86,6 +87,8 @@ async function loadRoutes() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -114,7 +117,6 @@ function routeCreatedEditedHandler() {
 }
 
 function reloadConfig() {
-  console.log('aaa')
   uciPendingChangesStore.getChanges()
   loadRoutes()
   loadMainTable()
@@ -159,18 +161,18 @@ function scrollToMainTable() {
 
 <template>
   <NeSkeleton v-if="loading" :lines="15" />
-  <HorizontalCard
+  <NeEmptyState
     v-if="!loading && !error.notificationTitle && !routes.length"
-    class="space-y-4 text-center"
+    :title="t('standalone.routes.no_route_found')"
+    :icon="['fas', 'circle-info']"
   >
-    <p>{{ t('standalone.routes.no_route_found') }}</p>
-    <NeButton :kind="'primary'" @click="openCreateRoute()">
+    <NeButton kind="primary" size="lg" @click="openCreateRoute()">
       <template #prefix>
-        <FontAwesomeIcon :icon="faCirclePlus" />
+        <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
       </template>
-      {{ t('standalone.routes.create_route') }}
-    </NeButton>
-  </HorizontalCard>
+      {{ t('standalone.routes.create_route') }}</NeButton
+    >
+  </NeEmptyState>
   <div v-if="!loading && routes.length">
     <div class="space-y-8">
       <div class="flex">

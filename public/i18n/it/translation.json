@@ -69,7 +69,8 @@
     "cannot_duplicate_port_forward": "Impossibile duplicare il port forward",
     "cannot_edit_port_forward": "Impossibile modificare il port forward",
     "cannot_delete_port_forward": "Impossibile eliminare il port forward",
-    "cannot_retrive_interfaces": "Impossibile recuperare le interfacce"
+    "cannot_retrive_interfaces": "Impossibile recuperare le interfacce",
+    "cannot_retrieve_interfaces": "Impossibile recuperare le interfacce"
   },
   "login": {
     "sign_in": "Accedi",

@@ -16,6 +16,7 @@ import EditDhcpInterfaceDrawer from './EditDhcpInterfaceDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { useFirewallStore } from '@/stores/standalone/useFirewallStore'
 import { computed } from 'vue'
+import { getZoneBorderColorClasses } from '@/lib/standalone/network'
 
 export type DhcpInterface = {
   device: string
@@ -59,18 +60,7 @@ async function fetchDhcpInterfaces() {
 function getBorderColorForInterface(iface: string) {
   const interfaceZone = firewallConfig.zones.find((zone) => zone.interfaces.includes(iface))
 
-  switch (interfaceZone?.name) {
-    case 'lan':
-      return 'border-green-700 dark:border-green-700'
-    case 'wan':
-      return 'border-rose-700 dark:border-rose-700'
-    case 'guests':
-      return 'border-blue-700 dark:border-blue-700'
-    case 'openvpnrw':
-      return 'border-teal-700 dark:border-teal-700'
-    default:
-      return 'border-gray-500 dark:border-gray-500'
-  }
+  return getZoneBorderColorClasses(interfaceZone?.name ?? '')
 }
 
 function openEditInterfaceDrawer(iface: string) {

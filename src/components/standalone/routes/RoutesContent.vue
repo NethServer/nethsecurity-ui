@@ -159,7 +159,7 @@ function scrollToMainTable() {
 
 <template>
   <NeSkeleton v-if="loading" :lines="15" />
-  <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
+  <HorizontalCard v-if="!loading && !error.notificationTitle && !routes.length" class="space-y-4 text-center">
     <p>{{ t('standalone.routes.no_route_found') }}</p>
     <NeButton :kind="'primary'" @click="openCreateRoute()">
       <template #prefix>
@@ -199,7 +199,7 @@ function scrollToMainTable() {
   />
   <div v-if="!loading && routes.length">
     <div class="my-4">
-      <NeButton kind="tertiary" size="sm" class="-ml-2" @click="scrollToMainTable()">
+      <NeButton v-if="routes && routes.length && routes.length > 4" kind="tertiary" size="sm" class="-ml-2" @click="scrollToMainTable()">
         {{ t('standalone.routes.main_table') }}
       </NeButton>
     </div>

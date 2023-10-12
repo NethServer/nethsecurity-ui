@@ -536,7 +536,7 @@
         "configurtion_dhcp_range_end": "DHCP range end",
         "configurtion_dhcp_range_end_helper": "Lorem ipsum, or lipsum as it is sometimes known",
         "configurtion_dhcp_range_end_placeholder": "192.168.0.254",
-        "configurtion_max_client_allowed": "Max clients allowed:",
+        "configurtion_max_client_allowed": "Max allowed clients:",
         "configurtion_max_client_allowed_placeholder": "253",
         "configurtion_parent_hotspot": "Parent hotspot",
         "configurtion_parent_hotspot_placeholder": "samplename-office",

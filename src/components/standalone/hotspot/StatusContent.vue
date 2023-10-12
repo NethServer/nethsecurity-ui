@@ -39,7 +39,7 @@ async function getConfiguration() {
       getDataConfiguration.data.configuration &&
       getDataConfiguration.data.configuration.connected
     )
-      activeConfiguration.value = true
+      activeConfiguration.value = getDataConfiguration.data.configuration.hotspot_id != ''
   } catch (exception: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(exception))

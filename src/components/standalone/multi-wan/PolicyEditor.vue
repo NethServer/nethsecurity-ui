@@ -2,6 +2,7 @@
 import type { PropType } from 'vue'
 import { computed, onMounted, reactive, ref, toRef } from 'vue'
 import type { Policy } from '@/composables/useMwan'
+import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import {
   NeButton,
   NeCombobox,
@@ -12,9 +13,8 @@ import {
   NeSkeleton,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { Gateway, usePolicyForm } from '@/composables/usePolicyForm'
+import { usePolicyForm } from '@/composables/usePolicyForm'
 import { MessageBag } from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useFirewallStore, Zone } from '@/stores/standalone/useFirewallStore'
@@ -144,16 +144,13 @@ function submit() {
           <NeButton
             v-if="policyForm.selection != 'backup'"
             :kind="'tertiary'"
-            @click="priority.push(new Gateway())"
+            @click="policyForm.addGateway(priorityIndex)"
           >
             {{ t('standalone.multi_wan.add_gateway') }}
           </NeButton>
         </div>
       </template>
-      <NeButton
-        v-if="policyForm.selection != 'balance'"
-        @click="policyForm.priorities.push([new Gateway()])"
-      >
+      <NeButton v-if="policyForm.selection != 'balance'" @click="policyForm.addPriority()">
         <template #prefix>
           <FontAwesomeIcon :icon="faPlus" />
         </template>

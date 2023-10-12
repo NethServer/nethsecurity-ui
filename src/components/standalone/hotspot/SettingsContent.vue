@@ -351,11 +351,6 @@ function saveConfiguration() {
     }
 
     ubusCall('ns.dedalo', 'set-configuration', payload)
-      .then((response) => {
-        if (response.data) {
-          console.log(response)
-        }
-      })
       .catch((exception: AxiosError) => {
         errorSave.value.notificationTitle = t('error.cannot_save_configuration')
         errorSave.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -620,6 +615,12 @@ function getDhcpRange() {
           kind="error"
           :title="errorSave.notificationTitle"
           :description="errorSave.notificationDescription"
+        />
+        <NeInlineNotification
+          class="my-4"
+          kind="info"
+          :title="t('standalone.hotspot.settings.configurtion_save_info')"
+          :description="t('standalone.hotspot.settings.configurtion_save_info_description')"
         />
         <div class="flex justify-end">
           <NeButton

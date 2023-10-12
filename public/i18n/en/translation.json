@@ -80,7 +80,9 @@
     "cannot_login_hotspot": "Cannot login",
     "cannot_login_hotspot_description": "Login failed",
     "cannot_unregister_hotspot": "Cannot unregister",
-    "cannot_load_hotspot_configuration": "Cannot load hotspot configuration"
+    "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
+    "empty_network_device": "No \"Network device\" found.",
+    "empty_network_device_description": "There be at latest an unassigned device or with role \"hotspot\""
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -493,6 +495,7 @@
     },
     "hotspot": {
       "title": "Hotspot",
+      "description": "Lorem ipsum, or lipsum as it is sometimes known",
       "tabs": {
         "status": "Status",
         "settings": "Settings"
@@ -544,7 +547,9 @@
         "configurtion_save_info": "Save & commit",
         "configurtion_save_info_description": "All pending changes to the firewall and network configuration will be committed.",
         "unregister": "Unregister",
-        "unregister_unit": "Unregister unit"
+        "unregister_unit": "Unregister unit",
+        "unregister_unit_modal_title": "Unregister Hotspot unit",
+        "unregister_unit_modal_description": "The Hotspot unit will be detached from the remote Hotspot manager. Local firewall and network configuration will not be changed."
       }
     },
     "users_and_objects": {

@@ -6,6 +6,7 @@ import {
   NeButton,
   NeCombobox,
   NeInlineNotification,
+  NeModal,
   NeSkeleton,
   NeTextInput,
   NeTooltip
@@ -74,6 +75,8 @@ let loading = ref(false)
 let logging = ref(false)
 let loadingUnregister = ref(false)
 let loadingDhcpRange = ref(false)
+let showUnregisterModal = ref(false)
+let emptyDevices = ref(false)
 let saving = ref(false)
 let hostnameRef = ref()
 let usernameRef = ref()
@@ -147,7 +150,7 @@ async function getFirewallData() {
           label: item
         }))
         configurationForm.value.networkDevice = getNetworkDevice.data.devices[0]
-      }
+      } else emptyDevices.value = true
     } catch (exception: any) {
       errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_network_device')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -168,11 +171,10 @@ async function getConfiguration() {
     ) {
       activeConfiguration.value = true
       let configuration = getDataConfiguration.data.configuration
-      if (configuration.hotspot_id) configurationForm.value.parentHotspot = configuration.hotspot_id
-      if (configuration.unit_name) configurationForm.value.unitName = configuration.unit_name
-      if (configuration.unit_description)
-        configurationForm.value.unitDescription = configuration.unit_description
-      if (configuration.interface) configurationForm.value.networkDevice = configuration.interface
+      configurationForm.value.parentHotspot = configuration.hotspot_id
+      configurationForm.value.unitName = configuration.unit_name
+      configurationForm.value.unitDescription = configuration.unit_description
+      configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {
         configurationForm.value.networkAddress = configuration.network
         getDhcpRange()
@@ -244,6 +246,7 @@ function login() {
         if (response.data && response.data.response && response.data.response === 'success') {
           isLoggedIn.value = true
           getFirewallData()
+          getConfiguration()
         } else {
           error.value.notificationTitle = t('error.cannot_login_hotspot')
           error.value.notificationDescription = t('error.cannot_login_hotspot_description')
@@ -376,6 +379,8 @@ function unregisterUnit() {
       if (response.data && response.data.result && response.data.result === 'success') {
         isLoggedIn.value = false
         activeConfiguration.value = false
+        showUnregisterModal.value = false
+        uciPendingChangesStore.getChanges()
       }
     })
     .catch((exception: AxiosError) => {
@@ -493,13 +498,20 @@ function getDhcpRange() {
       class="max-w-6xl"
     >
       <NeInlineNotification
+        v-if="emptyDevices"
+        class="my-4"
+        kind="warning"
+        :title="t('error.empty_network_device')"
+        :description="t('error.empty_network_device_description')"
+      />
+      <NeInlineNotification
         v-if="errorLoadingData.notificationTitle"
         class="my-4"
         kind="error"
         :title="errorLoadingData.notificationTitle"
         :description="errorLoadingData.notificationDescription"
       />
-      <form v-else>
+      <form v-else-if="!emptyDevices">
         <div class="mb-8 flex flex-col gap-y-4">
           <NeCombobox
             v-model="configurationForm.parentHotspot"
@@ -638,27 +650,36 @@ function getDhcpRange() {
     </FormLayout>
     <hr class="my-8" />
     <FormLayout
-      v-if="!loading && isLoggedIn && activeConfiguration"
+      v-if="!loading && isLoggedIn && activeConfiguration && !emptyDevices"
       :title="t('standalone.hotspot.settings.unregister')"
       class="max-w-6xl"
     >
-      <div>
-        <NeInlineNotification
-          v-if="errorUnregister.notificationTitle"
-          class="my-4"
-          kind="error"
-          :title="errorUnregister.notificationTitle"
-          :description="errorUnregister.notificationDescription"
-        />
-        <NeButton
-          size="md"
-          :disabled="loadingUnregister"
-          :loading="loadingUnregister"
-          @click="unregisterUnit()"
-        >
-          {{ t('standalone.hotspot.settings.unregister_unit') }}
-        </NeButton>
-      </div>
+      <NeButton size="md" @click="showUnregisterModal = true">
+        {{ t('standalone.hotspot.settings.unregister_unit') }}
+      </NeButton>
     </FormLayout>
   </div>
+  <NeModal
+    :primary-button-disabled="loadingUnregister"
+    :primary-button-loading="loadingUnregister"
+    :primary-label="t('standalone.hotspot.settings.unregister')"
+    :secondary-button-disabled="loadingUnregister"
+    :title="t('standalone.hotspot.settings.unregister_unit_modal_title')"
+    :visible="showUnregisterModal"
+    kind="warning"
+    primary-button-kind="danger"
+    @close="showUnregisterModal = false"
+    @primary-click="unregisterUnit()"
+  >
+    <div>
+      {{ t('standalone.hotspot.settings.unregister_unit_modal_description') }}
+    </div>
+    <NeInlineNotification
+      v-if="errorUnregister.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="errorUnregister.notificationTitle"
+      :description="errorUnregister.notificationDescription"
+    />
+  </NeModal>
 </template>

@@ -57,11 +57,11 @@
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
     "cancel_registration_error": "Cannot cancel registration",
-    "cannot_load_routes": "Cannot retrive routes",
+    "cannot_load_routes": "Cannot retrieve routes",
     "cannot_create_route": "Cannot create route",
     "cannot_edit_route": "Cannot edit route",
-    "cannot_retrive_interfaces": "Cannot retrieve interfaces",
-    "cannot_retrive_route_types": "Cannot retrieve route types",
+    "cannot_retrieve_interfaces": "Cannot retrieve interfaces",
+    "cannot_retrieve_route_types": "Cannot retrieve route types",
     "invalid_metric": "Enter an integer number greater than or equal to 0",
     "cannot_update_status_route": "Cannot update route status",
     "cannot_delete_port_forward": "Cannot delete port forward",
@@ -480,7 +480,8 @@
       "route_type": "Route type",
       "route_choose_type": "Select route type",
       "route_mtu": "MTU",
-      "route_onlink": "On-link\nWhen enabled, gateway is on-link even if the gateway does not match any interface prefix"
+      "route_onlink": "On-link",
+      "route_onlink_description": "When enabled, gateway is on-link even if the gateway does not match any interface prefix"
     },
     "users_and_objects": {
       "title": "Users & objects"

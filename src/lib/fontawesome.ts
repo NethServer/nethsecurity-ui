@@ -6,7 +6,8 @@ import {
   faPowerOff,
   faCircleStop,
   faHouse as fasHouse,
-  faUserGear
+  faUserGear,
+  faWifi
 } from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
@@ -127,4 +128,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faClone)
   library.add(faUserGear)
   library.add(faCircleStop)
+  library.add(faWifi)
 }

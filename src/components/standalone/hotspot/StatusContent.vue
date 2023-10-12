@@ -1,5 +1,179 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import {
+  NeButton,
+  NeSkeleton,
+  NeEmptyState,
+  NeInlineNotification,
+  getAxiosErrorMessage
+} from '@nethserver/vue-tailwind-lib'
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { ubusCall } from '@/lib/standalone/ubus'
+import NeTable from '@/components/standalone/NeTable.vue'
+
+const { t } = useI18n()
+const emit = defineEmits(['goToSetting'])
+
+let hotspotSession: any = ref({})
+let loading = ref(true)
+let error = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+
+onMounted(async () => {
+  await loadListSessions()
+  loading.value = false
+})
+
+async function loadListSessions() {
+  try {
+    const res = await ubusCall('ns.dedalo', 'list-sessions')
+    if (res.data && res.data.sessions && res.data.sessions.length)
+      hotspotSession.value = res.data.sessions
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_load_hotspot_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+}
+
+function secondsToHMS(seconds: number): string {
+  if (seconds) {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainingSeconds = seconds % 60
+
+    const formattedHours = hours.toString().padStart(2, '0')
+    const formattedMinutes = minutes.toString().padStart(2, '0')
+    const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+  } else return '-'
+}
+
+function autoConvertSize(sizeInBytes: number): string {
+  if (sizeInBytes) {
+    const units = ['B', 'KB', 'MB', 'GB', 'TB']
+
+    let unitIndex = 0
+    while (sizeInBytes >= 1024 && unitIndex < units.length - 1) {
+      sizeInBytes /= 1024
+      unitIndex++
+    }
+
+    return `${sizeInBytes.toFixed(2)} ${units[unitIndex]}`
+  } else return '-'
+}
+</script>
 
 <template>
-  <div></div>
+  <div>
+    <NeSkeleton v-if="loading" :lines="15" />
+    <NeInlineNotification
+      v-if="!loading && error.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+    />
+    <NeEmptyState
+      v-if="!loading && !error.notificationTitle && !hotspotSession.length"
+      :title="t('standalone.hotspot.status.no_hotspot_configuration_found')"
+      :description="t('standalone.hotspot.status.no_hotspot_configuration_found_description')"
+      :icon="['fa', 'wifi']"
+    >
+      <NeButton kind="primary" size="lg" @click="emit('goToSetting')">
+        <template #prefix>
+          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+        </template>
+        {{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
+      </NeButton>
+    </NeEmptyState>
+    <div>
+      <template v-if="!loading && hotspotSession.length > 0">
+        <NeTable
+          :data="hotspotSession"
+          :headers="[
+            {
+              key: 'mac_address',
+              label: t('standalone.hotspot.status.mac_address')
+            },
+            {
+              key: 'ip_address',
+              label: t('standalone.hotspot.status.ip_address')
+            },
+            {
+              key: 'login_status',
+              label: t('standalone.hotspot.status.login_status')
+            },
+            {
+              key: 'session_key',
+              label: t('standalone.hotspot.status.session_key')
+            },
+            {
+              key: 'session_time',
+              label: t('standalone.hotspot.status.session_time')
+            },
+            {
+              key: 'idle_time',
+              label: t('standalone.hotspot.status.idle_time')
+            },
+            {
+              key: 'downloaded',
+              label: t('standalone.hotspot.status.downloaded')
+            },
+            {
+              key: 'uploaded',
+              label: t('standalone.hotspot.status.uploaded')
+            }
+          ]"
+        >
+          <template #mac_address="{ item }">
+            <div class="flex items-center gap-x-4">
+              {{ item.macAddress }}
+            </div>
+          </template>
+          <template #ip_address="{ item }">
+            <div class="flex flex-wrap gap-2">
+              {{ item.ipAddress }}
+            </div>
+          </template>
+          <template #login_status="{ item }">
+            <div class="flex items-center gap-x-2">
+              <template v-if="item.status && item.status === 'authenticated'">
+                <FontAwesomeIcon :icon="faCircleCheck" />
+              </template>
+              <template v-else>
+                <FontAwesomeIcon :icon="faCircleXmark" />
+              </template>
+              {{ item.status }}
+            </div>
+          </template>
+          <template #session_key="{ item }">
+            <div class="flex items-center gap-x-2">
+              {{ item.sessionKey }}
+            </div>
+          </template>
+          <template #session_time="{ item }">
+            <div class="flex items-center gap-x-2">
+              {{ secondsToHMS(item.sessionTimeElapsed) }}
+            </div>
+          </template>
+          <template #idle_time="{ item }">
+            <div class="flex items-center gap-x-2">
+              {{ secondsToHMS(item.idleTimeElapsed) }}
+            </div>
+          </template>
+          <template #downloaded="{ item }">
+            {{ autoConvertSize(item.inputOctetsDownloaded) }}
+          </template>
+          <template #uploaded="{ item }">
+            {{ autoConvertSize(item.outputOctetsUploaded) }}
+          </template>
+        </NeTable>
+      </template>
+    </div>
+  </div>
 </template>

@@ -48,7 +48,10 @@ watch(selectedTab, () => {
       class="mb-8"
       @selectTab="selectedTab = $event"
     />
-    <StatusContent v-if="selectedTab == 'tab-status'" />
+    <StatusContent
+      v-if="selectedTab == 'tab-status'"
+      @go-to-setting="selectedTab = 'tab-settings'"
+    />
     <SettingsContent v-if="selectedTab == 'tab-settings'" />
   </div>
 </template>

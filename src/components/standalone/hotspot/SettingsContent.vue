@@ -17,8 +17,10 @@ import { useI18n } from 'vue-i18n'
 import { validateIp4Cidr, validateIp4Address, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()
+const uciPendingChangesStore = useUciPendingChangesStore()
 
 interface Login {
   hostname: string
@@ -112,7 +114,7 @@ async function getFirewallData() {
   loading.value = true
   errorLoadingData.value = { ...objError }
 
-  // Retrive parent hotspot
+  // Retrieve parent hotspot
   try {
     let getParentHotspot = await ubusCall('ns.dedalo', 'list-parents', {})
     if (
@@ -129,7 +131,7 @@ async function getFirewallData() {
       configurationForm.value.parentHotspot = getParentHotspot.data.parents[0].id
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_parent_hotspot')
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_parent_hotspot')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     try {
@@ -147,7 +149,7 @@ async function getFirewallData() {
         configurationForm.value.networkDevice = getNetworkDevice.data.devices[0]
       }
     } catch (exception: any) {
-      errorLoadingData.value.notificationTitle = t('error.cannot_retrive_network_device')
+      errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_network_device')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
     } finally {
       loading.value = false
@@ -177,7 +179,7 @@ async function getConfiguration() {
       if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
     } else isLoggedIn.value = false
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_configuration')
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
@@ -236,9 +238,10 @@ function login() {
     }
     ubusCall('ns.dedalo', 'login', payload)
       .then((response) => {
-        if (response.data && response.data.response && response.data.response === 'success')
+        if (response.data && response.data.response && response.data.response === 'success') {
           isLoggedIn.value = true
-        else {
+          getFirewallData()
+        } else {
           error.value.notificationTitle = t('error.cannot_login_hotspot')
           error.value.notificationDescription = t('error.cannot_login_hotspot_description')
         }
@@ -355,7 +358,10 @@ function saveConfiguration() {
         errorSave.value.notificationTitle = t('error.cannot_save_configuration')
         errorSave.value.notificationDescription = t(getAxiosErrorMessage(exception))
       })
-      .finally(() => (saving.value = false))
+      .finally(() => {
+        saving.value = false
+        uciPendingChangesStore.getChanges()
+      })
   }
 }
 
@@ -403,13 +409,12 @@ function getDhcpRange() {
     ubusCall('ns.dedalo', 'get-dhcp-range', payload)
       .then((response) => {
         if (response.data) {
-          console.log(response.data)
           if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
           if (response.data.end) configurationForm.value.dhcpRangeEnd = response.data.end
         }
       })
       .catch((exception: AxiosError) => {
-        errorDhcpRange.value.notificationTitle = t('error.cannot_retrive_dhcp_range')
+        errorDhcpRange.value.notificationTitle = t('error.cannot_retrieve_dhcp_range')
         errorDhcpRange.value.notificationDescription = t(getAxiosErrorMessage(exception))
       })
       .finally(() => (loadingDhcpRange.value = false))
@@ -640,7 +645,10 @@ function getDhcpRange() {
       </form>
     </FormLayout>
     <hr class="my-8" />
-    <FormLayout v-if="!loading && isLoggedIn" :title="t('standalone.hotspot.settings.unregister')">
+    <FormLayout
+      v-if="!loading && isLoggedIn && activeConficuration"
+      :title="t('standalone.hotspot.settings.unregister')"
+    >
       <div>
         <NeInlineNotification
           v-if="errorUnregister.notificationTitle"

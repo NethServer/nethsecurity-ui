@@ -57,15 +57,15 @@
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
     "cancel_registration_error": "Cannot cancel registration",
-    "cannot_load_routes": "Cannot retrive routes",
+    "cannot_load_routes": "Cannot retrieve routes",
     "cannot_create_route": "Cannot create route",
     "cannot_edit_route": "Cannot edit route",
     "cannot_retrive_interfaces": "Cannot retrieve interfaces",
     "cannot_retrive_route_types": "Cannot retrieve route types",
-    "cannot_retrive_parent_hotspot": "Cannot retrieve parent hotspot",
-    "cannot_retrive_network_device": "Cannot retrieve network device",
-    "cannot_retrive_configuration": "Cannot retrieve hotspot configuration",
-    "cannot_retrive_dhcp_range": "Cannot retrieve default DHCP range",
+    "cannot_retrieve_parent_hotspot": "Cannot retrieve parent hotspot",
+    "cannot_retrieve_network_device": "Cannot retrieve network device",
+    "cannot_retrieve_configuration": "Cannot retrieve hotspot configuration",
+    "cannot_retrieve_dhcp_range": "Cannot retrieve default DHCP range",
     "invalid_metric": "Enter an integer number greater than or equal to 0",
     "cannot_update_status_route": "Cannot update route status",
     "cannot_delete_port_forward": "Cannot delete port forward",
@@ -79,7 +79,8 @@
     "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
     "cannot_login_hotspot": "Cannot login",
     "cannot_login_hotspot_description": "Login failed",
-    "cannot_unregister_hotspot": "Cannot unregister"
+    "cannot_unregister_hotspot": "Cannot unregister",
+    "cannot_load_hotspot_configuration": "Cannot load hotspot configuration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -494,6 +495,19 @@
       "tabs": {
         "status": "Status",
         "settings": "Settings"
+      },
+      "status": {
+        "no_hotspot_configuration_found": "No Hotspot configuration found",
+        "no_hotspot_configuration_found_description": "Authenticate in \"Settings\" to edit hotspot configuration",
+        "no_hotspot_configuration_found_button": "Go to settings",
+        "mac_address": "MAC address",
+        "ip_address": "IP address",
+        "login_status": "Login status",
+        "session_key": "Session key",
+        "session_time": "Session time",
+        "idle_time": "Idle time",
+        "downloaded": "Downloaded",
+        "uploaded": "Uploaded"
       },
       "settings": {
         "login": "Login",

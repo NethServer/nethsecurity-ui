@@ -69,6 +69,11 @@ const standaloneRoutes = [
     path: 'security/flashstart',
     name: 'FlashStart',
     component: () => import('../views/standalone/security/FlashStartView.vue')
+  },
+  {
+    path: 'logs',
+    name: 'Logs',
+    component: () => import('../views/standalone/LogsView.vue')
   }
 ]
 

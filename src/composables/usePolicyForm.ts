@@ -120,6 +120,14 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
     priorities.value = priorities.value.filter((priority) => priority.length > 0)
   }
 
+  function addPriority() {
+    priorities.value.push([new Gateway()])
+  }
+
+  function addGateway(priorityIndex: number) {
+    priorities.value[priorityIndex].push(new Gateway())
+  }
+
   function cleanForm() {
     label.value = ''
     selection.value = PolicyOptions.BALANCE
@@ -133,6 +141,8 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
     policyOptionSelection,
     isTrashButtonDisabled,
     removePriority,
+    addPriority,
+    addGateway,
     cleanForm
   }
 }

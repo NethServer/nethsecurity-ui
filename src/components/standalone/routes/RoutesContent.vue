@@ -14,10 +14,10 @@ import {
   NeDropdown,
   NeTitle,
   NeModal,
+  NeEmptyState,
   NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
-import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
@@ -68,6 +68,7 @@ onMounted(async () => {
  * get all routes
  */
 async function loadRoutes() {
+  loading.value = true
   try {
     const res = await ubusCall('ns.routes', 'list-routes', {
       protocol: props.protocol
@@ -84,9 +85,10 @@ async function loadRoutes() {
 
     routes.value = items
   } catch (err: any) {
-    console.error(err)
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -101,7 +103,6 @@ async function loadMainTable() {
 
     if (res.data) table.value = res.data.table
   } catch (err: any) {
-    console.error(err)
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
@@ -116,8 +117,9 @@ function routeCreatedEditedHandler() {
 }
 
 function reloadConfig() {
-  loadRoutes()
   uciPendingChangesStore.getChanges()
+  loadRoutes()
+  loadMainTable()
 }
 
 function openCreateRoute() {
@@ -159,15 +161,18 @@ function scrollToMainTable() {
 
 <template>
   <NeSkeleton v-if="loading" :lines="15" />
-  <HorizontalCard v-if="!loading && !routes.length" class="space-y-4 text-center">
-    <p>{{ t('standalone.routes.no_route_found') }}</p>
-    <NeButton :kind="'primary'" @click="openCreateRoute()">
+  <NeEmptyState
+    v-if="!loading && !error.notificationTitle && !routes.length"
+    :title="t('standalone.routes.no_route_found')"
+    :icon="['fas', 'circle-info']"
+  >
+    <NeButton kind="primary" size="lg" @click="openCreateRoute()">
       <template #prefix>
-        <FontAwesomeIcon :icon="faCirclePlus" />
+        <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
       </template>
-      {{ t('standalone.routes.create_route') }}
-    </NeButton>
-  </HorizontalCard>
+      {{ t('standalone.routes.create_route') }}</NeButton
+    >
+  </NeEmptyState>
   <div v-if="!loading && routes.length">
     <div class="space-y-8">
       <div class="flex">
@@ -199,7 +204,13 @@ function scrollToMainTable() {
   />
   <div v-if="!loading && routes.length">
     <div class="my-4">
-      <NeButton kind="tertiary" size="sm" class="-ml-2" @click="scrollToMainTable()">
+      <NeButton
+        v-if="routes && routes.length && routes.length > 10"
+        kind="tertiary"
+        size="sm"
+        class="-ml-2"
+        @click="scrollToMainTable()"
+      >
         {{ t('standalone.routes.main_table') }}
       </NeButton>
     </div>
@@ -242,12 +253,12 @@ function scrollToMainTable() {
           <template #tbody>
             <tbody>
               <template v-for="item in routes" :key="item.id">
-                <tr :class="{ 'opacity-30': item.disabled !== '0' }">
-                  <td>
+                <tr>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     <span v-if="item.ns_description">{{ item.ns_description }}</span>
                     <span v-else>-</span>
                   </td>
-                  <td>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     <span>
                       <FontAwesomeIcon v-if="!item.interface" :icon="faEmptySet" />
                       <FontAwesomeIcon
@@ -268,16 +279,16 @@ function scrollToMainTable() {
                       }}
                     </span>
                   </td>
-                  <td>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     {{ item.target }}
                   </td>
-                  <td>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     {{ item.gateway }}
                   </td>
-                  <td>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     {{ item.metric }}
                   </td>
-                  <td>
+                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     <span v-if="item.disabled === '0'">
                       <FontAwesomeIcon :icon="faCircleCheck" />
                       {{ t('standalone.routes.route_status_enabled') }}

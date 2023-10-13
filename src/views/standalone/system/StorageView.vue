@@ -7,7 +7,8 @@ import {
   NeRadioSelection,
   NeModal,
   NeButton,
-  NeSkeleton
+  NeSkeleton,
+  NeEmptyState
 } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted } from 'vue'
 import { ref } from 'vue'
@@ -144,12 +145,12 @@ onMounted(() => {
         </div>
       </div>
     </template>
-    <template v-else>
-      <div>
-        <NeTitle level="h2">{{ t('standalone.storage.available_devices') }}</NeTitle>
+    <template v-else-if="storageOptions.length > 0">
+      <div class="max-w-5xl">
+        <NeTitle level="h4">{{ t('standalone.storage.available_devices') }}</NeTitle>
         <NeRadioSelection
           :options="storageOptions"
-          :grid-style="'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'"
+          :grid-style="'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3'"
           v-model="selectedStorage"
           :card="true"
           :label="''"
@@ -164,6 +165,12 @@ onMounted(() => {
           >{{ t('standalone.storage.format_configure_storage') }}</NeButton
         >
       </div>
+    </template>
+    <template v-else>
+      <NeEmptyState
+        :icon="['fas', 'circle-info']"
+        :title="t('standalone.storage.no_device_found')"
+      />
     </template>
   </div>
   <NeModal
@@ -188,7 +195,7 @@ onMounted(() => {
     />
   </NeModal>
   <NeModal
-    :primary-label="t('standalone.storage.configure_storage')"
+    :primary-label="t('standalone.storage.remove_storage')"
     :primary-button-loading="isConfiguringOrRemovingStorage"
     :primary-button-disabled="isConfiguringOrRemovingStorage"
     :title="t('standalone.storage.remove_storage')"

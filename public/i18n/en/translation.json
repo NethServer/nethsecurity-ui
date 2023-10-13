@@ -284,7 +284,8 @@
       "vendor": "Vendor",
       "unknown": "Unknown",
       "current_configuration": "Current configuration",
-      "available_devices": "Available devices"
+      "available_devices": "Available devices",
+      "no_device_found": "No device found"
     },
     "network": {
       "title": "Network"

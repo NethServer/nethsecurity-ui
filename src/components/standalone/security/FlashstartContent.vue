@@ -1,0 +1,275 @@
+<!--
+  Copyright (C) 2023 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import FormLayout from '@/components/standalone/FormLayout.vue'
+import {
+  NeSkeleton,
+  NeTextInput,
+  NeToggle,
+  NeTooltip,
+  NeCombobox,
+  NeButton,
+  NeInlineNotification,
+  focusElement,
+  getAxiosErrorMessage,
+  type NeComboboxOption
+} from '@nethserver/vue-tailwind-lib'
+import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { validateRequired, validateRequiredOption } from '@/lib/validation'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { AxiosError } from 'axios'
+const { t } = useI18n()
+
+interface Form {
+  status: boolean
+  username: string
+  password: string
+  bypassSource: Array<string>
+}
+
+const form = ref<Form>({
+  status: false,
+  username: '',
+  password: '',
+  bypassSource: ['']
+})
+
+let loading = ref(false)
+let saving = ref(false)
+let successSaving = ref(false)
+let zones = ref<NeComboboxOption[]>([])
+let selectedZones = ref<NeComboboxOption[]>([])
+let usernameRef = ref()
+let passwordRef = ref()
+let zonesRef = ref()
+let bypassSourceRef = ref()
+
+let objError = {
+  notificationTitle: '',
+  notificationDescription: '',
+  username: '',
+  password: '',
+  zones: '',
+  bypassSource: []
+}
+let error = ref({ ...objError })
+let errorLoadingData = ref({ ...objError })
+let errorSaving = ref({ ...objError })
+
+onMounted(() => {
+  getFirewallData()
+  getConfiguration()
+})
+
+async function getFirewallData() {
+  loading.value = true
+  errorLoadingData.value = { ...objError }
+
+  // Retrieve firewall zones
+  try {
+    let getZones = await ubusCall('ns.firewall', 'list_zones', {})
+    if (getZones && getZones.data) {
+      zones.value = Object.keys(getZones.data).map((key) => ({
+        id: getZones.data[key].name,
+        label: getZones.data[key].name
+      }))
+    }
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_zones')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loading.value = false
+  }
+}
+
+async function getConfiguration() {
+  try {
+    let getDataConfiguration = await ubusCall('ns.flashstart', 'get-config', {})
+    if (getDataConfiguration && getDataConfiguration.data && getDataConfiguration.data.values) {
+      let configuration = getDataConfiguration.data.values
+      form.value.status = configuration.enabled
+      form.value.username = configuration.username
+      form.value.password = configuration.password
+      form.value.bypassSource = configuration.bypass
+      selectedZones.value = configuration.zones.map((item: any) => ({
+        id: item,
+        label: item
+      }))
+    }
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  }
+}
+
+function validate() {
+  let isValidationOk = true
+  let isFocusInput = false
+
+  if (!form.value.username) {
+    let { valid, errMessage } = validateRequired(form.value.username)
+    if (!valid) {
+      error.value.username = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk) {
+    focusElement(usernameRef)
+    isFocusInput = true
+  }
+
+  if (!form.value.password) {
+    let { valid, errMessage } = validateRequired(form.value.password)
+    if (!valid) {
+      error.value.password = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(passwordRef)
+    isFocusInput = true
+  }
+
+  if (!selectedZones.value.length) {
+    let { valid, errMessage } = validateRequiredOption(selectedZones.value)
+    if (!valid) {
+      error.value.zones = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) focusElement(zonesRef)
+
+  return isValidationOk
+}
+
+function save() {
+  error.value = { ...objError }
+  if (validate()) {
+    saving.value = true
+
+    // create payload
+    let payload = {
+      enabled: form.value.status,
+      username: form.value.username,
+      password: form.value.password,
+      zones: selectedZones.value
+        .filter((zone: NeComboboxOption) => zone.label)
+        .map((zone: NeComboboxOption) => zone.label),
+      bypass: form.value.bypassSource.filter((item) => item)
+    }
+
+    ubusCall('ns.flashstart', 'set-config', payload)
+      .then((response) => {
+        if (response.data && response.data.message && response.data.message === 'success')
+          successSaving.value = true
+      })
+      .catch((exception: AxiosError) => {
+        errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
+        errorSaving.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      })
+      .finally(() => (saving.value = false))
+  }
+}
+</script>
+
+<template>
+  <div>
+    <FormLayout
+      :title="t('standalone.flashstart.content_title')"
+      :description="t('standalone.flashstart.content_description')"
+      class="max-w-3xl"
+    >
+      <NeSkeleton v-if="loading" :lines="5" />
+      <div class="mb-8 flex flex-col gap-y-6">
+        {{ t('standalone.flashstart.status') }}
+        <NeToggle
+          v-model="form.status"
+          :label="
+            form.status
+              ? t('standalone.flashstart.status_enabled')
+              : t('standalone.flashstart.status_disabled')
+          "
+        />
+        <NeTextInput
+          v-model="form.username"
+          :invalid-message="error.username"
+          :label="t('standalone.flashstart.username')"
+          ref="usernameRef"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.flashstart.username_helper') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="form.password"
+          isPassword
+          :invalid-message="error.password"
+          :label="t('standalone.flashstart.password')"
+          ref="passwordRef"
+        />
+        <NeCombobox
+          v-model="selectedZones"
+          :label="t('standalone.flashstart.zones')"
+          :placeholder="t('standalone.flashstart.zones_placeholder')"
+          :multiple="true"
+          :options="zones"
+          :invalid-message="error.zones"
+          ref="zonesRef"
+        />
+        <NeMultiTextInput
+          v-model="form.bypassSource"
+          :title="t('standalone.flashstart.sourcebypass')"
+          :add-item-label="t('standalone.flashstart.add_sourcebypass')"
+          :invalid-messages="error.bypassSource"
+          :disable-inputs="saving"
+          :disable-add-button="saving"
+          optional
+          :optionalLabel="t('common.optional')"
+          ref="bypassSourceRef"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.flashstart.sourcebypass_helper') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeMultiTextInput>
+        <NeInlineNotification
+          v-if="errorSaving.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="errorSaving.notificationTitle"
+          :description="errorSaving.notificationDescription"
+        />
+        <NeInlineNotification
+          v-if="successSaving"
+          kind="success"
+          :title="t('standalone.flashstart.success_save_title')"
+          :description="t('standalone.flashstart.success_save_description')"
+        />
+        <div class="flex justify-end py-6">
+          <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+            </template>
+            {{ t('common.save') }}
+          </NeButton>
+        </div>
+      </div>
+    </FormLayout>
+  </div>
+</template>

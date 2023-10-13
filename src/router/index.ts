@@ -64,6 +64,11 @@ const standaloneRoutes = [
     path: 'firewall/port-forward',
     name: 'PortForward',
     component: () => import('../views/standalone/firewall/PortForward.vue')
+  },
+  {
+    path: 'security/flashstart',
+    name: 'FlashStart',
+    component: () => import('../views/standalone/security/FlashStartView.vue')
   }
 ]
 

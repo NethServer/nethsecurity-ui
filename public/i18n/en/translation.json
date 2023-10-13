@@ -559,6 +559,24 @@
     "security": {
       "title": "Security"
     },
+    "flashstart": {
+      "title": "Flashstart filter",
+      "content_title": "Settings",
+      "content_description": "FlashStart doesn't require any DNS configuration neither in the firewall itself nor inside the clients. Before using FlashStart you need to",
+      "status": "Status",
+      "status_enabled": "Enabled",
+      "status_disabled": "Disabled",
+      "username": "Username",
+      "username_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+      "password": "Password",
+      "zones": "Zones to filter",
+      "zones_placeholder": "Choose zones",
+      "sourcebypass": "Bypass source IPs or networks",
+      "sourcebypass_helper": "Lorem ipsum, or lipsum as it is sometimes known",
+      "add_sourcebypass": "Add source bypass",
+      "success_save_title": "Save complete",
+      "success_save_description": "Settings saved successfully"
+    },
     "vpn": {
       "title": "VPN"
     },

@@ -26,25 +26,18 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 const { t } = useI18n()
 
-interface Form {
-  status: boolean
-  username: string
-  password: string
-  bypassSource: Array<string>
-}
-
-const form = ref<Form>({
+const form = ref({
   status: false,
   username: '',
   password: '',
-  bypassSource: ['']
+  bypassSource: [''],
+  zones: []
 })
 
 let loading = ref(false)
 let saving = ref(false)
 let successSaving = ref(false)
 let zones = ref<NeComboboxOption[]>([])
-let selectedZones = ref<NeComboboxOption[]>([])
 let usernameRef = ref()
 let passwordRef = ref()
 let zonesRef = ref()
@@ -64,7 +57,6 @@ let errorSaving = ref({ ...objError })
 
 onMounted(() => {
   getFirewallData()
-  getConfiguration()
 })
 
 async function getFirewallData() {
@@ -84,6 +76,7 @@ async function getFirewallData() {
     errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_zones')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
+    await getConfiguration()
     loading.value = false
   }
 }
@@ -97,7 +90,7 @@ async function getConfiguration() {
       form.value.username = configuration.username
       form.value.password = configuration.password
       form.value.bypassSource = configuration.bypass
-      selectedZones.value = configuration.zones.map((item: any) => ({
+      form.value.zones = configuration.zones.map((item: any) => ({
         id: item,
         label: item
       }))
@@ -138,8 +131,8 @@ function validate() {
     isFocusInput = true
   }
 
-  if (!selectedZones.value.length) {
-    let { valid, errMessage } = validateRequiredOption(selectedZones.value)
+  if (!form.value.zones.length) {
+    let { valid, errMessage } = validateRequiredOption(form.value.zones)
     if (!valid) {
       error.value.zones = t(errMessage as string)
       isValidationOk = false
@@ -161,7 +154,7 @@ function save() {
       enabled: form.value.status,
       username: form.value.username,
       password: form.value.password,
-      zones: selectedZones.value
+      zones: form.value.zones
         .filter((zone: NeComboboxOption) => zone.label)
         .map((zone: NeComboboxOption) => zone.label),
       bypass: form.value.bypassSource.filter((item) => item)
@@ -189,7 +182,7 @@ function save() {
       class="max-w-3xl"
     >
       <NeSkeleton v-if="loading" :lines="5" />
-      <div class="mb-8 flex flex-col gap-y-6">
+      <div v-else class="mb-8 flex flex-col gap-y-6">
         {{ t('standalone.flashstart.status') }}
         <NeToggle
           v-model="form.status"
@@ -221,10 +214,10 @@ function save() {
           ref="passwordRef"
         />
         <NeCombobox
-          v-model="selectedZones"
+          v-model="form.zones"
           :label="t('standalone.flashstart.zones')"
           :placeholder="t('standalone.flashstart.zones_placeholder')"
-          :multiple="true"
+          multiple
           :options="zones"
           :invalid-message="error.zones"
           ref="zonesRef"

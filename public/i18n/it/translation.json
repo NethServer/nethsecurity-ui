@@ -152,7 +152,9 @@
       "title": "VPN"
     },
     "logs": {
-      "title": "Log"
+      "title": "Log",
+      "search_error": "Espressione regolare non valida.",
+      "search": "Cerca"
     },
     "report": {
       "title": "Report"

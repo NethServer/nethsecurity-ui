@@ -30,14 +30,14 @@ const error = ref({
   fetchError: '',
   modalError: ''
 })
-const availableStorages = ref<Storage[]>([])
-const selectedStorage = ref<string>('')
+const availableDevices = ref<Storage[]>([])
+const selectedDevicePath = ref<string>('')
 const currentStorageConfiguration = ref<Storage | null>(null)
 const showDeleteModal = ref(false)
 const showConfigureModal = ref(false)
 
-const storageOptions = computed(() =>
-  availableStorages.value.map((storage) => ({
+const deviceOptions = computed(() =>
+  availableDevices.value.map((storage) => ({
     id: storage.path!,
     label: storage.name!,
     description: `${storage.path} | ${storage.size} ${storage.model ? `| ${storage.model}` : ''}`,
@@ -48,7 +48,7 @@ const storageOptions = computed(() =>
 async function fetchStorageConfig() {
   try {
     loading.value = true
-    availableStorages.value = (await ubusCall('ns.storage', 'list-devices')).data.devices
+    availableDevices.value = (await ubusCall('ns.storage', 'list-devices')).data.devices
     currentStorageConfiguration.value = (await ubusCall('ns.storage', 'get-configuration')).data
     loading.value = false
   } catch (err: any) {
@@ -62,12 +62,12 @@ function closeModal() {
   error.value.modalError = ''
 }
 
-async function addStorage() {
+async function configureStorage() {
   try {
     isConfiguringOrRemovingStorage.value = true
-    await ubusCall('ns.storage', 'add-storage', { device: selectedStorage.value })
-    await fetchStorageConfig()
+    await ubusCall('ns.storage', 'add-storage', { device: selectedDevicePath.value })
     closeModal()
+    await fetchStorageConfig()
   } catch (err: any) {
     error.value.modalError = t(getAxiosErrorMessage(err))
   } finally {
@@ -79,8 +79,8 @@ async function removeStorage() {
   try {
     isConfiguringOrRemovingStorage.value = true
     await ubusCall('ns.storage', 'remove-storage')
-    await fetchStorageConfig()
     closeModal()
+    await fetchStorageConfig()
   } catch (err: any) {
     error.value.modalError = t(getAxiosErrorMessage(err))
   } finally {
@@ -160,13 +160,13 @@ onMounted(() => {
         </div>
       </div>
     </template>
-    <template v-else-if="storageOptions.length > 0">
+    <template v-else-if="deviceOptions.length > 0">
       <div class="max-w-5xl">
         <NeTitle level="h4">{{ t('standalone.storage.select_device') }}</NeTitle>
         <NeRadioSelection
-          :options="storageOptions"
+          :options="deviceOptions"
           :grid-style="'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3'"
-          v-model="selectedStorage"
+          v-model="selectedDevicePath"
           :card="true"
           :label="''"
         />
@@ -175,7 +175,7 @@ onMounted(() => {
         <NeButton
           kind="primary"
           size="lg"
-          :disabled="selectedStorage === ''"
+          :disabled="selectedDevicePath === ''"
           @click="showConfigureModal = true"
           >{{ t('standalone.storage.format_configure_storage') }}</NeButton
         >
@@ -198,11 +198,11 @@ onMounted(() => {
     kind="warning"
     primary-button-kind="danger"
     @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
-    @primary-click="addStorage()"
+    @primary-click="configureStorage()"
   >
     {{
       t('standalone.storage.format_configure_storage_warning', {
-        device: availableStorages.find((storage) => storage.path === selectedStorage)?.name
+        device: availableDevices.find((storage) => storage.path === selectedDevicePath)?.name
       })
     }}
     <NeInlineNotification

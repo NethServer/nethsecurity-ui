@@ -64,6 +64,11 @@ const standaloneRoutes = [
     path: 'firewall/port-forward',
     name: 'PortForward',
     component: () => import('../views/standalone/firewall/PortForward.vue')
+  },
+  {
+    path: 'logs',
+    name: 'Logs',
+    component: () => import('../views/standalone/LogsView.vue')
   }
 ]
 

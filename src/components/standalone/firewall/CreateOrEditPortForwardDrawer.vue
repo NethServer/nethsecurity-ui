@@ -12,7 +12,7 @@ import {
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { toRefs, ref, onMounted } from 'vue'
+import { toRefs, ref, watch } from 'vue'
 import type {
   CreateEditPortForwardPayload,
   PortForward
@@ -165,14 +165,26 @@ watchEffect(() => {
 })
 
 function close() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  validationErrorBag.value.clear()
+  restrictIPValidationErrors.value = []
+
   resetForm()
   emit('close')
 }
 
-onMounted(() => {
-  fetchOptions()
-  firewallConfig.fetch()
-})
+watch(
+  () => props.isShown,
+  () => {
+    if (props.isShown) {
+      fetchOptions()
+      if (firewallConfig.loading || firewallConfig.error) {
+        firewallConfig.fetch()
+      }
+    }
+  }
+)
 
 function resetRestrictIPValidationErrors() {
   restrictIPValidationErrors.value = []
@@ -286,14 +298,18 @@ async function createOrEditPortForward() {
     "
   >
     <NeInlineNotification
-      v-if="error.notificationTitle"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
+      v-if="error.notificationTitle || firewallConfig.error"
+      :title="firewallConfig.error ? t('error.cannot_retrieve_zones') : error.notificationTitle"
+      :description="
+        firewallConfig.error
+          ? t(getAxiosErrorMessage(firewallConfig.error))
+          : error.notificationDescription
+      "
       class="mb-6"
       kind="error"
     />
     <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
-    <div v-else class="flex flex-col gap-y-6">
+    <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
       <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
       <NeTextInput
         :label="t('standalone.port_forward.name')"
@@ -327,13 +343,6 @@ async function createOrEditPortForward() {
           ></template
         >
       </NeTextInput>
-      <NeCombobox
-        :label="t('standalone.port_forward.destination_zone')"
-        :placeholder="t('standalone.port_forward.choose_zone')"
-        :options="supportedDestinationZones"
-        :selected-label="t('standalone.port_forward.any_zone')"
-        v-model="destinationZone"
-      />
       <NeTextInput
         :label="t('standalone.port_forward.destination_port')"
         v-model="destinationPort"
@@ -354,11 +363,17 @@ async function createOrEditPortForward() {
       </div>
       <template v-if="showAdvancedSettings">
         <NeCombobox
+          :label="t('standalone.port_forward.destination_zone')"
+          :placeholder="t('standalone.port_forward.choose_zone')"
+          :options="supportedDestinationZones"
+          :selected-label="t('standalone.port_forward.any_zone')"
+          v-model="destinationZone"
+        />
+        <NeCombobox
           :label="t('standalone.port_forward.wan_ip')"
           :options="wanInterfaces"
           v-model="wan"
         />
-
         <NeMultiTextInput
           :title="t('standalone.port_forward.restrict_access_to')"
           :optional="true"

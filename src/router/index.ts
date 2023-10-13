@@ -69,6 +69,11 @@ const standaloneRoutes = [
     path: 'system/storage',
     name: 'Storage',
     component: () => import('../views/standalone/system/StorageView.vue')
+  },
+  {
+    path: 'logs',
+    name: 'Logs',
+    component: () => import('../views/standalone/LogsView.vue')
   }
 ]
 

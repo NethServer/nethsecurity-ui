@@ -130,7 +130,7 @@ watch(
         if (selectedRoute.item.interface) form.value.routeInterface = selectedRoute.item.interface
         if (selectedRoute.item.type) form.value.routeType = selectedRoute.item.type
         if (selectedRoute.item.mtu) form.value.mtu = selectedRoute.item.mtu
-        if (selectedRoute.item.onlink) form.value.onlink = selectedRoute.item.mtu === '0'
+        if (selectedRoute.item.onlink) form.value.onlink = selectedRoute.item.onlink === '1'
       } else form.value = { ...originalForm }
     } else form.value = { ...originalForm }
   }
@@ -163,7 +163,7 @@ async function getFirewallData() {
   error = ref({ ...objError })
   errorLoadingData = ref({ ...objError })
 
-  // Retrive list interfaces && route types
+  // retrieve list interfaces && route types
   try {
     let getInterfaces = await ubusCall('ns.routes', 'list-interfaces', {})
     if (
@@ -172,7 +172,10 @@ async function getFirewallData() {
       getInterfaces.data.interfaces &&
       getInterfaces.data.interfaces.length
     ) {
-      routeInterfaces.value = getInterfaces.data.interfaces.map((item: RouteInterface) => ({
+      let responseData = getInterfaces.data.interfaces
+      responseData = responseData.filter((item: string) => item !== 'loopback')
+
+      routeInterfaces.value = responseData.map((item: RouteInterface) => ({
         id: item,
         label: item
       }))
@@ -184,7 +187,7 @@ async function getFirewallData() {
       }
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrive_interfaces')
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_interfaces')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     try {
@@ -200,7 +203,7 @@ async function getFirewallData() {
           label: item
         }))
     } catch (exception: any) {
-      errorLoadingData.value.notificationTitle = t('error.cannot_retrive_route_types')
+      errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_route_types')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
     } finally {
       loading.value = false
@@ -331,7 +334,6 @@ function validate(): boolean {
 function createRoute() {
   if (validate()) {
     saving.value = true
-    let isValidCreate = true
 
     // create payload
     let payload = {
@@ -355,28 +357,30 @@ function createRoute() {
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id
-          }).catch((exception: AxiosError) => {
-            error.value.notificationTitle = t('error.cannot_update_status_route')
-            error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-            isValidCreate = false
           })
+            .then(() => {
+              emit('routeCreated')
+            })
+            .catch((exception: AxiosError) => {
+              error.value.notificationTitle = t('error.cannot_update_status_route')
+              error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+            })
+            .finally(() => {
+              saving.value = false
+            })
         }
       })
       .catch((exception: AxiosError) => {
         error.value.notificationTitle = t('error.cannot_create_route')
         error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-        isValidCreate = false
+        saving.value = false
       })
-      .finally(() => (saving.value = false))
-
-    if (isValidCreate) emit('routeCreated')
   }
 }
 
 function editRoute() {
   if (validate()) {
     saving.value = true
-    let isValidUpdate = true
 
     // create payload
     let payload = {
@@ -401,21 +405,24 @@ function editRoute() {
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id
-          }).catch((exception: AxiosError) => {
-            error.value.notificationTitle = t('error.cannot_update_status_route')
-            error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-            isValidUpdate = false
           })
+            .then(() => {
+              emit('routeEdited')
+            })
+            .catch((exception: AxiosError) => {
+              error.value.notificationTitle = t('error.cannot_update_status_route')
+              error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+            })
+            .finally(() => {
+              saving.value = false
+            })
         }
       })
       .catch((exception: AxiosError) => {
         error.value.notificationTitle = t('error.cannot_edit_route')
         error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-        isValidUpdate = false
+        saving.value = false
       })
-      .finally(() => (saving.value = false))
-
-    if (isValidUpdate) emit('routeEdited')
   }
 }
 </script>
@@ -514,6 +521,10 @@ function editRoute() {
             ref="mtuRef"
           />
           <NeToggle v-model="form.onlink" :label="t('standalone.routes.route_onlink')" />
+          <NeInlineNotification
+            kind="info"
+            :description="t('standalone.routes.route_onlink_description')"
+          />
         </div>
       </Transition>
       <NeInlineNotification
@@ -543,7 +554,7 @@ function editRoute() {
           :loading="saving"
           @click="editRoute()"
         >
-          {{ t('common.edit') }}
+          {{ t('common.save') }}
         </NeButton>
       </div>
     </div>

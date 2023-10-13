@@ -495,7 +495,7 @@
     },
     "hotspot": {
       "title": "Hotspot",
-      "description": "Lorem ipsum, or lipsum as it is sometimes known",
+      "description": "Connect the firewall to a remote hotspot manager instance.",
       "tabs": {
         "status": "Status",
         "settings": "Settings"
@@ -504,8 +504,8 @@
         "no_hotspot_configuration_found": "No Hotspot configuration found",
         "no_hotspot_configuration_found_description": "Authenticate in \"Settings\" to edit hotspot configuration",
         "no_hotspot_configuration_found_button": "Go to settings",
-        "empty_sessions": "Lorem ipsum, or lipsum as it is sometimes known",
-        "empty_sessions_description": "Lorem ipsum, or lipsum as it is sometimes known",
+        "empty_sessions": "No active sessions",
+        "empty_sessions_description": "The sessions of clients connected to this unit will appear here.",
         "mac_address": "MAC address",
         "ip_address": "IP address",
         "login_status": "Login status",
@@ -521,7 +521,7 @@
         "login_hostname": "Host name",
         "login_username": "Username",
         "login_password": "Password",
-        "login_helper_username": "Lorem ipsum, or lipsum as it is sometimes known",
+        "login_helper_username": "Enter the email address associated with your Flashstart service subscription.",
         "configurtion": "Hotspot configuration",
         "configurtion_unit_name": "Unit name",
         "configurtion_unit_name_placeholder": "Samplename",

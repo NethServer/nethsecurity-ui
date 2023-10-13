@@ -11,7 +11,7 @@ import {
   NeTextInput,
   NeTooltip
 } from '@nethserver/vue-tailwind-lib'
-import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faRightToBracket, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
@@ -78,6 +78,7 @@ let loadingDhcpRange = ref(false)
 let showUnregisterModal = ref(false)
 let emptyDevices = ref(false)
 let saving = ref(false)
+let successSaving = ref(false)
 let hostnameRef = ref()
 let usernameRef = ref()
 let passwordRef = ref()
@@ -169,7 +170,7 @@ async function getConfiguration() {
       getDataConfiguration.data.configuration &&
       getDataConfiguration.data.configuration.connected
     ) {
-      activeConfiguration.value = true
+      activeConfiguration.value = getDataConfiguration.data.configuration.hotspot_id != ''
       let configuration = getDataConfiguration.data.configuration
       configurationForm.value.parentHotspot = configuration.hotspot_id
       configurationForm.value.unitName = configuration.unit_name
@@ -348,6 +349,7 @@ function validateConfiguration(): boolean {
 function saveConfiguration() {
   if (validateConfiguration()) {
     saving.value = true
+    successSaving.value = false
 
     let payload = {
       network: configurationForm.value.networkAddress,
@@ -360,6 +362,12 @@ function saveConfiguration() {
     }
 
     ubusCall('ns.dedalo', 'set-configuration', payload)
+      .then(() => {
+        successSaving.value = true
+        setTimeout(function () {
+          successSaving.value = false
+        }, 5000)
+      })
       .catch((exception: AxiosError) => {
         errorSave.value.notificationTitle = t('error.cannot_save_configuration')
         errorSave.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -438,12 +446,12 @@ function getDhcpRange() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading" :lines="8" />
     <FormLayout
       v-if="!isLoggedIn && !loading"
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
-      class="max-w-6xl"
+      class="max-w-3xl"
     >
       <form @submit="login()">
         <div class="mb-8 flex flex-col gap-y-4">
@@ -495,7 +503,8 @@ function getDhcpRange() {
     <FormLayout
       v-if="!loading && activeConfiguration"
       :title="t('standalone.hotspot.settings.configurtion')"
-      class="max-w-6xl"
+      :description="t('standalone.hotspot.description')"
+      class="max-w-3xl"
     >
       <NeInlineNotification
         v-if="emptyDevices"
@@ -632,6 +641,7 @@ function getDhcpRange() {
           :description="t('standalone.hotspot.settings.configurtion_save_info_description')"
         />
         <div class="flex justify-end">
+          <FontAwesomeIcon v-if="successSaving" :icon="faCircleCheck" class="text-green-500" />
           <NeButton
             v-if="isLoggedIn"
             :disabled="saving"
@@ -652,7 +662,7 @@ function getDhcpRange() {
     <FormLayout
       v-if="!loading && isLoggedIn && activeConfiguration && !emptyDevices"
       :title="t('standalone.hotspot.settings.unregister')"
-      class="max-w-6xl"
+      class="max-w-4xl"
     >
       <NeButton size="md" @click="showUnregisterModal = true">
         {{ t('standalone.hotspot.settings.unregister_unit') }}

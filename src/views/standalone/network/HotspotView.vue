@@ -40,9 +40,6 @@ watch(selectedTab, () => {
 <template>
   <NeTitle>{{ t('standalone.hotspot.title') }}</NeTitle>
   <div class="flex flex-col gap-y-6">
-    <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-      {{ t('standalone.hotspot.description') }}
-    </p>
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

@@ -147,7 +147,7 @@ onMounted(() => {
     </template>
     <template v-else-if="storageOptions.length > 0">
       <div class="max-w-5xl">
-        <NeTitle level="h4">{{ t('standalone.storage.available_devices') }}</NeTitle>
+        <NeTitle level="h4">{{ t('standalone.storage.select_device') }}</NeTitle>
         <NeRadioSelection
           :options="storageOptions"
           :grid-style="'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3'"
@@ -174,7 +174,7 @@ onMounted(() => {
     </template>
   </div>
   <NeModal
-    :primary-label="t('standalone.storage.configure_storage')"
+    :primary-label="t('standalone.storage.format_and_configure')"
     :title="t('standalone.storage.format_configure_storage')"
     :primary-button-loading="isConfiguringOrRemovingStorage"
     :primary-button-disabled="isConfiguringOrRemovingStorage"
@@ -210,7 +210,7 @@ onMounted(() => {
     }}
     <NeInlineNotification
       v-if="error.modalError"
-      :title="t('error.generic_error')"
+      :title="t('error.cannot_remove_storage')"
       :description="error.modalError"
       kind="error"
       class="my-6"

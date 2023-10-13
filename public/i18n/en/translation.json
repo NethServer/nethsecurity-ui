@@ -564,7 +564,14 @@
       "title": "VPN"
     },
     "logs": {
-      "title": "Logs"
+      "title": "Logs",
+      "limit_rows": "Lines limit",
+      "wrap_row": "Wrap lines",
+      "search": "Search",
+      "search_placeholder": "Search logs",
+      "pooling": "Follow logs",
+      "search_error": "Invalid regular expression.",
+      "search_tooltip": "The search uses regular expression format."
     },
     "report": {
       "title": "Report"

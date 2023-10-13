@@ -64,21 +64,27 @@ function closeModal() {
 
 async function addStorage() {
   try {
+    isConfiguringOrRemovingStorage.value = true
     await ubusCall('ns.storage', 'add-storage', { device: selectedStorage.value })
     await fetchStorageConfig()
     closeModal()
   } catch (err: any) {
     error.value.modalError = t(getAxiosErrorMessage(err))
+  } finally {
+    isConfiguringOrRemovingStorage.value = false
   }
 }
 
 async function removeStorage() {
   try {
+    isConfiguringOrRemovingStorage.value = true
     await ubusCall('ns.storage', 'remove-storage')
     await fetchStorageConfig()
     closeModal()
   } catch (err: any) {
     error.value.modalError = t(getAxiosErrorMessage(err))
+  } finally {
+    isConfiguringOrRemovingStorage.value = false
   }
 }
 
@@ -101,47 +107,56 @@ onMounted(() => {
     />
     <NeSkeleton :lines="10" v-if="loading" />
     <template v-else-if="currentStorageConfiguration?.name">
-      <NeTitle level="h3">{{ t('standalone.storage.current_configuration') }}</NeTitle>
-      <div
-        class="flex max-w-3xl flex-row items-center justify-between gap-8 rounded-md bg-white p-6 transition-colors duration-200 dark:bg-gray-800 sm:shadow"
-      >
-        <div class="mr-6 flex h-full flex-row items-center">
-          <div class="flex h-full flex-col items-center justify-center border-r pr-6 md:flex-row">
+      <div>
+        <NeTitle level="h4">{{ t('standalone.storage.current_configuration') }}</NeTitle>
+        <div
+          class="flex max-w-3xl flex-row items-center rounded-md bg-white p-6 transition-colors duration-200 dark:bg-gray-800 sm:shadow"
+        >
+          <!-- Card icon + device name and path -->
+          <div
+            class="flex flex-col items-center justify-center self-stretch border-r pr-6 md:flex-row"
+          >
             <font-awesome-icon
               :icon="['fas', 'hard-drive']"
               aria-hidden="true"
               :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 dark:bg-gray-500 dark:text-gray-50 md:mb-0 md:mr-5`"
             />
-            <div class="h-full text-center">
-              <p class="text-md md:text-lg">{{ currentStorageConfiguration.name }}</p>
-              <p class="md:text-md text-sm">{{ currentStorageConfiguration.path }}</p>
+            <div class="text-center md:text-start">
+              <p>{{ currentStorageConfiguration.name }}</p>
+              <p>{{ currentStorageConfiguration.path }}</p>
             </div>
           </div>
-          <div class="ml-6 text-sm">
-            <p>
-              <strong>{{ t('standalone.storage.size') }}:</strong>
-              {{ currentStorageConfiguration.size ?? t('standalone.storage.unknown') }}
-            </p>
-            <p>
-              <strong>{{ t('standalone.storage.model') }}:</strong>
-              {{ currentStorageConfiguration.model ?? t('standalone.storage.unknown') }}
-            </p>
-            <p>
-              <strong>{{ t('standalone.storage.vendor') }}:</strong>
-              {{ currentStorageConfiguration.vendor ?? t('standalone.storage.unknown') }}
-            </p>
+
+          <!-- device size, model and vendor -->
+          <div class="ml-6 flex grow flex-col justify-between sm:flex-row sm:items-center">
+            <div class="text-sm">
+              <p>
+                <strong>{{ t('standalone.storage.size') }}:</strong>
+                {{ currentStorageConfiguration.size ?? t('standalone.storage.unknown') }}
+              </p>
+              <p>
+                <strong>{{ t('standalone.storage.model') }}:</strong>
+                {{ currentStorageConfiguration.model ?? t('standalone.storage.unknown') }}
+              </p>
+              <p>
+                <strong>{{ t('standalone.storage.vendor') }}:</strong>
+                {{ currentStorageConfiguration.vendor ?? t('standalone.storage.unknown') }}
+              </p>
+            </div>
+
+            <!-- Remove storage button -->
+            <div>
+              <NeButton kind="danger" @click="showDeleteModal = true" class="mt-2 sm:mt-0">
+                <template #prefix>
+                  <font-awesome-icon
+                    :icon="['fas', 'trash']"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  /> </template
+                >{{ t('standalone.storage.remove_storage') }}</NeButton
+              >
+            </div>
           </div>
-        </div>
-        <div>
-          <NeButton kind="danger" @click="showDeleteModal = true">
-            <template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'trash']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              /> </template
-            >{{ t('standalone.storage.remove_storage') }}</NeButton
-          >
         </div>
       </div>
     </template>
@@ -168,7 +183,7 @@ onMounted(() => {
     </template>
     <template v-else>
       <NeEmptyState
-        :icon="['fas', 'circle-info']"
+        :icon="['fas', 'hard-drive']"
         :title="t('standalone.storage.no_device_found')"
       />
     </template>
@@ -182,10 +197,14 @@ onMounted(() => {
     :visible="showConfigureModal"
     kind="warning"
     primary-button-kind="danger"
-    @close="closeModal()"
+    @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
     @primary-click="addStorage()"
   >
-    {{ t('standalone.storage.format_configure_storage_warning', { device: selectedStorage }) }}
+    {{
+      t('standalone.storage.format_configure_storage_warning', {
+        device: availableStorages.find((storage) => storage.path === selectedStorage)?.name
+      })
+    }}
     <NeInlineNotification
       v-if="error.modalError"
       :title="t('error.cannot_configure_storage')"
@@ -202,11 +221,11 @@ onMounted(() => {
     :visible="showDeleteModal"
     kind="warning"
     primary-button-kind="danger"
-    @close="closeModal()"
+    @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
     @primary-click="removeStorage()"
   >
     {{
-      t('standalone.storage.remove_storage_warning', { storage: currentStorageConfiguration?.path })
+      t('standalone.storage.remove_storage_warning', { storage: currentStorageConfiguration?.name })
     }}
     <NeInlineNotification
       v-if="error.modalError"

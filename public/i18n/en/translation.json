@@ -506,7 +506,7 @@
       "mac_address": "MAC address",
       "lease_expiration": "Lease expiration",
       "static_leases_description": "Static leases assign stable IP addresses and symbolic hostnames to DHCP clients. The host is identified by its MAC address, assigned a fixed IP address, and provided with a symbolic hostname for easy recognition.",
-      "dynamic_leases_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dynamic_leases_description": "Dynamic leases represent IP addresses that are currently in use and have been allocated to devices on the network.",
       "delete_reservation_message": "You are about to delete '{hostname}'",
       "delete_reservation": "Delete reservation",
       "add_reservation": "Add reservation",

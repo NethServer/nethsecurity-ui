@@ -14,7 +14,6 @@ const { t } = useI18n()
 
 const { tabs, selectedTab } = useTabs([
   { name: 'general', label: t('standalone.system_settings.general_settings') },
-  // { name: 'logs', label: t('standalone.system_settings.logs_settings') }, ////
   { name: 'timeSync', label: t('standalone.system_settings.time_synchronization') }
 ])
 </script>
@@ -34,7 +33,6 @@ const { tabs, selectedTab } = useTabs([
       <template v-if="selectedTab === 'general'">
         <GeneralSettings />
       </template>
-      <template v-else-if="selectedTab === 'logs'"> Logs </template>
       <template v-else-if="selectedTab === 'timeSync'">
         <TimeSynchronization />
       </template>

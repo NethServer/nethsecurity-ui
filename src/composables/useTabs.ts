@@ -1,5 +1,5 @@
 import type { Tab } from 'node_modules/@nethserver/vue-tailwind-lib/dist/components/NeTabs.vue'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 /**
@@ -17,9 +17,13 @@ export function useTabs(tabsList: Tab[], initialTabName?: string) {
   const tabs = ref(tabsList)
   const selectedTab = ref('')
 
-  onMounted(() => {
-    selectedTab.value = (route.query.tab as string) ?? initialTabName ?? tabs.value[0].name
-  })
+  watch(
+    () => route.query.tab,
+    () => {
+      selectedTab.value = (route.query.tab as string) ?? initialTabName ?? tabs.value[0].name
+    },
+    { immediate: true }
+  )
 
   watch(selectedTab, () => {
     router.push({ path: route.path, query: { tab: selectedTab.value } })

@@ -479,7 +479,7 @@
       "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers.",
       "add_dns_server": "Add DNS server",
       "dns_domain": "DNS domain",
-      "dns_domain_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dns_domain_tooltip": "Insert the the local DNS domain, ensuring that queries for this domain are always resolved locally.",
       "rebind_protection": "Rebind protection",
       "rebind_protection_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "exclude_localhost_rebinding_checks": "Exclude localhost from rebinding checks",

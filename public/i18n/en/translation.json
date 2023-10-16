@@ -530,7 +530,7 @@
       "lease_time_tooltip": "Lease duration choices include seconds, minutes (e.g., 45m), hours (e.g., 12h), days (e.g., 2d), weeks (e.g., 1w), or 'infinite'. Default lease time is 1 hour for IPv4 and 1 day for IPv6; minimum lease time is 2 minutes.",
       "advanced_settings": "Advanced settings",
       "dhcp_option": "DHCP option",
-      "dhcp_option_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dhcp_option_tooltip": "Customize DHCP client options. By default, standard options like netmask, broadcast address, DNS server, and default route match dnsmasq host. Override these defaults or specify additional options as needed.",
       "add_dhcp_option": "Add DHCP option",
       "no_interface_configured": "No interfaces configured",
       "record_not_found": "Record not found",

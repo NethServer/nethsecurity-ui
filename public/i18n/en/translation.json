@@ -481,7 +481,7 @@
       "dns_domain": "DNS domain",
       "dns_domain_tooltip": "Insert the the local DNS domain, ensuring that queries for this domain are always resolved locally.",
       "rebind_protection": "Rebind protection",
-      "rebind_protection_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "rebind_protection_tooltip": "Filter out addresses from private ranges sent by upstream nameservers. This option can prevent an attack where a browser behind a firewall is  used  to  probe machines on the local network.",
       "exclude_localhost_rebinding_checks": "Exclude localhost from rebinding checks",
       "domain_whitelist": "Domain whitelist",
       "add_domain": "Add domain",

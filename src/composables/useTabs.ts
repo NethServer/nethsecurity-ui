@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 /**
- * Composable which handles the state associated to a page's tabs, binding them to
+ * Composable that handles the state associated to the tabs of a page, binding them to
  * the router's `tab` query string.
  * @param {Tab[]} tabsList - A list containing all the tabs.
  * @param {string} [initialTabName] - If present, `selectedTab` will be set to

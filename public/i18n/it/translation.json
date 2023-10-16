@@ -70,7 +70,13 @@
     "cannot_edit_port_forward": "Impossibile modificare il port forward",
     "cannot_delete_port_forward": "Impossibile eliminare il port forward",
     "cannot_retrive_interfaces": "Impossibile recuperare le interfacce",
-    "cannot_retrieve_interfaces": "Impossibile recuperare le interfacce"
+    "cannot_retrieve_interfaces": "Impossibile recuperare le interfacce",
+    "invalid_metric": "Inserire un numero intero maggiore o uguale a 0",
+    "cannot_edit_route": "Impossibile modificare la rotta",
+    "cannot_update_status_route": "Impossibile aggiornare lo stato della rotta",
+    "cannot_load_routes": "Impossibile recuperare le rotte",
+    "cannot_retrieve_route_types": "Impossibile recuperare i tipi di rotta",
+    "cannot_create_route": "Impossibile creare la rotta"
   },
   "login": {
     "sign_in": "Accedi",
@@ -153,8 +159,13 @@
     },
     "logs": {
       "title": "Log",
-      "search_error": "Espressione regolare non valida.",
-      "search": "Cerca"
+      "search_error": "Espressione regolare non valida",
+      "search": "Cerca",
+      "limit_rows": "Limite linee",
+      "pooling": "Segui log",
+      "search_tooltip": "La ricerca usa il formato delle espressioni regolari",
+      "wrap_row": "A capo automatico",
+      "search_placeholder": "Cerca log"
     },
     "report": {
       "title": "Report"
@@ -510,7 +521,7 @@
       "choose_zone": "Scegli zona",
       "no_port_forward_found": "Nessun port forward trovato",
       "add_ip_address": "Aggiungi indirizzo IP",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "description": "Il port forwarding redireziona il traffico di rete in ingresso dall'indirizzo IP pubblico del firewall ad un dispositivo nella rete locale, abilitando l'accesso a servizi ed applicazioni ospitati su quel dispositivo.",
       "destination": "Destinazione",
       "copy": "Copia",
       "delete_port_forward": "Elimina port forward",
@@ -522,7 +533,7 @@
       "source_port": "Porta sorgente",
       "filter_change_suggestion": "Prova a modificare il filtro",
       "duplicate": "Duplica",
-      "destination_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "destination_address_tooltip": "Redireziona il traffico in arrivo che fa match con l'host interno specificato",
       "status": "Stato",
       "title": "Port forward",
       "hairpin_nat_zones": "Hairpin NAT abilitato sulle seguenti zone",
@@ -532,7 +543,7 @@
       "add_port_forward": "Aggiungi port forward",
       "no_port_forward_configured": "Nessun port forward configurato",
       "destination_zone": "Zona di destinazione",
-      "restrict_access_to_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "restrict_access_to_tooltip": "Di default, l'accesso al port forward è consentito a chiunque. Aggiungi indirizzi IP o CIDR per limitare l'accesso solo alle reti indicate",
       "disabled": "Disabilitato",
       "choose_protocol": "Scegli protocollo",
       "filter": "Filtra"
@@ -549,7 +560,29 @@
       "route_status_table": "Stato",
       "route_interface": "Interfaccia",
       "route_protocol": "Protocollo",
-      "route_status_disabled": "Disattivato"
+      "route_status_disabled": "Disattivato",
+      "route_gateway_helper": "Inserisci l'indirizzo IP del gateway. Questo indirizzo dovrebbe essere raggiungibile dal firewall",
+      "delete_route_ipv6": "Elimina rotta IPv6",
+      "delete_route_name": "Elimina rotta '{name}'?",
+      "route_mtu": "MTU",
+      "tabs": {
+        "routes_ipv6": "Rotte IPv6",
+        "routes_ipv4": "Rotte IPv4"
+      },
+      "create_route": "Aggiungi rotta",
+      "route_choose_type": "Seleziona il tipo di rotta",
+      "edit_route_ipv6": "Modifica rotta IPv6",
+      "no_route_found": "Nessuna rotta trovata",
+      "route_onlink_description": "Quando abilitato, il gateway è on-link anche se non fa match con nessun prefisso di interfaccia",
+      "main_table": "Tabella principale delle rotte attive",
+      "edit_route_ipv4": "Modifica rotta IPv4",
+      "route_name": "Nome rotta",
+      "route_onlink": "On-link",
+      "route_description": "Le rotte definiscono su quali interfaccia e gateway uno specifico host o una specifica rete possono essere raggiunti",
+      "create_route_ipv4": "Aggiunti rotta IPv4",
+      "create_route_ipv6": "Aggiungi rotta IPv6",
+      "route_network_address": "Indirizzo di rete",
+      "delete_route_ipv4": "Elimina rotta IPv4"
     }
   },
   "controller": {

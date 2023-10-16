@@ -79,6 +79,11 @@ const standaloneRoutes = [
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')
+  },
+  {
+    path: 'user',
+    name: 'UserManagement',
+    component: () => import('../views/standalone/UserManagement.vue')
   }
 ]
 

@@ -136,6 +136,7 @@
   },
   "standalone": {
     "shell": {
+      "account": "Account",
       "sign_out": "Sign out",
       "open_sidebar": "Open sidebar",
       "close_sidebar": "Close sidebar",
@@ -695,6 +696,16 @@
     },
     "report": {
       "title": "Report"
+    },
+    "account_management": {
+      "title": "Account Management for '{name}'",
+      "change_password": "Change password",
+      "change_password_description": "Beware, if you change the password fo the 'root' user, you will change the password for shell access too."
+    },
+    "change_password": {
+      "new_password": "New password",
+      "confirm_password": "Confirm password",
+      "success_message": "Password changed successfully."
     }
   },
   "controller": {

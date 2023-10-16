@@ -25,6 +25,7 @@ import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
 import { isEmpty } from 'lodash'
+import router from '@/router'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
@@ -32,7 +33,11 @@ const themeStore = useThemeStore()
 const { t } = useI18n()
 
 const accountMenu = [
-  // { name: 'Your profile', action: null }, ////
+  {
+    name: t('standalone.shell.account'),
+    action: () => router.push('/standalone/user'),
+    disabled: !isStandaloneMode()
+  },
   {
     name: t('standalone.shell.sign_out'),
     action: loginStore.logout,

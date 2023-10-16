@@ -486,7 +486,7 @@
       "domain_whitelist": "Domain whitelist",
       "add_domain": "Add domain",
       "log_dns_queries": "Log DNS queries",
-      "dns_records_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dns_records_description": "Configure DNS records for local IP resolution of specified hosts. Hostnames link domain names to IP addresses. This feature is unnecessary for hostnames with static leases but can be handy for rebinding fully qualified domain names (FQDNs).",
       "filter": "Filter",
       "add_dns_record": "Add DNS record",
       "edit_dns_record": "Edit DNS record",

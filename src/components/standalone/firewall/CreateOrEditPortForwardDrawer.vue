@@ -246,6 +246,8 @@ function validate(): boolean {
 }
 
 async function createOrEditPortForward() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
   const isEditing = id.value != ''
 
   try {

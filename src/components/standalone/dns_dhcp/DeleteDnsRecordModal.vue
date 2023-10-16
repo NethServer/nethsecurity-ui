@@ -1,34 +1,38 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { DnsRecord } from './DnsRecords.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: PortForward | null
+  itemToDelete: DnsRecord | null
 }>()
 
-const emit = defineEmits(['close', 'port-forward-deleted'])
+const emit = defineEmits(['close', 'record-deleted'])
 
 const { visible, itemToDelete } = toRefs(props)
 const error = ref('')
 const isDeleting = ref(false)
-const { t } = useI18n()
 
-async function deletePortForward() {
+async function deleteDnsRecord() {
   if (itemToDelete.value) {
     try {
       error.value = ''
       isDeleting.value = true
-      await ubusCall('ns.redirects', 'delete-redirect', {
-        id: itemToDelete.value.id
+      await ubusCall('ns.dns', 'delete-record', {
+        record: itemToDelete.value.record
       })
-      emit('port-forward-deleted')
+      emit('record-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value =
+        err.response.data.message == 'record_not_found'
+          ? t('standalone.dns_dhcp.record_not_found')
+          : t(getAxiosErrorMessage(err))
     } finally {
       isDeleting.value = false
     }
@@ -45,22 +49,22 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.port_forward.delete_port_forward')"
-    :primaryLabel="t('standalone.port_forward.delete_port_forward')"
+    :title="t('standalone.dns_dhcp.delete_dns_record')"
+    :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
-    @primaryClick="deletePortForward()"
+    @primaryClick="deleteDnsRecord()"
     @close="close()"
   >
     {{
-      t('standalone.port_forward.delete_port_forward_message', {
+      t('standalone.dns_dhcp.delete_dns_record_message', {
         name: itemToDelete?.name ?? ''
       })
     }}
     <NeInlineNotification
       v-if="error"
       kind="error"
-      :title="t('error.cannot_delete_port_forward')"
+      :title="t('error.cannot_delete_dns_record')"
       :description="error"
     />
   </NeModal>

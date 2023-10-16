@@ -1,34 +1,38 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { StaticLease } from './StaticLeases.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: PortForward | null
+  itemToDelete: StaticLease | null
 }>()
 
-const emit = defineEmits(['close', 'port-forward-deleted'])
+const emit = defineEmits(['close', 'lease-deleted'])
 
 const { visible, itemToDelete } = toRefs(props)
 const error = ref('')
 const isDeleting = ref(false)
-const { t } = useI18n()
 
-async function deletePortForward() {
+async function deleteStaticLease() {
   if (itemToDelete.value) {
     try {
       error.value = ''
       isDeleting.value = true
-      await ubusCall('ns.redirects', 'delete-redirect', {
-        id: itemToDelete.value.id
+      await ubusCall('ns.dhcp', 'delete-static-lease', {
+        lease: itemToDelete.value.lease
       })
-      emit('port-forward-deleted')
+      emit('lease-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value =
+        err.response.data.message == 'lease_not_found'
+          ? t('standalone.dns_dhcp.lease_not_found')
+          : t(getAxiosErrorMessage(err))
     } finally {
       isDeleting.value = false
     }
@@ -45,22 +49,22 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.port_forward.delete_port_forward')"
-    :primaryLabel="t('standalone.port_forward.delete_port_forward')"
+    :title="t('standalone.dns_dhcp.delete_reservation')"
+    :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
-    @primaryClick="deletePortForward()"
+    @primaryClick="deleteStaticLease()"
     @close="close()"
   >
     {{
-      t('standalone.port_forward.delete_port_forward_message', {
-        name: itemToDelete?.name ?? ''
+      t('standalone.dns_dhcp.delete_reservation_message', {
+        hostname: itemToDelete?.hostname ?? ''
       })
     }}
     <NeInlineNotification
       v-if="error"
       kind="error"
-      :title="t('error.cannot_delete_port_forward')"
+      :title="t('error.cannot_delete_reservation')"
       :description="error"
     />
   </NeModal>

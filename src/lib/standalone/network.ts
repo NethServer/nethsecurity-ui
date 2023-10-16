@@ -77,6 +77,21 @@ export function getZoneColorClasses(zoneName: string) {
   }
 }
 
+export function getZoneBorderColorClasses(zoneName: string) {
+  switch (zoneName) {
+    case 'lan':
+      return 'border-green-700 dark:border-green-700'
+    case 'wan':
+      return 'border-rose-700 dark:border-rose-700'
+    case 'guests':
+      return 'border-blue-700 dark:border-blue-700'
+    case 'openvpnrw':
+      return 'border-teal-700 dark:border-teal-700'
+    default:
+      return 'border-gray-500 dark:border-gray-500'
+  }
+}
+
 export function getZoneIcon(zoneName: string) {
   switch (zoneName) {
     case 'lan':

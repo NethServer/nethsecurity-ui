@@ -476,7 +476,7 @@
         "dns_records": "DNS records"
       },
       "dns_forwarding_servers": "DNS forwarding servers",
-      "dns_forwarding_servers_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers.",
       "add_dns_server": "Add DNS server",
       "dns_domain": "DNS domain",
       "dns_domain_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",

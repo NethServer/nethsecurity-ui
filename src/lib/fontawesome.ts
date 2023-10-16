@@ -64,6 +64,10 @@ import { faCircleInfo as fasCircleInfo } from '@fortawesome/free-solid-svg-icons
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { faClone as faClone } from '@fortawesome/free-solid-svg-icons'
 import { faHardDrive } from '@fortawesome/free-solid-svg-icons/faHardDrive'
+import { faCircleChevronDown } from '@fortawesome/free-solid-svg-icons/faCircleChevronDown'
+import { faCircleChevronUp } from '@fortawesome/free-solid-svg-icons/faCircleChevronUp'
+import { faDownLeftAndUpRightToCenter } from '@fortawesome/free-solid-svg-icons/faDownLeftAndUpRightToCenter'
+import { faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons/faUpRightAndDownLeftFromCenter'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -129,4 +133,8 @@ export async function loadFontAwesome(app: any) {
   library.add(faUserGear)
   library.add(faCircleStop)
   library.add(faHardDrive)
+  library.add(faCircleChevronDown)
+  library.add(faCircleChevronUp)
+  library.add(faDownLeftAndUpRightToCenter)
+  library.add(faUpRightAndDownLeftFromCenter)
 }

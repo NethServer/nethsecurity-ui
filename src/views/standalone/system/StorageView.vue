@@ -40,7 +40,6 @@ const deviceOptions = computed(() =>
   availableDevices.value.map((storage) => ({
     id: storage.path!,
     label: storage.name!,
-    description: `${storage.path} | ${storage.size} ${storage.model ? `| ${storage.model}` : ''}`,
     icon: 'hard-drive'
   }))
 )
@@ -169,7 +168,34 @@ onMounted(() => {
           v-model="selectedDevicePath"
           :card="true"
           :label="''"
-        />
+        >
+          <template #option="{ option }">
+            <div class="flex flex-col text-left">
+              <p class="mb-1 text-sm">{{ option.label }} ({{ option.id }})</p>
+              <p class="text-sm">
+                <strong>{{ t('standalone.storage.size') }}:</strong>
+                {{
+                  availableDevices.find((device) => device.name == option.label)?.size ??
+                  t('standalone.storage.unknown')
+                }}
+              </p>
+              <p class="text-sm">
+                <strong>{{ t('standalone.storage.model') }}:</strong>
+                {{
+                  availableDevices.find((device) => device.name == option.label)?.model ??
+                  t('standalone.storage.unknown')
+                }}
+              </p>
+              <p class="text-sm">
+                <strong>{{ t('standalone.storage.vendor') }}:</strong>
+                {{
+                  availableDevices.find((device) => device.name == option.label)?.vendor ??
+                  t('standalone.storage.unknown')
+                }}
+              </p>
+            </div>
+          </template>
+        </NeRadioSelection>
       </div>
       <div>
         <NeButton

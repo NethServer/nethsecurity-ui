@@ -168,26 +168,37 @@ onMounted(() => {
           v-model="selectedDevicePath"
           :card="true"
           :label="''"
+          card-size="lg"
         >
           <template #option="{ option }">
-            <div class="flex flex-col text-left">
-              <p class="mb-1 text-sm">{{ option.label }} ({{ option.id }})</p>
-              <p class="text-sm">
-                <strong>{{ t('standalone.storage.size') }}:</strong>
+            <div class="flex flex-col text-left text-sm">
+              <div class="mb-1 flex flex-row">
+                <p>{{ option.label }}</p>
+                <p
+                  :class="[
+                    'ml-2',
+                    selectedDevicePath == option.id ? '' : 'text-gray-500 dark:text-gray-400'
+                  ]"
+                >
+                  {{ option.id }}
+                </p>
+              </div>
+              <p>
+                <span class="font-semibold">{{ t('standalone.storage.size') }}:</span>
                 {{
                   availableDevices.find((device) => device.name == option.label)?.size ??
                   t('standalone.storage.unknown')
                 }}
               </p>
-              <p class="text-sm">
-                <strong>{{ t('standalone.storage.model') }}:</strong>
+              <p>
+                <span class="font-semibold">{{ t('standalone.storage.model') }}:</span>
                 {{
                   availableDevices.find((device) => device.name == option.label)?.model ??
                   t('standalone.storage.unknown')
                 }}
               </p>
-              <p class="text-sm">
-                <strong>{{ t('standalone.storage.vendor') }}:</strong>
+              <p>
+                <span class="font-semibold">{{ t('standalone.storage.vendor') }}:</span>
                 {{
                   availableDevices.find((device) => device.name == option.label)?.vendor ??
                   t('standalone.storage.unknown')

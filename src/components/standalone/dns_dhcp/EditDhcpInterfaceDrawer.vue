@@ -279,7 +279,6 @@ watch(
           :invalid-messages="dhcpOptionValueErrors"
           :invalid-key-messages="dhcpOptionKeyErrors"
           :combobox-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
-          :text-input-placeholder="t('standalone.dns_dhcp.dhcp_option_text_input_placeholder')"
           ><template #tooltip>
             <NeTooltip>
               <template #content>

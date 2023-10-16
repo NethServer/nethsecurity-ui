@@ -538,8 +538,7 @@
       "interface_not_found": "Interface not found",
       "no_dynamic_lease_found": "No dynamic leases found",
       "filter_change_suggestion": "Try changing filter value",
-      "dhcp_option_combobox_placeholder": "Search key",
-      "dhcp_option_text_input_placeholder": "Add value (e.g. 192.268.39.4)"
+      "dhcp_option_combobox_placeholder": "Search key"
     },
     "routes": {
       "title": "Routes",

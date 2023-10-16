@@ -11,7 +11,8 @@
     "lint": "eslint --ignore-path .gitignore --fix .",
     "lint:check": "eslint --ignore-path .gitignore --fix-dry-run .",
     "format": "prettier --write .",
-    "format:check": "prettier --list-different ."
+    "format:check": "prettier --list-different .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

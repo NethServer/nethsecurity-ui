@@ -107,7 +107,7 @@ onMounted(() => {
     <NeSkeleton :lines="10" v-if="loading" />
     <template v-else-if="currentStorageConfiguration?.name">
       <div>
-        <NeTitle level="h4">{{ t('standalone.storage.current_configuration') }}</NeTitle>
+        <NeTitle level="h4">{{ t('standalone.storage.storage_configuration') }}</NeTitle>
         <div
           class="flex max-w-3xl flex-row items-center rounded-md bg-white p-6 transition-colors duration-200 dark:bg-gray-800 sm:shadow"
         >
@@ -120,8 +120,8 @@ onMounted(() => {
               aria-hidden="true"
               :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 dark:bg-gray-500 dark:text-gray-50 md:mb-0 md:mr-5`"
             />
-            <div class="text-center md:text-start">
-              <p>{{ currentStorageConfiguration.name }}</p>
+            <div class="text-center text-sm md:text-start">
+              <p class="font-semibold">{{ currentStorageConfiguration.name }}</p>
               <p>{{ currentStorageConfiguration.path }}</p>
             </div>
           </div>
@@ -174,12 +174,7 @@ onMounted(() => {
             <div class="flex flex-col text-left text-sm">
               <div class="mb-1 flex flex-row">
                 <p>{{ option.label }}</p>
-                <p
-                  :class="[
-                    'ml-2',
-                    selectedDevicePath == option.id ? '' : 'text-gray-500 dark:text-gray-400'
-                  ]"
-                >
+                <p class="ml-2 text-gray-500 dark:text-gray-400">
                   {{ option.id }}
                 </p>
               </div>
@@ -237,11 +232,23 @@ onMounted(() => {
     @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
     @primary-click="configureStorage()"
   >
-    {{
-      t('standalone.storage.format_configure_storage_warning', {
-        device: availableDevices.find((storage) => storage.path === selectedDevicePath)?.name
-      })
-    }}
+    <ul class="list-disc">
+      <li>
+        {{
+          t('standalone.storage.format_storage_warning', {
+            device: availableDevices.find((storage) => storage.path === selectedDevicePath)?.name
+          })
+        }}
+      </li>
+      <li>
+        {{ t('standalone.storage.configure_storage_logs_description') }}
+        <code class="inline">/mnt/data/logs/messages</code>
+      </li>
+      <li>
+        {{ t('standalone.storage.configure_storage_extra_data_description') }}
+      </li>
+    </ul>
+
     <NeInlineNotification
       v-if="error.modalError"
       :title="t('error.cannot_configure_storage')"

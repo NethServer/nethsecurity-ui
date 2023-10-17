@@ -91,7 +91,10 @@
     "cannot_retrieve_dhcp_options": "Cannot retrieve DHCP options",
     "cannot_retrieve_interface_details": "Cannot retrieve interface details",
     "cannot_retrieve_dynamic_leases": "Cannot retrieve dynamic leases",
-    "cannot_retrieve_dhcp_interfaces": "Cannot retrieve DHCP interfaces"
+    "cannot_retrieve_dhcp_interfaces": "Cannot retrieve DHCP interfaces",
+    "cannot_retrieve_storage_configuration": "Cannot retrieve storage configuration",
+    "cannot_configure_storage": "Cannot configure storage",
+    "cannot_remove_storage": "Cannot remove storage"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -286,6 +289,25 @@
       "reboot_warning": "You are about to reboot '{unit}' unit",
       "reboot_now": "Reboot now",
       "reboot_in_progress": "The unit is rebooting, please wait..."
+    },
+    "storage": {
+      "title": "Storage",
+      "description": "You can keep a copy of your system logs on an external storage device, such as a USB stick. This can be useful for troubleshooting problems or for keeping a record of your system activity.",
+      "format_configure_storage": "Format and configure storage",
+      "configure_storage": "Configure storage",
+      "format_storage_warning": "All data contained in '{device}' will be erased",
+      "configure_storage_logs_description": "From now on logs will also be written on the device at mount point",
+      "configure_storage_extra_data_description": "Extra data can be automatically stored to the device once a day",
+      "format_and_configure": "Format and configure",
+      "remove_storage": "Remove storage",
+      "remove_storage_warning": "You are about to remove storage '{storage}'. Logs won't be written on the device anymore",
+      "size": "Size",
+      "model": "Model",
+      "vendor": "Vendor",
+      "unknown": "Unknown",
+      "storage_configuration": "Storage configuration",
+      "select_device": "Select device",
+      "no_device_found": "No devices found"
     },
     "network": {
       "title": "Network"

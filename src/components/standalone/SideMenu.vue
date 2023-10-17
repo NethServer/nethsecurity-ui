@@ -34,6 +34,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.reboot_and_shutdown.title'),
         to: 'system/reboot-and-shutdown'
+      },
+      {
+        name: t('standalone.storage.title'),
+        to: 'system/storage'
       }
     ],
     expanded: false

@@ -210,7 +210,7 @@ onMounted(() => {
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState
-        :title="t('standalone.port_forward.no_port_forward_configured')"
+        :title="t('standalone.port_forward.no_port_forward_found')"
         :icon="['fas', 'circle-info']"
         v-if="Object.keys(portForwards).length == 0"
         ><NeButton kind="primary" @click="openCreateEditDrawer(null)"

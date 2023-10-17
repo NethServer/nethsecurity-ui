@@ -9,6 +9,7 @@ import {
   NeSkeleton,
   NeInlineNotification,
   NeTooltip,
+  NeFormItemLabel,
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -317,7 +318,15 @@ async function createOrEditPortForward() {
     />
     <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
     <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
-      <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
+      <div>
+        <NeFormItemLabel>{{ t('standalone.port_forward.status') }}</NeFormItemLabel>
+        <NeToggle
+          :label="
+            enabled ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
+          "
+          v-model="enabled"
+        />
+      </div>
       <NeTextInput
         :label="t('standalone.port_forward.name')"
         v-model="name"
@@ -398,9 +407,26 @@ async function createOrEditPortForward() {
             >
           </template>
         </NeMultiTextInput>
-
-        <NeToggle :label="t('standalone.port_forward.log')" v-model="log" />
-        <NeToggle :label="t('standalone.port_forward.hairpin_nat')" v-model="reflection" />
+        <div>
+          <NeFormItemLabel>{{ t('standalone.port_forward.log') }}</NeFormItemLabel>
+          <NeToggle
+            :label="
+              log ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
+            "
+            v-model="log"
+          />
+        </div>
+        <div>
+          <NeFormItemLabel>{{ t('standalone.port_forward.hairpin_nat') }}</NeFormItemLabel>
+          <NeToggle
+            :label="
+              reflection
+                ? t('standalone.port_forward.enabled')
+                : t('standalone.port_forward.disabled')
+            "
+            v-model="reflection"
+          />
+        </div>
         <NeCombobox
           v-if="reflection"
           :label="t('standalone.port_forward.hairpin_nat_zones')"

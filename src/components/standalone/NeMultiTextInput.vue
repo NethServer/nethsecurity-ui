@@ -104,14 +104,14 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="title" class="mb-4 flex items-end justify-between">
+    <div v-if="title" class="mb-4 flex items-center justify-between">
       <div>
         <span class="mr-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
           {{ title }}
         </span>
         <slot name="tooltip"></slot>
       </div>
-      <span v-if="optional" class="ml-2 font-normal">{{ optionalLabel }}</span>
+      <span v-if="optional" class="ml-2 text-sm font-normal">{{ optionalLabel }}</span>
     </div>
 
     <div class="space-y-6">

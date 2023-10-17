@@ -80,7 +80,8 @@
     "cannot_create_route": "Impossibile creare la rotta",
     "invalid_mac_address": "Indirizzo IP non valido",
     "cannot_retrieve_dhcp_interfaces": "Impossibile recuperare le interfacce WAN",
-    "cannot_retrieve_dns_configuration": "Impossibile caricare la configurazione"
+    "cannot_retrieve_dns_configuration": "Impossibile caricare la configurazione",
+    "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione del filtro"
   },
   "login": {
     "sign_in": "Accedi",
@@ -608,6 +609,15 @@
       "enabled": "Attivato",
       "hostname": "Nome host",
       "filter": "Filtro"
+    },
+    "storage": {
+      "vendor": "Produttore",
+      "title": "Archiviazione",
+      "no_device_found": "Nessun dispositivo trovato",
+      "model": "Modello",
+      "size": "Dimensione",
+      "select_device": "Seleziona Dispositivo",
+      "unknown": "sconosciuta"
     }
   },
   "controller": {

@@ -292,7 +292,7 @@
     },
     "storage": {
       "title": "Storage",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "description": "You can keep a copy of your system logs on an external storage device, such as a USB stick. This can be useful for troubleshooting problems or for keeping a record of your system activity.",
       "format_configure_storage": "Format and configure storage",
       "configure_storage": "Configure storage",
       "format_storage_warning": "All data contained in '{device}' will be erased",

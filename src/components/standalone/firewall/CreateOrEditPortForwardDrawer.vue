@@ -9,6 +9,7 @@ import {
   NeSkeleton,
   NeInlineNotification,
   NeTooltip,
+  NeFormItemLabel,
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -77,8 +78,8 @@ const sourcePort = ref('')
 const destinationIP = ref('')
 const destinationPort = ref('')
 const wan = ref('')
-const enabled = ref(false)
-const restrict = ref<string[]>([])
+const enabled = ref(true)
+const restrict = ref<string[]>([''])
 const protocols = ref<NeComboboxOption[]>([])
 const log = ref(false)
 const reflection = ref(false)
@@ -94,8 +95,11 @@ function resetForm() {
   destinationIP.value = props.initialItem?.dest_ip ?? ''
   destinationPort.value = props.initialItem?.destination_port ?? ''
   wan.value = props.initialItem?.wan ?? 'any'
-  enabled.value = props.initialItem?.enabled ?? false
-  restrict.value = props.initialItem?.restrict.map((x) => x) ?? []
+  enabled.value = props.initialItem?.enabled ?? true
+  restrict.value =
+    props.initialItem?.restrict && props.initialItem.restrict.length > 0
+      ? props.initialItem?.restrict.map((x) => x)
+      : ['']
   protocols.value =
     props.initialItem?.protocol.map((proto: string) => ({
       id: proto,
@@ -169,6 +173,7 @@ function close() {
   error.value.notificationDescription = ''
   validationErrorBag.value.clear()
   restrictIPValidationErrors.value = []
+  showAdvancedSettings.value = false
 
   resetForm()
   emit('close')
@@ -210,7 +215,8 @@ function validate(): boolean {
 
   let validRestrict = true
   for (let [index, restrictValue] of restrict.value.entries()) {
-    for (let validator of [validateRequired(restrictValue), validateIpAddress(restrictValue)]) {
+    if (restrictValue) {
+      let validator = validateIpAddress(restrictValue)
       if (!validator.valid) {
         restrictIPValidationErrors.value[index] = t(validator.errMessage as string)
         validRestrict = false
@@ -265,7 +271,7 @@ async function createOrEditPortForward() {
         enabled: enabled.value ? '1' : '0',
         log: log.value ? '1' : '0',
         reflection: reflection.value ? '1' : '0',
-        restrict: restrict.value,
+        restrict: restrict.value.filter((x) => x != ''),
         dest: destinationZone.value === 'any' ? '' : destinationZone.value,
         reflection_zone: reflectionZones.value.map((reflectionZone) => reflectionZone.id)
       }
@@ -312,7 +318,15 @@ async function createOrEditPortForward() {
     />
     <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
     <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
-      <NeToggle :label="t('standalone.port_forward.status')" v-model="enabled" />
+      <div>
+        <NeFormItemLabel>{{ t('standalone.port_forward.status') }}</NeFormItemLabel>
+        <NeToggle
+          :label="
+            enabled ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
+          "
+          v-model="enabled"
+        />
+      </div>
       <NeTextInput
         :label="t('standalone.port_forward.name')"
         v-model="name"
@@ -393,9 +407,26 @@ async function createOrEditPortForward() {
             >
           </template>
         </NeMultiTextInput>
-
-        <NeToggle :label="t('standalone.port_forward.log')" v-model="log" />
-        <NeToggle :label="t('standalone.port_forward.hairpin_nat')" v-model="reflection" />
+        <div>
+          <NeFormItemLabel>{{ t('standalone.port_forward.log') }}</NeFormItemLabel>
+          <NeToggle
+            :label="
+              log ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
+            "
+            v-model="log"
+          />
+        </div>
+        <div>
+          <NeFormItemLabel>{{ t('standalone.port_forward.hairpin_nat') }}</NeFormItemLabel>
+          <NeToggle
+            :label="
+              reflection
+                ? t('standalone.port_forward.enabled')
+                : t('standalone.port_forward.disabled')
+            "
+            v-model="reflection"
+          />
+        </div>
         <NeCombobox
           v-if="reflection"
           :label="t('standalone.port_forward.hairpin_nat_zones')"

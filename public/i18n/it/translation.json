@@ -541,7 +541,6 @@
       "wan_ip": "IP WAN",
       "destination_port": "Porta di destinazione",
       "add_port_forward": "Aggiungi port forward",
-      "no_port_forward_configured": "Nessun port forward configurato",
       "destination_zone": "Zona di destinazione",
       "restrict_access_to_tooltip": "Di default, l'accesso al port forward è consentito a chiunque. Aggiungi indirizzi IP o CIDR per limitare l'accesso solo alle reti indicate",
       "disabled": "Disabilitato",

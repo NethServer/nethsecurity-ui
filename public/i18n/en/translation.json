@@ -664,7 +664,6 @@
       "any": "Any",
       "destination_address_tooltip": "Redirect matched incoming traffic to the specified internal host.",
       "restrict_access_to_tooltip": "By default, the port forward access is granted to anyone. Add IPs or CIDRs to restric the access only from the given networks.",
-      "no_port_forward_configured": "No port forward configured",
       "no_port_forward_found": "No port forward found",
       "filter_change_suggestion": "Try changing filter value",
       "copy": "Copy"

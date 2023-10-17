@@ -183,8 +183,12 @@ onMounted(() => {
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.port_forward.description') }}
       </p>
-      <div>
-        <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+      <div class="ml-2 shrink-0">
+        <NeButton
+          kind="secondary"
+          @click="openCreateEditDrawer(null)"
+          v-if="Object.keys(portForwards).length > 0"
+        >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
           </template>

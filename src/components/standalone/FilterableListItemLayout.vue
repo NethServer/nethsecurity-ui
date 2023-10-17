@@ -92,7 +92,11 @@ onMounted(() => {
         {{ description }}
       </p>
       <div class="ml-2 shrink-0">
-        <NeButton kind="secondary" @click="openCreateEditDrawer(null)" v-if="!readonly">
+        <NeButton
+          kind="secondary"
+          @click="openCreateEditDrawer(null)"
+          v-if="!readonly && items.length > 0"
+        >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
           </template>

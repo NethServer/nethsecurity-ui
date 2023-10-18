@@ -684,6 +684,13 @@
     "vpn": {
       "title": "VPN"
     },
+    "openvpn_tunnel": {
+      "title": "OpenVPN tunnel",
+      "tabs": {
+        "server_tunnel": "Server tunnel",
+        "client_tunnel": "Client tunnel"
+      }
+    },
     "logs": {
       "title": "Logs",
       "limit_rows": "Lines limit",

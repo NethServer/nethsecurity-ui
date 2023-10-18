@@ -87,7 +87,17 @@ const navigation: Ref<any> = ref([
     ]
   },
   { name: t('standalone.security.title'), to: 'security', icon: 'shield-halved' },
-  { name: t('standalone.vpn.title'), to: 'vpn', icon: 'globe' },
+  {
+    name: t('standalone.vpn.title'),
+    to: 'vpn',
+    icon: 'globe',
+    children: [
+      {
+        name: t('standalone.openvpn_tunnel.title'),
+        to: 'vpn/openvpn-tunnel'
+      }
+    ]
+  },
   { name: t('standalone.logs.title'), to: 'logs', icon: 'list' },
   { name: t('standalone.report.title'), to: 'report', icon: 'chart-line' }
 ])

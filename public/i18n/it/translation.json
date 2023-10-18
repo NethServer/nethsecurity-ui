@@ -81,7 +81,9 @@
     "invalid_mac_address": "Indirizzo IP non valido",
     "cannot_retrieve_dhcp_interfaces": "Impossibile recuperare le interfacce WAN",
     "cannot_retrieve_dns_configuration": "Impossibile caricare la configurazione",
-    "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione del filtro"
+    "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione del filtro",
+    "password_too_short": "Password troppo corta",
+    "invalid_equal": "Le password non corrispondono"
   },
   "login": {
     "sign_in": "Accedi",
@@ -182,7 +184,8 @@
       "toggle_theme": "Cambia tema",
       "show_notifications": "Mostra notifiche",
       "open_user_menu": "Apri il menu utente",
-      "close_side_drawer": "Chiudi il cassetto laterale"
+      "close_side_drawer": "Chiudi il cassetto laterale",
+      "account": "Profilo"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -618,6 +621,14 @@
       "size": "Dimensione",
       "select_device": "Seleziona Dispositivo",
       "unknown": "sconosciuta"
+    },
+    "change_password": {
+      "new_password": "Nuova password",
+      "success_message": "La password è stata cambiata correttamente",
+      "confirm_password": "Conferma password"
+    },
+    "account_management": {
+      "change_password": "Modifica password"
     }
   },
   "controller": {

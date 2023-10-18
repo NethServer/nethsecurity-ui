@@ -283,7 +283,7 @@ export const validatePassword = (value: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateEqual = (value: String, otherValue: String): validationOutput => {
+export const validateStringEqual = (value: String, otherValue: String): validationOutput => {
   if (value != otherValue) {
     return { valid: false, errMessage: 'error.invalid_equal' }
   }

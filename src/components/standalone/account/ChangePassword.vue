@@ -8,11 +8,17 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
-  NeTextInput
+  NeTextInput,
+  NeTooltip
 } from '@nethserver/vue-tailwind-lib'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MessageBag, validateEqual, validatePassword, validateRequired } from '@/lib/validation'
+import {
+  MessageBag,
+  validatePassword,
+  validateRequired,
+  validateStringEqual
+} from '@/lib/validation'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
@@ -30,6 +36,26 @@ const loading = ref(false)
 const error = ref<Error>()
 const success = ref(false)
 
+const newPasswordHtmlRef = ref<HTMLElement | null>()
+const confirmPasswordHtmlRef = ref<HTMLElement | null>()
+
+watch(
+  () => validationBag.value.keys(),
+  () => {
+    const validationErrors = Array.from(validationBag.value.keys())
+    if (validationErrors.length != 0) {
+      switch (validationErrors[0]) {
+        case 'new_password':
+          newPasswordHtmlRef.value?.focus()
+          break
+        case 'confirm_password':
+          confirmPasswordHtmlRef.value?.focus()
+          break
+      }
+    }
+  }
+)
+
 function validate(): boolean {
   validationBag.value.clear()
   let errMessage = validateRequired(newPassword.value).errMessage
@@ -40,7 +66,7 @@ function validate(): boolean {
   if (errMessage) {
     validationBag.value.set('new_password', String(errMessage))
   }
-  errMessage = validateEqual(newPassword.value, confirmPassword.value).errMessage
+  errMessage = validateStringEqual(newPassword.value, confirmPassword.value).errMessage
   if (errMessage) {
     validationBag.value.set('confirm_password', String(errMessage))
   }
@@ -75,13 +101,23 @@ function updatePassword() {
       kind="success"
     />
     <NeTextInput
+      ref="newPasswordHtmlRef"
       v-model="newPassword"
       :disabled="loading"
       :invalid-message="t(validationBag.getFirstFor('new_password'))"
       :label="t('standalone.change_password.new_password')"
       is-password
-    />
+    >
+      <template #tooltip>
+        <NeTooltip>
+          <template #content>
+            {{ t('standalone.change_password.password_rules') }}
+          </template>
+        </NeTooltip>
+      </template>
+    </NeTextInput>
     <NeTextInput
+      ref="confirmPasswordHtmlRef"
       v-model="confirmPassword"
       :disabled="loading"
       :invalid-message="t(validationBag.getFirstFor('confirm_password'))"

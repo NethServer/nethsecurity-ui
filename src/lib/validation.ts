@@ -264,6 +264,32 @@ export const validateLeaseTime = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validatePassword = (value: String): validationOutput => {
+  if (value.length < 8) {
+    return { valid: false, errMessage: 'error.password_too_short' }
+  }
+  if (!value.match(/[a-z]/)) {
+    return { valid: false, errMessage: 'error.password_lowercase_required' }
+  }
+  if (!value.match(/[A-Z]/)) {
+    return { valid: false, errMessage: 'error.password_uppercase_required' }
+  }
+  if (!value.match(/[0-9]/)) {
+    return { valid: false, errMessage: 'error.password_number_required' }
+  }
+  if (!value.match(/[^a-zA-Z0-9]/)) {
+    return { valid: false, errMessage: 'error.password_special_character_required' }
+  }
+  return { valid: true }
+}
+
+export const validateStringEqual = (value: String, otherValue: String): validationOutput => {
+  if (value != otherValue) {
+    return { valid: false, errMessage: 'error.invalid_equal' }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

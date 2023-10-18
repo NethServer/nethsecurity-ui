@@ -77,6 +77,12 @@
     "cannot_retrieve_protocols": "Cannot retrieve protocols",
     "cannot_retrieve_zones": "Cannot retrieve zones",
     "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
+    "password_too_short": "Password is too short",
+    "password_lowercase_required": "Password must contain at least one lowercase letter",
+    "password_uppercase_required": "Password must contain at least one uppercase letter",
+    "password_number_required": "Password must contain at least one number",
+    "password_special_character_required": "Password must contain at least one special character",
+    "invalid_equal": "Passwords don't match",
     "cannot_retrieve_dns_configuration": "Cannot retrieve DNS configuration",
     "cannot_update_dns_configuration": "Cannot update DNS configuration",
     "cannot_retrieve_dns_records": "Cannot retrieve DNS records",
@@ -130,6 +136,7 @@
   },
   "standalone": {
     "shell": {
+      "account": "Account",
       "sign_out": "Sign out",
       "open_sidebar": "Open sidebar",
       "close_sidebar": "Close sidebar",
@@ -689,6 +696,17 @@
     },
     "report": {
       "title": "Report"
+    },
+    "account_management": {
+      "title": "Account management for '{name}'",
+      "change_password": "Change password",
+      "change_password_description": "Note: if you change the password for 'root' user, you will change the password for shell access too."
+    },
+    "change_password": {
+      "password_rules": "Must be 8 characters or longer, contain at least one lowercase letter, one uppercase letter, a number and a symbol",
+      "new_password": "New password",
+      "confirm_password": "Confirm password",
+      "success_message": "Password changed successfully"
     }
   },
   "controller": {

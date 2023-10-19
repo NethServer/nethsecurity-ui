@@ -189,7 +189,7 @@ function save() {
             href="https://flashstart.nethesis.it/"
             target="_blank"
             rel="noreferrer"
-            class="text-primary-600 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-200"
+            class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-300"
           >
             {{ t('standalone.flashstart.content_link') }}
           </a>

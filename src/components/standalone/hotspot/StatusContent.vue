@@ -76,7 +76,7 @@ async function loadListSessions() {
       >
         <NeButton kind="primary" size="lg" @click="emit('goToSetting')">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="['fas', 'fa-arrow-right']" aria-hidden="true" />
           </template>
           {{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
         </NeButton>

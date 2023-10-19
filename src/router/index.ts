@@ -46,6 +46,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')
   },
   {
+    path: 'network/dns-dhcp',
+    name: 'DNSAndDHCP',
+    component: () => import('../views/standalone/network/DnsDhcpView.vue')
+  },
+  {
     path: 'network/multi-wan',
     name: 'MultiWAN',
     component: () => import('../views/standalone/network/MultiWanView.vue')
@@ -71,9 +76,19 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/security/FlashStartView.vue')
   },
   {
+    path: 'system/storage',
+    name: 'Storage',
+    component: () => import('../views/standalone/system/StorageView.vue')
+  },
+  {
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')
+  },
+  {
+    path: 'user',
+    name: 'UserManagement',
+    component: () => import('../views/standalone/UserManagement.vue')
   }
 ]
 

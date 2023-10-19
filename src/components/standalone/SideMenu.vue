@@ -34,6 +34,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.reboot_and_shutdown.title'),
         to: 'system/reboot-and-shutdown'
+      },
+      {
+        name: t('standalone.storage.title'),
+        to: 'system/storage'
       }
     ],
     expanded: false
@@ -46,6 +50,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.interfaces_and_devices.title'),
         to: 'network/interfaces-and-devices'
+      },
+      {
+        name: t('standalone.dns_dhcp.title'),
+        to: 'network/dns-dhcp'
       },
       {
         name: t('standalone.routes.title'),

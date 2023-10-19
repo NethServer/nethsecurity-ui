@@ -17,7 +17,8 @@ import {
   NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
-  type NeComboboxOption
+  type NeComboboxOption,
+  NeFormItemLabel
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -94,6 +95,10 @@ async function getConfiguration() {
         id: item,
         label: item
       }))
+
+      if (!form.value.bypassSource.length) {
+        form.value.bypassSource = ['']
+      }
     }
   } catch (exception: any) {
     errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
@@ -182,16 +187,28 @@ function save() {
       class="max-w-3xl"
     >
       <NeSkeleton v-if="loading" :lines="5" />
-      <div v-else class="mb-8 flex flex-col gap-y-6">
-        {{ t('standalone.flashstart.status') }}
-        <NeToggle
-          v-model="form.status"
-          :label="
-            form.status
-              ? t('standalone.flashstart.status_enabled')
-              : t('standalone.flashstart.status_disabled')
-          "
-        />
+      <NeInlineNotification
+        v-if="errorLoadingData.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorLoadingData.notificationTitle"
+        :description="errorLoadingData.notificationDescription"
+      />
+      <div
+        v-if="!errorLoadingData.notificationTitle && !loading"
+        class="mb-8 flex flex-col gap-y-6"
+      >
+        <div>
+          <NeFormItemLabel>{{ t('standalone.flashstart.status') }}</NeFormItemLabel>
+          <NeToggle
+            v-model="form.status"
+            :label="
+              form.status
+                ? t('standalone.flashstart.status_enabled')
+                : t('standalone.flashstart.status_disabled')
+            "
+          />
+        </div>
         <NeTextInput
           v-model="form.username"
           :invalid-message="error.username"

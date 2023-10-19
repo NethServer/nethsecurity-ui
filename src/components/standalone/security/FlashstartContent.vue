@@ -22,7 +22,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { validateRequired, validateRequiredOption } from '@/lib/validation'
+import { validateIp4Cidr, validateRequired, validateRequiredOption } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 const { t } = useI18n()
@@ -50,7 +50,7 @@ let objError = {
   username: '',
   password: '',
   zones: '',
-  bypassSource: []
+  bypassSource: ['']
 }
 let error = ref({ ...objError })
 let errorLoadingData = ref({ ...objError })
@@ -145,6 +145,17 @@ function validate() {
   }
 
   if (!isValidationOk && !isFocusInput) focusElement(zonesRef)
+
+  for (let [index, item] of form.value.bypassSource.entries()) {
+    if (item) {
+      let { valid, errMessage } = validateIp4Cidr(item)
+
+      if (!valid) {
+        error.value.bypassSource[index] = t(errMessage as string)
+        isValidationOk = false
+      }
+    }
+  }
 
   return isValidationOk
 }

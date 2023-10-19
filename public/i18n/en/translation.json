@@ -81,8 +81,8 @@
     "cannot_login_hotspot_description": "Login failed",
     "cannot_unregister_hotspot": "Cannot unregister",
     "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
-    "empty_network_device": "No \"Network device\" found.",
-    "empty_network_device_description": "There be at latest an unassigned device or with role \"hotspot\""
+    "empty_network_device": "No network device found.",
+    "empty_network_device_description": "There must be at latest an unassigned device or with role 'hotspot'"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -501,9 +501,9 @@
         "settings": "Settings"
       },
       "status": {
-        "no_hotspot_configuration_found": "No Hotspot configuration found",
-        "no_hotspot_configuration_found_description": "Authenticate in \"Settings\" to edit hotspot configuration",
-        "no_hotspot_configuration_found_button": "Go to settings",
+        "no_hotspot_configuration_found": "No hotspot configuration found",
+        "no_hotspot_configuration_found_description": "Authenticate in Settings tab to configure hotspot",
+        "no_hotspot_configuration_found_button": "Go to Settings",
         "empty_sessions": "No active sessions",
         "empty_sessions_description": "The sessions of clients connected to this unit will appear here.",
         "mac_address": "MAC address",
@@ -513,7 +513,9 @@
         "session_time": "Session time",
         "idle_time": "Idle time",
         "downloaded": "Downloaded",
-        "uploaded": "Uploaded"
+        "uploaded": "Uploaded",
+        "authenticated": "Authenticated",
+        "not_authenticated": "Not authenticated"
       },
       "settings": {
         "login": "Login",
@@ -542,14 +544,14 @@
         "configurtion_parent_hotspot_placeholder": "samplename-office",
         "configurtion_network_device": "Network device",
         "configurtion_network_device_helper": "Lorem ipsum, or lipsum as it is sometimes known",
-        "configurtion_network_device_placeholder": "eth1",
+        "configurtion_network_device_placeholder": "Choose device",
         "configurtion_use_default_dhcp_range": "Use default DHCP range",
-        "configurtion_save_info": "Save & commit",
-        "configurtion_save_info_description": "All pending changes to the firewall and network configuration will be committed.",
+        "configurtion_save_info": "Save and commit",
+        "configurtion_save_info_description": "All pending changes to the firewall and network configurations will be committed.",
         "unregister": "Unregister",
         "unregister_unit": "Unregister unit",
-        "unregister_unit_modal_title": "Unregister Hotspot unit",
-        "unregister_unit_modal_description": "The Hotspot unit will be detached from the remote Hotspot manager. Local firewall and network configuration will not be changed."
+        "unregister_unit_modal_title": "Unregister hotspot unit",
+        "unregister_unit_modal_description": "The hotspot unit will be detached from the remote hotspot manager. Local firewall and network configurations will not be changed."
       }
     },
     "users_and_objects": {

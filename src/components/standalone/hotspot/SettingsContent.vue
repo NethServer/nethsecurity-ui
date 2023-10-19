@@ -71,7 +71,8 @@ const configurationForm = ref<Configuration>({
 
 let isLoggedIn = ref(false)
 let activeConfiguration = ref(false)
-let loading = ref(false)
+let loadingParentHotspot = ref(false)
+let loadingListDevices = ref(false)
 let logging = ref(false)
 let loadingUnregister = ref(false)
 let loadingDhcpRange = ref(false)
@@ -110,66 +111,60 @@ let errorUnregister = ref({ ...objError })
 let errorDhcpRange = ref({ ...objError })
 
 onMounted(() => {
-  getFirewallData()
+  getListParents()
+  getListDevices()
   getConfiguration()
 })
 
-async function getFirewallData() {
-  loading.value = true
+async function getListParents() {
+  loadingParentHotspot.value = true
   errorLoadingData.value = { ...objError }
 
   // Retrieve parent hotspot
   try {
-    let getParentHotspot = await ubusCall('ns.dedalo', 'list-parents', {})
-    if (
-      getParentHotspot &&
-      getParentHotspot.data &&
-      getParentHotspot.data.parents &&
-      getParentHotspot.data.parents.length
-    ) {
+    let res = await ubusCall('ns.dedalo', 'list-parents', {})
+    if (res?.data?.parents?.length) {
       isLoggedIn.value = true
-      parentHotspotList.value = getParentHotspot.data.parents.map((item: ParentHotspot) => ({
+      parentHotspotList.value = res.data.parents.map((item: ParentHotspot) => ({
         id: item.id,
         label: item.name
       }))
-      configurationForm.value.parentHotspot = getParentHotspot.data.parents[0].id
+      configurationForm.value.parentHotspot = res.data.parents[0].id
     }
   } catch (exception: any) {
     errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_parent_hotspot')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    try {
-      let getNetworkDevice = await ubusCall('ns.dedalo', 'list-devices', {})
-      if (
-        getNetworkDevice &&
-        getNetworkDevice.data &&
-        getNetworkDevice.data.devices &&
-        getNetworkDevice.data.devices.length
-      ) {
-        networkDeviceList.value = getNetworkDevice.data.devices.map((item: NetworkDevice) => ({
-          id: item,
-          label: item
-        }))
-        configurationForm.value.networkDevice = getNetworkDevice.data.devices[0]
-      } else emptyDevices.value = true
-    } catch (exception: any) {
-      errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_network_device')
-      errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    } finally {
-      loading.value = false
-    }
+    loadingParentHotspot.value = false
+  }
+}
+
+async function getListDevices() {
+  loadingListDevices.value = true
+  errorLoadingData.value = { ...objError }
+
+  // Retrieve list devices
+  try {
+    let res = await ubusCall('ns.dedalo', 'list-devices', {})
+    if (res?.data?.devices?.length) {
+      networkDeviceList.value = res.data.devices.map((item: NetworkDevice) => ({
+        id: item,
+        label: item
+      }))
+      configurationForm.value.networkDevice = res.data.devices[0]
+    } else emptyDevices.value = true
+  } catch (exception: any) {
+    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_network_device')
+    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loadingListDevices.value = false
   }
 }
 
 async function getConfiguration() {
   try {
     let getDataConfiguration = await ubusCall('ns.dedalo', 'get-configuration', {})
-    if (
-      getDataConfiguration &&
-      getDataConfiguration.data &&
-      getDataConfiguration.data.configuration &&
-      getDataConfiguration.data.configuration.connected
-    ) {
+    if (getDataConfiguration?.data?.configuration?.connected) {
       activeConfiguration.value = getDataConfiguration.data.configuration.hotspot_id != ''
       let configuration = getDataConfiguration.data.configuration
       configurationForm.value.parentHotspot = configuration.hotspot_id
@@ -246,7 +241,8 @@ function login() {
       .then((response) => {
         if (response.data && response.data.response && response.data.response === 'success') {
           isLoggedIn.value = true
-          getFirewallData()
+          getListParents()
+          getListDevices()
           getConfiguration()
         } else {
           error.value.notificationTitle = t('error.cannot_login_hotspot')
@@ -446,9 +442,9 @@ function getDhcpRange() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="8" />
+    <NeSkeleton v-if="loadingParentHotspot || loadingListDevices" :lines="8" />
     <FormLayout
-      v-if="!isLoggedIn && !loading"
+      v-if="!isLoggedIn && !loadingParentHotspot && !loadingListDevices"
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
       class="max-w-3xl"
@@ -501,7 +497,7 @@ function getDhcpRange() {
       </form>
     </FormLayout>
     <FormLayout
-      v-if="!loading && activeConfiguration"
+      v-if="!loadingParentHotspot && !loadingListDevices && activeConfiguration"
       :title="t('standalone.hotspot.settings.configurtion')"
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
@@ -660,7 +656,13 @@ function getDhcpRange() {
     </FormLayout>
     <hr class="my-8" />
     <FormLayout
-      v-if="!loading && isLoggedIn && activeConfiguration && !emptyDevices"
+      v-if="
+        !loadingParentHotspot &&
+        !loadingListDevices &&
+        isLoggedIn &&
+        activeConfiguration &&
+        !emptyDevices
+      "
       :title="t('standalone.hotspot.settings.unregister')"
       class="max-w-4xl"
     >

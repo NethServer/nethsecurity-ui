@@ -6,6 +6,8 @@ import {
   NeSkeleton,
   NeEmptyState,
   NeInlineNotification,
+  byteFormat1024,
+  formatDurationLoc,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
@@ -32,14 +34,10 @@ onMounted(async () => {
 
 async function getConfiguration() {
   try {
-    let getDataConfiguration = await ubusCall('ns.dedalo', 'get-configuration', {})
-    if (
-      getDataConfiguration &&
-      getDataConfiguration.data &&
-      getDataConfiguration.data.configuration &&
-      getDataConfiguration.data.configuration.connected
-    )
-      activeConfiguration.value = getDataConfiguration.data.configuration.hotspot_id != ''
+    let res = await ubusCall('ns.dedalo', 'get-configuration', {})
+    if (res?.data?.configuration?.connected) {
+      activeConfiguration.value = res.data.configuration.hotspot_id != ''
+    }
   } catch (exception: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -55,34 +53,6 @@ async function loadListSessions() {
     error.value.notificationTitle = t('error.cannot_load_hotspot_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
-}
-
-function secondsToHMS(seconds: number): string {
-  if (seconds) {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const remainingSeconds = seconds % 60
-
-    const formattedHours = hours.toString().padStart(2, '0')
-    const formattedMinutes = minutes.toString().padStart(2, '0')
-    const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
-
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
-  } else return '-'
-}
-
-function autoConvertSize(sizeInBytes: number): string {
-  if (sizeInBytes) {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB']
-
-    let unitIndex = 0
-    while (sizeInBytes >= 1024 && unitIndex < units.length - 1) {
-      sizeInBytes /= 1024
-      unitIndex++
-    }
-
-    return `${sizeInBytes.toFixed(2)} ${units[unitIndex]}`
-  } else return '-'
 }
 </script>
 
@@ -117,14 +87,7 @@ function autoConvertSize(sizeInBytes: number): string {
         :title="t('standalone.hotspot.status.empty_sessions')"
         :description="t('standalone.hotspot.status.empty_sessions_description')"
         :icon="['fas', 'circle-info']"
-      >
-        <!--NeButton kind="primary" size="lg" @click="emit('goToSetting')">
-					<template #prefix>
-						<FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-					</template>
-					{{ t('standalone.hotspot.status.no_hotspot_configuration_found_button') }}
-				</NeButton-->
-      </NeEmptyState>
+      />
       <div v-if="activeConfiguration && hotspotSession.length > 0">
         <NeTable
           :data="hotspotSession"
@@ -181,7 +144,12 @@ function autoConvertSize(sizeInBytes: number): string {
               <template v-else>
                 <FontAwesomeIcon :icon="faCircleXmark" />
               </template>
-              {{ item.status }}
+              <span v-if="item.status === 'authenticated'">
+                {{ t('standalone.hotspot.status.authenticated') }}
+              </span>
+              <span v-if="item.status === 'not authenticated'">
+                {{ t('standalone.hotspot.status.not_authenticated') }}
+              </span>
             </div>
           </template>
           <template #session_key="{ item }">
@@ -191,19 +159,19 @@ function autoConvertSize(sizeInBytes: number): string {
           </template>
           <template #session_time="{ item }">
             <div class="flex items-center gap-x-2">
-              {{ secondsToHMS(item.sessionTimeElapsed) }}
+              {{ item.sessionTimeElapsed ? formatDurationLoc(item.sessionTimeElapsed) : '-' }}
             </div>
           </template>
           <template #idle_time="{ item }">
             <div class="flex items-center gap-x-2">
-              {{ secondsToHMS(item.idleTimeElapsed) }}
+              {{ item.idleTimeElapsed ? formatDurationLoc(item.idleTimeElapsed) : '-' }}
             </div>
           </template>
           <template #downloaded="{ item }">
-            {{ autoConvertSize(item.inputOctetsDownloaded) }}
+            {{ item.inputOctetsDownloaded ? byteFormat1024(item.inputOctetsDownloaded) : '-' }}
           </template>
           <template #uploaded="{ item }">
-            {{ autoConvertSize(item.outputOctetsUploaded) }}
+            {{ item.outputOctetsUploaded ? byteFormat1024(item.outputOctetsUploaded) : '-' }}
           </template>
         </NeTable>
       </div>

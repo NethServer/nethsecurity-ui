@@ -1,0 +1,96 @@
+<script setup lang="ts">
+import {
+  NeModal,
+  NeInlineNotification,
+  NeRadioSelection,
+  getAxiosErrorMessage
+} from '@nethserver/vue-tailwind-lib'
+import { ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { ServerTunnelType } from './ServerTunnel.vue'
+
+const props = defineProps<{
+  visible: boolean
+  itemToDownload: ServerTunnelType | null
+}>()
+
+const { t } = useI18n()
+const emit = defineEmits(['close', 'tunnel-downloaded'])
+
+const { visible, itemToDownload } = toRefs(props)
+const error = ref('')
+const isDownloading = ref(false)
+const downloadMode = ref('')
+
+const downloadOptions = [
+  {
+    id: 'nethsecurity_client_configuration',
+    label: t('standalone.openvpn_tunnel.nethsecurity_client_configuration'),
+    description: t('standalone.openvpn_tunnel.nethsecurity_client_configuration_description')
+  },
+  {
+    id: 'private_key_tunnel_ca_certificates',
+    label: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates'),
+    description: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates_description')
+  }
+]
+
+async function downloadTunnel() {
+  if (itemToDownload.value) {
+    try {
+      error.value = ''
+      isDownloading.value = true
+      //TODO: download tunnel
+      emit('tunnel-downloaded')
+      emit('close')
+    } catch (err: any) {
+      error.value = t(getAxiosErrorMessage(err))
+    } finally {
+      isDownloading.value = false
+    }
+  }
+}
+
+function close() {
+  error.value = ''
+  downloadMode.value = ''
+  emit('close')
+}
+</script>
+
+<template>
+  <NeModal
+    :visible="visible"
+    kind="neutral"
+    :title="t('standalone.openvpn_tunnel.download')"
+    :primaryLabel="t('standalone.openvpn_tunnel.download')"
+    :primaryButtonDisabled="!downloadMode || isDownloading"
+    :primaryButtonLoading="isDownloading"
+    @primaryClick="downloadTunnel()"
+    @close="close()"
+  >
+    {{ t('standalone.openvpn_tunnel.download_tunnel_message', { name: itemToDownload?.name }) }}
+    <NeRadioSelection
+      :card="true"
+      :options="downloadOptions"
+      v-model="downloadMode"
+      :label="''"
+      :grid-style="'grid-cols-1 gap-3'"
+      class="mt-4"
+      card-size="lg"
+    >
+      <template #option="{ option }">
+        <div class="flex flex-col gap-y-1 text-left">
+          <p>{{ option.label }}</p>
+          <p class="text-gray-500 dark:text-gray-400">{{ option.description }}</p>
+        </div>
+      </template>
+    </NeRadioSelection>
+    <NeInlineNotification
+      v-if="error"
+      kind="error"
+      :title="t('error.cannot_download_tunnel')"
+      :description="error"
+    />
+  </NeModal>
+</template>

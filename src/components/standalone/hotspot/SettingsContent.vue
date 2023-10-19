@@ -85,6 +85,7 @@ let usernameRef = ref()
 let passwordRef = ref()
 let unitNameRef = ref()
 let unitDescriptionRef = ref()
+let networkDeviceRef = ref()
 let networkAddressRef = ref()
 let dhcpRangeStartRef = ref()
 let dhcpRangeEndRef = ref()
@@ -99,6 +100,7 @@ let objError = {
   password: '',
   unitName: '',
   unitDescription: '',
+  networkDevice: '',
   networkAddress: '',
   dhcpRangeStart: '',
   dhcpRangeEnd: '',
@@ -111,6 +113,7 @@ let errorUnregister = ref({ ...objError })
 let errorDhcpRange = ref({ ...objError })
 
 onMounted(() => {
+  errorLoadingData.value = { ...objError }
   getListParents()
   getListDevices()
   getConfiguration()
@@ -118,7 +121,6 @@ onMounted(() => {
 
 async function getListParents() {
   loadingParentHotspot.value = true
-  errorLoadingData.value = { ...objError }
 
   // Retrieve parent hotspot
   try {
@@ -141,7 +143,6 @@ async function getListParents() {
 
 async function getListDevices() {
   loadingListDevices.value = true
-  errorLoadingData.value = { ...objError }
 
   // Retrieve list devices
   try {
@@ -163,10 +164,15 @@ async function getListDevices() {
 
 async function getConfiguration() {
   try {
-    let getDataConfiguration = await ubusCall('ns.dedalo', 'get-configuration', {})
-    if (getDataConfiguration?.data?.configuration?.connected) {
-      activeConfiguration.value = getDataConfiguration.data.configuration.hotspot_id != ''
-      let configuration = getDataConfiguration.data.configuration
+    let res = await ubusCall('ns.dedalo', 'get-configuration', {})
+    if (res?.data?.configuration) {
+      let configuration = res.data.configuration
+      if (configuration.connected) {
+        activeConfiguration.value = configuration.hotspot_id != ''
+      } else {
+        isLoggedIn.value = false
+      }
+
       configurationForm.value.parentHotspot = configuration.hotspot_id
       configurationForm.value.unitName = configuration.unit_name
       configurationForm.value.unitDescription = configuration.unit_description
@@ -178,7 +184,7 @@ async function getConfiguration() {
       if (configuration.dhcp_start)
         configurationForm.value.dhcpRangeStart = configuration.dhcp_start
       if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
-    } else isLoggedIn.value = false
+    }
   } catch (exception: any) {
     errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -241,6 +247,7 @@ function login() {
       .then((response) => {
         if (response.data && response.data.response && response.data.response === 'success') {
           isLoggedIn.value = true
+          errorLoadingData.value = { ...objError }
           getListParents()
           getListDevices()
           getConfiguration()
@@ -287,6 +294,19 @@ function validateConfiguration(): boolean {
 
   if (!isValidationOk && !isFocusInput) {
     focusElement(unitDescriptionRef)
+    isFocusInput = true
+  }
+
+  if (!configurationForm.value.networkDevice) {
+    let { valid, errMessage } = validateRequired(configurationForm.value.networkDevice)
+    if (!valid) {
+      error.value.networkDevice = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(networkDeviceRef)
     isFocusInput = true
   }
 
@@ -371,6 +391,7 @@ function saveConfiguration() {
       .finally(() => {
         saving.value = false
         uciPendingChangesStore.getChanges()
+        getConfiguration()
       })
   }
 }
@@ -382,9 +403,9 @@ function unregisterUnit() {
     .then((response) => {
       if (response.data && response.data.result && response.data.result === 'success') {
         isLoggedIn.value = false
-        activeConfiguration.value = false
         showUnregisterModal.value = false
         uciPendingChangesStore.getChanges()
+        getConfiguration()
       }
     })
     .catch((exception: AxiosError) => {
@@ -497,7 +518,7 @@ function getDhcpRange() {
       </form>
     </FormLayout>
     <FormLayout
-      v-if="!loadingParentHotspot && !loadingListDevices && activeConfiguration"
+      v-if="!loadingParentHotspot && !loadingListDevices"
       :title="t('standalone.hotspot.settings.configurtion')"
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
@@ -548,9 +569,11 @@ function getDhcpRange() {
             v-model="configurationForm.networkDevice"
             :options="networkDeviceList"
             :placeholder="t('standalone.hotspot.settings.configurtion_network_device_placeholder')"
+            :invalid-message="error.networkDevice"
             :label="t('standalone.hotspot.settings.configurtion_network_device')"
             :disabled="!isLoggedIn"
             class="grow"
+            ref="networkDeviceRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -637,20 +660,26 @@ function getDhcpRange() {
           :description="t('standalone.hotspot.settings.configurtion_save_info_description')"
         />
         <div class="flex justify-end">
-          <FontAwesomeIcon v-if="successSaving" :icon="faCircleCheck" class="text-green-500" />
-          <NeButton
-            v-if="isLoggedIn"
-            :disabled="saving"
-            :loading="saving"
-            kind="primary"
-            size="lg"
-            @click.prevent="saveConfiguration()"
-          >
-            <template #prefix>
-              <FontAwesomeIcon :icon="faSave" />
-            </template>
-            {{ t('common.save') }}
-          </NeButton>
+          <div>
+            <FontAwesomeIcon
+              v-if="successSaving"
+              :icon="faCircleCheck"
+              class="mr-2 text-green-500"
+            />
+            <NeButton
+              v-if="isLoggedIn"
+              :disabled="saving"
+              :loading="saving"
+              kind="primary"
+              size="lg"
+              @click.prevent="saveConfiguration()"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faSave" />
+              </template>
+              {{ t('common.save') }}
+            </NeButton>
+          </div>
         </div>
       </form>
     </FormLayout>
@@ -664,7 +693,7 @@ function getDhcpRange() {
         !emptyDevices
       "
       :title="t('standalone.hotspot.settings.unregister')"
-      class="max-w-4xl"
+      class="max-w-3xl"
     >
       <NeButton size="md" @click="showUnregisterModal = true">
         {{ t('standalone.hotspot.settings.unregister_unit') }}

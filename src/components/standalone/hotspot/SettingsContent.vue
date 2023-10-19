@@ -69,6 +69,7 @@ const configurationForm = ref<Configuration>({
   maxClientsAllowed: ''
 })
 
+let isError = ref(false)
 let isLoggedIn = ref(false)
 let activeConfiguration = ref(false)
 let loadingParentHotspot = ref(false)
@@ -107,13 +108,17 @@ let objError = {
   maxClientsAllowed: ''
 }
 let error = ref({ ...objError })
-let errorLoadingData = ref({ ...objError })
+let errorListParents = ref({ ...objError })
+let errorListDevices = ref({ ...objError })
+let errorGetConfiguration = ref({ ...objError })
 let errorSave = ref({ ...objError })
 let errorUnregister = ref({ ...objError })
 let errorDhcpRange = ref({ ...objError })
 
 onMounted(() => {
-  errorLoadingData.value = { ...objError }
+  errorListParents.value = { ...objError }
+  errorListDevices.value = { ...objError }
+  errorGetConfiguration.value = { ...objError }
   getListParents()
   getListDevices()
   getConfiguration()
@@ -134,8 +139,9 @@ async function getListParents() {
       configurationForm.value.parentHotspot = res.data.parents[0].id
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_parent_hotspot')
-    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    isError.value = true
+    errorListParents.value.notificationTitle = t('error.cannot_retrieve_parent_hotspot')
+    errorListParents.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     loadingParentHotspot.value = false
   }
@@ -155,8 +161,9 @@ async function getListDevices() {
       configurationForm.value.networkDevice = res.data.devices[0]
     } else emptyDevices.value = true
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_network_device')
-    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    isError.value = true
+    errorListDevices.value.notificationTitle = t('error.cannot_retrieve_network_device')
+    errorListDevices.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     loadingListDevices.value = false
   }
@@ -186,8 +193,9 @@ async function getConfiguration() {
       if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
-    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    isError.value = true
+    errorGetConfiguration.value.notificationTitle = t('error.cannot_retrieve_configuration')
+    errorGetConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
 
@@ -247,7 +255,9 @@ function login() {
       .then((response) => {
         if (response.data && response.data.response && response.data.response === 'success') {
           isLoggedIn.value = true
-          errorLoadingData.value = { ...objError }
+          errorListParents.value = { ...objError }
+          errorListDevices.value = { ...objError }
+          errorGetConfiguration.value = { ...objError }
           getListParents()
           getListDevices()
           getConfiguration()
@@ -519,7 +529,7 @@ function getDhcpRange() {
     </FormLayout>
     <FormLayout
       v-if="!loadingParentHotspot && !loadingListDevices"
-      :title="t('standalone.hotspot.settings.configurtion')"
+      :title="t('standalone.hotspot.settings.configuration')"
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
     >
@@ -531,27 +541,41 @@ function getDhcpRange() {
         :description="t('error.empty_network_device_description')"
       />
       <NeInlineNotification
-        v-if="errorLoadingData.notificationTitle"
+        v-if="errorListParents.notificationTitle"
         class="my-4"
         kind="error"
-        :title="errorLoadingData.notificationTitle"
-        :description="errorLoadingData.notificationDescription"
+        :title="errorListParents.notificationTitle"
+        :description="errorListParents.notificationDescription"
       />
-      <form v-else-if="!emptyDevices">
+      <NeInlineNotification
+        v-if="errorListDevices.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorListDevices.notificationTitle"
+        :description="errorListDevices.notificationDescription"
+      />
+      <NeInlineNotification
+        v-if="errorGetConfiguration.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorGetConfiguration.notificationTitle"
+        :description="errorGetConfiguration.notificationDescription"
+      />
+      <form v-if="!isError">
         <div class="mb-8 flex flex-col gap-y-4">
           <NeCombobox
             v-model="configurationForm.parentHotspot"
             :options="parentHotspotList"
-            :placeholder="t('standalone.hotspot.settings.configurtion_parent_hotspot_placeholder')"
-            :label="t('standalone.hotspot.settings.configurtion_parent_hotspot')"
+            :placeholder="t('standalone.hotspot.settings.configuration_parent_hotspot_placeholder')"
+            :label="t('standalone.hotspot.settings.configuration_parent_hotspot')"
             class="grow"
             :disabled="!isLoggedIn"
           />
           <NeTextInput
             v-model="configurationForm.unitName"
             :invalid-message="error.unitName"
-            :placeholder="t('standalone.hotspot.settings.configurtion_unit_name_placeholder')"
-            :label="t('standalone.hotspot.settings.configurtion_unit_name')"
+            :placeholder="t('standalone.hotspot.settings.configuration_unit_name_placeholder')"
+            :label="t('standalone.hotspot.settings.configuration_unit_name')"
             :disabled="!isLoggedIn"
             ref="unitNameRef"
           />
@@ -559,18 +583,18 @@ function getDhcpRange() {
             v-model="configurationForm.unitDescription"
             :invalid-message="error.unitDescription"
             :placeholder="
-              t('standalone.hotspot.settings.configurtion_unit_description_placeholder')
+              t('standalone.hotspot.settings.configuration_unit_description_placeholder')
             "
-            :label="t('standalone.hotspot.settings.configurtion_unit_description')"
+            :label="t('standalone.hotspot.settings.configuration_unit_description')"
             :disabled="!isLoggedIn"
             ref="unitDescriptionRef"
           />
           <NeCombobox
             v-model="configurationForm.networkDevice"
             :options="networkDeviceList"
-            :placeholder="t('standalone.hotspot.settings.configurtion_network_device_placeholder')"
+            :placeholder="t('standalone.hotspot.settings.configuration_network_device_placeholder')"
             :invalid-message="error.networkDevice"
-            :label="t('standalone.hotspot.settings.configurtion_network_device')"
+            :label="t('standalone.hotspot.settings.configuration_network_device')"
             :disabled="!isLoggedIn"
             class="grow"
             ref="networkDeviceRef"
@@ -578,7 +602,7 @@ function getDhcpRange() {
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.hotspot.settings.configurtion_network_device_helper') }}
+                  {{ t('standalone.hotspot.settings.configuration_network_device_helper') }}
                 </template>
               </NeTooltip>
             </template>
@@ -586,8 +610,8 @@ function getDhcpRange() {
           <NeTextInput
             v-model="configurationForm.networkAddress"
             :invalid-message="error.networkAddress"
-            :placeholder="t('standalone.hotspot.settings.configurtion_network_address_placeholder')"
-            :label="t('standalone.hotspot.settings.configurtion_network_address')"
+            placeholder="192.168.0.0/24"
+            :label="t('standalone.hotspot.settings.configuration_network_address')"
             :disabled="!isLoggedIn"
             ref="networkAddressRef"
             @change="getDhcpRange()"
@@ -595,7 +619,7 @@ function getDhcpRange() {
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.hotspot.settings.configurtion_network_address_helper') }}
+                  {{ t('standalone.hotspot.settings.configuration_network_address_helper') }}
                 </template>
               </NeTooltip>
             </template>
@@ -608,23 +632,21 @@ function getDhcpRange() {
             :description="errorDhcpRange.notificationDescription"
           />
           <small class="opacity-60"
-            >{{ t('standalone.hotspot.settings.configurtion_max_client_allowed') }}
+            >{{ t('standalone.hotspot.settings.configuration_max_client_allowed') }}
             {{ configurationForm.maxClientsAllowed }}</small
           >
           <NeTextInput
             v-model="configurationForm.dhcpRangeStart"
             :invalid-message="error.dhcpRangeStart"
-            :placeholder="
-              t('standalone.hotspot.settings.configurtion_dhcp_range_start_placeholder')
-            "
-            :label="t('standalone.hotspot.settings.configurtion_dhcp_range_start')"
+            placeholder="192.168.0.2"
+            :label="t('standalone.hotspot.settings.configuration_dhcp_range_start')"
             :disabled="!isLoggedIn"
             ref="dhcpRangeStartRef"
           >
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.hotspot.settings.configurtion_dhcp_range_start_helper') }}
+                  {{ t('standalone.hotspot.settings.configuration_dhcp_range_start_helper') }}
                 </template>
               </NeTooltip>
             </template>
@@ -632,15 +654,15 @@ function getDhcpRange() {
           <NeTextInput
             v-model="configurationForm.dhcpRangeEnd"
             :invalid-message="error.dhcpRangeEnd"
-            :placeholder="t('standalone.hotspot.settings.configurtion_dhcp_range_end_placeholder')"
-            :label="t('standalone.hotspot.settings.configurtion_dhcp_range_end')"
+            placeholder="192.168.0.254"
+            :label="t('standalone.hotspot.settings.configuration_dhcp_range_end')"
             :disabled="!isLoggedIn"
             ref="dhcpRangeEndRef"
           >
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.hotspot.settings.configurtion_dhcp_range_end_helper') }}
+                  {{ t('standalone.hotspot.settings.configuration_dhcp_range_end_helper') }}
                 </template>
               </NeTooltip>
             </template>
@@ -656,8 +678,8 @@ function getDhcpRange() {
         <NeInlineNotification
           class="my-4"
           kind="info"
-          :title="t('standalone.hotspot.settings.configurtion_save_info')"
-          :description="t('standalone.hotspot.settings.configurtion_save_info_description')"
+          :title="t('standalone.hotspot.settings.configuration_save_info')"
+          :description="t('standalone.hotspot.settings.configuration_save_info_description')"
         />
         <div class="flex justify-end">
           <div>
@@ -705,7 +727,7 @@ function getDhcpRange() {
     :primary-button-loading="loadingUnregister"
     :primary-label="t('standalone.hotspot.settings.unregister')"
     :secondary-button-disabled="loadingUnregister"
-    :title="t('standalone.hotspot.settings.unregister_unit_modal_title')"
+    :title="t('standalone.hotspot.settings.unregister_unit')"
     :visible="showUnregisterModal"
     kind="warning"
     primary-button-kind="danger"

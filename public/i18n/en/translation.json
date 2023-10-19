@@ -9,7 +9,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "filter": "Filter",
-    "advanced_settings": "Advanced settings"
+    "advanced_settings": "Advanced settings",
+    "configure": "Configure"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -100,7 +101,10 @@
     "cannot_retrieve_dhcp_interfaces": "Cannot retrieve DHCP interfaces",
     "cannot_retrieve_storage_configuration": "Cannot retrieve storage configuration",
     "cannot_configure_storage": "Cannot configure storage",
-    "cannot_remove_storage": "Cannot remove storage"
+    "cannot_remove_storage": "Cannot remove storage",
+    "cannot_retrieve_subscription_info": "Cannot retrieve subscription information",
+    "cannot_retrieve_system_board": "Cannot retrieve system board",
+    "cannot_set_passphrase": "Cannot set passphrase"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -283,7 +287,25 @@
       }
     },
     "backup_and_restore": {
-      "title": "Backup & restore"
+      "title": "Backup & restore",
+      "tabs": {
+        "backup": "Backup",
+        "restore": "Restore"
+      },
+      "backup": {
+        "description": "Download your firewall's current settings and data. This will serving as a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
+        "download": "Download",
+        "download_backup": "Download backup",
+        "modal_download_title": "Downloaded backup",
+        "modal_download_description": "Are you sure you want to proceed with the '{name}' backup?",
+        "passphrase_drawer_title": "Configure passphrase",
+        "passphrase": "Passphrase",
+        "passphrase_helper": "Lorem ipsum..",
+        "configure_passphrase": "Configure passphrase",
+        "no_backups_found": "No backups found",
+        "run_backup": "Run backup",
+        "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?"
+      }
     },
     "reboot_and_shutdown": {
       "title": "Reboot & shutdown",

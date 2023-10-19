@@ -29,7 +29,7 @@ const navigation: Ref<any> = ref([
       { name: t('standalone.ssh.title'), to: 'system/ssh' },
       {
         name: t('standalone.backup_and_restore.title'),
-        to: 'system/backup-restore'
+        to: 'system/backup-and-restore'
       },
       {
         name: t('standalone.reboot_and_shutdown.title'),

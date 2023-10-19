@@ -35,6 +35,7 @@ const form = ref({
   zones: []
 })
 
+let isError = ref(false)
 let loading = ref(false)
 let saving = ref(false)
 let successSaving = ref(false)
@@ -53,16 +54,18 @@ let objError = {
   bypassSource: ['']
 }
 let error = ref({ ...objError })
-let errorLoadingData = ref({ ...objError })
+let errorLoadingZones = ref({ ...objError })
+let errorLoadingConfiguration = ref({ ...objError })
 let errorSaving = ref({ ...objError })
 
 onMounted(() => {
-  getFirewallData()
+  getZones()
+  getConfiguration()
 })
 
-async function getFirewallData() {
+async function getZones() {
   loading.value = true
-  errorLoadingData.value = { ...objError }
+  errorLoadingZones.value = { ...objError }
 
   // Retrieve firewall zones
   try {
@@ -74,10 +77,10 @@ async function getFirewallData() {
       }))
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_zones')
-    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    isError.value = true
+    errorLoadingZones.value.notificationTitle = t('error.cannot_retrieve_zones')
+    errorLoadingZones.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    await getConfiguration()
     loading.value = false
   }
 }
@@ -101,8 +104,11 @@ async function getConfiguration() {
       }
     }
   } catch (exception: any) {
-    errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_configuration')
-    errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    isError.value = true
+    errorLoadingConfiguration.value.notificationTitle = t(
+      'error.cannot_retrieve_flashstart_configuration'
+    )
+    errorLoadingConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
 
@@ -208,16 +214,20 @@ function save() {
       </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
-        v-if="errorLoadingData.notificationTitle"
+        v-if="errorLoadingZones.notificationTitle"
         class="my-4"
         kind="error"
-        :title="errorLoadingData.notificationTitle"
-        :description="errorLoadingData.notificationDescription"
+        :title="errorLoadingZones.notificationTitle"
+        :description="errorLoadingZones.notificationDescription"
       />
-      <div
-        v-if="!errorLoadingData.notificationTitle && !loading"
-        class="mb-8 flex flex-col gap-y-6"
-      >
+      <NeInlineNotification
+        v-if="errorLoadingConfiguration.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorLoadingConfiguration.notificationTitle"
+        :description="errorLoadingConfiguration.notificationDescription"
+      />
+      <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
         <div>
           <NeFormItemLabel>{{ t('standalone.flashstart.status') }}</NeFormItemLabel>
           <NeToggle

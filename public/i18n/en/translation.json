@@ -100,6 +100,7 @@
     "cannot_retrieve_dhcp_interfaces": "Cannot retrieve DHCP interfaces",
     "cannot_retrieve_storage_configuration": "Cannot retrieve storage configuration",
     "cannot_configure_storage": "Cannot configure storage",
+    "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
     "cannot_remove_storage": "Cannot remove storage"
   },
   "ne_text_input": {
@@ -682,7 +683,7 @@
       "title": "Security"
     },
     "flashstart": {
-      "title": "Flashstart filter",
+      "title": "FlashStart filter",
       "content_title": "Settings",
       "content_description": "FlashStart doesn't require any DNS configuration neither in the firewall itself nor inside the clients. Before using FlashStart you need to",
       "content_link": "create an account",
@@ -695,7 +696,7 @@
       "zones": "Zones to filter",
       "zones_placeholder": "Choose zones",
       "sourcebypass": "Bypass source IPs or networks",
-      "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered will not be subject to the DNS filter",
+      "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
       "add_sourcebypass": "Add source bypass",
       "success_save_title": "Save complete",
       "success_save_description": "Settings saved successfully"

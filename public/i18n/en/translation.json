@@ -685,6 +685,7 @@
       "title": "Flashstart filter",
       "content_title": "Settings",
       "content_description": "FlashStart doesn't require any DNS configuration neither in the firewall itself nor inside the clients. Before using FlashStart you need to",
+      "content_link": "create an account",
       "status": "Status",
       "status_enabled": "Enabled",
       "status_disabled": "Disabled",

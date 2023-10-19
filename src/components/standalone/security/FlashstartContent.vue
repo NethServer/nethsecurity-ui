@@ -181,11 +181,20 @@ function save() {
 
 <template>
   <div>
-    <FormLayout
-      :title="t('standalone.flashstart.content_title')"
-      :description="t('standalone.flashstart.content_description')"
-      class="max-w-3xl"
-    >
+    <FormLayout :title="t('standalone.flashstart.content_title')" class="max-w-3xl">
+      <template #description>
+        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.flashstart.content_description') }}
+          <a
+            href="https://flashstart.nethesis.it/"
+            target="_blank"
+            rel="noreferrer"
+            class="text-primary-600 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-200"
+          >
+            {{ t('standalone.flashstart.content_link') }}
+          </a>
+        </p>
+      </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
         v-if="errorLoadingData.notificationTitle"

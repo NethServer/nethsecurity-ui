@@ -6,17 +6,13 @@
 <script lang="ts" setup>
 import { NeTabs, NeTitle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import MultiWanGeneralSettings from '@/components/standalone/multi-wan/MultiWanGeneralSettings.vue'
 import MultiWanManager from '@/components/standalone/multi-wan/MultiWanManager.vue'
+import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
-const route = useRoute()
-const router = useRouter()
 
-// tabs management
-const tabs = ref([
+const { tabs, selectedTab } = useTabs([
   {
     name: 'multi-wan-manager',
     label: t('standalone.multi_wan.tabs.multi_wan_manager')
@@ -26,15 +22,6 @@ const tabs = ref([
     label: t('standalone.multi_wan.tabs.general_settings')
   }
 ])
-const selectedTab = ref('')
-
-onMounted(() => {
-  selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
-})
-
-watch(selectedTab, () => {
-  router.push({ path: route.path, query: { tab: selectedTab.value } })
-})
 </script>
 
 <template>

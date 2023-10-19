@@ -33,6 +33,16 @@ export const validateHostname = (hostname: String): validationOutput => {
   return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }
 
+export const validateMacAddress = (macAddress: String): validationOutput => {
+  const isValid = macAddress.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/) != null
+
+  if (isValid) {
+    return { valid: true }
+  } else {
+    return { valid: false, errMessage: 'error.invalid_mac_address' }
+  }
+}
+
 export const validateHost = (host: String): validationOutput => {
   const validHostname = validateHostname(host)
 
@@ -230,6 +240,52 @@ export function validatePortRange(value: string, minRange = 1, maxRange = 65535)
 export const validateRequiredOption = (value: NeComboboxOption[]): validationOutput => {
   if (value.length == 0) {
     return { valid: false, errMessage: 'error.required_option' }
+  }
+  return { valid: true }
+}
+
+export const validateLeaseTime = (value: string): validationOutput => {
+  const re = /^([1-9][0-9]*[smhdw]|infinity)$/
+
+  const match = value.match(re)
+
+  if (!match) {
+    return { valid: false, errMessage: 'error.invalid_lease_time' }
+  }
+  if (value != 'infinity') {
+    const unit = value.charAt(value.length - 1)
+    if (
+      (unit === 's' && Number.parseInt(value.slice(0, value.length - 1)) < 120) ||
+      (unit === 'm' && Number.parseInt(value.slice(0, value.length - 1)) < 2)
+    ) {
+      return { valid: false, errMessage: 'error.invalid_lease_time_duration' }
+    }
+  }
+  return { valid: true }
+}
+
+export const validatePassword = (value: String): validationOutput => {
+  if (value.length < 8) {
+    return { valid: false, errMessage: 'error.password_too_short' }
+  }
+  if (!value.match(/[a-z]/)) {
+    return { valid: false, errMessage: 'error.password_lowercase_required' }
+  }
+  if (!value.match(/[A-Z]/)) {
+    return { valid: false, errMessage: 'error.password_uppercase_required' }
+  }
+  if (!value.match(/[0-9]/)) {
+    return { valid: false, errMessage: 'error.password_number_required' }
+  }
+  if (!value.match(/[^a-zA-Z0-9]/)) {
+    return { valid: false, errMessage: 'error.password_special_character_required' }
+  }
+  return { valid: true }
+}
+
+export const validateStringEqual = (value: String, otherValue: String): validationOutput => {
+  if (value != otherValue) {
+    return { valid: false, errMessage: 'error.invalid_equal' }
   }
   return { valid: true }
 }

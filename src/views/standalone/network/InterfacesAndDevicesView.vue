@@ -27,7 +27,8 @@ import {
   isBridge,
   isBond,
   getName,
-  isBondDevice
+  isBondDevice,
+  getZoneBorderColorClasses
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -295,18 +296,7 @@ function getDeviceBorderStyle(device: any) {
     return 'border-gray-500 dark:border-gray-500'
   }
 
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
-    case 'lan':
-      return 'border-green-700 dark:border-green-700'
-    case 'wan':
-      return 'border-rose-700 dark:border-rose-700'
-    case 'guests':
-      return 'border-blue-700 dark:border-blue-700'
-    case 'openvpnrw':
-      return 'border-teal-700 dark:border-teal-700'
-    default:
-      return 'border-gray-500 dark:border-gray-500'
-  }
+  return getZoneBorderColorClasses(getFirewallZone(iface, firewallConfig.value)?.name)
 }
 
 //// add missing zones (dmz?)

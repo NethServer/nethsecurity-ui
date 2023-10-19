@@ -86,7 +86,7 @@
     "cannot_unregister_hotspot": "Cannot unregister",
     "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
     "empty_network_device": "No network device found.",
-    "empty_network_device_description": "There must be at latest an unassigned device or with role 'hotspot'"
+    "empty_network_device_description": "There must be at latest an unassigned device or with role 'hotspot'",
     "password_too_short": "Password is too short",
     "password_lowercase_required": "Password must contain at least one lowercase letter",
     "password_uppercase_required": "Password must contain at least one uppercase letter",

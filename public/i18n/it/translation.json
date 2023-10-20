@@ -83,7 +83,8 @@
     "cannot_retrieve_dns_configuration": "Impossibile caricare la configurazione",
     "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione del filtro",
     "password_too_short": "Password troppo corta",
-    "invalid_equal": "Le password non corrispondono"
+    "invalid_equal": "Le password non corrispondono",
+    "cannot_retrieve_flashstart_configuration": "Impossibile caricare la configurazione"
   },
   "login": {
     "sign_in": "Accedi",
@@ -629,6 +630,16 @@
     },
     "account_management": {
       "change_password": "Modifica password"
+    },
+    "flashstart": {
+      "username": "Nome utente",
+      "content_title": "Impostazioni",
+      "zones_placeholder": "Scegli zona",
+      "content_link": "crea un account",
+      "password": "Password",
+      "status_enabled": "Attivato",
+      "status_disabled": "Disabilitato",
+      "status": "Stato"
     }
   },
   "controller": {

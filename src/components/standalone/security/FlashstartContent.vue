@@ -22,7 +22,12 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { validateIp4Cidr, validateRequired, validateRequiredOption } from '@/lib/validation'
+import {
+  validateIp4Address,
+  validateIp4Cidr,
+  validateRequired,
+  validateRequiredOption
+} from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 const { t } = useI18n()
@@ -59,7 +64,6 @@ let errorLoadingConfiguration = ref({ ...objError })
 let errorSaving = ref({ ...objError })
 
 onMounted(() => {
-  getZones()
   getConfiguration()
 })
 
@@ -69,11 +73,11 @@ async function getZones() {
 
   // Retrieve firewall zones
   try {
-    let getZones = await ubusCall('ns.firewall', 'list_zones', {})
-    if (getZones && getZones.data) {
-      zones.value = Object.keys(getZones.data).map((key) => ({
-        id: getZones.data[key].name,
-        label: getZones.data[key].name
+    let getZones = await ubusCall('ns.flashstart', 'list-zones', {})
+    if (getZones?.data?.values?.length) {
+      zones.value = getZones.data.values.map((item: any) => ({
+        id: item.label,
+        label: item.label
       }))
     }
   } catch (exception: any) {
@@ -109,6 +113,19 @@ async function getConfiguration() {
       'error.cannot_retrieve_flashstart_configuration'
     )
     errorLoadingConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    await getZones()
+  }
+}
+
+function clearErrors() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    username: '',
+    password: '',
+    zones: '',
+    bypassSource: ['']
   }
 }
 
@@ -154,10 +171,10 @@ function validate() {
 
   for (let [index, item] of form.value.bypassSource.entries()) {
     if (item) {
-      let { valid, errMessage } = validateIp4Cidr(item)
-
-      if (!valid) {
-        error.value.bypassSource[index] = t(errMessage as string)
+      let validator = [validateIp4Address(item), validateIp4Cidr(item)]
+      let allInvalid = validator.every((obj) => !obj.valid)
+      if (allInvalid) {
+        error.value.bypassSource[index] = t(validator[0].errMessage as string)
         isValidationOk = false
       }
     }
@@ -167,7 +184,7 @@ function validate() {
 }
 
 function save() {
-  error.value = { ...objError }
+  clearErrors()
   if (validate()) {
     saving.value = true
 

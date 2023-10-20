@@ -119,7 +119,7 @@
     "cannot_run_backup": "Cannot run backup",
     "cannot_retrieve_backup": "Cannot retrieve backups",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
-    "cannot_remove_storage": "Cannot remove storage"
+    "cannot_retrieve_passphrase": "Lorem ipsum..."
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -321,6 +321,17 @@
         "run_backup": "Run backup",
         "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?",
         "success_download": "Backup downloaded successfully"
+      },
+      "restore": {
+        "description": "Restore the firewall's previous configuration and settings from a saved backup file, ensuring it functions with its original rules and parameters.",
+        "restore_backup": "Restore backup",
+        "restore_button": "Restore",
+        "passphrase": "Passphrase",
+        "passphrase_helper": "Lorem ipsum..",
+        "source": "Backup source",
+        "backup": "Backup",
+        "from_backup": "From last backups",
+        "from_file": "Upload file"
       }
     },
     "reboot_and_shutdown": {

@@ -10,7 +10,8 @@ import {
   faArrowCircleDown,
   faBoxArchive,
   faPlay,
-  faWifi
+  faWifi,
+  faRotate
 } from '@fortawesome/free-solid-svg-icons'
 import { faHouse as falHouse } from '@nethesis/nethesis-light-svg-icons'
 import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
@@ -145,4 +146,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faArrowCircleDown)
   library.add(faBoxArchive)
   library.add(faPlay)
+  library.add(faRotate)
 }

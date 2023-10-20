@@ -203,6 +203,13 @@ async function oepenDownloadEnterprise(file: string) {
       :title="errorHostname.notificationTitle"
       :description="errorHostname.notificationDescription"
     />
+    <NeInlineNotification
+      v-if="!loading && errorGetBackup.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="errorGetBackup.notificationTitle"
+      :description="errorGetBackup.notificationDescription"
+    />
     <template v-if="!loading && !error">
       <div class="flex">
         <div>

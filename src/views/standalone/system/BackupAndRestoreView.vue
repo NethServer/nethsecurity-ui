@@ -5,24 +5,23 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useTabs } from '@/composables/useTabs'
 import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
-import { ref } from 'vue'
 import BackupContent from '@/components/standalone/backup_and_restore/BackupContent.vue'
+import RestoreContent from '@/components/standalone/backup_and_restore/RestoreContent.vue'
 
 const { t } = useI18n()
 
-// tabs management
-const tabs = ref([
+const { tabs, selectedTab } = useTabs([
   {
     name: 'tab-backup',
     label: t('standalone.backup_and_restore.tabs.backup')
   },
   {
-    name: 'tab-settings',
+    name: 'tab-restore',
     label: t('standalone.backup_and_restore.tabs.restore')
   }
 ])
-const selectedTab = ref('')
 </script>
 <template>
   <NeTitle>{{ t('standalone.backup_and_restore.title') }}</NeTitle>
@@ -36,5 +35,6 @@ const selectedTab = ref('')
       @selectTab="selectedTab = $event"
     />
     <BackupContent v-if="selectedTab == 'tab-backup'" />
+    <RestoreContent v-if="selectedTab == 'tab-restore'" />
   </div>
 </template>

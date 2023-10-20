@@ -11,7 +11,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TunnelTable from './TunnelTable.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import CreateOrEditServerTunnelDrawer from './CreateOrEditServerTunnelDrawer.vue'
+import CreateOrEditTunnelDrawer from './CreateOrEditTunnelDrawer.vue'
 import DeleteTunnelModal from './DeleteTunnelModal.vue'
 import DownloadTunnelModal from './DownloadTunnelModal.vue'
 
@@ -151,11 +151,12 @@ onMounted(() => {
       />
     </template>
   </div>
-  <CreateOrEditServerTunnelDrawer
+  <CreateOrEditTunnelDrawer
     :item-to-edit="selectedServerTunnel"
     @close="closeModalsAndDrawers"
     @add-edit-tunnel="reloadServerTunnels"
     :is-shown="showCreateEditDrawer"
+    :is-client-tunnel="false"
   />
   <DeleteTunnelModal
     :visible="showDeleteModal"

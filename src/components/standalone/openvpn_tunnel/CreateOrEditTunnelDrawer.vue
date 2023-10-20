@@ -24,6 +24,7 @@ import NeMultiTextInput from '../NeMultiTextInput.vue'
 const props = defineProps<{
   isShown: boolean
   itemToEdit: ServerTunnelType | null
+  isClientTunnel: boolean
 }>()
 const { isShown } = toRefs(props)
 
@@ -31,6 +32,7 @@ const { t } = useI18n()
 
 const emit = defineEmits(['close', 'add-edit-tunnel'])
 
+const loading = ref(false)
 const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
@@ -38,13 +40,10 @@ const error = ref({
 })
 const validationErrorBag = ref(new MessageBag())
 
-// Form fields
+// Shared form fields
 const id = ref('')
 const enabled = ref(true)
 const name = ref('')
-const publicEndpoints = ref<string[]>([''])
-const port = ref('')
-const localNetworks = ref<NeComboboxOption[]>([])
 const remoteNetworks = ref<string[]>([''])
 const topology = ref<'subnet' | 'p2p'>('subnet')
 const vpnNetwork = ref('')
@@ -55,7 +54,23 @@ const protocol = ref<'tcp' | 'udp'>('udp')
 const compression = ref('auto')
 const digest = ref('auto')
 const cipher = ref('auto')
+
+// Server tunnel form fields
+const publicEndpoints = ref<string[]>([''])
+const port = ref('')
+const localNetworks = ref<NeComboboxOption[]>([])
 const minimumTLSVersion = ref('auto')
+
+// Client tunnel form fields
+const remoteHosts = ref<string[]>([''])
+const remotePort = ref('')
+const authentication = ref<'certificate' | 'username_password_certificate'>('certificate')
+const username = ref('')
+const password = ref('')
+const certificate = ref('')
+const mode = ref<'bridged' | 'routed'>('bridged')
+
+const showAdvancedSettings = ref(false)
 
 const compressionOptions = [
   {
@@ -72,6 +87,28 @@ const topologyOptions = [
   {
     id: 'p2p',
     label: t('standalone.openvpn_tunnel.p2p')
+  }
+]
+
+const authenticationOptions = [
+  {
+    id: 'certificate',
+    label: t('standalone.openvpn_tunnel.certificate')
+  },
+  {
+    id: 'username_password_certificate',
+    label: t('standalone.openvpn_tunnel.username_password_certificate')
+  }
+]
+
+const modeOptions = [
+  {
+    id: 'bridged',
+    label: t('standalone.openvpn_tunnel.bridged')
+  },
+  {
+    id: 'routed',
+    label: t('standalone.openvpn_tunnel.routed')
   }
 ]
 
@@ -109,8 +146,6 @@ const tlsOptions = [
   }
 ]
 
-const showAdvancedSettings = ref(false)
-
 function resetForm() {
   //TODO: fill in after knowing payload format
 }
@@ -129,7 +164,7 @@ function validate() {
   return true
 }
 
-async function createOrEditDnsRecord() {
+async function createOrEditTunnel() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   const isEditing = id.value != ''
@@ -145,13 +180,10 @@ async function createOrEditDnsRecord() {
     }
   } catch (err: any) {
     error.value.notificationTitle = isEditing
-      ? t('error.cannot_edit_dns_record')
-      : t('error.cannot_create_dns_record')
+      ? t('error.cannot_edit_tunnel')
+      : t('error.cannot_create_tunnel')
 
-    error.value.notificationDescription =
-      err.response.data.message == 'record_not_found'
-        ? t('standalone.dns_dhcp.record_not_found')
-        : t(getAxiosErrorMessage(err))
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
   } finally {
     isSavingChanges.value = false
   }
@@ -209,43 +241,57 @@ onMounted(() => {
         :label="t('standalone.openvpn_tunnel.tunnel_name')"
         :invalid-message="validationErrorBag.getFirstFor('name')"
       />
-      <NeMultiTextInput
-        v-model="publicEndpoints"
-        :add-item-label="t('standalone.openvpn_tunnel.add_endpoint')"
-        :title="t('standalone.openvpn_tunnel.public_endpoints')"
-        ><template #tooltip>
-          <NeTooltip
-            ><template #content>{{
-              t('standalone.openvpn_tunnel.public_endpoints_tooltip')
-            }}</template></NeTooltip
-          >
-        </template>
-      </NeMultiTextInput>
-      <NeTextInput
-        v-model="port"
-        :label="t('standalone.openvpn_tunnel.port')"
-        :invalid-message="validationErrorBag.getFirstFor('port')"
-      />
-      <NeCombobox
-        :label="t('standalone.openvpn_tunnel.local_networks')"
-        :placeholder="t('standalone.openvpn_tunnel.choose_network')"
-        :multiple="true"
-        :options="[]"
-        v-model="localNetworks"
-        :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
-      />
-      <NeMultiTextInput
-        v-model="remoteNetworks"
-        :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
-        :title="t('standalone.openvpn_tunnel.remote_networks')"
-        ><template #tooltip>
-          <NeTooltip
-            ><template #content>{{
-              t('standalone.openvpn_tunnel.remote_networks_tooltip')
-            }}</template></NeTooltip
-          >
-        </template>
-      </NeMultiTextInput>
+      <template v-if="!isClientTunnel">
+        <NeMultiTextInput
+          v-model="publicEndpoints"
+          :add-item-label="t('standalone.openvpn_tunnel.add_endpoint')"
+          :title="t('standalone.openvpn_tunnel.public_endpoints')"
+          ><template #tooltip>
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_tunnel.public_endpoints_tooltip')
+              }}</template></NeTooltip
+            >
+          </template>
+        </NeMultiTextInput>
+        <NeTextInput
+          v-model="port"
+          :label="t('standalone.openvpn_tunnel.port')"
+          :invalid-message="validationErrorBag.getFirstFor('port')"
+        />
+        <NeCombobox
+          :label="t('standalone.openvpn_tunnel.local_networks')"
+          :placeholder="t('standalone.openvpn_tunnel.choose_network')"
+          :multiple="true"
+          :options="[]"
+          v-model="localNetworks"
+          :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
+        />
+        <NeMultiTextInput
+          v-model="remoteNetworks"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :title="t('standalone.openvpn_tunnel.remote_networks')"
+          ><template #tooltip>
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_tunnel.remote_networks_tooltip')
+              }}</template></NeTooltip
+            >
+          </template>
+        </NeMultiTextInput>
+      </template>
+      <template v-else>
+        <NeMultiTextInput
+          v-model="remoteHosts"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :title="t('standalone.openvpn_tunnel.remote_hosts')"
+        />
+        <NeTextInput
+          v-model="remotePort"
+          :label="t('standalone.openvpn_tunnel.remote_port')"
+          :invalid-message="validationErrorBag.getFirstFor('remotePort')"
+        />
+      </template>
       <NeRadioSelection
         :label="t('standalone.openvpn_tunnel.topology')"
         :options="topologyOptions"
@@ -258,12 +304,34 @@ onMounted(() => {
           >
         </template></NeRadioSelection
       >
-      <NeTextInput
-        v-model="vpnNetwork"
-        :label="t('standalone.openvpn_tunnel.vpn_network')"
-        :invalid-message="validationErrorBag.getFirstFor('vpnNetwork')"
-        v-if="topology == 'subnet'"
-      />
+      <template v-if="topology == 'subnet'">
+        <NeTextInput
+          v-model="vpnNetwork"
+          :label="t('standalone.openvpn_tunnel.vpn_network')"
+          :invalid-message="validationErrorBag.getFirstFor('vpnNetwork')"
+          v-if="!isClientTunnel"
+        />
+        <template v-else>
+          <NeRadioSelection
+            :label="t('standalone.openvpn_tunnel.authentication')"
+            :options="authenticationOptions"
+            v-model="authentication"
+          />
+          <template v-if="authentication == 'username_password_certificate'">
+            <NeTextInput
+              v-model="username"
+              :label="t('standalone.openvpn_tunnel.username')"
+              :invalid-message="validationErrorBag.getFirstFor('username')"
+            />
+            <NeTextInput
+              v-model="password"
+              :label="t('standalone.openvpn_tunnel.password')"
+              :invalid-message="validationErrorBag.getFirstFor('password')"
+            />
+          </template>
+          <NeTextArea v-model="certificate" :label="t('standalone.openvpn_tunnel.certificate')" />
+        </template>
+      </template>
       <template v-else>
         <NeTextInput
           v-model="localP2pIp"
@@ -290,6 +358,27 @@ onMounted(() => {
         </NeButton>
       </div>
       <template v-if="showAdvancedSettings">
+        <template v-if="isClientTunnel">
+          <NeMultiTextInput
+            v-model="remoteNetworks"
+            :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+            :title="t('standalone.openvpn_tunnel.remote_networks')"
+            optional
+            :optional-label="t('common.optional')"
+            ><template #tooltip>
+              <NeTooltip
+                ><template #content>{{
+                  t('standalone.openvpn_tunnel.remote_networks_tooltip')
+                }}</template></NeTooltip
+              >
+            </template>
+          </NeMultiTextInput>
+          <NeRadioSelection
+            :label="t('standalone.openvpn_tunnel.mode')"
+            :options="modeOptions"
+            v-model="mode"
+          />
+        </template>
         <NeRadioSelection
           :label="t('standalone.openvpn_tunnel.protocol')"
           :options="protocolOptions"
@@ -318,6 +407,7 @@ onMounted(() => {
           :options="tlsOptions"
           v-model="minimumTLSVersion"
           :invalid-message="validationErrorBag.getFirstFor('minimumTLSVersion')"
+          v-if="!isClientTunnel"
         />
       </template>
       <hr />
@@ -325,7 +415,7 @@ onMounted(() => {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditDnsRecord()"
+          @click="createOrEditTunnel()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
           >{{ t('common.save') }}</NeButton

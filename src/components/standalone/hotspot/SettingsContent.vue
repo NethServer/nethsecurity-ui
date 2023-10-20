@@ -19,6 +19,8 @@ import { validateIp4Cidr, validateIp4Address, validateRequired } from '@/lib/val
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import router from '@/router'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
@@ -469,6 +471,10 @@ function getDhcpRange() {
       .finally(() => (loadingDhcpRange.value = false))
   }
 }
+
+function goToInterfaces() {
+  router.push(`${getStandaloneRoutePrefix()}/network/interfaces-and-devices`)
+}
 </script>
 
 <template>
@@ -539,6 +545,8 @@ function getDhcpRange() {
         kind="warning"
         :title="t('error.empty_network_device')"
         :description="t('error.empty_network_device_description')"
+        :primaryButtonLabel="t('error.empty_network_device_link')"
+        @primaryClick="goToInterfaces"
       />
       <NeInlineNotification
         v-if="errorListParents.notificationTitle"

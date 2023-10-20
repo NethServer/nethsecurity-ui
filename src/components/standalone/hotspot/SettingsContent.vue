@@ -73,6 +73,7 @@ const configurationForm = ref<Configuration>({
 
 let isError = ref(false)
 let isLoggedIn = ref(false)
+let viewConfiguration = ref(false)
 let activeConfiguration = ref(false)
 let loadingParentHotspot = ref(false)
 let loadingListDevices = ref(false)
@@ -178,6 +179,7 @@ async function getConfiguration() {
       let configuration = res.data.configuration
       if (configuration.connected) {
         activeConfiguration.value = configuration.hotspot_id != ''
+        viewConfiguration.value = true
       } else {
         isLoggedIn.value = false
       }
@@ -415,6 +417,7 @@ function unregisterUnit() {
     .then((response) => {
       if (response.data && response.data.result && response.data.result === 'success') {
         isLoggedIn.value = false
+        viewConfiguration.value = false
         showUnregisterModal.value = false
         uciPendingChangesStore.getChanges()
         getConfiguration()
@@ -534,7 +537,7 @@ function goToInterfaces() {
       </form>
     </FormLayout>
     <FormLayout
-      v-if="!loadingParentHotspot && !loadingListDevices"
+      v-if="!loadingParentHotspot && !loadingListDevices && viewConfiguration"
       :title="t('standalone.hotspot.settings.configuration')"
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"

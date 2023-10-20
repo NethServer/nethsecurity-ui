@@ -71,6 +71,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/firewall/PortForward.vue')
   },
   {
+    path: 'security/flashstart',
+    name: 'FlashStart',
+    component: () => import('../views/standalone/security/FlashStartView.vue')
+  },
+  {
     path: 'system/storage',
     name: 'Storage',
     component: () => import('../views/standalone/system/StorageView.vue')

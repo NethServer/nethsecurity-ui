@@ -3,16 +3,16 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeModal,
-  NeTitle,
+  getAxiosErrorMessage,
   NeButton,
-  NeTooltip,
+  NeEmptyState,
+  NeInlineNotification,
+  NeModal,
+  NeSideDrawer,
   NeSkeleton,
   NeTextInput,
-  NeEmptyState,
-  NeSideDrawer,
-  NeInlineNotification,
-  getAxiosErrorMessage
+  NeTitle,
+  NeTooltip
 } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -26,6 +26,7 @@ const formPassphrase = ref({
 
 let loading = ref(true)
 let isEnterprise = ref(false)
+let isSetPassphrase = ref(false)
 let loadingDownload = ref(false)
 let loadingSetPassphrase = ref(false)
 let loadingRunBackup = ref(false)
@@ -50,10 +51,12 @@ let errorDownloadBackup = ref({ ...objNotification })
 let errorSetPassphrase = ref({ ...objNotification })
 let errorRunBackup = ref({ ...objNotification })
 let errorGetBackup = ref({ ...objNotification })
+let errorIsPassphrase = ref({ ...objNotification })
 
 onMounted(() => {
   getSubscription()
   getHostname()
+  getIsPassphrase()
 })
 
 async function getSubscription() {
@@ -80,6 +83,21 @@ async function getHostname() {
     error.value = true
     errorHostname.value.notificationTitle = t('error.cannot_retrieve_system_board')
     errorHostname.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  }
+}
+
+async function getIsPassphrase() {
+  try {
+    let res = await ubusCall('ns.backup', 'is-passphrase-set', {})
+    if (res?.data?.values?.set) {
+      isSetPassphrase.value = true
+    }
+  } catch (exception: any) {
+    error.value = true
+    errorIsPassphrase.value.notificationTitle = t('error.cannot_retrieve_passphrase')
+    errorIsPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -110,22 +128,17 @@ async function downloadBackup() {
 
     let res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.backup) {
-      const base64 = btoa(
-        new Uint8Array(res.data.backup).reduce((data, byte) => data + String.fromCharCode(byte), '')
-      )
-      const blob = new Blob([atob(base64)], { type: 'application/octet-stream' })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
+      let blob = new Blob([res.data.backup], { type: 'application/octet-stream' })
+      let url = URL.createObjectURL(blob)
+      let a = document.createElement('a')
+      a.style.display = 'none'
       a.href = url
-      // tar.gz || gpg
-      a.download = 'backup.tar.gz'
+      let extension = '.tar.gz'
+      if (isSetPassphrase.value) extension = '.gpg'
+      a.download = 'backup' + extension
       document.body.appendChild(a)
       a.click()
-      window.URL.revokeObjectURL(url)
-
-      showDownloadModal.value = false
-
-      // TODO success notification
+      document.body.removeChild(a)
     }
   } catch (exception: any) {
     errorDownloadBackup.value.notificationTitle = t('error.cannot_download_backup')
@@ -202,6 +215,13 @@ async function oepenDownloadEnterprise(file: string) {
       kind="error"
       :title="errorHostname.notificationTitle"
       :description="errorHostname.notificationDescription"
+    />
+    <NeInlineNotification
+      v-if="!loading && errorIsPassphrase.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="errorIsPassphrase.notificationTitle"
+      :description="errorIsPassphrase.notificationDescription"
     />
     <NeInlineNotification
       v-if="!loading && errorGetBackup.notificationTitle"

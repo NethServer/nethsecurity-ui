@@ -758,15 +758,13 @@
       "status_enabled": "Enabled",
       "status_disabled": "Disabled",
       "username": "Username",
-      "username_helper": "Enter the username or the email address registered on https://flashstart.nethesis.it/.",
+      "username_helper": "Enter the username or the email address registered on",
       "password": "Password",
       "zones": "Zones to filter",
       "zones_placeholder": "Choose zones",
       "sourcebypass": "Bypass source IPs or networks",
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
-      "add_sourcebypass": "Add source bypass",
-      "success_save_title": "Save complete",
-      "success_save_description": "Settings saved successfully"
+      "add_sourcebypass": "Add source bypass"
     },
     "vpn": {
       "title": "VPN"

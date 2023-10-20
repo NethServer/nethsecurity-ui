@@ -30,6 +30,7 @@ import {
 } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 const { t } = useI18n()
 
 const form = ref({
@@ -185,7 +186,7 @@ function validate() {
 
 function save() {
   clearErrors()
-  if (validate()) {
+  if (!form.value.status || validate()) {
     saving.value = true
 
     // create payload
@@ -201,8 +202,12 @@ function save() {
 
     ubusCall('ns.flashstart', 'set-config', payload)
       .then((response) => {
-        if (response.data && response.data.message && response.data.message === 'success')
+        if (response.data && response.data.message && response.data.message === 'success') {
           successSaving.value = true
+          setTimeout(function () {
+            successSaving.value = false
+          }, 5000)
+        }
       })
       .catch((exception: AxiosError) => {
         errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
@@ -256,75 +261,90 @@ function save() {
             "
           />
         </div>
-        <NeTextInput
-          v-model="form.username"
-          :invalid-message="error.username"
-          :label="t('standalone.flashstart.username')"
-          ref="usernameRef"
-        >
-          <template #tooltip>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.flashstart.username_helper') }}
-              </template>
-            </NeTooltip>
-          </template>
-        </NeTextInput>
-        <NeTextInput
-          v-model="form.password"
-          isPassword
-          :invalid-message="error.password"
-          :label="t('standalone.flashstart.password')"
-          ref="passwordRef"
-        />
-        <NeCombobox
-          v-model="form.zones"
-          :label="t('standalone.flashstart.zones')"
-          :placeholder="t('standalone.flashstart.zones_placeholder')"
-          multiple
-          :options="zones"
-          :invalid-message="error.zones"
-          ref="zonesRef"
-        />
-        <NeMultiTextInput
-          v-model="form.bypassSource"
-          :title="t('standalone.flashstart.sourcebypass')"
-          :add-item-label="t('standalone.flashstart.add_sourcebypass')"
-          :invalid-messages="error.bypassSource"
-          :disable-inputs="saving"
-          :disable-add-button="saving"
-          optional
-          :optionalLabel="t('common.optional')"
-          ref="bypassSourceRef"
-        >
-          <template #tooltip>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.flashstart.sourcebypass_helper') }}
-              </template>
-            </NeTooltip>
-          </template>
-        </NeMultiTextInput>
-        <NeInlineNotification
-          v-if="errorSaving.notificationTitle"
-          class="my-4"
-          kind="error"
-          :title="errorSaving.notificationTitle"
-          :description="errorSaving.notificationDescription"
-        />
-        <NeInlineNotification
-          v-if="successSaving"
-          kind="success"
-          :title="t('standalone.flashstart.success_save_title')"
-          :description="t('standalone.flashstart.success_save_description')"
-        />
-        <div class="flex justify-end py-6">
-          <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+        <template v-if="form.status">
+          <NeTextInput
+            v-model="form.username"
+            :invalid-message="error.username"
+            :label="t('standalone.flashstart.username')"
+            ref="usernameRef"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.flashstart.username_helper') }}
+                  <a
+                    href="https://flashstart.nethesis.it/"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="text-primary-500 hover:text-primary-300 dark:text-primary-700 dark:hover:text-primary-800"
+                  >
+                    https://flashstart.nethesis.it/ </a
+                  >.
+                </template>
+              </NeTooltip>
             </template>
-            {{ t('common.save') }}
-          </NeButton>
+          </NeTextInput>
+          <NeTextInput
+            v-model="form.password"
+            isPassword
+            :invalid-message="error.password"
+            :label="t('standalone.flashstart.password')"
+            ref="passwordRef"
+          />
+          <NeCombobox
+            v-model="form.zones"
+            :label="t('standalone.flashstart.zones')"
+            :placeholder="t('standalone.flashstart.zones_placeholder')"
+            multiple
+            :options="zones"
+            :invalid-message="error.zones"
+            ref="zonesRef"
+          />
+          <NeMultiTextInput
+            v-model="form.bypassSource"
+            :title="t('standalone.flashstart.sourcebypass')"
+            :add-item-label="t('standalone.flashstart.add_sourcebypass')"
+            :invalid-messages="error.bypassSource"
+            :disable-inputs="saving"
+            :disable-add-button="saving"
+            optional
+            :optionalLabel="t('common.optional')"
+            ref="bypassSourceRef"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.flashstart.sourcebypass_helper') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeMultiTextInput>
+          <NeInlineNotification
+            v-if="errorSaving.notificationTitle"
+            class="my-4"
+            kind="error"
+            :title="errorSaving.notificationTitle"
+            :description="errorSaving.notificationDescription"
+          />
+        </template>
+        <div class="flex justify-end py-6">
+          <div>
+            <FontAwesomeIcon
+              v-if="successSaving"
+              :icon="faCircleCheck"
+              class="mr-2 text-green-500"
+            />
+            <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
+              <template #prefix>
+                <FontAwesomeIcon
+                  :icon="['fas', 'floppy-disk']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('common.save') }}
+            </NeButton>
+          </div>
         </div>
       </div>
     </FormLayout>

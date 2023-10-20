@@ -281,6 +281,23 @@ function login() {
   }
 }
 
+function clearErrors() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    hostname: '',
+    username: '',
+    password: '',
+    unitName: '',
+    unitDescription: '',
+    networkDevice: '',
+    networkAddress: '',
+    dhcpRangeStart: '',
+    dhcpRangeEnd: '',
+    maxClientsAllowed: ''
+  }
+}
+
 function validateConfiguration(): boolean {
   let isValidationOk = true
   let isFocusInput = false
@@ -377,6 +394,7 @@ function validateConfiguration(): boolean {
 }
 
 function saveConfiguration() {
+  clearErrors()
   if (validateConfiguration()) {
     saving.value = true
     successSaving.value = false

@@ -63,10 +63,10 @@ const tableHeaders = [
     label: t('standalone.openvpn_tunnel.status'),
     key: 'status'
   },
-  {
+  /*{
     label: t('standalone.openvpn_tunnel.connection'),
     key: 'connection'
-  },
+  },*/
   {
     label: '',
     key: 'menu'
@@ -108,7 +108,7 @@ function getDropdownItems(item: ServerTunnelType) {
   ]
 }
 
-function getCellClasses(item: ServerTunnelType) {
+function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
   return !item.enabled ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
 </script>
@@ -122,19 +122,44 @@ function getCellClasses(item: ServerTunnelType) {
       <p :class="[...getCellClasses(item)]">{{ item.lport }}</p>
     </template>
     <template v-if="!props.isClientTunnel" #local_networks="{ item }: { item: ServerTunnelType }">
-      <p :class="[...getCellClasses(item)]">{{ item.locals }}</p>
+      <template v-if="item.locals.length > 0">
+        <p
+          v-for="(local, idx) in item.locals.slice(0, 2)"
+          :key="local"
+          :class="[...getCellClasses(item)]"
+        >
+          {{ local }}{{ item.locals.length > 2 && idx == 1 ? '...' : '' }}
+        </p>
+      </template>
     </template>
     <template #remote_networks="{ item }: { item: ServerTunnelType | ClientTunnelType }">
-      <p :class="[...getCellClasses(item)]">{{ item.remotes }}</p>
+      <template v-if="item.remotes.length > 0">
+        <p
+          v-for="(remote, idx) in item.remotes.slice(0, 2)"
+          :key="remote"
+          :class="[...getCellClasses(item)]"
+        >
+          {{ remote }}{{ item.remotes.length > 2 && idx == 1 ? '...' : '' }}
+        </p>
+      </template>
+      <p :class="[...getCellClasses(item)]" v-else>-</p>
     </template>
     <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnelType }">
-      <p :class="[...getCellClasses(item)]">{{ item.remotes }}</p>
+      <template v-if="item.remote_hosts.length > 0">
+        <p
+          v-for="(remoteHost, idx) in item.remote_hosts.slice(0, 2)"
+          :key="remoteHost"
+          :class="[...getCellClasses(item)]"
+        >
+          {{ remoteHost }}{{ item.remote_hosts.length > 2 && idx == 1 ? '...' : '' }}
+        </p>
+      </template>
     </template>
     <template #topology="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.topology }}</p>
     </template>
     <template v-if="!props.isClientTunnel" #vpn_network="{ item }: { item: ServerTunnelType }">
-      <p :class="[...getCellClasses(item)]">{{ item.public_ip }}</p>
+      <p :class="[...getCellClasses(item)]">{{ item.vpn_network }}</p>
     </template>
     <template #status="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
@@ -152,7 +177,7 @@ function getCellClasses(item: ServerTunnelType) {
         </p>
       </div>
     </template>
-    <template #connection="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <!--<template #connection="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <div :class="['flex', 'flex-row', 'items-center']">
         <font-awesome-icon
           :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
@@ -167,7 +192,7 @@ function getCellClasses(item: ServerTunnelType) {
           }}
         </p>
       </div>
-    </template>
+    </template>-->
     <template #menu="{ item }: { item: ServerTunnelType }">
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">

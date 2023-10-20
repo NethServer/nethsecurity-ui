@@ -27,6 +27,7 @@ export type ServerTunnelType = {
   remotes: string[]
   enabled: boolean
   connected: boolean
+  vpn_network: string
 }
 
 export type ClientTunnelType = {
@@ -40,6 +41,7 @@ export type ClientTunnelType = {
   remotes: string[]
   enabled: boolean
   connected: boolean
+  remote_hosts: string[]
 }
 
 type Tunnel = ServerTunnelType | ClientTunnelType
@@ -64,7 +66,8 @@ const tunnels = ref<ServerTunnelType[] | ClientTunnelType[]>([
     locals: ['192.168.102.0/24'],
     remotes: ['192.168.5.0/24'],
     enabled: true,
-    connected: true
+    connected: true,
+    remote_hosts: ['123.123.123.123', '112.121.121.121']
   }
 ])
 const selectedTunnel = ref<Tunnel | null>(null)
@@ -77,7 +80,6 @@ const error = ref('')
 async function fetchTunnels() {
   try {
     loading.value = true
-    tunnels.value = []
     if (props.manageClientTunnels) {
       // fetch client tunnels
     } else {
@@ -182,7 +184,11 @@ onMounted(() => {
     </div>
     <NeInlineNotification
       kind="error"
-      :title="t('error.cannot_retrieve_server_tunnels')"
+      :title="
+        manageClientTunnels
+          ? t('error.cannot_retrieve_client_tunnels')
+          : t('error.cannot_retrieve_server_tunnels')
+      "
       :description="error"
       v-if="error"
     />

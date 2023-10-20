@@ -67,6 +67,10 @@
     "cannot_edit_route": "Cannot edit route",
     "cannot_retrieve_interfaces": "Cannot retrieve interfaces",
     "cannot_retrieve_route_types": "Cannot retrieve route types",
+    "cannot_retrieve_parent_hotspot": "Cannot retrieve parent hotspot",
+    "cannot_retrieve_network_device": "Cannot retrieve network device",
+    "cannot_retrieve_configuration": "Cannot retrieve hotspot configuration",
+    "cannot_retrieve_dhcp_range": "Cannot retrieve default DHCP range",
     "invalid_metric": "Enter an integer number greater than or equal to 0",
     "cannot_update_status_route": "Cannot update route status",
     "cannot_delete_port_forward": "Cannot delete port forward",
@@ -78,6 +82,12 @@
     "cannot_retrieve_protocols": "Cannot retrieve protocols",
     "cannot_retrieve_zones": "Cannot retrieve zones",
     "cannot_retrieve_wan_interfaces": "Cannot retrieve WAN interfaces",
+    "cannot_login_hotspot": "Cannot login",
+    "cannot_login_hotspot_description": "Login failed",
+    "cannot_unregister_hotspot": "Cannot unregister",
+    "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
+    "empty_network_device": "No network device found",
+    "empty_network_device_description": "There must be at least an unassigned device or a device with role 'hotspot'",
     "password_too_short": "Password is too short",
     "password_lowercase_required": "Password must contain at least one lowercase letter",
     "password_uppercase_required": "Password must contain at least one uppercase letter",
@@ -107,7 +117,9 @@
     "cannot_set_passphrase": "Cannot set passphrase",
     "cannot_download_backup": "Cannot download backup",
     "cannot_run_backup": "Cannot run backup",
-    "cannot_retrieve_backup": "Cannot retrieve backups"
+    "cannot_retrieve_backup": "Cannot retrieve backups",
+    "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
+    "cannot_remove_storage": "Cannot remove storage"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -631,6 +643,63 @@
       "route_onlink": "On-link",
       "route_onlink_description": "When enabled, gateway is on-link even if the gateway does not match any interface prefix"
     },
+    "hotspot": {
+      "title": "Hotspot",
+      "description": "Connect the unit to a remote hotspot manager instance.",
+      "tabs": {
+        "status": "Status",
+        "settings": "Settings"
+      },
+      "status": {
+        "no_hotspot_configuration_found": "No hotspot configuration found",
+        "no_hotspot_configuration_found_description": "Authenticate in Settings tab to configure hotspot",
+        "no_hotspot_configuration_found_button": "Go to Settings",
+        "empty_sessions": "No active sessions",
+        "empty_sessions_description": "The sessions of clients connected to this unit will appear here.",
+        "mac_address": "MAC address",
+        "ip_address": "IP address",
+        "login_status": "Login status",
+        "session_key": "Session key",
+        "session_time": "Session time",
+        "idle_time": "Idle time",
+        "downloaded": "Downloaded",
+        "uploaded": "Uploaded",
+        "authenticated": "Authenticated",
+        "not_authenticated": "Not authenticated"
+      },
+      "settings": {
+        "login": "Login",
+        "login_description": "Authenticate to edit hotspot configuration or unregister your hotspot.",
+        "login_hostname": "Host name",
+        "login_username": "Username",
+        "login_password": "Password",
+        "login_helper_username": "Enter the username used to access the hotspot manager instance.",
+        "configuration": "Hotspot configuration",
+        "configuration_unit_name": "Hotspot unit name",
+        "configuration_unit_name_placeholder": "Samplename",
+        "configuration_unit_description": "Hotspot unit description",
+        "configuration_unit_description_placeholder": "Hotspot unit description",
+        "configuration_network_address": "Network address",
+        "configuration_network_address_helper": "Choose an available network address; devices connected to the hotspot will be assigned an IP address within this network.",
+        "configuration_dhcp_range_start": "DHCP range start",
+        "configuration_dhcp_range_start_helper": "The initial address within the DHCP range; enter an IP address within the chosen hotspot network. Keep it unchanged if you're uncertain.",
+        "configuration_dhcp_range_end": "DHCP range end",
+        "configuration_dhcp_range_end_helper": "The last address of the DHCP range; insert an address higher than the one set as the start of the range.",
+        "configuration_max_client_allowed": "Max allowed clients:",
+        "configuration_parent_hotspot": "Parent hotspot",
+        "configuration_parent_hotspot_placeholder": "samplename-office",
+        "configuration_network_device": "Network device",
+        "configuration_network_device_helper": "Choose a network device: the hotspot will intercept all connections on this network interface and enforce authentication for connected clients.",
+        "configuration_network_device_placeholder": "Choose device",
+        "configuration_use_default_dhcp_range": "Use default DHCP range",
+        "configuration_save_info": "Save and commit",
+        "configuration_save_info_description": "All pending changes to the firewall and network configurations will be committed.",
+        "unregister": "Unregister",
+        "unregister_unit": "Unregister hotspot unit",
+        "unregister_unit_modal_description": "The hotspot unit will be detached from the remote hotspot manager. Local firewall and network configurations will not be changed.",
+        "empty_network_device_link": "Go to Interfaces and devices"
+      }
+    },
     "users_and_objects": {
       "title": "Users & objects"
     },
@@ -706,6 +775,25 @@
     },
     "security": {
       "title": "Security"
+    },
+    "flashstart": {
+      "title": "FlashStart filter",
+      "content_title": "Settings",
+      "content_description": "FlashStart doesn't require any DNS configuration neither in the firewall itself nor inside the clients. Before using FlashStart you need to",
+      "content_link": "create an account",
+      "status": "Status",
+      "status_enabled": "Enabled",
+      "status_disabled": "Disabled",
+      "username": "Username",
+      "username_helper": "Enter the username or the email address registered on https://flashstart.nethesis.it/.",
+      "password": "Password",
+      "zones": "Zones to filter",
+      "zones_placeholder": "Choose zones",
+      "sourcebypass": "Bypass source IPs or networks",
+      "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
+      "add_sourcebypass": "Add source bypass",
+      "success_save_title": "Save complete",
+      "success_save_description": "Settings saved successfully"
     },
     "vpn": {
       "title": "VPN"

@@ -62,6 +62,10 @@ const navigation: Ref<any> = ref([
       {
         name: t('standalone.multi_wan.title'),
         to: 'network/multi-wan'
+      },
+      {
+        name: t('standalone.hotspot.title'),
+        to: 'network/hotspot'
       }
     ],
     expanded: false
@@ -86,7 +90,17 @@ const navigation: Ref<any> = ref([
       }
     ]
   },
-  { name: t('standalone.security.title'), to: 'security', icon: 'shield-halved' },
+  {
+    name: t('standalone.security.title'),
+    to: 'security',
+    icon: 'shield-halved',
+    children: [
+      {
+        name: t('standalone.flashstart.title'),
+        to: 'security/flashstart'
+      }
+    ]
+  },
   { name: t('standalone.vpn.title'), to: 'vpn', icon: 'globe' },
   { name: t('standalone.logs.title'), to: 'logs', icon: 'list' },
   { name: t('standalone.report.title'), to: 'report', icon: 'chart-line' }

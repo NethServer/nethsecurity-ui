@@ -2,8 +2,7 @@
 import { useTabs } from '@/composables/useTabs'
 import { NeTabs, NeTitle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import ServerTunnel from '@/components/standalone/openvpn_tunnel/ServerTunnel.vue'
-import ClientTunnel from '@/components/standalone/openvpn_tunnel/ClientTunnel.vue'
+import TunnelManager from '@/components/standalone/openvpn_tunnel/TunnelManager.vue'
 
 const { t } = useI18n()
 
@@ -30,7 +29,7 @@ const { tabs, selectedTab } = useTabs([
       class="mb-8"
       @selectTab="selectedTab = $event"
     />
-    <ServerTunnel v-if="selectedTab == 'server-tunnel'" />
-    <ClientTunnel v-else />
+    <TunnelManager :manageClientTunnels="false" v-if="selectedTab == 'server-tunnel'" />
+    <TunnelManager :manageClientTunnels="true" v-else />
   </div>
 </template>

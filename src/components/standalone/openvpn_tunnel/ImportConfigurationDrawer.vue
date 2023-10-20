@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NeSideDrawer } from '@nethserver/vue-tailwind-lib'
+import { NeSideDrawer, NeButton } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -28,16 +28,18 @@ function importConfiguration() {}
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     :title="t('standalone.openvpn_tunnel.import_configuration')"
   >
-    <hr />
-    <div class="flex justify-end">
-      <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-      <NeButton
-        kind="primary"
-        @click="importConfiguration()"
-        :disabled="isImporting"
-        :loading="isImporting"
-        >{{ t('standalone.openvpn_tunnel.import') }}</NeButton
-      >
+    <div class="flex flex-col gap-y-6">
+      <hr />
+      <div class="flex justify-end">
+        <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
+        <NeButton
+          kind="primary"
+          @click="importConfiguration()"
+          :disabled="isImporting"
+          :loading="isImporting"
+          >{{ t('standalone.openvpn_tunnel.import') }}</NeButton
+        >
+      </div>
     </div>
   </NeSideDrawer>
 </template>

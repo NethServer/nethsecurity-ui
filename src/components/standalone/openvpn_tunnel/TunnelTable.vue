@@ -2,12 +2,12 @@
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
-import type { ServerTunnelType } from './ServerTunnel.vue'
+import type { ServerTunnelType, ClientTunnelType } from './TunnelManager.vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  tunnels: ServerTunnelType[]
+  tunnels: ServerTunnelType[] | ClientTunnelType[]
   isClientTunnel: boolean
 }>()
 
@@ -114,29 +114,29 @@ function getCellClasses(item: ServerTunnelType) {
 </script>
 
 <template>
-  <NeTable :data="tunnels" :headers="tableHeaders" :readonly="isClientTunnel">
-    <template #name="{ item }: { item: ServerTunnelType }">
+  <NeTable :data="tunnels" :headers="tableHeaders">
+    <template #name="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
     </template>
-    <template #port="{ item }: { item: ServerTunnelType }">
+    <template #port="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.lport }}</p>
     </template>
     <template v-if="!props.isClientTunnel" #local_networks="{ item }: { item: ServerTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.locals }}</p>
     </template>
-    <template #remote_networks="{ item }: { item: ServerTunnelType }">
+    <template #remote_networks="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.remotes }}</p>
     </template>
-    <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ServerTunnelType }">
+    <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.remotes }}</p>
     </template>
-    <template #topology="{ item }: { item: ServerTunnelType }">
+    <template #topology="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.topology }}</p>
     </template>
     <template v-if="!props.isClientTunnel" #vpn_network="{ item }: { item: ServerTunnelType }">
       <p :class="[...getCellClasses(item)]">{{ item.public_ip }}</p>
     </template>
-    <template #status="{ item }: { item: ServerTunnelType }">
+    <template #status="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
         <font-awesome-icon
           :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
@@ -152,7 +152,7 @@ function getCellClasses(item: ServerTunnelType) {
         </p>
       </div>
     </template>
-    <template #connection="{ item }: { item: ServerTunnelType }">
+    <template #connection="{ item }: { item: ServerTunnelType | ClientTunnelType }">
       <div :class="['flex', 'flex-row', 'items-center']">
         <font-awesome-icon
           :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"

@@ -18,12 +18,12 @@ import {
   NeRadioSelection
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import type { ServerTunnelType } from './ServerTunnel.vue'
+import type { ServerTunnelType, ClientTunnelType } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit: ServerTunnelType | null
+  itemToEdit: ServerTunnelType | ClientTunnelType | null
   isClientTunnel: boolean
 }>()
 const { isShown } = toRefs(props)

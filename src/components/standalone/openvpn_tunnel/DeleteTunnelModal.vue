@@ -2,13 +2,13 @@
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ServerTunnelType } from './ServerTunnel.vue'
+import type { ServerTunnelType, ClientTunnelType } from './TunnelManager.vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: ServerTunnelType | null
+  itemToDelete: ServerTunnelType | ClientTunnelType | null
 }>()
 
 const emit = defineEmits(['close', 'tunnel-deleted'])

@@ -697,8 +697,11 @@
         "client_tunnel": "Client tunnel"
       },
       "server_tunnel_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "client_tunnel_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "add_server_tunnel": "Add server tunnel",
+      "add_client_tunnel": "Add client tunnel",
       "no_server_tunnel_found": "No server tunnel found",
+      "no_client_tunnel_found": "No client tunnel found",
       "name": "Name",
       "port": "Port",
       "remote_networks": "Remote networks",

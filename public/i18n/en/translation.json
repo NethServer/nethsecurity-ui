@@ -87,7 +87,6 @@
     "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
     "empty_network_device": "No network device found",
     "empty_network_device_description": "There must be at least an unassigned device or a device with role 'hotspot'",
-    "empty_network_device_link": "Go to Interfaces and devices",
     "password_too_short": "Password is too short",
     "password_lowercase_required": "Password must contain at least one lowercase letter",
     "password_uppercase_required": "Password must contain at least one uppercase letter",
@@ -669,7 +668,8 @@
         "configuration_save_info_description": "All pending changes to the firewall and network configurations will be committed.",
         "unregister": "Unregister",
         "unregister_unit": "Unregister hotspot unit",
-        "unregister_unit_modal_description": "The hotspot unit will be detached from the remote hotspot manager. Local firewall and network configurations will not be changed."
+        "unregister_unit_modal_description": "The hotspot unit will be detached from the remote hotspot manager. Local firewall and network configurations will not be changed.",
+        "empty_network_device_link": "Go to Interfaces and devices"
       }
     },
     "users_and_objects": {

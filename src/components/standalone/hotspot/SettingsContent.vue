@@ -545,7 +545,7 @@ function goToInterfaces() {
         kind="warning"
         :title="t('error.empty_network_device')"
         :description="t('error.empty_network_device_description')"
-        :primaryButtonLabel="t('error.empty_network_device_link')"
+        :primaryButtonLabel="t('standalone.hotspot.settings.empty_network_device_link')"
         @primaryClick="goToInterfaces"
       />
       <NeInlineNotification

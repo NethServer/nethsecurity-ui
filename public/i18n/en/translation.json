@@ -104,7 +104,10 @@
     "cannot_remove_storage": "Cannot remove storage",
     "cannot_retrieve_subscription_info": "Cannot retrieve subscription information",
     "cannot_retrieve_system_board": "Cannot retrieve system board",
-    "cannot_set_passphrase": "Cannot set passphrase"
+    "cannot_set_passphrase": "Cannot set passphrase",
+    "cannot_download_backup": "Cannot download backup",
+    "cannot_run_backup": "Cannot run backup",
+    "cannot_retrieve_backup": "Cannot retrieve backups"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -304,7 +307,8 @@
         "configure_passphrase": "Configure passphrase",
         "no_backups_found": "No backups found",
         "run_backup": "Run backup",
-        "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?"
+        "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?",
+        "success_download": "Backup downloaded successfully"
       }
     },
     "reboot_and_shutdown": {

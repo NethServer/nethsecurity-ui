@@ -12,11 +12,10 @@ import {
   NeEmptyState,
   NeSideDrawer,
   NeInlineNotification,
-  getAxiosErrorMessage,
-  focusElement
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
+import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { validateRequired } from '@/lib/validation'
 import { AxiosError } from 'axios'
 
 const { t } = useI18n()
@@ -34,24 +33,25 @@ let showDownloadModal = ref(false)
 let showPassphraseDrawer = ref(false)
 let showRunBackupModal = ref(false)
 let unitName = ref(undefined)
+let seletedBackup = ref('')
 let passphraseRef = ref()
 let listBackups: any = ref([])
 
-let objError = {
+let objNotification = {
   notificationTitle: '',
   notificationDescription: '',
   passphrase: ''
 }
 
 let error = ref(false)
-let errorSubscription = ref({ ...objError })
-let errorHostname = ref({ ...objError })
-let errorDownloadBackup = ref({ ...objError })
-let errorSetPassphrase = ref({ ...objError })
-let errorRunBackup = ref({ ...objError })
+let errorSubscription = ref({ ...objNotification })
+let errorHostname = ref({ ...objNotification })
+let errorDownloadBackup = ref({ ...objNotification })
+let errorSetPassphrase = ref({ ...objNotification })
+let errorRunBackup = ref({ ...objNotification })
+let errorGetBackup = ref({ ...objNotification })
 
 onMounted(() => {
-  loading.value = false
   getSubscription()
   getHostname()
 })
@@ -67,6 +67,8 @@ async function getSubscription() {
     error.value = true
     errorSubscription.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
     errorSubscription.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -83,60 +85,104 @@ async function getHostname() {
 
 async function getBackups() {
   if (isEnterprise.value) {
-    // TODO get list backups
+    try {
+      let res = await ubusCall('ns.backup', 'registered-list-backups')
+      if (res?.data?.values?.length) listBackups.value = res.data.values
+    } catch (exception: any) {
+      errorGetBackup.value.notificationTitle = t('error.cannot_retrieve_backup')
+      errorGetBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    }
   }
 }
 
 async function downloadBackup() {
-  // TODO downloadBackup
+  try {
+    loadingDownload.value = true
+
+    let payload = {}
+    let methodCall = 'backup'
+    if (seletedBackup.value) {
+      methodCall = 'registered-download-backup'
+      payload = {
+        file: seletedBackup.value
+      }
+    }
+
+    let res = await ubusCall('ns.backup', methodCall, payload)
+    if (res?.data?.backup) {
+      const base64 = btoa(
+        new Uint8Array(res.data.backup).reduce((data, byte) => data + String.fromCharCode(byte), '')
+      )
+      const blob = new Blob([atob(base64)], { type: 'application/octet-stream' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      // tar.gz || gpg
+      a.download = 'backup.tar.gz'
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+
+      showDownloadModal.value = false
+
+      // TODO success notification
+    }
+  } catch (exception: any) {
+    errorDownloadBackup.value.notificationTitle = t('error.cannot_download_backup')
+    errorDownloadBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loadingDownload.value = false
+  }
 }
 
 async function runBackup() {
-  // TODO runBackup
+  loadingRunBackup.value = true
+  try {
+    let res = await ubusCall('ns.backup', 'registered-backup')
+    if (res?.data?.message && res?.data?.message === 'success') {
+      showRunBackupModal.value = false
+      await getBackups()
+
+      // TODO success notification
+    }
+  } catch (exception: any) {
+    errorRunBackup.value.notificationTitle = t('error.cannot_run_backup')
+    errorRunBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loadingRunBackup.value = false
+  }
 }
 
 async function openPassphraseDrawer() {
   showPassphraseDrawer.value = true
-  errorSetPassphrase.value = { ...objError }
-}
-
-function validatePassphrase(): boolean {
-  let isValidationOk = true
-
-  if (!formPassphrase.value.passphrase) {
-    let { valid, errMessage } = validateRequired(formPassphrase.value.passphrase)
-    if (!valid) {
-      errorSetPassphrase.value.passphrase = t(errMessage as string)
-      isValidationOk = false
-      focusElement(passphraseRef)
-    }
-  }
-
-  return isValidationOk
+  errorSetPassphrase.value = { ...objNotification }
 }
 
 async function setPassphrase() {
-  if (validatePassphrase()) {
-    loadingSetPassphrase.value = true
+  loadingSetPassphrase.value = true
 
-    // create payload
-    let payload = {
-      passphrase: formPassphrase.value.passphrase
-    }
-
-    ubusCall('ns.backup', 'set-passphrase', payload)
-      .then((response) => {
-        if (response?.data?.message && response.data.message == 'success') {
-          loadingSetPassphrase.value = false
-          showPassphraseDrawer.value = false
-        }
-      })
-      .catch((exception: AxiosError) => {
-        errorSetPassphrase.value.notificationTitle = t('error.cannot_set_passphrase')
-        errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
-        loadingSetPassphrase.value = false
-      })
+  let payload = {
+    passphrase: formPassphrase.value.passphrase
   }
+
+  ubusCall('ns.backup', 'set-passphrase', payload)
+    .then((response) => {
+      if (response?.data?.message && response.data.message == 'success') {
+        showPassphraseDrawer.value = false
+      }
+    })
+    .catch((exception: AxiosError) => {
+      errorSetPassphrase.value.notificationTitle = t('error.cannot_set_passphrase')
+      errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    })
+    .finally(() => {
+      loadingSetPassphrase.value = false
+    })
+}
+
+async function oepenDownloadEnterprise(file: string) {
+  showDownloadModal.value = true
+  seletedBackup.value = file
 }
 </script>
 
@@ -179,7 +225,13 @@ async function setPassphrase() {
         </template>
         <template v-else>
           <div class="mr-auto self-start">
-            <NeButton kind="secondary" size="lg" type="submit" @click="showDownloadModal = true">
+            <NeButton
+              class="mr-2"
+              kind="secondary"
+              size="lg"
+              type="submit"
+              @click="showDownloadModal = true"
+            >
               <template #prefix>
                 <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
               </template>
@@ -192,31 +244,60 @@ async function setPassphrase() {
         </template>
       </div>
     </template>
-    <NeEmptyState
-      v-if="
-        isEnterprise &&
-        !listBackups.length &&
-        !errorSubscription.notificationTitle &&
-        !errorHostname.notificationTitle
-      "
-      :title="t('standalone.backup_and_restore.backup.no_backups_found')"
-      :icon="['fa', 'box-archive']"
-      class="mt-5"
-    >
-      <div class="flex justify-center">
-        <NeButton kind="primary" size="lg" @click="showRunBackupModal = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
-          </template>
-          {{ t('standalone.backup_and_restore.backup.run_backup') }}
-        </NeButton>
-      </div>
-      <div class="mt-2 flex justify-center">
-        <NeButton kind="tertiary" size="lg" @click="openPassphraseDrawer()">
-          {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-        </NeButton>
-      </div>
-    </NeEmptyState>
+    <div v-if="!loading && isEnterprise" class="mt-5">
+      <NeEmptyState
+        v-if="
+          !listBackups.length &&
+          !errorSubscription.notificationTitle &&
+          !errorHostname.notificationTitle
+        "
+        :title="t('standalone.backup_and_restore.backup.no_backups_found')"
+        :icon="['fa', 'box-archive']"
+      >
+        <div class="flex justify-center">
+          <NeButton kind="primary" size="lg" @click="showRunBackupModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
+            </template>
+            {{ t('standalone.backup_and_restore.backup.run_backup') }}
+          </NeButton>
+        </div>
+        <div class="mt-2 flex justify-center">
+          <NeButton kind="tertiary" size="lg" @click="openPassphraseDrawer()">
+            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+          </NeButton>
+        </div>
+      </NeEmptyState>
+      <NeTable
+        :data="listBackups"
+        :headers="[
+          {
+            key: 'name',
+            label: 'Date'
+          },
+          {
+            key: 'actions'
+          }
+        ]"
+      >
+        <template #name="{ item }">
+          <div>
+            <FontAwesomeIcon :icon="['fa', 'clock']" class="mr-2" />
+            {{ item.name }}
+          </div>
+        </template>
+        <template #actions="{ item }">
+          <div class="flex items-center justify-end">
+            <NeButton :kind="'tertiary'" @click="oepenDownloadEnterprise(item.file)">
+              <template #prefix>
+                <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download') }}
+            </NeButton>
+          </div>
+        </template>
+      </NeTable>
+    </div>
   </div>
   <NeModal
     :primary-button-disabled="loadingDownload"

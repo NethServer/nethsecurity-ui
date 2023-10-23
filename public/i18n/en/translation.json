@@ -107,7 +107,8 @@
     "cannot_delete_tunnel": "Cannot delete tunnel",
     "cannot_download_tunnel": "Cannot download tunnel",
     "cannot_create_tunnel": "Cannot create tunnel",
-    "cannot_edit_tunnel": "Cannot edit tunnel"
+    "cannot_edit_tunnel": "Cannot edit tunnel",
+    "cannot_import_configuration": "Cannot import configuration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -758,6 +759,7 @@
       "mode": "Mode",
       "bridged": "Bridged",
       "routed": "Routed",
+      "could_not_parse_configuration_file": "Could not parse configuration file",
       "public_endpoints_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "local_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "remote_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",

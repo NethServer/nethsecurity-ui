@@ -70,6 +70,7 @@ import { faDownLeftAndUpRightToCenter } from '@fortawesome/free-solid-svg-icons/
 import { faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons/faUpRightAndDownLeftFromCenter'
 import { faCircleArrowDown } from '@fortawesome/free-solid-svg-icons/faCircleArrowDown'
 import { faCircleArrowUp } from '@fortawesome/free-solid-svg-icons/faCircleArrowUp'
+import { faFile } from '@fortawesome/free-solid-svg-icons/faFile'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -141,4 +142,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faUpRightAndDownLeftFromCenter)
   library.add(faCircleArrowDown)
   library.add(faCircleArrowUp)
+  library.add(faFile)
 }

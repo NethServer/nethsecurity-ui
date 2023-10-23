@@ -61,6 +61,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/RoutesView.vue')
   },
   {
+    path: 'network/hotspot',
+    name: 'Hotspot',
+    component: () => import('../views/standalone/network/HotspotView.vue')
+  },
+  {
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')
@@ -69,6 +74,11 @@ const standaloneRoutes = [
     path: 'firewall/port-forward',
     name: 'PortForward',
     component: () => import('../views/standalone/firewall/PortForward.vue')
+  },
+  {
+    path: 'security/flashstart',
+    name: 'FlashStart',
+    component: () => import('../views/standalone/security/FlashStartView.vue')
   },
   {
     path: 'system/storage',

@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
-import { MessageBag, type validationOutput } from '@/lib/validation'
+import { ref, toRefs, watch } from 'vue'
+import {
+  MessageBag,
+  validateIp4Cidr,
+  validateIpAddress,
+  validatePort,
+  validateRequired,
+  validateRequiredOption,
+  type validationOutput
+} from '@/lib/validation'
 import { onMounted } from 'vue'
 import { watchEffect } from 'vue'
 import {
@@ -39,6 +47,9 @@ const error = ref({
   notificationDescription: ''
 })
 const validationErrorBag = ref(new MessageBag())
+const remoteNetworksValidationErrors = ref<string[]>([])
+const publicEndpointsValidationErrors = ref<string[]>([])
+const remoteHostsValidationErrors = ref<string[]>([])
 
 // Shared form fields
 const id = ref('')
@@ -46,12 +57,11 @@ const enabled = ref(true)
 const name = ref('')
 const remoteNetworks = ref<string[]>([''])
 const topology = ref<'subnet' | 'p2p'>('subnet')
-const vpnNetwork = ref('')
 const localP2pIp = ref('')
 const remoteP2pIp = ref('')
 const presharedKey = ref('')
 const protocol = ref<'tcp' | 'udp'>('udp')
-const compression = ref('auto')
+const compression = ref('disabled')
 const digest = ref('auto')
 const cipher = ref('auto')
 
@@ -60,6 +70,7 @@ const publicEndpoints = ref<string[]>([''])
 const port = ref('')
 const localNetworks = ref<NeComboboxOption[]>([])
 const minimumTLSVersion = ref('auto')
+const vpnNetwork = ref('')
 
 // Client tunnel form fields
 const remoteHosts = ref<string[]>([''])
@@ -74,8 +85,8 @@ const showAdvancedSettings = ref(false)
 
 const compressionOptions = [
   {
-    id: 'auto',
-    label: t('standalone.openvpn_tunnel.auto')
+    id: 'disabled',
+    label: t('standalone.openvpn_tunnel.disabled')
   }
 ]
 
@@ -146,6 +157,13 @@ const tlsOptions = [
   }
 ]
 
+function cleanValidationErrors() {
+  validationErrorBag.value.clear()
+  remoteNetworksValidationErrors.value = []
+  publicEndpointsValidationErrors.value = []
+  remoteHostsValidationErrors.value = []
+}
+
 function resetForm() {
   //TODO: fill in after knowing payload format
 }
@@ -161,7 +179,114 @@ function runValidators(validators: validationOutput[], label: string): boolean {
 }
 
 function validate() {
-  return true
+  cleanValidationErrors()
+
+  // populate NeMultiTextInput validation errors
+  remoteNetworks.value.forEach(() => {
+    remoteNetworksValidationErrors.value.push('')
+  })
+  remoteHosts.value.forEach(() => {
+    remoteHostsValidationErrors.value.push('')
+  })
+  publicEndpoints.value.forEach(() => {
+    publicEndpointsValidationErrors.value.push('')
+  })
+
+  const p2pValidators: [validationOutput[], string][] = [
+    [[validateRequired(localP2pIp.value), validateIpAddress(localP2pIp.value)], 'localP2pIp'],
+    [[validateRequired(remoteP2pIp.value), validateIpAddress(remoteP2pIp.value)], 'remoteP2pIp'],
+    [[validateRequired(presharedKey.value)], 'presharedKey']
+  ]
+
+  // shared form fields validation
+  const sharedFieldsValidators: [validationOutput[], string][] = [
+    [[validateRequired(name.value)], 'name'],
+    ...(topology.value === 'p2p' ? p2pValidators : [])
+  ]
+
+  const sharedFieldsValidatorsOk = sharedFieldsValidators
+    .map(([validator, label]) => runValidators(validator, label))
+    .every((result) => result)
+
+  // remote networks validation
+  let validRemoteNetworks = true
+  for (let [index, remoteNetwork] of remoteNetworks.value.entries()) {
+    const isRemoteNetworksOptional = props.isClientTunnel && topology.value == 'subnet'
+    let validators = [
+      ...(!isRemoteNetworksOptional ? [validateRequired(remoteNetwork)] : []),
+      validateIp4Cidr(remoteNetwork)
+    ]
+    for (let validator of validators) {
+      if (!validator.valid && (!isRemoteNetworksOptional || remoteNetwork != '')) {
+        remoteNetworksValidationErrors.value[index] = t(validator.errMessage as string)
+        validRemoteNetworks = false
+        break
+      }
+    }
+  }
+
+  let specificFieldsValidatorsOk = true
+
+  if (props.isClientTunnel) {
+    const usernamePasswordValidators: [validationOutput[], string][] = [
+      [[validateRequired(username.value)], 'username'],
+      [[validateRequired(password.value)], 'password']
+    ]
+
+    // client form fields validation
+    const clientTunnelFieldsValidators: [validationOutput[], string][] = [
+      [[validateRequired(remotePort.value), validatePort(remotePort.value)], 'remotePort'],
+      [[validateRequired(certificate.value), validateIp4Cidr(vpnNetwork.value)], 'certificate'],
+      ...(authentication.value === 'username_password_certificate'
+        ? usernamePasswordValidators
+        : [])
+    ]
+
+    // remote hosts validation
+    let validRemoteHosts = true
+    for (let [index, remoteHost] of remoteHosts.value.entries()) {
+      let validators = [validateRequired(remoteHost), validateIpAddress(remoteHost)]
+      for (let validator of validators) {
+        if (!validator.valid) {
+          remoteHostsValidationErrors.value[index] = t(validator.errMessage as string)
+          validRemoteHosts = false
+          break
+        }
+      }
+    }
+
+    specificFieldsValidatorsOk =
+      clientTunnelFieldsValidators
+        .map(([validator, label]) => runValidators(validator, label))
+        .every((result) => result) && validRemoteHosts
+  } else {
+    // server form fields validation
+    const serverTunnelFieldsValidators: [validationOutput[], string][] = [
+      [[validateRequired(port.value), validatePort(port.value)], 'port'],
+      [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'vpnNetwork'],
+      [[validateRequiredOption(localNetworks.value)], 'localNetworks']
+    ]
+
+    // public endpoints validation
+    let validPublicEndpoints = true
+    for (let [index, publicEndpoint] of publicEndpoints.value.entries()) {
+      let validators = [validateRequired(publicEndpoint), validateIpAddress(publicEndpoint)]
+      for (let validator of validators) {
+        if (!validator.valid) {
+          publicEndpointsValidationErrors.value[index] = t(validator.errMessage as string)
+          validPublicEndpoints = false
+          break
+        }
+      }
+    }
+
+    specificFieldsValidatorsOk =
+      serverTunnelFieldsValidators
+        .map(([validator, label]) => runValidators(validator, label))
+        .every((result) => result) && validPublicEndpoints
+  }
+
+  return sharedFieldsValidatorsOk && specificFieldsValidatorsOk && validRemoteNetworks
 }
 
 async function createOrEditTunnel() {
@@ -190,12 +315,23 @@ async function createOrEditTunnel() {
 }
 
 function close() {
-  validationErrorBag.value.clear()
+  cleanValidationErrors()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   resetForm()
   emit('close')
 }
+
+watch(
+  () => [props.isClientTunnel, topology.value],
+  () => {
+    // clean remote network errors if topology is changed in client tunnel
+    // (since validators change depending on topology)
+    if (props.isClientTunnel) {
+      remoteNetworksValidationErrors.value = []
+    }
+  }
+)
 
 watchEffect(() => {
   resetForm()
@@ -250,6 +386,7 @@ onMounted(() => {
           v-model="publicEndpoints"
           :add-item-label="t('standalone.openvpn_tunnel.add_endpoint')"
           :title="t('standalone.openvpn_tunnel.public_endpoints')"
+          :invalid-messages="publicEndpointsValidationErrors"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -275,6 +412,7 @@ onMounted(() => {
           v-model="remoteNetworks"
           :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
           :title="t('standalone.openvpn_tunnel.remote_networks')"
+          :invalid-messages="remoteNetworksValidationErrors"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -289,6 +427,7 @@ onMounted(() => {
           v-model="remoteHosts"
           :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
           :title="t('standalone.openvpn_tunnel.remote_hosts')"
+          :invalid-messages="remoteHostsValidationErrors"
         />
         <NeTextInput
           v-model="remotePort"
@@ -333,7 +472,11 @@ onMounted(() => {
               :invalid-message="validationErrorBag.getFirstFor('password')"
             />
           </template>
-          <NeTextArea v-model="certificate" :label="t('standalone.openvpn_tunnel.certificate')" />
+          <NeTextArea
+            v-model="certificate"
+            :label="t('standalone.openvpn_tunnel.certificate')"
+            :invalid-message="validationErrorBag.getFirstFor('certificate')"
+          />
         </template>
       </template>
       <template v-else>
@@ -347,7 +490,25 @@ onMounted(() => {
           :label="t('standalone.openvpn_tunnel.remote_p2p_ip')"
           :invalid-message="validationErrorBag.getFirstFor('remoteP2pIp')"
         />
-        <NeTextArea v-model="presharedKey" :label="t('standalone.openvpn_tunnel.preshared_key')" />
+        <NeMultiTextInput
+          v-if="isClientTunnel"
+          v-model="remoteNetworks"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :title="t('standalone.openvpn_tunnel.remote_networks')"
+          :invalid-messages="remoteNetworksValidationErrors"
+          ><template #tooltip>
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_tunnel.remote_networks_tooltip')
+              }}</template></NeTooltip
+            >
+          </template>
+        </NeMultiTextInput>
+        <NeTextArea
+          v-model="presharedKey"
+          :label="t('standalone.openvpn_tunnel.preshared_key')"
+          :invalid-message="validationErrorBag.getFirstFor('presharedKey')"
+        />
       </template>
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
@@ -364,15 +525,17 @@ onMounted(() => {
       <template v-if="showAdvancedSettings">
         <template v-if="isClientTunnel">
           <NeMultiTextInput
+            v-if="topology != 'p2p'"
             v-model="remoteNetworks"
             :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
-            :title="t('standalone.openvpn_tunnel.remote_networks')"
+            :title="t('standalone.openvpn_tunnel.extra_remote_networks')"
             optional
             :optional-label="t('common.optional')"
+            :invalid-messages="remoteNetworksValidationErrors"
             ><template #tooltip>
               <NeTooltip
                 ><template #content>{{
-                  t('standalone.openvpn_tunnel.remote_networks_tooltip')
+                  t('standalone.openvpn_tunnel.extra_remote_networks_tooltip')
                 }}</template></NeTooltip
               >
             </template>
@@ -392,25 +555,21 @@ onMounted(() => {
           :label="t('standalone.openvpn_tunnel.compression')"
           :options="compressionOptions"
           v-model="compression"
-          :invalid-message="validationErrorBag.getFirstFor('compression')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.digest')"
           :options="digestOptions"
           v-model="digest"
-          :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.cipher')"
           :options="cipherOptions"
           v-model="cipher"
-          :invalid-message="validationErrorBag.getFirstFor('cipher')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
           :options="tlsOptions"
           v-model="minimumTLSVersion"
-          :invalid-message="validationErrorBag.getFirstFor('minimumTLSVersion')"
           v-if="!isClientTunnel"
         />
       </template>

@@ -709,6 +709,7 @@
       "name": "Name",
       "port": "Port",
       "remote_networks": "Remote networks",
+      "extra_remote_networks": "Extra remote networks",
       "remote_hosts": "Remote hosts",
       "topology": "Topology",
       "vpn_network": "VPN network",
@@ -763,6 +764,7 @@
       "public_endpoints_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "local_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "remote_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "extra_remote_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
       "topology_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta"
     },
     "logs": {

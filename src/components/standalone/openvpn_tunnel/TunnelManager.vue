@@ -16,7 +16,7 @@ import DeleteTunnelModal from './DeleteTunnelModal.vue'
 import DownloadTunnelModal from './DownloadTunnelModal.vue'
 import ImportConfigurationDrawer from './ImportConfigurationDrawer.vue'
 
-export type ServerTunnelType = {
+export type ServerTunnel = {
   name: string
   lport: string
   proto: string
@@ -30,7 +30,7 @@ export type ServerTunnelType = {
   vpn_network: string
 }
 
-export type ClientTunnelType = {
+export type ClientTunnel = {
   name: string
   lport: string
   proto: string
@@ -44,7 +44,7 @@ export type ClientTunnelType = {
   remote_hosts: string[]
 }
 
-type Tunnel = ServerTunnelType | ClientTunnelType
+type Tunnel = ServerTunnel | ClientTunnel
 
 const props = defineProps<{
   manageClientTunnels: boolean
@@ -55,7 +55,7 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 const loading = ref(true)
-const tunnels = ref<ServerTunnelType[] | ClientTunnelType[]>([
+const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([
   {
     name: 'server1',
     lport: '2001',

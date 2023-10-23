@@ -2,12 +2,12 @@
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
-import type { ServerTunnelType, ClientTunnelType } from './TunnelManager.vue'
+import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  tunnels: ServerTunnelType[] | ClientTunnelType[]
+  tunnels: ServerTunnel[] | ClientTunnel[]
   isClientTunnel: boolean
 }>()
 
@@ -73,7 +73,7 @@ const tableHeaders = [
   }
 ]
 
-function getDropdownItems(item: ServerTunnelType) {
+function getDropdownItems(item: ServerTunnel) {
   return [
     {
       id: 'download',
@@ -108,20 +108,20 @@ function getDropdownItems(item: ServerTunnelType) {
   ]
 }
 
-function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
+function getCellClasses(item: ServerTunnel | ClientTunnel) {
   return !item.enabled ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
 </script>
 
 <template>
   <NeTable :data="tunnels" :headers="tableHeaders">
-    <template #name="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <template #name="{ item }: { item: ServerTunnel | ClientTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
     </template>
-    <template #port="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <template #port="{ item }: { item: ServerTunnel | ClientTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.lport }}</p>
     </template>
-    <template v-if="!props.isClientTunnel" #local_networks="{ item }: { item: ServerTunnelType }">
+    <template v-if="!props.isClientTunnel" #local_networks="{ item }: { item: ServerTunnel }">
       <template v-if="item.locals.length > 0">
         <p
           v-for="(local, idx) in item.locals.slice(0, 2)"
@@ -132,7 +132,7 @@ function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
         </p>
       </template>
     </template>
-    <template #remote_networks="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <template #remote_networks="{ item }: { item: ServerTunnel | ClientTunnel }">
       <template v-if="item.remotes.length > 0">
         <p
           v-for="(remote, idx) in item.remotes.slice(0, 2)"
@@ -144,7 +144,7 @@ function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
       </template>
       <p :class="[...getCellClasses(item)]" v-else>-</p>
     </template>
-    <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnelType }">
+    <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnel }">
       <template v-if="item.remote_hosts.length > 0">
         <p
           v-for="(remoteHost, idx) in item.remote_hosts.slice(0, 2)"
@@ -155,13 +155,13 @@ function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
         </p>
       </template>
     </template>
-    <template #topology="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <template #topology="{ item }: { item: ServerTunnel | ClientTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.topology }}</p>
     </template>
-    <template v-if="!props.isClientTunnel" #vpn_network="{ item }: { item: ServerTunnelType }">
+    <template v-if="!props.isClientTunnel" #vpn_network="{ item }: { item: ServerTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.vpn_network }}</p>
     </template>
-    <template #status="{ item }: { item: ServerTunnelType | ClientTunnelType }">
+    <template #status="{ item }: { item: ServerTunnel | ClientTunnel }">
       <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
         <font-awesome-icon
           :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
@@ -193,7 +193,7 @@ function getCellClasses(item: ServerTunnelType | ClientTunnelType) {
         </p>
       </div>
     </template>-->
-    <template #menu="{ item }: { item: ServerTunnelType }">
+    <template #menu="{ item }: { item: ServerTunnel }">
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">
           <template #prefix>

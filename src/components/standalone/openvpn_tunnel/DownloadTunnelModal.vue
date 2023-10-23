@@ -7,11 +7,11 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ServerTunnelType, ClientTunnelType } from './TunnelManager.vue'
+import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 
 const props = defineProps<{
   visible: boolean
-  itemToDownload: ServerTunnelType | ClientTunnelType | null
+  itemToDownload: ServerTunnel | ClientTunnel | null
 }>()
 
 const { t } = useI18n()

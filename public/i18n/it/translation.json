@@ -15,7 +15,7 @@
     "enable": "Abilita",
     "disabled": "Disabilitato",
     "disable": "Disabilita",
-    "enabled": "Attivato"
+    "enabled": "Abilitato"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -82,15 +82,15 @@
     "cannot_load_routes": "Impossibile recuperare le rotte",
     "cannot_retrieve_route_types": "Impossibile recuperare i tipi di rotta",
     "cannot_create_route": "Impossibile creare la rotta",
-    "invalid_mac_address": "Indirizzo IP non valido",
-    "cannot_retrieve_dhcp_interfaces": "Impossibile recuperare le interfacce WAN",
-    "cannot_retrieve_dns_configuration": "Impossibile caricare la configurazione",
-    "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione del filtro",
-    "password_too_short": "Password troppo corta",
+    "invalid_mac_address": "Indirizzo MAC non valido",
+    "cannot_retrieve_dhcp_interfaces": "Impossibile recuperare le interfacce DHCP",
+    "cannot_retrieve_dns_configuration": "Impossibile recuperare la configurazione DNS",
+    "cannot_retrieve_storage_configuration": "Impossibile recuperare la configurazione dello storage",
+    "password_too_short": "La password è troppo corta",
     "invalid_equal": "Le password non corrispondono",
-    "cannot_retrieve_flashstart_configuration": "Impossibile caricare la configurazione",
+    "cannot_retrieve_flashstart_configuration": "Impossibile recuperare la configurazione",
     "cannot_login_hotspot_description": "Accesso fallito",
-    "cannot_retrieve_configuration": "Impossibile recuperare la configurazione del filtro",
+    "cannot_retrieve_configuration": "Impossibile recuperare la configurazione hotspot",
     "zone_already_exists": "Zona esistente"
   },
   "login": {
@@ -193,7 +193,7 @@
       "show_notifications": "Mostra notifiche",
       "open_user_menu": "Apri il menu utente",
       "close_side_drawer": "Chiudi il cassetto laterale",
-      "account": "Profilo"
+      "account": "Account"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -616,24 +616,24 @@
       "domain": "Dominio",
       "filter_change_suggestion": "Prova a modificare il filtro",
       "add_domain": "Aggiungi dominio",
-      "not_active": "Non attiva",
+      "not_active": "Inattivo",
       "disabled": "Disabilitato",
-      "enabled": "Attivato",
+      "enabled": "Abilitato",
       "hostname": "Nome host",
       "filter": "Filtro"
     },
     "storage": {
       "vendor": "Produttore",
-      "title": "Archiviazione",
+      "title": "Storage",
       "no_device_found": "Nessun dispositivo trovato",
       "model": "Modello",
       "size": "Dimensione",
-      "select_device": "Seleziona Dispositivo",
-      "unknown": "sconosciuta"
+      "select_device": "Seleziona dispositivo",
+      "unknown": "Sconosciuto"
     },
     "change_password": {
       "new_password": "Nuova password",
-      "success_message": "La password è stata cambiata correttamente",
+      "success_message": "La password è stata cambiata con successo",
       "confirm_password": "Conferma password"
     },
     "account_management": {
@@ -642,16 +642,16 @@
     "flashstart": {
       "username": "Nome utente",
       "content_title": "Impostazioni",
-      "zones_placeholder": "Scegli zona",
-      "content_link": "crea un account",
+      "zones_placeholder": "Scegli zone",
+      "content_link": "creare un account",
       "password": "Password",
       "status_enabled": "Attivato",
-      "status_disabled": "Disabilitato",
+      "status_disabled": "Disattivato",
       "status": "Stato"
     },
     "hotspot": {
       "settings": {
-        "unregister": "Rimuovi",
+        "unregister": "Rimuovi registrazione",
         "login": "Accedi",
         "login_username": "Nome utente",
         "login_hostname": "Nome host",
@@ -661,8 +661,8 @@
       "status": {
         "idle_time": "Tempo di inattività",
         "ip_address": "Indirizzo IP",
-        "uploaded": "Caricato/i",
-        "no_hotspot_configuration_found_button": "Vai alle Impostazioni",
+        "uploaded": "Caricati",
+        "no_hotspot_configuration_found_button": "Vai a Impostazioni",
         "login_status": "Stato login",
         "downloaded": "Scaricati",
         "mac_address": "Indirizzo MAC",
@@ -675,15 +675,15 @@
       }
     },
     "dpi": {
-      "search_results": "Cerca risultati",
+      "search_results": "Risultati della ricerca",
       "create_rule": "Crea regola",
       "clear_search": "Svuota ricerca",
       "delete_rule": "Elimina regola",
-      "try_changing_search_filter": "Prova a cambiare i tuoi filtri di ricerca",
+      "try_changing_search_filter": "Prova a cambiare il filtro di ricerca",
       "exceptions": "Eccezioni",
       "source": "Sorgente",
       "type_protocol": "Protocollo",
-      "type_application": "Applicazione",
+      "type_application": "App",
       "rules": "Regole",
       "no_rules_found": "Nessuna regola trovata"
     }

@@ -12,7 +12,7 @@ const { t } = useI18n()
 
 <template>
   <div>
-    <h1 class="page-title">{{ t('standalone.backup_and_restore.title') }}</h1>
+    <h1 class="page-title">{{ t('standalone.report.title') }}</h1>
     <NeEmptyState :title="t('common.page_under_construction')" :icon="['fas', 'traffic-cone']" />
   </div>
 </template>

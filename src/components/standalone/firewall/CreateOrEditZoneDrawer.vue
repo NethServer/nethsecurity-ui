@@ -250,7 +250,7 @@ function validate(): boolean {
       <NeTextInput
         v-model="name"
         :disabled="saving || !isCreating"
-        :invalid-message="t(errorBag.getFirstI18nKeyFor('name', 'standalone.zones_and_policies'))"
+        :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.zones_and_policies.name')"
         :placeholder="t('standalone.zones_and_policies.name')"
       />

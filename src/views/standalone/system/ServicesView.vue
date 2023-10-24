@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -11,6 +12,7 @@ const { t } = useI18n()
 
 <template>
   <div>
-    <h1>{{ t('standalone.services.title') }}</h1>
+    <h1 class="page-title">{{ t('standalone.services.title') }}</h1>
+    <NeEmptyState :title="t('common.page_under_construction')" :icon="['fas', 'traffic-cone']" />
   </div>
 </template>

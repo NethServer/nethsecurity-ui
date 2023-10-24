@@ -154,6 +154,10 @@ function getBadgeIcon(status: string) {
     :errorTitle="error.title"
     :errorDescription="error.description"
   >
+    <!-- title slot (if present) -->
+    <template #title>
+      <slot name="title"></slot>
+    </template>
     <NeBadge
       v-if="hasStatus"
       :kind="getBadgeKind(serviceStatus)"

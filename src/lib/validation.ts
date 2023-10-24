@@ -318,9 +318,17 @@ export class MessageBag extends Map<string, Array<string>> {
    * @param key key of the messageBag, e.g. 'zoneName'
    * @param prefix string prefix to build the i18n key, e.g. 'standalone.zones_and_policies'
    */
-  getFirstI18nKeyFor(key: string, prefix: string): string {
+  getFirstI18nKeyFor(key: string): string {
     if (this.has(key)) {
-      return `${prefix}.${this.getFirstFor(key)}`
+      const i18nKey = this.getFirstFor(key)
+
+      if (i18nKey.includes('.')) {
+        // assume the i18nKey already contains the prefix, e.g. 'error.xyz'
+        return i18nKey
+      } else {
+        // add 'error.' prefix to build the i18n key
+        return `error.${i18nKey}`
+      }
     }
     return ''
   }

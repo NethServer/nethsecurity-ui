@@ -11,7 +11,11 @@
     "edit": "Modifica",
     "delete": "Elimina",
     "advanced_settings": "Impostazioni avanzate",
-    "filter": "Filtro"
+    "filter": "Filtro",
+    "enable": "Abilita",
+    "disabled": "Disabilitato",
+    "disable": "Disabilita",
+    "enabled": "Attivato"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -86,7 +90,8 @@
     "invalid_equal": "Le password non corrispondono",
     "cannot_retrieve_flashstart_configuration": "Impossibile caricare la configurazione",
     "cannot_login_hotspot_description": "Accesso fallito",
-    "cannot_retrieve_configuration": "Impossibile recuperare la configurazione del filtro"
+    "cannot_retrieve_configuration": "Impossibile recuperare la configurazione del filtro",
+    "zone_already_exists": "Zona esistente"
   },
   "login": {
     "sign_in": "Accedi",
@@ -414,7 +419,8 @@
       "bond_8023ad": "802.3ad Dynamic link aggregation",
       "bond_balance_alb": "Adaptive load balancing",
       "bond_balance_rr": "Round-robin",
-      "no_devices_available": "Nessun dispositivo disponibile"
+      "no_devices_available": "Nessun dispositivo disponibile",
+      "custom_zone": "Personalizzata"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -667,6 +673,19 @@
         "settings": "Impostazioni",
         "status": "Stato"
       }
+    },
+    "dpi": {
+      "search_results": "Cerca risultati",
+      "create_rule": "Crea regola",
+      "clear_search": "Svuota ricerca",
+      "delete_rule": "Elimina regola",
+      "try_changing_search_filter": "Prova a cambiare i tuoi filtri di ricerca",
+      "exceptions": "Eccezioni",
+      "source": "Sorgente",
+      "type_protocol": "Protocollo",
+      "type_application": "Applicazione",
+      "rules": "Regole",
+      "no_rules_found": "Nessuna regola trovata"
     }
   },
   "controller": {

@@ -65,24 +65,10 @@ async function importConfiguration() {
         :description="error"
       />
       <div>
-        <NeFormItemLabel>{{
-          `${t('standalone.openvpn_tunnel.nethsecurity_client_configuration')} (*.json)`
-        }}</NeFormItemLabel>
-        <NeFileInput v-if="!fileToUpload" v-model="fileToUpload" />
-        <NeCard v-else>
-          <div class="flex flex-row items-center">
-            <font-awesome-icon :icon="['fas', 'file']" class="mr-4 h-6 w-6" aria-hidden="true" />
-            <div class="mr-auto">
-              <p class="text-sm font-semibold">{{ fileToUpload.name }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ fileToUpload.size / 1000 }} KB
-              </p>
-            </div>
-            <NeButton @click="fileToUpload = undefined" kind="tertiary" class="self-stretch"
-              ><font-awesome-icon :icon="['fas', 'xmark']" class="h-4 w-4" aria-hidden="true"
-            /></NeButton>
-          </div>
-        </NeCard>
+        <NeFileInput
+          :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration')} (*.json)`"
+          v-model="fileToUpload"
+        />
       </div>
       <hr />
       <div class="flex justify-end">

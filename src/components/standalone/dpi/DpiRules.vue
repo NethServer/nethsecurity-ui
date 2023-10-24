@@ -21,9 +21,11 @@ import ManageDpiRuleModal from '@/components/standalone/dpi/ManageDpiRuleModal.v
 import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()
 const firewallConfig = useFirewallStore()
+const uciChangesStore = useUciPendingChangesStore()
 const rules = ref<DpiRule[]>([])
 const isShownManageRuleModal = ref(false)
 const currentRule = ref<DpiRule>()
@@ -38,9 +40,14 @@ let error = ref({
 })
 
 onMounted(() => {
+  loadData()
+})
+
+function loadData() {
   listRules()
   firewallConfig.fetch()
-})
+  uciChangesStore.getChanges()
+}
 
 async function listRules() {
   loading.value.listRules = true
@@ -129,7 +136,7 @@ function showDeleteRuleModal(rule: DpiRule) {
           :zones="firewallConfig.zones"
           @editRule="showEditRuleModal"
           @deleteRule="showDeleteRuleModal"
-          @reloadData="listRules"
+          @reloadData="loadData"
         />
       </div>
     </template>
@@ -139,14 +146,14 @@ function showDeleteRuleModal(rule: DpiRule) {
       :ruleToEdit="currentRule"
       :allRules="rules"
       @close="isShownManageRuleModal = false"
-      @reloadData="listRules"
+      @reloadData="loadData"
     />
     <!-- delete rule modal -->
     <DeleteDpiRuleModal
       :visible="isShownDeleteRuleModal"
       :rule="currentRule"
       @close="isShownDeleteRuleModal = false"
-      @reloadData="listRules"
+      @reloadData="loadData"
     />
   </div>
 </template>

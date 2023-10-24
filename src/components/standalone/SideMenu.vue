@@ -46,7 +46,7 @@ const navigation: Ref<MenuItem[]> = ref([
       { name: t('standalone.ssh.title'), to: 'system/ssh' },
       {
         name: t('standalone.backup_and_restore.title'),
-        to: 'system/backup-restore'
+        to: 'system/backup-and-restore'
       },
       {
         name: t('standalone.reboot_and_shutdown.title'),
@@ -85,11 +85,11 @@ const navigation: Ref<MenuItem[]> = ref([
       }
     ]
   },
-  {
-    name: t('standalone.users_and_objects.title'),
-    to: 'users-and-objects',
-    icon: 'user-group'
-  },
+  // { ////
+  //   name: t('standalone.users_and_objects.title'),
+  //   to: 'users-and-objects',
+  //   icon: 'user-group'
+  // },
   {
     name: t('standalone.firewall.title'),
     to: 'firewall',

@@ -739,7 +739,8 @@
     "account_management": {
       "change_password": "Modifica password",
       "change_password_description": "Nota: se cambi la password per l'utente 'root', cambierai anche la password per l'accesso alla shell.",
-      "title": "Gestione account per '{name} '"
+      "title": "Gestione account per '{name} '",
+      "language": "Language"
     },
     "flashstart": {
       "username": "Nome utente",

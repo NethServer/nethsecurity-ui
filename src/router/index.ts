@@ -94,6 +94,11 @@ const standaloneRoutes = [
     path: 'user',
     name: 'UserManagement',
     component: () => import('../views/standalone/UserManagement.vue')
+  },
+  {
+    path: 'security/dpi',
+    name: 'Dpi',
+    component: () => import('../views/standalone/security/DpiFilterView.vue')
   }
 ]
 

@@ -362,10 +362,17 @@ function validate() {
         .every((result) => result) && validRemoteHosts
   } else {
     // server form fields validation
+    const localNetworksCidrValidation = localNetworks.value.map((x) => validateIp4Cidr(x.id))
     const serverTunnelFieldsValidators: [validationOutput[], string][] = [
       [[validateRequired(port.value), validatePort(port.value)], 'port'],
       [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'vpnNetwork'],
-      [[validateRequiredOption(localNetworks.value)], 'localNetworks']
+      [
+        [
+          validateRequiredOption(localNetworks.value),
+          localNetworksCidrValidation.find((x) => !x.valid) ?? { valid: true }
+        ],
+        'localNetworks'
+      ]
     ]
 
     // public endpoints validation

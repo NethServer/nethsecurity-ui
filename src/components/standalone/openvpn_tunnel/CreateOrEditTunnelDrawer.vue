@@ -431,7 +431,6 @@ watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
-      console.log('invoke')
       fetchOptions().then(() => {
         resetForm()
       })
@@ -506,7 +505,14 @@ watch(
           :options="localNetworks"
           v-model="localNetworks"
           :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
-        />
+          ><template #tooltip>
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_tunnel.local_networks_tooltip')
+              }}</template></NeTooltip
+            >
+          </template></NeCombobox
+        >
         <NeMultiTextInput
           v-model="remoteNetworks"
           :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
@@ -595,14 +601,7 @@ watch(
           :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
           :title="t('standalone.openvpn_tunnel.remote_networks')"
           :invalid-messages="remoteNetworksValidationErrors"
-          ><template #tooltip>
-            <NeTooltip
-              ><template #content>{{
-                t('standalone.openvpn_tunnel.remote_networks_tooltip')
-              }}</template></NeTooltip
-            >
-          </template>
-        </NeMultiTextInput>
+        />
         <NeTextArea
           v-model="presharedKey"
           :label="t('standalone.openvpn_tunnel.preshared_key')"

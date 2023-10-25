@@ -149,7 +149,9 @@
   "ne_combobox": {
     "no_results": "No results",
     "limited_options_label": "Continue typing to show more options",
-    "no_options_label": "No options available"
+    "no_options_label": "No options available",
+    "selected": "Selected",
+    "user_input_label": "User input"
   },
   "ne_dropdown": {
     "open_menu": "Open menu"

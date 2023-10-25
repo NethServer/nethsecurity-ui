@@ -95,6 +95,7 @@ const mode = ref<'bridged' | 'routed'>('bridged')
 // remote options
 const digestOptions = ref<NeComboboxOption[]>([])
 const cipherOptions = ref<NeComboboxOption[]>([])
+const localNetworksOptions = ref<NeComboboxOption[]>([])
 
 const compressionOptions = [
   {
@@ -217,6 +218,9 @@ async function resetForm() {
   loading.value = true
   if (props.itemToEdit) {
     // call get-tunnel
+    /* const tunnelData = props.isClientTunnel
+      ? await ubusCall('ns.ovpntunnel', 'get-tunnel-client')
+      : await ubusCall('ns.ovpntunnel', 'get-tunnel-server') */
   } else {
     enabled.value = true
     name.value = ''
@@ -250,10 +254,12 @@ async function resetForm() {
       if (!props.isClientTunnel) {
         vpnNetwork.value = defaultsPayload.server
         publicEndpoints.value = defaultsPayload.remote
-        localNetworks.value = defaultsPayload.route.map((localNetwork) => ({
+        const initialNetworkOptions = defaultsPayload.route.map((localNetwork) => ({
           id: localNetwork,
           label: localNetwork
         }))
+        localNetworksOptions.value = [...initialNetworkOptions]
+        localNetworks.value = [...initialNetworkOptions]
       }
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
@@ -502,9 +508,15 @@ watch(
           :label="t('standalone.openvpn_tunnel.local_networks')"
           :placeholder="t('standalone.openvpn_tunnel.choose_network')"
           :multiple="true"
-          :options="localNetworks"
+          :options="localNetworksOptions"
           v-model="localNetworks"
           :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :show-selected-label="true"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :accept-user-input="true"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -652,20 +664,28 @@ watch(
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.compression')"
           :options="compressionOptions"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
           v-model="compression"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.digest')"
           :options="digestOptions"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
           v-model="digest"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.cipher')"
           :options="cipherOptions"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
           v-model="cipher"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"
           v-model="minimumTLSVersion"
           v-if="!isClientTunnel"

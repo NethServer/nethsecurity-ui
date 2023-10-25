@@ -8,6 +8,7 @@ import {
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   visible: boolean
@@ -20,29 +21,47 @@ const emit = defineEmits(['close', 'tunnel-downloaded'])
 const { visible, itemToDownload } = toRefs(props)
 const error = ref('')
 const isDownloading = ref(false)
-const downloadMode = ref('')
+const downloadMode = ref<
+  'nethsecurity_client_configuration' | 'private_key_tunnel_ca_certificates' | ''
+>('')
 
 const downloadOptions = [
   {
     id: 'nethsecurity_client_configuration',
     label: t('standalone.openvpn_tunnel.nethsecurity_client_configuration'),
     description: t('standalone.openvpn_tunnel.nethsecurity_client_configuration_description')
-  },
-  {
+  }
+  /*{
     id: 'private_key_tunnel_ca_certificates',
     label: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates'),
     description: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates_description')
-  }
+  }*/
 ]
 
 async function downloadTunnel() {
-  if (itemToDownload.value) {
+  if (itemToDownload.value && downloadMode.value) {
     try {
       error.value = ''
       isDownloading.value = true
-      //TODO: download tunnel
+      if (downloadMode.value == 'nethsecurity_client_configuration') {
+        const exportedJsonPayload = JSON.stringify(
+          (await ubusCall('ns.ovpntunnel', 'export-client', { name: itemToDownload.value.name }))
+            .data
+        )
+        var downloadElement = document.createElement('a')
+        downloadElement.setAttribute(
+          'href',
+          'data:text/json;charset=utf-8,' + encodeURIComponent(exportedJsonPayload)
+        )
+        downloadElement.setAttribute('download', `${itemToDownload.value.name}.json`)
+        document.body.appendChild(downloadElement)
+        downloadElement.click()
+        downloadElement.remove()
+      } else {
+        // TODO: download private key, tunnel and ca certificates
+      }
       emit('tunnel-downloaded')
-      emit('close')
+      close()
     } catch (err: any) {
       error.value = t(getAxiosErrorMessage(err))
     } finally {

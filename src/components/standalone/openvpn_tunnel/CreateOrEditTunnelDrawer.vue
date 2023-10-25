@@ -22,12 +22,14 @@ import {
   NeCombobox,
   NeFormItemLabel,
   NeTextArea,
+  NeSkeleton,
   type NeComboboxOption,
   NeRadioSelection
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
@@ -50,6 +52,8 @@ const validationErrorBag = ref(new MessageBag())
 const remoteNetworksValidationErrors = ref<string[]>([])
 const publicEndpointsValidationErrors = ref<string[]>([])
 const remoteHostsValidationErrors = ref<string[]>([])
+
+const showAdvancedSettings = ref(false)
 
 // Shared form fields
 const id = ref('')
@@ -81,12 +85,22 @@ const password = ref('')
 const certificate = ref('')
 const mode = ref<'bridged' | 'routed'>('bridged')
 
-const showAdvancedSettings = ref(false)
+// remote options
+const digestOptions = ref<NeComboboxOption[]>([])
+const cipherOptions = ref<NeComboboxOption[]>([])
 
 const compressionOptions = [
   {
     id: 'disabled',
     label: t('standalone.openvpn_tunnel.disabled')
+  },
+  {
+    id: 'lzo',
+    label: 'LZ0'
+  },
+  {
+    id: 'lz4',
+    label: 'LZ4'
   }
 ]
 
@@ -134,28 +148,56 @@ const protocolOptions = [
   }
 ]
 
-const digestOptions = [
-  {
-    id: 'auto',
-    label: t('standalone.openvpn_tunnel.auto'),
-    description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
-  }
-]
-
-const cipherOptions = [
-  {
-    id: 'auto',
-    label: t('standalone.openvpn_tunnel.auto'),
-    description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
-  }
-]
-
 const tlsOptions = [
   {
     id: 'auto',
     label: t('standalone.openvpn_tunnel.auto')
+  },
+  {
+    id: '1.1',
+    label: '1.1'
+  },
+  {
+    id: '1.2',
+    label: '1.2'
   }
 ]
+
+async function fetchOptions() {
+  try {
+    loading.value = true
+    cipherOptions.value = [
+      {
+        id: 'auto',
+        label: t('standalone.openvpn_tunnel.auto'),
+        description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
+      },
+      ...(await ubusCall('ns.ovpntunnel', 'list-cipher')).data.ciphers.map(
+        (cipher: { name: string; description: string }) => ({
+          id: cipher.name,
+          label: cipher.name
+        })
+      )
+    ]
+    digestOptions.value = [
+      {
+        id: 'auto',
+        label: t('standalone.openvpn_tunnel.auto'),
+        description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
+      },
+      ...(await ubusCall('ns.ovpntunnel', 'list-digest')).data.digests.map(
+        (digest: { name: string; description: string }) => ({
+          id: digest.name,
+          label: digest.name
+        })
+      )
+    ]
+    loading.value = false
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_tunnel_options')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+}
 
 function cleanValidationErrors() {
   validationErrorBag.value.clear()
@@ -340,6 +382,15 @@ watchEffect(() => {
 onMounted(() => {
   resetForm()
 })
+
+watch(
+  () => props.isShown,
+  () => {
+    if (props.isShown) {
+      fetchOptions()
+    }
+  }
+)
 </script>
 
 <template>
@@ -364,7 +415,8 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     />
-    <div class="flex flex-col gap-y-6">
+    <NeSkeleton :lines="15" v-if="loading" />
+    <div class="flex flex-col gap-y-6" v-else>
       <div>
         <NeFormItemLabel>{{ t('standalone.openvpn_tunnel.status') }}</NeFormItemLabel>
         <NeToggle

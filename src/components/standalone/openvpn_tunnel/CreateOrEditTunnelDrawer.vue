@@ -9,8 +9,6 @@ import {
   validateRequiredOption,
   type validationOutput
 } from '@/lib/validation'
-import { onMounted } from 'vue'
-import { watchEffect } from 'vue'
 import {
   NeSideDrawer,
   NeInlineNotification,
@@ -30,6 +28,16 @@ import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+
+type TunnelDefaults = {
+  secret: string
+  port: number
+  server: string
+  ifconfig_local: string
+  ifconfig_remote: string
+  route: string[]
+  remote: string[]
+}
 
 const props = defineProps<{
   isShown: boolean
@@ -59,6 +67,7 @@ const showAdvancedSettings = ref(false)
 const id = ref('')
 const enabled = ref(true)
 const name = ref('')
+const port = ref('')
 const remoteNetworks = ref<string[]>([''])
 const topology = ref<'subnet' | 'p2p'>('subnet')
 const localP2pIp = ref('')
@@ -71,14 +80,12 @@ const cipher = ref('auto')
 
 // Server tunnel form fields
 const publicEndpoints = ref<string[]>([''])
-const port = ref('')
 const localNetworks = ref<NeComboboxOption[]>([])
 const minimumTLSVersion = ref('auto')
 const vpnNetwork = ref('')
 
 // Client tunnel form fields
 const remoteHosts = ref<string[]>([''])
-const remotePort = ref('')
 const authentication = ref<'certificate' | 'username_password_certificate'>('certificate')
 const username = ref('')
 const password = ref('')
@@ -206,8 +213,54 @@ function cleanValidationErrors() {
   remoteHostsValidationErrors.value = []
 }
 
-function resetForm() {
-  //TODO: fill in after knowing payload format
+async function resetForm() {
+  loading.value = true
+  if (props.itemToEdit) {
+    // call get-tunnel
+  } else {
+    enabled.value = true
+    name.value = ''
+    remoteNetworks.value = ['']
+    topology.value = 'subnet'
+    protocol.value = 'udp'
+    compression.value = 'disabled'
+    digest.value = 'auto'
+    cipher.value = 'auto'
+
+    if (props.isClientTunnel) {
+      minimumTLSVersion.value = 'auto'
+    } else {
+      remoteHosts.value = ['']
+      authentication.value = 'certificate'
+      username.value = ''
+      password.value = ''
+      certificate.value = ''
+      mode.value = 'bridged'
+    }
+
+    try {
+      const defaultsPayload = (await ubusCall('ns.ovpntunnel', 'get-defaults'))
+        .data as TunnelDefaults
+
+      port.value = defaultsPayload.port.toString()
+      localP2pIp.value = defaultsPayload.ifconfig_local
+      remoteP2pIp.value = defaultsPayload.ifconfig_remote
+      presharedKey.value = defaultsPayload.secret
+
+      if (!props.isClientTunnel) {
+        vpnNetwork.value = defaultsPayload.server
+        publicEndpoints.value = defaultsPayload.remote
+        localNetworks.value = defaultsPayload.route.map((localNetwork) => ({
+          id: localNetwork,
+          label: localNetwork
+        }))
+      }
+    } catch (err: any) {
+      error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    }
+  }
+  loading.value = false
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -277,7 +330,7 @@ function validate() {
 
     // client form fields validation
     const clientTunnelFieldsValidators: [validationOutput[], string][] = [
-      [[validateRequired(remotePort.value), validatePort(remotePort.value)], 'remotePort'],
+      [[validateRequired(port.value), validatePort(port.value)], 'port'],
       [[validateRequired(certificate.value), validateIp4Cidr(vpnNetwork.value)], 'certificate'],
       ...(authentication.value === 'username_password_certificate'
         ? usernamePasswordValidators
@@ -360,7 +413,6 @@ function close() {
   cleanValidationErrors()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
-  resetForm()
   emit('close')
 }
 
@@ -375,19 +427,14 @@ watch(
   }
 )
 
-watchEffect(() => {
-  resetForm()
-})
-
-onMounted(() => {
-  resetForm()
-})
-
 watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
-      fetchOptions()
+      console.log('invoke')
+      fetchOptions().then(() => {
+        resetForm()
+      })
     }
   }
 )
@@ -415,7 +462,7 @@ watch(
       class="mb-6"
       kind="error"
     />
-    <NeSkeleton :lines="15" v-if="loading" />
+    <NeSkeleton :lines="20" v-if="loading" />
     <div class="flex flex-col gap-y-6" v-else>
       <div>
         <NeFormItemLabel>{{ t('standalone.openvpn_tunnel.status') }}</NeFormItemLabel>
@@ -456,7 +503,7 @@ watch(
           :label="t('standalone.openvpn_tunnel.local_networks')"
           :placeholder="t('standalone.openvpn_tunnel.choose_network')"
           :multiple="true"
-          :options="[]"
+          :options="localNetworks"
           v-model="localNetworks"
           :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
         />
@@ -482,9 +529,9 @@ watch(
           :invalid-messages="remoteHostsValidationErrors"
         />
         <NeTextInput
-          v-model="remotePort"
+          v-model="port"
           :label="t('standalone.openvpn_tunnel.remote_port')"
-          :invalid-message="validationErrorBag.getFirstFor('remotePort')"
+          :invalid-message="validationErrorBag.getFirstFor('port')"
         />
       </template>
       <NeRadioSelection

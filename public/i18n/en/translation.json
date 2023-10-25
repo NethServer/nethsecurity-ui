@@ -135,6 +135,7 @@
     "cannot_enable_tunnel": "Cannot enable tunnel",
     "cannot_disable_tunnel": "Cannot disable tunnel",
     "cannot_retrieve_tunnel_options": "Cannot retrieve tunnel options",
+    "cannot_retrieve_tunnel_defaults": "Cannot retrieve tunnel defaults",
     "cannot_import_configuration": "Cannot import configuration"
   },
   "ne_text_input": {

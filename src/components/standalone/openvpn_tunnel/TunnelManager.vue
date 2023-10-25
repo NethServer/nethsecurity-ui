@@ -15,33 +15,25 @@ import CreateOrEditTunnelDrawer from './CreateOrEditTunnelDrawer.vue'
 import DeleteTunnelModal from './DeleteTunnelModal.vue'
 import DownloadTunnelModal from './DownloadTunnelModal.vue'
 import ImportConfigurationDrawer from './ImportConfigurationDrawer.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 export type ServerTunnel = {
   name: string
-  lport: string
-  proto: string
+  port: string
   topology: string
-  ifconfig: string
-  public_ip: string[]
-  locals: string[]
-  remotes: string[]
   enabled: boolean
-  connected: boolean
+  local_network: string[]
+  remote_network: string[]
   vpn_network: string
 }
 
 export type ClientTunnel = {
   name: string
-  lport: string
-  proto: string
   topology: string
-  ifconfig: string
-  public_ip: string[]
-  locals: string[]
-  remotes: string[]
   enabled: boolean
-  connected: boolean
-  remote_hosts: string[]
+  port: string
+  remote_host: string[]
+  remote_network: string[]
 }
 
 type Tunnel = ServerTunnel | ClientTunnel
@@ -55,39 +47,32 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 const loading = ref(true)
-const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([
-  {
-    name: 'server1',
-    lport: '2001',
-    proto: 'udp',
-    topology: 'p2p',
-    ifconfig: '10.96.83.1 10.96.83.2',
-    public_ip: ['192.168.122.49'],
-    locals: ['192.168.102.0/24'],
-    remotes: ['192.168.5.0/24'],
-    enabled: true,
-    connected: true,
-    remote_hosts: ['123.123.123.123', '112.121.121.121']
-  }
-])
+const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([])
 const selectedTunnel = ref<Tunnel | null>(null)
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
 const showDownloadModal = ref(false)
 const showImportConfigurationDrawer = ref(false)
-const error = ref('')
+const error = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
 
 async function fetchTunnels() {
   try {
     loading.value = true
+    const listTunnelResponse = await ubusCall('ns.ovpntunnel', 'list-tunnels')
     if (props.manageClientTunnels) {
-      // fetch client tunnels
+      tunnels.value = listTunnelResponse.data.clients
     } else {
-      //fetch server tunnels
+      tunnels.value = listTunnelResponse.data.servers
     }
     loading.value = false
   } catch (err: any) {
-    error.value = t(getAxiosErrorMessage(err))
+    error.value.notificationTitle = props.manageClientTunnels
+      ? t('error.cannot_retrieve_client_tunnels')
+      : t('error.cannot_retrieve_server_tunnels')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
 }
 
@@ -118,8 +103,26 @@ function closeModalsAndDrawers() {
   showImportConfigurationDrawer.value = false
 }
 
+function cleanError() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: ''
+  }
+}
+
 async function toggleTunnelEnable(tunnel: Tunnel) {
-  //TODO: toggle tunnel enable
+  try {
+    cleanError()
+    await ubusCall('ns.ovpntunnel', tunnel.enabled ? 'disable-tunnel' : 'enable-tunnel', {
+      name: tunnel.name
+    })
+    await reloadTunnels()
+  } catch (err: any) {
+    error.value.notificationTitle = t(
+      tunnel.enabled ? 'error.cannot_disable_tunnel' : 'error.cannot_enable_tunnel'
+    )
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
 }
 
 async function reloadTunnels() {
@@ -184,13 +187,9 @@ onMounted(() => {
     </div>
     <NeInlineNotification
       kind="error"
-      :title="
-        manageClientTunnels
-          ? t('error.cannot_retrieve_client_tunnels')
-          : t('error.cannot_retrieve_server_tunnels')
-      "
-      :description="error"
-      v-if="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      v-if="error.notificationTitle"
     />
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>

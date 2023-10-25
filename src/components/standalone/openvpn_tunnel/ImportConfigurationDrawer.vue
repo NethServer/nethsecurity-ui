@@ -5,9 +5,7 @@ import {
   NeButton,
   NeFileInput,
   NeInlineNotification,
-  NeFormItemLabel,
-  getAxiosErrorMessage,
-  NeCard
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

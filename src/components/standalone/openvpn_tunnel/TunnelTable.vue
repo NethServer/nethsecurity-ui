@@ -119,39 +119,39 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
       <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
     </template>
     <template #port="{ item }: { item: ServerTunnel | ClientTunnel }">
-      <p :class="[...getCellClasses(item)]">{{ item.lport }}</p>
+      <p :class="[...getCellClasses(item)]">{{ item.port }}</p>
     </template>
     <template v-if="!props.isClientTunnel" #local_networks="{ item }: { item: ServerTunnel }">
-      <template v-if="item.locals.length > 0">
+      <template v-if="item.local_network.length > 0">
         <p
-          v-for="(local, idx) in item.locals.slice(0, 2)"
+          v-for="(local, idx) in item.local_network.slice(0, 2)"
           :key="local"
           :class="[...getCellClasses(item)]"
         >
-          {{ local }}{{ item.locals.length > 2 && idx == 1 ? '...' : '' }}
+          {{ local }}{{ item.local_network.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
     </template>
     <template #remote_networks="{ item }: { item: ServerTunnel | ClientTunnel }">
-      <template v-if="item.remotes.length > 0">
+      <template v-if="item.remote_network.length > 0">
         <p
-          v-for="(remote, idx) in item.remotes.slice(0, 2)"
+          v-for="(remote, idx) in item.remote_network.slice(0, 2)"
           :key="remote"
           :class="[...getCellClasses(item)]"
         >
-          {{ remote }}{{ item.remotes.length > 2 && idx == 1 ? '...' : '' }}
+          {{ remote }}{{ item.remote_network.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
       <p :class="[...getCellClasses(item)]" v-else>-</p>
     </template>
     <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnel }">
-      <template v-if="item.remote_hosts.length > 0">
+      <template v-if="item.remote_host.length > 0">
         <p
-          v-for="(remoteHost, idx) in item.remote_hosts.slice(0, 2)"
+          v-for="(remoteHost, idx) in item.remote_host.slice(0, 2)"
           :key="remoteHost"
           :class="[...getCellClasses(item)]"
         >
-          {{ remoteHost }}{{ item.remote_hosts.length > 2 && idx == 1 ? '...' : '' }}
+          {{ remoteHost }}{{ item.remote_host.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
     </template>

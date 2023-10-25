@@ -3,6 +3,7 @@ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const { t } = useI18n()
 
@@ -22,7 +23,7 @@ async function deleteTunnel() {
     try {
       error.value = ''
       isDeleting.value = true
-      //TODO: delete tunnel
+      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { name: itemToDelete.value.name })
       emit('tunnel-deleted')
       emit('close')
     } catch (err: any) {
@@ -60,6 +61,7 @@ function close() {
       kind="error"
       :title="t('error.cannot_delete_tunnel')"
       :description="error"
+      class="my-2"
     />
   </NeModal>
 </template>

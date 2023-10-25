@@ -132,6 +132,8 @@
     "cannot_download_tunnel": "Cannot download tunnel",
     "cannot_create_tunnel": "Cannot create tunnel",
     "cannot_edit_tunnel": "Cannot edit tunnel",
+    "cannot_enable_tunnel": "Cannot enable tunnel",
+    "cannot_disable_tunnel": "Cannot disable tunnel",
     "cannot_import_configuration": "Cannot import configuration"
   },
   "ne_text_input": {

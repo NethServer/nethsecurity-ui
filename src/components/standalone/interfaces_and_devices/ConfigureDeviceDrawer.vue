@@ -523,6 +523,10 @@ async function createAndSetNetworkDevice() {
 async function addInterfaceToFirewallZone() {
   const fwZone = props.firewallConfig.zone.find((z: any) => z.name === zone.value)
 
+  if (!fwZone.network) {
+    fwZone.network = []
+  }
+
   // add the new interface to zone interfaces
   fwZone.network.push(interfaceName.value)
 

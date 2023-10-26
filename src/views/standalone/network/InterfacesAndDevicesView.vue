@@ -164,7 +164,7 @@ const sortedZonesAndDevices: any = computed(() => {
         if (zoneObj) {
           zoneObj.devices.push(dev)
         } else {
-          zones[zoneFound.name] = { name: zoneFound.name, devices: [dev] }
+          zones.push({ name: zoneFound.name, devices: [dev] })
         }
       }
     }

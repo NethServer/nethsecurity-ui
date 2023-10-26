@@ -36,7 +36,7 @@ import ConfigureDeviceDrawer, {
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
-import { isEmpty, isEqual, uniqWith, upperFirst } from 'lodash'
+import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -317,7 +317,7 @@ function getInterfaceIconName(device: any) {
     case 'openvpnrw':
       return 'globe'
     default:
-      return 'circle-question'
+      return 'star'
   }
 }
 
@@ -338,7 +338,7 @@ function getIconBackgroundStyle(device: any) {
     case 'openvpnrw':
       return 'bg-teal-100 dark:bg-teal-700'
     default:
-      return 'bg-gray-100 dark:bg-gray-500'
+      return 'bg-indigo-100 dark:bg-indigo-700'
   }
 }
 
@@ -358,7 +358,7 @@ function getIconForegroundStyle(device: any) {
     case 'openvpnrw':
       return 'text-teal-700 dark:text-teal-50'
     default:
-      return 'text-gray-500 dark:text-gray-50'
+      return 'text-indigo-700 dark:text-indigo-50'
   }
 }
 
@@ -692,7 +692,7 @@ function getTxBytes(device: any) {
             <NeTitle level="h3">{{
               te(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 ? t(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
-                : upperFirst(zone.name)
+                : toUpper(zone.name)
             }}</NeTitle>
             <div class="space-y-4">
               <template v-for="(device, i) in zone.devices" :key="i">
@@ -759,7 +759,6 @@ function getTxBytes(device: any) {
                         class="flex flex-wrap items-start gap-8 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
                       >
                         <div class="flex items-center">
-                          <!-- use component for interface icon? //// -->
                           <div
                             :class="`mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${getIconBackgroundStyle(
                               device

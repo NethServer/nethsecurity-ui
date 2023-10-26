@@ -117,6 +117,7 @@ let errorGetConfiguration = ref({ ...objError })
 let errorSave = ref({ ...objError })
 let errorUnregister = ref({ ...objError })
 let errorDhcpRange = ref({ ...objError })
+let errorHostname = ref({ ...objError })
 
 onMounted(() => {
   errorListParents.value = { ...objError }
@@ -125,6 +126,7 @@ onMounted(() => {
   getListParents()
   getListDevices()
   getConfiguration()
+  getHostname()
 })
 
 async function getListParents() {
@@ -162,7 +164,10 @@ async function getListDevices() {
         label: item
       }))
       configurationForm.value.networkDevice = res.data.devices[0]
-    } else emptyDevices.value = true
+    } else {
+      isError.value = true
+      emptyDevices.value = true
+    }
   } catch (exception: any) {
     isError.value = true
     errorListDevices.value.notificationTitle = t('error.cannot_retrieve_network_device')
@@ -185,7 +190,6 @@ async function getConfiguration() {
       }
 
       configurationForm.value.parentHotspot = configuration.hotspot_id
-      configurationForm.value.unitName = configuration.unit_name
       configurationForm.value.unitDescription = configuration.unit_description
       configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {
@@ -200,6 +204,17 @@ async function getConfiguration() {
     isError.value = true
     errorGetConfiguration.value.notificationTitle = t('error.cannot_retrieve_configuration')
     errorGetConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  }
+}
+
+async function getHostname() {
+  try {
+    let systemInfo = await ubusCall('system', 'board')
+    configurationForm.value.unitName = systemInfo.data.hostname
+  } catch (exception: any) {
+    isError.value = true
+    errorHostname.value.notificationTitle = t('error.cannot_retrieve_system_board')
+    errorHostname.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
 
@@ -570,6 +585,13 @@ function goToInterfaces() {
         @primaryClick="goToInterfaces"
       />
       <NeInlineNotification
+        v-if="errorHostname.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorHostname.notificationTitle"
+        :description="errorHostname.notificationDescription"
+      />
+      <NeInlineNotification
         v-if="errorListParents.notificationTitle"
         class="my-4"
         kind="error"
@@ -605,7 +627,7 @@ function goToInterfaces() {
             :invalid-message="error.unitName"
             :placeholder="t('standalone.hotspot.settings.configuration_unit_name_placeholder')"
             :label="t('standalone.hotspot.settings.configuration_unit_name')"
-            :disabled="!isLoggedIn"
+            disabled
             ref="unitNameRef"
           />
           <NeTextInput

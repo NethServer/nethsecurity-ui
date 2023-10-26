@@ -138,10 +138,11 @@ async function getListParents() {
     if (res?.data?.parents?.length) {
       isLoggedIn.value = true
       parentHotspotList.value = res.data.parents.map((item: ParentHotspot) => ({
-        id: item.id,
+        id: String(item.id),
         label: item.name
       }))
-      configurationForm.value.parentHotspot = res.data.parents[0].id
+      if (!configurationForm.value.parentHotspot)
+        configurationForm.value.parentHotspot = String(res.data.parents[0].id)
     }
   } catch (exception: any) {
     isError.value = true
@@ -189,7 +190,7 @@ async function getConfiguration() {
         isLoggedIn.value = false
       }
 
-      configurationForm.value.parentHotspot = configuration.hotspot_id
+      configurationForm.value.parentHotspot = String(configuration.hotspot_id)
       configurationForm.value.unitDescription = configuration.unit_description
       configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {

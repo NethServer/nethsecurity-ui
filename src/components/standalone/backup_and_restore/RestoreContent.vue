@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
+  NeModal,
   NeTitle,
   NeButton,
   NeTooltip,
@@ -11,6 +12,7 @@ import {
   NeTextInput,
   NeFileInput,
   NeSideDrawer,
+  NeProgressBar,
   NeRadioSelection,
   NeInlineNotification,
   getAxiosErrorMessage,
@@ -20,10 +22,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { validateRequired } from '@/lib/validation'
 
 const { t } = useI18n()
+const RESTORE_WAIT_TIME = 45000
 
 const formRestore = ref({
   passphrase: '',
-  file: [],
+  file: undefined,
   backup: ''
 })
 
@@ -34,6 +37,11 @@ let isSetPassphrase = ref(false)
 let showRestoreDrawer = ref(false)
 let typeRestore = ref('upload_file')
 let listBackups: any = ref([])
+let isRestoring = ref(false)
+let restoreProgress = ref(0)
+let restoreIntervalRef = ref<number | undefined>()
+let restoreTimeoutRef = ref<number | undefined>()
+
 let sourceRestoreOptions = [
   {
     id: 'from_backup',
@@ -72,8 +80,8 @@ async function getSubscription() {
   try {
     let res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.systemd_id && res?.data?.active) {
-      //isEnterprise.value = true
-      //typeRestore.value = 'from_backup'
+      isEnterprise.value = true
+      typeRestore.value = 'from_backup'
       await getBackups()
     }
   } catch (exception: any) {
@@ -135,11 +143,13 @@ function validateRestore(): boolean {
   }
 
   if (typeRestore.value === 'upload_file') {
-    /*let { valid, errMessage } = validateRequired(formRestore.value.file)
+    let { valid, errMessage } = validateRequired(
+      formRestore?.value?.file ? formRestore.value.file : ''
+    )
     if (!valid) {
       errorRestore.value.file = t(errMessage as string)
       isValidationOk = false
-    }*/
+    }
   } else if (isEnterprise.value && typeRestore.value === 'from_backup') {
     let { valid, errMessage } = validateRequired(formRestore.value.backup)
     if (!valid) {
@@ -169,30 +179,44 @@ async function restoreBackup() {
   clearErrors()
   if (validateRestore()) {
     loadingRestore.value = true
-
+    let error = false
     try {
-      /*let payload = {}
+      let payload = {}
       let methodCall = 'restore'
 
-      if (isSetPassphrase.value) payload.passphrase = formRestore.value.passphrase
+      if (isSetPassphrase.value)
+        Object.assign(payload, { passphrase: formRestore.value.passphrase })
 
       if (isEnterprise.value && typeRestore.value === 'from_backup') {
         methodCall = 'registered-restore'
-        payload.file = formRestore.value.backup
+        Object.assign(payload, { file: formRestore.value.backup })
       } else {
-        payload.backup = formRestore.value.file
+        await new Promise((resolve: any) => {
+          let reader = new FileReader()
+          reader.onload = function (event) {
+            if (event?.target?.result) {
+              Object.assign(payload, { backup: String(event.target.result).split(',')[1] })
+            } else {
+              error = true
+            }
+            resolve()
+          }
+          if (formRestore.value.file) {
+            reader.readAsDataURL(formRestore.value.file)
+          }
+        })
       }
 
-      console.log(methodCall, payload)
-      if (methodCall) {
+      if (!error && methodCall) {
         let res = await ubusCall('ns.backup', methodCall, payload)
-				if (
-					res?.data?.message &&
-					res?.data?.message === 'success'
-				) {
-
-				}
-      }*/
+        if (res?.data?.message && res?.data?.message === 'success') {
+          isRestoring.value = true
+          showRestoreDrawer.value = false
+          setRestoreTimer()
+        }
+      } else {
+        errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
+      }
     } catch (exception: any) {
       errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
       errorRestoreBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -200,6 +224,16 @@ async function restoreBackup() {
       loadingRestore.value = false
     }
   }
+}
+
+function setRestoreTimer() {
+  restoreTimeoutRef.value = setTimeout(() => {
+    location.reload()
+  }, RESTORE_WAIT_TIME)
+
+  restoreIntervalRef.value = setInterval(() => {
+    restoreProgress.value += 0.5
+  }, RESTORE_WAIT_TIME / 200)
 }
 </script>
 
@@ -319,10 +353,24 @@ async function restoreBackup() {
             :loading="loadingRestore"
             @click="restoreBackup()"
           >
-            {{ t('standalone.backup_and_restore.restore.restore_button') }}
+            {{ t('standalone.backup_and_restore.restore.restore') }}
           </NeButton>
         </div>
       </div>
     </NeSideDrawer>
+    <NeModal
+      :primary-label="t('standalone.backup_and_restore.restore.restore_now')"
+      :primary-button-loading="isRestoring"
+      :primary-button-disabled="isRestoring"
+      :title="t('standalone.backup_and_restore.restore.restore')"
+      :cancel-label="!isRestoring ? t('common.cancel') : ''"
+      :visible="isRestoring"
+      kind="warning"
+      primary-button-kind="danger"
+      @close="isRestoring = false"
+    >
+      {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}
+      <NeProgressBar class="my-4" :progress="restoreProgress" />
+    </NeModal>
   </div>
 </template>

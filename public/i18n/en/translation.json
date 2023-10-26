@@ -325,8 +325,10 @@
       },
       "restore": {
         "description": "Restore the firewall's previous configuration and settings from a saved backup file, ensuring it functions with its original rules and parameters.",
+        "restore": "Restore",
+        "restore_now": "Restoring now",
+        "restore_in_progress": "Restoring backup in progress",
         "restore_backup": "Restore backup",
-        "restore_button": "Restore",
         "passphrase": "Passphrase",
         "passphrase_helper": "Lorem ipsum..",
         "source": "Backup source",

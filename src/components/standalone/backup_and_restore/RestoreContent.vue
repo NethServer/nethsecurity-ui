@@ -9,18 +9,21 @@ import {
   NeCombobox,
   NeSkeleton,
   NeTextInput,
+  NeFileInput,
   NeSideDrawer,
   NeRadioSelection,
   NeInlineNotification,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  focusElement
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { validateRequired } from '@/lib/validation'
 
 const { t } = useI18n()
 
 const formRestore = ref({
   passphrase: '',
-  file: '',
+  file: [],
   backup: ''
 })
 
@@ -41,11 +44,16 @@ let sourceRestoreOptions = [
     label: t('standalone.backup_and_restore.restore.from_file')
   }
 ]
+let passphraseRef = ref()
+let fileRef = ref()
+let backupRef = ref()
 
 let objNotification = {
   notificationTitle: '',
   notificationDescription: '',
-  passphrase: ''
+  passphrase: '',
+  file: '',
+  backup: ''
 }
 
 let error = ref(false)
@@ -53,6 +61,7 @@ let errorSubscription = ref({ ...objNotification })
 let errorIsPassphrase = ref({ ...objNotification })
 let errorRestore = ref({ ...objNotification })
 let errorGetBackup = ref({ ...objNotification })
+let errorRestoreBackup = ref({ ...objNotification })
 
 onMounted(() => {
   getSubscription()
@@ -63,8 +72,8 @@ async function getSubscription() {
   try {
     let res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.systemd_id && res?.data?.active) {
-      isEnterprise.value = true
-      typeRestore.value = 'from_backup'
+      //isEnterprise.value = true
+      //typeRestore.value = 'from_backup'
       await getBackups()
     }
   } catch (exception: any) {
@@ -108,8 +117,89 @@ async function getBackups() {
   }
 }
 
-function restoreBackup() {
-  // TODO restoreBackup
+function validateRestore(): boolean {
+  let isValidationOk = true
+  let isFocusInput = false
+
+  if (isSetPassphrase.value) {
+    let { valid, errMessage } = validateRequired(formRestore.value.passphrase)
+    if (!valid) {
+      errorRestore.value.passphrase = t(errMessage as string)
+      isValidationOk = false
+    }
+  }
+
+  if (!isValidationOk) {
+    focusElement(passphraseRef)
+    isFocusInput = true
+  }
+
+  if (typeRestore.value === 'upload_file') {
+    /*let { valid, errMessage } = validateRequired(formRestore.value.file)
+    if (!valid) {
+      errorRestore.value.file = t(errMessage as string)
+      isValidationOk = false
+    }*/
+  } else if (isEnterprise.value && typeRestore.value === 'from_backup') {
+    let { valid, errMessage } = validateRequired(formRestore.value.backup)
+    if (!valid) {
+      errorRestore.value.backup = t(errMessage as string)
+      isValidationOk = false
+    }
+
+    if (!isValidationOk && !isFocusInput) {
+      focusElement(backupRef)
+    }
+  }
+
+  return isValidationOk
+}
+
+function clearErrors() {
+  errorRestore.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    passphrase: '',
+    file: '',
+    backup: ''
+  }
+}
+
+async function restoreBackup() {
+  clearErrors()
+  if (validateRestore()) {
+    loadingRestore.value = true
+
+    try {
+      /*let payload = {}
+      let methodCall = 'restore'
+
+      if (isSetPassphrase.value) payload.passphrase = formRestore.value.passphrase
+
+      if (isEnterprise.value && typeRestore.value === 'from_backup') {
+        methodCall = 'registered-restore'
+        payload.file = formRestore.value.backup
+      } else {
+        payload.backup = formRestore.value.file
+      }
+
+      console.log(methodCall, payload)
+      if (methodCall) {
+        let res = await ubusCall('ns.backup', methodCall, payload)
+				if (
+					res?.data?.message &&
+					res?.data?.message === 'success'
+				) {
+
+				}
+      }*/
+    } catch (exception: any) {
+      errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
+      errorRestoreBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    } finally {
+      loadingRestore.value = false
+    }
+  }
 }
 </script>
 
@@ -175,13 +265,20 @@ function restoreBackup() {
               v-model="formRestore.backup"
               :options="listBackups"
               :label="t('standalone.backup_and_restore.restore.backup')"
+              :invalid-message="errorRestore.backup"
               class="grow"
+              ref="backupRef"
             />
           </template>
         </template>
         <template v-if="typeRestore === 'upload_file'">
-          <!-- TODO UPLOAD FILE -->
-          <div>UPLOD FILE</div>
+          <NeFileInput
+            :label="t('standalone.backup_and_restore.restore.upload_file')"
+            :dropzoneLabel="t('standalone.backup_and_restore.restore.upload_file_description')"
+            :invalid-message="errorRestore.file"
+            v-model="formRestore.file"
+            ref="fileRef"
+          />
         </template>
         <template v-if="isSetPassphrase">
           <NeTextInput
@@ -201,6 +298,13 @@ function restoreBackup() {
           </NeTextInput>
         </template>
         <hr />
+        <NeInlineNotification
+          v-if="errorRestoreBackup.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="errorRestoreBackup.notificationTitle"
+          :description="errorRestoreBackup.notificationDescription"
+        />
         <div class="flex justify-end gap-4">
           <NeButton
             :disabled="loadingRestore"

@@ -117,6 +117,7 @@
     "cannot_set_passphrase": "Cannot set passphrase",
     "cannot_download_backup": "Cannot download backup",
     "cannot_run_backup": "Cannot run backup",
+    "cannot_restore_backup": "Cannot restore backup",
     "cannot_retrieve_backup": "Cannot retrieve backups",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_passphrase": "Lorem ipsum..."
@@ -331,7 +332,9 @@
         "source": "Backup source",
         "backup": "Backup",
         "from_backup": "From last backups",
-        "from_file": "Upload file"
+        "from_file": "Upload file",
+        "upload_file": "Backup file (*.tar .xz)",
+        "upload_file_description": "Drag and drop or choose file"
       }
     },
     "reboot_and_shutdown": {

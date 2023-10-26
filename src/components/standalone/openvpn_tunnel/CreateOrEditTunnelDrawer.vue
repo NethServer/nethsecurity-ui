@@ -508,6 +508,7 @@ watch(
         </NeMultiTextInput>
         <NeTextInput
           v-model="port"
+          type="number"
           :label="t('standalone.openvpn_tunnel.port')"
           :invalid-message="validationErrorBag.getFirstFor('port')"
         />
@@ -555,6 +556,7 @@ watch(
         />
         <NeTextInput
           v-model="port"
+          type="number"
           :label="t('standalone.openvpn_tunnel.remote_port')"
           :invalid-message="validationErrorBag.getFirstFor('port')"
         />
@@ -592,6 +594,7 @@ watch(
             />
             <NeTextInput
               v-model="password"
+              :is-password="true"
               :label="t('standalone.openvpn_tunnel.password')"
               :invalid-message="validationErrorBag.getFirstFor('password')"
             />

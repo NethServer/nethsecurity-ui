@@ -52,7 +52,10 @@ async function downloadTunnel() {
           'href',
           'data:text/json;charset=utf-8,' + encodeURIComponent(exportedJsonPayload)
         )
-        downloadElement.setAttribute('download', `${itemToDownload.value.ns_name}.json`)
+        downloadElement.setAttribute(
+          'download',
+          `${!itemToDownload.value.ns_name ? 'tunnel' : itemToDownload.value.ns_name}.json`
+        )
         document.body.appendChild(downloadElement)
         downloadElement.click()
         downloadElement.remove()
@@ -109,6 +112,7 @@ function close() {
       kind="error"
       :title="t('error.cannot_download_tunnel')"
       :description="error"
+      class="mt-4"
     />
   </NeModal>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
+import { validateFile } from '@/lib/validation'
 import {
   NeSideDrawer,
   NeButton,
@@ -15,20 +16,28 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const error = ref('')
+const importConfigurationError = ref('')
+const fileInputValidationError = ref('')
 const isImporting = ref(false)
 
-const fileToUpload = ref<File>()
+const fileToUpload = ref<File | null>(null)
 
 const emit = defineEmits(['close', 'tunnel-imported'])
 
 function close() {
-  error.value = ''
-  fileToUpload.value = undefined
+  importConfigurationError.value = ''
+  fileInputValidationError.value = ''
+  fileToUpload.value = null
   emit('close')
 }
 
 async function importConfiguration() {
+  const fileValidation = validateFile(fileToUpload.value, 'json')
+  if (!fileValidation.valid) {
+    fileInputValidationError.value = t(fileValidation.errMessage as string)
+    return
+  }
+
   try {
     isImporting.value = true
     const jsonPayload = await fileToUpload.value?.text()
@@ -38,9 +47,11 @@ async function importConfiguration() {
   } catch (err: any) {
     if (err instanceof SyntaxError) {
       // JSON file parsing failed
-      error.value = t('standalone.openvpn_tunnel.could_not_parse_configuration_file')
+      importConfigurationError.value = t(
+        'standalone.openvpn_tunnel.could_not_parse_configuration_file'
+      )
     } else {
-      error.value = t(getAxiosErrorMessage(err))
+      importConfigurationError.value = t(getAxiosErrorMessage(err))
     }
   } finally {
     isImporting.value = false
@@ -58,13 +69,14 @@ async function importConfiguration() {
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
         kind="error"
-        v-if="error"
+        v-if="importConfigurationError"
         :title="t('error.cannot_import_configuration')"
-        :description="error"
+        :description="importConfigurationError"
       />
       <div>
         <NeFileInput
           :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration')} (*.json)`"
+          :invalid-message="fileInputValidationError"
           v-model="fileToUpload"
         />
       </div>
@@ -74,7 +86,7 @@ async function importConfiguration() {
         <NeButton
           kind="primary"
           @click="importConfiguration()"
-          :disabled="isImporting || !fileToUpload"
+          :disabled="isImporting"
           :loading="isImporting"
           >{{ t('standalone.openvpn_tunnel.import') }}</NeButton
         >

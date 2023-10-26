@@ -54,6 +54,8 @@
     "invalid_ip_v4_subnet_mask": "Invalid IPv4 subnet mask",
     "invalid_ip_v4_mtu": "Enter an integer number between 576 and 9200",
     "invalid_ip_v6_mtu": "Enter an integer number between 1280 and 9200",
+    "required_file": "A file must be selected",
+    "invalid_file_format": "Invalid file format",
     "invalid_hexadecimal_string": "Invalid hexadecimal string",
     "maximum_num_characters_allowed": "Maximum {num} characters allowed",
     "invalid_vlan_id": "Enter an integer number between 1 and 4094",

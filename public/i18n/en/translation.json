@@ -657,7 +657,7 @@
       "settings": {
         "login": "Login",
         "login_description": "Authenticate to edit hotspot configuration or unregister your hotspot.",
-        "login_hostname": "Host name",
+        "login_hostname": "Hotspot manager endpoint",
         "login_username": "Username",
         "login_password": "Password",
         "login_helper_username": "Enter the username used to access the hotspot manager instance.",

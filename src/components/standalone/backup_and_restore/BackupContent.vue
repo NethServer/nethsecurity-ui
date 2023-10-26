@@ -25,6 +25,7 @@ const formPassphrase = ref({
 })
 
 let loading = ref(true)
+let loadingPassphrase = ref(true)
 let isEnterprise = ref(false)
 let isSetPassphrase = ref(false)
 let loadingDownload = ref(false)
@@ -87,6 +88,7 @@ async function getHostname() {
 }
 
 async function getIsPassphrase() {
+  isSetPassphrase.value = false
   try {
     let res = await ubusCall('ns.backup', 'is-passphrase-set', {})
     if (res?.data?.values?.set) {
@@ -97,7 +99,7 @@ async function getIsPassphrase() {
     errorIsPassphrase.value.notificationTitle = t('error.cannot_retrieve_passphrase')
     errorIsPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    loading.value = false
+    loadingPassphrase.value = false
   }
 }
 
@@ -128,19 +130,19 @@ async function downloadBackup() {
 
     let res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.backup) {
-      let blob = new Blob([res.data.backup], { type: 'application/octet-stream' })
-      let url = URL.createObjectURL(blob)
-      let a = document.createElement('a')
-      a.style.display = 'none'
-      a.href = url
       let extension = '.tar.gz'
-      if (isSetPassphrase.value) extension = '.gpg'
-      a.download = 'backup' + extension
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      if (isSetPassphrase.value) extension += '.gpg'
+      let link = document.createElement('a')
+      link.href = `data:application/gzip;base64,${res.data.backup}`
+      link.download = 'backup' + extension
+      link.click()
+
+      showDownloadModal.value = false
+
+      // TODO notifica success
     }
   } catch (exception: any) {
+    console.log(exception)
     errorDownloadBackup.value.notificationTitle = t('error.cannot_download_backup')
     errorDownloadBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
@@ -182,6 +184,7 @@ async function setPassphrase() {
     .then((response) => {
       if (response?.data?.message && response.data.message == 'success') {
         showPassphraseDrawer.value = false
+        getIsPassphrase()
       }
     })
     .catch((exception: AxiosError) => {
@@ -201,36 +204,36 @@ async function oepenDownloadEnterprise(file: string) {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading || loadingPassphrase" :lines="15" />
     <NeInlineNotification
-      v-if="!loading && errorSubscription.notificationTitle"
+      v-if="!loading && !loadingPassphrase && errorSubscription.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorSubscription.notificationTitle"
       :description="errorSubscription.notificationDescription"
     />
     <NeInlineNotification
-      v-if="!loading && errorHostname.notificationTitle"
+      v-if="!loading && !loadingPassphrase && errorHostname.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorHostname.notificationTitle"
       :description="errorHostname.notificationDescription"
     />
     <NeInlineNotification
-      v-if="!loading && errorIsPassphrase.notificationTitle"
+      v-if="!loading && !loadingPassphrase && errorIsPassphrase.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorIsPassphrase.notificationTitle"
       :description="errorIsPassphrase.notificationDescription"
     />
     <NeInlineNotification
-      v-if="!loading && errorGetBackup.notificationTitle"
+      v-if="!loading && !loadingPassphrase && errorGetBackup.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorGetBackup.notificationTitle"
       :description="errorGetBackup.notificationDescription"
     />
-    <template v-if="!loading && !error">
+    <template v-if="!loading && !loadingPassphrase && !error">
       <div class="flex">
         <div>
           <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">

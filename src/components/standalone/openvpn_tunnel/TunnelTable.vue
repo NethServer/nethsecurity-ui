@@ -116,7 +116,7 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
 <template>
   <NeTable :data="tunnels" :headers="tableHeaders">
     <template #name="{ item }: { item: ServerTunnel | ClientTunnel }">
-      <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+      <p :class="[...getCellClasses(item)]">{{ item.ns_name }}</p>
     </template>
     <template #port="{ item }: { item: ServerTunnel | ClientTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.port }}</p>

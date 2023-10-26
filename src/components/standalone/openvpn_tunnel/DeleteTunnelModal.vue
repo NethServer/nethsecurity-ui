@@ -23,7 +23,7 @@ async function deleteTunnel() {
     try {
       error.value = ''
       isDeleting.value = true
-      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { name: itemToDelete.value.name })
+      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { id: itemToDelete.value.id })
       emit('tunnel-deleted')
       emit('close')
     } catch (err: any) {
@@ -53,7 +53,7 @@ function close() {
   >
     {{
       t('standalone.openvpn_tunnel.delete_tunnel_message', {
-        name: itemToDelete?.name ?? ''
+        name: itemToDelete?.ns_name ?? ''
       })
     }}
     <NeInlineNotification

@@ -18,7 +18,8 @@ import ImportConfigurationDrawer from './ImportConfigurationDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 export type ServerTunnel = {
-  name: string
+  id: string
+  ns_name: string
   port: string
   topology: string
   enabled: boolean
@@ -28,7 +29,8 @@ export type ServerTunnel = {
 }
 
 export type ClientTunnel = {
-  name: string
+  id: string
+  ns_name: string
   topology: string
   enabled: boolean
   port: string
@@ -114,7 +116,7 @@ async function toggleTunnelEnable(tunnel: Tunnel) {
   try {
     cleanError()
     await ubusCall('ns.ovpntunnel', tunnel.enabled ? 'disable-tunnel' : 'enable-tunnel', {
-      name: tunnel.name
+      id: tunnel.id
     })
     await reloadTunnels()
   } catch (err: any) {

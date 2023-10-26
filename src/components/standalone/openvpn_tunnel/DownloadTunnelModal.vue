@@ -45,15 +45,14 @@ async function downloadTunnel() {
       isDownloading.value = true
       if (downloadMode.value == 'nethsecurity_client_configuration') {
         const exportedJsonPayload = JSON.stringify(
-          (await ubusCall('ns.ovpntunnel', 'export-client', { name: itemToDownload.value.name }))
-            .data
+          (await ubusCall('ns.ovpntunnel', 'export-client', { id: itemToDownload.value.id })).data
         )
         var downloadElement = document.createElement('a')
         downloadElement.setAttribute(
           'href',
           'data:text/json;charset=utf-8,' + encodeURIComponent(exportedJsonPayload)
         )
-        downloadElement.setAttribute('download', `${itemToDownload.value.name}.json`)
+        downloadElement.setAttribute('download', `${itemToDownload.value.ns_name}.json`)
         document.body.appendChild(downloadElement)
         downloadElement.click()
         downloadElement.remove()
@@ -88,7 +87,7 @@ function close() {
     @primaryClick="downloadTunnel()"
     @close="close()"
   >
-    {{ t('standalone.openvpn_tunnel.download_tunnel_message', { name: itemToDownload?.name }) }}
+    {{ t('standalone.openvpn_tunnel.download_tunnel_message', { name: itemToDownload?.ns_name }) }}
     <NeRadioSelection
       :card="true"
       :options="downloadOptions"

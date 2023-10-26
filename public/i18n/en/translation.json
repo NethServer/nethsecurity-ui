@@ -831,7 +831,7 @@
       "title": "Account management for '{name}'",
       "change_password": "Change password",
       "change_password_description": "Note: if you change the password for 'root' user, you will change the password for shell access too.",
-      "language": "language"
+      "language": "Language"
     },
     "change_password": {
       "password_rules": "Must be 8 characters or longer, contain at least one lowercase letter, one uppercase letter, a number and a symbol",

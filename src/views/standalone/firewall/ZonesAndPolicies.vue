@@ -208,8 +208,7 @@ function editZone(zone: Zone) {
                 id: 'edit',
                 label: t('common.edit'),
                 action: () => editZone(item),
-                icon: 'pen-to-square',
-                disabled: isSpecialZone(item)
+                icon: 'pen-to-square'
               },
               {
                 id: 'delete',

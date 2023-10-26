@@ -74,7 +74,6 @@ import { faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icon
 import { faShapes as fasShapes } from '@fortawesome/free-solid-svg-icons'
 import { faTrafficCone as fasTrafficCone } from '@nethesis/nethesis-solid-svg-icons'
 import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons'
-
 import {
   faAmazon,
   faFacebook,
@@ -88,7 +87,8 @@ import {
   faVimeo,
   faWhatsapp,
   faYoutube
-} from '@nethesis/nethesis-brands-svg-icons'
+} from '@fortawesome/free-brands-svg-icons'
+import { faNetflix, faSquareXTwitter, faNordVpn } from '@nethesis/nethesis-brands-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -162,20 +162,32 @@ export async function loadFontAwesome(app: any) {
   library.add(fasShapes)
   library.add(fasDiagramProject)
   library.add(fasArrowsLeftRight)
+  // @ts-ignore
   library.add(faFacebook)
+  // @ts-ignore
   library.add(faAmazon)
+  // @ts-ignore
   library.add(faWhatsapp)
+  // @ts-ignore
   library.add(faInstagram)
-  // library.add(faNetflix) ////
-  // library.add(faXTwitter) ////
+  library.add(faNetflix)
+  library.add(faSquareXTwitter)
+  // @ts-ignore
   library.add(faTelegram)
+  // @ts-ignore
   library.add(faTiktok)
+  // @ts-ignore
   library.add(faYoutube)
+  // @ts-ignore
   library.add(faFacebookMessenger)
+  // @ts-ignore
   library.add(faVimeo)
+  // @ts-ignore
   library.add(faSnapchat)
+  // @ts-ignore
   library.add(faPinterest)
-  // library.add(faNordVpn) ////
+  library.add(faNordVpn)
+  // @ts-ignore
   library.add(faTwitch)
   library.add(fasTrafficCone)
   library.add(fasStar)

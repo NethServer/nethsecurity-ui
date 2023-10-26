@@ -4,7 +4,6 @@
 -->
 
 <script setup lang="ts">
-import { NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
 import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'

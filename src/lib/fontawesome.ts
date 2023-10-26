@@ -10,7 +10,6 @@ import {
   faArrowCircleDown,
   faBoxArchive,
   faPlay,
-  faWifi,
   faRotate,
   faWifi,
   faDiagramProject as fasDiagramProject,

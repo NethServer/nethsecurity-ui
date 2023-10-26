@@ -29,7 +29,7 @@ const { tabs, selectedTab } = useTabs([
       @selectTab="selectedTab = $event"
       class="mb-8"
     />
-    <div class="px-8">
+    <div>
       <template v-if="selectedTab === 'general'">
         <GeneralSettings />
       </template>

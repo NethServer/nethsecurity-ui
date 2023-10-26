@@ -81,14 +81,29 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/security/FlashStartView.vue')
   },
   {
+    path: 'security/dpi',
+    name: 'Dpi',
+    component: () => import('../views/standalone/security/DpiFilterView.vue')
+  },
+  {
     path: 'system/storage',
     name: 'Storage',
     component: () => import('../views/standalone/system/StorageView.vue')
   },
   {
+    path: 'vpn',
+    name: 'Vpn',
+    component: () => import('../views/standalone/VpnView.vue')
+  },
+  {
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')
+  },
+  {
+    path: 'report',
+    name: 'Report',
+    component: () => import('../views/standalone/ReportView.vue')
   },
   {
     path: 'user',

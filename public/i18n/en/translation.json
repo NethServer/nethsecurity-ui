@@ -10,7 +10,12 @@
     "delete": "Delete",
     "filter": "Filter",
     "advanced_settings": "Advanced settings",
-    "configure": "Configure"
+    "configure": "Configure",
+    "enable": "Enable",
+    "disable": "Disable",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "page_under_construction": "Page under construction"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -120,7 +125,16 @@
     "cannot_restore_backup": "Cannot restore backup",
     "cannot_retrieve_backup": "Cannot retrieve backups",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
-    "cannot_retrieve_passphrase": "Lorem ipsum..."
+    "cannot_retrieve_passphrase": "Lorem ipsum...",
+    "cannot_remove_storage": "Cannot remove storage",
+    "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
+    "cannot_create_dpi_rule": "Cannot create DPI rule",
+    "cannot_edit_dpi_rule": "Cannot edit DPI rule",
+    "cannot_retrieve_popular_apps": "Cannot retrieve popular apps",
+    "cannot_retrieve_devices": "Cannot retrieve devices",
+    "cannot_retrieve_applications": "Cannot retrieve applications",
+    "zone_already_exists": "Zone already exists",
+    "cannot_delete_rule": "Cannote delete rule"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -472,7 +486,8 @@
       "bond_balance_alb": "Adaptive load balancing",
       "bond_primary_device": "Primary device",
       "primary_device_not_included": "Primary device must be included in selected devices",
-      "no_devices_available": "No devices available"
+      "no_devices_available": "No devices available",
+      "custom_zone": "Custom"
     },
     "multi_wan": {
       "title": "MultiWAN",
@@ -686,7 +701,7 @@
       "settings": {
         "login": "Login",
         "login_description": "Authenticate to edit hotspot configuration or unregister your hotspot.",
-        "login_hostname": "Host name",
+        "login_hostname": "Hotspot manager endpoint",
         "login_username": "Username",
         "login_password": "Password",
         "login_helper_username": "Enter the username used to access the hotspot manager instance.",
@@ -745,8 +760,7 @@
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
       "delete_zone": "Delete \"{0}\"?",
-      "edit_zone_name": "Edit zone {name}",
-      "zone_already_exists": "Zone already exists"
+      "edit_zone_name": "Edit zone {name}"
     },
     "port_forward": {
       "title": "Port forward",
@@ -801,15 +815,45 @@
       "status_enabled": "Enabled",
       "status_disabled": "Disabled",
       "username": "Username",
-      "username_helper": "Enter the username or the email address registered on https://flashstart.nethesis.it/.",
+      "username_helper": "Enter the username or the email address registered on",
       "password": "Password",
       "zones": "Zones to filter",
       "zones_placeholder": "Choose zones",
       "sourcebypass": "Bypass source IPs or networks",
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
-      "add_sourcebypass": "Add source bypass",
-      "success_save_title": "Save complete",
-      "success_save_description": "Settings saved successfully"
+      "add_sourcebypass": "Add source bypass"
+    },
+    "dpi": {
+      "title": "DPI filter",
+      "rules": "Rules",
+      "exceptions": "Exceptions",
+      "rules_description": "Add distinct Deep Packet Inspection (DPI) rules tailored to each interface to restrict specific applications. The number of applications is restricted when the machine lacks a subscription.",
+      "no_rules_found": "No rules found",
+      "create_rule": "Create rule",
+      "edit_rule": "Edit rule",
+      "save_rule": "Save rule",
+      "enable_rule": "Enable rule",
+      "source": "Source",
+      "choose_interface": "Choose interface",
+      "source_tooltip": "Only the traffic passing through this interface will be subjected to the blocking rule.",
+      "no_interfaces_available": "No interfaces available",
+      "apps_and_protocols": "Apps and protocols to block",
+      "apps_and_protocols_placeholder": "Search {num} apps, protocols and categories",
+      "no_apps": "No apps or protocols",
+      "clear_search": "Clear search",
+      "num_apps_and_protocols_selected": "{num} apps and protocols selected",
+      "search_results": "Search results",
+      "no_apps_or_protocols_found": "No apps or protocols found",
+      "try_changing_search_filter": "Try changing your search filter",
+      "available_with_subscription": "Available with subscription",
+      "continue_typing_to_show_other_search_results": "Continue typing your search query to show other search results",
+      "select_at_least_one_app_or_protocol": "Select at least one app or protocol",
+      "type_application": "App",
+      "type_protocol": "Protocol",
+      "confirm_delete_rule": "You are about to delete DPI rule on interface '{iface}'",
+      "delete_rule": "Delete rule",
+      "blocked_apps_and_protocols": "Blocked apps and protocols",
+      "plus_num_others": "+{num} others"
     },
     "vpn": {
       "title": "VPN"
@@ -830,7 +874,8 @@
     "account_management": {
       "title": "Account management for '{name}'",
       "change_password": "Change password",
-      "change_password_description": "Note: if you change the password for 'root' user, you will change the password for shell access too."
+      "change_password_description": "Note: if you change the password for 'root' user, you will change the password for shell access too.",
+      "language": "language"
     },
     "change_password": {
       "password_rules": "Must be 8 characters or longer, contain at least one lowercase letter, one uppercase letter, a number and a symbol",

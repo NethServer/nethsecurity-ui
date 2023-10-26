@@ -270,7 +270,7 @@ watch(
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form class="relative flex flex-1" action="#" method="GET">
-            <label for="search-field" class="sr-only">{{ t('common.search') }}</label>
+            <!-- <label for="search-field" class="sr-only">{{ t('common.search') }}</label> //// global search
             <font-awesome-icon
               :icon="['fas', 'magnifying-glass']"
               :class="[
@@ -285,7 +285,7 @@ watch(
               :placeholder="t('common.search')"
               type="search"
               name="search"
-            />
+            /> -->
           </form>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">

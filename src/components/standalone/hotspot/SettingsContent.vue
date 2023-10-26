@@ -73,6 +73,7 @@ const configurationForm = ref<Configuration>({
 
 let isError = ref(false)
 let isLoggedIn = ref(false)
+let viewConfiguration = ref(false)
 let activeConfiguration = ref(false)
 let loadingParentHotspot = ref(false)
 let loadingListDevices = ref(false)
@@ -116,6 +117,7 @@ let errorGetConfiguration = ref({ ...objError })
 let errorSave = ref({ ...objError })
 let errorUnregister = ref({ ...objError })
 let errorDhcpRange = ref({ ...objError })
+let errorHostname = ref({ ...objError })
 
 onMounted(() => {
   errorListParents.value = { ...objError }
@@ -124,6 +126,7 @@ onMounted(() => {
   getListParents()
   getListDevices()
   getConfiguration()
+  getHostname()
 })
 
 async function getListParents() {
@@ -135,10 +138,11 @@ async function getListParents() {
     if (res?.data?.parents?.length) {
       isLoggedIn.value = true
       parentHotspotList.value = res.data.parents.map((item: ParentHotspot) => ({
-        id: item.id,
+        id: String(item.id),
         label: item.name
       }))
-      configurationForm.value.parentHotspot = res.data.parents[0].id
+      if (!configurationForm.value.parentHotspot)
+        configurationForm.value.parentHotspot = String(res.data.parents[0].id)
     }
   } catch (exception: any) {
     isError.value = true
@@ -161,7 +165,10 @@ async function getListDevices() {
         label: item
       }))
       configurationForm.value.networkDevice = res.data.devices[0]
-    } else emptyDevices.value = true
+    } else {
+      isError.value = true
+      emptyDevices.value = true
+    }
   } catch (exception: any) {
     isError.value = true
     errorListDevices.value.notificationTitle = t('error.cannot_retrieve_network_device')
@@ -178,12 +185,12 @@ async function getConfiguration() {
       let configuration = res.data.configuration
       if (configuration.connected) {
         activeConfiguration.value = configuration.hotspot_id != ''
+        viewConfiguration.value = true
       } else {
         isLoggedIn.value = false
       }
 
-      configurationForm.value.parentHotspot = configuration.hotspot_id
-      configurationForm.value.unitName = configuration.unit_name
+      configurationForm.value.parentHotspot = String(configuration.hotspot_id)
       configurationForm.value.unitDescription = configuration.unit_description
       configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {
@@ -198,6 +205,17 @@ async function getConfiguration() {
     isError.value = true
     errorGetConfiguration.value.notificationTitle = t('error.cannot_retrieve_configuration')
     errorGetConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  }
+}
+
+async function getHostname() {
+  try {
+    let systemInfo = await ubusCall('system', 'board')
+    configurationForm.value.unitName = systemInfo.data.hostname
+  } catch (exception: any) {
+    isError.value = true
+    errorHostname.value.notificationTitle = t('error.cannot_retrieve_system_board')
+    errorHostname.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
 }
 
@@ -276,6 +294,23 @@ function login() {
         logging.value = false
         getConfiguration()
       })
+  }
+}
+
+function clearErrors() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    hostname: '',
+    username: '',
+    password: '',
+    unitName: '',
+    unitDescription: '',
+    networkDevice: '',
+    networkAddress: '',
+    dhcpRangeStart: '',
+    dhcpRangeEnd: '',
+    maxClientsAllowed: ''
   }
 }
 
@@ -375,6 +410,7 @@ function validateConfiguration(): boolean {
 }
 
 function saveConfiguration() {
+  clearErrors()
   if (validateConfiguration()) {
     saving.value = true
     successSaving.value = false
@@ -415,6 +451,7 @@ function unregisterUnit() {
     .then((response) => {
       if (response.data && response.data.result && response.data.result === 'success') {
         isLoggedIn.value = false
+        viewConfiguration.value = false
         showUnregisterModal.value = false
         uciPendingChangesStore.getChanges()
         getConfiguration()
@@ -534,7 +571,7 @@ function goToInterfaces() {
       </form>
     </FormLayout>
     <FormLayout
-      v-if="!loadingParentHotspot && !loadingListDevices"
+      v-if="!loadingParentHotspot && !loadingListDevices && viewConfiguration"
       :title="t('standalone.hotspot.settings.configuration')"
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
@@ -547,6 +584,13 @@ function goToInterfaces() {
         :description="t('error.empty_network_device_description')"
         :primaryButtonLabel="t('standalone.hotspot.settings.empty_network_device_link')"
         @primaryClick="goToInterfaces"
+      />
+      <NeInlineNotification
+        v-if="errorHostname.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorHostname.notificationTitle"
+        :description="errorHostname.notificationDescription"
       />
       <NeInlineNotification
         v-if="errorListParents.notificationTitle"
@@ -584,7 +628,7 @@ function goToInterfaces() {
             :invalid-message="error.unitName"
             :placeholder="t('standalone.hotspot.settings.configuration_unit_name_placeholder')"
             :label="t('standalone.hotspot.settings.configuration_unit_name')"
-            :disabled="!isLoggedIn"
+            disabled
             ref="unitNameRef"
           />
           <NeTextInput

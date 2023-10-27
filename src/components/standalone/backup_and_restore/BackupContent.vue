@@ -236,7 +236,13 @@ async function oepenDownloadEnterprise(file: string) {
     <template v-if="!loading && !loadingPassphrase && !error">
       <div class="flex">
         <div>
-          <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          <p
+            v-if="isEnterprise"
+            class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400"
+          >
+            {{ t('standalone.backup_and_restore.backup.description_entrprise') }}
+          </p>
+          <p v-else class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
             {{ t('standalone.backup_and_restore.backup.description') }}
           </p>
         </div>
@@ -299,6 +305,7 @@ async function oepenDownloadEnterprise(file: string) {
         </div>
       </NeEmptyState>
       <NeTable
+        v-if="listBackups.length"
         :data="listBackups"
         :headers="[
           {

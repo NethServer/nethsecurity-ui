@@ -324,6 +324,7 @@
       },
       "backup": {
         "description": "Download your firewall's current settings and data. This will serving as a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
+        "description_entrprise": "Run a backup to download your firewall's current settings and data. The system runs autonomously and keeps up to 3 backups. Configure a passphrase to increase the security of your data.",
         "download": "Download",
         "download_backup": "Download backup",
         "modal_download_title": "Downloaded backup",

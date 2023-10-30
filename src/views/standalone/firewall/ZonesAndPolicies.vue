@@ -43,7 +43,7 @@ function icon(zone: Zone): string {
     case ZoneType.GUEST:
       return 'users'
     case ZoneType.CUSTOM:
-      return 'empty-set'
+      return 'star'
   }
 }
 
@@ -141,7 +141,7 @@ function editZone(zone: Zone) {
             :class="getZoneColorClasses(item.name)"
             class="flex h-10 w-10 items-center justify-center rounded-full"
           >
-            <FontAwesomeIcon :icon="['fas', icon(item)]" />
+            <FontAwesomeIcon :icon="['fas', icon(item)]" class="h-5 w-5" />
           </div>
           <span class="uppercase">{{ item.name }}</span>
         </div>
@@ -208,8 +208,7 @@ function editZone(zone: Zone) {
                 id: 'edit',
                 label: t('common.edit'),
                 action: () => editZone(item),
-                icon: 'pen-to-square',
-                disabled: isSpecialZone(item)
+                icon: 'pen-to-square'
               },
               {
                 id: 'delete',

@@ -49,9 +49,9 @@ type SharedTunnelPayload = {
   secret?: string
   ifconfig_local?: string
   ifconfig_remote?: string
-  compression?: string
+  compress?: string
   cipher?: string
-  digest?: string
+  auth?: string
 }
 
 type ClientTunnelPayload = {
@@ -270,8 +270,8 @@ async function resetForm() {
     presharedKey.value = tunnelData.secret ?? ''
     topology.value = localP2pIp.value || remoteP2pIp.value || presharedKey.value ? 'p2p' : 'subnet'
     cipher.value = tunnelData.cipher ?? 'auto'
-    digest.value = tunnelData.digest ?? 'auto'
-    compression.value = tunnelData.compression ?? 'disabled'
+    digest.value = tunnelData.auth ?? 'auto'
+    compression.value = tunnelData.compress ?? 'disabled'
 
     if (props.isClientTunnel) {
       const clientTunnelData = tunnelData as ClientTunnelPayload
@@ -485,9 +485,9 @@ async function createOrEditTunnel() {
         ns_name: name.value,
         port: port.value,
         proto: protocol.value,
-        compression: compression.value === 'disabled' ? '' : compression.value,
+        compress: compression.value === 'disabled' ? '' : compression.value,
         enabled: enabled.value ? '1' : '0',
-        digest: digest.value === 'auto' ? '' : digest.value,
+        auth: digest.value === 'auto' ? '' : digest.value,
         remote: [],
         cipher: cipher.value === 'auto' ? '' : cipher.value,
         ...(topology.value === 'subnet'

@@ -39,25 +39,36 @@ type TunnelDefaults = {
   remote: string[]
 }
 
-type ClientTunnelPayload = {
+type SharedTunnelPayload = {
   id?: string
   ns_name: string
   port: string
   proto: 'tcp' | 'udp'
-  dev_type: 'tun' | 'tap'
-  remote: string[]
-  route?: string[]
-  cipher?: string
-  compression?: string
-  digest?: string
   enabled: string
+  remote: string[]
   secret?: string
   ifconfig_local?: string
   ifconfig_remote?: string
+  compression?: string
+  cipher?: string
+  digest?: string
+}
+
+type ClientTunnelPayload = {
+  dev_type: 'tun' | 'tap'
+  route?: string[]
   certificate?: string
   username?: string
   password?: string
-}
+} & SharedTunnelPayload
+
+type ServerTunnelPayload = {
+  topology: 'subnet' | 'p2p'
+  local: string[]
+  ns_public_ip: string[]
+  tls_version_min: string
+  server: string
+} & SharedTunnelPayload
 
 const props = defineProps<{
   isShown: boolean
@@ -123,7 +134,7 @@ const compressionOptions = [
     label: t('standalone.openvpn_tunnel.disabled')
   },
   {
-    id: 'lzo',
+    id: 'lz0',
     label: 'LZ0'
   },
   {
@@ -236,20 +247,21 @@ function cleanValidationErrors() {
 
 async function resetForm() {
   loading.value = true
-  if (props.itemToEdit && props.isClientTunnel) {
-    // call get-tunnel
-    /* const tunnelData = props.isClientTunnel
-      ? await ubusCall('ns.ovpntunnel', 'get-tunnel-client')
-      : await ubusCall('ns.ovpntunnel', 'get-tunnel-server') */
-    const tunnelData = (
-      await ubusCall('ns.ovpntunnel', 'get-tunnel-client', {
-        id: props.itemToEdit.id
-      })
-    ).data as ClientTunnelPayload
+  if (props.itemToEdit) {
+    const tunnelData = props.isClientTunnel
+      ? ((
+          await ubusCall('ns.ovpntunnel', 'get-tunnel-client', {
+            id: props.itemToEdit.id
+          })
+        ).data as ClientTunnelPayload)
+      : ((
+          await ubusCall('ns.ovpntunnel', 'get-tunnel-server', {
+            id: props.itemToEdit.id
+          })
+        ).data as ServerTunnelPayload)
+
     id.value = tunnelData.id as string
     name.value = tunnelData.ns_name
-    remoteHosts.value = tunnelData.remote
-    remoteNetworks.value = tunnelData.route ?? ['']
     enabled.value = tunnelData.enabled === '1'
     port.value = tunnelData.port
     protocol.value = tunnelData.proto
@@ -257,15 +269,28 @@ async function resetForm() {
     remoteP2pIp.value = tunnelData.ifconfig_remote ?? ''
     presharedKey.value = tunnelData.secret ?? ''
     topology.value = localP2pIp.value || remoteP2pIp.value || presharedKey.value ? 'p2p' : 'subnet'
-    username.value = tunnelData.username ?? ''
-    password.value = tunnelData.password ?? ''
-    certificate.value = tunnelData.certificate ?? ''
     cipher.value = tunnelData.cipher ?? 'auto'
     digest.value = tunnelData.digest ?? 'auto'
     compression.value = tunnelData.compression ?? 'disabled'
-    mode.value = tunnelData.dev_type === 'tun' ? 'routed' : 'bridged'
-    authentication.value =
-      username.value || password.value ? 'username_password_certificate' : 'certificate'
+
+    if (props.isClientTunnel) {
+      const clientTunnelData = tunnelData as ClientTunnelPayload
+      remoteHosts.value = clientTunnelData.remote
+      remoteNetworks.value = clientTunnelData.route ?? ['']
+      username.value = clientTunnelData.username ?? ''
+      password.value = clientTunnelData.password ?? ''
+      certificate.value = clientTunnelData.certificate ?? ''
+      mode.value = clientTunnelData.dev_type === 'tun' ? 'routed' : 'bridged'
+      authentication.value =
+        username.value || password.value ? 'username_password_certificate' : 'certificate'
+    } else {
+      const serverTunnelData = tunnelData as ServerTunnelPayload
+      remoteNetworks.value = serverTunnelData.remote ?? ['']
+      localNetworks.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
+      localNetworksOptions.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
+      publicEndpoints.value = serverTunnelData.ns_public_ip
+      vpnNetwork.value = serverTunnelData.server
+    }
   } else {
     id.value = ''
     enabled.value = true
@@ -451,11 +476,30 @@ async function createOrEditTunnel() {
   try {
     isSavingChanges.value = true
     if (validate()) {
+      let sharedPayload: SharedTunnelPayload = {
+        ...(isEditing ? { id: id.value } : {}),
+        ns_name: name.value,
+        port: port.value,
+        proto: protocol.value,
+        compression: compression.value === 'disabled' ? '' : compression.value,
+        enabled: enabled.value ? '1' : '0',
+        digest: digest.value === 'auto' ? '' : digest.value,
+        remote: [],
+        cipher: cipher.value === 'auto' ? '' : cipher.value,
+        ...(topology.value === 'subnet'
+          ? {}
+          : {
+              ifconfig_local: localP2pIp.value,
+              ifconfig_remote: remoteP2pIp.value,
+              secret: presharedKey.value
+            })
+      }
+
       if (props.isClientTunnel) {
         const requestType = isEditing ? 'edit-client' : 'add-client'
 
         const payload: ClientTunnelPayload = {
-          ...(isEditing ? { id: id.value } : {}),
+          ...sharedPayload,
           ...(topology.value === 'subnet'
             ? {
                 certificate: certificate.value,
@@ -466,26 +510,27 @@ async function createOrEditTunnel() {
                     }
                   : {})
               }
-            : {
-                ifconfig_local: localP2pIp.value,
-                ifconfig_remote: remoteP2pIp.value,
-                secret: presharedKey.value
-              }),
-          ns_name: name.value,
-          port: port.value,
-          proto: protocol.value,
+            : {}),
           dev_type: mode.value == 'bridged' ? 'tun' : 'tap',
           remote: remoteHosts.value,
-          route: remoteNetworks.value.filter(Boolean),
-          compression: compression.value === 'disabled' ? '' : compression.value,
-          enabled: enabled.value ? '1' : '0',
-          digest: digest.value === 'auto' ? '' : digest.value,
-          cipher: cipher.value === 'auto' ? '' : cipher.value
+          route: remoteNetworks.value.filter(Boolean)
         }
 
         await ubusCall('ns.ovpntunnel', requestType, payload)
       } else {
         const requestType = isEditing ? 'edit-server' : 'add-server'
+
+        const payload: ServerTunnelPayload = {
+          ...sharedPayload,
+          local: localNetworks.value.map((option) => option.id),
+          topology: topology.value,
+          ns_public_ip: publicEndpoints.value,
+          tls_version_min: minimumTLSVersion.value === 'auto' ? '' : minimumTLSVersion.value,
+          server: vpnNetwork.value,
+          remote: remoteNetworks.value
+        }
+
+        await ubusCall('ns.ovpntunnel', requestType, payload)
       }
       emit('add-edit-tunnel')
       close()

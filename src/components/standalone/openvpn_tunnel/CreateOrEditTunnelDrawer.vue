@@ -7,6 +7,7 @@ import {
   validatePort,
   validateRequired,
   validateRequiredOption,
+  validateUciName,
   type validationOutput
 } from '@/lib/validation'
 import {
@@ -372,7 +373,7 @@ function validate() {
 
   // shared form fields validation
   const sharedFieldsValidators: [validationOutput[], string][] = [
-    [[validateRequired(name.value)], 'name'],
+    [[validateRequired(name.value), validateUciName(name.value, 10)], 'name'],
     ...(topology.value === 'p2p' ? p2pValidators : [])
   ]
 

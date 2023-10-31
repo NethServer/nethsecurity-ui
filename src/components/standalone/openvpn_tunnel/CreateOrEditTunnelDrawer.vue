@@ -67,7 +67,7 @@ type ServerTunnelPayload = {
   local: string[]
   ns_public_ip: string[]
   tls_version_min: string
-  server: string
+  server?: string
 } & SharedTunnelPayload
 
 const props = defineProps<{
@@ -289,7 +289,7 @@ async function resetForm() {
       localNetworks.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
       localNetworksOptions.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
       publicEndpoints.value = serverTunnelData.ns_public_ip
-      vpnNetwork.value = serverTunnelData.server
+      vpnNetwork.value = serverTunnelData.server ?? ''
     }
   } else {
     id.value = ''
@@ -405,13 +405,17 @@ function validate() {
       [[validateRequired(password.value)], 'password']
     ]
 
-    // client form fields validation
-    const clientTunnelFieldsValidators: [validationOutput[], string][] = [
-      [[validateRequired(port.value), validatePort(port.value)], 'port'],
+    const authenticationValidators: [validationOutput[], string][] = [
       [[validateRequired(certificate.value)], 'certificate'],
       ...(authentication.value === 'username_password_certificate'
         ? usernamePasswordValidators
         : [])
+    ]
+
+    // client form fields validation
+    const clientTunnelFieldsValidators: [validationOutput[], string][] = [
+      [[validateRequired(port.value), validatePort(port.value)], 'port'],
+      ...(topology.value === 'subnet' ? authenticationValidators : [])
     ]
 
     // remote hosts validation
@@ -476,7 +480,7 @@ async function createOrEditTunnel() {
   try {
     isSavingChanges.value = true
     if (validate()) {
-      let sharedPayload: SharedTunnelPayload = {
+      let sharedFieldsPayload: SharedTunnelPayload = {
         ...(isEditing ? { id: id.value } : {}),
         ns_name: name.value,
         port: port.value,
@@ -499,7 +503,7 @@ async function createOrEditTunnel() {
         const requestType = isEditing ? 'edit-client' : 'add-client'
 
         const payload: ClientTunnelPayload = {
-          ...sharedPayload,
+          ...sharedFieldsPayload,
           ...(topology.value === 'subnet'
             ? {
                 certificate: certificate.value,
@@ -521,13 +525,13 @@ async function createOrEditTunnel() {
         const requestType = isEditing ? 'edit-server' : 'add-server'
 
         const payload: ServerTunnelPayload = {
-          ...sharedPayload,
+          ...sharedFieldsPayload,
           local: localNetworks.value.map((option) => option.id),
           topology: topology.value,
           ns_public_ip: publicEndpoints.value,
           tls_version_min: minimumTLSVersion.value === 'auto' ? '' : minimumTLSVersion.value,
-          server: vpnNetwork.value,
-          remote: remoteNetworks.value
+          remote: remoteNetworks.value,
+          ...(topology.value === 'subnet' ? { server: vpnNetwork.value } : {})
         }
 
         await ubusCall('ns.ovpntunnel', requestType, payload)

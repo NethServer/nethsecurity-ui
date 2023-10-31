@@ -128,6 +128,7 @@ async function toggleTunnelEnable(tunnel: Tunnel) {
 }
 
 async function reloadTunnels() {
+  cleanError()
   await fetchTunnels()
   await uciChangesStore.getChanges()
 }

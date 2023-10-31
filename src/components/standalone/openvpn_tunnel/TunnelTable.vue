@@ -156,7 +156,13 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
       </template>
     </template>
     <template #topology="{ item }: { item: ServerTunnel | ClientTunnel }">
-      <p :class="[...getCellClasses(item)]">{{ item.topology }}</p>
+      <p :class="[...getCellClasses(item)]">
+        {{
+          item.topology === 'subnet'
+            ? t('standalone.openvpn_tunnel.subnet')
+            : t('standalone.openvpn_tunnel.p2p')
+        }}
+      </p>
     </template>
     <template v-if="!props.isClientTunnel" #vpn_network="{ item }: { item: ServerTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.vpn_network }}</p>

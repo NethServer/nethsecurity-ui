@@ -125,8 +125,7 @@
     "cannot_restore_backup": "Cannot restore backup",
     "cannot_retrieve_backup": "Cannot retrieve backups",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
-    "cannot_retrieve_passphrase": "Lorem ipsum...",
-    "cannot_remove_storage": "Cannot remove storage",
+    "cannot_retrieve_passphrase": "Cannot load backup passphrase",
     "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
     "cannot_create_dpi_rule": "Cannot create DPI rule",
     "cannot_edit_dpi_rule": "Cannot edit DPI rule",
@@ -134,7 +133,8 @@
     "cannot_retrieve_devices": "Cannot retrieve devices",
     "cannot_retrieve_applications": "Cannot retrieve applications",
     "zone_already_exists": "Zone already exists",
-    "cannot_delete_rule": "Cannote delete rule"
+    "cannot_delete_rule": "Cannote delete rule",
+    "upload_file_migration": "Lorem ipsum..."
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -320,7 +320,8 @@
       "title": "Backup & restore",
       "tabs": {
         "backup": "Backup",
-        "restore": "Restore"
+        "restore": "Restore",
+        "migration": "Migration"
       },
       "backup": {
         "description": "Download your firewall's current settings and data. This will serving as a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
@@ -331,11 +332,12 @@
         "modal_download_description": "Are you sure you want to proceed with the '{name}' backup?",
         "passphrase_drawer_title": "Configure passphrase",
         "passphrase": "Passphrase",
-        "passphrase_helper": "Lorem ipsum..",
+        "passphrase_helper": "Enter a passphrase if you want to encrypt the backup with GPG; if the passphrase is empty, the backup will be saved in plain text. Warning: if you lose the passphrase, you won't be able to use the encrypted backup.",
         "configure_passphrase": "Configure passphrase",
         "no_backups_found": "No backups found",
         "run_backup": "Run backup",
         "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?",
+        "success_run_backup": "Backup performed successfully",
         "success_download": "Backup downloaded successfully"
       },
       "restore": {
@@ -345,13 +347,24 @@
         "restore_in_progress": "Restoring backup in progress",
         "restore_backup": "Restore backup",
         "passphrase": "Passphrase",
-        "passphrase_helper": "Lorem ipsum..",
+        "passphrase_helper": "Enter the passphrase used to encrypt the backup; if the passphrase is incorrect, it will not be possible to restore the backup.",
         "source": "Backup source",
         "backup": "Backup",
         "from_backup": "From last backups",
         "from_file": "Upload file",
-        "upload_file": "Backup file (*.tar .xz)",
+        "upload_file": "Backup file (*.tar.xz)",
         "upload_file_description": "Drag and drop or choose file"
+      },
+      "migration": {
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sit amet tortor vel neque molestie venenatis. Pellentesque lobortis iaculis erat. Donec eu leo at est pulvinar bibendum et id sapien.",
+        "description_link": "Lorem ipsum...",
+        "upload_file": "Upload migration file",
+        "drawer_title": "Upload migration file",
+        "input_upload_file": "Upload file (*.tar.xz)",
+        "input_upload_file_description": "Drag and drop or choose file",
+        "migrate": "Migrate",
+        "remap_interfaces": "Remap interfaces",
+        "remap_interfaces_description": "Info: During interface remapping, if one or more interfaces change its IP address, you have to login again in the new IP address."
       }
     },
     "reboot_and_shutdown": {

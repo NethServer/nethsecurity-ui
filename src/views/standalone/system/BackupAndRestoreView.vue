@@ -9,6 +9,7 @@ import { useTabs } from '@/composables/useTabs'
 import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
 import BackupContent from '@/components/standalone/backup_and_restore/BackupContent.vue'
 import RestoreContent from '@/components/standalone/backup_and_restore/RestoreContent.vue'
+import MigrationContent from '@/components/standalone/backup_and_restore/MigrationContent.vue'
 
 const { t } = useI18n()
 
@@ -20,6 +21,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'tab-restore',
     label: t('standalone.backup_and_restore.tabs.restore')
+  },
+  {
+    name: 'tab-migration',
+    label: t('standalone.backup_and_restore.tabs.migration')
   }
 ])
 </script>
@@ -36,5 +41,6 @@ const { tabs, selectedTab } = useTabs([
     />
     <BackupContent v-if="selectedTab == 'tab-backup'" />
     <RestoreContent v-if="selectedTab == 'tab-restore'" />
+    <MigrationContent v-if="selectedTab == 'tab-migration'" />
   </div>
 </template>

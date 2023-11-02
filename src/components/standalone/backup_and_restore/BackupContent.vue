@@ -7,52 +7,38 @@ import {
   NeButton,
   NeEmptyState,
   NeInlineNotification,
-  NeModal,
-  NeSideDrawer,
-  NeSkeleton,
-  NeTextInput,
-  NeTitle,
-  NeTooltip
+  NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { AxiosError } from 'axios'
+import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
+import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
+import DrawerSetPassphrase from '@/components/standalone/backup_and_restore/DrawerSetPassphrase.vue'
 
 const { t } = useI18n()
-
-const formPassphrase = ref({
-  passphrase: ''
-})
 
 let loading = ref(true)
 let loadingPassphrase = ref(true)
 let isEnterprise = ref(false)
 let isSetPassphrase = ref(false)
-let loadingDownload = ref(false)
-let loadingSetPassphrase = ref(false)
-let loadingRunBackup = ref(false)
 let showDownloadModal = ref(false)
 let showPassphraseDrawer = ref(false)
 let showRunBackupModal = ref(false)
 let unitName = ref(undefined)
 let seletedBackup = ref('')
-let passphraseRef = ref()
 let listBackups: any = ref([])
 
 let objNotification = {
   notificationTitle: '',
-  notificationDescription: '',
-  passphrase: ''
+  notificationDescription: ''
 }
 
 let error = ref(false)
 let errorSubscription = ref({ ...objNotification })
 let errorHostname = ref({ ...objNotification })
-let errorDownloadBackup = ref({ ...objNotification })
-let errorSetPassphrase = ref({ ...objNotification })
-let errorRunBackup = ref({ ...objNotification })
 let errorGetBackup = ref({ ...objNotification })
 let errorIsPassphrase = ref({ ...objNotification })
+let successNotificationRunBackup = ref({ ...objNotification })
 
 onMounted(() => {
   getSubscription()
@@ -115,90 +101,25 @@ async function getBackups() {
   }
 }
 
-async function downloadBackup() {
-  try {
-    loadingDownload.value = true
-
-    let payload = {}
-    let methodCall = 'backup'
-    if (seletedBackup.value) {
-      methodCall = 'registered-download-backup'
-      payload = {
-        file: seletedBackup.value
-      }
-    }
-
-    let res = await ubusCall('ns.backup', methodCall, payload)
-    if (res?.data?.backup) {
-      let extension = '.tar.gz'
-      if (isSetPassphrase.value) extension += '.gpg'
-      let link = document.createElement('a')
-      link.href = `data:application/gzip;base64,${res.data.backup}`
-      link.download = 'backup' + extension
-      link.click()
-
-      showDownloadModal.value = false
-
-      // TODO notifica success
-    }
-  } catch (exception: any) {
-    console.log(exception)
-    errorDownloadBackup.value.notificationTitle = t('error.cannot_download_backup')
-    errorDownloadBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  } finally {
-    loadingDownload.value = false
-  }
-}
-
-async function runBackup() {
-  loadingRunBackup.value = true
-  try {
-    let res = await ubusCall('ns.backup', 'registered-backup')
-    if (res?.data?.message && res?.data?.message === 'success') {
-      showRunBackupModal.value = false
-      await getBackups()
-
-      // TODO success notification
-    }
-  } catch (exception: any) {
-    errorRunBackup.value.notificationTitle = t('error.cannot_run_backup')
-    errorRunBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  } finally {
-    loadingRunBackup.value = false
-  }
-}
-
-async function openPassphraseDrawer() {
-  showPassphraseDrawer.value = true
-  errorSetPassphrase.value = { ...objNotification }
-}
-
-async function setPassphrase() {
-  loadingSetPassphrase.value = true
-
-  let payload = {
-    passphrase: formPassphrase.value.passphrase
-  }
-
-  ubusCall('ns.backup', 'set-passphrase', payload)
-    .then((response) => {
-      if (response?.data?.message && response.data.message == 'success') {
-        showPassphraseDrawer.value = false
-        getIsPassphrase()
-      }
-    })
-    .catch((exception: AxiosError) => {
-      errorSetPassphrase.value.notificationTitle = t('error.cannot_set_passphrase')
-      errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    })
-    .finally(() => {
-      loadingSetPassphrase.value = false
-    })
-}
-
-async function oepenDownloadEnterprise(file: string) {
+function oepenDownloadEnterprise(file: string) {
   showDownloadModal.value = true
   seletedBackup.value = file
+}
+
+function successRunBackup() {
+  showRunBackupModal.value = false
+  getBackups()
+  successNotificationRunBackup.value.notificationTitle = t(
+    'standalone.backup_and_restore.backup.success_run_backup'
+  )
+  setTimeout(function () {
+    successNotificationRunBackup.value.notificationTitle = ''
+  }, 5000)
+}
+
+function successSetPassphrase() {
+  showPassphraseDrawer.value = false
+  getIsPassphrase()
 }
 </script>
 
@@ -248,7 +169,7 @@ async function oepenDownloadEnterprise(file: string) {
         </div>
         <template v-if="isEnterprise">
           <div v-if="listBackups.length" class="ml-auto self-start">
-            <NeButton class="mr-2" kind="tertiary" @click="openPassphraseDrawer()">
+            <NeButton class="mr-2" kind="tertiary" @click="showPassphraseDrawer = true">
               {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
             </NeButton>
             <NeButton kind="secondary" @click="showRunBackupModal = true">
@@ -273,13 +194,19 @@ async function oepenDownloadEnterprise(file: string) {
               </template>
               {{ t('standalone.backup_and_restore.backup.download_backup') }}
             </NeButton>
-            <NeButton kind="tertiary" size="lg" @click="openPassphraseDrawer()">
+            <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
               {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
             </NeButton>
           </div>
         </template>
       </div>
     </template>
+    <NeInlineNotification
+      v-if="!loading && !loadingPassphrase && successNotificationRunBackup.notificationTitle"
+      class="my-4"
+      kind="success"
+      :title="successNotificationRunBackup.notificationTitle"
+    />
     <div v-if="!loading && isEnterprise" class="mt-5">
       <NeEmptyState
         v-if="
@@ -299,7 +226,7 @@ async function oepenDownloadEnterprise(file: string) {
           </NeButton>
         </div>
         <div class="mt-2 flex justify-center">
-          <NeButton kind="tertiary" size="lg" @click="openPassphraseDrawer()">
+          <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
             {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
           </NeButton>
         </div>
@@ -336,96 +263,22 @@ async function oepenDownloadEnterprise(file: string) {
       </NeTable>
     </div>
   </div>
-  <NeModal
-    :primary-button-disabled="loadingDownload"
-    :primary-button-loading="loadingDownload"
-    :primary-label="t('standalone.backup_and_restore.backup.download')"
-    :secondary-button-disabled="loadingDownload"
-    :title="t('standalone.backup_and_restore.backup.modal_download_title')"
-    :visible="showDownloadModal"
-    kind="info"
-    primary-button-kind="primary"
+  <ModalDownloadBackup
+    :showDownloadModal="showDownloadModal"
+    :isSetPassphrase="isSetPassphrase"
+    :seletedBackup="seletedBackup"
+    :unitName="unitName"
     @close="showDownloadModal = false"
-    @primary-click="downloadBackup()"
-  >
-    <div>
-      {{ t('standalone.backup_and_restore.backup.modal_download_description', { name: unitName }) }}
-    </div>
-    <NeInlineNotification
-      v-if="errorDownloadBackup.notificationTitle"
-      class="my-4"
-      kind="error"
-      :title="errorDownloadBackup.notificationTitle"
-      :description="errorDownloadBackup.notificationDescription"
-    />
-  </NeModal>
-  <NeModal
-    :primary-button-disabled="loadingRunBackup"
-    :primary-button-loading="loadingRunBackup"
-    :primary-label="t('standalone.backup_and_restore.backup.run_backup')"
-    :secondary-button-disabled="loadingRunBackup"
-    :title="t('standalone.backup_and_restore.backup.run_backup')"
-    :visible="showRunBackupModal"
-    kind="info"
-    primary-button-kind="primary"
+  />
+  <ModalRunBackup
+    :showRunBackupModal="showRunBackupModal"
+    :unitName="unitName"
+    @success="successRunBackup()"
     @close="showRunBackupModal = false"
-    @primary-click="runBackup()"
-  >
-    <div>
-      {{ t('standalone.backup_and_restore.backup.run_backup_description', { name: unitName }) }}
-    </div>
-    <NeInlineNotification
-      v-if="errorRunBackup.notificationTitle"
-      class="my-4"
-      kind="error"
-      :title="errorRunBackup.notificationTitle"
-      :description="errorRunBackup.notificationDescription"
-    />
-  </NeModal>
-  <NeSideDrawer :is-shown="showPassphraseDrawer" title="" @close="showPassphraseDrawer = false">
-    <div class="space-y-8">
-      <NeTitle>{{ t('standalone.backup_and_restore.backup.passphrase_drawer_title') }}</NeTitle>
-      <hr />
-      <NeTextInput
-        v-model="formPassphrase.passphrase"
-        :invalid-message="errorSetPassphrase.passphrase"
-        :label="t('standalone.backup_and_restore.backup.passphrase')"
-        isPassword
-        ref="passphraseRef"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.backup_and_restore.backup.passphrase_helper') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
-      <NeInlineNotification
-        v-if="errorSetPassphrase.notificationTitle"
-        class="my-4"
-        kind="error"
-        :title="errorSetPassphrase.notificationTitle"
-        :description="errorSetPassphrase.notificationDescription"
-      />
-      <hr />
-      <div class="flex justify-end gap-4">
-        <NeButton
-          :disabled="loadingSetPassphrase"
-          :kind="'tertiary'"
-          @click="showPassphraseDrawer = false"
-        >
-          {{ t('common.cancel') }}
-        </NeButton>
-        <NeButton
-          :disabled="loadingSetPassphrase"
-          :kind="'primary'"
-          :loading="loadingSetPassphrase"
-          @click="setPassphrase()"
-        >
-          {{ t('common.configure') }}
-        </NeButton>
-      </div>
-    </div>
-  </NeSideDrawer>
+  />
+  <DrawerSetPassphrase
+    :showPassphraseDrawer="showPassphraseDrawer"
+    @success="successSetPassphrase()"
+    @close="showPassphraseDrawer = false"
+  />
 </template>

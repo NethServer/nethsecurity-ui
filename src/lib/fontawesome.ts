@@ -71,6 +71,8 @@ import { faCircleChevronDown } from '@fortawesome/free-solid-svg-icons/faCircleC
 import { faCircleChevronUp } from '@fortawesome/free-solid-svg-icons/faCircleChevronUp'
 import { faDownLeftAndUpRightToCenter } from '@fortawesome/free-solid-svg-icons/faDownLeftAndUpRightToCenter'
 import { faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons/faUpRightAndDownLeftFromCenter'
+import { faCircleArrowDown } from '@fortawesome/free-solid-svg-icons/faCircleArrowDown'
+import { faCircleArrowUp } from '@fortawesome/free-solid-svg-icons/faCircleArrowUp'
 import { faShapes as fasShapes } from '@fortawesome/free-solid-svg-icons'
 import { faTrafficCone as fasTrafficCone } from '@nethesis/nethesis-solid-svg-icons'
 import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons'
@@ -159,6 +161,8 @@ export async function loadFontAwesome(app: any) {
   library.add(faCircleChevronUp)
   library.add(faDownLeftAndUpRightToCenter)
   library.add(faUpRightAndDownLeftFromCenter)
+  library.add(faCircleArrowDown)
+  library.add(faCircleArrowUp)
   library.add(fasShapes)
   library.add(fasDiagramProject)
   library.add(fasArrowsLeftRight)

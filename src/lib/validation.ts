@@ -290,6 +290,25 @@ export const validateStringEqual = (value: String, otherValue: String): validati
   return { valid: true }
 }
 
+export const validateFile = (
+  value: File | null,
+  format: string | null = null
+): validationOutput => {
+  if (!value) {
+    return { valid: false, errMessage: 'error.required_file' }
+  }
+
+  if (format) {
+    const filenameSplit = value.name.split('.')
+    const extension = filenameSplit[filenameSplit.length - 1]
+
+    if (extension.toLowerCase() != format.toLowerCase())
+      return { valid: false, errMessage: 'error.invalid_file_format' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

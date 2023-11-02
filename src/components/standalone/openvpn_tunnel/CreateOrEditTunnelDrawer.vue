@@ -703,9 +703,18 @@ watch(
         v-model="topology"
         ><template #tooltip>
           <NeTooltip
-            ><template #content>{{
-              t('standalone.openvpn_tunnel.topology_tooltip')
-            }}</template></NeTooltip
+            ><template #content>
+              <p>
+                <span class="font-semibold"
+                  >{{ t('standalone.openvpn_tunnel.topology_tooltip_subnet_title') }}:</span
+                >
+                {{ t('standalone.openvpn_tunnel.topology_tooltip_subnet_description') }}
+              </p>
+              <p>
+                <span class="font-semibold">{{ t('standalone.openvpn_tunnel.p2p') }}:</span>
+                {{ t('standalone.openvpn_tunnel.topology_tooltip_p2p_description') }}
+              </p></template
+            ></NeTooltip
           >
         </template></NeRadioSelection
       >

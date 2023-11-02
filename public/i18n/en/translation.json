@@ -836,8 +836,8 @@
         "server_tunnel": "Server tunnel",
         "client_tunnel": "Client tunnel"
       },
-      "server_tunnel_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "client_tunnel_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "server_tunnel_description": "On this page, you can configure the server for OpenVPN tunnels. OpenVPN tunnels are used to securely connect remote networks. After the configuration is complete, you can export the settings, which can be imported into another NethSecurity device from the OpenVPN client section.",
+      "client_tunnel_description": "On this page, you can import a configuration file generated from another NethSecurity's OpenVPN tunnel server page. You can also manually configure a client to connect it to any device that supports OpenVPN.",
       "add_server_tunnel": "Add server tunnel",
       "add_client_tunnel": "Add client tunnel",
       "edit_server_tunnel": "Edit server tunnel",

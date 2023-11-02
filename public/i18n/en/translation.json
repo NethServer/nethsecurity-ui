@@ -899,11 +899,11 @@
       "bridged": "Bridged",
       "routed": "Routed",
       "could_not_parse_configuration_file": "Could not parse configuration file",
-      "public_endpoints_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "local_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "remote_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "extra_remote_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "topology_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta"
+      "public_endpoints_tooltip": "Public endpoints are a list of IP addresses or hostnames that clients can use to reach the OpenVPN tunnel server.",
+      "local_networks_tooltip": "Local networks are a list of network addresses that need to be reachable from the other end of the OpenVPN tunnel.",
+      "remote_networks_tooltip": "Remote networks are a list of network addresses present at the other end of the OpenVPN tunnel. The networks specified here will be added as static routes in the firewall when the VPN is active.",
+      "extra_remote_networks_tooltip": "When the VPN is active, these network addresses will be added as static routes regardless of the configuration received from the OpenVPN server.",
+      "topology_tooltip": "Subnet (recommended): This method offers a straightforward configuration approach. Instead of using a point-to-point setup, utilize a subnet configuration by specifying a local IP address and subnet mask for the tun interface. In this mode, each connected client is assigned a unique IP address, and it is compatible with Windows systems as well. P2P: Implement a point-to-point topology where the client's tun interface remote endpoint consistently points to the server's tun interface local endpoint. This configuration assigns a single IP address to each connected client. Utilize this mode exclusively when none of the connected clients operate on Windows systems."
     },
     "logs": {
       "title": "Logs",

@@ -207,11 +207,13 @@ async function fetchOptions() {
   try {
     loading.value = true
     cipherOptions.value = [
+      // Default value for the cipher option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
         description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
       },
+      // List containing the available ciphers returned from the ns.ovpntunnel service, mapped into NeCombobox options
       ...(await ubusCall('ns.ovpntunnel', 'list-cipher')).data.ciphers.map(
         (cipher: { name: string; description: string }) => ({
           id: cipher.name,
@@ -220,11 +222,13 @@ async function fetchOptions() {
       )
     ]
     digestOptions.value = [
+      // Default value for the digest option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
         description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
       },
+      // List containing the available digests returned from the ns.ovpntunnel service, mapped into NeCombobox options
       ...(await ubusCall('ns.ovpntunnel', 'list-digest')).data.digests.map(
         (digest: { name: string; description: string }) => ({
           id: digest.name,
@@ -249,17 +253,20 @@ function cleanValidationErrors() {
 async function resetForm() {
   loading.value = true
   if (props.itemToEdit) {
-    const tunnelData = props.isClientTunnel
-      ? ((
-          await ubusCall('ns.ovpntunnel', 'get-tunnel-client', {
-            id: props.itemToEdit.id
-          })
-        ).data as ClientTunnelPayload)
-      : ((
-          await ubusCall('ns.ovpntunnel', 'get-tunnel-server', {
-            id: props.itemToEdit.id
-          })
-        ).data as ServerTunnelPayload)
+    let tunnelData: ClientTunnelPayload | ServerTunnelPayload
+    if (props.isClientTunnel) {
+      tunnelData = (
+        await ubusCall('ns.ovpntunnel', 'get-tunnel-client', {
+          id: props.itemToEdit.id
+        })
+      ).data
+    } else {
+      tunnelData = (
+        await ubusCall('ns.ovpntunnel', 'get-tunnel-server', {
+          id: props.itemToEdit.id
+        })
+      ).data
+    }
 
     id.value = tunnelData.id as string
     name.value = tunnelData.ns_name
@@ -289,7 +296,7 @@ async function resetForm() {
       remoteNetworks.value = serverTunnelData.remote ?? ['']
       localNetworks.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
       localNetworksOptions.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
-      publicEndpoints.value = serverTunnelData.ns_public_ip
+      publicEndpoints.value = serverTunnelData.ns_public_ip ?? []
       vpnNetwork.value = serverTunnelData.server ?? ''
     }
   } else {

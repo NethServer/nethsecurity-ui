@@ -18,6 +18,9 @@ const emit = defineEmits([
   'tunnel-download'
 ])
 
+// Lists the table headers for the tunnels.
+// The headers vary based on the tunnel type: in the case of a client tunnel, the Remote Hosts header will be included.
+// In the case of a server tunnel, the Local Networks and VPN Network headers will be shown instead.
 const tableHeaders = [
   {
     label: t('standalone.openvpn_tunnel.name'),
@@ -27,6 +30,7 @@ const tableHeaders = [
     label: t('standalone.openvpn_tunnel.port'),
     key: 'port'
   },
+  // Include Local Networks header if the tunnel is a server one
   ...(!props.isClientTunnel
     ? [
         {
@@ -39,6 +43,7 @@ const tableHeaders = [
     label: t('standalone.openvpn_tunnel.remote_networks'),
     key: 'remote_networks'
   },
+  // Include Remote Hosts header if the tunnel is a client one
   ...(props.isClientTunnel
     ? [
         {
@@ -51,6 +56,7 @@ const tableHeaders = [
     label: t('standalone.openvpn_tunnel.topology'),
     key: 'topology'
   },
+  // Include VPN Network header if the tunnel is a server one
   ...(!props.isClientTunnel
     ? [
         {
@@ -63,10 +69,6 @@ const tableHeaders = [
     label: t('standalone.openvpn_tunnel.status'),
     key: 'status'
   },
-  /*{
-    label: t('standalone.openvpn_tunnel.connection'),
-    key: 'connection'
-  },*/
   {
     label: '',
     key: 'menu'
@@ -183,22 +185,6 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
         </p>
       </div>
     </template>
-    <!--<template #connection="{ item }: { item: ServerTunnelType | ClientTunnelType }">
-      <div :class="['flex', 'flex-row', 'items-center']">
-        <font-awesome-icon
-          :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
-          :class="['mr-2', 'h-5', 'w-5', item.connected ? 'text-green-500' : 'text-rose-500']"
-          aria-hidden="true"
-        />
-        <p>
-          {{
-            item.connected
-              ? t('standalone.openvpn_tunnel.connected')
-              : t('standalone.openvpn_tunnel.not_connected')
-          }}
-        </p>
-      </div>
-    </template>-->
     <template #menu="{ item }: { item: ServerTunnel }">
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">

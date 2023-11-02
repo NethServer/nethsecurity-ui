@@ -31,11 +31,6 @@ const downloadOptions = [
     label: t('standalone.openvpn_tunnel.nethsecurity_client_configuration'),
     description: t('standalone.openvpn_tunnel.nethsecurity_client_configuration_description')
   }
-  /*{
-    id: 'private_key_tunnel_ca_certificates',
-    label: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates'),
-    description: t('standalone.openvpn_tunnel.private_key_tunnel_ca_certificates_description')
-  }*/
 ]
 
 async function downloadTunnel() {

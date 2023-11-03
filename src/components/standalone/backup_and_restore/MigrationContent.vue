@@ -1,13 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DrawerMigration from '@/components/standalone/backup_and_restore/DrawerMigration.vue'
 
 const { t } = useI18n()
 
 let showMigrationDrawer = ref(false)
+
+let objNotification = {
+  notificationTitle: ''
+}
+let successNotificationMigration = ref({ ...objNotification })
+
+function successMigration() {
+  successNotificationMigration.value.notificationTitle = t(
+    'standalone.backup_and_restore.migration.success_migration'
+  )
+  setTimeout(function () {
+    successNotificationMigration.value.notificationTitle = ''
+  }, 5000)
+}
 </script>
 
 <template>
@@ -42,8 +56,15 @@ let showMigrationDrawer = ref(false)
         </NeButton>
       </div>
     </div>
+    <NeInlineNotification
+      v-if="successNotificationMigration.notificationTitle"
+      class="my-4"
+      kind="success"
+      :title="successNotificationMigration.notificationTitle"
+    />
     <DrawerMigration
       :showMigrationDrawer="showMigrationDrawer"
+      @success="successMigration()"
       @close="showMigrationDrawer = false"
     />
   </div>

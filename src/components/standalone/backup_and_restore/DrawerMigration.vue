@@ -25,10 +25,8 @@ defineProps({
   }
 })
 
-defineEmits(['success', 'close'])
-
-//const MIGRATION_WAIT_TIME = 45000
-
+const MIGRATION_WAIT_TIME = 25000
+const emit = defineEmits(['success', 'close'])
 const formMigration = ref({
   file: undefined,
   devices: []
@@ -40,15 +38,21 @@ let loadingMigration = ref(false)
 let isMigrating = ref(false)
 let migrationProgress = ref(0)
 let listDevices = ref([])
-let listDevicesMigration = ref([])
-//let migrationIntervalRef = ref<number | undefined>()
-//let migrationTimeoutRef = ref<number | undefined>()
+let listDevicesMigration = ref([
+  {
+    id: '',
+    label: '',
+    selected: ''
+  }
+])
+let migrationIntervalRef = ref<number | undefined>()
 let fileRef = ref()
 
 let objNotification = {
   notificationTitle: '',
   notificationDescription: '',
-  file: ''
+  file: '',
+  devices: ['']
 }
 
 let error = ref(false)
@@ -67,7 +71,8 @@ watch(
     errorMigrationFile.value = {
       notificationTitle: '',
       notificationDescription: '',
-      file: ''
+      file: '',
+      devices: ['']
     }
     if (formMigration.value.file) {
       loadingFile.value = true
@@ -81,9 +86,15 @@ watch(
               }
 
               let res = await ubusCall('ns.migration', 'upload', payload)
-              console.log(1, res.data)
               if (res?.data?.devices?.length) {
-                listDevicesMigration.value = res.data.devices
+                listDevicesMigration.value = res.data.devices.map((item: any) => ({
+                  id: item.hwaddr,
+                  selected: undefined,
+                  label:
+                    item.name +
+                    (item.ipaddr ? ' - ' + item.ipaddr : '') +
+                    (item.role ? ' - ' + item.role : '')
+                }))
               }
             } catch (exception: any) {
               errorMigrationFile.value.notificationTitle = t('error.upload_file_migration')
@@ -106,10 +117,9 @@ async function getListDevices() {
   loading.value = true
   try {
     let res = await ubusCall('ns.migration', 'list-devices', {})
-    console.log(res.data)
     if (res?.data?.devices?.length) {
       listDevices.value = res.data.devices.map((item: any) => ({
-        id: item.name,
+        id: item.hwaddr,
         label:
           item.name +
           (item.ipaddr ? ' - ' + item.ipaddr : '') +
@@ -127,7 +137,7 @@ async function getListDevices() {
   }
 }
 
-function validateRestore(): boolean {
+function validateMigration(): boolean {
   let isValidationOk = true
 
   let { valid, errMessage } = validateRequired(
@@ -138,52 +148,62 @@ function validateRestore(): boolean {
     isValidationOk = false
   }
 
+  if (listDevicesMigration.value.length) {
+    for (let [index, item] of listDevicesMigration.value.entries()) {
+      if (!item.selected) {
+        let { valid, errMessage } = validateRequired(item.selected)
+        if (!valid) {
+          errorMigration.value.devices[index] = t(errMessage as string)
+          isValidationOk = false
+        }
+      }
+    }
+  }
+
   return isValidationOk
 }
 
 function clearErrors() {
+  migrationIntervalRef.value = undefined
+  migrationProgress.value = 0
   errorMigration.value = {
     notificationTitle: '',
     notificationDescription: '',
-    file: ''
+    file: '',
+    devices: ['']
   }
 }
 
 async function startMigration() {
   clearErrors()
-  if (validateRestore()) {
+  if (validateMigration()) {
     loadingMigration.value = true
-    let error = false
     try {
-      let payload = {}
-
-      await new Promise((resolve: any) => {
-        let reader = new FileReader()
-        reader.onload = function (event) {
-          if (event?.target?.result) {
-            Object.assign(payload, { backup: String(event.target.result).split(',')[1] })
-          } else {
-            error = true
-          }
-          resolve()
+      let devices = []
+      if (listDevicesMigration.value.length) {
+        for (let item of listDevicesMigration.value) {
+          devices.push({
+            old: item.id,
+            new: item.selected
+          })
         }
-        if (formMigration.value.file) {
-          reader.readAsDataURL(formMigration.value.file)
-        }
-      })
+      }
 
-      if (!error) {
-        /*let res = await ubusCall('ns.backup', methodCall, payload)
-				if (res?.data?.message && res?.data?.message === 'success') {
-					isMigrating.value = true
-					showMigrationDrawer.value = false
-					setMigrationTimer()
-				} */
-      } else {
-        errorMigrationBackup.value.notificationTitle = t('error.cannot_restore_backup')
+      let payload = {
+        mappings: devices
+      }
+
+      emit('close')
+      isMigrating.value = true
+      setMigrationTimer()
+
+      let res = await ubusCall('ns.migration', 'migrate', payload)
+      if (res?.data?.result && res?.data?.result === 'success') {
+        isMigrating.value = false
+        emit('success')
       }
     } catch (exception: any) {
-      errorMigrationBackup.value.notificationTitle = t('error.cannot_restore_backup')
+      errorMigrationBackup.value.notificationTitle = t('error.cannot_migrate')
       errorMigrationBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
     } finally {
       loadingMigration.value = false
@@ -191,15 +211,11 @@ async function startMigration() {
   }
 }
 
-/* function setMigrationTimer() {
-	migrationTimeoutRef.value = setTimeout(() => {
-		location.reload()
-	}, MIGRATION_WAIT_TIME)
-
-	migrationIntervalRef.value = setInterval(() => {
-		migrationProgress.value += 0.5
-	}, MIGRATION_WAIT_TIME / 200)
-} */
+function setMigrationTimer() {
+  migrationIntervalRef.value = setInterval(() => {
+    migrationProgress.value += 0.5
+  }, MIGRATION_WAIT_TIME / 200)
+}
 </script>
 
 <template>
@@ -246,10 +262,12 @@ async function startMigration() {
           </div>
           <div v-for="(deviceMigration, index) in listDevicesMigration" :key="index">
             <NeCombobox
-              v-model="formMigration.devices"
-              :options="listDevices"
-              :label="deviceMigration.name"
+              v-model="deviceMigration.selected"
               class="grow"
+              :options="listDevices"
+              :label="deviceMigration.label"
+              :invalid-message="errorMigration.devices[index]"
+              :ref="'deviceMigration' + index"
             />
           </div>
         </template>
@@ -277,17 +295,17 @@ async function startMigration() {
       </div>
     </NeSideDrawer>
     <NeModal
-      :primary-label="t('standalone.backup_and_restore.restore.restore_now')"
+      :primary-label="t('standalone.backup_and_restore.migration.migrating_now')"
       :primary-button-loading="isMigrating"
       :primary-button-disabled="isMigrating"
-      :title="t('standalone.backup_and_restore.restore.restore')"
+      :title="t('standalone.backup_and_restore.migration.migrate')"
       :cancel-label="!isMigrating ? t('common.cancel') : ''"
       :visible="isMigrating"
       kind="warning"
       primary-button-kind="danger"
       @close="isMigrating = false"
     >
-      {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}
+      {{ t('standalone.backup_and_restore.migration.migration_in_progress') }}
       <NeProgressBar class="my-4" :progress="migrationProgress" />
     </NeModal>
   </div>

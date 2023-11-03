@@ -134,7 +134,8 @@
     "cannot_retrieve_applications": "Cannot retrieve applications",
     "zone_already_exists": "Zone already exists",
     "cannot_delete_rule": "Cannote delete rule",
-    "upload_file_migration": "Lorem ipsum..."
+    "upload_file_migration": "Lorem ipsum...",
+    "cannot_migrate": "Lorem ipsum..."
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -360,11 +361,14 @@
         "description_link": "Lorem ipsum...",
         "upload_file": "Upload migration file",
         "drawer_title": "Upload migration file",
-        "input_upload_file": "Upload file (*.tar.xz)",
+        "input_upload_file": "Upload file (*.tar.gz)",
         "input_upload_file_description": "Drag and drop or choose file",
         "migrate": "Migrate",
         "remap_interfaces": "Remap interfaces",
-        "remap_interfaces_description": "Info: During interface remapping, if one or more interfaces change its IP address, you have to login again in the new IP address."
+        "remap_interfaces_description": "Info: During interface remapping, if one or more interfaces change its IP address, you have to login again in the new IP address.",
+        "migrating_now": "Migrating now",
+        "migration_in_progress": "Migration in progress",
+        "success_migration": "Migration performed successfully"
       }
     },
     "reboot_and_shutdown": {

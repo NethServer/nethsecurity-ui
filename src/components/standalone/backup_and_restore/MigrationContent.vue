@@ -8,11 +8,9 @@ import DrawerMigration from '@/components/standalone/backup_and_restore/DrawerMi
 const { t } = useI18n()
 
 let showMigrationDrawer = ref(false)
-
-let objNotification = {
+let successNotificationMigration = ref({
   notificationTitle: ''
-}
-let successNotificationMigration = ref({ ...objNotification })
+})
 
 function successMigration() {
   successNotificationMigration.value.notificationTitle = t(

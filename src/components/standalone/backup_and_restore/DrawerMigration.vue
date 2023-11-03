@@ -32,34 +32,39 @@ const formMigration = ref({
   devices: []
 })
 
-let loading = ref(false)
-let loadingFile = ref(false)
-let loadingMigration = ref(false)
-let isMigrating = ref(false)
-let migrationProgress = ref(0)
-let listDevices = ref([])
-let listDevicesMigration = ref([
+const loading = ref(false)
+const loadingFile = ref(false)
+const loadingMigration = ref(false)
+const isMigrating = ref(false)
+const migrationProgress = ref(0)
+const listDevices = ref([])
+const listDevicesMigration = ref([
   {
     id: '',
     label: '',
     selected: ''
   }
 ])
-let migrationIntervalRef = ref<number | undefined>()
-let fileRef = ref()
-
-let objNotification = {
-  notificationTitle: '',
-  notificationDescription: '',
-  file: '',
-  devices: ['']
-}
+const migrationIntervalRef = ref<number | undefined>()
+const fileRef = ref()
 
 let error = ref(false)
-let errorMigration = ref({ ...objNotification })
-let errorMigrationFile = ref({ ...objNotification })
-let errorMigrationBackup = ref({ ...objNotification })
-let errorLoadDevices = ref({ ...objNotification })
+let errorMigration = ref({
+  file: '',
+  devices: ['']
+})
+let errorMigrationFile = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+let errorMigrationBackup = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+let errorLoadDevices = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
 
 onMounted(() => {
   getListDevices()
@@ -70,9 +75,7 @@ watch(
   async () => {
     errorMigrationFile.value = {
       notificationTitle: '',
-      notificationDescription: '',
-      file: '',
-      devices: ['']
+      notificationDescription: ''
     }
     if (formMigration.value.file) {
       loadingFile.value = true
@@ -167,8 +170,6 @@ function clearErrors() {
   migrationIntervalRef.value = undefined
   migrationProgress.value = 0
   errorMigration.value = {
-    notificationTitle: '',
-    notificationDescription: '',
     file: '',
     devices: ['']
   }

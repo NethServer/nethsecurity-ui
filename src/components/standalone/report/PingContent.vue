@@ -17,19 +17,22 @@ const { t } = useI18n()
 const formPing = ref({
   hostList: ['']
 })
+const loading = ref(true)
+const saving = ref(false)
+const successSaving = ref(false)
 
-let loading = ref(true)
-let saving = ref(false)
-let successSaving = ref(false)
-let objNotification = {
-  notificationTitle: '',
-  notificationDescription: '',
-  hostList: ['']
-}
 let error = ref(false)
-let errorConfiguration = ref({ ...objNotification })
-let errorForm = ref({ ...objNotification })
-let errorSaving = ref({ ...objNotification })
+let errorConfiguration = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+let errorSaving = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+let errorForm = ref({
+  hostList: ['']
+})
 
 onMounted(() => {
   getConfiguration()
@@ -68,7 +71,9 @@ function validate() {
 }
 
 function save() {
-  errorForm.value = { ...objNotification }
+  errorForm.value = {
+    hostList: ['']
+  }
   if (validate()) {
     saving.value = true
 

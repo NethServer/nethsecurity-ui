@@ -10,15 +10,14 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const { t } = useI18n()
+const loading = ref(true)
+const linkPath = ref('')
 
-let loading = ref(true)
-let linkPath = ref('')
-let objNotification = {
+let error = ref(false)
+let errorConfiguration = ref({
   notificationTitle: '',
   notificationDescription: ''
-}
-let error = ref(false)
-let errorConfiguration = ref({ ...objNotification })
+})
 
 onMounted(() => {
   getConfiguration()

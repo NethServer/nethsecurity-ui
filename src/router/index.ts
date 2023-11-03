@@ -96,6 +96,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/VpnView.vue')
   },
   {
+    path: 'vpn/openvpn-tunnel',
+    name: 'OpenVPNTunnel',
+    component: () => import('../views/standalone/vpn/OpenvpnTunnelView.vue')
+  },
+  {
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')

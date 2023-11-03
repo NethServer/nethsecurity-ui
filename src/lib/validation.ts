@@ -290,6 +290,25 @@ export const validateStringEqual = (value: String, otherValue: String): validati
   return { valid: true }
 }
 
+export const validateFile = (
+  value: File | null,
+  format: string | null = null
+): validationOutput => {
+  if (!value) {
+    return { valid: false, errMessage: 'error.required_file' }
+  }
+
+  if (format) {
+    const filenameSplit = value.name.split('.')
+    const extension = filenameSplit[filenameSplit.length - 1]
+
+    if (extension.toLowerCase() != format.toLowerCase())
+      return { valid: false, errMessage: 'error.invalid_file_format' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */
@@ -318,9 +337,17 @@ export class MessageBag extends Map<string, Array<string>> {
    * @param key key of the messageBag, e.g. 'zoneName'
    * @param prefix string prefix to build the i18n key, e.g. 'standalone.zones_and_policies'
    */
-  getFirstI18nKeyFor(key: string, prefix: string): string {
+  getFirstI18nKeyFor(key: string): string {
     if (this.has(key)) {
-      return `${prefix}.${this.getFirstFor(key)}`
+      const i18nKey = this.getFirstFor(key)
+
+      if (i18nKey.includes('.')) {
+        // assume the i18nKey already contains the prefix, e.g. 'error.xyz'
+        return i18nKey
+      } else {
+        // add 'error.' prefix to build the i18n key
+        return `error.${i18nKey}`
+      }
     }
     return ''
   }

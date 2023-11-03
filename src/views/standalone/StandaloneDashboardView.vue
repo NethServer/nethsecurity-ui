@@ -4,9 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeButton, NeCard, savePreference } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeCard } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
@@ -16,7 +15,6 @@ import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
 
-const loginStore = useLoginStore()
 const { t } = useI18n()
 const {
   clientsLabels,
@@ -29,13 +27,6 @@ const {
   errorTitle,
   errorDescription
 } = useTrafficSummary()
-
-async function changeLocale(lang: string) {
-  savePreference('locale', lang, loginStore.username)
-
-  // reload page
-  location.reload()
-}
 
 function goToMultiwan() {
   router.push(`${getStandaloneRoutePrefix()}/network/multi-wan`)
@@ -61,14 +52,13 @@ function goToMultiwan() {
       :icon="['fas', 'earth-americas']"
     />
     <!-- multiwan -->
-    <ServiceCard
-      serviceName="mwan"
-      hasStatus
-      :title="t('standalone.dashboard.multiwan')"
-      :icon="['fas', 'earth-americas']"
-      titleClickable
-      @titleClick="goToMultiwan"
-    />
+    <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
+      <template #title>
+        <a @click="goToMultiwan" class="cursor-pointer text-primary-700 dark:text-primary-500">
+          {{ t('standalone.dashboard.multiwan') }}
+        </a>
+      </template>
+    </ServiceCard>
     <!-- dpi-core -->
     <ServiceCard
       serviceName="netifyd"
@@ -182,11 +172,5 @@ function goToMultiwan() {
         :datasets="protocolsDatasets"
       />
     </NeCard>
-  </div>
-
-  <!-- ////  -->
-  <div class="mt-12">
-    <NeButton size="lg" @click="changeLocale('it')" class="mb-4 mr-4">ITA</NeButton>
-    <NeButton size="lg" @click="changeLocale('en')" class="mb-4">ENG</NeButton>
   </div>
 </template>

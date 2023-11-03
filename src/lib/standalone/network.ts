@@ -2,6 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/useFirewallStore'
+import { useI18n } from 'vue-i18n'
 
 export function getInterface(deviceOrIface: any, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
@@ -51,6 +52,8 @@ export function getZoneLabel(zoneName: string) {
 }
 
 export function getZoneColor(zoneName: string) {
+  const { t } = useI18n()
+
   switch (zoneName) {
     case 'lan':
       return 'Green'
@@ -60,7 +63,8 @@ export function getZoneColor(zoneName: string) {
       return 'Blue'
     //// dmz
     default:
-      return ''
+      // custom zone
+      return t('standalone.interfaces_and_devices.custom_zone')
   }
 }
 
@@ -88,7 +92,8 @@ export function getZoneBorderColorClasses(zoneName: string) {
     case 'openvpnrw':
       return 'border-teal-700 dark:border-teal-700'
     default:
-      return 'border-gray-500 dark:border-gray-500'
+      // custom zone
+      return 'border-indigo-700 dark:border-indigo-700'
   }
 }
 
@@ -102,7 +107,7 @@ export function getZoneIcon(zoneName: string) {
       return 'user-group'
     //// dmz
     default:
-      return ''
+      return 'star'
   }
 }
 

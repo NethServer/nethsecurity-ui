@@ -19,9 +19,6 @@ const props = defineProps({
   showPassphraseDrawer: {
     type: Boolean,
     required: true
-  },
-  unitName: {
-    type: String
   }
 })
 
@@ -32,8 +29,7 @@ watch(
   () => {
     errorSetPassphrase.value = {
       notificationTitle: '',
-      notificationDescription: '',
-      passphrase: ''
+      notificationDescription: ''
     }
   }
 )
@@ -42,19 +38,15 @@ const formPassphrase = ref({
   passphrase: ''
 })
 
-let loadingSetPassphrase = ref(false)
-let passphraseRef = ref()
+const loading = ref(false)
 
-let objNotification = {
+let errorSetPassphrase = ref({
   notificationTitle: '',
-  notificationDescription: '',
-  passphrase: ''
-}
-
-let errorSetPassphrase = ref({ ...objNotification })
+  notificationDescription: ''
+})
 
 async function setPassphrase() {
-  loadingSetPassphrase.value = true
+  loading.value = true
 
   let payload = {
     passphrase: formPassphrase.value.passphrase
@@ -71,7 +63,7 @@ async function setPassphrase() {
       errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
     })
     .finally(() => {
-      loadingSetPassphrase.value = false
+      loading.value = false
     })
 }
 </script>
@@ -83,10 +75,8 @@ async function setPassphrase() {
       <hr />
       <NeTextInput
         v-model="formPassphrase.passphrase"
-        :invalid-message="errorSetPassphrase.passphrase"
         :label="t('standalone.backup_and_restore.backup.passphrase')"
         isPassword
-        ref="passphraseRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -105,15 +95,10 @@ async function setPassphrase() {
       />
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="loadingSetPassphrase" :kind="'tertiary'" @click="$emit('close')">
+        <NeButton :disabled="loading" :kind="'tertiary'" @click="$emit('close')">
           {{ t('common.cancel') }}
         </NeButton>
-        <NeButton
-          :disabled="loadingSetPassphrase"
-          :kind="'primary'"
-          :loading="loadingSetPassphrase"
-          @click="setPassphrase()"
-        >
+        <NeButton :disabled="loading" :kind="'primary'" :loading="loading" @click="setPassphrase()">
           {{ t('common.configure') }}
         </NeButton>
       </div>

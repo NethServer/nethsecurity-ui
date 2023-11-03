@@ -17,8 +17,7 @@ defineProps({
 })
 
 const emit = defineEmits(['success', 'close'])
-
-let loadingRunBackup = ref(false)
+const loading = ref(false)
 
 let objNotification = {
   notificationTitle: '',
@@ -28,7 +27,7 @@ let objNotification = {
 let errorRunBackup = ref({ ...objNotification })
 
 async function runBackup() {
-  loadingRunBackup.value = true
+  loading.value = true
   try {
     let res = await ubusCall('ns.backup', 'registered-backup')
     if (res?.data?.message && res?.data?.message === 'success') {
@@ -38,17 +37,17 @@ async function runBackup() {
     errorRunBackup.value.notificationTitle = t('error.cannot_run_backup')
     errorRunBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    loadingRunBackup.value = false
+    loading.value = false
   }
 }
 </script>
 
 <template>
   <NeModal
-    :primary-button-disabled="loadingRunBackup"
-    :primary-button-loading="loadingRunBackup"
+    :primary-button-disabled="loading"
+    :primary-button-loading="loading"
     :primary-label="t('standalone.backup_and_restore.backup.run_backup')"
-    :secondary-button-disabled="loadingRunBackup"
+    :secondary-button-disabled="loading"
     :title="t('standalone.backup_and_restore.backup.run_backup')"
     :visible="showRunBackupModal"
     kind="info"

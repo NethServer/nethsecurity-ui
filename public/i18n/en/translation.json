@@ -137,8 +137,8 @@
     "cannot_retrieve_applications": "Cannot retrieve applications",
     "zone_already_exists": "Zone already exists",
     "cannot_delete_rule": "Cannote delete rule",
-    "upload_file_migration": "Lorem ipsum...",
-    "cannot_migrate": "Lorem ipsum...",
+    "upload_file_migration": "Uploaded file is not a valid migration archive",
+    "cannot_migrate": "Can't execute migration",
     "cannot_retrieve_server_tunnels": "Cannot retrieve server tunnels",
     "cannot_retrieve_client_tunnels": "Cannot retrieve client tunnels",
     "cannot_duplicate_tunnel": "Cannot duplicate tunnel",
@@ -374,8 +374,8 @@
         "upload_file_description": "Drag and drop or choose file"
       },
       "migration": {
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sit amet tortor vel neque molestie venenatis. Pellentesque lobortis iaculis erat. Donec eu leo at est pulvinar bibendum et id sapien.",
-        "description_link": "Lorem ipsum...",
+        "description": "Migration is the process to convert a NethServer 7 machine into a NethSecurity. To initiate the process, access the NethServer 7 machine and create a migration archive, which should then be uploaded on this page. Following the upload, ensure the proper remapping of old network interfaces to those within the hardware hosting NethSecurity.",
+        "description_link": "See the manual for more info.",
         "upload_file": "Upload migration file",
         "drawer_title": "Upload migration file",
         "input_upload_file": "Upload file (*.tar.gz)",

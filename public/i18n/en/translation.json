@@ -111,7 +111,8 @@
     "cannot_retrieve_storage_configuration": "Cannot retrieve storage configuration",
     "cannot_configure_storage": "Cannot configure storage",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
-    "cannot_remove_storage": "Cannot remove storage"
+    "cannot_remove_storage": "Cannot remove storage",
+    "cannot_retrieve_netdata_configuration": "Cannot retrieve configuration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -782,7 +783,20 @@
       "search_tooltip": "The search uses regular expression format."
     },
     "report": {
-      "title": "Report"
+      "title": "Report",
+      "tabs": {
+        "real_time_report": "Real time report",
+        "ping_latency_monitor": "Ping latency monitor"
+      },
+      "real_time_report": {
+        "description": "Lorem ipsum in publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visithout relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is availa",
+        "open_report": "Open report"
+      },
+      "ping_latency_monitor": {
+        "description": "Lorem ipsum in publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visithout relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is availa",
+        "add_host": "Add host",
+        "host_to_monitor": "Host to monitor"
+      }
     },
     "account_management": {
       "title": "Account management for '{name}'",

@@ -101,6 +101,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/vpn/OpenvpnTunnelView.vue')
   },
   {
+    path: 'vpn/ipsec-tunnel',
+    name: 'IPsecTunnel',
+    component: () => import('../views/standalone/vpn/IPsecTunnelView.vue')
+  },
+  {
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')

@@ -1,10 +1,153 @@
-<script setup>
+<script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeEmptyState,
+  NeInlineNotification,
+  NeSkeleton,
+  getAxiosErrorMessage
+} from '@nethserver/vue-tailwind-lib'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { onMounted, ref } from 'vue'
+import { ubusCall } from '@/lib/standalone/ubus'
+import IPsecTunnelTable from '@/components/standalone/ipsec_tunnel/IPsecTunnelTable.vue'
+
+export type IpsecTunnel = {
+  id: string
+  name: string
+  local: string[]
+  remote: string[]
+  enabled: '0' | '1'
+  connected: boolean
+}
 
 const { t } = useI18n()
+
+const uciChangesStore = useUciPendingChangesStore()
+
+const loading = ref(true)
+const tunnels = ref([])
+const selectedTunnel = ref<IpsecTunnel | null>(null)
+const showCreateEditDrawer = ref(false)
+const showDeleteModal = ref(false)
+
+const error = ref({
+  notificationTitle: '',
+  notificationDescription: ''
+})
+
+async function fetchTunnels() {
+  try {
+    loading.value = true
+    tunnels.value = (await ubusCall('ns.ipsectunnel', 'list-tunnels')).data.tunnels
+    loading.value = false
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_ipsec_tunnels')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+}
+
+function openCreateEditDrawer(itemToEdit: IpsecTunnel | null) {
+  selectedTunnel.value = itemToEdit
+  showCreateEditDrawer.value = true
+}
+
+function openDeleteModal(itemToDelete: IpsecTunnel) {
+  selectedTunnel.value = itemToDelete
+  showDeleteModal.value = true
+}
+
+function closeModalsAndDrawers() {
+  selectedTunnel.value = null
+  showDeleteModal.value = false
+  showCreateEditDrawer.value = false
+}
+
+function cleanError() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: ''
+  }
+}
+
+async function toggleTunnelEnable(tunnel: IpsecTunnel) {
+  try {
+    cleanError()
+    await ubusCall('ns.ipsectunnel', tunnel.enabled ? 'disable-tunnel' : 'enable-tunnel', {
+      id: tunnel.id
+    })
+    await reloadTunnels()
+  } catch (err: any) {
+    error.value.notificationTitle = t(
+      tunnel.enabled ? 'error.cannot_disable_tunnel' : 'error.cannot_enable_tunnel'
+    )
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  }
+}
+
+async function reloadTunnels() {
+  cleanError()
+  await fetchTunnels()
+  await uciChangesStore.getChanges()
+}
+
+onMounted(() => {
+  fetchTunnels()
+})
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.ipsec_tunnel.title') }}</NeTitle>
+  <div class="flex flex-col gap-y-6">
+    <NeTitle>{{ t('standalone.ipsec_tunnel.title') }}</NeTitle>
+    <div class="flex flex-row items-center justify-between">
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.ipsec_tunnel.description') }}
+      </p>
+      <template v-if="tunnels.length > 0">
+        <div class="ml-2 flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
+          <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+            <template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'circle-plus']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </template>
+            {{ t('standalone.ipsec_tunnel.add_ipsec_tunnel') }}
+          </NeButton>
+        </div>
+      </template>
+    </div>
+    <NeInlineNotification
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      v-if="error.notificationTitle"
+    />
+    <NeSkeleton v-if="loading" :lines="10" />
+    <template v-else>
+      <NeEmptyState
+        v-if="tunnels.length == 0"
+        :title="t('standalone.ipsec_tunnel.no_tunnel_found')"
+        :icon="['fas', 'globe']"
+        ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'circle-plus']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('standalone.ipsec_tunnel.add_ipsec_tunnel') }}</NeButton
+        ></NeEmptyState
+      >
+      <IPsecTunnelTable
+        v-else
+        :tunnels="tunnels"
+        @tunnel-delete="openDeleteModal"
+        @tunnel-edit="openCreateEditDrawer"
+        @tunnel-toggle-enable="toggleTunnelEnable"
+      />
+    </template>
+  </div>
 </template>

@@ -138,7 +138,8 @@
     "cannot_disable_tunnel": "Cannot disable tunnel",
     "cannot_retrieve_tunnel_options": "Cannot retrieve tunnel options",
     "cannot_retrieve_tunnel_defaults": "Cannot retrieve tunnel defaults",
-    "cannot_import_configuration": "Cannot import configuration"
+    "cannot_import_configuration": "Cannot import configuration",
+    "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -909,7 +910,23 @@
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta"
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "add_ipsec_tunnel": "Add IPsec tunnel",
+      "no_tunnel_found": "No tunnel found",
+      "name": "Name",
+      "local_networks": "Local networks",
+      "remote_networks": "Remote networks",
+      "received": "Received",
+      "sent": "Sent",
+      "started": "Started",
+      "status": "Status",
+      "connection": "Connection",
+      "connected": "Connected",
+      "not_connected": "Not connected",
+      "enable": "Enable",
+      "disable": "Disable",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     },
     "logs": {
       "title": "Logs",

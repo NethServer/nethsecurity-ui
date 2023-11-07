@@ -926,7 +926,11 @@
       "enable": "Enable",
       "disable": "Disable",
       "enabled": "Enabled",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "delete_tunnel": "Delete tunnel",
+      "delete_tunnel_message": "You are about to delete tunnel '{name}'",
+      "add_tunnel": "Add tunnel",
+      "edit_tunnel": "Edit tunnel"
     },
     "logs": {
       "title": "Logs",

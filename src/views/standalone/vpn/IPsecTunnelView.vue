@@ -11,7 +11,8 @@ import {
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import IPsecTunnelTable from '@/components/standalone/ipsec_tunnel/IPsecTunnelTable.vue'
+import TunnelTable from '@/components/standalone/ipsec_tunnel/TunnelTable.vue'
+import DeleteTunnelModal from '@/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue'
 
 export type IpsecTunnel = {
   id: string
@@ -141,7 +142,7 @@ onMounted(() => {
           >{{ t('standalone.ipsec_tunnel.add_ipsec_tunnel') }}</NeButton
         ></NeEmptyState
       >
-      <IPsecTunnelTable
+      <TunnelTable
         v-else
         :tunnels="tunnels"
         @tunnel-delete="openDeleteModal"
@@ -150,4 +151,10 @@ onMounted(() => {
       />
     </template>
   </div>
+  <DeleteTunnelModal
+    :visible="showDeleteModal"
+    :item-to-delete="selectedTunnel"
+    @close="closeModalsAndDrawers"
+    @tunnel-deleted="reloadTunnels"
+  />
 </template>

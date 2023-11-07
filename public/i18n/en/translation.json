@@ -14,6 +14,7 @@
     "disable": "Disable",
     "enabled": "Enabled",
     "disabled": "Disabled",
+    "step": "Step",
     "page_under_construction": "Page under construction"
   },
   "error": {

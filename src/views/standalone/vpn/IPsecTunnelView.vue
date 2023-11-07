@@ -74,7 +74,7 @@ function cleanError() {
 async function toggleTunnelEnable(tunnel: IpsecTunnel) {
   try {
     cleanError()
-    await ubusCall('ns.ipsectunnel', tunnel.enabled ? 'disable-tunnel' : 'enable-tunnel', {
+    await ubusCall('ns.ipsectunnel', tunnel.enabled === '1' ? 'disable-tunnel' : 'enable-tunnel', {
       id: tunnel.id
     })
     await reloadTunnels()

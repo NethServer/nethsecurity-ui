@@ -43,11 +43,12 @@ function getDropdownItems(item: IpsecTunnel) {
   return [
     {
       id: 'enable_disable',
-      label: item.enabled
-        ? t('standalone.ipsec_tunnel.disable')
-        : t('standalone.ipsec_tunnel.enable'),
+      label:
+        item.enabled === '1'
+          ? t('standalone.ipsec_tunnel.disable')
+          : t('standalone.ipsec_tunnel.enable'),
       iconStyle: 'fas',
-      icon: item.enabled ? 'circle-xmark' : 'circle-check',
+      icon: item.enabled === '1' ? 'circle-xmark' : 'circle-check',
       action: () => {
         emit('tunnel-toggle-enable', item)
       }
@@ -66,7 +67,7 @@ function getDropdownItems(item: IpsecTunnel) {
 }
 
 function getCellClasses(item: IpsecTunnel) {
-  return !item.enabled ? ['text-gray-400', 'dark:text-gray-700'] : []
+  return item.enabled === '0' ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
 </script>
 
@@ -101,13 +102,13 @@ function getCellClasses(item: IpsecTunnel) {
     <template #status="{ item }: { item: IpsecTunnel }">
       <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
         <font-awesome-icon
-          :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
+          :icon="['fas', item.enabled === '1' ? 'circle-check' : 'circle-xmark']"
           class="mr-2 h-5 w-5"
           aria-hidden="true"
         />
         <p>
           {{
-            item.enabled
+            item.enabled === '1'
               ? t('standalone.ipsec_tunnel.enabled')
               : t('standalone.ipsec_tunnel.disabled')
           }}
@@ -115,10 +116,19 @@ function getCellClasses(item: IpsecTunnel) {
       </div>
     </template>
     <template #connection="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-row', 'items-center']">
+      <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
         <font-awesome-icon
           :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
-          :class="['mr-2', 'h-5', 'w-5', item.connected ? 'text-green-500' : 'text-rose-500']"
+          :class="[
+            'mr-2',
+            'h-5',
+            'w-5',
+            item.enabled === '0'
+              ? 'text-gray-400 dark:text-gray-700'
+              : item.connected
+              ? 'text-green-500'
+              : 'text-rose-500'
+          ]"
           aria-hidden="true"
         />
         <p>

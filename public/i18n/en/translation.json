@@ -15,6 +15,8 @@
     "enabled": "Enabled",
     "disabled": "Disabled",
     "step": "Step",
+    "previous": "Previous",
+    "next": "Next",
     "page_under_construction": "Page under construction"
   },
   "error": {
@@ -140,7 +142,9 @@
     "cannot_retrieve_tunnel_options": "Cannot retrieve tunnel options",
     "cannot_retrieve_tunnel_defaults": "Cannot retrieve tunnel defaults",
     "cannot_import_configuration": "Cannot import configuration",
-    "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels"
+    "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels",
+    "cannot_retrieve_ipsec_encryption_options": "Cannot retrieve IPsec encryption options",
+    "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -931,7 +935,30 @@
       "delete_tunnel": "Delete tunnel",
       "delete_tunnel_message": "You are about to delete tunnel '{name}'",
       "add_tunnel": "Add tunnel",
-      "edit_tunnel": "Edit tunnel"
+      "edit_tunnel": "Edit tunnel",
+      "tunnel_name": "Tunnel name",
+      "wan_ip_address": "WAN IP address",
+      "remote_ip_address": "Remote IP address",
+      "local_identifier": "Local identifier",
+      "remote_identifier": "Remote identifier",
+      "choose_wan": "Choose WAN",
+      "add_network": "Add network",
+      "pre_shared_key": "Pre-shared key",
+      "generate_key": "Generate key",
+      "import_key": "Import key",
+      "dpd_dead_peer_detection": "DPD (dead peer detection)",
+      "pfs_perfect_forward_secrecy": "PFS (perfect forward secrecy",
+      "compression": "Compression",
+      "phase_one_ike": "Phase 1 (IKE)",
+      "phase_two_esp": "Phase 2 (ESP)",
+      "ike_version": "IKE version",
+      "encryption_algorithm": "Encryption algorithm",
+      "integrity_algorithm": "Integrity algorithm",
+      "diffie_hellman_group": "Diffie-Hellman group",
+      "key_life_time_seconds": "Key life time (seconds)",
+      "remote_ip_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "local_identifier_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "edit_ipsec_tunnel": "Edit IPsec tunnel"
     },
     "logs": {
       "title": "Logs",

@@ -13,6 +13,7 @@ import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import TunnelTable from '@/components/standalone/ipsec_tunnel/TunnelTable.vue'
 import DeleteTunnelModal from '@/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue'
+import CreateOrEditTunnelDrawer from '@/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue'
 
 export type IpsecTunnel = {
   id: string
@@ -156,5 +157,11 @@ onMounted(() => {
     :item-to-delete="selectedTunnel"
     @close="closeModalsAndDrawers"
     @tunnel-deleted="reloadTunnels"
+  />
+  <CreateOrEditTunnelDrawer
+    :item-to-edit="selectedTunnel"
+    @close="closeModalsAndDrawers"
+    @add-edit-tunnel="reloadTunnels"
+    :is-shown="showCreateEditDrawer"
   />
 </template>

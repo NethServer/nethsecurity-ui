@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   MessageBag,
+  validateIp4Cidr,
   validateIpAddress,
   validateRequired,
   type validationOutput
@@ -20,6 +21,7 @@ import {
   NeRadioSelection,
   NeFormItemLabel,
   NeTitle,
+  NeInlineNotification,
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -175,7 +177,7 @@ async function fetchOptions() {
 
 async function resetForm() {
   step.value = 1
-  // tunnelData is null if there is no item to edit, otherwise it will contain the result from the call to get-tunnel
+  // tunnelData is null if there is no item to edit, otherwise it will contain the result from the get-tunnel call
   let tunnelData: CreateEditIpsecTunnelPayload | null = null
 
   if (props.itemToEdit) {
@@ -189,6 +191,7 @@ async function resetForm() {
       localIdentifier.value = tunnelData.local_identifier
       remoteIdentifier.value = tunnelData.remote_identifier
       presharedKey.value = tunnelData.pre_shared_key
+      presharedKeyMode.value = 'import'
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_data')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -201,6 +204,7 @@ async function resetForm() {
       localIdentifier.value = defaultsResponse.data.local_identifier
       remoteIdentifier.value = defaultsResponse.data.remote_identifier
       generatedPresharedKey.value = defaultsResponse.data.pre_shared_key
+      presharedKeyMode.value = 'generate'
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -238,8 +242,36 @@ function runValidators(validators: validationOutput[], label: string): boolean {
   return validators.every((validator) => validator.valid)
 }
 
+function validateNetworkFields(networkList: string[]): [boolean, string[]] {
+  let validationErrors = []
+  let validationResult = true
+  networkList.forEach(() => {
+    validationErrors.push('')
+  })
+
+  for (let [index, networkEntry] of networkList.entries()) {
+    if (networkEntry) {
+      let validator = validateIp4Cidr(networkEntry)
+      if (!validator.valid) {
+        validationErrors[index] = t(validator.errMessage as string)
+        validationResult = false
+      }
+    }
+  }
+
+  return [validationResult, validationErrors]
+}
+
 function validateStep(step: number): boolean {
   if (step == 1) {
+    const [localValidationResult, localValidationError] = validateNetworkFields(localNetworks.value)
+    localNetworksValidationErrors.value = localValidationError
+
+    const [remoteValidationResult, remoteValidationError] = validateNetworkFields(
+      remoteNetworks.value
+    )
+    remoteNetworksValidationErrors.value = remoteValidationError
+
     const step1Validators: [validationOutput[], string][] = [
       [[validateRequired(name.value)], 'name'],
       [[validateRequired(wanIpAddress.value)], 'wanIpAddress'],
@@ -251,9 +283,13 @@ function validateStep(step: number): boolean {
       [[validateRequired(remoteIdentifier.value)], 'remoteIdentifier']
     ]
 
-    return step1Validators
-      .map(([validator, label]) => runValidators(validator, label))
-      .every((result) => result)
+    return (
+      step1Validators
+        .map(([validator, label]) => runValidators(validator, label))
+        .every((result) => result) &&
+      localValidationResult &&
+      remoteValidationResult
+    )
   } else if (step == 2) {
     if (presharedKeyMode.value === 'generate') {
       return true
@@ -304,6 +340,8 @@ function handlePreviousStep() {
 }
 
 async function createOrEditTunnel() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
   const isEditing = id.value != ''
   const requestType = isEditing ? 'edit-tunnel' : 'add-tunnel'
   const payload: CreateEditIpsecTunnelPayload = {
@@ -324,8 +362,8 @@ async function createOrEditTunnel() {
     enabled: enabled.value ? '1' : '0',
     dpdaction: dpd.value ? 'restart' : 'none',
     keyexchange: ikeVersion.value,
-    remote_subnet: remoteNetworks.value,
-    local_subnet: localNetworks.value,
+    remote_subnet: remoteNetworks.value.filter((x) => x != ''),
+    local_subnet: localNetworks.value.filter((x) => x != ''),
     gateway: remoteIpAddress.value,
     local_identifier: localIdentifier.value,
     remote_identifier: remoteIdentifier.value,
@@ -337,9 +375,18 @@ async function createOrEditTunnel() {
   if (isEditing) payload.id = id.value
 
   try {
+    isSavingChanges.value = true
     await ubusCall('ns.ipsec', requestType, payload)
+    emit('add-edit-tunnel')
+    close()
   } catch (err: any) {
-    //TODO: handle error
+    error.value.notificationTitle = isEditing
+      ? t('error.cannot_edit_tunnel')
+      : t('error.cannot_create_tunnel')
+
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    isSavingChanges.value = false
   }
 }
 
@@ -414,6 +461,7 @@ watch(
           :label="t('standalone.ipsec_tunnel.wan_ip_address')"
           :placeholder="t('standalone.ipsec_tunnel.choose_wan')"
           :invalidMessage="validationErrorBag.getFirstFor('wanIpAddress')"
+          :options="wanOptions"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
         />
@@ -461,6 +509,7 @@ watch(
       </template>
       <template v-else-if="step == 2">
         <NeRadioSelection
+          v-if="!id"
           :label="t('standalone.ipsec_tunnel.pre_shared_key')"
           :options="presharedKeyOptions"
           v-model="presharedKeyMode"
@@ -471,6 +520,7 @@ watch(
         <NeTextInput
           v-model="presharedKey"
           :invalidMessage="validationErrorBag.getFirstFor('presharedKey')"
+          :label="id ? t('standalone.ipsec_tunnel.pre_shared_key') : ''"
           v-if="presharedKeyMode == 'import'"
         />
         <div

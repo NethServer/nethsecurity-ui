@@ -169,7 +169,8 @@ async function fetchOptions() {
     }))
     diffieHellmanOptions.value = algsResponse.data.dh.map((x: { id: string; name: string }) => ({
       id: x.id,
-      label: x.name
+      label:
+        x.name == '-' ? t('standalone.ipsec_tunnel.pfs_perfect_forward_secrecy_disabled') : x.name
     }))
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_ipsec_algorithms')

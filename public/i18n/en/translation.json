@@ -947,7 +947,7 @@
       "generate_key": "Generate key",
       "import_key": "Import key",
       "dpd_dead_peer_detection": "DPD (dead peer detection)",
-      "pfs_perfect_forward_secrecy": "PFS (perfect forward secrecy",
+      "pfs_perfect_forward_secrecy_disabled": "PFS (Perfect Forward Secrecy) disabled",
       "compression": "Compression",
       "phase_one_ike": "Phase 1 (IKE)",
       "phase_two_esp": "Phase 2 (ESP)",

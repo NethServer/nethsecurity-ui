@@ -18,7 +18,7 @@ function copyValue() {
     <div
       class="text-md flex flex-row rounded-md border border-gray-300 bg-white text-gray-700 transition-colors duration-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-200 sm:text-sm sm:leading-6"
     >
-      <div class="mt-0 flex-grow px-3 py-1.5">
+      <div class="no-scrollbar mt-0 max-w-full flex-grow overflow-x-scroll px-3 py-1.5">
         {{ value }}
       </div>
       <button
@@ -35,3 +35,14 @@ function copyValue() {
     </div>
   </div>
 </template>
+
+<style>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

@@ -86,6 +86,7 @@ function getCellClasses(item: IpsecTunnel) {
           {{ local }}{{ item.local.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
+      <p :class="[...getCellClasses(item)]" v-else>-</p>
     </template>
     <template #remote_networks="{ item }: { item: IpsecTunnel }">
       <template v-if="item.remote.length > 0">

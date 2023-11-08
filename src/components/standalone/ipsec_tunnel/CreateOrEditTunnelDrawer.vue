@@ -206,6 +206,7 @@ async function resetForm() {
       remoteIdentifier.value = defaultsResponse.data.remote_identifier
       generatedPresharedKey.value = defaultsResponse.data.pre_shared_key
       presharedKeyMode.value = 'generate'
+      presharedKey.value = ''
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -243,12 +244,20 @@ function runValidators(validators: validationOutput[], label: string): boolean {
   return validators.every((validator) => validator.valid)
 }
 
-function validateNetworkFields(networkList: string[]): [boolean, string[]] {
+function validateNetworkFields(
+  networkList: string[],
+  validationBagKey: string
+): [boolean, string[]] {
   let validationErrors = []
   let validationResult = true
   networkList.forEach(() => {
     validationErrors.push('')
   })
+
+  if (networkList.length == 0) {
+    validationErrorBag.value.set(validationBagKey, [t('error.required')])
+    return [false, []]
+  }
 
   for (let [index, networkEntry] of networkList.entries()) {
     if (networkEntry) {
@@ -257,6 +266,9 @@ function validateNetworkFields(networkList: string[]): [boolean, string[]] {
         validationErrors[index] = t(validator.errMessage as string)
         validationResult = false
       }
+    } else {
+      validationErrors[index] = t('error.required')
+      validationResult = false
     }
   }
 
@@ -265,11 +277,15 @@ function validateNetworkFields(networkList: string[]): [boolean, string[]] {
 
 function validateFormByStep(step: number): boolean {
   if (step == 1) {
-    const [localValidationResult, localValidationError] = validateNetworkFields(localNetworks.value)
+    const [localValidationResult, localValidationError] = validateNetworkFields(
+      localNetworks.value,
+      'localNetworks'
+    )
     localNetworksValidationErrors.value = localValidationError
 
     const [remoteValidationResult, remoteValidationError] = validateNetworkFields(
-      remoteNetworks.value
+      remoteNetworks.value,
+      'remoteNetworks'
     )
     remoteNetworksValidationErrors.value = remoteValidationError
 
@@ -307,11 +323,9 @@ function validateFormByStep(step: number): boolean {
       [[validateRequired(ikeVersion.value)], 'ikeVersion'],
       [[validateRequired(ikeEncryptionAlgorithm.value)], 'ikeEncryptionAlgorithm'],
       [[validateRequired(ikeIntegrityAlgorithm.value)], 'ikeIntegrityAlgorithm'],
-      [[validateRequired(ikeDiffieHellmanGroup.value)], 'ikeDiffieHellmanGroup'],
       [[validateRequired(ikeKeyLifetime.value)], 'ikeKeyLifetime'],
       [[validateRequired(espEncryptionAlgorithm.value)], 'espEncryptionAlgorithm'],
       [[validateRequired(espIntegrityAlgorithm.value)], 'espIntegrityAlgorithm'],
-      [[validateRequired(espDiffieHellmanGroup.value)], 'espDiffieHellmanGroup'],
       [[validateRequired(espKeyLifetime.value)], 'espKeyLifetime']
     ]
 
@@ -377,7 +391,7 @@ async function createOrEditTunnel() {
 
   try {
     isSavingChanges.value = true
-    await ubusCall('ns.ipsec', requestType, payload)
+    await ubusCall('ns.ipsectunnel', requestType, payload)
     emit('add-edit-tunnel')
     close()
   } catch (err: any) {
@@ -393,6 +407,8 @@ async function createOrEditTunnel() {
 
 function cleanValidationErrors() {
   validationErrorBag.value.clear()
+  localNetworksValidationErrors.value = []
+  remoteNetworksValidationErrors.value = []
 }
 
 function close() {
@@ -479,12 +495,16 @@ watch(
           :add-item-label="t('standalone.ipsec_tunnel.add_network')"
           :title="t('standalone.ipsec_tunnel.local_networks')"
           :invalid-messages="localNetworksValidationErrors"
+          :general-invalid-message="validationErrorBag.getFirstFor('localNetworks')"
+          @add-item="validationErrorBag.delete('localNetworks')"
         />
         <NeMultiTextInput
           v-model="remoteNetworks"
           :add-item-label="t('standalone.ipsec_tunnel.add_network')"
           :title="t('standalone.ipsec_tunnel.remote_networks')"
           :invalid-messages="remoteNetworksValidationErrors"
+          :general-invalid-message="validationErrorBag.getFirstFor('remoteNetworks')"
+          @add-item="validationErrorBag.delete('remoteNetworks')"
         />
         <NeTextInput
           v-model="localIdentifier"

@@ -143,7 +143,7 @@
     "cannot_retrieve_tunnel_defaults": "Cannot retrieve tunnel defaults",
     "cannot_import_configuration": "Cannot import configuration",
     "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels",
-    "cannot_retrieve_ipsec_encryption_options": "Cannot retrieve IPsec encryption options",
+    "cannot_retrieve_ipsec_algorithms": "Cannot retrieve IPsec algorithms",
     "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data"
   },
   "ne_text_input": {

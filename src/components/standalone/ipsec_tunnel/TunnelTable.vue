@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
-import type { IpsecTunnel } from '../../../views/standalone/vpn/IPsecTunnelView.vue'
+import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
 
 const { t } = useI18n()
 

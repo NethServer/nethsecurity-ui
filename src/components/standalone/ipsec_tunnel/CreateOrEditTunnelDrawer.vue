@@ -170,7 +170,7 @@ async function fetchOptions() {
       label: x.name
     }))
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_ipsec_encryption_options')
+    error.value.notificationTitle = t('error.cannot_retrieve_ipsec_algorithms')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     throw err
   }
@@ -263,7 +263,7 @@ function validateNetworkFields(networkList: string[]): [boolean, string[]] {
   return [validationResult, validationErrors]
 }
 
-function validateStep(step: number): boolean {
+function validateFormByStep(step: number): boolean {
   if (step == 1) {
     const [localValidationResult, localValidationError] = validateNetworkFields(localNetworks.value)
     localNetworksValidationErrors.value = localValidationError
@@ -323,7 +323,7 @@ function validateStep(step: number): boolean {
 
 function handleNextStep() {
   cleanValidationErrors()
-  if (validateStep(step.value)) {
+  if (validateFormByStep(step.value)) {
     if (step.value == 3) {
       createOrEditTunnel()
     } else {

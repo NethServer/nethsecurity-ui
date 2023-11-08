@@ -65,8 +65,8 @@ type ClientTunnelPayload = {
 
 type ServerTunnelPayload = {
   topology: 'subnet' | 'p2p'
-  local: string[]
-  ns_public_ip: string[]
+  local?: string[]
+  ns_public_ip?: string[]
   tls_version_min: string
   server?: string
 } & SharedTunnelPayload
@@ -294,8 +294,8 @@ async function resetForm() {
     } else {
       const serverTunnelData = tunnelData as ServerTunnelPayload
       remoteNetworks.value = serverTunnelData.remote ?? ['']
-      localNetworks.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
-      localNetworksOptions.value = serverTunnelData.local.map((x) => ({ id: x, label: x }))
+      localNetworks.value = serverTunnelData.local?.map((x) => ({ id: x, label: x })) ?? []
+      localNetworksOptions.value = serverTunnelData.local?.map((x) => ({ id: x, label: x })) ?? []
       publicEndpoints.value = serverTunnelData.ns_public_ip ?? []
       vpnNetwork.value = serverTunnelData.server ?? ''
     }

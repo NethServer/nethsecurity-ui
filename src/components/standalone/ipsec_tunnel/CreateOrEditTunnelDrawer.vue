@@ -228,14 +228,16 @@ async function resetForm() {
   remoteNetworks.value = tunnelData?.remote_subnet ?? []
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
-  ikeVersion.value = tunnelData?.keyexchange ?? ''
-  ikeEncryptionAlgorithm.value = tunnelData?.ike.encryption_algorithm ?? ''
-  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? ''
-  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? ''
+  ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
+  ikeEncryptionAlgorithm.value =
+    tunnelData?.ike.encryption_algorithm ?? encryptionOptions.value[0].id
+  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? integrityOptions.value[0].id
+  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? diffieHellmanOptions.value[0].id
   ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? ''
-  espEncryptionAlgorithm.value = tunnelData?.esp.encryption_algorithm ?? ''
-  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? ''
-  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? ''
+  espEncryptionAlgorithm.value =
+    tunnelData?.esp.encryption_algorithm ?? encryptionOptions.value[0].id
+  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? integrityOptions.value[0].id
+  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? diffieHellmanOptions.value[0].id
   espKeyLifetime.value = tunnelData?.esp.rekeytime ?? ''
 }
 

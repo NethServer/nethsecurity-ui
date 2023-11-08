@@ -1,21 +1,21 @@
-import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
 
-export async function loadLocaleMessages(setLocaleMessage: any, lang: string) {
+export async function loadLocaleMessages(setLocaleMessage: any, lang: string): Promise<string> {
   try {
     const response = await fetch(`/i18n/${lang}/translation.json`)
     const messages = await response.json()
     setLocaleMessage(lang, messages)
-    return nextTick()
+    return lang
   } catch (error) {
     console.warn(`Cannot import ${lang} language messages`, error)
 
     // fallback to english
     if (lang !== 'en') {
-      console.warn(`Falling back to English`, error)
-      loadLocaleMessages(setLocaleMessage, 'en')
+      console.warn(`Falling back to English`)
+      return loadLocaleMessages(setLocaleMessage, 'en')
     }
   }
+  return ''
 }
 
 export function setupI18n(options: any) {

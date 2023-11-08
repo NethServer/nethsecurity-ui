@@ -7,7 +7,7 @@
 import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from './stores/standalone/uciPendingChanges'
 import axios from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
@@ -56,8 +56,13 @@ async function loadI18n() {
   if (preferredLanguage) {
     lang = preferredLanguage
   }
-  await loadLocaleMessages(setLocaleMessage, lang)
-  setI18nLanguage(locale, lang)
+  // load preferred or navigator language, falling back to English
+  const actualLang = await loadLocaleMessages(setLocaleMessage, lang)
+  await nextTick()
+
+  if (actualLang) {
+    setI18nLanguage(locale, actualLang)
+  }
 }
 
 function configureAxios() {

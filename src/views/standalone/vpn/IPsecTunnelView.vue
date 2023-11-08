@@ -36,7 +36,8 @@ const showDeleteModal = ref(false)
 
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 async function fetchTunnels() {
@@ -47,6 +48,7 @@ async function fetchTunnels() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_ipsec_tunnels')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -69,7 +71,8 @@ function closeModalsAndDrawers() {
 function cleanError() {
   error.value = {
     notificationTitle: '',
-    notificationDescription: ''
+    notificationDescription: '',
+    notificationDetails: ''
   }
 }
 
@@ -85,6 +88,7 @@ async function toggleTunnelEnable(tunnel: IpsecTunnel) {
       tunnel.enabled ? 'error.cannot_disable_tunnel' : 'error.cannot_enable_tunnel'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -126,7 +130,10 @@ onMounted(() => {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       v-if="error.notificationTitle"
-    />
+      ><template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState

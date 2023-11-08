@@ -70,7 +70,8 @@ const loading = ref(false)
 const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const step = ref(1)
 const validationErrorBag = ref(new MessageBag())
@@ -150,6 +151,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_wan_list')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
     throw err
   }
 
@@ -172,6 +174,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_ipsec_algorithms')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
     throw err
   }
 }
@@ -196,6 +199,7 @@ async function resetForm() {
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_data')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
       throw err
     }
   } else {
@@ -210,6 +214,7 @@ async function resetForm() {
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
       throw err
     }
   }
@@ -400,6 +405,7 @@ async function createOrEditTunnel() {
       : t('error.cannot_create_tunnel')
 
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isSavingChanges.value = false
   }
@@ -450,7 +456,11 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton :lines="20" v-if="loading" />
     <div class="flex flex-col gap-y-6" v-else>
       <NeStepper :currentStep="step" :totalSteps="3" :stepLabel="t('common.step')" />

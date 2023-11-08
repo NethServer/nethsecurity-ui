@@ -15,19 +15,26 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'tunnel-deleted'])
 
 const { visible, itemToDelete } = toRefs(props)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const isDeleting = ref(false)
 
 async function deleteTunnel() {
   if (itemToDelete.value) {
     try {
-      error.value = ''
+      error.value = {
+        notificationDescription: '',
+        notificationDetails: ''
+      }
       isDeleting.value = true
       await ubusCall('ns.ipsectunnel', 'delete-tunnel', { id: itemToDelete.value.id })
       emit('tunnel-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     } finally {
       isDeleting.value = false
     }
@@ -35,7 +42,10 @@ async function deleteTunnel() {
 }
 
 function close() {
-  error.value = ''
+  error.value = {
+    notificationDescription: '',
+    notificationDetails: ''
+  }
   emit('close')
 }
 </script>
@@ -57,11 +67,14 @@ function close() {
       })
     }}
     <NeInlineNotification
-      v-if="error"
+      v-if="error.notificationDescription"
       kind="error"
       :title="t('error.cannot_delete_tunnel')"
-      :description="error"
+      :description="error.notificationDescription"
       class="my-2"
-    />
+      ><template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
   </NeModal>
 </template>

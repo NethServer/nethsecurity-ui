@@ -2,7 +2,7 @@
 import { NeProgressBar } from '@nethserver/vue-tailwind-lib'
 import { range } from 'lodash'
 
-const props = defineProps<{
+defineProps<{
   totalSteps: number
   currentStep: number
   stepLabel: string

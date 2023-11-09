@@ -193,6 +193,7 @@ async function getConfiguration() {
       configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {
         configurationForm.value.networkAddress = configuration.network
+        getDhcpRange(true)
       }
       if (configuration.dhcp_start) {
         configurationForm.value.dhcpRangeStart = configuration.dhcp_start
@@ -455,7 +456,7 @@ function unregisterUnit() {
     .finally(() => (loadingUnregister.value = false))
 }
 
-function getDhcpRange() {
+function getDhcpRange(skipDhcpLimit: boolean) {
   loadingDhcpRange.value = true
   errorDhcpRange.value.notificationTitle = ''
   error.value.networkAddress = ''
@@ -489,7 +490,8 @@ function getDhcpRange() {
           if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
           if (response.data.max_entries)
             configurationForm.value.maxClientsAllowed = response.data.max_entries
-          if (response.data.end) configurationForm.value.dhcpLimit = response.data.end
+          if (!skipDhcpLimit && response.data.end)
+            configurationForm.value.dhcpLimit = response.data.end
         }
       })
       .catch((exception: AxiosError) => {
@@ -657,7 +659,12 @@ function goToInterfaces() {
             :label="t('standalone.hotspot.settings.configuration_network_address')"
             :disabled="!isLoggedIn"
             ref="networkAddressRef"
-            @change="getDhcpRange()"
+            :helperText="
+              t('standalone.hotspot.settings.configuration_max_client_allowed') +
+              ' ' +
+              configurationForm.maxClientsAllowed
+            "
+            @change="getDhcpRange(false)"
           >
             <template #tooltip>
               <NeTooltip>
@@ -674,15 +681,16 @@ function goToInterfaces() {
             :title="errorDhcpRange.notificationTitle"
             :description="errorDhcpRange.notificationDescription"
           />
-          <small class="opacity-60"
-            >{{ t('standalone.hotspot.settings.configuration_max_client_allowed') }}
-            {{ configurationForm.maxClientsAllowed }}</small
-          >
           <NeTextInput
             v-model="configurationForm.dhcpLimit"
             :invalid-message="error.dhcpLimit"
             :label="t('standalone.hotspot.settings.configuration_dhcp_limit')"
             :disabled="!isLoggedIn"
+            :helperText="
+              t('standalone.hotspot.settings.configuration_dhcp_start') +
+              ' ' +
+              configurationForm.dhcpRangeStart
+            "
             ref="dhcpLimitRef"
           >
             <template #tooltip>
@@ -693,10 +701,6 @@ function goToInterfaces() {
               </NeTooltip>
             </template>
           </NeTextInput>
-          <small class="opacity-60">
-            {{ t('standalone.hotspot.settings.configuration_dhcp_start') }}
-            {{ configurationForm.dhcpRangeStart }}
-          </small>
         </div>
         <NeInlineNotification
           v-if="errorSave.notificationTitle"

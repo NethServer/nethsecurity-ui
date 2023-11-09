@@ -342,26 +342,26 @@
       },
       "backup": {
         "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
-        "description_entrprise": "Run a backup to download your firewall's current settings and data. The system runs autonomously and keeps up to 3 backups. Configure a passphrase to increase the security of your data.",
+        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 3 backups. Configure a passphrase to increase the security of your data",
         "download": "Download",
         "download_backup": "Download backup",
         "modal_download_title": "Downloaded backup",
-        "modal_download_description": "Are you sure you want to proceed with the '{name}' backup?",
+        "modal_download_description": "Are you sure you want to download '{name}' backup?",
         "passphrase_drawer_title": "Configure passphrase",
         "passphrase": "Passphrase",
         "passphrase_helper": "Enter a passphrase if you want to encrypt the backup with GPG; if the passphrase is empty, the backup will be saved in plain text. Warning: if you lose the passphrase, you won't be able to use the encrypted backup.",
+        "passphrase_reser_helper": "Enter an empty string to remove passphrase",
         "configure_passphrase": "Configure passphrase",
         "no_backups_found": "No backups found",
         "run_backup": "Run backup",
-        "run_backup_description": "Are you sure you want to proceed with the '{name}' backup?",
+        "run_backup_description": "Are you sure you want to start '{name}' backup?",
         "success_run_backup": "Backup performed successfully",
         "success_download": "Backup downloaded successfully"
       },
       "restore": {
-        "description": "Restore a previous configuration of the unit, ensuring it functions with its original rules and parameters.",
+        "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",
         "restore": "Restore",
-        "restore_now": "Restoring now",
-        "restore_in_progress": "Restoring backup in progress",
+        "restore_in_progress": "Restoring backup and rebooting the unit, please wait\n",
         "restore_backup": "Restore backup",
         "passphrase": "Passphrase",
         "passphrase_helper": "Enter the passphrase used to encrypt the backup; if the passphrase is incorrect, it will not be possible to restore the backup.",
@@ -369,7 +369,7 @@
         "backup": "Backup",
         "from_backup": "From last backups",
         "from_file": "Upload file",
-        "upload_file": "Backup file (*.tar.xz)",
+        "upload_file": "Backup file (*.tar.gz or *.tar.gz.gpg)",
         "upload_file_description": "Drag and drop or choose file"
       },
       "migration": {
@@ -381,10 +381,10 @@
         "input_upload_file_description": "Drag and drop or choose file",
         "migrate": "Migrate",
         "remap_interfaces": "Remap interfaces",
-        "remap_interfaces_description": "Info: During interface remapping, if one or more interfaces change its IP address, you have to login again in the new IP address.",
-        "migrating_now": "Migrating now",
-        "migration_in_progress": "Migration in progress",
-        "success_migration": "Migration performed successfully"
+        "remap_interfaces_description": "During interface remapping, if one or more interfaces change their IP address, you have to login again on the new IP address.",
+        "migration_in_progress": "Migrating and rebooting, please wait",
+        "success_migration": "Migration performed successfully",
+        "to": "to"
       }
     },
     "reboot_and_shutdown": {

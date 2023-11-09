@@ -13,7 +13,8 @@ import {
   getAxiosErrorMessage,
   NeFormItemLabel,
   NeSkeleton,
-  NeCombobox
+  NeCombobox,
+  NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'
 const { t } = useI18n()
@@ -48,22 +49,24 @@ const listDevicesMigration = ref([
 const migrationIntervalRef = ref<number | undefined>()
 const fileRef = ref()
 
-let error = ref(false)
 let errorMigration = ref({
   file: '',
   devices: ['']
 })
 let errorMigrationFile = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorMigrationBackup = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorLoadDevices = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 onMounted(() => {
@@ -75,7 +78,8 @@ watch(
   async () => {
     errorMigrationFile.value = {
       notificationTitle: '',
-      notificationDescription: ''
+      notificationDescription: '',
+      notificationDetails: ''
     }
     if (formMigration.value.file) {
       loadingFile.value = true
@@ -102,6 +106,7 @@ watch(
             } catch (exception: any) {
               errorMigrationFile.value.notificationTitle = t('error.upload_file_migration')
               errorMigrationFile.value.notificationDescription = t(getAxiosErrorMessage(exception))
+              errorMigrationFile.value.notificationDetails = exception.toString()
             } finally {
               loadingFile.value = false
             }
@@ -132,9 +137,9 @@ async function getListDevices() {
       }))
     }
   } catch (exception: any) {
-    error.value = true
-    errorLoadDevices.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
+    errorLoadDevices.value.notificationTitle = t('error.cannot_retrieve_devices')
     errorLoadDevices.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorLoadDevices.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -206,6 +211,7 @@ async function startMigration() {
     } catch (exception: any) {
       errorMigrationBackup.value.notificationTitle = t('error.cannot_migrate')
       errorMigrationBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      errorMigrationBackup.value.notificationDetails = exception.toString()
     } finally {
       loadingMigration.value = false
     }
@@ -229,8 +235,12 @@ function setMigrationTimer() {
         kind="error"
         :title="errorLoadDevices.notificationTitle"
         :description="errorLoadDevices.notificationDescription"
-      />
-      <div v-if="!loading && !error" class="space-y-8">
+      >
+        <template v-if="errorLoadDevices.notificationDetails" #details>
+          {{ errorLoadDevices.notificationDetails }}
+        </template>
+      </NeInlineNotification>
+      <div v-if="!loading && !errorLoadDevices.notificationTitle" class="space-y-8">
         <NeTitle>{{ t('standalone.backup_and_restore.migration.drawer_title') }}</NeTitle>
         <hr />
         <NeSkeleton v-if="loadingFile" :lines="5" />
@@ -250,27 +260,40 @@ function setMigrationTimer() {
           kind="error"
           :title="errorMigrationFile.notificationTitle"
           :description="errorMigrationFile.notificationDescription"
-        />
+        >
+          <template v-if="errorMigrationFile.notificationDetails" #details>
+            {{ errorMigrationFile.notificationDetails }}
+          </template>
+        </NeInlineNotification>
         <template v-if="formMigration.file && !loadingFile && listDevicesMigration.length">
           <div class="space-y-0">
             <NeFormItemLabel>
               {{ t('standalone.backup_and_restore.migration.remap_interfaces') }}
             </NeFormItemLabel>
-            <NeInlineNotification
-              kind="info"
-              :title="t('standalone.backup_and_restore.migration.remap_interfaces_description')"
-            />
           </div>
           <div v-for="(deviceMigration, index) in listDevicesMigration" :key="index">
-            <NeCombobox
-              v-model="deviceMigration.selected"
-              class="grow"
-              :options="listDevices"
-              :label="deviceMigration.label"
-              :invalid-message="errorMigration.devices[index]"
-              :ref="'deviceMigration' + index"
-            />
+            <div class="flex">
+              <div>
+                <NeTextInput v-model="deviceMigration.label" disabled />
+              </div>
+              <div class="flex-grow text-center">
+                {{ t('standalone.backup_and_restore.migration.to') }}
+              </div>
+              <div>
+                <NeCombobox
+                  v-model="deviceMigration.selected"
+                  class="grow"
+                  :options="listDevices"
+                  :invalid-message="errorMigration.devices[index]"
+                  :ref="'deviceMigration' + index"
+                />
+              </div>
+            </div>
           </div>
+          <NeInlineNotification
+            kind="info"
+            :title="t('standalone.backup_and_restore.migration.remap_interfaces_description')"
+          />
         </template>
         <hr />
         <NeInlineNotification
@@ -279,7 +302,11 @@ function setMigrationTimer() {
           kind="error"
           :title="errorMigrationBackup.notificationTitle"
           :description="errorMigrationBackup.notificationDescription"
-        />
+        >
+          <template v-if="errorMigrationBackup.notificationDetails" #details>
+            {{ errorMigrationBackup.notificationDetails }}
+          </template>
+        </NeInlineNotification>
         <div class="flex justify-end gap-4">
           <NeButton :disabled="loadingMigration" :kind="'tertiary'" @click="$emit('close')">
             {{ t('common.cancel') }}
@@ -296,12 +323,11 @@ function setMigrationTimer() {
       </div>
     </NeSideDrawer>
     <NeModal
-      :primary-label="t('standalone.backup_and_restore.migration.migrating_now')"
-      :primary-button-loading="isMigrating"
-      :primary-button-disabled="isMigrating"
+      :primary-label="t('common.cancel')"
+      :primary-button-disabled="true"
       :title="t('standalone.backup_and_restore.migration.migrate')"
-      :cancel-label="!isMigrating ? t('common.cancel') : ''"
       :visible="isMigrating"
+      cancel-label=""
       kind="warning"
       primary-button-kind="danger"
       @close="isMigrating = false"

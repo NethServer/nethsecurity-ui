@@ -30,7 +30,7 @@ watch(
     errorSetPassphrase.value = {
       notificationTitle: '',
       notificationDescription: '',
-			notificationDetails: ''
+      notificationDetails: ''
     }
   }
 )
@@ -44,7 +44,7 @@ const loading = ref(false)
 let errorSetPassphrase = ref({
   notificationTitle: '',
   notificationDescription: '',
-	notificationDetails: ''
+  notificationDetails: ''
 })
 
 async function setPassphrase() {
@@ -63,7 +63,7 @@ async function setPassphrase() {
     .catch((exception: AxiosError) => {
       errorSetPassphrase.value.notificationTitle = t('error.cannot_set_passphrase')
       errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorSetPassphrase.value.notificationDetails = exception.toString();
+      errorSetPassphrase.value.notificationDetails = exception.toString()
     })
     .finally(() => {
       loading.value = false
@@ -80,6 +80,7 @@ async function setPassphrase() {
         v-model="formPassphrase.passphrase"
         :label="t('standalone.backup_and_restore.backup.passphrase')"
         isPassword
+        :helperText="t('standalone.backup_and_restore.backup.passphrase_reser_helper')"
       >
         <template #tooltip>
           <NeTooltip>
@@ -96,10 +97,10 @@ async function setPassphrase() {
         :title="errorSetPassphrase.notificationTitle"
         :description="errorSetPassphrase.notificationDescription"
       >
-				<template v-if="errorSetPassphrase.notificationDetails" #details>
-					{{ errorSetPassphrase.notificationDetails }}
-				</template>
-			</NeInlineNotification>
+        <template v-if="errorSetPassphrase.notificationDetails" #details>
+          {{ errorSetPassphrase.notificationDetails }}
+        </template>
+      </NeInlineNotification>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="loading" :kind="'tertiary'" @click="$emit('close')">

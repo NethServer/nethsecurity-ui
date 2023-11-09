@@ -20,6 +20,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { validateRequired } from '@/lib/validation'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
 const RESTORE_WAIT_TIME = 45000
@@ -55,14 +56,15 @@ const passphraseRef = ref()
 const fileRef = ref()
 const backupRef = ref()
 
-let error = ref(false)
 let errorPage = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorRestoreBackup = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorRestore = ref({
   passphrase: '',
@@ -71,7 +73,8 @@ let errorRestore = ref({
 })
 
 onMounted(() => {
-  Promise.all([getSubscription(), getIsPassphrase()])
+  getSubscription()
+  getIsPassphrase()
 })
 
 async function getSubscription() {
@@ -83,9 +86,9 @@ async function getSubscription() {
       await getBackups()
     }
   } catch (exception: any) {
-    error.value = true
     errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorPage.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -98,9 +101,9 @@ async function getIsPassphrase() {
       isSetPassphrase.value = true
     }
   } catch (exception: any) {
-    error.value = true
     errorPage.value.notificationTitle = t('error.cannot_retrieve_passphrase')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorPage.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -119,6 +122,7 @@ async function getBackups() {
     } catch (exception: any) {
       errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
       errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      errorPage.value.notificationDetails = exception.toString()
     }
   }
 }
@@ -216,6 +220,7 @@ async function restoreBackup() {
     } catch (exception: any) {
       errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
       errorRestoreBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      errorRestoreBackup.value.notificationDetails = exception.toString()
     } finally {
       loadingRestore.value = false
     }
@@ -235,36 +240,40 @@ function setRestoreTimer() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
       v-if="!loading && errorPage.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorPage.notificationTitle"
       :description="errorPage.notificationDescription"
-    />
-    <template v-if="!loading && !error">
-      <div class="flex">
-        <div>
-          <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.backup_and_restore.restore.description') }}
-          </p>
+    >
+      <template v-if="errorPage.notificationDetails" #details>
+        {{ errorPage.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <template v-if="!loading && !errorPage.notificationTitle">
+      <FormLayout
+        :description="t('standalone.backup_and_restore.restore.description')"
+        class="max-w-6xl"
+      >
+        <div class="flex">
+          <div class="mr-auto self-start">
+            <NeButton
+              class="ml-"
+              kind="secondary"
+              size="lg"
+              type="submit"
+              @click="showRestoreDrawer = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="['fa', 'rotate']" />
+              </template>
+              {{ t('standalone.backup_and_restore.restore.restore_backup') }}
+            </NeButton>
+          </div>
         </div>
-        <div class="mr-auto self-start">
-          <NeButton
-            class="ml-6"
-            kind="secondary"
-            size="lg"
-            type="submit"
-            @click="showRestoreDrawer = true"
-          >
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fa', 'rotate']" />
-            </template>
-            {{ t('standalone.backup_and_restore.restore.restore_backup') }}
-          </NeButton>
-        </div>
-      </div>
+      </FormLayout>
     </template>
     <NeSideDrawer :is-shown="showRestoreDrawer" title="" @close="showRestoreDrawer = false">
       <div class="space-y-8">
@@ -320,7 +329,11 @@ function setRestoreTimer() {
           kind="error"
           :title="errorRestoreBackup.notificationTitle"
           :description="errorRestoreBackup.notificationDescription"
-        />
+        >
+          <template v-if="errorRestoreBackup.notificationDetails" #details>
+            {{ errorRestoreBackup.notificationDetails }}
+          </template>
+        </NeInlineNotification>
         <div class="flex justify-end gap-4">
           <NeButton
             :disabled="loadingRestore"
@@ -345,8 +358,8 @@ function setRestoreTimer() {
       :primary-button-disabled="true"
       :title="t('standalone.backup_and_restore.restore.restore')"
       :visible="isRestoring"
-			cancel-label=""
-			kind="warning"
+      cancel-label=""
+      kind="warning"
       @close="isRestoring = false"
     >
       {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}

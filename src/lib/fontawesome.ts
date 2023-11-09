@@ -9,6 +9,7 @@ import {
   faUserGear,
   faArrowCircleDown,
   faArrowCircleUp,
+  faArrowUpRightFromSquare,
   faBoxArchive,
   faPlay,
   faRotate,
@@ -168,6 +169,7 @@ export async function loadFontAwesome(app: any) {
   library.add(faUpRightAndDownLeftFromCenter)
   library.add(faArrowCircleDown)
   library.add(faArrowCircleUp)
+  library.add(faArrowUpRightFromSquare)
   library.add(faBoxArchive)
   library.add(faPlay)
   library.add(faRotate)

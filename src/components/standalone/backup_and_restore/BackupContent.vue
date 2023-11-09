@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
 import DrawerSetPassphrase from '@/components/standalone/backup_and_restore/DrawerSetPassphrase.vue'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
 
@@ -119,7 +120,7 @@ function successSetPassphrase() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading || loadingPassphrase" :lines="15" />
+    <NeSkeleton v-if="loading || loadingPassphrase" :lines="10" />
     <NeInlineNotification
       v-if="!loading && !loadingPassphrase && errorPage.notificationTitle"
       class="my-4"
@@ -127,59 +128,57 @@ function successSetPassphrase() {
       :title="errorPage.notificationTitle"
       :description="errorPage.notificationDescription"
     />
-    <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
-      <div class="flex">
-        <div>
-          <p
-            v-if="isEnterprise"
-            class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400"
-          >
-            {{ t('standalone.backup_and_restore.backup.description_entrprise') }}
-          </p>
-          <p v-else class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.backup_and_restore.backup.description') }}
-          </p>
-        </div>
-        <template v-if="isEnterprise">
-          <div v-if="listBackups.length" class="ml-auto self-start">
-            <NeButton class="mr-2" kind="tertiary" @click="showPassphraseDrawer = true">
-              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-            </NeButton>
-            <NeButton kind="secondary" @click="showRunBackupModal = true">
-              <template #prefix>
-                <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.run_backup') }}
-            </NeButton>
-          </div>
-        </template>
-        <template v-else>
-          <div class="mr-auto self-start">
-            <NeButton
-              class="mr-2"
-              kind="secondary"
-              size="lg"
-              type="submit"
-              @click="showDownloadModal = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_backup') }}
-            </NeButton>
-            <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-            </NeButton>
-          </div>
-        </template>
-      </div>
-    </template>
     <NeInlineNotification
       v-if="!loading && !loadingPassphrase && successNotificationRunBackup"
       class="my-4"
       kind="success"
       :title="t('standalone.backup_and_restore.backup.success_run_backup')"
     />
+    <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
+      <FormLayout
+        :description="
+          isEnterprise
+            ? t('standalone.backup_and_restore.backup.description_entrprise')
+            : t('standalone.backup_and_restore.backup.description')
+        "
+        class="max-w-12xl"
+      >
+        <div class="flex">
+          <template v-if="isEnterprise">
+            <div v-if="listBackups.length" class="ml-auto self-start">
+              <NeButton class="mr-2" kind="tertiary" @click="showPassphraseDrawer = true">
+                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+              </NeButton>
+              <NeButton kind="secondary" @click="showRunBackupModal = true">
+                <template #prefix>
+                  <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
+                </template>
+                {{ t('standalone.backup_and_restore.backup.run_backup') }}
+              </NeButton>
+            </div>
+          </template>
+          <template v-else>
+            <div class="mr-auto self-start">
+              <NeButton
+                class="mr-2"
+                kind="secondary"
+                size="lg"
+                type="submit"
+                @click="showDownloadModal = true"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
+                </template>
+                {{ t('standalone.backup_and_restore.backup.download_backup') }}
+              </NeButton>
+              <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
+                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+              </NeButton>
+            </div>
+          </template>
+        </div>
+      </FormLayout>
+    </template>
     <div v-if="!loading && isEnterprise && !errorPage.notificationTitle" class="mt-5">
       <NeEmptyState
         v-if="!listBackups.length"

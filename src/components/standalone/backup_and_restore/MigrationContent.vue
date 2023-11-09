@@ -4,66 +4,67 @@ import { useI18n } from 'vue-i18n'
 import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DrawerMigration from '@/components/standalone/backup_and_restore/DrawerMigration.vue'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
 
 let showMigrationDrawer = ref(false)
-let successNotificationMigration = ref({
-  notificationTitle: ''
-})
+let successNotificationMigration = ref(false)
 
 function successMigration() {
-  successNotificationMigration.value.notificationTitle = t(
-    'standalone.backup_and_restore.migration.success_migration'
-  )
+  successNotificationMigration.value = true
   setTimeout(function () {
-    successNotificationMigration.value.notificationTitle = ''
+    successNotificationMigration.value = false
   }, 5000)
 }
 </script>
 
 <template>
   <div>
-    <div class="flex">
-      <div>
-        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+    <NeInlineNotification
+      v-if="successNotificationMigration"
+      class="my-4"
+      kind="success"
+      :title="t('standalone.backup_and_restore.migration.success_migration')"
+    />
+    <FormLayout class="max-w-6xl">
+      <template #description>
+        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
           {{ t('standalone.backup_and_restore.migration.description') }}
           <br />
+          <br />
           <a
-            href="https://lormepisum"
+            href="https://docs.nethsecurity.org/en/latest/migration.html"
             target="_blank"
             rel="noreferrer"
             class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-300"
           >
+            <FontAwesomeIcon class="mr-2" :icon="['fa', 'arrow-up-right-from-square']" />
             {{ t('standalone.backup_and_restore.migration.description_link') }}
           </a>
         </p>
+      </template>
+      <div class="flex">
+        <div class="mr-auto self-start">
+          <NeButton
+            class="ml-6"
+            kind="secondary"
+            size="lg"
+            type="submit"
+            @click="showMigrationDrawer = true"
+          >
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fa', 'arrow-circle-up']" />
+            </template>
+            {{ t('standalone.backup_and_restore.migration.upload_file') }}
+          </NeButton>
+        </div>
       </div>
-      <div class="mr-auto self-start">
-        <NeButton
-          class="ml-6"
-          kind="secondary"
-          size="lg"
-          type="submit"
-          @click="showMigrationDrawer = true"
-        >
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fa', 'arrow-circle-up']" />
-          </template>
-          {{ t('standalone.backup_and_restore.migration.upload_file') }}
-        </NeButton>
-      </div>
-    </div>
-    <NeInlineNotification
-      v-if="successNotificationMigration.notificationTitle"
-      class="my-4"
-      kind="success"
-      :title="successNotificationMigration.notificationTitle"
-    />
-    <DrawerMigration
-      :showMigrationDrawer="showMigrationDrawer"
-      @success="successMigration()"
-      @close="showMigrationDrawer = false"
-    />
+      <DrawerMigration
+        :showMigrationDrawer="showMigrationDrawer"
+        @success="successMigration()"
+        @close="showMigrationDrawer = false"
+      />
+    </FormLayout>
   </div>
 </template>

@@ -72,6 +72,13 @@ function goToMultiwan() {
       :title="t('standalone.dashboard.openvpn_rw')"
       :icon="['fas', 'globe']"
     />
+    <!-- hotspot -->
+    <ServiceCard
+      serviceName="dedalo"
+      hasStatus
+      :title="t('standalone.dashboard.hotspot')"
+      :icon="['fas', 'wifi']"
+    />
     <!-- banIP -->
     <ServiceCard
       serviceName="banip"

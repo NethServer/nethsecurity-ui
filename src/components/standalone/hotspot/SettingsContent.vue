@@ -15,7 +15,7 @@ import { faSave, faRightToBracket, faCircleCheck } from '@fortawesome/free-solid
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import { validateIp4Cidr, validateIp4Address, validateRequired } from '@/lib/validation'
+import { validateIp4Cidr, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -44,7 +44,7 @@ interface Configuration {
   networkDevice: string
   networkAddress: string
   dhcpRangeStart: string
-  dhcpRangeEnd: string
+  dhcpLimit: string
   maxClientsAllowed: string
 }
 
@@ -67,7 +67,7 @@ const configurationForm = ref<Configuration>({
   networkDevice: '',
   networkAddress: '',
   dhcpRangeStart: '',
-  dhcpRangeEnd: '',
+  dhcpLimit: '',
   maxClientsAllowed: ''
 })
 
@@ -91,8 +91,7 @@ let unitNameRef = ref()
 let unitDescriptionRef = ref()
 let networkDeviceRef = ref()
 let networkAddressRef = ref()
-let dhcpRangeStartRef = ref()
-let dhcpRangeEndRef = ref()
+let dhcpLimitRef = ref()
 let parentHotspotList = ref<Array<ParentHotspot>>()
 let networkDeviceList = ref<Array<NetworkDevice>>()
 
@@ -106,8 +105,7 @@ let objError = {
   unitDescription: '',
   networkDevice: '',
   networkAddress: '',
-  dhcpRangeStart: '',
-  dhcpRangeEnd: '',
+  dhcpLimit: '',
   maxClientsAllowed: ''
 }
 let error = ref({ ...objError })
@@ -195,11 +193,14 @@ async function getConfiguration() {
       configurationForm.value.networkDevice = configuration.interface
       if (configuration.network) {
         configurationForm.value.networkAddress = configuration.network
-        getDhcpRange()
+        getDhcpRange(true)
       }
-      if (configuration.dhcp_start)
+      if (configuration.dhcp_start) {
         configurationForm.value.dhcpRangeStart = configuration.dhcp_start
-      if (configuration.dhcp_end) configurationForm.value.dhcpRangeEnd = configuration.dhcp_end
+      }
+      if (configuration.dhcp_limit) {
+        configurationForm.value.dhcpLimit = configuration.dhcp_limit
+      }
     }
   } catch (exception: any) {
     isError.value = true
@@ -308,8 +309,7 @@ function clearErrors() {
     unitDescription: '',
     networkDevice: '',
     networkAddress: '',
-    dhcpRangeStart: '',
-    dhcpRangeEnd: '',
+    dhcpLimit: '',
     maxClientsAllowed: ''
   }
 }
@@ -376,35 +376,28 @@ function validateConfiguration(): boolean {
     isFocusInput = true
   }
 
-  if (configurationForm.value.dhcpRangeStart) {
-    let { valid, errMessage } = validateIp4Address(configurationForm.value.dhcpRangeStart)
-    if (!valid) {
-      error.value.dhcpRangeStart = t(errMessage as string)
+  if (configurationForm.value.dhcpLimit) {
+    let validDhcpLimit = false
+
+    if (
+      !isNaN(Number(configurationForm.value.dhcpLimit)) &&
+      Number(configurationForm.value.dhcpLimit) >= 0
+    )
+      validDhcpLimit = true
+
+    if (!validDhcpLimit) {
+      error.value.dhcpLimit = t('error.invalid_dhcp_limit')
       isValidationOk = false
     }
   } else {
-    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpRangeStart)
+    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpLimit)
     if (!valid) {
-      error.value.dhcpRangeStart = t(errMessage as string)
+      error.value.dhcpLimit = t(errMessage as string)
       isValidationOk = false
     }
   }
 
-  if (configurationForm.value.dhcpRangeEnd) {
-    let { valid, errMessage } = validateIp4Address(configurationForm.value.dhcpRangeEnd)
-    if (!valid) {
-      error.value.dhcpRangeEnd = t(errMessage as string)
-      isValidationOk = false
-    }
-  } else {
-    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpRangeEnd)
-    if (!valid) {
-      error.value.dhcpRangeEnd = t(errMessage as string)
-      isValidationOk = false
-    }
-  }
-
-  if (!isValidationOk && !isFocusInput) focusElement(dhcpRangeStartRef)
+  if (!isValidationOk && !isFocusInput) focusElement(dhcpLimitRef)
 
   return isValidationOk
 }
@@ -421,8 +414,7 @@ function saveConfiguration() {
       unit_name: configurationForm.value.unitName,
       unit_description: configurationForm.value.unitDescription,
       interface: configurationForm.value.networkDevice,
-      dhcp_start: configurationForm.value.dhcpRangeStart,
-      dhcp_end: configurationForm.value.dhcpRangeEnd
+      dhcp_limit: configurationForm.value.dhcpLimit
     }
 
     ubusCall('ns.dedalo', 'set-configuration', payload)
@@ -464,7 +456,7 @@ function unregisterUnit() {
     .finally(() => (loadingUnregister.value = false))
 }
 
-function getDhcpRange() {
+function getDhcpRange(skipDhcpLimit: boolean) {
   loadingDhcpRange.value = true
   errorDhcpRange.value.notificationTitle = ''
   error.value.networkAddress = ''
@@ -496,9 +488,10 @@ function getDhcpRange() {
       .then((response) => {
         if (response.data) {
           if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
-          if (response.data.end) configurationForm.value.dhcpRangeEnd = response.data.end
           if (response.data.max_entries)
             configurationForm.value.maxClientsAllowed = response.data.max_entries
+          if (!skipDhcpLimit && response.data.end)
+            configurationForm.value.dhcpLimit = response.data.end
         }
       })
       .catch((exception: AxiosError) => {
@@ -666,7 +659,12 @@ function goToInterfaces() {
             :label="t('standalone.hotspot.settings.configuration_network_address')"
             :disabled="!isLoggedIn"
             ref="networkAddressRef"
-            @change="getDhcpRange()"
+            :helperText="
+              t('standalone.hotspot.settings.configuration_max_client_allowed') +
+              ' ' +
+              configurationForm.maxClientsAllowed
+            "
+            @change="getDhcpRange(false)"
           >
             <template #tooltip>
               <NeTooltip>
@@ -683,38 +681,22 @@ function goToInterfaces() {
             :title="errorDhcpRange.notificationTitle"
             :description="errorDhcpRange.notificationDescription"
           />
-          <small class="opacity-60"
-            >{{ t('standalone.hotspot.settings.configuration_max_client_allowed') }}
-            {{ configurationForm.maxClientsAllowed }}</small
-          >
           <NeTextInput
-            v-model="configurationForm.dhcpRangeStart"
-            :invalid-message="error.dhcpRangeStart"
-            placeholder="192.168.0.2"
-            :label="t('standalone.hotspot.settings.configuration_dhcp_range_start')"
+            v-model="configurationForm.dhcpLimit"
+            :invalid-message="error.dhcpLimit"
+            :label="t('standalone.hotspot.settings.configuration_dhcp_limit')"
             :disabled="!isLoggedIn"
-            ref="dhcpRangeStartRef"
+            :helperText="
+              t('standalone.hotspot.settings.configuration_dhcp_start') +
+              ' ' +
+              configurationForm.dhcpRangeStart
+            "
+            ref="dhcpLimitRef"
           >
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.hotspot.settings.configuration_dhcp_range_start_helper') }}
-                </template>
-              </NeTooltip>
-            </template>
-          </NeTextInput>
-          <NeTextInput
-            v-model="configurationForm.dhcpRangeEnd"
-            :invalid-message="error.dhcpRangeEnd"
-            placeholder="192.168.0.254"
-            :label="t('standalone.hotspot.settings.configuration_dhcp_range_end')"
-            :disabled="!isLoggedIn"
-            ref="dhcpRangeEndRef"
-          >
-            <template #tooltip>
-              <NeTooltip>
-                <template #content>
-                  {{ t('standalone.hotspot.settings.configuration_dhcp_range_end_helper') }}
+                  {{ t('standalone.hotspot.settings.configuration_dhcp_limit_helper') }}
                 </template>
               </NeTooltip>
             </template>

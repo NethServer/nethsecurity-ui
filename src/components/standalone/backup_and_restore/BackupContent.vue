@@ -30,18 +30,19 @@ const showDownloadModal = ref(false)
 const showPassphraseDrawer = ref(false)
 const showRunBackupModal = ref(false)
 const successNotificationRunBackup = ref(false)
-const unitName = ref()
+const unitName = ref('')
 const seletedBackup = ref('')
 const listBackups = ref<Backup[]>([])
 
-let error = ref(false)
 let errorPage = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
 
 onMounted(() => {
-  Promise.all([getSubscription(), getHostname(), getIsPassphrase()])
+  getSubscription()
+  getHostname()
+  getIsPassphrase()
 })
 
 async function getSubscription() {
@@ -52,7 +53,6 @@ async function getSubscription() {
       await getBackups()
     }
   } catch (exception: any) {
-    error.value = true
     errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
@@ -65,7 +65,6 @@ async function getHostname() {
     let systemInfo = await ubusCall('system', 'board')
     unitName.value = systemInfo.data.hostname
   } catch (exception: any) {
-    error.value = true
     errorPage.value.notificationTitle = t('error.cannot_retrieve_system_board')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
   }
@@ -79,7 +78,6 @@ async function getIsPassphrase() {
       isSetPassphrase.value = true
     }
   } catch (exception: any) {
-    error.value = true
     errorPage.value.notificationTitle = t('error.cannot_retrieve_passphrase')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
@@ -91,7 +89,6 @@ async function getBackups() {
   if (isEnterprise.value) {
     try {
       let res = await ubusCall('ns.backup', 'registered-list-backups')
-      console.log(res)
       if (res?.data?.values?.length) listBackups.value = res.data.values
     } catch (exception: any) {
       errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
@@ -130,7 +127,7 @@ function successSetPassphrase() {
       :title="errorPage.notificationTitle"
       :description="errorPage.notificationDescription"
     />
-    <template v-if="!loading && !loadingPassphrase && !error">
+    <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
       <div class="flex">
         <div>
           <p
@@ -183,9 +180,9 @@ function successSetPassphrase() {
       kind="success"
       :title="t('standalone.backup_and_restore.backup.success_run_backup')"
     />
-    <div v-if="!loading && isEnterprise && !error" class="mt-5">
+    <div v-if="!loading && isEnterprise && !errorPage.notificationTitle" class="mt-5">
       <NeEmptyState
-        v-if="!listBackups.length && !errorPage.notificationTitle"
+        v-if="!listBackups.length"
         :title="t('standalone.backup_and_restore.backup.no_backups_found')"
         :icon="['fa', 'box-archive']"
       >

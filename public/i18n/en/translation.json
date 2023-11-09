@@ -126,7 +126,6 @@
     "cannot_run_backup": "Cannot run backup",
     "cannot_restore_backup": "Cannot restore backup",
     "cannot_retrieve_backup": "Cannot retrieve backups",
-    "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_passphrase": "Cannot load backup passphrase",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
@@ -342,7 +341,7 @@
         "migration": "Migration"
       },
       "backup": {
-        "description": "Download your firewall's current settings and data. This will serving as a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
+        "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
         "description_entrprise": "Run a backup to download your firewall's current settings and data. The system runs autonomously and keeps up to 3 backups. Configure a passphrase to increase the security of your data.",
         "download": "Download",
         "download_backup": "Download backup",
@@ -359,7 +358,7 @@
         "success_download": "Backup downloaded successfully"
       },
       "restore": {
-        "description": "Restore the firewall's previous configuration and settings from a saved backup file, ensuring it functions with its original rules and parameters.",
+        "description": "Restore a previous configuration of the unit, ensuring it functions with its original rules and parameters.",
         "restore": "Restore",
         "restore_now": "Restoring now",
         "restore_in_progress": "Restoring backup in progress",

@@ -341,14 +341,12 @@ function setRestoreTimer() {
       </div>
     </NeSideDrawer>
     <NeModal
-      :primary-label="t('standalone.backup_and_restore.restore.restore_now')"
-      :primary-button-loading="isRestoring"
-      :primary-button-disabled="isRestoring"
+      :primary-label="t('common.cancel')"
+      :primary-button-disabled="true"
       :title="t('standalone.backup_and_restore.restore.restore')"
-      :cancel-label="!isRestoring ? t('common.cancel') : ''"
       :visible="isRestoring"
-      kind="warning"
-      primary-button-kind="danger"
+			cancel-label=""
+			kind="warning"
       @close="isRestoring = false"
     >
       {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}

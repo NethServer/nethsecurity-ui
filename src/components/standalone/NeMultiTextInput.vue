@@ -21,6 +21,7 @@ const props = withDefaults(
     modelValue: string[] | KeyValueItem[]
     addItemLabel: string
     invalidMessages?: string[]
+    generalInvalidMessage?: string
     invalidKeyMessages?: string[]
     keyOptions?: NeComboboxOption[]
     title?: string
@@ -106,7 +107,9 @@ onMounted(() => {
   <div>
     <div
       v-if="title"
-      :class="`${items.length > 0 ? 'mb-2' : 'mb-4'} flex items-center justify-between`"
+      :class="`${
+        items.length > 0 || generalInvalidMessage ? 'mb-2' : 'mb-4'
+      } flex items-center justify-between`"
     >
       <div>
         <span class="mr-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
@@ -140,6 +143,9 @@ onMounted(() => {
             <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
           </NeButton>
         </div>
+        <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
+          {{ generalInvalidMessage }}
+        </p>
         <NeButton size="md" @click="addItem" :disabled="disableAddButton">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />

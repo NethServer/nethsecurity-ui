@@ -133,6 +133,7 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
           {{ local }}{{ item.local_network.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
+      <p :class="[...getCellClasses(item)]" v-else>-</p>
     </template>
     <template #remote_networks="{ item }: { item: ServerTunnel | ClientTunnel }">
       <template v-if="item.remote_network.length > 0">

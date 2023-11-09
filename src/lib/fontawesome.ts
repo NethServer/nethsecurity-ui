@@ -92,6 +92,7 @@ import {
   faWhatsapp,
   faYoutube
 } from '@nethesis/nethesis-brands-svg-icons'
+import { faKey } from '@fortawesome/free-solid-svg-icons/faKey'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -185,4 +186,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faTwitch)
   library.add(fasTrafficCone)
   library.add(fasStar)
+  library.add(faKey)
 }

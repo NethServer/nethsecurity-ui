@@ -7,7 +7,7 @@
 import ControllerAppShell from '@/components/controller/ControllerAppShell.vue'
 import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import axios from 'axios'
 import { getPreference } from '@nethserver/vue-tailwind-lib'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
@@ -41,8 +41,13 @@ async function loadI18n() {
   if (preferredLanguage) {
     lang = preferredLanguage
   }
-  await loadLocaleMessages(setLocaleMessage, lang)
-  setI18nLanguage(locale, lang)
+  // load preferred or navigator language, falling back to English
+  const actualLang = await loadLocaleMessages(setLocaleMessage, lang)
+  await nextTick()
+
+  if (actualLang) {
+    setI18nLanguage(locale, actualLang)
+  }
 }
 
 function configureAxios() {

@@ -8,15 +8,17 @@ import {
   NeInlineNotification,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
+import FormLayout from '@/components/standalone/FormLayout.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const { t } = useI18n()
+
 const loading = ref(true)
 const linkPath = ref('')
 
-let error = ref(false)
 let errorConfiguration = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 onMounted(() => {
@@ -30,9 +32,9 @@ async function getConfiguration() {
       linkPath.value = res.data.path
     }
   } catch (exception: any) {
-    error.value = true
     errorConfiguration.value.notificationTitle = t('error.cannot_retrieve_netdata_configuration')
     errorConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorConfiguration.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -51,21 +53,23 @@ function goToReport() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading" :lines="5" />
     <NeInlineNotification
       v-if="!loading && errorConfiguration.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorConfiguration.notificationTitle"
       :description="errorConfiguration.notificationDescription"
-    />
-    <template v-if="!loading && !error">
-      <div class="flex">
-        <div>
-          <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.report.real_time_report.description') }}
-          </p>
-        </div>
+    >
+      <template v-if="errorConfiguration.notificationDetails" #details>
+        {{ errorConfiguration.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <template v-if="!loading && !errorConfiguration.notificationTitle">
+      <FormLayout
+        :description="t('standalone.report.real_time_report.description')"
+        class="max-w-12xl"
+      >
         <div class="mr-auto self-start">
           <NeButton class="mr-2" kind="secondary" size="lg" @click="goToReport()">
             <template #prefix>
@@ -74,7 +78,7 @@ function goToReport() {
             {{ t('standalone.report.real_time_report.open_report') }}
           </NeButton>
         </div>
-      </div>
+      </FormLayout>
     </template>
   </div>
 </template>

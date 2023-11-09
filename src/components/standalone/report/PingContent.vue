@@ -19,16 +19,16 @@ const formPing = ref({
 })
 const loading = ref(true)
 const saving = ref(false)
-const successSaving = ref(false)
 
-let error = ref(false)
 let errorConfiguration = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorSaving = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 let errorForm = ref({
   hostList: ['']
@@ -39,15 +39,16 @@ onMounted(() => {
 })
 
 async function getConfiguration() {
+  loading.value = true
   try {
     let res = await ubusCall('ns.netdata', 'get-configuration', {})
     if (res?.data?.hosts) {
       formPing.value.hostList = res.data.hosts
     }
   } catch (exception: any) {
-    error.value = true
     errorConfiguration.value.notificationTitle = t('error.cannot_retrieve_netdata_configuration')
     errorConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorConfiguration.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -83,13 +84,14 @@ function save() {
 
     ubusCall('ns.netdata', 'set-hosts', payload)
       .then((response) => {
-        if (response?.data?.result && response.data.result === 'success') {
-          successSaving.value = true
+        if (response?.data?.success && response.data.success) {
+          getConfiguration()
         }
       })
       .catch((exception: AxiosError) => {
         errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
         errorSaving.value.notificationDescription = t(getAxiosErrorMessage(exception))
+        errorSaving.value.notificationDetails = exception.toString()
       })
       .finally(() => (saving.value = false))
   }
@@ -98,15 +100,19 @@ function save() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading" :lines="5" />
     <NeInlineNotification
       v-if="!loading && errorConfiguration.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorConfiguration.notificationTitle"
       :description="errorConfiguration.notificationDescription"
-    />
-    <template v-if="!loading && !error">
+    >
+      <template v-if="errorConfiguration.notificationDetails" #details>
+        {{ errorConfiguration.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <template v-if="!loading && !errorConfiguration.notificationTitle">
       <div class="flex">
         <div>
           <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -135,13 +141,11 @@ function save() {
           kind="error"
           :title="errorSaving.notificationTitle"
           :description="errorSaving.notificationDescription"
-        />
-        <NeInlineNotification
-          v-if="successSaving"
-          kind="success"
-          :title="t('standalone.flashstart.success_save_title')"
-          :description="t('standalone.flashstart.success_save_description')"
-        />
+        >
+          <template v-if="errorSaving.notificationDetails" #details>
+            {{ errorSaving.notificationDetails }}
+          </template>
+        </NeInlineNotification>
         <div class="flex justify-end py-6">
           <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
             <template #prefix>

@@ -11,6 +11,7 @@ import {
 import { toRefs } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
+import NeCopyField from '../NeCopyField.vue'
 
 type DonRequestType = 'start' | 'status' | 'stop'
 
@@ -52,10 +53,6 @@ async function getSessionStatus() {
     sessionId.value = statusResponse.data.session_id
   }
   isLoadingSessionStatus.value = false
-}
-
-function copySessionId() {
-  navigator.clipboard.writeText(sessionId.value)
 }
 
 async function makeDonRequest(type: DonRequestType) {
@@ -102,23 +99,11 @@ onMounted(() => {
       >
       <div v-else>
         <!-- Session ID item -->
-        <p class="mb-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
-          {{ t('standalone.subscription.session_id') }}
-        </p>
-        <div
-          class="text-md flex flex-row rounded-md border border-gray-300 bg-white text-gray-700 transition-colors duration-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-200 sm:text-sm sm:leading-6"
-        >
-          <div class="mt-0 flex-grow px-3 py-1.5">
-            {{ sessionId }}
-          </div>
-          <button
-            class="rounded-r-md bg-gray-50 px-3 py-1.5 duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white focus:duration-0 dark:bg-gray-950 dark:hover:bg-gray-800 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950"
-            @click="copySessionId()"
-          >
-            <font-awesome-icon :icon="['fas', 'clone']" aria-hidden="true" class="mr-2 h-4 w-4" />
-            {{ t('standalone.subscription.copy_id') }}
-          </button>
-        </div>
+        <NeCopyField
+          :label="t('standalone.subscription.session_id')"
+          :value="sessionId"
+          :copy-value-label="t('standalone.subscription.copy_id')"
+        />
 
         <div class="mt-6 flex justify-end">
           <NeButton

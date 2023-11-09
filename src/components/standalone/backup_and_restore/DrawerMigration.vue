@@ -240,7 +240,7 @@ function setMigrationTimer() {
           {{ errorLoadDevices.notificationDetails }}
         </template>
       </NeInlineNotification>
-      <div v-if="!loading && !errorLoadDevices.notificationTitle" class="space-y-8">
+      <div v-if="!loading && !errorLoadDevices.notificationTitle" class="space-y-5">
         <NeTitle>{{ t('standalone.backup_and_restore.migration.drawer_title') }}</NeTitle>
         <hr />
         <NeSkeleton v-if="loadingFile" :lines="5" />
@@ -266,20 +266,20 @@ function setMigrationTimer() {
           </template>
         </NeInlineNotification>
         <template v-if="formMigration.file && !loadingFile && listDevicesMigration.length">
-          <div class="space-y-0">
+          <div>
             <NeFormItemLabel>
               {{ t('standalone.backup_and_restore.migration.remap_interfaces') }}
             </NeFormItemLabel>
           </div>
           <div v-for="(deviceMigration, index) in listDevicesMigration" :key="index">
-            <div class="flex">
-              <div>
+            <div class="flex items-center">
+              <div class="flex-grow">
                 <NeTextInput v-model="deviceMigration.label" disabled />
               </div>
-              <div class="flex-grow text-center">
+              <div class="px-3 text-center text-sm">
                 {{ t('standalone.backup_and_restore.migration.to') }}
               </div>
-              <div>
+              <div class="flex-grow">
                 <NeCombobox
                   v-model="deviceMigration.selected"
                   class="grow"

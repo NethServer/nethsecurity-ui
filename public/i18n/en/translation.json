@@ -206,6 +206,7 @@
       "unknown": "Unknown",
       "multiwan": "MultiWAN",
       "dpi_core": "DPI-core",
+      "hotspot": "Hotspot",
       "ban_ip": "BanIP",
       "adblock_dns": "Adblock DNS",
       "thread_shield_ip": "Threat Shield IP",

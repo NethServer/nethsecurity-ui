@@ -129,6 +129,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.openvpn_tunnel.title'),
         to: 'vpn/openvpn-tunnel'
+      },
+      {
+        name: t('standalone.ipsec_tunnel.title'),
+        to: 'vpn/ipsec-tunnel'
       }
     ]
   },

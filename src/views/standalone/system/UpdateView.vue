@@ -28,7 +28,7 @@ const securityFixDetails = ref<
 >([])
 const isUpdating = ref(false)
 const newAvailableRelease = ref('nethsecurity-22.05.01')
-const scheduledDate = ref(new Date())
+const scheduledDate = ref<Date | null>(null)
 
 async function checkFixes() {
   try {
@@ -143,7 +143,10 @@ function showEditScheduleDrawer() {
       :description="newAvailableRelease"
     />
     <div class="mt-4">
-      <NeButton class="mr-4" :disabled="newAvailableRelease == '' || scheduledDate != null"
+      <NeButton
+        class="mr-4"
+        v-if="newAvailableRelease && !scheduledDate"
+        @click="showEditScheduleDrawer"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'calendar']"
@@ -151,7 +154,7 @@ function showEditScheduleDrawer() {
             aria-hidden="true" /></template
         >{{ t('standalone.update.schedule_update') }}</NeButton
       >
-      <NeButton kind="tertiary" :disabled="scheduledDate != null"
+      <NeButton kind="tertiary" v-if="!scheduledDate"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-arrow-up']"

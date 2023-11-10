@@ -24,7 +24,7 @@ const validationErrorBag = ref(new MessageBag())
 
 const isEditing = ref(false)
 const versionToUpdate = ref('')
-const scheduleMode = ref<'date_time' | 'now'>('date_time')
+const scheduleMode = ref<'date_time' | 'now'>('now')
 const time = ref('')
 const date = ref('')
 const isSavingChanges = ref(false)
@@ -36,12 +36,12 @@ const error = ref({
 
 const scheduleModeOptions = [
   {
-    id: 'date_time',
-    label: t('standalone.update.schedule_time_and_date')
-  },
-  {
     id: 'now',
     label: t('standalone.update.now')
+  },
+  {
+    id: 'date_time',
+    label: t('standalone.update.schedule_time_and_date')
   }
 ]
 
@@ -49,6 +49,7 @@ function resetForm() {
   versionToUpdate.value = props.updateVersion
   scheduleMode.value = 'date_time'
   if (props.scheduleToEdit) {
+    isEditing.value = true
     date.value = props.scheduleToEdit.toISOString().split('T')[0]
     time.value = props.scheduleToEdit.toLocaleTimeString('en', {
       timeStyle: 'short',

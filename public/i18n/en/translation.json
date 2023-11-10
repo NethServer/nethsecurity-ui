@@ -419,7 +419,22 @@
       "system_update_second_tip": "The current settings and configuration will be preserved",
       "installed_release": "Installed release: {release}",
       "schedule_update": "Schedule update",
-      "upload_image": "Upload image"
+      "upload_image": "Upload image",
+      "all_updates_installed_notification": "All updates have already been correctly installed",
+      "available_release": "Available release",
+      "bug_security_fixes_to_update": "Bug & security fixes to update",
+      "component_update_details": "{versionFrom} to {versionTo}",
+      "update_in_progress_message": "Updating the system, please wait until complete.",
+      "update_to_version": "Update to version",
+      "choose_when_to_update": "Choose when to update",
+      "schedule_mode_tooltip": "After the update the system will be reboot",
+      "now": "Now",
+      "schedule_time_and_date": "Schedule time and date",
+      "time_and_date": "Time and date",
+      "schedule": "Schedule",
+      "cancel_update": "Cancel update",
+      "system_update_scheduled": "System update scheduled",
+      "system_update_scheduled_description": "The system will be updated to '{version}' at {date}"
     },
     "storage": {
       "title": "Storage",

@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  focusElement,
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
@@ -14,7 +13,6 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { validateRequired } from '@/lib/validation'
 
 const { t } = useI18n()
 const RESET_WAIT_TIME = 45000
@@ -46,10 +44,6 @@ let errorResetting = ref({
   notificationDetails: ''
 })
 
-let errorReset = ref({
-  unit_name: ''
-})
-
 onMounted(() => {
   getConfiguration()
 })
@@ -74,48 +68,21 @@ async function getConfiguration() {
   }
 }
 
-function validateForm(): boolean {
-  let isValidationOk = true
-
-  let { valid, errMessage } = validateRequired(formReset.value.unit_name)
-  if (!valid) {
-    errorReset.value.unit_name = t(errMessage as string)
-    isValidationOk = false
-  }
-
-  if (isValidationOk && formReset.value.unit_name !== unitName.value) {
-    errorReset.value.unit_name = t('standalone.factory_reset.wrong_unit_name')
-    isValidationOk = false
-  }
-
-  if (!isValidationOk) {
-    focusElement(unitNameRef)
-  }
-
-  return isValidationOk
-}
-
 async function startFactoryReset() {
-  errorReset.value = {
-    unit_name: ''
-  }
-
-  if (validateForm()) {
-    loadingReset.value = true
-    try {
-      let res = await ubusCall('ns.factoryreset', 'reset', {})
-      if (res?.data?.result && res?.data?.result === 'success') {
-        isResetting.value = true
-        showModalFactoryReset.value = false
-        setResetTimer()
-      }
-    } catch (exception: any) {
-      errorResetting.value.notificationTitle = t('error.cannot_perform_factory_reset')
-      errorResetting.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorResetting.value.notificationDetails = exception.toString()
-    } finally {
-      loadingReset.value = false
+  loadingReset.value = true
+  try {
+    let res = await ubusCall('ns.factoryreset', 'reset', {})
+    if (res?.data?.result && res?.data?.result === 'success') {
+      isResetting.value = true
+      showModalFactoryReset.value = false
+      setResetTimer()
     }
+  } catch (exception: any) {
+    errorResetting.value.notificationTitle = t('error.cannot_perform_factory_reset')
+    errorResetting.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorResetting.value.notificationDetails = exception.toString()
+  } finally {
+    loadingReset.value = false
   }
 }
 
@@ -145,18 +112,20 @@ function setResetTimer() {
       </template>
     </NeInlineNotification>
     <template v-if="!loading && !errorPage.notificationTitle">
-      <FormLayout class="max-w-6xl">
+      <FormLayout class="max-w-6xl text-sm text-gray-500 dark:text-gray-400">
         <template #description>
-          <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
+          <p class="mb-4">
             {{ t('standalone.factory_reset.description') }}
-            <br />
-            <br />
+          </p>
+          <div class="flex">
             <FontAwesomeIcon
               :icon="['fa', 'circle-info']"
-              class="text-indigo-700 dark:text-indigo-300"
+              class="mr-2 mt-1 text-indigo-700 dark:text-indigo-300"
             />
-            {{ t('standalone.factory_reset.description_helper') }}
-          </p>
+            <p class="mb-8">
+              {{ t('standalone.factory_reset.description_helper') }}
+            </p>
+          </div>
         </template>
         <div>
           <p class="mb-2 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -175,7 +144,7 @@ function setResetTimer() {
     </template>
     <NeModal
       :primary-label="t('standalone.factory_reset.perform_factory_confirm')"
-      :primary-button-disabled="loadingReset"
+      :primary-button-disabled="unitName !== formReset.unit_name"
       :primary-button-loading="loadingReset"
       :title="t('standalone.factory_reset.perform_factory_reset')"
       :visible="showModalFactoryReset"
@@ -190,7 +159,6 @@ function setResetTimer() {
         class="mt-4"
         v-model="formReset.unit_name"
         :disabled="loadingReset"
-        :invalid-message="errorReset.unit_name"
         :label="t('standalone.factory_reset.type_unit_name', { unit: unitName })"
         ref="unitNameRef"
       />

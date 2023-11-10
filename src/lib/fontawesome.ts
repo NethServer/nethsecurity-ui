@@ -14,7 +14,6 @@ import {
   faPlay,
   faRotate,
   faWifi,
-  faArrowUpRightFromSquare,
   faDiagramProject as fasDiagramProject,
   faArrowsLeftRight as fasArrowsLeftRight
 } from '@fortawesome/free-solid-svg-icons'

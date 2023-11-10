@@ -1,0 +1,211 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { ubusCall } from '@/lib/standalone/ubus'
+import {
+  focusElement,
+  getAxiosErrorMessage,
+  NeButton,
+  NeInlineNotification,
+  NeModal,
+  NeProgressBar,
+  NeSkeleton,
+  NeTextInput
+} from '@nethserver/vue-tailwind-lib'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import FormLayout from '@/components/standalone/FormLayout.vue'
+import { validateRequired } from '@/lib/validation'
+
+const { t } = useI18n()
+const RESET_WAIT_TIME = 45000
+
+const formReset = ref({
+  unit_name: ''
+})
+
+const loading = ref(true)
+const loadingReset = ref(false)
+const isResetting = ref(false)
+const showModalFactoryReset = ref(false)
+const currentVersion = ref('')
+const unitName = ref()
+const unitNameRef = ref()
+const resetProgress = ref(0)
+const resetIntervalRef = ref<number | undefined>()
+const resetTimeoutRef = ref<number | undefined>()
+
+let errorPage = ref({
+  notificationTitle: '',
+  notificationDescription: '',
+  notificationDetails: ''
+})
+
+let errorResetting = ref({
+  notificationTitle: '',
+  notificationDescription: '',
+  notificationDetails: ''
+})
+
+let errorReset = ref({
+  unit_name: ''
+})
+
+onMounted(() => {
+  getConfiguration()
+})
+
+async function getConfiguration() {
+  try {
+    let res = await ubusCall('ns.dashboard', 'system-info', {})
+    if (res?.data?.result) {
+      if (res?.data?.result?.hostname) unitName.value = res.data.result.hostname
+      if (res?.data?.result?.version?.release)
+        currentVersion.value = res.data.result.version.release
+    }
+  } catch (exception: any) {
+    errorPage.value.notificationTitle = t('error.cannot_load_system_config')
+    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorPage.value.notificationDetails = exception.toString()
+  } finally {
+    loading.value = false
+  }
+}
+
+function validateForm(): boolean {
+  let isValidationOk = true
+
+  let { valid, errMessage } = validateRequired(formReset.value.unit_name)
+  if (!valid) {
+    errorReset.value.unit_name = t(errMessage as string)
+    isValidationOk = false
+    focusElement(unitNameRef)
+  }
+
+  return isValidationOk
+}
+
+async function startFactoryReset() {
+  errorReset.value = {
+    unit_name: ''
+  }
+
+  if (validateForm()) {
+    loadingReset.value = true
+    try {
+      let res = await ubusCall('ns.factoryreset', 'reset', {})
+      if (res?.data?.result && res?.data?.result === 'success') {
+        isResetting.value = true
+        showModalFactoryReset.value = false
+        setResetTimer()
+      }
+    } catch (exception: any) {
+      errorResetting.value.notificationTitle = t('error.cannot_perform_factory_reset')
+      errorResetting.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      errorResetting.value.notificationDetails = exception.toString()
+    } finally {
+      loadingReset.value = false
+    }
+  }
+}
+
+function setResetTimer() {
+  resetTimeoutRef.value = setTimeout(() => {
+    location.reload()
+  }, RESET_WAIT_TIME)
+
+  resetIntervalRef.value = setInterval(() => {
+    resetProgress.value += 0.5
+  }, RESET_WAIT_TIME / 200)
+}
+</script>
+
+<template>
+  <div>
+    <NeSkeleton v-if="loading" :lines="5" />
+    <NeInlineNotification
+      v-if="!loading && errorPage.notificationTitle"
+      class="my-4"
+      kind="error"
+      :title="errorPage.notificationTitle"
+      :description="errorPage.notificationDescription"
+    >
+      <template v-if="errorPage.notificationDetails" #details>
+        {{ errorPage.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <template v-if="!loading && !errorPage.notificationTitle">
+      <FormLayout class="max-w-6xl">
+        <template #description>
+          <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
+            {{ t('standalone.factory_reset.description') }}
+            <br />
+            <br />
+            <FontAwesomeIcon
+              :icon="['fa', 'circle-info']"
+              class="text-indigo-700 dark:text-indigo-300"
+            />
+            {{ t('standalone.factory_reset.description_helper') }}
+          </p>
+        </template>
+        <div>
+          <p class="mb-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+            {{ t('standalone.factory_reset.current_version') }} {{ currentVersion }}
+          </p>
+          <div>
+            <NeButton kind="secondary" @click="showModalFactoryReset = true">
+              <template #prefix>
+                <FontAwesomeIcon :icon="['fa', 'arrow-rotate-left']" aria-hidden="true" />
+              </template>
+              {{ t('standalone.factory_reset.perform_factory_reset') }}
+            </NeButton>
+          </div>
+        </div>
+      </FormLayout>
+    </template>
+    <NeModal
+      :primary-label="t('standalone.factory_reset.perform_factory_confirm')"
+      :primary-button-disabled="loadingReset"
+      :primary-button-loading="loadingReset"
+      :title="t('standalone.factory_reset.perform_factory_reset')"
+      :visible="showModalFactoryReset"
+      :cancel-label="t('common.cancel')"
+      kind="warning"
+      primary-button-kind="danger"
+      @close="showModalFactoryReset = false"
+      @primaryClick="startFactoryReset()"
+    >
+      {{ t('standalone.factory_reset.perform_factory_reset_description') }}
+      <NeTextInput
+        class="mt-4"
+        v-model="formReset.unit_name"
+        :disabled="loadingReset"
+        :invalid-message="errorReset.unit_name"
+        :label="t('standalone.factory_reset.type_unit_name', { unit: unitName })"
+        ref="unitNameRef"
+      />
+      <NeInlineNotification
+        v-if="errorResetting.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorResetting.notificationTitle"
+        :description="errorResetting.notificationDescription"
+      >
+        <template v-if="errorResetting.notificationDetails" #details>
+          {{ errorResetting.notificationDetails }}
+        </template>
+      </NeInlineNotification>
+    </NeModal>
+    <NeModal
+      :primary-label="t('common.cancel')"
+      :primary-button-disabled="true"
+      :title="t('standalone.factory_reset.title')"
+      :visible="isResetting"
+      cancel-label=""
+      kind="neutral"
+      @close="isResetting = false"
+    >
+      {{ t('standalone.factory_reset.resetting_description') }}
+      <NeProgressBar class="my-4" :progress="resetProgress" />
+    </NeModal>
+  </div>
+</template>

@@ -156,7 +156,8 @@
     "cannot_import_configuration": "Cannot import configuration",
     "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels",
     "cannot_retrieve_ipsec_algorithms": "Cannot retrieve IPsec algorithms",
-    "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data"
+    "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data",
+    "cannot_perform_factory_reset": "Unable to perform factory reset"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -425,6 +426,17 @@
       "storage_configuration": "Storage configuration",
       "select_device": "Select device",
       "no_device_found": "No devices found"
+    },
+    "factory_reset": {
+      "title": "Factory reset",
+      "description": "Factory reset erases all your installed packages and customized settings, reverting the firewall back to its original state as it was after installation.",
+      "description_helper": "Factory reset restores the currently installed version.",
+      "current_version": "Current version: ",
+      "perform_factory_reset": "Perform factory reset",
+      "perform_factory_reset_description": "Factory reset permanently erases all data and settings.",
+      "perform_factory_confirm": "Confirm reset",
+      "type_unit_name": "Type '{unit}' to confirm",
+      "resetting_description": "Reset the system and rebooting the unit, please wait until complete."
     },
     "network": {
       "title": "Network"

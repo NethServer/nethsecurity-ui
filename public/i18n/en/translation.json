@@ -156,7 +156,11 @@
     "cannot_import_configuration": "Cannot import configuration",
     "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels",
     "cannot_retrieve_ipsec_algorithms": "Cannot retrieve IPsec algorithms",
-    "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data"
+    "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data",
+    "cannot_retrieve_updates_status": "Cannot retrieve updates status",
+    "cannot_retrieve_package_updates": "Cannot retrieve package updates",
+    "cannot_cancel_update_schedule": "Cannot cancel update schedule",
+    "cannot_set_update_schedule": "Cannot set update schedule"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -411,7 +415,7 @@
       "title": "Update",
       "bug_security_fixes": "Bug & security fixes",
       "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages. The system will be updated automatically but you can check and install them at any time.",
-      "updated_at": "Updated at {updateDate}",
+      "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
       "system_update": "System update",
       "system_update_description": "New features are released with images. If a new image is available you can update the system to a new version. Alternatively upload a compatible firmware image.",

@@ -4,11 +4,13 @@ import {
   NeRadioSelection,
   NeFormItemLabel,
   NeTextInput,
-  NeButton
+  NeButton,
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag } from '@/lib/validation'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
@@ -47,15 +49,17 @@ const scheduleModeOptions = [
 
 function resetForm() {
   versionToUpdate.value = props.updateVersion
-  scheduleMode.value = 'date_time'
   if (props.scheduleToEdit) {
     isEditing.value = true
+    scheduleMode.value = 'date_time'
     date.value = props.scheduleToEdit.toISOString().split('T')[0]
     time.value = props.scheduleToEdit.toLocaleTimeString('en', {
       timeStyle: 'short',
       hour12: false,
       timeZone: 'UTC'
     })
+  } else {
+    scheduleMode.value = 'now'
   }
 }
 
@@ -68,7 +72,30 @@ function close() {
   emit('close')
 }
 
-async function saveSchedule() {}
+async function saveSchedule() {
+  try {
+    isSavingChanges.value = true
+    if (scheduleMode.value == 'date_time') {
+      const scheduleDate = new Date(date.value)
+      const [hour, minutes] = time.value.split(':')
+      scheduleDate.setHours(parseInt(hour))
+      scheduleDate.setMinutes(parseInt(minutes))
+      await ubusCall('ns.update', 'schedule-system-update', {
+        scheduleAt: scheduleDate.getTime() / 1000
+      })
+      emit('schedule-saved')
+      emit('close')
+    } else {
+      // TODO: handle update
+    }
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_set_update_schedule')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    isSavingChanges.value = false
+  }
+}
 
 watch(
   () => props.isShown,
@@ -91,7 +118,10 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+      ><template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="versionToUpdate"

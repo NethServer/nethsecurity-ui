@@ -978,7 +978,7 @@
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "description": "On this page, you can create IPSec tunnels; the IPsec protocol is supported by many network devices and is the best choice for interoperability. IPSec tunnels can be used to securely connect remote networks.",
       "add_ipsec_tunnel": "Add IPsec tunnel",
       "no_tunnel_found": "No tunnel found",
       "name": "Name",
@@ -1019,8 +1019,8 @@
       "integrity_algorithm": "Integrity algorithm",
       "diffie_hellman_group": "Diffie-Hellman group",
       "key_life_time_seconds": "Key life time (seconds)",
-      "remote_ip_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "local_identifier_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "remote_ip_address_tooltip": "Enter the public IP address or host of the remote server. If the remote server has a dynamic IP address, you can simply enter 'any'",
+      "local_identifier_tooltip": "Please enter a string that identifies the current machine; this string should start with the character '@'. On the other end of the tunnel, the identifiers should be reversed",
       "edit_ipsec_tunnel": "Edit IPsec tunnel"
     },
     "logs": {

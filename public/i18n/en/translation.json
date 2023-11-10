@@ -408,7 +408,18 @@
       "reboot_in_progress": "The unit is rebooting, please wait..."
     },
     "update": {
-      "title": "Update"
+      "title": "Update",
+      "bug_security_fixes": "Bug & security fixes",
+      "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages. The system will be updated automatically but you can check and install them at any time.",
+      "updated_at": "Updated at {updateDate}",
+      "check_for_fixes": "Check for fixes",
+      "system_update": "System update",
+      "system_update_description": "New features are released with images. If a new image is available you can update the system to a new version. Alternatively upload a compatible firmware image.",
+      "system_update_first_tip": "Back up your configuration before updating your NethSecurity system",
+      "system_update_second_tip": "The current settings and configuration will be preserved",
+      "installed_release": "Installed release: {release}",
+      "schedule_update": "Schedule update",
+      "upload_image": "Upload image"
     },
     "storage": {
       "title": "Storage",

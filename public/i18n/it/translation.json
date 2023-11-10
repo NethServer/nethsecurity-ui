@@ -663,7 +663,7 @@
       "hostname": "Nome host",
       "filter": "Filtro",
       "delete_dns_record": "Elimina record DNS",
-      "exclude_localhost_rebinding_checks": "Escludei localhost dai controlli di rebinding",
+      "exclude_localhost_rebinding_checks": "Escludi localhost dai controlli di rebinding",
       "dns_domain": "Dominio DNS",
       "no_reservation_configured": "Nessuna reservation configurata",
       "add_dns_server": "Aggiungi server DNS",

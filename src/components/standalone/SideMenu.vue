@@ -53,6 +53,10 @@ const navigation: Ref<MenuItem[]> = ref([
         to: 'system/reboot-and-shutdown'
       },
       {
+        name: t('standalone.update.title'),
+        to: 'system/update'
+      },
+      {
         name: t('standalone.storage.title'),
         to: 'system/storage'
       }

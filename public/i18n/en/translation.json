@@ -407,6 +407,9 @@
       "reboot_now": "Reboot now",
       "reboot_in_progress": "The unit is rebooting, please wait..."
     },
+    "update": {
+      "title": "Update"
+    },
     "storage": {
       "title": "Storage",
       "description": "You can keep a copy of your system logs on an external storage device, such as a USB stick. This can be useful for troubleshooting problems or for keeping a record of your system activity.",

@@ -7,6 +7,12 @@ import {
   faCircleStop,
   faHouse as fasHouse,
   faUserGear,
+  faArrowCircleDown,
+  faArrowCircleUp,
+  faArrowUpRightFromSquare,
+  faBoxArchive,
+  faPlay,
+  faRotate,
   faWifi,
   faArrowUpRightFromSquare,
   faDiagramProject as fasDiagramProject,
@@ -164,6 +170,12 @@ export async function loadFontAwesome(app: any) {
   library.add(faCircleChevronUp)
   library.add(faDownLeftAndUpRightToCenter)
   library.add(faUpRightAndDownLeftFromCenter)
+  library.add(faArrowCircleDown)
+  library.add(faArrowCircleUp)
+  library.add(faArrowUpRightFromSquare)
+  library.add(faBoxArchive)
+  library.add(faPlay)
+  library.add(faRotate)
   library.add(faCircleArrowDown)
   library.add(faCircleArrowUp)
   library.add(fasShapes)

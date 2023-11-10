@@ -4,15 +4,43 @@
 -->
 
 <script setup lang="ts">
-import { NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
+import { useTabs } from '@/composables/useTabs'
+import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
+import BackupContent from '@/components/standalone/backup_and_restore/BackupContent.vue'
+import RestoreContent from '@/components/standalone/backup_and_restore/RestoreContent.vue'
+import MigrationContent from '@/components/standalone/backup_and_restore/MigrationContent.vue'
 
 const { t } = useI18n()
-</script>
 
+const { tabs, selectedTab } = useTabs([
+  {
+    name: 'tab-backup',
+    label: t('standalone.backup_and_restore.tabs.backup')
+  },
+  {
+    name: 'tab-restore',
+    label: t('standalone.backup_and_restore.tabs.restore')
+  },
+  {
+    name: 'tab-migration',
+    label: t('standalone.backup_and_restore.tabs.migration')
+  }
+])
+</script>
 <template>
-  <div>
-    <h1 class="page-title">{{ t('standalone.backup_and_restore.title') }}</h1>
-    <NeEmptyState :title="t('common.page_under_construction')" :icon="['fas', 'traffic-cone']" />
+  <NeTitle>{{ t('standalone.backup_and_restore.title') }}</NeTitle>
+  <div class="flex flex-col gap-y-6">
+    <NeTabs
+      :selected="selectedTab"
+      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
+      :srTabsLabel="t('ne_tabs.tabs')"
+      :tabs="tabs"
+      class="mb-8"
+      @selectTab="selectedTab = $event"
+    />
+    <BackupContent v-if="selectedTab == 'tab-backup'" />
+    <RestoreContent v-if="selectedTab == 'tab-restore'" />
+    <MigrationContent v-if="selectedTab == 'tab-migration'" />
   </div>
 </template>

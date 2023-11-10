@@ -29,10 +29,10 @@ const currentVersion = ref('')
 const unitName = ref()
 const unitNameRef = ref()
 const resetProgress = ref(0)
-const resetIntervalRef = ref<number | undefined>()
-const resetTimeoutRef = ref<number | undefined>()
+const resetInterval = ref<number | undefined>()
+const resetTimeout = ref<number | undefined>()
 
-let errorPage = ref({
+let errorSystemInfo = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -60,9 +60,9 @@ async function getConfiguration() {
       }
     }
   } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_load_system_config')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    errorPage.value.notificationDetails = exception.toString()
+    errorSystemInfo.value.notificationTitle = t('error.cannot_load_system_config')
+    errorSystemInfo.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    errorSystemInfo.value.notificationDetails = exception.toString()
   } finally {
     loading.value = false
   }
@@ -87,11 +87,11 @@ async function startFactoryReset() {
 }
 
 function setResetTimer() {
-  resetTimeoutRef.value = setTimeout(() => {
+  resetTimeout.value = setTimeout(() => {
     location.reload()
   }, RESET_WAIT_TIME)
 
-  resetIntervalRef.value = setInterval(() => {
+  resetInterval.value = setInterval(() => {
     resetProgress.value += 0.5
   }, RESET_WAIT_TIME / 200)
 }
@@ -101,17 +101,17 @@ function setResetTimer() {
   <div>
     <NeSkeleton v-if="loading" :lines="5" />
     <NeInlineNotification
-      v-if="!loading && errorPage.notificationTitle"
+      v-if="!loading && errorSystemInfo.notificationTitle"
       class="my-4"
       kind="error"
-      :title="errorPage.notificationTitle"
-      :description="errorPage.notificationDescription"
+      :title="errorSystemInfo.notificationTitle"
+      :description="errorSystemInfo.notificationDescription"
     >
-      <template v-if="errorPage.notificationDetails" #details>
-        {{ errorPage.notificationDetails }}
+      <template v-if="errorSystemInfo.notificationDetails" #details>
+        {{ errorSystemInfo.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <template v-if="!loading && !errorPage.notificationTitle">
+    <template v-if="!loading && !errorSystemInfo.notificationTitle">
       <FormLayout class="max-w-6xl text-sm text-gray-500 dark:text-gray-400">
         <template #description>
           <p class="mb-4">
@@ -129,7 +129,7 @@ function setResetTimer() {
         </template>
         <div>
           <p class="mb-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.factory_reset.current_version') }} {{ currentVersion }}
+            {{ t('standalone.factory_reset.current_version') }}: {{ currentVersion }}
           </p>
           <div>
             <NeButton kind="secondary" @click="showModalFactoryReset = true">

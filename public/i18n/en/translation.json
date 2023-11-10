@@ -436,7 +436,8 @@
       "perform_factory_reset_description": "Factory reset permanently erases all data and settings.",
       "perform_factory_confirm": "Confirm reset",
       "type_unit_name": "Type '{unit}' to confirm",
-      "resetting_description": "Reset the system and rebooting the unit, please wait until complete."
+      "resetting_description": "Reset the system and rebooting the unit, please wait until complete.",
+      "wrong_unit_name": "Enter the name of unit"
     },
     "network": {
       "title": "Network"

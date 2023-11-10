@@ -58,9 +58,12 @@ async function getConfiguration() {
   try {
     let res = await ubusCall('ns.dashboard', 'system-info', {})
     if (res?.data?.result) {
-      if (res?.data?.result?.hostname) unitName.value = res.data.result.hostname
-      if (res?.data?.result?.version?.release)
+      if (res?.data?.result?.hostname) {
+        unitName.value = res.data.result.hostname
+      }
+      if (res?.data?.result?.version?.release) {
         currentVersion.value = res.data.result.version.release
+      }
     }
   } catch (exception: any) {
     errorPage.value.notificationTitle = t('error.cannot_load_system_config')
@@ -78,6 +81,14 @@ function validateForm(): boolean {
   if (!valid) {
     errorReset.value.unit_name = t(errMessage as string)
     isValidationOk = false
+  }
+
+  if (isValidationOk && formReset.value.unit_name !== unitName.value) {
+    errorReset.value.unit_name = t('standalone.factory_reset.wrong_unit_name')
+    isValidationOk = false
+  }
+
+  if (!isValidationOk) {
     focusElement(unitNameRef)
   }
 

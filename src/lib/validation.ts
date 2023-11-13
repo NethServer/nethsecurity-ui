@@ -300,7 +300,13 @@ export const validateFile = (
 
   if (format) {
     const filenameSplit = value.name.split('.')
-    const extension = filenameSplit[filenameSplit.length - 1]
+
+    if (filenameSplit.length < format.split('.').length)
+      return { valid: false, errMessage: 'error.invalid_file_format' }
+
+    const extension = filenameSplit
+      .slice(filenameSplit.length - format.split('.').length, filenameSplit.length)
+      .join('.')
 
     if (extension.toLowerCase() != format.toLowerCase())
       return { valid: false, errMessage: 'error.invalid_file_format' }

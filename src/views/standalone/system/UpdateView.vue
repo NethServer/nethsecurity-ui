@@ -11,6 +11,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'
+import UploadImageDrawer from '@/components/standalone/update/UploadImageDrawer.vue'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { computed } from 'vue'
@@ -44,6 +45,7 @@ const isUpdatingPackages = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
+const showUploadImageDrawer = ref(false)
 
 const scheduleDate = computed(() =>
   systemUpdateData.value?.scheduleAt && systemUpdateData.value.scheduleAt != -1
@@ -221,7 +223,7 @@ onMounted(() => {
               aria-hidden="true" /></template
           >{{ t('standalone.update.schedule_update') }}</NeButton
         >
-        <NeButton kind="tertiary" v-if="!scheduleDate"
+        <NeButton kind="tertiary" v-if="!scheduleDate" @click="showUploadImageDrawer = true"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-arrow-up']"
@@ -266,4 +268,5 @@ onMounted(() => {
     :schedule-to-edit="scheduleDate"
     @schedule-saved="fetchUpdatesStatus"
   />
+  <UploadImageDrawer :is-shown="showUploadImageDrawer" @close="showUploadImageDrawer = false" />
 </template>

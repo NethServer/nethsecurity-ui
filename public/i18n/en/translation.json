@@ -160,7 +160,8 @@
     "cannot_retrieve_updates_status": "Cannot retrieve updates status",
     "cannot_retrieve_package_updates": "Cannot retrieve package updates",
     "cannot_cancel_update_schedule": "Cannot cancel update schedule",
-    "cannot_set_update_schedule": "Cannot set update schedule"
+    "cannot_set_update_schedule": "Cannot set update schedule",
+    "cannot_upload_image": "Cannot upload image"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -438,7 +439,9 @@
       "schedule": "Schedule",
       "cancel_update": "Cancel update",
       "system_update_scheduled": "System update scheduled",
-      "system_update_scheduled_description": "The system will be updated to '{version}' at {date}"
+      "system_update_scheduled_description": "The system will be updated to '{version}' at {date}",
+      "image_file": "Image file",
+      "upload_and_reboot": "Upload & reboot"
     },
     "storage": {
       "title": "Storage",

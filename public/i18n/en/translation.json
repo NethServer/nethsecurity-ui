@@ -161,7 +161,8 @@
     "cannot_retrieve_package_updates": "Cannot retrieve package updates",
     "cannot_cancel_update_schedule": "Cannot cancel update schedule",
     "cannot_set_update_schedule": "Cannot set update schedule",
-    "cannot_upload_image": "Cannot upload image"
+    "cannot_upload_image": "Cannot upload image",
+    "cannot_update_packages": "Cannot update packages"
   },
   "ne_text_input": {
     "show_password": "Show password",

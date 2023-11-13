@@ -4,7 +4,6 @@ import {
   NeButton,
   NeInlineNotification,
   NeModal,
-  NeProgressBar,
   NeSkeleton,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -16,6 +15,7 @@ import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { computed } from 'vue'
 import { onMounted } from 'vue'
+import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
 
 export type PackageUpdate = {
   package: string
@@ -46,7 +46,6 @@ const lastPackageUpdateCheck = ref<Date | null>(null)
 const packageUpdates = ref<PackageUpdate[]>([])
 const systemUpdateData = ref<SystemUpdate | null>(null)
 const isCheckingPackageUpdates = ref(false)
-const isUpdatingPackages = ref(false)
 const isCancellingSchedule = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
@@ -89,17 +88,6 @@ async function checkPackageUpdates() {
     error.value.notificationDetails = err.toString()
   } finally {
     isCheckingPackageUpdates.value = false
-  }
-}
-
-async function updatePackages() {
-  try {
-    isUpdatingPackages.value = true
-    //TODO: update packages
-  } catch (err: any) {
-    // TODO: handle package error
-  } finally {
-    isUpdatingPackages.value = false
   }
 }
 
@@ -250,33 +238,6 @@ onMounted(() => {
       </div>
     </FormLayout></template
   >
-  <NeModal
-    :visible="packageUpdates.length > 0"
-    kind="info"
-    :title="t('standalone.update.bug_security_fixes_to_update')"
-    :primary-label="t('standalone.update.title')"
-    :primary-button-disabled="isUpdatingPackages"
-    :primary-button-loading="isUpdatingPackages"
-    @close="packageUpdates = []"
-  >
-    <template v-if="!isUpdatingPackages"
-      ><p v-for="item in packageUpdates" :key="item.package">
-        {{ item.package }}
-        <span class="text-gray-500 dark:text-gray-400">{{
-          t('standalone.update.component_update_details', {
-            versionFrom: item.currentVersion,
-            versionTo: item.lastVersion
-          })
-        }}</span>
-      </p></template
-    >
-    <template v-else>
-      <p class="text-gray-500 dark:text-gray-400">
-        {{ t('standalone.update.update_in_progress_message') }}
-      </p>
-      <NeProgressBar class="mt-4" :progress="50" />
-    </template>
-  </NeModal>
 
   <!-- Confirm cancel schedule modal -->
   <NeModal
@@ -308,6 +269,11 @@ onMounted(() => {
     </NeInlineNotification>
   </NeModal>
 
+  <UpdatePackagesModal
+    :package-updates="packageUpdates"
+    @close="packageUpdates = []"
+    @packages-updated="fetchUpdatesStatus"
+  />
   <ScheduleUpdateDrawer
     :is-shown="showScheduleUpdateDrawer"
     @close="showScheduleUpdateDrawer = false"

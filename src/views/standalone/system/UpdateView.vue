@@ -16,6 +16,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { computed } from 'vue'
 import { onMounted } from 'vue'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
+import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 
 export type PackageUpdate = {
   package: string
@@ -47,6 +48,7 @@ const packageUpdates = ref<PackageUpdate[]>([])
 const systemUpdateData = ref<SystemUpdate | null>(null)
 const isCheckingPackageUpdates = ref(false)
 const isCancellingSchedule = ref(false)
+const isApplyingSystemUpdate = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
@@ -280,6 +282,12 @@ onMounted(() => {
     :update-version="systemUpdateData?.lastVersion ?? ''"
     :schedule-to-edit="scheduleDate"
     @schedule-saved="fetchUpdatesStatus"
+    @system-update-requested="isApplyingSystemUpdate = true"
   />
-  <UploadImageDrawer :is-shown="showUploadImageDrawer" @close="showUploadImageDrawer = false" />
+  <UploadImageDrawer
+    :is-shown="showUploadImageDrawer"
+    @close="showUploadImageDrawer = false"
+    @image-uploaded="isApplyingSystemUpdate = true"
+  />
+  <SystemUpdateInProgressModal :visible="isApplyingSystemUpdate" />
 </template>

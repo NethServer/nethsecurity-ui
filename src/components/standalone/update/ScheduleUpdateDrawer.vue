@@ -18,7 +18,7 @@ const props = defineProps<{
   scheduleToEdit: Date | null
 }>()
 
-const emit = defineEmits(['close', 'schedule-saved'])
+const emit = defineEmits(['close', 'schedule-saved', 'system-update-requested'])
 
 const { t } = useI18n()
 
@@ -76,6 +76,7 @@ async function saveSchedule() {
   try {
     isSavingChanges.value = true
     if (scheduleMode.value == 'date_time') {
+      //TODO: validate fields
       const scheduleDate = new Date(date.value)
       const [hour, minutes] = time.value.split(':')
       scheduleDate.setHours(parseInt(hour))
@@ -84,9 +85,11 @@ async function saveSchedule() {
         scheduleAt: scheduleDate.getTime() / 1000
       })
       emit('schedule-saved')
-      emit('close')
+      close()
     } else {
-      // TODO: handle update
+      await ubusCall('ns.update', 'update-system')
+      emit('system-update-requested')
+      close()
     }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_set_update_schedule')

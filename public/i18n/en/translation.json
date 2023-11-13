@@ -444,7 +444,8 @@
       "image_file": "Image file",
       "upload_and_reboot": "Upload & reboot",
       "keep_scheduled_update": "Keep scheduled update",
-      "cancel_update_description": "The scheduled update for version '{version}' will be canceled"
+      "cancel_update_description": "The scheduled update for version '{version}' will be canceled",
+      "system_update_in_progress_message": "Updating the system and rebooting the unit, please wait until complete."
     },
     "storage": {
       "title": "Storage",

@@ -9,7 +9,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MessageBag } from '@/lib/validation'
+import { MessageBag, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
@@ -55,8 +55,7 @@ function resetForm() {
     date.value = props.scheduleToEdit.toISOString().split('T')[0]
     time.value = props.scheduleToEdit.toLocaleTimeString('en', {
       timeStyle: 'short',
-      hour12: false,
-      timeZone: 'UTC'
+      hour12: false
     })
   } else {
     scheduleMode.value = 'now'
@@ -72,11 +71,26 @@ function close() {
   emit('close')
 }
 
+function validateScheduleDate() {
+  let dateValidator = validateRequired(date.value)
+  if (!dateValidator.valid) {
+    validationErrorBag.value.set('date', [t(dateValidator.errMessage as string)])
+  }
+
+  let timeValidator = validateRequired(time.value)
+  if (!dateValidator.valid) {
+    validationErrorBag.value.set('time', [t(dateValidator.errMessage as string)])
+  }
+
+  return dateValidator.valid && timeValidator.valid
+}
+
 async function saveSchedule() {
   try {
     isSavingChanges.value = true
     if (scheduleMode.value == 'date_time') {
-      //TODO: validate fields
+      if (!validateScheduleDate()) return
+
       const scheduleDate = new Date(date.value)
       const [hour, minutes] = time.value.split(':')
       scheduleDate.setHours(parseInt(hour))

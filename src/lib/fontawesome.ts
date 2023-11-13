@@ -163,6 +163,7 @@ export async function loadFontAwesome(app: any) {
   library.add(faUserGear)
   library.add(faCircleStop)
   library.add(faWifi)
+  library.add(faArrowUpRightFromSquare)
   library.add(faHardDrive)
   library.add(faCircleChevronDown)
   library.add(faCircleChevronUp)

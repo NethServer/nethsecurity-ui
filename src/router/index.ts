@@ -119,6 +119,11 @@ const standaloneRoutes = [
     path: 'user',
     name: 'UserManagement',
     component: () => import('../views/standalone/UserManagement.vue')
+  },
+  {
+    path: 'report',
+    name: 'Report',
+    component: () => import('../views/standalone/ReportView.vue')
   }
 ]
 

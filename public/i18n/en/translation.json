@@ -441,7 +441,9 @@
       "system_update_scheduled": "System update scheduled",
       "system_update_scheduled_description": "The system will be updated to '{version}' at {date}",
       "image_file": "Image file",
-      "upload_and_reboot": "Upload & reboot"
+      "upload_and_reboot": "Upload & reboot",
+      "keep_scheduled_update": "Keep scheduled update",
+      "cancel_update_description": "The scheduled update for version '{version}' will be canceled"
     },
     "storage": {
       "title": "Storage",

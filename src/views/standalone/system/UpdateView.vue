@@ -37,15 +37,22 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
+const cancelScheduleError = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
+
 const lastPackageUpdateCheck = ref<Date | null>(null)
 const packageUpdates = ref<PackageUpdate[]>([])
 const systemUpdateData = ref<SystemUpdate | null>(null)
 const isCheckingPackageUpdates = ref(false)
 const isUpdatingPackages = ref(false)
+const isCancellingSchedule = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
 const showUploadImageDrawer = ref(false)
+const showConfirmCancelScheduleDrawer = ref(false)
 
 const scheduleDate = computed(() =>
   systemUpdateData.value?.scheduleAt && systemUpdateData.value.scheduleAt != -1
@@ -98,13 +105,22 @@ async function updatePackages() {
 
 async function cancelSchedule() {
   try {
+    isCancellingSchedule.value = true
     await ubusCall('ns.update', 'schedule-system-update', { scheduleAt: -1 })
+    closeConfirmCancelScheduleModal()
     await fetchUpdatesStatus()
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_cancel_schedule')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    cancelScheduleError.value.notificationDescription = t(getAxiosErrorMessage(err))
+    cancelScheduleError.value.notificationDetails = err.toString()
+  } finally {
+    isCancellingSchedule.value = false
   }
+}
+
+function closeConfirmCancelScheduleModal() {
+  cancelScheduleError.value.notificationDescription = ''
+  cancelScheduleError.value.notificationDetails = ''
+  showConfirmCancelScheduleDrawer.value = false
 }
 
 function showEditScheduleDrawer() {
@@ -201,7 +217,7 @@ onMounted(() => {
         "
         :primary-button-label="t('common.edit')"
         :secondary-button-label="t('standalone.update.cancel_update')"
-        @secondary-click="cancelSchedule"
+        @secondary-click="showConfirmCancelScheduleDrawer = true"
         @primary-click="showEditScheduleDrawer"
       />
       <NeInlineNotification
@@ -261,6 +277,37 @@ onMounted(() => {
       <NeProgressBar class="mt-4" :progress="50" />
     </template>
   </NeModal>
+
+  <!-- Confirm cancel schedule modal -->
+  <NeModal
+    :visible="showConfirmCancelScheduleDrawer"
+    kind="info"
+    :title="t('standalone.update.cancel_update')"
+    :primary-label="t('standalone.update.cancel_update')"
+    :cancel-label="t('standalone.update.keep_scheduled_update')"
+    :primary-button-disabled="isCancellingSchedule"
+    :primary-button-loading="isCancellingSchedule"
+    @primary-click="cancelSchedule"
+    @close="!isCancellingSchedule ? closeConfirmCancelScheduleModal() : undefined"
+  >
+    <p>
+      {{
+        t('standalone.update.cancel_update_description', { version: systemUpdateData?.lastVersion })
+      }}
+    </p>
+    <NeInlineNotification
+      v-if="cancelScheduleError.notificationDescription"
+      :title="t('error.cannot_cancel_schedule')"
+      :description="cancelScheduleError.notificationDescription"
+      kind="error"
+      class="my-6"
+    >
+      <template #details v-if="cancelScheduleError.notificationDetails">
+        {{ cancelScheduleError.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+  </NeModal>
+
   <ScheduleUpdateDrawer
     :is-shown="showScheduleUpdateDrawer"
     @close="showScheduleUpdateDrawer = false"

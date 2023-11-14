@@ -88,7 +88,7 @@ const name = ref('')
 const wanIpAddress = ref('')
 const remoteIpAddress = ref('')
 const localNetworks = ref<string[]>([])
-const remoteNetworks = ref<string[]>([])
+const remoteNetworks = ref<string[]>([''])
 const localIdentifier = ref('')
 const remoteIdentifier = ref('')
 
@@ -227,7 +227,7 @@ async function resetForm() {
   wanIpAddress.value = tunnelData?.local_ip ?? ''
   remoteIpAddress.value = tunnelData?.gateway ?? ''
   localNetworks.value = tunnelData?.local_subnet ?? []
-  remoteNetworks.value = tunnelData?.remote_subnet ?? []
+  remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id

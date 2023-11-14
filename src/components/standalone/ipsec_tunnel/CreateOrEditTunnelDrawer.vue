@@ -5,6 +5,7 @@ import {
   validateIpAddress,
   validatePositiveInteger,
   validateRequired,
+  validateRequiredOption,
   type validationOutput
 } from '@/lib/validation'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
@@ -76,8 +77,8 @@ const error = ref({
 })
 const step = ref(1)
 const validationErrorBag = ref(new MessageBag())
-const localNetworksValidationErrors = ref<string[]>([])
 const remoteNetworksValidationErrors = ref<string[]>([])
+const localNetworksOptions = ref<NeComboboxOption[]>([])
 
 const id = ref('')
 const generatedPresharedKey = ref('')
@@ -87,7 +88,7 @@ const enabled = ref(true)
 const name = ref('')
 const wanIpAddress = ref('')
 const remoteIpAddress = ref('')
-const localNetworks = ref<string[]>([])
+const localNetworks = ref<NeComboboxOption[]>([])
 const remoteNetworks = ref<string[]>([''])
 const localIdentifier = ref('')
 const remoteIdentifier = ref('')
@@ -198,6 +199,10 @@ async function resetForm() {
       remoteIdentifier.value = tunnelData.remote_identifier
       presharedKey.value = tunnelData.pre_shared_key
       presharedKeyMode.value = 'import'
+
+      const tunnelLocalNetworks = tunnelData?.local_subnet.map((x) => ({ id: x, label: x }))
+      localNetworks.value = [...tunnelLocalNetworks]
+      localNetworksOptions.value = [...tunnelLocalNetworks]
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_data')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -213,6 +218,13 @@ async function resetForm() {
       generatedPresharedKey.value = defaultsResponse.data.pre_shared_key
       presharedKeyMode.value = 'generate'
       presharedKey.value = ''
+
+      const defaultLocalNetworks = defaultsResponse.data.local_networks.map((x: string) => ({
+        id: x,
+        label: x
+      }))
+      localNetworksOptions.value = [...defaultLocalNetworks]
+      localNetworks.value = [...defaultLocalNetworks]
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -226,7 +238,6 @@ async function resetForm() {
   enabled.value = tunnelData ? tunnelData.enabled === '1' : true
   wanIpAddress.value = tunnelData?.local_ip ?? ''
   remoteIpAddress.value = tunnelData?.gateway ?? ''
-  localNetworks.value = tunnelData?.local_subnet ?? []
   remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
@@ -284,17 +295,13 @@ function validateNetworkFields(
 
 function validateFormByStep(step: number): boolean {
   if (step == 1) {
-    const [localValidationResult, localValidationError] = validateNetworkFields(
-      localNetworks.value,
-      'localNetworks'
-    )
-    localNetworksValidationErrors.value = localValidationError
-
     const [remoteValidationResult, remoteValidationError] = validateNetworkFields(
       remoteNetworks.value,
       'remoteNetworks'
     )
     remoteNetworksValidationErrors.value = remoteValidationError
+
+    const localNetworksCidrValidation = localNetworks.value.map((x) => validateIp4Cidr(x.id))
 
     const step1Validators: [validationOutput[], string][] = [
       [[validateRequired(name.value)], 'name'],
@@ -303,6 +310,13 @@ function validateFormByStep(step: number): boolean {
         [validateRequired(remoteIpAddress.value), validateIpAddress(remoteIpAddress.value)],
         'remoteIpAddress'
       ],
+      [
+        [
+          validateRequiredOption(localNetworks.value),
+          localNetworksCidrValidation.find((x) => !x.valid) ?? { valid: true }
+        ],
+        'localNetworks'
+      ],
       [[validateRequired(localIdentifier.value)], 'localIdentifier'],
       [[validateRequired(remoteIdentifier.value)], 'remoteIdentifier']
     ]
@@ -310,9 +324,7 @@ function validateFormByStep(step: number): boolean {
     return (
       step1Validators
         .map(([validator, label]) => runValidators(validator, label))
-        .every((result) => result) &&
-      localValidationResult &&
-      remoteValidationResult
+        .every((result) => result) && remoteValidationResult
     )
   } else if (step == 2) {
     if (presharedKeyMode.value === 'generate') {
@@ -391,7 +403,7 @@ async function createOrEditTunnel() {
     dpdaction: dpd.value ? 'restart' : 'none',
     keyexchange: ikeVersion.value,
     remote_subnet: remoteNetworks.value.filter((x) => x != ''),
-    local_subnet: localNetworks.value.filter((x) => x != ''),
+    local_subnet: localNetworks.value.filter((x) => x.id != '').map((x) => x.id),
     gateway: remoteIpAddress.value,
     local_identifier: localIdentifier.value,
     remote_identifier: remoteIdentifier.value,
@@ -421,7 +433,6 @@ async function createOrEditTunnel() {
 
 function cleanValidationErrors() {
   validationErrorBag.value.clear()
-  localNetworksValidationErrors.value = []
   remoteNetworksValidationErrors.value = []
 }
 
@@ -508,13 +519,19 @@ watch(
             >
           </template>
         </NeTextInput>
-        <NeMultiTextInput
+        <NeCombobox
+          :label="t('standalone.ipsec_tunnel.local_networks')"
+          :placeholder="t('standalone.ipsec_tunnel.choose_network')"
+          :multiple="true"
+          :options="localNetworksOptions"
           v-model="localNetworks"
-          :add-item-label="t('standalone.ipsec_tunnel.add_network')"
-          :title="t('standalone.ipsec_tunnel.local_networks')"
-          :invalid-messages="localNetworksValidationErrors"
-          :general-invalid-message="validationErrorBag.getFirstFor('localNetworks')"
-          @add-item="validationErrorBag.delete('localNetworks')"
+          :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :show-selected-label="true"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :accept-user-input="true"
         />
         <NeMultiTextInput
           v-model="remoteNetworks"

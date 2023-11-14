@@ -1034,7 +1034,8 @@
       "key_life_time_seconds": "Key life time (seconds)",
       "remote_ip_address_tooltip": "Enter the public IP address or host of the remote server. If the remote server has a dynamic IP address, you can simply enter 'any'",
       "local_identifier_tooltip": "Please enter a string that identifies the current machine; this string should start with the character '{'@'}'. On the other end of the tunnel, the identifiers should be reversed",
-      "edit_ipsec_tunnel": "Edit IPsec tunnel"
+      "edit_ipsec_tunnel": "Edit IPsec tunnel",
+      "choose_network": "Choose network"
     },
     "logs": {
       "title": "Logs",

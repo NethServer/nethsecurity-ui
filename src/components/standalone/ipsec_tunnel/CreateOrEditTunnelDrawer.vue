@@ -100,13 +100,13 @@ const enableCompression = ref(false)
 
 // Step 3 fields
 const ikeVersion = ref('')
-const ikeEncryptionAlgorithm = ref('')
-const ikeIntegrityAlgorithm = ref('')
-const ikeDiffieHellmanGroup = ref('')
+const ikeEncryptionAlgorithm = ref('aes256')
+const ikeIntegrityAlgorithm = ref('sha256')
+const ikeDiffieHellmanGroup = ref('modp2048')
 const ikeKeyLifetime = ref('3600')
-const espEncryptionAlgorithm = ref('')
-const espIntegrityAlgorithm = ref('')
-const espDiffieHellmanGroup = ref('')
+const espEncryptionAlgorithm = ref('aes256')
+const espIntegrityAlgorithm = ref('sha256')
+const espDiffieHellmanGroup = ref('modp2048')
 const espKeyLifetime = ref('3600')
 
 // Form options
@@ -231,15 +231,13 @@ async function resetForm() {
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
-  ikeEncryptionAlgorithm.value =
-    tunnelData?.ike.encryption_algorithm ?? encryptionOptions.value[0].id
-  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? integrityOptions.value[0].id
-  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? diffieHellmanOptions.value[0].id
+  ikeEncryptionAlgorithm.value = tunnelData?.ike.encryption_algorithm ?? 'aes256'
+  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? 'sha256'
+  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? 'modp2048'
   ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? '3600'
-  espEncryptionAlgorithm.value =
-    tunnelData?.esp.encryption_algorithm ?? encryptionOptions.value[0].id
-  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? integrityOptions.value[0].id
-  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? diffieHellmanOptions.value[0].id
+  espEncryptionAlgorithm.value = tunnelData?.esp.encryption_algorithm ?? 'aes256'
+  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? 'sha256'
+  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? 'modp2048'
   espKeyLifetime.value = tunnelData?.esp.rekeytime ?? '3600'
 }
 
@@ -617,7 +615,7 @@ watch(
           :invalidMessage="validationErrorBag.getFirstFor('ikeDiffieHellmanGroup')"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
-          :options="diffieHellmanOptions"
+          :options="diffieHellmanOptions.filter((x) => x.id != '')"
         />
         <NeTextInput
           v-model="ikeKeyLifetime"

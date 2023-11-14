@@ -3,6 +3,7 @@ import {
   MessageBag,
   validateIp4Cidr,
   validateIpAddress,
+  validatePositiveInteger,
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
@@ -102,11 +103,11 @@ const ikeVersion = ref('')
 const ikeEncryptionAlgorithm = ref('')
 const ikeIntegrityAlgorithm = ref('')
 const ikeDiffieHellmanGroup = ref('')
-const ikeKeyLifetime = ref('')
+const ikeKeyLifetime = ref('3600')
 const espEncryptionAlgorithm = ref('')
 const espIntegrityAlgorithm = ref('')
 const espDiffieHellmanGroup = ref('')
-const espKeyLifetime = ref('')
+const espKeyLifetime = ref('3600')
 
 // Form options
 const ikeVersionOptions: NeComboboxOption[] = [
@@ -234,12 +235,12 @@ async function resetForm() {
     tunnelData?.ike.encryption_algorithm ?? encryptionOptions.value[0].id
   ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? integrityOptions.value[0].id
   ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? diffieHellmanOptions.value[0].id
-  ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? ''
+  ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? '3600'
   espEncryptionAlgorithm.value =
     tunnelData?.esp.encryption_algorithm ?? encryptionOptions.value[0].id
   espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? integrityOptions.value[0].id
   espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? diffieHellmanOptions.value[0].id
-  espKeyLifetime.value = tunnelData?.esp.rekeytime ?? ''
+  espKeyLifetime.value = tunnelData?.esp.rekeytime ?? '3600'
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -331,10 +332,16 @@ function validateFormByStep(step: number): boolean {
       [[validateRequired(ikeVersion.value)], 'ikeVersion'],
       [[validateRequired(ikeEncryptionAlgorithm.value)], 'ikeEncryptionAlgorithm'],
       [[validateRequired(ikeIntegrityAlgorithm.value)], 'ikeIntegrityAlgorithm'],
-      [[validateRequired(ikeKeyLifetime.value)], 'ikeKeyLifetime'],
+      [
+        [validateRequired(ikeKeyLifetime.value), validatePositiveInteger(ikeKeyLifetime.value)],
+        'ikeKeyLifetime'
+      ],
       [[validateRequired(espEncryptionAlgorithm.value)], 'espEncryptionAlgorithm'],
       [[validateRequired(espIntegrityAlgorithm.value)], 'espIntegrityAlgorithm'],
-      [[validateRequired(espKeyLifetime.value)], 'espKeyLifetime']
+      [
+        [validateRequired(espKeyLifetime.value), validatePositiveInteger(espKeyLifetime.value)],
+        'espKeyLifetime'
+      ]
     ]
 
     return step3Validators

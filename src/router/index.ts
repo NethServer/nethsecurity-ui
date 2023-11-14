@@ -41,6 +41,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/RebootAndShutdownView.vue')
   },
   {
+    path: 'system/factory_reset',
+    name: 'FactoryReset',
+    component: () => import('../views/standalone/system/FactoryResetView.vue')
+  },
+  {
     path: 'network/interfaces-and-devices',
     name: 'Interfaces',
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')

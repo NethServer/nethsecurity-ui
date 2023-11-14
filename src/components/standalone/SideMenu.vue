@@ -55,6 +55,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.storage.title'),
         to: 'system/storage'
+      },
+      {
+        name: t('standalone.factory_reset.title'),
+        to: 'system/factory_reset'
       }
     ]
   },

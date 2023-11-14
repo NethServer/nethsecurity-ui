@@ -495,6 +495,7 @@ watch(
         </div>
         <NeTextInput
           v-model="name"
+          :disabled="id != ''"
           :label="t('standalone.ipsec_tunnel.tunnel_name')"
           :invalidMessage="validationErrorBag.getFirstFor('name')"
         />

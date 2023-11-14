@@ -128,12 +128,12 @@ const ikeVersionOptions: NeComboboxOption[] = [
 const presharedKeyOptions = [
   {
     id: 'generate',
-    label: t('standalone.ipsec_tunnel.generate_key'),
+    label: t('standalone.ipsec_tunnel.use_generated_key'),
     icon: 'key'
   },
   {
     id: 'import',
-    label: t('standalone.ipsec_tunnel.import_key'),
+    label: t('standalone.ipsec_tunnel.use_custom_key'),
     icon: 'circle-arrow-up'
   }
 ]

@@ -110,7 +110,7 @@ onUnmounted(() => {
       ></template
     >
     <template v-else>
-      <p class="text-gray-500 dark:text-gray-400">
+      <p>
         {{ t('standalone.update.update_in_progress_message') }}
       </p>
       <NeProgressBar class="mt-4" :progress="updateProgress" />

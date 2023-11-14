@@ -25,6 +25,7 @@
     "@nethesis/nethesis-solid-svg-icons": "github:nethesis/Font-Awesome#ns-solid",
     "@nethserver/vue-tailwind-lib": "^0.0.90",
     "@types/lodash": "^4.14.195",
+    "@vuepic/vue-datepicker": "^7.2.2",
     "@vueuse/core": "^10.5.0",
     "axios": "^1.4.0",
     "chart.js": "^4.4.0",

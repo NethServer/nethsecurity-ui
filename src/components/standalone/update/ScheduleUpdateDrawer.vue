@@ -11,12 +11,17 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+import { useThemeStore } from '@/stores/theme'
 
 const props = defineProps<{
   isShown: boolean
   updateVersion: string
   scheduleToEdit: Date | null
 }>()
+
+const theme = useThemeStore()
 
 const emit = defineEmits(['close', 'schedule-saved', 'system-update-requested'])
 
@@ -27,8 +32,7 @@ const validationErrorBag = ref(new MessageBag())
 const isEditing = ref(false)
 const versionToUpdate = ref('')
 const scheduleMode = ref<'date_time' | 'now'>('now')
-const time = ref('')
-const date = ref('')
+const scheduleDate = ref<Date>(new Date())
 const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
@@ -47,18 +51,20 @@ const scheduleModeOptions = [
   }
 ]
 
+const disablePastDates = (date: Date) => {
+  const today = new Date()
+  return date < today
+}
+
 function resetForm() {
   versionToUpdate.value = props.updateVersion
   if (props.scheduleToEdit) {
     isEditing.value = true
     scheduleMode.value = 'date_time'
-    date.value = props.scheduleToEdit.toISOString().split('T')[0]
-    time.value = props.scheduleToEdit.toLocaleTimeString('en', {
-      timeStyle: 'short',
-      hour12: false
-    })
+    scheduleDate.value = props.scheduleToEdit
   } else {
     scheduleMode.value = 'now'
+    scheduleDate.value = new Date()
   }
 }
 
@@ -71,32 +77,12 @@ function close() {
   emit('close')
 }
 
-function validateScheduleDate() {
-  let dateValidator = validateRequired(date.value)
-  if (!dateValidator.valid) {
-    validationErrorBag.value.set('date', [t(dateValidator.errMessage as string)])
-  }
-
-  let timeValidator = validateRequired(time.value)
-  if (!dateValidator.valid) {
-    validationErrorBag.value.set('time', [t(dateValidator.errMessage as string)])
-  }
-
-  return dateValidator.valid && timeValidator.valid
-}
-
 async function saveSchedule() {
   try {
     isSavingChanges.value = true
     if (scheduleMode.value == 'date_time') {
-      if (!validateScheduleDate()) return
-
-      const scheduleDate = new Date(date.value)
-      const [hour, minutes] = time.value.split(':')
-      scheduleDate.setHours(parseInt(hour))
-      scheduleDate.setMinutes(parseInt(minutes))
       await ubusCall('ns.update', 'schedule-system-update', {
-        scheduleAt: scheduleDate.getTime() / 1000
+        scheduleAt: scheduleDate.value.getTime() / 1000
       })
       emit('schedule-saved')
       close()
@@ -161,9 +147,13 @@ watch(
         <div>
           <NeFormItemLabel class="mb-2">{{ t('standalone.update.time_and_date') }}</NeFormItemLabel>
           <div class="flex flex-row gap-x-4">
-            <!-- TODO: replace with NeTextInput -->
-            <input type="date" v-model="date" class="flex-grow" />
-            <input type="time" v-model="time" class="flex-grow" />
+            <VueDatePicker
+              v-model="scheduleDate"
+              :time-picker-inline="true"
+              :clearable="false"
+              :disabled-dates="disablePastDates"
+              :dark="!theme.isLight"
+            />
           </div>
         </div>
       </template>
@@ -181,3 +171,17 @@ watch(
     </div></NeSideDrawer
   >
 </template>
+
+<style>
+.dp__theme_dark {
+  --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
+  --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));
+  --dp-primary-text-color: rgb(3 7 18 / var(--tw-text-opacity));
+  --dp-border-color-hover: var(--dp-primary-color);
+}
+
+.dp__theme_light {
+  --dp-primary-color: rgb(14 116 144 / var(--tw-bg-opacity));
+  --dp-border-color-hover: var(--dp-primary-color);
+}
+</style>

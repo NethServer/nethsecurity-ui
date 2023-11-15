@@ -117,7 +117,7 @@ async function uploadImageAndReboot() {
           @click="uploadImageAndReboot()"
           :disabled="isRequestingUpdate || !isReadyToUpdate"
           :loading="isRequestingUpdate"
-          >{{ t('standalone.update.upload_and_reboot') }}</NeButton
+          >{{ t('standalone.update.update_and_reboot') }}</NeButton
         >
       </div>
     </div>

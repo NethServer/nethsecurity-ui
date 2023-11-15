@@ -10,6 +10,7 @@ import {
   NeButton
 } from '@nethserver/vue-tailwind-lib'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { uploadFile } from '@/lib/standalone/fileUpload'
 
 defineProps<{
   isShown: boolean
@@ -19,11 +20,43 @@ const { t } = useI18n()
 const uploadErrorDescription = ref('')
 const uploadErrorDetails = ref('')
 const fileInputValidationError = ref('')
-const isUploading = ref(false)
+
+const isReadyToUpdate = ref(false)
+const isRequestingUpdate = ref(false)
+const uploadProgress = ref(0)
+const uploadedImageFileName = ref('')
 
 const fileToUpload = ref<File | null>(null)
 
-const emit = defineEmits(['close', 'image-uploaded'])
+async function handleFileUpload(event: Event) {
+  fileInputValidationError.value = ''
+  isReadyToUpdate.value = false
+  const input = event.target as HTMLInputElement
+  if (!input.files?.length) {
+    return
+  }
+
+  fileToUpload.value = input.files[0]
+
+  const fileValidation = validateFile(fileToUpload.value, 'img.gz')
+  if (!fileValidation.valid) {
+    fileInputValidationError.value = t(fileValidation.errMessage as string)
+    return
+  }
+
+  try {
+    const uploadResult = await uploadFile(fileToUpload.value as File, (e) => {
+      uploadProgress.value = e.progress as number
+    })
+    uploadedImageFileName.value = uploadResult.data.data
+    isReadyToUpdate.value = true
+  } catch (err: any) {
+    uploadErrorDescription.value = t(getAxiosErrorMessage(err))
+    uploadErrorDetails.value = err.toString()
+  }
+}
+
+const emit = defineEmits(['close', 'update-requested'])
 
 function close() {
   uploadErrorDescription.value = ''
@@ -34,23 +67,16 @@ function close() {
 }
 
 async function uploadImageAndReboot() {
-  const fileValidation = validateFile(fileToUpload.value, 'img.gz')
-  if (!fileValidation.valid) {
-    fileInputValidationError.value = t(fileValidation.errMessage as string)
-    return
-  }
-
   try {
-    isUploading.value = true
-    //TODO: handle file upload, reboot
-    await ubusCall('ns.update', 'install-uploaded-image', { image: fileToUpload.value?.name })
-    emit('image-uploaded')
+    isRequestingUpdate.value = true
+    await ubusCall('ns.update', 'install-uploaded-image', { image: uploadedImageFileName.value })
+    emit('update-requested')
     close()
   } catch (err: any) {
     uploadErrorDescription.value = t(getAxiosErrorMessage(err))
     uploadErrorDetails.value = err.toString()
   } finally {
-    isUploading.value = false
+    isRequestingUpdate.value = false
   }
 }
 </script>
@@ -58,7 +84,7 @@ async function uploadImageAndReboot() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="!isUploading ? close() : undefined"
+    @close="!isRequestingUpdate ? close() : undefined"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     :title="t('standalone.update.upload_image')"
   >
@@ -76,20 +102,21 @@ async function uploadImageAndReboot() {
       <div>
         <NeFileInput
           :label="`${t('standalone.update.image_file')} (*.img.gz)`"
+          @change="handleFileUpload"
           :invalid-message="fileInputValidationError"
           v-model="fileToUpload"
         />
       </div>
       <hr />
       <div class="flex justify-end">
-        <NeButton kind="tertiary" class="mr-4" @click="!isUploading ? close() : undefined">{{
+        <NeButton kind="tertiary" class="mr-4" @click="!isRequestingUpdate ? close() : undefined">{{
           t('common.cancel')
         }}</NeButton>
         <NeButton
           kind="primary"
           @click="uploadImageAndReboot()"
-          :disabled="isUploading"
-          :loading="isUploading"
+          :disabled="isRequestingUpdate || !isReadyToUpdate"
+          :loading="isRequestingUpdate"
           >{{ t('standalone.update.upload_and_reboot') }}</NeButton
         >
       </div>

@@ -287,7 +287,7 @@ onMounted(() => {
   <UploadImageDrawer
     :is-shown="showUploadImageDrawer"
     @close="showUploadImageDrawer = false"
-    @image-uploaded="isApplyingSystemUpdate = true"
+    @update-requested="isApplyingSystemUpdate = true"
   />
   <SystemUpdateInProgressModal :visible="isApplyingSystemUpdate" />
 </template>

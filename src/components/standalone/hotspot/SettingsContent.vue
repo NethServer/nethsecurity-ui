@@ -386,7 +386,7 @@ function validateConfiguration(): boolean {
       validDhcpLimit = true
 
     if (!validDhcpLimit) {
-      error.value.dhcpLimit = t('error.invalid_dhcp_limit')
+      error.value.dhcpLimit = t('error.invalid_negative_integer')
       isValidationOk = false
     }
   } else {

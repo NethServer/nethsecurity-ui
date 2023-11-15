@@ -625,6 +625,7 @@ watch(
       </div>
       <NeTextInput
         v-model="name"
+        :disabled="id != ''"
         :label="t('standalone.openvpn_tunnel.tunnel_name')"
         :invalid-message="validationErrorBag.getFirstFor('name')"
       />

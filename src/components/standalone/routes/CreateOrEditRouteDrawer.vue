@@ -378,7 +378,7 @@ function createRoute() {
   }
 }
 
-function editRoute() {
+function submit() {
   if (validate()) {
     saving.value = true
 
@@ -547,13 +547,7 @@ function editRoute() {
         >
           {{ t('common.save') }}
         </NeButton>
-        <NeButton
-          v-else
-          :disabled="saving"
-          :kind="'primary'"
-          :loading="saving"
-          @click="editRoute()"
-        >
+        <NeButton v-else :disabled="saving" :kind="'primary'" :loading="saving" @click="submit()">
           {{ t('common.save') }}
         </NeButton>
       </div>

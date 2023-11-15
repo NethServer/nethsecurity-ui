@@ -96,7 +96,7 @@
     "cannot_login_hotspot_description": "Login failed",
     "cannot_unregister_hotspot": "Cannot unregister",
     "cannot_load_hotspot_configuration": "Cannot load hotspot configuration",
-    "invalid_dhcp_limit": "Enter an integer number greater than or equal to 0",
+    "invalid_negative_integer": "Enter an integer number greater than or equal to 0",
     "empty_network_device": "No network device found",
     "empty_network_device_description": "There must be at least an unassigned device or a device with role 'hotspot'",
     "password_too_short": "Password is too short",
@@ -132,6 +132,7 @@
     "cannot_retrieve_backup": "Cannot retrieve backups",
     "cannot_retrieve_passphrase": "Cannot load backup passphrase",
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
+    "cannot_retrieve_netdata_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
     "cannot_create_dpi_rule": "Cannot create DPI rule",
     "cannot_edit_dpi_rule": "Cannot edit DPI rule",
@@ -157,6 +158,7 @@
     "cannot_retrieve_ipsec_tunnels": "Cannot retrieve IPsec tunnels",
     "cannot_retrieve_ipsec_algorithms": "Cannot retrieve IPsec algorithms",
     "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data",
+    "cannot_perform_factory_reset": "Cannot perform factory reset",
     "cannot_retrieve_updates_status": "Cannot retrieve updates status",
     "cannot_retrieve_package_updates": "Cannot retrieve package updates",
     "cannot_cancel_update_schedule": "Cannot cancel update schedule",
@@ -292,7 +294,6 @@
       "notes_placeholder": "Notes about this unit",
       "local_time": "Local time",
       "timezone": "Timezone",
-      "sync_with_browser": "Sync with browser",
       "sync_with_ntp_server": "Sync with NTP server",
       "enable_ntp_client": "Enable NTP client",
       "provide_ntp_server": "Provide NTP server",
@@ -465,6 +466,17 @@
       "storage_configuration": "Storage configuration",
       "select_device": "Select device",
       "no_device_found": "No devices found"
+    },
+    "factory_reset": {
+      "title": "Factory reset",
+      "description": "Factory reset erases all installed packages and customized settings, reverting the firewall back to its original state as it was after installation.",
+      "description_helper": "Factory reset restores the currently installed version.",
+      "current_version": "Current version",
+      "perform_factory_reset": "Perform factory reset",
+      "perform_factory_reset_description": "Factory reset permanently erases all data and settings.",
+      "perform_factory_confirm": "Confirm reset",
+      "type_unit_name": "Type '{unit}' to confirm",
+      "resetting_description": "Resetting and rebooting the unit, please wait"
     },
     "network": {
       "title": "Network"
@@ -1018,7 +1030,7 @@
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
+      "description": "On this page, you can create IPSec tunnels; the IPsec protocol is supported by many network devices and is the best choice for interoperability. IPSec tunnels can be used to securely connect remote networks.",
       "add_ipsec_tunnel": "Add IPsec tunnel",
       "no_tunnel_found": "No tunnel found",
       "name": "Name",
@@ -1047,8 +1059,8 @@
       "choose_wan": "Choose WAN",
       "add_network": "Add network",
       "pre_shared_key": "Pre-shared key",
-      "generate_key": "Generate key",
-      "import_key": "Import key",
+      "use_generated_key": "Use generated key",
+      "use_custom_key": "Use custom key",
       "dpd_dead_peer_detection": "DPD (dead peer detection)",
       "pfs_perfect_forward_secrecy_disabled": "PFS (Perfect Forward Secrecy) disabled",
       "compression": "Compression",
@@ -1059,9 +1071,10 @@
       "integrity_algorithm": "Integrity algorithm",
       "diffie_hellman_group": "Diffie-Hellman group",
       "key_life_time_seconds": "Key life time (seconds)",
-      "remote_ip_address_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "local_identifier_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida, nibh vel finibus suscipit, mauris erat porta",
-      "edit_ipsec_tunnel": "Edit IPsec tunnel"
+      "remote_ip_address_tooltip": "Enter the public IP address or host of the remote server. If the remote server has a dynamic IP address, you can simply enter 'any'",
+      "local_identifier_tooltip": "Please enter a string that identifies the current machine; this string should start with the character '{'@'}'. On the other end of the tunnel, the identifiers should be reversed",
+      "edit_ipsec_tunnel": "Edit IPsec tunnel",
+      "choose_network": "Choose network"
     },
     "logs": {
       "title": "Logs",
@@ -1074,7 +1087,20 @@
       "search_tooltip": "The search uses regular expression format."
     },
     "report": {
-      "title": "Report"
+      "title": "Report",
+      "tabs": {
+        "real_time_report": "Real time report",
+        "ping_latency_monitor": "Ping latency monitor"
+      },
+      "real_time_report": {
+        "description": "The monitoring tool offers in-depth analysis of system and application performance, presenting detailed metrics and visualizations. These metrics are stored in RAM and reset upon machine reboot, except when the unit is linked to a remote controller. In such cases, metrics are saved in the controller and persist through reboots.",
+        "open_report": "Open report"
+      },
+      "ping_latency_monitor": {
+        "description": "Set up the monitoring tool to assess round-trip time and packet loss by sending ping messages to network hosts. This tool is used for monitoring network connectivity quality. You can add one or more hosts to monitor. It's also possible to add IP addresses in a VPN to assess tunnel quality.",
+        "add_host": "Add host",
+        "host_to_monitor": "Hosts to monitor"
+      }
     },
     "account_management": {
       "title": "Account management for '{name}'",

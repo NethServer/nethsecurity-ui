@@ -3,7 +3,9 @@ import {
   MessageBag,
   validateIp4Cidr,
   validateIpAddress,
+  validatePositiveInteger,
   validateRequired,
+  validateRequiredOption,
   type validationOutput
 } from '@/lib/validation'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
@@ -75,8 +77,8 @@ const error = ref({
 })
 const step = ref(1)
 const validationErrorBag = ref(new MessageBag())
-const localNetworksValidationErrors = ref<string[]>([])
 const remoteNetworksValidationErrors = ref<string[]>([])
+const localNetworksOptions = ref<NeComboboxOption[]>([])
 
 const id = ref('')
 const generatedPresharedKey = ref('')
@@ -86,8 +88,8 @@ const enabled = ref(true)
 const name = ref('')
 const wanIpAddress = ref('')
 const remoteIpAddress = ref('')
-const localNetworks = ref<string[]>([])
-const remoteNetworks = ref<string[]>([])
+const localNetworks = ref<NeComboboxOption[]>([])
+const remoteNetworks = ref<string[]>([''])
 const localIdentifier = ref('')
 const remoteIdentifier = ref('')
 
@@ -99,14 +101,14 @@ const enableCompression = ref(false)
 
 // Step 3 fields
 const ikeVersion = ref('')
-const ikeEncryptionAlgorithm = ref('')
-const ikeIntegrityAlgorithm = ref('')
-const ikeDiffieHellmanGroup = ref('')
-const ikeKeyLifetime = ref('')
-const espEncryptionAlgorithm = ref('')
-const espIntegrityAlgorithm = ref('')
-const espDiffieHellmanGroup = ref('')
-const espKeyLifetime = ref('')
+const ikeEncryptionAlgorithm = ref('aes256')
+const ikeIntegrityAlgorithm = ref('sha256')
+const ikeDiffieHellmanGroup = ref('modp2048')
+const ikeKeyLifetime = ref('3600')
+const espEncryptionAlgorithm = ref('aes256')
+const espIntegrityAlgorithm = ref('sha256')
+const espDiffieHellmanGroup = ref('modp2048')
+const espKeyLifetime = ref('3600')
 
 // Form options
 const ikeVersionOptions: NeComboboxOption[] = [
@@ -126,12 +128,12 @@ const ikeVersionOptions: NeComboboxOption[] = [
 const presharedKeyOptions = [
   {
     id: 'generate',
-    label: t('standalone.ipsec_tunnel.generate_key'),
+    label: t('standalone.ipsec_tunnel.use_generated_key'),
     icon: 'key'
   },
   {
     id: 'import',
-    label: t('standalone.ipsec_tunnel.import_key'),
+    label: t('standalone.ipsec_tunnel.use_custom_key'),
     icon: 'circle-arrow-up'
   }
 ]
@@ -197,6 +199,10 @@ async function resetForm() {
       remoteIdentifier.value = tunnelData.remote_identifier
       presharedKey.value = tunnelData.pre_shared_key
       presharedKeyMode.value = 'import'
+
+      const tunnelLocalNetworks = tunnelData?.local_subnet.map((x) => ({ id: x, label: x }))
+      localNetworks.value = [...tunnelLocalNetworks]
+      localNetworksOptions.value = [...tunnelLocalNetworks]
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_data')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -212,6 +218,13 @@ async function resetForm() {
       generatedPresharedKey.value = defaultsResponse.data.pre_shared_key
       presharedKeyMode.value = 'generate'
       presharedKey.value = ''
+
+      const defaultLocalNetworks = defaultsResponse.data.local_networks.map((x: string) => ({
+        id: x,
+        label: x
+      }))
+      localNetworksOptions.value = [...defaultLocalNetworks]
+      localNetworks.value = [...defaultLocalNetworks]
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -225,21 +238,18 @@ async function resetForm() {
   enabled.value = tunnelData ? tunnelData.enabled === '1' : true
   wanIpAddress.value = tunnelData?.local_ip ?? ''
   remoteIpAddress.value = tunnelData?.gateway ?? ''
-  localNetworks.value = tunnelData?.local_subnet ?? []
-  remoteNetworks.value = tunnelData?.remote_subnet ?? []
+  remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
-  ikeEncryptionAlgorithm.value =
-    tunnelData?.ike.encryption_algorithm ?? encryptionOptions.value[0].id
-  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? integrityOptions.value[0].id
-  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? diffieHellmanOptions.value[0].id
-  ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? ''
-  espEncryptionAlgorithm.value =
-    tunnelData?.esp.encryption_algorithm ?? encryptionOptions.value[0].id
-  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? integrityOptions.value[0].id
-  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? diffieHellmanOptions.value[0].id
-  espKeyLifetime.value = tunnelData?.esp.rekeytime ?? ''
+  ikeEncryptionAlgorithm.value = tunnelData?.ike.encryption_algorithm ?? 'aes256'
+  ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? 'sha256'
+  ikeDiffieHellmanGroup.value = tunnelData?.ike.dh_group ?? 'modp2048'
+  ikeKeyLifetime.value = tunnelData?.ike.rekeytime ?? '3600'
+  espEncryptionAlgorithm.value = tunnelData?.esp.encryption_algorithm ?? 'aes256'
+  espIntegrityAlgorithm.value = tunnelData?.esp.hash_algorithm ?? 'sha256'
+  espDiffieHellmanGroup.value = tunnelData?.esp.dh_group ?? 'modp2048'
+  espKeyLifetime.value = tunnelData?.esp.rekeytime ?? '3600'
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -285,17 +295,13 @@ function validateNetworkFields(
 
 function validateFormByStep(step: number): boolean {
   if (step == 1) {
-    const [localValidationResult, localValidationError] = validateNetworkFields(
-      localNetworks.value,
-      'localNetworks'
-    )
-    localNetworksValidationErrors.value = localValidationError
-
     const [remoteValidationResult, remoteValidationError] = validateNetworkFields(
       remoteNetworks.value,
       'remoteNetworks'
     )
     remoteNetworksValidationErrors.value = remoteValidationError
+
+    const localNetworksCidrValidation = localNetworks.value.map((x) => validateIp4Cidr(x.id))
 
     const step1Validators: [validationOutput[], string][] = [
       [[validateRequired(name.value)], 'name'],
@@ -304,6 +310,13 @@ function validateFormByStep(step: number): boolean {
         [validateRequired(remoteIpAddress.value), validateIpAddress(remoteIpAddress.value)],
         'remoteIpAddress'
       ],
+      [
+        [
+          validateRequiredOption(localNetworks.value),
+          localNetworksCidrValidation.find((x) => !x.valid) ?? { valid: true }
+        ],
+        'localNetworks'
+      ],
       [[validateRequired(localIdentifier.value)], 'localIdentifier'],
       [[validateRequired(remoteIdentifier.value)], 'remoteIdentifier']
     ]
@@ -311,9 +324,7 @@ function validateFormByStep(step: number): boolean {
     return (
       step1Validators
         .map(([validator, label]) => runValidators(validator, label))
-        .every((result) => result) &&
-      localValidationResult &&
-      remoteValidationResult
+        .every((result) => result) && remoteValidationResult
     )
   } else if (step == 2) {
     if (presharedKeyMode.value === 'generate') {
@@ -331,10 +342,16 @@ function validateFormByStep(step: number): boolean {
       [[validateRequired(ikeVersion.value)], 'ikeVersion'],
       [[validateRequired(ikeEncryptionAlgorithm.value)], 'ikeEncryptionAlgorithm'],
       [[validateRequired(ikeIntegrityAlgorithm.value)], 'ikeIntegrityAlgorithm'],
-      [[validateRequired(ikeKeyLifetime.value)], 'ikeKeyLifetime'],
+      [
+        [validateRequired(ikeKeyLifetime.value), validatePositiveInteger(ikeKeyLifetime.value)],
+        'ikeKeyLifetime'
+      ],
       [[validateRequired(espEncryptionAlgorithm.value)], 'espEncryptionAlgorithm'],
       [[validateRequired(espIntegrityAlgorithm.value)], 'espIntegrityAlgorithm'],
-      [[validateRequired(espKeyLifetime.value)], 'espKeyLifetime']
+      [
+        [validateRequired(espKeyLifetime.value), validatePositiveInteger(espKeyLifetime.value)],
+        'espKeyLifetime'
+      ]
     ]
 
     return step3Validators
@@ -386,7 +403,7 @@ async function createOrEditTunnel() {
     dpdaction: dpd.value ? 'restart' : 'none',
     keyexchange: ikeVersion.value,
     remote_subnet: remoteNetworks.value.filter((x) => x != ''),
-    local_subnet: localNetworks.value.filter((x) => x != ''),
+    local_subnet: localNetworks.value.filter((x) => x.id != '').map((x) => x.id),
     gateway: remoteIpAddress.value,
     local_identifier: localIdentifier.value,
     remote_identifier: remoteIdentifier.value,
@@ -416,7 +433,6 @@ async function createOrEditTunnel() {
 
 function cleanValidationErrors() {
   validationErrorBag.value.clear()
-  localNetworksValidationErrors.value = []
   remoteNetworksValidationErrors.value = []
 }
 
@@ -479,6 +495,7 @@ watch(
         </div>
         <NeTextInput
           v-model="name"
+          :disabled="id != ''"
           :label="t('standalone.ipsec_tunnel.tunnel_name')"
           :invalidMessage="validationErrorBag.getFirstFor('name')"
         />
@@ -503,13 +520,19 @@ watch(
             >
           </template>
         </NeTextInput>
-        <NeMultiTextInput
+        <NeCombobox
+          :label="t('standalone.ipsec_tunnel.local_networks')"
+          :placeholder="t('standalone.ipsec_tunnel.choose_network')"
+          :multiple="true"
+          :options="localNetworksOptions"
           v-model="localNetworks"
-          :add-item-label="t('standalone.ipsec_tunnel.add_network')"
-          :title="t('standalone.ipsec_tunnel.local_networks')"
-          :invalid-messages="localNetworksValidationErrors"
-          :general-invalid-message="validationErrorBag.getFirstFor('localNetworks')"
-          @add-item="validationErrorBag.delete('localNetworks')"
+          :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :show-selected-label="true"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :accept-user-input="true"
         />
         <NeMultiTextInput
           v-model="remoteNetworks"
@@ -610,7 +633,7 @@ watch(
           :invalidMessage="validationErrorBag.getFirstFor('ikeDiffieHellmanGroup')"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
-          :options="diffieHellmanOptions"
+          :options="diffieHellmanOptions.filter((x) => x.id != '')"
         />
         <NeTextInput
           v-model="ikeKeyLifetime"

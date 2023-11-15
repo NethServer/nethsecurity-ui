@@ -315,6 +315,15 @@ export const validateFile = (
   return { valid: true }
 }
 
+export const validatePositiveInteger = (value: string): validationOutput => {
+  const intValue = Number.parseInt(value)
+
+  if (intValue < 0) {
+    return { valid: false, errMessage: 'error.invalid_negative_integer' }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

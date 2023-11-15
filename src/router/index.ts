@@ -46,6 +46,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/UpdateView.vue')
   },
   {
+    path: 'system/factory_reset',
+    name: 'FactoryReset',
+    component: () => import('../views/standalone/system/FactoryResetView.vue')
+  },
+  {
     path: 'network/interfaces-and-devices',
     name: 'Interfaces',
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')
@@ -124,6 +129,11 @@ const standaloneRoutes = [
     path: 'user',
     name: 'UserManagement',
     component: () => import('../views/standalone/UserManagement.vue')
+  },
+  {
+    path: 'report',
+    name: 'Report',
+    component: () => import('../views/standalone/ReportView.vue')
   }
 ]
 

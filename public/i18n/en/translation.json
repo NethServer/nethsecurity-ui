@@ -289,7 +289,6 @@
       "notes_placeholder": "Notes about this unit",
       "local_time": "Local time",
       "timezone": "Timezone",
-      "sync_with_browser": "Sync with browser",
       "sync_with_ntp_server": "Sync with NTP server",
       "enable_ntp_client": "Enable NTP client",
       "provide_ntp_server": "Provide NTP server",

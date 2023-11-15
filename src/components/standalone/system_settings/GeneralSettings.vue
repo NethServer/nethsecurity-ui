@@ -291,14 +291,13 @@ async function syncWithNtpServer() {
             </div>
           </div>
           <!-- sync buttons -->
-          <div>
+          <div class="-ml-2.5">
             <NeButton
               @click="syncWithNtpServer"
               kind="tertiary"
               size="lg"
               :loading="loading.syncWithNtpServer"
               :disabled="loading.syncWithNtpServer || loading.save"
-              class="ml-4"
               >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
             >
           </div>

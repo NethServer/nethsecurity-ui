@@ -1,15 +1,9 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
+<script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
-  NeSkeleton
-} from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethserver/vue-tailwind-lib'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 const { t } = useI18n()
 
 function goToReport() {

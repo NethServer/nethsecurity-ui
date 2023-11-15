@@ -213,23 +213,6 @@ async function save() {
   }
 }
 
-async function syncWithBrowser() {
-  loading.value.syncWithBrowser = true
-  const browserTime = Math.floor(Date.now() / 1000)
-
-  try {
-    await ubusCall('luci', 'setLocaltime', {
-      localtime: browserTime
-    })
-    getSystemInfo()
-  } catch (err: any) {
-    console.error(err)
-    error.value.notificationTitle = t('error.cannot_sync_local_time')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-  }
-  loading.value.syncWithBrowser = false
-}
-
 async function syncWithNtpServer() {
   loading.value.syncWithNtpServer = true
 
@@ -309,15 +292,6 @@ async function syncWithNtpServer() {
           </div>
           <!-- sync buttons -->
           <div>
-            <NeButton
-              @click="syncWithBrowser"
-              kind="tertiary"
-              size="lg"
-              :loading="loading.syncWithBrowser"
-              :disabled="loading.syncWithBrowser || loading.save"
-              class="-ml-2.5"
-              >{{ t('standalone.system_settings.sync_with_browser') }}</NeButton
-            >
             <NeButton
               @click="syncWithNtpServer"
               kind="tertiary"

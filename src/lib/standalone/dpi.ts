@@ -41,8 +41,8 @@ export function getAppIcon(app: DpiAppOrProtocol) {
       return ['fab', 'whatsapp']
     case 'netify.instagram':
       return ['fab', 'instagram']
-    // case 'netify.netflix': ////
-    //   return ['fab', '']
+    case 'netify.netflix':
+      return ['fab', 'netflix']
     case 'netify.telegram':
       return ['fab', 'telegram']
     case 'netify.tiktok':
@@ -51,16 +51,16 @@ export function getAppIcon(app: DpiAppOrProtocol) {
       return ['fab', 'youtube']
     case 'netify.facebook-messenger':
       return ['fab', 'facebook-messenger']
-    // case 'netify.twitter': ////
-    //   return ['fab', '']
+    case 'netify.twitter':
+      return ['fab', 'square-x-twitter']
     case 'netify.vimeo':
       return ['fab', 'vimeo']
     case 'netify.snapchat':
       return ['fab', 'snapchat']
     case 'netify.pinterest':
       return ['fab', 'pinterest']
-    // case 'netify.nordvpn': ////
-    //   return ['fab', '']
+    case 'netify.nordvpn':
+      return ['fab', 'nord-vpn']
     case 'netify.twitch':
       return ['fab', 'twitch']
     case 'netify.teamviewer':

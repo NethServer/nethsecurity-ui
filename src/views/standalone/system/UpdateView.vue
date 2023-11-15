@@ -148,7 +148,12 @@ onMounted(() => {
           })
         }}
       </p>
-      <NeButton class="mt-4" @click="checkPackageUpdates">
+      <NeButton
+        class="mt-4"
+        @click="checkPackageUpdates"
+        :disabled="isCheckingPackageUpdates"
+        :loading="isCheckingPackageUpdates"
+      >
         <template #prefix>
           <font-awesome-icon
             :icon="['fas', 'arrows-rotate']"
@@ -159,7 +164,7 @@ onMounted(() => {
       <NeInlineNotification
         kind="success"
         class="my-6"
-        v-if="noPackageUpdatesAvailable && packageUpdates.length > 0"
+        v-if="noPackageUpdatesAvailable"
         :description="t('standalone.update.all_updates_installed_notification')"
       />
     </FormLayout>
@@ -197,11 +202,11 @@ onMounted(() => {
       <NeInlineNotification
         kind="info"
         class="my-6"
-        v-if="scheduleDate && systemUpdateData?.lastVersion"
+        v-if="scheduleDate && systemUpdateData?.lastVersion != systemUpdateData?.currentVersion"
         :title="t('standalone.update.system_update_scheduled')"
         :description="
           t('standalone.update.system_update_scheduled_description', {
-            version: systemUpdateData.lastVersion,
+            version: systemUpdateData?.lastVersion,
             date: scheduleDate.toLocaleString()
           })
         "
@@ -213,14 +218,14 @@ onMounted(() => {
       <NeInlineNotification
         kind="info"
         class="my-6"
-        v-else-if="systemUpdateData?.lastVersion"
+        v-else-if="systemUpdateData?.lastVersion != systemUpdateData?.currentVersion"
         :title="t('standalone.update.available_release')"
-        :description="systemUpdateData.lastVersion"
+        :description="systemUpdateData?.lastVersion"
       />
       <div class="mt-4">
         <NeButton
           class="mr-4"
-          v-if="systemUpdateData?.lastVersion && !scheduleDate"
+          v-if="systemUpdateData?.lastVersion != systemUpdateData?.currentVersion && !scheduleDate"
           @click="showEditScheduleDrawer"
           ><template #prefix>
             <font-awesome-icon

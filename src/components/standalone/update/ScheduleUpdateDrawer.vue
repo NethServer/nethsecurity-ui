@@ -5,11 +5,12 @@ import {
   NeFormItemLabel,
   NeTextInput,
   NeButton,
+  NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MessageBag, validateRequired } from '@/lib/validation'
+import { validateFutureDate } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -27,7 +28,7 @@ const emit = defineEmits(['close', 'schedule-saved', 'system-update-requested'])
 
 const { t } = useI18n()
 
-const validationErrorBag = ref(new MessageBag())
+const scheduleDateValidationError = ref('')
 
 const isEditing = ref(false)
 const versionToUpdate = ref('')
@@ -77,10 +78,24 @@ function close() {
   emit('close')
 }
 
+function validateScheduleDate() {
+  const dateValidator = validateFutureDate(scheduleDate.value)
+
+  if (!dateValidator.valid) {
+    scheduleDateValidationError.value = t(dateValidator.errMessage as string)
+    return false
+  }
+
+  return true
+}
+
 async function saveSchedule() {
+  scheduleDateValidationError.value = ''
   try {
     isSavingChanges.value = true
     if (scheduleMode.value == 'date_time') {
+      if (!validateScheduleDate()) return
+
       await ubusCall('ns.update', 'schedule-system-update', {
         scheduleAt: scheduleDate.value.getTime() / 1000
       })
@@ -92,6 +107,7 @@ async function saveSchedule() {
       close()
     }
   } catch (err: any) {
+    //TODO: use different error message if we update now
     error.value.notificationTitle = t('error.cannot_set_update_schedule')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
@@ -146,7 +162,7 @@ watch(
       <template v-if="scheduleMode === 'date_time'">
         <div>
           <NeFormItemLabel class="mb-2">{{ t('standalone.update.time_and_date') }}</NeFormItemLabel>
-          <div class="flex flex-row gap-x-4">
+          <div class="flex flex-col">
             <VueDatePicker
               v-model="scheduleDate"
               :time-picker-inline="true"
@@ -154,6 +170,12 @@ watch(
               :disabled-dates="disablePastDates"
               :dark="!theme.isLight"
             />
+            <p
+              v-if="scheduleDateValidationError"
+              :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
+            >
+              {{ scheduleDateValidationError }}
+            </p>
           </div>
         </div>
       </template>

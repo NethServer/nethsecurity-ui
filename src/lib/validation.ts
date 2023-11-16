@@ -324,6 +324,14 @@ export const validatePositiveInteger = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateFutureDate = (value: Date): validationOutput => {
+  if (value.getTime() < new Date().getTime()) {
+    return { valid: false, errMessage: 'error.invalid_future_date' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

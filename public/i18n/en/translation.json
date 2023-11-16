@@ -50,6 +50,7 @@
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "invalid_lease_time": "Invalid lease time",
     "invalid_lease_time_duration": "Lease time must be at least 2 minutes",
+    "invalid_future_date": "Date cannot be set in the past",
     "cannot_apply_configuration_changes": "Cannot apply configuration changes",
     "cannot_revert_configuration_changes": "Cannot revert configuration changes",
     "cannot_load_network_devices": "Cannot load network devices",

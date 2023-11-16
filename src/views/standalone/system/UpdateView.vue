@@ -27,7 +27,7 @@ export type PackageUpdate = {
 export type SystemUpdate = {
   currentVersion: string
   lastVersion: string
-  scheduleAt: number
+  scheduledAt: number
 }
 
 const { t } = useI18n()
@@ -56,8 +56,8 @@ const showUploadImageDrawer = ref(false)
 const showConfirmCancelScheduleDrawer = ref(false)
 
 const scheduleDate = computed(() =>
-  systemUpdateData.value?.scheduleAt && systemUpdateData.value.scheduleAt != -1
-    ? new Date(systemUpdateData.value.scheduleAt * 1000)
+  systemUpdateData.value?.scheduledAt && systemUpdateData.value.scheduledAt != -1
+    ? new Date(systemUpdateData.value.scheduledAt * 1000)
     : null
 )
 
@@ -68,7 +68,8 @@ async function fetchUpdatesStatus() {
     const lastPackageUpdateCheckResponse = (
       await ubusCall('ns.update', 'get-package-updates-last-check')
     ).data
-    lastPackageUpdateCheck.value = new Date(lastPackageUpdateCheckResponse.lastCheck * 1000)
+    if (lastPackageUpdateCheckResponse.lastCheck > 0)
+      lastPackageUpdateCheck.value = new Date(lastPackageUpdateCheckResponse.lastCheck * 1000)
     loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_updates_status')
@@ -141,15 +142,14 @@ onMounted(() => {
       :description="t('standalone.update.bug_security_fixes_description')"
       class="max-w-4xl"
     >
-      <p class="text-sm text-gray-500 dark:text-gray-400">
+      <p class="mb-4 text-sm text-gray-500 dark:text-gray-400" v-if="lastPackageUpdateCheck">
         {{
           t('standalone.update.updated_at', {
-            lastCheck: lastPackageUpdateCheck?.toLocaleString()
+            lastCheck: lastPackageUpdateCheck.toLocaleString()
           })
         }}
       </p>
       <NeButton
-        class="mt-4"
         @click="checkPackageUpdates"
         :disabled="isCheckingPackageUpdates"
         :loading="isCheckingPackageUpdates"

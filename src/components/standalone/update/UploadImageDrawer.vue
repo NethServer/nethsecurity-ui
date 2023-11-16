@@ -23,6 +23,7 @@ const fileInputValidationError = ref('')
 
 const isReadyToUpdate = ref(false)
 const isRequestingUpdate = ref(false)
+const isUploadingImage = ref(false)
 const uploadProgress = ref(0)
 const uploadedImageFileName = ref('')
 
@@ -31,6 +32,7 @@ const fileToUpload = ref<File | null>(null)
 async function handleFileUpload(event: Event) {
   fileInputValidationError.value = ''
   isReadyToUpdate.value = false
+  isUploadingImage.value = false
   const input = event.target as HTMLInputElement
   if (!input.files?.length) {
     return
@@ -45,14 +47,18 @@ async function handleFileUpload(event: Event) {
   }
 
   try {
+    uploadProgress.value = 0.1
+    isUploadingImage.value = true
     const uploadResult = await uploadFile(fileToUpload.value as File, (e) => {
-      uploadProgress.value = e.progress as number
+      uploadProgress.value = (e.progress as number) * 100
     })
     uploadedImageFileName.value = uploadResult.data.data
     isReadyToUpdate.value = true
   } catch (err: any) {
     uploadErrorDescription.value = t(getAxiosErrorMessage(err))
     uploadErrorDetails.value = err.toString()
+  } finally {
+    isUploadingImage.value = false
   }
 }
 
@@ -104,6 +110,8 @@ async function uploadImageAndReboot() {
           :label="`${t('standalone.update.image_file')} (*.img.gz)`"
           @change="handleFileUpload"
           :invalid-message="fileInputValidationError"
+          :show-progress="isUploadingImage"
+          :progress="uploadProgress"
           v-model="fileToUpload"
         />
       </div>

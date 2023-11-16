@@ -202,7 +202,7 @@ onMounted(() => {
       <NeInlineNotification
         kind="info"
         class="my-6"
-        v-if="scheduleDate && systemUpdateData?.lastVersion != systemUpdateData?.currentVersion"
+        v-if="scheduleDate"
         :title="t('standalone.update.system_update_scheduled')"
         :description="
           t('standalone.update.system_update_scheduled_description', {
@@ -218,14 +218,21 @@ onMounted(() => {
       <NeInlineNotification
         kind="info"
         class="my-6"
-        v-else-if="systemUpdateData?.lastVersion != systemUpdateData?.currentVersion"
+        v-else-if="
+          systemUpdateData?.lastVersion &&
+          systemUpdateData.lastVersion != systemUpdateData?.currentVersion
+        "
         :title="t('standalone.update.available_release')"
         :description="systemUpdateData?.lastVersion"
       />
       <div class="mt-4">
         <NeButton
           class="mr-4"
-          v-if="systemUpdateData?.lastVersion != systemUpdateData?.currentVersion && !scheduleDate"
+          v-if="
+            systemUpdateData?.lastVersion &&
+            systemUpdateData.lastVersion != systemUpdateData?.currentVersion &&
+            !scheduleDate
+          "
           @click="showEditScheduleDrawer"
           ><template #prefix>
             <font-awesome-icon

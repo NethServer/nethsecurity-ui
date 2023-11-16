@@ -61,7 +61,14 @@ const scheduleDate = computed(() =>
     : null
 )
 
+function cleanError() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+}
+
 async function fetchUpdatesStatus() {
+  cleanError()
   loading.value = true
   try {
     systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
@@ -79,6 +86,7 @@ async function fetchUpdatesStatus() {
 }
 
 async function checkPackageUpdates() {
+  cleanError()
   try {
     isCheckingPackageUpdates.value = true
     noPackageUpdatesAvailable.value = false

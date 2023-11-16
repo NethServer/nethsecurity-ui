@@ -17,8 +17,11 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const uploadErrorDescription = ref('')
-const uploadErrorDetails = ref('')
+const error = ref({
+  notificationTitle: '',
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const fileInputValidationError = ref('')
 
 const isReadyToUpdate = ref(false)
@@ -55,8 +58,9 @@ async function handleFileUpload(event: Event) {
     uploadedImageFileName.value = uploadResult.data.data
     isReadyToUpdate.value = true
   } catch (err: any) {
-    uploadErrorDescription.value = t(getAxiosErrorMessage(err))
-    uploadErrorDetails.value = err.toString()
+    error.value.notificationTitle = t('error.cannot_upload_image')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isUploadingImage.value = false
   }
@@ -65,8 +69,9 @@ async function handleFileUpload(event: Event) {
 const emit = defineEmits(['close', 'update-requested'])
 
 function close() {
-  uploadErrorDescription.value = ''
-  uploadErrorDetails.value = ''
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   fileInputValidationError.value = ''
   fileToUpload.value = null
   emit('close')
@@ -82,9 +87,11 @@ async function uploadImageAndReboot() {
     if (!err.response || !err.response.data) {
       emit('update-requested')
       close()
+    } else {
+      error.value.notificationTitle = t('error.cannot_update_system')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
-    uploadErrorDescription.value = t(getAxiosErrorMessage(err))
-    uploadErrorDetails.value = err.toString()
   } finally {
     isRequestingUpdate.value = false
   }
@@ -101,12 +108,12 @@ async function uploadImageAndReboot() {
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
         kind="error"
-        v-if="uploadErrorDescription"
+        v-if="error.notificationTitle"
         :title="t('error.cannot_upload_image')"
-        :description="uploadErrorDescription"
+        :description="error.notificationDescription"
       >
-        <template #details v-if="uploadErrorDetails">
-          {{ uploadErrorDetails }}
+        <template #details v-if="error.notificationDetails">
+          {{ error.notificationDetails }}
         </template>
       </NeInlineNotification>
       <div>

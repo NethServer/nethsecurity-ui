@@ -75,6 +75,7 @@ function close() {
     notificationDescription: '',
     notificationDetails: ''
   }
+  scheduleDateValidationError.value = ''
   emit('close')
 }
 
@@ -89,7 +90,7 @@ function validateScheduleDate() {
   return true
 }
 
-async function saveSchedule() {
+async function saveScheduleOrBeginUpdate() {
   scheduleDateValidationError.value = ''
   isSavingChanges.value = true
   if (scheduleMode.value == 'date_time') {
@@ -193,7 +194,7 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="saveSchedule()"
+          @click="saveScheduleOrBeginUpdate()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
           >{{ t('standalone.update.schedule') }}</NeButton

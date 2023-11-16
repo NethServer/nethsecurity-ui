@@ -16,10 +16,12 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethserver/vue-tailwind-lib'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
+import { useNotificationsStore } from './stores/standalone/notifications'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 const unitManagementStore = useUnitManagementStore()
+const notificationsStore = useNotificationsStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
 
 const isLoaded = ref(false)
@@ -119,6 +121,9 @@ function configureAxios() {
           unitManagementStore.manageUnit(unitName as string)
           //// page refresh needed?
         }
+      } else {
+        // show error notification
+        notificationsStore.createNotificationFromAxiosError(error)
       }
       return Promise.reject(error)
     }

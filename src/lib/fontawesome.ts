@@ -70,7 +70,8 @@ import {
   faWarning as faWarning,
   faWifi,
   faWrench as fasWrench,
-  faXmark as fasXmark
+  faXmark as fasXmark,
+  faBell as fasBell
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -103,6 +104,7 @@ import {
   faYoutube
 } from '@fortawesome/free-brands-svg-icons'
 import { faNetflix, faNordVpn, faSquareXTwitter } from '@nethesis/nethesis-brands-svg-icons'
+import { faBell as farBell } from '@fortawesome/free-regular-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
@@ -204,4 +206,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasTrafficCone)
   library.add(fasStar)
   library.add(faKey)
+  library.add(fasBell)
+  library.add(farBell)
 }

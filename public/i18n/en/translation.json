@@ -18,7 +18,8 @@
     "step": "Step",
     "previous": "Previous",
     "next": "Next",
-    "page_under_construction": "Page under construction"
+    "page_under_construction": "Page under construction",
+    "copied": "Copied!"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -1129,5 +1130,21 @@
     "logs": {
       "title": "Logs"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "no_notification": "No notification yet",
+    "ubus_call_failed": "Ubus call failed",
+    "api_call_failed": "API call failed",
+    "show_details": "Show details",
+    "copy_curl": "Copy cURL",
+    "request_url": "Request URL",
+    "request_body": "Request body",
+    "response_message": "Response message",
+    "axios_message": "Axios message",
+    "status": "Status",
+    "request": "Request",
+    "response": "Response",
+    "no_payload": "No payload"
   }
 }

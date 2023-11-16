@@ -26,11 +26,15 @@ import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
 import { isEmpty } from 'lodash-es'
 import router from '@/router'
+import ToastNotificationsArea from './ToastNotificationsArea.vue'
+import NotificationDrawer from './NotificationDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 const themeStore = useThemeStore()
 const { t } = useI18n()
+const notificationsStore = useNotificationsStore()
 
 const accountMenu = [
   {
@@ -51,7 +55,8 @@ let showUciChangesModal = ref(false)
 
 let isChangesButtonFlashing = ref(false)
 
-const topBarButtonsColorClasses = 'text-gray-600 dark:text-gray-300'
+const topBarButtonsColorClasses =
+  'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
 
 const logoFilename = computed(() => {
   if (themeStore.isLight) {
@@ -76,6 +81,10 @@ watch(
     }
   }
 )
+
+function openNotificationsDrawer() {
+  notificationsStore.setNotificationDrawerOpen(true)
+}
 </script>
 
 <template>
@@ -326,10 +335,7 @@ watch(
               href="https://docs.nethsecurity.org/"
               target="_blank"
               rel="noreferrer"
-              :class="[
-                '-m-2.5 flex items-center gap-3 p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
-                topBarButtonsColorClasses
-              ]"
+              :class="['-m-2.5 flex items-center gap-3 p-2.5', topBarButtonsColorClasses]"
             >
               <font-awesome-icon
                 :icon="['fas', 'circle-question']"
@@ -349,10 +355,7 @@ watch(
             <button
               type="button"
               @click="themeStore.toggleTheme()"
-              :class="[
-                '-m-2.5 flex p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
-                topBarButtonsColorClasses
-              ]"
+              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
             >
               <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
               <font-awesome-icon
@@ -369,13 +372,11 @@ watch(
               />
             </button>
 
-            <!-- notifications //// -->
-            <!-- <button
+            <!-- notifications -->
+            <button
               type="button"
-              :class="[
-                '-m-2.5 flex p-2.5 hover:text-gray-900 dark:hover:text-gray-50',
-                topBarButtonsColorClasses
-              ]"
+              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
+              @click="openNotificationsDrawer"
             >
               <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
               <font-awesome-icon
@@ -383,17 +384,12 @@ watch(
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
-            </button> -->
+            </button>
 
             <!-- //// use NeDropdown component -->
             <!-- Profile dropdown -->
             <Menu as="div" class="relative">
-              <MenuButton
-                :class="[
-                  '-m-1.5 flex items-center p-1.5 hover:text-gray-900 dark:hover:text-gray-50',
-                  topBarButtonsColorClasses
-                ]"
-              >
+              <MenuButton :class="['-m-1.5 flex items-center p-1.5', topBarButtonsColorClasses]">
                 <span class="sr-only">{{ t('standalone.shell.open_user_menu') }}</span>
                 <font-awesome-icon
                   :icon="['fas', 'circle-user']"
@@ -458,5 +454,7 @@ watch(
         </div>
       </main>
     </div>
+    <NotificationDrawer />
+    <ToastNotificationsArea />
   </div>
 </template>

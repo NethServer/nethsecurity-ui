@@ -91,29 +91,38 @@ function validateScheduleDate() {
 
 async function saveSchedule() {
   scheduleDateValidationError.value = ''
-  try {
-    isSavingChanges.value = true
-    if (scheduleMode.value == 'date_time') {
-      if (!validateScheduleDate()) return
+  isSavingChanges.value = true
+  if (scheduleMode.value == 'date_time') {
+    if (!validateScheduleDate()) return
 
+    try {
       await ubusCall('ns.update', 'schedule-system-update', {
         scheduleAt: scheduleDate.value.getTime() / 1000
       })
       emit('schedule-saved')
       close()
-    } else {
+    } catch (err: any) {
+      error.value.notificationTitle = t('error.cannot_set_update_schedule')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
+  } else {
+    try {
       await ubusCall('ns.update', 'update-system')
       emit('system-update-requested')
       close()
+    } catch (err: any) {
+      if (!err.response || !err.response.data) {
+        emit('system-update-requested')
+        close()
+      } else {
+        error.value.notificationTitle = t('error.cannot_update_system')
+        error.value.notificationDescription = t(getAxiosErrorMessage(err))
+        error.value.notificationDetails = err.toString()
+      }
     }
-  } catch (err: any) {
-    //TODO: use different error message if we update now
-    error.value.notificationTitle = t('error.cannot_set_update_schedule')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
-  } finally {
-    isSavingChanges.value = false
   }
+  isSavingChanges.value = false
 }
 
 watch(

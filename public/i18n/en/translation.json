@@ -165,7 +165,8 @@
     "cannot_cancel_update_schedule": "Cannot cancel update schedule",
     "cannot_set_update_schedule": "Cannot set update schedule",
     "cannot_upload_image": "Cannot upload image",
-    "cannot_update_packages": "Cannot update packages"
+    "cannot_update_packages": "Cannot update packages",
+    "cannot_update_system": "Cannot update system"
   },
   "ne_text_input": {
     "show_password": "Show password",

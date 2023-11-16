@@ -79,6 +79,10 @@ async function uploadImageAndReboot() {
     emit('update-requested')
     close()
   } catch (err: any) {
+    if (!err.response || !err.response.data) {
+      emit('update-requested')
+      close()
+    }
     uploadErrorDescription.value = t(getAxiosErrorMessage(err))
     uploadErrorDetails.value = err.toString()
   } finally {

@@ -1,10 +1,10 @@
 import { onUnmounted, ref } from 'vue'
 
 export type TimerOptions = {
-    duration: number
-    progressStep: number
-    onProgressStep?: (currentProgress: number) => void
-    onTimerFinish?: () => void
+  duration: number
+  progressStep: number
+  onProgressStep?: (currentProgress: number) => void
+  onTimerFinish?: () => void
 }
 
 /**
@@ -19,28 +19,28 @@ export type TimerOptions = {
  * when the timer ends
  */
 export function useTimer({ duration, progressStep, onProgressStep, onTimerFinish }: TimerOptions) {
-    const timerIntervalRef = ref<number | undefined>()
-    const timeTimeoutRef = ref<number | undefined>()
-    const currentProgress = ref<number>(0)
+  const timerIntervalRef = ref<number | undefined>()
+  const timeTimeoutRef = ref<number | undefined>()
+  const currentProgress = ref<number>(0)
 
-    function startTimer() {
-        timeTimeoutRef.value = setTimeout(onTimerFinish ?? (() => { }), duration)
+  function startTimer() {
+    timeTimeoutRef.value = setTimeout(onTimerFinish ?? (() => {}), duration)
 
-        timerIntervalRef.value = setInterval(() => {
-            currentProgress.value += progressStep
-            onProgressStep?.(currentProgress.value)
-        }, (duration * progressStep) / 100)
-    }
+    timerIntervalRef.value = setInterval(() => {
+      currentProgress.value += progressStep
+      onProgressStep?.(currentProgress.value)
+    }, (duration * progressStep) / 100)
+  }
 
-    function clearTimer() {
-        if (timeTimeoutRef.value) clearTimeout(timeTimeoutRef.value)
-        if (timerIntervalRef.value) clearInterval(timerIntervalRef.value)
-        currentProgress.value = 0
-    }
+  function clearTimer() {
+    if (timeTimeoutRef.value) clearTimeout(timeTimeoutRef.value)
+    if (timerIntervalRef.value) clearInterval(timerIntervalRef.value)
+    currentProgress.value = 0
+  }
 
-    onUnmounted(() => {
-        clearTimer()
-    })
+  onUnmounted(() => {
+    clearTimer()
+  })
 
-    return { startTimer, clearTimer, currentProgress }
+  return { startTimer, clearTimer, currentProgress }
 }

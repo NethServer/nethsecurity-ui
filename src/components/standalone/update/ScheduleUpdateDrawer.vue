@@ -5,6 +5,7 @@ import {
   NeFormItemLabel,
   NeTextInput,
   NeButton,
+  NeTooltip,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -139,7 +140,9 @@ watch(
     :is-shown="isShown"
     @close="close()"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
-    :title="t('standalone.update.schedule_update')"
+    :title="
+      !isEditing ? t('standalone.update.update_system') : t('standalone.update.edit_scheduled_date')
+    "
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -179,6 +182,16 @@ watch(
               :clearable="false"
               :disabled-dates="disablePastDates"
               :dark="!theme.isLight"
+              :format="
+                (date: Date | null) =>
+                  date?.toLocaleString([], {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }) ?? ''
+              "
             />
             <p
               v-if="scheduleDateValidationError"
@@ -197,7 +210,13 @@ watch(
           @click="saveScheduleOrBeginUpdate()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
-          >{{ t('standalone.update.schedule') }}</NeButton
+          >{{
+            scheduleMode === 'now'
+              ? t('standalone.update.update_and_reboot')
+              : isEditing
+              ? t('common.save')
+              : t('standalone.update.schedule')
+          }}</NeButton
         >
       </div>
     </div></NeSideDrawer

@@ -427,13 +427,12 @@
       "system_update_first_tip": "Back up your configuration before updating your NethSecurity system",
       "system_update_second_tip": "The current settings and configuration will be preserved",
       "installed_release": "Installed release: {release}",
-      "schedule_update": "Schedule update",
-      "upload_image": "Upload image",
-      "all_updates_installed_notification": "All updates have already been correctly installed",
-      "available_release": "Available release",
+      "update_with_image_file": "Update with image file",
+      "all_updates_installed_notification": "All updates are installed",
+      "latest_release": "Latest release",
       "bug_security_fixes_to_update": "Bug & security fixes to update",
       "component_update_details": "{versionFrom} to {versionTo}",
-      "update_in_progress_message": "Updating the system, please wait until complete.",
+      "update_in_progress_message": "Updating the unit, please wait...",
       "update_to_version": "Update to version",
       "choose_when_to_update": "Choose when to update",
       "schedule_mode_tooltip": "After the update the system will be reboot",
@@ -448,7 +447,9 @@
       "update_and_reboot": "Update & reboot",
       "keep_scheduled_update": "Keep scheduled update",
       "cancel_update_description": "The scheduled update for version '{version}' will be canceled",
-      "system_update_in_progress_message": "Updating the system and rebooting the unit, please wait until complete."
+      "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
+      "update_system": "Update system",
+      "edit_scheduled_date": "Edit scheduled date"
     },
     "storage": {
       "title": "Storage",

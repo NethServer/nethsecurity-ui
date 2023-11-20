@@ -103,13 +103,13 @@ async function uploadImageAndReboot() {
     :is-shown="isShown"
     @close="!isRequestingUpdate ? close() : undefined"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
-    :title="t('standalone.update.upload_image')"
+    :title="t('standalone.update.update_with_image_file')"
   >
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
         kind="error"
         v-if="error.notificationTitle"
-        :title="t('error.cannot_upload_image')"
+        :title="error.notificationTitle"
         :description="error.notificationDescription"
       >
         <template #details v-if="error.notificationDetails">

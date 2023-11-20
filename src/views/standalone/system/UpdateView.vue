@@ -153,7 +153,13 @@ onMounted(() => {
       <p class="mb-4 text-sm text-gray-500 dark:text-gray-400" v-if="lastPackageUpdateCheck">
         {{
           t('standalone.update.updated_at', {
-            lastCheck: lastPackageUpdateCheck.toLocaleString()
+            lastCheck: lastPackageUpdateCheck.toLocaleString([], {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
           })
         }}
       </p>
@@ -215,7 +221,13 @@ onMounted(() => {
         :description="
           t('standalone.update.system_update_scheduled_description', {
             version: systemUpdateData?.lastVersion,
-            date: scheduleDate.toLocaleString()
+            date: scheduleDate.toLocaleString([], {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
           })
         "
         :primary-button-label="t('common.edit')"
@@ -230,12 +242,12 @@ onMounted(() => {
           systemUpdateData?.lastVersion &&
           systemUpdateData.lastVersion != systemUpdateData?.currentVersion
         "
-        :title="t('standalone.update.available_release')"
+        :title="t('standalone.update.latest_release')"
         :description="systemUpdateData?.lastVersion"
       />
       <div class="mt-4">
         <NeButton
-          class="mr-4"
+          class="mb-2 mr-4"
           v-if="
             systemUpdateData?.lastVersion &&
             systemUpdateData.lastVersion != systemUpdateData?.currentVersion &&
@@ -244,10 +256,10 @@ onMounted(() => {
           @click="showEditScheduleDrawer"
           ><template #prefix>
             <font-awesome-icon
-              :icon="['fas', 'calendar']"
+              :icon="['fas', 'arrows-rotate']"
               class="h-4 w-4"
               aria-hidden="true" /></template
-          >{{ t('standalone.update.schedule_update') }}</NeButton
+          >{{ t('standalone.update.update_system') }}</NeButton
         >
         <NeButton kind="tertiary" v-if="!scheduleDate" @click="showUploadImageDrawer = true"
           ><template #prefix>
@@ -255,7 +267,7 @@ onMounted(() => {
               :icon="['fas', 'circle-arrow-up']"
               class="h-4 w-4"
               aria-hidden="true" /></template
-          >{{ t('standalone.update.upload_image') }}</NeButton
+          >{{ t('standalone.update.update_with_image_file') }}</NeButton
         >
       </div>
     </FormLayout></template

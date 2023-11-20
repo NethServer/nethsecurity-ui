@@ -168,7 +168,9 @@
     "cannot_upload_image": "Cannot upload image",
     "cannot_update_packages": "Cannot update packages",
     "cannot_update_system": "Cannot update system",
-    "last_must_be_greater_than_first": "Ensure that the last IP in the range is greater than the first IP"
+    "last_must_be_greater_than_first": "Ensure that the last IP in the range is greater than the first IP",
+    "cannot_delete_proxy": "Cannot delete proxy",
+    "cannot_retrieve_proxies": "Cannot retrieve proxies"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -832,9 +834,15 @@
     },
     "reverse_proxy": {
       "title": "Reverse proxy",
-      "description": "A reverse proxy forwards HTTP client requests to another web server",
+      "page_description": "A reverse proxy forwards HTTP client requests to another web server",
       "no_reverse_proxy_found": "No reverse proxy found",
-      "add_reverse_proxy": "Add reverse proxy"
+      "add_reverse_proxy": "Add reverse proxy",
+      "domain_path": "Domain/Path",
+      "destination_url": "Destination URL",
+      "description": "Description",
+      "allowed_networks": "Allowed networks",
+      "delete_proxy": "Delete proxy",
+      "delete_proxy_message": "You are about to delete proxy '{path}'"
     },
     "users_and_objects": {
       "title": "Users & objects"

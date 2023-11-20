@@ -830,6 +830,12 @@
         "empty_network_device_link": "Go to Interfaces and devices"
       }
     },
+    "reverse_proxy": {
+      "title": "Reverse proxy",
+      "description": "A reverse proxy forwards HTTP client requests to another web server",
+      "no_reverse_proxy_found": "No reverse proxy found",
+      "add_reverse_proxy": "Add reverse proxy"
+    },
     "users_and_objects": {
       "title": "Users & objects"
     },

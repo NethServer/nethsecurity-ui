@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -16,7 +17,6 @@ import {
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
-import { onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -33,10 +33,15 @@ const isPerformingRequest = ref(false)
 const modalRequestError = ref('')
 const pageError = ref('')
 
-const rebootProgress = ref(0)
 const isRebooting = ref(false)
-const rebootIntervalRef = ref<number | undefined>()
-const rebootTimeoutRef = ref<number | undefined>()
+
+const { startTimer, currentProgress } = useTimer({
+  duration: REBOOT_WAIT_TIME,
+  progressStep: 0.5,
+  onTimerFinish: () => {
+    location.reload()
+  }
+})
 
 async function getHostname() {
   try {
@@ -55,7 +60,7 @@ async function performRequest(type: requestType) {
 
     if (type == 'reboot') {
       isRebooting.value = true
-      setRebootTimer()
+      startTimer()
     }
   } catch (err: any) {
     modalRequestError.value = t(getAxiosErrorMessage(err))
@@ -70,23 +75,8 @@ function closeModal() {
   modalRequestError.value = ''
 }
 
-function setRebootTimer() {
-  rebootTimeoutRef.value = setTimeout(() => {
-    location.reload()
-  }, REBOOT_WAIT_TIME)
-
-  rebootIntervalRef.value = setInterval(() => {
-    rebootProgress.value += 0.5
-  }, REBOOT_WAIT_TIME / 200)
-}
-
 onMounted(() => {
   getHostname()
-})
-
-onUnmounted(() => {
-  if (rebootTimeoutRef.value) clearTimeout(rebootTimeoutRef.value)
-  if (rebootIntervalRef.value) clearInterval(rebootIntervalRef.value)
 })
 </script>
 
@@ -159,7 +149,7 @@ onUnmounted(() => {
   >
     <template v-if="isRebooting">
       {{ t('standalone.reboot_and_shutdown.reboot_in_progress') }}
-      <NeProgressBar class="my-4" :progress="rebootProgress" />
+      <NeProgressBar class="my-4" :progress="currentProgress" />
     </template>
     <template v-else>
       {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}

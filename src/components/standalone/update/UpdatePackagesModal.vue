@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { PackageUpdate } from '@/views/standalone/system/UpdateView.vue'
 import {
@@ -7,7 +8,6 @@ import {
   NeInlineNotification,
   NeProgressBar
 } from '@nethserver/vue-tailwind-lib'
-import { onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -28,13 +28,19 @@ const { t } = useI18n()
 
 const isSubmittingUpdateRequest = ref(false)
 const isUpdatingPackages = ref(false)
-const updateProgress = ref(0)
-const updateTimerRef = ref<number | undefined>()
-const updateIntervalRef = ref<number | undefined>()
+
+const { startTimer, currentProgress, clearTimer } = useTimer({
+  duration: UPDATE_WAIT_TIME,
+  progressStep: 0.5,
+  onTimerFinish: () => {
+    emit('packages-updated')
+    clearTimer()
+    close()
+  }
+})
 
 function close() {
   isUpdatingPackages.value = false
-  updateProgress.value = 0
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
   emit('close')
@@ -45,7 +51,7 @@ async function updatePackages() {
     isSubmittingUpdateRequest.value = true
     await ubusCall('ns.update', 'install-package-updates')
     isUpdatingPackages.value = true
-    setUpdateTimer()
+    startTimer()
   } catch (err: any) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
@@ -53,27 +59,6 @@ async function updatePackages() {
     isSubmittingUpdateRequest.value = false
   }
 }
-
-function clearTimers() {
-  if (updateTimerRef.value) clearTimeout(updateTimerRef.value)
-  if (updateIntervalRef.value) clearInterval(updateIntervalRef.value)
-}
-
-function setUpdateTimer() {
-  updateTimerRef.value = setTimeout(() => {
-    emit('packages-updated')
-    clearTimers()
-    close()
-  }, UPDATE_WAIT_TIME)
-
-  updateIntervalRef.value = setInterval(() => {
-    updateProgress.value += 0.5
-  }, UPDATE_WAIT_TIME / 200)
-}
-
-onUnmounted(() => {
-  clearTimers()
-})
 </script>
 
 <template>
@@ -113,7 +98,7 @@ onUnmounted(() => {
       <p>
         {{ t('standalone.update.update_in_progress_message') }}
       </p>
-      <NeProgressBar class="mt-4" :progress="updateProgress" />
+      <NeProgressBar class="mt-4" :progress="currentProgress" />
     </template>
   </NeModal>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
 import { NeProgressBar, NeModal } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { watch } from 'vue'
+import { useTimer } from '@/composables/useTimer'
 
 const REBOOT_WAIT_TIME = 45000
 
@@ -12,33 +12,22 @@ const props = defineProps<{
   visible: boolean
 }>()
 
-const rebootProgress = ref(0)
-const rebootIntervalRef = ref<number | undefined>()
-const rebootTimeoutRef = ref<number | undefined>()
-
-function setRebootTimer() {
-  rebootTimeoutRef.value = setTimeout(() => {
+const { startTimer, currentProgress } = useTimer({
+  duration: REBOOT_WAIT_TIME,
+  progressStep: 0.5,
+  onTimerFinish: () => {
     location.reload()
-  }, REBOOT_WAIT_TIME)
-
-  rebootIntervalRef.value = setInterval(() => {
-    rebootProgress.value += 0.5
-  }, REBOOT_WAIT_TIME / 200)
-}
+  }
+})
 
 watch(
   () => props.visible,
   () => {
     if (props.visible) {
-      setRebootTimer()
+      startTimer()
     }
   }
 )
-
-onUnmounted(() => {
-  if (rebootTimeoutRef.value) clearTimeout(rebootTimeoutRef.value)
-  if (rebootIntervalRef.value) clearInterval(rebootIntervalRef.value)
-})
 </script>
 
 <template>
@@ -54,6 +43,6 @@ onUnmounted(() => {
     <p>
       {{ t('standalone.update.system_update_in_progress_message') }}
     </p>
-    <NeProgressBar class="mt-4" :progress="rebootProgress" />
+    <NeProgressBar class="mt-4" :progress="currentProgress" />
   </NeModal>
 </template>

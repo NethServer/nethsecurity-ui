@@ -155,5 +155,6 @@ onMounted(() => {
     :is-shown="showCreateEditDrawer"
     :item-to-edit="selectedProxy"
     @close="closeModalsAndDrawers"
+    @add-edit-proxy="reloadProxies"
   />
 </template>

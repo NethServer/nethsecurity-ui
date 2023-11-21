@@ -50,6 +50,7 @@
     "invalid_cidr_address": "Enter a valid IP address with CIDR notation",
     "invalid_path": "Enter a valid path",
     "invalid_fqdn": "Enter a valid full qualified domain name",
+    "invalid_url": "Enter a valid URL",
     "invalid_port": "Enter an integer number between 1 and 65535",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "invalid_lease_time": "Invalid lease time",

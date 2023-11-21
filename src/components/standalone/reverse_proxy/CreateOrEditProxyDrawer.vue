@@ -5,6 +5,7 @@ import {
   validateIpCidr,
   validatePath,
   validateRequired,
+  validateURL,
   type validationOutput
 } from '@/lib/validation'
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
@@ -116,7 +117,7 @@ function validate() {
     [[validateRequired(domain.value), validateFQDN(domain.value)], 'domain']
   ]
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(destinationURL.value)], 'destinationURL'],
+    [[validateRequired(destinationURL.value), validateURL(destinationURL.value)], 'destinationURL'],
     ...(type.value === 'path' ? pathValidators : domainValidators)
   ]
   return (
@@ -165,6 +166,8 @@ async function createOrEditProxy() {
   try {
     isSavingChanges.value = true
     await ubusCall('ns.reverseproxy', requestType, payload)
+    emit('add-edit-proxy')
+    close()
   } catch (err: any) {
     error.value.notificationTitle = id.value
       ? t('error.cannot_edit_proxy')
@@ -222,6 +225,7 @@ function close() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
+  clearValidationErrors()
   emit('close')
 }
 
@@ -333,6 +337,7 @@ watch(
         v-model="allowedNetworks"
         :add-item-label="t('standalone.reverse_proxy.add_cidr_network')"
         :title="t('standalone.reverse_proxy.allowed_networks')"
+        :invalid-messages="allowedNetworksValidationErrors"
         ><template #tooltip>
           <NeTooltip>
             <template #content>

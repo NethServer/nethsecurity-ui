@@ -852,6 +852,7 @@
       "delete_proxy_message": "You are about to delete proxy '{path}'",
       "path": "Path",
       "domain": "Domain",
+      "and_n_others": "+ {n} others",
       "type": "Type",
       "add_cidr_network": "Add CIDR network",
       "certificate": "Certificate",

@@ -13,6 +13,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { ubusCall } from '@/lib/standalone/ubus'
 import ProxyTable from '@/components/standalone/reverse_proxy/ProxyTable.vue'
 import DeleteProxyModal from '@/components/standalone/reverse_proxy/DeleteProxyModal.vue'
+import CreateOrEditProxyDrawer from '@/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue'
 
 export type ReverseProxy = {
   id: string
@@ -137,6 +138,7 @@ onMounted(() => {
         ></NeEmptyState
       >
       <ProxyTable
+        v-else
         :proxies="proxies"
         @proxy-delete="openDeleteModal"
         @proxy-edit="openCreateEditDrawer"
@@ -149,5 +151,9 @@ onMounted(() => {
     @close="closeModalsAndDrawers"
     @proxy-deleted="reloadProxies"
   />
-  <!-- CREATE/EDIT DRAWER -->
+  <CreateOrEditProxyDrawer
+    :is-shown="showCreateEditDrawer"
+    :item-to-edit="selectedProxy"
+    @close="closeModalsAndDrawers"
+  />
 </template>

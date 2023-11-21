@@ -125,6 +125,13 @@ export const validateIp6Cidr = (ip4Cidr: String): validationOutput => {
   return { valid: true }
 }
 
+export const validateIpCidr = (ipCidr: string): validationOutput => {
+  if (!validateIp4Cidr(ipCidr).valid && !validateIp6Cidr(ipCidr).valid)
+    return { valid: false, errMessage: 'error.invalid_cidr_address' }
+
+  return { valid: true }
+}
+
 export const validateIp6Address = (ipAddr: String): validationOutput => {
   const re =
     /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
@@ -328,7 +335,22 @@ export const validateFutureDate = (value: Date): validationOutput => {
   if (value.getTime() < new Date().getTime()) {
     return { valid: false, errMessage: 'error.invalid_future_date' }
   }
+  return { valid: true }
+}
 
+export const validatePath = (value: string): validationOutput => {
+  if (value[0] != '/') {
+    return { valid: false, errMessage: 'error.invalid_path' }
+  }
+  return { valid: true }
+}
+
+export const validateFQDN = (value: string): validationOutput => {
+  const re = /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
+
+  if (!value.match(re)) {
+    return { valid: false, errMessage: 'error.invalid_fqdn' }
+  }
   return { valid: true }
 }
 

@@ -17,6 +17,7 @@ import { computed } from 'vue'
 import { onMounted } from 'vue'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
+import { getProductName } from '@/lib/config'
 
 export type PackageUpdate = {
   package: string
@@ -143,14 +144,15 @@ onMounted(() => {
       {{ error.notificationDetails }}
     </template></NeInlineNotification
   >
-  <NeSkeleton v-if="loading" :lines="10" />
-  <template v-else
-    ><FormLayout
-      :title="t('standalone.update.bug_security_fixes')"
-      :description="t('standalone.update.bug_security_fixes_description')"
-      class="max-w-4xl"
-    >
-      <p class="mb-4 text-sm text-gray-500 dark:text-gray-400" v-if="lastPackageUpdateCheck">
+
+  <FormLayout
+    :title="t('standalone.update.bug_security_fixes')"
+    :description="t('standalone.update.bug_security_fixes_description')"
+    class="max-w-4xl"
+  >
+    <NeSkeleton v-if="loading" :lines="5" />
+    <template v-else
+      ><p class="mb-4 text-sm text-gray-500 dark:text-gray-400" v-if="lastPackageUpdateCheck">
         {{
           t('standalone.update.updated_at', {
             lastCheck: lastPackageUpdateCheck.toLocaleString([], {
@@ -180,34 +182,36 @@ onMounted(() => {
         class="my-6"
         v-if="noPackageUpdatesAvailable"
         :description="t('standalone.update.all_updates_installed_notification')"
-      />
-    </FormLayout>
-    <hr class="my-6" />
-    <FormLayout class="max-w-4xl" :title="t('standalone.update.system_update')">
-      <template #description>
-        <p class="mb-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-          {{ t('standalone.update.system_update_description') }}
+    /></template>
+  </FormLayout>
+  <hr class="my-6" />
+  <FormLayout class="max-w-4xl" :title="t('standalone.update.system_update')">
+    <template #description>
+      <p class="mb-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.update.system_update_description') }}
+      </p>
+      <div class="mb-4 flex flex-row items-start gap-x-2">
+        <FontAwesomeIcon
+          :icon="['fas', 'circle-info']"
+          class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+        />
+        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.update.system_update_first_tip', { productName: getProductName() }) }}
         </p>
-        <div class="mb-4 flex flex-row items-start gap-x-2">
-          <FontAwesomeIcon
-            :icon="['fas', 'circle-info']"
-            class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
-          />
-          <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.update.system_update_first_tip') }}
-          </p>
-        </div>
-        <div class="flex flex-row items-start gap-x-2">
-          <FontAwesomeIcon
-            :icon="['fas', 'circle-info']"
-            class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
-          />
-          <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.update.system_update_second_tip') }}
-          </p>
-        </div>
-      </template>
+      </div>
+      <div class="mb-4 flex flex-row items-start gap-x-2">
+        <FontAwesomeIcon
+          :icon="['fas', 'circle-info']"
+          class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+        />
+        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.update.system_update_second_tip') }}
+        </p>
+      </div>
+    </template>
 
+    <NeSkeleton v-if="loading" :lines="5" />
+    <template v-else>
       <p class="text-sm text-gray-500 dark:text-gray-400">
         {{
           t('standalone.update.installed_release', { release: systemUpdateData?.currentVersion })
@@ -270,8 +274,8 @@ onMounted(() => {
           >{{ t('standalone.update.update_with_image_file') }}</NeButton
         >
       </div>
-    </FormLayout></template
-  >
+    </template>
+  </FormLayout>
 
   <!-- Confirm cancel schedule modal -->
   <NeModal

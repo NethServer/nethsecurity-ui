@@ -201,5 +201,4 @@ export async function loadFontAwesome(app: any) {
   library.add(fasTrafficCone)
   library.add(fasStar)
   library.add(faKey)
-  library.add(faCalendar)
 }

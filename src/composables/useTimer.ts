@@ -8,7 +8,7 @@ export type TimerOptions = {
 }
 
 /**
- * Composable that enables the creation of a timer, and the end of which an action is executed.
+ * Composable that enables the creation of a timer, at the end of which an action is executed.
  * @param {Object} timerOptions - An object containing the options associated to the timer
  * @param {number} timerOptions.duration - Contains the duration of the timer
  * @param {number} timerOptions.progressStep - Contains the progress step, which defines how often the progress is updated.

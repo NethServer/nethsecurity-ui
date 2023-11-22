@@ -20,7 +20,7 @@ import DpiRuleCard from '@/components/standalone/dpi/DpiRuleCard.vue'
 import ManageDpiRuleModal from '@/components/standalone/dpi/ManageDpiRuleModal.vue'
 import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { useFirewallStore } from '@/stores/standalone/firewall'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()

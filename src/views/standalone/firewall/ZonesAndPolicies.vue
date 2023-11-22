@@ -18,7 +18,7 @@ import {
   useFirewallStore,
   Zone,
   ZoneType
-} from '@/stores/standalone/useFirewallStore'
+} from '@/stores/standalone/firewall'
 import { isEmpty } from 'lodash-es'
 import { getTrafficToWan, forwardingsToByZone, getZoneColorClasses } from '@/lib/standalone/network'
 

@@ -10,7 +10,7 @@ import { getHumanizedAppName, getAppIcon, type DpiRule } from '@/lib/standalone/
 import { getZoneBorderColorClasses } from '@/lib/standalone/network'
 import { computed, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import type { Zone } from '@/stores/standalone/useFirewallStore'
+import type { Zone } from '@/stores/standalone/firewall'
 
 interface Props {
   rule: DpiRule

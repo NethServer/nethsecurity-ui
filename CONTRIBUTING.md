@@ -59,7 +59,7 @@ Follow the steps below to prepare the development environment:
 You can develop and build [inside a container (recommended)](#develop-inside-a-container)
 or [on your workstation](#develop-on-bare-bone).
 
-## Commit notations
+### Commit notations
 
 To enforce understandable and linear commits,
 the [conventional commits specification v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) is used.
@@ -67,6 +67,22 @@ the [conventional commits specification v1.0.0](https://www.conventionalcommits.
 On every `npm install` a `commit-msg` hook that checks the contents of the commit is installed. However, if a `trash`
 commit or a `wip` commit needs to be provided, feel free to skip the checks with this additional `git-commit`
 flag: `--no-verify`
+
+### Code style
+
+The project uses [prettier](https://prettier.io) to enforce code style in tandem with [eslint](https://eslint.org). To format all files automatically, you can run:
+
+```bash
+./dev.sh npm run format
+```
+
+while to check for linting errors (and automatically fix them if possible) you can run:
+
+```bash
+./dev.sh npm run lint
+```
+
+this will prevent issues when proposing a PR.
 
 ### Develop inside a container
 

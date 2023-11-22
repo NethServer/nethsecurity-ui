@@ -21,7 +21,7 @@ import type {
 import { watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
-import { ZoneType, useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { ZoneType, useFirewallStore } from '@/stores/standalone/firewall'
 import { computed } from 'vue'
 import {
   MessageBag,

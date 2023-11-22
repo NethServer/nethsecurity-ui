@@ -14,7 +14,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import EditDhcpInterfaceDrawer from './EditDhcpInterfaceDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { useFirewallStore } from '@/stores/standalone/useFirewallStore'
+import { useFirewallStore } from '@/stores/standalone/firewall'
 import { computed } from 'vue'
 import { getZoneBorderColorClasses } from '@/lib/standalone/network'
 

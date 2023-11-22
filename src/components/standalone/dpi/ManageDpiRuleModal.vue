@@ -30,7 +30,7 @@ import {
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { watchDebounced } from '@vueuse/core'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { MessageBag, validateRequired } from '@/lib/validation'
 
 interface Props {

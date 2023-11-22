@@ -15,7 +15,7 @@ import {
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { round } from 'lodash'
+import { round } from 'lodash-es'
 
 const { t } = useI18n()
 const REFRESH_INTERVAL = 10000

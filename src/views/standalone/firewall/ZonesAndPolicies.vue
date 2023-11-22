@@ -19,7 +19,7 @@ import {
   Zone,
   ZoneType
 } from '@/stores/standalone/useFirewallStore'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { getTrafficToWan, forwardingsToByZone, getZoneColorClasses } from '@/lib/standalone/network'
 
 const { t } = useI18n()

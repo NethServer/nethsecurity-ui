@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import { NeSkeleton } from '@nethserver/vue-tailwind-lib'
-import { get } from 'lodash'
+import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 
 /**

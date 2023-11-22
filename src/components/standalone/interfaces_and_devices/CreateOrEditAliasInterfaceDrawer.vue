@@ -21,7 +21,7 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty, uniq } from 'lodash'
+import { isEmpty, uniq } from 'lodash-es'
 import { ref, watch, type Ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

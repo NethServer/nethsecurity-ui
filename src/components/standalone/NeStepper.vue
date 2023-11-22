@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeProgressBar } from '@nethserver/vue-tailwind-lib'
-import { range } from 'lodash'
+import { range } from 'lodash-es'
 
 defineProps<{
   totalSteps: number

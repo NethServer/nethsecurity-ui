@@ -3,7 +3,7 @@
 
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import axios from 'axios'
 import { deleteFromStorage, saveToStorage, getJsonFromStorage } from '@nethserver/vue-tailwind-lib'
 import { useRouter } from 'vue-router'

@@ -24,7 +24,7 @@ import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import router from '@/router'
 
 const loginStore = useLoginStore()

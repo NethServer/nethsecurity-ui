@@ -17,7 +17,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
-import { isEmpty, uniq } from 'lodash'
+import { isEmpty, uniq } from 'lodash-es'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'

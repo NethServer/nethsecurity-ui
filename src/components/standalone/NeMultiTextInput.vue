@@ -8,7 +8,7 @@ import {
   NeCombobox
 } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
-import _ from 'lodash'
+import { zip } from 'lodash-es'
 
 export type KeyValueItem = {
   key: string
@@ -55,7 +55,7 @@ function emitUpdate() {
   if (props.useKeyCombobox) {
     emit(
       'update:modelValue',
-      _.zip(keys.value, items.value).map(([k, v]) => ({ key: k, value: v }))
+      zip(keys.value, items.value).map(([k, v]) => ({ key: k, value: v }))
     )
   } else {
     emit('update:modelValue', items.value)

@@ -7,7 +7,7 @@
 import { useUnitsStore } from '@/stores/controller/units'
 import { NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { useUnitManagementStore } from '@/stores/controller/unitManagement'
 import { useRouter } from 'vue-router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'

@@ -15,7 +15,7 @@ import {
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

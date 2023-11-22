@@ -17,7 +17,7 @@ import {
   getPreference,
   savePreference
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

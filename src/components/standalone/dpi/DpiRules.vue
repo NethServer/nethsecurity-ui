@@ -14,7 +14,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import type { DpiRule } from '@/lib/standalone/dpi'
 import DpiRuleCard from '@/components/standalone/dpi/DpiRuleCard.vue'
 import ManageDpiRuleModal from '@/components/standalone/dpi/ManageDpiRuleModal.vue'

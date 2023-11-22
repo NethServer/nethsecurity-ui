@@ -36,7 +36,7 @@ import ConfigureDeviceDrawer, {
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
-import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash'
+import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash-es'
 
 const GET_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()

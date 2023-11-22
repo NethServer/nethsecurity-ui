@@ -7,7 +7,7 @@
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { getPreference, savePreference } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { onMounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'

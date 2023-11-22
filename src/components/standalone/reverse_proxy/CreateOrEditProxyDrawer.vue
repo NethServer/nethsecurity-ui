@@ -44,7 +44,7 @@ const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-edit-proxy'])
+const emit = defineEmits(['close', 'add-edit-proxy', 'open-certificate-page'])
 
 const loading = ref(false)
 const isSavingChanges = ref(false)
@@ -118,6 +118,7 @@ function validate() {
   ]
   const validators: [validationOutput[], string][] = [
     [[validateRequired(destinationURL.value), validateURL(destinationURL.value)], 'destinationURL'],
+    [[validateRequired(description.value)], 'description'],
     ...(type.value === 'path' ? pathValidators : domainValidators)
   ]
   return (
@@ -312,7 +313,7 @@ watch(
           :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
           kind="warning"
           :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
-          @primary-click="() => console.log('x')"
+          @primary-click="emit('open-certificate-page')"
         />
       </template>
       <NeTextInput
@@ -330,8 +331,7 @@ watch(
       <NeTextInput
         v-model="description"
         :label="t('standalone.reverse_proxy.description')"
-        :optional="true"
-        :optional-label="t('common.optional')"
+        :invalid-message="validationErrorBag.getFirstFor('description')"
       />
       <NeMultiTextInput
         v-model="allowedNetworks"

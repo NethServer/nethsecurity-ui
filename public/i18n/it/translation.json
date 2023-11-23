@@ -16,7 +16,11 @@
     "disabled": "Disabilitato",
     "disable": "Disabilita",
     "enabled": "Abilitato",
-    "page_under_construction": "Pagina in costruzione"
+    "page_under_construction": "Pagina in costruzione",
+    "step": "Step",
+    "configure": "Configura",
+    "next": "Prossimo",
+    "previous": "Precedente"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",

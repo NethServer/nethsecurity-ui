@@ -247,9 +247,7 @@ function setMigrationTimer() {
         <NeFileInput
           v-if="!loadingFile"
           :label="t('standalone.backup_and_restore.migration.input_upload_file')"
-          :dropzoneLabel="
-            t('standalone.backup_and_restore.migration.input_upload_file_description')
-          "
+          :dropzoneLabel="t('ne_file_input.dropzone_label')"
           :invalid-message="errorMigration.file"
           v-model="formMigration.file"
           ref="fileRef"

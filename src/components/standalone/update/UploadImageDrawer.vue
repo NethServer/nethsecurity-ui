@@ -36,6 +36,10 @@ async function handleFileUpload() {
   fileInputValidationError.value = ''
   isReadyToUpdate.value = false
   isUploadingImage.value = false
+
+  if (!fileToUpload.value) {
+    return
+  }
   const fileValidation = validateFile(fileToUpload.value, 'img.gz')
   if (!fileValidation.valid) {
     fileInputValidationError.value = t(fileValidation.errMessage as string)
@@ -116,6 +120,7 @@ async function updateImageAndReboot() {
           :invalid-message="fileInputValidationError"
           :show-progress="isUploadingImage"
           :progress="uploadProgress"
+          :dropzoneLabel="t('ne_file_input.dropzone_label')"
           v-model="fileToUpload"
         />
       </div>

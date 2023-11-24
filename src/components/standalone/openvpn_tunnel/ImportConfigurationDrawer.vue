@@ -77,6 +77,7 @@ async function importConfiguration() {
         <NeFileInput
           :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration')} (*.json)`"
           :invalid-message="fileInputValidationError"
+          :dropzoneLabel="t('ne_file_input.dropzone_label')"
           v-model="fileToUpload"
         />
       </div>

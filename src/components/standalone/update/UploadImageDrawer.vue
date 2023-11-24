@@ -71,6 +71,9 @@ function close() {
   error.value.notificationDetails = ''
   fileInputValidationError.value = ''
   fileToUpload.value = null
+  isReadyToUpdate.value = false
+  isUploadingImage.value = false
+  uploadedImageFileName.value = ''
   emit('close')
 }
 

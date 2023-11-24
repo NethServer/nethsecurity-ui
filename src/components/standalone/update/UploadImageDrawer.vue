@@ -32,17 +32,14 @@ const uploadedImageFileName = ref('')
 
 const fileToUpload = ref<File | null>(null)
 
-async function handleFileUpload(event: Event) {
+async function handleFileUpload() {
   fileInputValidationError.value = ''
   isReadyToUpdate.value = false
   isUploadingImage.value = false
-  const input = event.target as HTMLInputElement
-  if (!input.files?.length) {
+
+  if (!fileToUpload.value) {
     return
   }
-
-  fileToUpload.value = input.files[0]
-
   const fileValidation = validateFile(fileToUpload.value, 'img.gz')
   if (!fileValidation.valid) {
     fileInputValidationError.value = t(fileValidation.errMessage as string)
@@ -77,7 +74,7 @@ function close() {
   emit('close')
 }
 
-async function uploadImageAndReboot() {
+async function updateImageAndReboot() {
   try {
     isRequestingUpdate.value = true
     await ubusCall('ns.update', 'install-uploaded-image', { image: uploadedImageFileName.value })
@@ -119,10 +116,11 @@ async function uploadImageAndReboot() {
       <div>
         <NeFileInput
           :label="`${t('standalone.update.image_file')} (*.img.gz)`"
-          @change="handleFileUpload"
+          @select="handleFileUpload"
           :invalid-message="fileInputValidationError"
           :show-progress="isUploadingImage"
           :progress="uploadProgress"
+          :dropzoneLabel="t('ne_file_input.dropzone_label')"
           v-model="fileToUpload"
         />
       </div>
@@ -133,7 +131,7 @@ async function uploadImageAndReboot() {
         }}</NeButton>
         <NeButton
           kind="primary"
-          @click="uploadImageAndReboot()"
+          @click="updateImageAndReboot()"
           :disabled="isRequestingUpdate || !isReadyToUpdate"
           :loading="isRequestingUpdate"
           >{{ t('standalone.update.update_and_reboot') }}</NeButton

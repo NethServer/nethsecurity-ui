@@ -299,7 +299,7 @@ function setRestoreTimer() {
         <template v-if="typeRestore === 'upload_file'">
           <NeFileInput
             :label="t('standalone.backup_and_restore.restore.upload_file')"
-            :dropzoneLabel="t('standalone.backup_and_restore.restore.upload_file_description')"
+            :dropzoneLabel="t('ne_file_input.dropzone_label')"
             :invalid-message="errorRestore.file"
             v-model="formRestore.file"
             ref="fileRef"

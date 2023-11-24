@@ -189,6 +189,9 @@
   "ne_table": {
     "no_items": "No items"
   },
+  "ne_file_input": {
+    "dropzone_label": "Drag and drop or click to upload"
+  },
   "login": {
     "welcome_title_standalone": "Welcome",
     "welcome_description_standalone": "Sign in to {product}, secure your network and access the cloud quickly.",
@@ -386,8 +389,7 @@
         "backup": "Backup",
         "from_backup": "From last backups",
         "from_file": "Upload file",
-        "upload_file": "Backup file (*.tar.gz or *.tar.gz.gpg)",
-        "upload_file_description": "Drag and drop or choose file"
+        "upload_file": "Backup file (*.tar.gz or *.tar.gz.gpg)"
       },
       "migration": {
         "description": "Migration is the process to convert a NethServer 7 machine into a NethSecurity. To initiate the process, access the NethServer 7 machine and create a migration archive, which should then be uploaded on this page. Following the upload, ensure the proper remapping of old network interfaces to those within the hardware hosting NethSecurity.",
@@ -395,7 +397,6 @@
         "upload_file": "Upload migration file",
         "drawer_title": "Upload migration file",
         "input_upload_file": "Upload file (*.tar.gz)",
-        "input_upload_file_description": "Drag and drop or choose file",
         "migrate": "Migrate",
         "remap_interfaces": "Remap interfaces",
         "remap_interfaces_description": "During interface remapping, if one or more interfaces change their IP address, you have to login again on the new IP address.",

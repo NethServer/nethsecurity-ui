@@ -21,7 +21,7 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
@@ -183,11 +183,15 @@ async function saveChanges() {
       close()
     }
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_edit_interface')
-    error.value.notificationDescription =
-      err.response.data.message == 'interface_not_found'
-        ? t('standalone.dns_dhcp.interface_not_found')
-        : t(getAxiosErrorMessage(err))
+    if (err instanceof ValidationError) {
+      validationErrorBag.value = err.errorBag
+    } else {
+      error.value.notificationTitle = t('error.cannot_edit_interface')
+      error.value.notificationDescription =
+        err.response.data.message == 'interface_not_found'
+          ? t('standalone.dns_dhcp.interface_not_found')
+          : t(getAxiosErrorMessage(err))
+    }
   } finally {
     isSavingChanges.value = false
   }
@@ -200,6 +204,15 @@ function close() {
   dhcpOptionValueErrors.value = []
   dhcpOptionKeyErrors.value = []
   emit('close')
+}
+
+function rangeEndValidationError() {
+  let server_error = validationErrorBag.value.getFirstFor('last')
+  if (server_error) {
+    return t('error.' + server_error)
+  } else {
+    return validationErrorBag.value.getFirstFor('rangeIpEnd')
+  }
 }
 
 watchEffect(() => {
@@ -241,7 +254,7 @@ watch(
       <NeTextInput
         v-model="rangeIpEnd"
         :label="t('standalone.dns_dhcp.range_ip_end')"
-        :invalid-message="validationErrorBag.getFirstFor('rangeIpEnd')"
+        :invalid-message="rangeEndValidationError()"
       />
       <NeTextInput
         v-model="leaseTime"

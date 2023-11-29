@@ -34,10 +34,6 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  firewallConfig: {
-    type: Object,
-    required: true
-  },
   networkConfig: {
     type: Object,
     required: true
@@ -371,76 +367,6 @@ function validate() {
   return isValidationOk
 }
 
-async function addNetworkInterface() {
-  await ubusCall('uci', 'add', {
-    config: 'network',
-    name: interfaceName.value,
-    type: 'interface',
-    values: {
-      proto: 'static',
-      device: `@${props.iface['.name']}`
-    }
-  })
-}
-
-async function setIpAddressList() {
-  const valuesToSet: any = {}
-  const optionsToDelete = []
-
-  if (!isEmpty(ipv4Addresses.value)) {
-    valuesToSet.ipaddr = ipv4Addresses.value
-  } else if (!isCreating.value && props.aliasToEdit.ipaddr) {
-    // ip address list has been cleared
-    optionsToDelete.push('ipaddr')
-  }
-
-  if (!isEmpty(ipv6Addresses.value)) {
-    valuesToSet.ip6addr = ipv6Addresses.value
-  } else if (!isCreating.value && props.aliasToEdit.ip6addr) {
-    // ip address list has been cleared
-    optionsToDelete.push('ip6addr')
-  }
-
-  // set non-empty ip address lists
-
-  if (!isEmpty(valuesToSet)) {
-    await ubusCall('uci', 'set', {
-      config: 'network',
-      section: interfaceName.value,
-      values: valuesToSet
-    })
-  }
-
-  // delete empty ip address lists
-
-  if (!isEmpty(optionsToDelete)) {
-    await ubusCall('uci', 'delete', {
-      config: 'network',
-      section: interfaceName.value,
-      options: optionsToDelete
-    })
-  }
-}
-
-async function setFirewallZone() {
-  const zoneFound = props.firewallConfig.zone.find((zone: any) =>
-    zone.network.includes(props.iface['.name'])
-  )
-
-  // add alias interface to zone interfaces
-  zoneFound.network.push(interfaceName.value)
-
-  if (zoneFound) {
-    await ubusCall('uci', 'set', {
-      config: 'firewall',
-      section: zoneFound['.name'],
-      values: {
-        network: zoneFound.network
-      }
-    })
-  }
-}
-
 async function saveAliasInterface() {
   const isValidationOk = validate()
   if (!isValidationOk) {
@@ -448,11 +374,15 @@ async function saveAliasInterface() {
   }
 
   loading.value.create = true
+  const action = isCreating.value ? 'create-alias-interface' : 'edit-alias-interface'
 
   try {
-    await addNetworkInterface()
-    await setIpAddressList()
-    await setFirewallZone()
+    await ubusCall('ns.devices', action, {
+      alias_iface_name: interfaceName.value,
+      parent_iface_name: props.iface['.name'],
+      ip4_addresses: ipv4Addresses.value,
+      ip6_addresses: ipv6Addresses.value
+    })
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {

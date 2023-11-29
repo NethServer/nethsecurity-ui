@@ -131,19 +131,6 @@ function clearErrors() {
   }
 }
 
-async function createDevice() {
-  await ubusCall('uci', 'add', {
-    config: 'network',
-    type: 'device',
-    values: {
-      name: deviceName.value,
-      type: vlanType.value,
-      ifname: baseDevice.value,
-      vid: vlanId.value
-    }
-  })
-}
-
 async function createVlanDevice() {
   const isValidationOk = validate()
 
@@ -153,13 +140,18 @@ async function createVlanDevice() {
   loading.value.create = true
 
   try {
-    await createDevice()
+    await ubusCall('ns.devices', 'create-vlan-device', {
+      vlan_type: vlanType.value,
+      base_device_name: baseDevice.value,
+      vlan_id: vlanId.value
+    })
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_create_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    //// error details
   } finally {
     loading.value.create = false
     await uciChangesStore.getChanges()

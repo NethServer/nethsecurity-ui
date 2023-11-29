@@ -49,7 +49,8 @@
     "invalid_ip_v6_address": "Invalid IPv6 address",
     "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
-    "invalid_cidr_address": "Enter a valid IP address with CIDR notation",
+    "invalid_ip_v6_address_or_cidr_v6": "Enter a valid IPv6 address or IPv6 address with CIDR notation",
+    "invalid_cidr_address": "Enter a valid IPv4 or IPv6 address with CIDR notation",
     "invalid_path": "Enter a valid path",
     "invalid_fqdn": "Enter a valid full qualified domain name",
     "invalid_url": "Enter a valid URL",
@@ -581,7 +582,7 @@
       "zone_label_dedalo": "Dedalo (Hotspot)",
       "zone_label_openvpnrw": "VPN (OpenVPN RW)",
       "zone_label_unassigned": "Unassigned",
-      "create_logical_interface": "Create logical interface",
+      "create_logical_interface": "Configure logical interface",
       "bridge": "Bridge",
       "bond": "Bond",
       "logical_type": "Type",
@@ -602,7 +603,8 @@
       "bond_primary_device": "Primary device",
       "primary_device_not_included": "Primary device must be included in selected devices",
       "no_devices_available": "No devices available",
-      "custom_zone": "Custom"
+      "custom_zone": "Custom",
+      "cannot_remove_device_configuration": "Cannot remove device configuration"
     },
     "multi_wan": {
       "title": "MultiWAN",
@@ -1190,6 +1192,7 @@
     "api_call_failed": "API call failed",
     "show_details": "Show details",
     "copy_curl": "Copy cURL",
+    "copy_command": "Copy command",
     "request_url": "Request URL",
     "request_body": "Request body",
     "response_message": "Response message",

@@ -67,7 +67,7 @@ export enum SpecialZones {
 export enum ZoneType {
   LAN,
   WAN,
-  GUEST,
+  GUESTS,
   CUSTOM
 }
 
@@ -106,7 +106,7 @@ export class Zone {
       case 'LAN':
         return ZoneType.LAN
       case 'GUESTS':
-        return ZoneType.GUEST
+        return ZoneType.GUESTS
       default:
         return ZoneType.CUSTOM
     }

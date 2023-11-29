@@ -40,7 +40,7 @@ function icon(zone: Zone): string {
       return 'earth-americas'
     case ZoneType.LAN:
       return 'location-dot'
-    case ZoneType.GUEST:
+    case ZoneType.GUESTS:
       return 'users'
     case ZoneType.CUSTOM:
       return 'star'

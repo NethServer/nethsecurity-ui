@@ -15,10 +15,6 @@ const props = defineProps({
   device: {
     type: Object,
     required: true
-  },
-  networkConfig: {
-    type: Object,
-    required: true
   }
 })
 
@@ -50,29 +46,20 @@ function closeModal() {
   emit('close')
 }
 
-async function deleteNetworkDevice() {
-  const sectionFound = props.networkConfig.device?.find(
-    (dev: any) => dev.name === props.device.name
-  )
-
-  await ubusCall('uci', 'delete', {
-    config: 'network',
-    options: null,
-    section: sectionFound['.name']
-  })
-}
-
 async function deleteDevice() {
   loading.value.deleteDevice = true
 
   try {
-    await deleteNetworkDevice()
+    await ubusCall('ns.devices', 'delete-device', {
+      device_name: props.device.name
+    })
     emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_delete_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    //// error details
   } finally {
     loading.value.deleteDevice = false
     await uciChangesStore.getChanges()

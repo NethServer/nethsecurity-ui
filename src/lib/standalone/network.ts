@@ -2,9 +2,57 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/firewall'
+import { toUpper } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 
-export function getInterface(deviceOrIface: any, networkConfig: any) {
+export interface DeviceOrIface {
+  name?: string
+  '.name'?: string
+  type?: string
+  '.type'?: string
+  mac?: string
+  mtu?: number
+  up?: boolean
+  ipaddrs?: Ipv4Address[]
+  ip6addrs?: Ipv6Address[]
+  stats?: Stats
+  ipv6?: string
+  ports?: string[]
+  ifname?: string
+  vid?: string
+  proto?: string
+  bonding_policy?: string
+  ipaddr?: string
+  packets_per_slave?: string
+  slaves?: string[]
+  speed?: number
+}
+
+interface Ipv4Address {
+  address: string
+  netmask: string
+  broadcast: string
+}
+
+interface Ipv6Address {
+  address: string
+  netmask: string
+}
+
+interface Stats {
+  collisions: number
+  multicast: number
+  rx_bytes: number
+  rx_dropped: number
+  rx_errors: number
+  rx_packets: number
+  tx_bytes: number
+  tx_dropped: number
+  tx_errors: number
+  tx_packets: number
+}
+
+export function getInterface(deviceOrIface: DeviceOrIface, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
     return deviceOrIface
@@ -13,7 +61,7 @@ export function getInterface(deviceOrIface: any, networkConfig: any) {
   return networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
 }
 
-export function getAliasInterface(device: any, networkConfig: any) {
+export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
   const iface = getInterface(device, networkConfig)
 
   if (!iface) {
@@ -47,7 +95,7 @@ export function getZoneLabel(zoneName: string) {
       return 'OpenVPN RW'
     //// dmz
     default:
-      return zoneName
+      return toUpper(zoneName)
   }
 }
 
@@ -111,28 +159,24 @@ export function getZoneIcon(zoneName: string) {
   }
 }
 
-export function isVlan(device: any) {
-  if (device.devtype === 'vlan' || device.vid) {
+export function isVlan(device: DeviceOrIface) {
+  if (device.vid) {
     return true
   } else {
     return false
   }
 }
 
-export function isBridge(device: any) {
-  if (device.devtype === 'bridge' || device.type === 'bridge') {
+export function isBridge(device: DeviceOrIface) {
+  if (device?.type === 'bridge') {
     return true
   } else {
     return false
   }
 }
 
-export function isBond(iface: any) {
-  return iface.proto === 'bonding'
-}
-
-export function isBondDevice(device: any) {
-  return device.devtype === 'bond'
+export function isBond(iface: DeviceOrIface) {
+  return iface?.proto === 'bonding'
 }
 
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {
@@ -149,11 +193,11 @@ export function generateDeviceName(devicePrefix: string, networkConfig: any) {
   return deviceNameGenerated
 }
 
-export function getName(deviceOrIface: any) {
+export function getName(deviceOrIface: DeviceOrIface) {
   if (deviceOrIface['.type'] === 'interface') {
-    return deviceOrIface['.name']
+    return deviceOrIface['.name'] || '-'
   } else {
-    return deviceOrIface.name
+    return deviceOrIface.name || '-'
   }
 }
 

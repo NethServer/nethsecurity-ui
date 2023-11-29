@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
 
-//// move to lib after removing ubus references
+// Unlike NeAxiosErrorModal, this component is tailored to handle Ubus API calls too and copy to clipboard the specific command to invoke API script.
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
@@ -17,6 +17,13 @@ const axiosError = computed(() => {
   return notificationsStore.axiosErrorNotificationToShow
 })
 
+const secondaryButtonLabel = computed(() => {
+  const isUbusCall = axiosError.value?.payload.config.url.includes('/ubus/call')
+  const buttonLabel = isUbusCall ? t('notifications.copy_command') : t('notifications.copy_curl')
+
+  return justCopied.value ? t('common.copied') : buttonLabel
+})
+
 watch(
   () => notificationsStore.isAxiosErrorModalOpen,
   () => {
@@ -27,9 +34,13 @@ watch(
   }
 )
 
-function copyCurlToClipboard() {
+function copyCommandToClipboard() {
   if (axiosError.value) {
-    notificationsStore.copyCurlToClipboard(axiosError.value)
+    if (axiosError.value.payload.config.url.includes('/ubus/call')) {
+      notificationsStore.copyUbusApiCommandToClipboard(axiosError.value)
+    } else {
+      notificationsStore.copyCurlToClipboard(axiosError.value)
+    }
     justCopied.value = true
 
     setTimeout(() => {
@@ -51,7 +62,7 @@ function getFormattedJsonString(stringOrJson: any, indent: number = 4) {
     size="lg"
     :primary-label="t('common.close')"
     :secondary-button-disabled="justCopied"
-    :secondary-label="justCopied ? t('common.copied') : t('notifications.copy_curl')"
+    :secondary-label="secondaryButtonLabel"
     secondary-button-kind="tertiary"
     :title="axiosError ? axiosError.title : ''"
     :visible="notificationsStore.isAxiosErrorModalOpen"
@@ -60,7 +71,7 @@ function getFormattedJsonString(stringOrJson: any, indent: number = 4) {
     kind="error"
     @close="notificationsStore.setAxiosErrorModalOpen(false)"
     @primary-click="notificationsStore.setAxiosErrorModalOpen(false)"
-    @secondary-click="copyCurlToClipboard"
+    @secondary-click="copyCommandToClipboard"
   >
     <div class="space-y-4">
       <!-- ubus error message (if available) -->

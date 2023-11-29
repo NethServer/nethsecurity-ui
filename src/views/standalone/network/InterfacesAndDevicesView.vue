@@ -27,8 +27,8 @@ import {
   isBridge,
   isBond,
   getName,
-  isBondDevice,
-  getZoneBorderColorClasses
+  getZoneBorderColorClasses,
+  type DeviceOrIface
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -38,11 +38,22 @@ import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devic
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
 import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash-es'
 
-const GET_DEVICES_INTERVAL_TIME = 10000
+interface ZoneWithDeviceNames {
+  name: string
+  devices: string[]
+}
+
+interface ZoneWithDevices {
+  name: string
+  devices: DeviceOrIface[]
+}
+
+const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
-let physicalDevices: any = ref({})
 // used for setInterval
 let devicesIntervalId = ref(0)
+let allDevices: Ref<DeviceOrIface[]> = ref([])
+let devicesByZone: Ref<ZoneWithDeviceNames[]> = ref([])
 let firewallConfig: Ref<any> = ref({})
 let networkConfig: Ref<any> = ref({})
 let currentDevice: Ref<any> = ref({})
@@ -78,98 +89,21 @@ const isLoading = computed(() => {
   return loading.value.networkDevices || loading.value.networkConfig || loading.value.firewallConfig
 })
 
-const allDevices: any = computed(() => {
-  const networkDevices = networkConfig.value.device || []
+const sortedZonesAndDevices = computed(() => {
+  const zones: ZoneWithDevices[] = []
+  devicesByZone.value.forEach((z: ZoneWithDeviceNames) => {
+    const deviceList: DeviceOrIface[] = []
+    z.devices.forEach((devName: string) => {
+      const devFound = allDevices.value.find((dev) => getName(dev) === devName)
 
-  // interfaces without device (e.g. bond interfaces)
-  const ifacesWithoutDevice =
-    networkConfig.value.interface?.filter((iface: any) => !iface.device) || []
-
-  const filteredPhysicalDevices = Object.values(physicalDevices.value).filter(
-    (physicalDev: any) => {
-      return (
-        // physical devices not included in network configuration
-        !networkConfig.value.device?.find(
-          (networkDev: any) => networkDev.name === physicalDev.name
-        ) &&
-        // hide unconfigured bridges from physical devices (they would appear after bridge removal, before committing changes)
-        !(isBridge(physicalDev) && !getInterface(physicalDev, networkConfig.value)) &&
-        // hide unconfigured bond devices (they would appear after committing bond creation)
-        !isBondDevice(physicalDev)
-      )
-    }
-  )
-  let devices = networkDevices.concat(ifacesWithoutDevice).concat(filteredPhysicalDevices)
-
-  console.log('allDevices', allDevices) ////
-
-  return devices
-})
-
-const devicesToDisplay: any = computed(() => {
-  // hide devices used by bridges/bonds
-
-  const devicesUsedByBridgesOrBonds: any[] = []
-
-  allDevices.value.forEach((dev: any) => {
-    if (isBond(dev)) {
-      devicesUsedByBridgesOrBonds.push(...dev.slaves)
-    } else if (isBridge(dev)) {
-      devicesUsedByBridgesOrBonds.push(...dev.ports)
-    }
-  })
-  return allDevices.value.filter((dev: any) => !devicesUsedByBridgesOrBonds.includes(getName(dev)))
-})
-
-const sortedZonesAndDevices: any = computed(() => {
-  const zones = [
-    {
-      name: 'lan',
-      devices: [] as any
-    },
-    {
-      name: 'wan',
-      devices: [] as any
-    },
-    {
-      name: 'guests',
-      devices: [] as any
-    },
-    {
-      name: 'dmz',
-      devices: [] as any
-    }
-  ]
-
-  const unassignedZone = {
-    name: 'unassigned',
-    devices: [] as any
-  }
-
-  devicesToDisplay.value.forEach((dev: any) => {
-    const ifaceFound = getInterface(dev, networkConfig.value)
-
-    if (!ifaceFound) {
-      unassignedZone.devices.push(dev)
-    } else {
-      const zoneFound = firewallConfig.value.zone.find((z: any) =>
-        z.network?.includes(ifaceFound['.name'])
-      )
-
-      if (!zoneFound) {
-        unassignedZone.devices.push(dev)
-      } else {
-        const zoneObj = zones.find((z: any) => z.name === zoneFound.name)
-
-        if (zoneObj) {
-          zoneObj.devices.push(dev)
-        } else {
-          zones.push({ name: zoneFound.name, devices: [dev] })
-        }
+      if (devFound) {
+        deviceList.push(devFound)
       }
-    }
+    })
+    const zone = { name: z.name, devices: deviceList }
+    zones.push(zone)
   })
-  zones.push(unassignedZone)
+
   return zones
 })
 
@@ -184,7 +118,7 @@ onUnmounted(() => {
 })
 
 async function loadData() {
-  getPhysicalDevices()
+  listDevices()
   getNetworkConfig()
   getFirewallConfig()
 
@@ -195,7 +129,7 @@ async function loadData() {
   }
 
   // reload devices periodically
-  devicesIntervalId.value = setInterval(getPhysicalDevices, GET_DEVICES_INTERVAL_TIME)
+  devicesIntervalId.value = setInterval(listDevices, LIST_DEVICES_INTERVAL_TIME)
 }
 
 async function getFirewallConfig() {
@@ -203,8 +137,6 @@ async function getFirewallConfig() {
 
   try {
     firewallConfig.value = await getUciConfig('firewall')
-
-    console.log('firewallConfig', firewallConfig) ////
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -218,8 +150,6 @@ async function getNetworkConfig() {
 
   try {
     networkConfig.value = await getUciConfig('network')
-
-    console.log('networkConfig', networkConfig.value) ////
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -228,65 +158,36 @@ async function getNetworkConfig() {
   loading.value.networkConfig = false
 }
 
-async function getPhysicalDevices() {
+async function listDevices() {
   // show skeleton only the first time
   if (!devicesIntervalId.value) {
     loading.value.networkDevices = true
   }
 
   try {
-    const res = await ubusCall('luci-rpc', 'getNetworkDevices')
+    const res = await ubusCall('ns.devices', 'list-devices')
 
-    // keep only physical devices
-
-    const devices: any = {}
-
-    for (const devName in res.data) {
-      const dev = res.data[devName]
-
-      if (!isVlan(dev) && !['lo', 'ifb-dns'].includes(devName)) {
-        devices[devName] = dev
-      }
-    }
-    physicalDevices.value = devices
-
-    console.log('physicalDevices', physicalDevices.value) ////
-
-    // alias visibility
-
-    for (const deviceName in physicalDevices.value) {
-      // set to not expanded only if needed (getNetworkDevices is called periodically)
-
-      if (isExpandedAlias.value[deviceName] == undefined) {
-        isExpandedAlias.value[deviceName] = false
-      }
-
-      if (isExpandedBridge.value[deviceName] == undefined) {
-        isExpandedBridge.value[deviceName] = false
-      }
-
-      if (isExpandedBond.value[deviceName] == undefined) {
-        isExpandedBond.value[deviceName] = false
-      }
-    }
+    allDevices.value = res.data.all_devices
+    devicesByZone.value = res.data.devices_by_zone
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_network_devices')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    //// error details
   }
   loading.value.networkDevices = false
 }
 
-function toggleExpandAlias(device: any) {
-  isExpandedAlias.value[device.name] = !isExpandedAlias.value[device.name]
+function toggleExpandAlias(deviceOrIface: any) {
+  isExpandedAlias.value[getName(deviceOrIface)] = !isExpandedAlias.value[getName(deviceOrIface)]
 }
 
 function toggleExpandBridge(device: any) {
   isExpandedBridge.value[device.name] = !isExpandedBridge.value[device.name]
 }
 
-function toggleExpandBond(device: any) {
-  isExpandedBond.value[device.name] = !isExpandedBond.value[device.name]
+function toggleExpandBond(deviceOrIface: any) {
+  isExpandedBond.value[getName(deviceOrIface)] = !isExpandedBond.value[getName(deviceOrIface)]
 }
 
 function getDeviceBorderStyle(device: any) {
@@ -374,7 +275,7 @@ function getConfiguredDeviceKebabMenuItems(device: any) {
       action: () => showCreateAliasInterfaceDrawer(device),
       disabled:
         !iface ||
-        getAliasInterface(device, networkConfig.value) ||
+        !!getAliasInterface(device, networkConfig.value) ||
         !getFirewallZone(iface, firewallConfig.value)
     },
     {
@@ -520,21 +421,15 @@ function getIpv4Addresses(device: any) {
   const ipv4Addresses = []
   const iface = getInterface(device, networkConfig.value)
   const proto = getProtocolLabel(iface?.proto)
+  const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
 
   if (!isEmpty(device.ipaddrs)) {
     for (const ipv4 of device.ipaddrs) {
-      ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
-    }
-  } else {
-    // ip addresses from physical device
-
-    const physicalDev = physicalDevices.value[device.name]
-
-    if (physicalDev) {
-      for (const ipv4 of physicalDev.ipaddrs) {
-        ipv4Addresses.push({ address: ipv4.address, netmask: ipv4.netmask, proto })
+      // skip alias addresses
+      if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(ipv4.address)) {
+        ipv4Addresses.push({ address: ipv4.address, proto })
       }
     }
   }
@@ -542,7 +437,10 @@ function getIpv4Addresses(device: any) {
   // interface ip address
 
   if (iface?.ipaddr) {
-    ipv4Addresses.push({ address: iface.ipaddr, netmask: iface.netmask, proto })
+    // skip alias addresses
+    if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(iface.ipaddr)) {
+      ipv4Addresses.push({ address: iface.ipaddr, proto })
+    }
   }
   return uniqWith(ipv4Addresses, isEqual)
 }
@@ -556,21 +454,15 @@ function getIpv6Addresses(device: any) {
   const ipv6Addresses = []
   const iface = getInterface(device, networkConfig.value)
   const proto = getProtocolLabel(iface?.proto)
+  const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
 
   if (!isEmpty(device.ip6addrs)) {
     for (const ipv6 of device.ip6addrs) {
-      ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
-    }
-  } else {
-    // ip addresses from physical device
-
-    const physicalDev = physicalDevices.value[device.name]
-
-    if (physicalDev) {
-      for (const ipv6 of physicalDev.ip6addrs) {
-        ipv6Addresses.push({ address: ipv6.address, netmask: ipv6.netmask, proto })
+      // skip alias addresses
+      if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(ipv6.address)) {
+        ipv6Addresses.push({ address: ipv6.address, proto })
       }
     }
   }
@@ -578,63 +470,93 @@ function getIpv6Addresses(device: any) {
   // interface ip address
 
   if (iface?.ip6addr) {
-    ipv6Addresses.push({ address: iface.ip6addr, netmask: iface.netmask, proto })
+    let addr = iface.ip6addr
+
+    // ipv6 address is stored inside a one-element array
+    if (addr instanceof Array) {
+      addr = addr[0]
+    }
+
+    // skip alias addresses
+    if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(addr)) {
+      ipv6Addresses.push({ address: addr, proto })
+    }
   }
   return uniqWith(ipv6Addresses, isEqual)
 }
 
-function getPhysicalDevice(device: any) {
-  if (device.devtype) {
-    // this is the physical device
-    return device
-  }
-
-  if (isBond(device)) {
-    const physicalDev = physicalDevices.value[`bond-${device['.name']}`]
-    return physicalDev
-  } else if (isVlan(device)) {
-    const physicalDev = physicalDevices.value[device.ifname]
-    return physicalDev
-  }
-
-  const physicalDev = physicalDevices.value[device.name]
-  return physicalDev
-}
-
 function isDeviceUp(device: any) {
-  const physicalDev = getPhysicalDevice(device)
-
-  if (physicalDev?.flags) {
-    return physicalDev.flags.up
+  // get parent device if it's a vlan
+  if (isVlan(device)) {
+    device = getVlanParent(device)
   }
-  return false
+
+  return device?.up
 }
 
 function getDeviceMac(device: any) {
-  const physicalDev = getPhysicalDevice(device)
-
-  if (physicalDev?.mac) {
-    return physicalDev.mac
+  // get parent device if it's a vlan
+  if (isVlan(device)) {
+    device = getVlanParent(device)
   }
-  return '-'
+
+  if (device?.mac) {
+    return toUpper(device.mac)
+  } else {
+    return '-'
+  }
+}
+
+function getIpv4Gateway(device: any) {
+  const iface = getInterface(device, networkConfig.value)
+
+  if (iface?.gateway) {
+    return iface.gateway
+  } else {
+    return null
+  }
+}
+
+function getIpv6Gateway(device: any) {
+  const iface = getInterface(device, networkConfig.value)
+
+  if (iface?.ip6gw) {
+    return iface.ip6gw
+  } else {
+    return null
+  }
+}
+
+function getVlanParent(bridgeDevice: any) {
+  const parentDevice = bridgeDevice.ifname
+  const deviceFound = allDevices.value.find((dev) => dev.name === parentDevice)
+  return deviceFound
 }
 
 function getRxBytes(device: any) {
-  const physicalDev = getPhysicalDevice(device)
-
-  if (physicalDev) {
-    return byteFormat1000(physicalDev.stats?.rx_bytes)
+  // get parent device if it's a vlan
+  if (isVlan(device)) {
+    device = getVlanParent(device)
   }
-  return '-'
+
+  if (device?.stats?.rx_bytes) {
+    return byteFormat1000(device.stats.rx_bytes)
+  } else {
+    return '-'
+  }
 }
 
 function getTxBytes(device: any) {
-  const physicalDev = getPhysicalDevice(device)
-
-  if (physicalDev) {
-    return byteFormat1000(physicalDev.stats?.tx_bytes)
+  // get parent device if it's a vlan
+  if (isVlan(device)) {
+    device = getVlanParent(device)
   }
-  return '-'
+
+  if (device?.stats?.tx_bytes) {
+    return byteFormat1000(device.stats.tx_bytes)
+  } else {
+    return '-'
+  }
 }
 </script>
 
@@ -790,7 +712,9 @@ function getTxBytes(device: any) {
                                 <font-awesome-icon
                                   :icon="[
                                     'fas',
-                                    isExpandedAlias[device.name] ? 'chevron-up' : 'chevron-down'
+                                    isExpandedAlias[getName(device) || '']
+                                      ? 'chevron-up'
+                                      : 'chevron-down'
                                   ]"
                                   class="h-3 w-3"
                                   aria-hidden="true"
@@ -815,7 +739,9 @@ function getTxBytes(device: any) {
                                 <font-awesome-icon
                                   :icon="[
                                     'fas',
-                                    isExpandedBridge[device.name] ? 'chevron-up' : 'chevron-down'
+                                    isExpandedBridge[device.name || '']
+                                      ? 'chevron-up'
+                                      : 'chevron-down'
                                   ]"
                                   class="h-3 w-3"
                                   aria-hidden="true"
@@ -836,7 +762,9 @@ function getTxBytes(device: any) {
                                 <font-awesome-icon
                                   :icon="[
                                     'fas',
-                                    isExpandedBond[device.name] ? 'chevron-up' : 'chevron-down'
+                                    isExpandedBond[getName(device) || '']
+                                      ? 'chevron-up'
+                                      : 'chevron-down'
                                   ]"
                                   class="h-3 w-3"
                                   aria-hidden="true"
@@ -855,28 +783,32 @@ function getTxBytes(device: any) {
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
-                        <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
-                          <div>
-                            <span class="font-medium">IPv4: </span>
-                            <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
+                        <div>
+                          <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
+                            <div>
+                              <span class="font-medium">IPv4: </span>
+                              <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
+                            </div>
                           </div>
-                          <div v-if="ipv4.netmask">
+                          <div v-if="getIpv4Gateway(device)">
                             <span class="font-medium"
-                              >{{ t('standalone.interfaces_and_devices.ipv4_subnet_mask') }}:
+                              >{{ t('standalone.interfaces_and_devices.ipv4_gateway') }}:
                             </span>
-                            <span>{{ ipv4.netmask }}</span>
+                            <span>{{ getIpv4Gateway(device) }}</span>
                           </div>
                         </div>
-                        <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
-                          <div>
-                            <span class="font-medium">IPv6: </span>
-                            <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
+                        <div>
+                          <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
+                            <div>
+                              <span class="font-medium">IPv6: </span>
+                              <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
+                            </div>
                           </div>
-                          <div v-if="ipv6.netmask">
+                          <div v-if="getIpv6Gateway(device)">
                             <span class="font-medium"
-                              >{{ t('standalone.interfaces_and_devices.ipv6_subnet_mask') }}:
+                              >{{ t('standalone.interfaces_and_devices.ipv6_gateway') }}:
                             </span>
-                            <span>{{ ipv6.netmask }}</span>
+                            <span>{{ getIpv6Gateway(device) }}</span>
                           </div>
                         </div>
                       </div>
@@ -885,15 +817,15 @@ function getTxBytes(device: any) {
                         <div>
                           <span class="font-medium">RX: </span>
                           <span>{{ getRxBytes(device) }}</span>
-                          <span v-if="getPhysicalDevice(device)?.stats?.rx_packets">
-                            ({{ getPhysicalDevice(device).stats.rx_packets || '-' }} pkts)</span
+                          <span v-if="device.stats?.rx_packets">
+                            ({{ device.stats.rx_packets }} pkts)</span
                           >
                         </div>
                         <div>
                           <span class="font-medium">TX: </span>
                           <span>{{ getTxBytes(device) }}</span>
-                          <span v-if="getPhysicalDevice(device)?.stats?.tx_packets">
-                            ({{ getPhysicalDevice(device).stats.tx_packets || '-' }} pkts)</span
+                          <span v-if="device.stats?.tx_packets">
+                            ({{ device.stats.tx_packets || '-' }} pkts)</span
                           >
                         </div>
                       </div>
@@ -918,10 +850,7 @@ function getTxBytes(device: any) {
                             </span>
                             <span>
                               {{
-                                getPhysicalDevice(device)?.link?.speed &&
-                                getPhysicalDevice(device)?.link?.speed !== -1
-                                  ? `${getPhysicalDevice(device).link.speed} Mbps`
-                                  : '-'
+                                device.speed && device.speed !== -1 ? `${device.speed} Mbps` : '-'
                               }}
                             </span>
                           </div>
@@ -981,7 +910,8 @@ function getTxBytes(device: any) {
                   <Transition name="slide-down">
                     <div
                       v-if="
-                        getAliasInterface(device, networkConfig) && isExpandedAlias[device.name]
+                        getAliasInterface(device, networkConfig) &&
+                        isExpandedAlias[getName(device) || '']
                       "
                     >
                       <!-- v-for is a trick to declare 'alias' variable inside template -->
@@ -1077,7 +1007,7 @@ function getTxBytes(device: any) {
                   <!-- bridge interface -->
                   <Transition name="slide-down">
                     <div
-                      v-if="isBridge(device) && isExpandedBridge[device.name]"
+                      v-if="isBridge(device) && isExpandedBridge[device.name || '']"
                       class="group flex items-start"
                     >
                       <!-- L-shaped dashed line-->
@@ -1105,7 +1035,7 @@ function getTxBytes(device: any) {
                               {{
                                 t(
                                   'standalone.interfaces_and_devices.devices_pl',
-                                  device.ports.length
+                                  device.ports?.length || 0
                                 )
                               }}:
                             </span>
@@ -1121,7 +1051,7 @@ function getTxBytes(device: any) {
                   <!-- bond interface -->
                   <Transition name="slide-down">
                     <div
-                      v-if="isBond(device) && isExpandedBond[device.name]"
+                      v-if="isBond(device) && isExpandedBond[getName(device) || '']"
                       class="group flex items-start"
                     >
                       <!-- L-shaped dashed line-->
@@ -1148,7 +1078,7 @@ function getTxBytes(device: any) {
                               {{
                                 t(
                                   'standalone.interfaces_and_devices.devices_pl',
-                                  device.slaves.length
+                                  device.slaves?.length || 0
                                 )
                               }}:
                             </span>
@@ -1172,7 +1102,6 @@ function getTxBytes(device: any) {
     <CreateOrEditAliasInterfaceDrawer
       :iface="currentInterface"
       :networkConfigDevice="currentNetworkConfigDevice"
-      :firewallConfig="firewallConfig"
       :networkConfig="networkConfig"
       :isShown="isShownCreateOrEditAliasInterfaceDrawer"
       :aliasToEdit="aliasToEdit"
@@ -1184,7 +1113,6 @@ function getTxBytes(device: any) {
       :visible="isShownDeleteAliasModal"
       :alias="currentAlias"
       :parentInterface="currentParentInterface"
-      :firewallConfig="firewallConfig"
       @close="isShownDeleteAliasModal = false"
       @reloadData="loadData"
     />
@@ -1205,7 +1133,6 @@ function getTxBytes(device: any) {
       :visible="isShownUnconfigureDeviceModal"
       :device="currentDevice"
       :networkConfig="networkConfig"
-      :firewallConfig="firewallConfig"
       @close="isShownUnconfigureDeviceModal = false"
       @reloadData="loadData"
     />
@@ -1221,7 +1148,6 @@ function getTxBytes(device: any) {
     <DeleteDeviceModal
       :visible="isShownDeleteDeviceModal"
       :device="currentDevice"
-      :networkConfig="networkConfig"
       @close="isShownDeleteDeviceModal = false"
       @reloadData="loadData"
     />

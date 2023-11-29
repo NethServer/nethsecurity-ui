@@ -25,7 +25,7 @@ type SshKeyError = {
 
 type SshKeysResponse = {
   data: {
-    data: string
+    keys: string
   }
 }
 
@@ -89,11 +89,11 @@ onMounted(() => {
 function load() {
   error.value = undefined
   loading.value = true
-  ubusCall('file', 'read', { path: '/etc/dropbear/authorized_keys' })
+  ubusCall('ns.ssh', 'list-keys')
     .then((response: SshKeysResponse) => {
       sshKeys.value = new Array<SshKey>()
       // the response will be a string with all the keys separated by a newline
-      response.data.data.split('\n').forEach((line) => {
+      response.data.keys.split('\n').forEach((line) => {
         // final end line, skipping
         if (line.length == 0) {
           return

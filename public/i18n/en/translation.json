@@ -860,10 +860,10 @@
       "no_certificate_configured_title": "There is no signed certificate configured",
       "no_certificate_configured_description": "You can configurate a valid certificate in 'Certificates' page.",
       "go_to_certificates": "Go to Certificates",
-      "path_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-      "domain_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "path_tooltip": "Type resource path beginning with a '/' to create a “resource path” matching rule",
+      "domain_tooltip": "Type website fully qualified domain name to create a “web site name” matching rule",
       "destination_url_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-      "allowed_networks_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+      "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks"
     },
     "users_and_objects": {
       "title": "Users & objects"

@@ -308,7 +308,7 @@ watch(
           :options="certificateOptions"
         />
         <NeInlineNotification
-          v-if="certificateOptions.length == 1"
+          v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
           :title="t('standalone.reverse_proxy.no_certificate_configured_title')"
           :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
           kind="warning"

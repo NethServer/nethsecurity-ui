@@ -126,7 +126,7 @@ onMounted(() => {
       <NeEmptyState
         v-if="proxies.length == 0"
         :title="t('standalone.reverse_proxy.no_reverse_proxy_found')"
-        :icon="['fas', 'globe']"
+        :icon="['fas', 'server']"
         ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
           ><template #prefix>
             <font-awesome-icon

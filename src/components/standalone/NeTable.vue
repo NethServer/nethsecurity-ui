@@ -145,7 +145,7 @@ table {
 }
 
 .table-basic thead {
-  @apply hidden bg-gray-100 dark:bg-gray-800 md:table-header-group;
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
 .table-basic.ghost thead {
@@ -190,7 +190,7 @@ table {
 
 /* Card style CSS. */
 .table-card {
-  @apply overflow-hidden overflow-x-auto;
+  @apply overflow-x-auto;
 }
 
 .table-card table {

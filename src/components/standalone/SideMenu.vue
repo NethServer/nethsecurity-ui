@@ -42,7 +42,6 @@ const navigation: Ref<MenuItem[]> = ref([
         name: t('standalone.system_settings.title'),
         to: 'system/systemSettings'
       },
-      { name: t('standalone.services.title'), to: 'system/services' },
       { name: t('standalone.ssh.title'), to: 'system/ssh' },
       {
         name: t('standalone.backup_and_restore.title'),

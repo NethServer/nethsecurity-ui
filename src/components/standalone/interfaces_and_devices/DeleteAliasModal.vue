@@ -7,7 +7,7 @@
 import { getFirewallZone } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -21,11 +21,6 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/SystemSettingsView.vue')
   },
   {
-    path: 'system/services',
-    name: 'Services',
-    component: () => import('../views/standalone/system/ServicesView.vue')
-  },
-  {
     path: 'system/ssh',
     name: 'SSH',
     component: () => import('../views/standalone/system/SSHView.vue')

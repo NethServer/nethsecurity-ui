@@ -88,7 +88,7 @@ function clearValidationErrors() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      validationErrorBag.value.set(label, [validator.errMessage as string])
     }
   }
 
@@ -117,7 +117,7 @@ function validate() {
     [[validateRequired(domain.value), validateFQDN(domain.value)], 'domain']
   ]
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(destinationURL.value), validateURL(destinationURL.value)], 'destinationURL'],
+    [[validateRequired(destinationURL.value), validateURL(destinationURL.value)], 'destination'],
     [[validateRequired(description.value)], 'description'],
     ...(type.value === 'path' ? pathValidators : domainValidators)
   ]
@@ -255,8 +255,8 @@ watch(
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     :title="
       id
-        ? t('standalone.ipsec_tunnel.edit_ipsec_tunnel')
-        : t('standalone.ipsec_tunnel.add_ipsec_tunnel')
+        ? t('standalone.reverse_proxy.edit_reverse_proxy')
+        : t('standalone.reverse_proxy.add_reverse_proxy')
     "
   >
     <NeInlineNotification
@@ -273,7 +273,7 @@ watch(
     <NeSkeleton :lines="20" v-if="loading" />
     <div class="flex flex-col gap-y-6" v-else>
       <NeRadioSelection
-        :label="t('standalone.openvpn_tunnel.topology')"
+        :label="t('standalone.reverse_proxy.type')"
         :options="typeOptions"
         v-model="type"
       />
@@ -281,7 +281,7 @@ watch(
         v-if="type === 'path'"
         v-model="path"
         :label="t('standalone.reverse_proxy.path')"
-        :invalid-message="validationErrorBag.getFirstFor('path')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('path'))"
         ><template #tooltip>
           <NeTooltip>
             <template #content>
@@ -294,7 +294,7 @@ watch(
         <NeTextInput
           v-model="domain"
           :label="t('standalone.reverse_proxy.domain')"
-          :invalid-message="validationErrorBag.getFirstFor('domain')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('domain'))"
           ><template #tooltip>
             <NeTooltip>
               <template #content>
@@ -306,7 +306,7 @@ watch(
         <NeCombobox
           v-model="certificate"
           :label="t('standalone.reverse_proxy.certificate')"
-          :invalidMessage="validationErrorBag.getFirstFor('certificate')"
+          :invalidMessage="t(validationErrorBag.getFirstI18nKeyFor('certificate'))"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="certificateOptions"
@@ -315,7 +315,7 @@ watch(
       <NeTextInput
         v-model="destinationURL"
         :label="t('standalone.reverse_proxy.destination_url')"
-        :invalid-message="validationErrorBag.getFirstFor('destinationURL')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('destination'))"
         ><template #tooltip>
           <NeTooltip>
             <template #content>
@@ -327,13 +327,14 @@ watch(
       <NeTextInput
         v-model="description"
         :label="t('standalone.reverse_proxy.description')"
-        :invalid-message="validationErrorBag.getFirstFor('description')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))"
       />
       <NeMultiTextInput
         v-model="allowedNetworks"
         :add-item-label="t('standalone.reverse_proxy.add_cidr_network')"
         :title="t('standalone.reverse_proxy.allowed_networks')"
         :invalid-messages="allowedNetworksValidationErrors"
+        :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('allow'))"
         ><template #tooltip>
           <NeTooltip>
             <template #content>

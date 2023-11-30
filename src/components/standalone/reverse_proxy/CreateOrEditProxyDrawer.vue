@@ -24,7 +24,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 
 type CreateOrEditProxyPayload = {
   path?: string
@@ -44,7 +44,7 @@ const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-edit-proxy', 'open-certificate-page'])
+const emit = defineEmits(['close', 'add-edit-proxy'])
 
 const loading = ref(false)
 const isSavingChanges = ref(false)
@@ -170,11 +170,15 @@ async function createOrEditProxy() {
     emit('add-edit-proxy')
     close()
   } catch (err: any) {
-    error.value.notificationTitle = id.value
-      ? t('error.cannot_edit_proxy')
-      : t('error.cannot_add_proxy')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    if (err instanceof ValidationError) {
+      validationErrorBag.value = err.errorBag
+    } else {
+      error.value.notificationTitle = id.value
+        ? t('error.cannot_edit_proxy')
+        : t('error.cannot_add_proxy')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
   } finally {
     isSavingChanges.value = false
   }
@@ -186,7 +190,7 @@ async function fetchOptions() {
     certificateOptions.value = [
       ...certificatesData.map((x: string) => ({
         id: x,
-        label: x === '_lan' ? t('standalone.reverse_proxy.self_signed_certificate') : x
+        label: x === '_lan' ? t('standalone.reverse_proxy.default_certificate') : x
       }))
     ]
   } catch (err: any) {
@@ -306,14 +310,6 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="certificateOptions"
-        />
-        <NeInlineNotification
-          v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
-          :title="t('standalone.reverse_proxy.no_certificate_configured_title')"
-          :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
-          kind="warning"
-          :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
-          @primary-click="emit('open-certificate-page')"
         />
       </template>
       <NeTextInput

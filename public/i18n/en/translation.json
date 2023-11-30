@@ -856,7 +856,7 @@
       "type": "Type",
       "add_cidr_network": "Add CIDR network",
       "certificate": "Certificate",
-      "self_signed_certificate": "Self-signed certificate",
+      "default_certificate": "Default certificate",
       "no_certificate_configured_title": "There is no signed certificate configured",
       "no_certificate_configured_description": "You can configurate a valid certificate in 'Certificates' page.",
       "go_to_certificates": "Go to Certificates",

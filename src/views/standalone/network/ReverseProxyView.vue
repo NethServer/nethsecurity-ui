@@ -47,11 +47,12 @@ async function fetchProxies() {
   try {
     loading.value = true
     proxies.value = (await ubusCall('ns.reverseproxy', 'list-proxies')).data.data
-    loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_proxies')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    loading.value = false
   }
 }
 
@@ -122,7 +123,7 @@ onMounted(() => {
       </template></NeInlineNotification
     >
     <NeSkeleton v-if="loading" :lines="10" />
-    <template v-else>
+    <template v-else-if="!error.notificationTitle">
       <NeEmptyState
         v-if="proxies.length == 0"
         :title="t('standalone.reverse_proxy.no_reverse_proxy_found')"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
@@ -14,7 +14,6 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'proxy-deleted'])
 
-const { visible, itemToDelete } = toRefs(props)
 const error = ref({
   notificationDescription: '',
   notificationDetails: ''
@@ -22,14 +21,14 @@ const error = ref({
 const isDeleting = ref(false)
 
 async function deleteProxy() {
-  if (itemToDelete.value) {
+  if (props.itemToDelete) {
     try {
       error.value = {
         notificationDescription: '',
         notificationDetails: ''
       }
       isDeleting.value = true
-      await ubusCall('ns.reverseproxy', 'delete-proxy', { id: itemToDelete.value.id })
+      await ubusCall('ns.reverseproxy', 'delete-proxy', { id: props.itemToDelete.id })
       emit('proxy-deleted')
       emit('close')
     } catch (err: any) {
@@ -63,7 +62,7 @@ function close() {
   >
     {{
       t('standalone.reverse_proxy.delete_proxy_message', {
-        path: itemToDelete?.location ?? ''
+        path: itemToDelete?.domain ?? itemToDelete?.path ?? itemToDelete?.location ?? ''
       })
     }}
     <NeInlineNotification

@@ -40,7 +40,6 @@ const props = defineProps<{
   isShown: boolean
   itemToEdit: ReverseProxy | null
 }>()
-const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 

@@ -10,7 +10,10 @@ defineProps<{
   proxies: ReverseProxy[]
 }>()
 
-const emit = defineEmits(['proxy-delete', 'proxy-edit'])
+const emit = defineEmits<{
+  (e: 'proxy-delete', item: ReverseProxy): void
+  (e: 'proxy-edit', item: ReverseProxy): void
+}>()
 
 const tableHeaders = [
   {
@@ -55,6 +58,11 @@ function getDropdownItems(item: ReverseProxy) {
   <NeTable :data="proxies" :headers="tableHeaders">
     <template #domain_path="{ item }: { item: ReverseProxy }">
       <p>{{ item.domain ?? item.path ?? item.location }}</p>
+    </template>
+    <template #destination="{ item }: { item: ReverseProxy }">
+      <p>
+        {{ item.domain ? item.destination.replace('$upstream', item.domain) : item.destination }}
+      </p>
     </template>
     <template #description="{ item }: { item: ReverseProxy }">
       <p>{{ item.description ? item.description : '-' }}</p>

@@ -4,11 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs, NeEmptyState } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import DpiRules from '@/components/standalone/dpi/DpiRules.vue'
+import DpiExceptions from '@/components/standalone/dpi/DpiExceptions.vue'
 
 //// review
 
@@ -56,10 +57,7 @@ function changeTab(tabName: any) {
         <DpiRules />
       </template>
       <template v-else-if="currentTab === 'exceptions'">
-        <NeEmptyState
-          :title="t('common.page_under_construction')"
-          :icon="['fas', 'traffic-cone']"
-        />
+        <DpiExceptions />
       </template>
     </div>
   </div>

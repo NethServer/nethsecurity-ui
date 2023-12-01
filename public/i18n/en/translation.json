@@ -136,8 +136,12 @@
     "cannot_retrieve_flashstart_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_netdata_configuration": "Cannot retrieve configuration",
     "cannot_retrieve_dpi_rules": "Cannot retrieve DPI rules",
+    "cannot_retrieve_dpi_exceptions": "Cannot retrieve DPI exceptions",
+    "cannot_create_dpi_exception": "Cannot create DPI exception",
     "cannot_create_dpi_rule": "Cannot create DPI rule",
     "cannot_edit_dpi_rule": "Cannot edit DPI rule",
+    "cannot_edit_dpi_exception": "Cannot edit DPI exception",
+    "cannot_delete_dpi_exception": "Cannot delete DPI exception",
     "cannot_retrieve_popular_apps": "Cannot retrieve popular apps",
     "cannot_retrieve_devices": "Cannot retrieve devices",
     "cannot_retrieve_applications": "Cannot retrieve applications",
@@ -952,7 +956,16 @@
       "confirm_delete_rule": "You are about to delete DPI rule on interface '{iface}'",
       "delete_rule": "Delete rule",
       "blocked_apps_and_protocols": "Blocked apps and protocols",
-      "plus_num_others": "+{num} others"
+      "plus_num_others": "+{num} others",
+      "delete_exception_message": "You are about to delete DPI exception '{name}'",
+      "delete_exception": "Delete exception",
+      "add_exception": "Add exception",
+      "edit_exception": "Edit exception",
+      "exceptions_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras bibendum aliquam tortor nec ultricies.",
+      "status": "Status",
+      "ip_address": "IP address",
+      "exception_name": "Exception name",
+      "no_exception_found": "No exception found"
     },
     "vpn": {
       "title": "VPN"

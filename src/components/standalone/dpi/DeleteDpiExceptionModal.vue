@@ -20,7 +20,7 @@ const error = ref({
 })
 const isDeleting = ref(false)
 
-async function deleteTunnel() {
+async function deleteException() {
   if (props.itemToDelete) {
     try {
       error.value = {
@@ -59,7 +59,7 @@ function close() {
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
-    @primaryClick="deleteTunnel()"
+    @primaryClick="deleteException()"
     @close="close()"
   >
     {{

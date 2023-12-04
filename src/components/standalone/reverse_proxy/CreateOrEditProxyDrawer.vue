@@ -9,7 +9,7 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
-import { ref, toRefs, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   NeSideDrawer,

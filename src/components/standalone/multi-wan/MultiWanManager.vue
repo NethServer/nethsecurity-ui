@@ -11,14 +11,14 @@ import {
   NeBadge,
   NeButton,
   NeDropdown,
-  NeInlineNotification
+  NeInlineNotification,
+  NeTable
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import type { Member, Policy, Rule } from '@/composables/useMwan'
 import { useMwan } from '@/composables/useMwan'
-import NeTable from '@/components/standalone/NeTable.vue'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
 import PolicyCreator from '@/components/standalone/multi-wan/PolicyCreator.vue'
 import PolicyDeleter from '@/components/standalone/multi-wan/PolicyDeleter.vue'
@@ -175,6 +175,7 @@ function policyIcon(policy: Policy) {
         </HorizontalCard>
         <NeTable
           v-else
+          :empty-text="t('ne_table.no_items')"
           :data="mwan.policies"
           :headers="[
             {

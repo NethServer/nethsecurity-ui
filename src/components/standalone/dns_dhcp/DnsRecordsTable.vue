@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { toRefs } from 'vue'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 import type { DnsRecord } from './DnsRecords.vue'
 
 const { t } = useI18n()
@@ -55,7 +54,12 @@ function getDropdownItems(item: DnsRecord) {
 </script>
 
 <template>
-  <NeTable :data="dnsRecords" :headers="tableHeaders" class="z-10">
+  <NeTable
+    :empty-text="t('ne_table.no_items')"
+    :data="dnsRecords"
+    :headers="tableHeaders"
+    class="z-10"
+  >
     <template #description="{ item }: { item: DnsRecord }">
       {{ item.description ? item.description : '-' }}
     </template>

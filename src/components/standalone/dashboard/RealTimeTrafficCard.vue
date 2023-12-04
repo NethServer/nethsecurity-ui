@@ -5,10 +5,9 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, getAxiosErrorMessage, kbpsFormat } from '@nethserver/vue-tailwind-lib'
+import { NeCard, getAxiosErrorMessage, kbpsFormat, NeTable } from '@nethserver/vue-tailwind-lib'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import NeTable from '@/components/standalone/NeTable.vue'
 
 const { t } = useI18n()
 const REFRESH_INTERVAL = 10000
@@ -84,6 +83,7 @@ async function getTopTalkers() {
   >
     <div class="mt-3">
       <NeTable
+        :empty-text="t('ne_table.no_items')"
         :data="topTalkers"
         :headers="tableHeaders"
         :loading="loading.getTopTalkers"

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
 
 const { t } = useI18n()
@@ -55,7 +54,7 @@ function getDropdownItems(item: ReverseProxy) {
 </script>
 
 <template>
-  <NeTable :data="proxies" :headers="tableHeaders">
+  <NeTable :empty-text="t('ne_table.no_items')" :data="proxies" :headers="tableHeaders">
     <template #domain_path="{ item }: { item: ReverseProxy }">
       <p>{{ item.domain ?? item.path ?? item.location }}</p>
     </template>

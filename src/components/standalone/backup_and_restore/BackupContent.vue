@@ -7,9 +7,9 @@ import {
   NeButton,
   NeEmptyState,
   NeInlineNotification,
-  NeSkeleton
+  NeSkeleton,
+  NeTable
 } from '@nethserver/vue-tailwind-lib'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
@@ -201,6 +201,7 @@ function successSetPassphrase() {
       </NeEmptyState>
       <NeTable
         v-if="listBackups.length"
+        :empty-text="t('ne_table.no_items')"
         :data="listBackups"
         :headers="[
           {

@@ -15,9 +15,9 @@ import {
   NeTitle,
   NeModal,
   NeEmptyState,
-  NeInlineNotification
+  NeInlineNotification,
+  NeTable
 } from '@nethserver/vue-tailwind-lib'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
@@ -218,6 +218,7 @@ function scrollToMainTable() {
       <NeSkeleton v-if="loading" :lines="3" :size="'sm'" />
       <template v-if="!loading && routes.length > 0">
         <NeTable
+          :empty-text="t('ne_table.no_items')"
           :data="routes"
           :headers="[
             {
@@ -338,6 +339,7 @@ function scrollToMainTable() {
         <NeTitle level="h3">{{ t('standalone.routes.main_table') }}</NeTitle>
         <template v-if="!loading && table.length > 0">
           <NeTable
+            :empty-text="t('ne_table.no_items')"
             :data="table"
             :readonly="true"
             :headers="[

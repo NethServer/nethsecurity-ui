@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import NeTable from '@/components/standalone/NeTable.vue'
 import { ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
@@ -10,7 +9,8 @@ import {
   NeButton,
   NeDropdown,
   NeInlineNotification,
-  NeSkeleton
+  NeSkeleton,
+  NeTable
 } from '@nethserver/vue-tailwind-lib'
 import type { Rule } from '@/composables/useMwan'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -120,7 +120,8 @@ function saveState(): void {
     :data="rules"
     :headers="headers"
     :loading="loading"
-    :style="'card'"
+    :kind="'card'"
+    :empty-text="t('ne_table.no_items')"
     class="!border-spacing-y-1"
   >
     <template #tbody>

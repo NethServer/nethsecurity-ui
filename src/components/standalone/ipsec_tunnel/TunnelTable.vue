@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
 
 const { t } = useI18n()
@@ -72,7 +71,7 @@ function getCellClasses(item: IpsecTunnel) {
 </script>
 
 <template>
-  <NeTable :data="tunnels" :headers="tableHeaders">
+  <NeTable :empty-text="t('ne_table.no_items')" :data="tunnels" :headers="tableHeaders">
     <template #name="{ item }: { item: IpsecTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
     </template>

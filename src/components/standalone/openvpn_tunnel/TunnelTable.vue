@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 
 const { t } = useI18n()
@@ -116,7 +115,7 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
 </script>
 
 <template>
-  <NeTable :data="tunnels" :headers="tableHeaders">
+  <NeTable :empty-text="t('ne_table.no_items')" :data="tunnels" :headers="tableHeaders">
     <template #name="{ item }: { item: ServerTunnel | ClientTunnel }">
       <p :class="[...getCellClasses(item)]">{{ item.ns_name }}</p>
     </template>

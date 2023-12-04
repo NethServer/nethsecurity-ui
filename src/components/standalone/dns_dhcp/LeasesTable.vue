@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
 
@@ -71,7 +70,12 @@ function getDropdownItems(item: StaticLease) {
 </script>
 
 <template>
-  <NeTable :data="leases" :headers="tableHeaders" :readonly="showDynamicLeases">
+  <NeTable
+    :empty-text="t('ne_table.no_items')"
+    :data="leases"
+    :headers="tableHeaders"
+    :readonly="showDynamicLeases"
+  >
     <template v-if="!showDynamicLeases" #description="{ item }: { item: StaticLease }">
       {{ item.description ? item.description : '-' }}
     </template>

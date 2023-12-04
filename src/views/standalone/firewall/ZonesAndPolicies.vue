@@ -4,10 +4,10 @@ import {
   NeButton,
   NeDropdown,
   NeInlineNotification,
-  NeTitle
+  NeTitle,
+  NeTable
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import CreateOrEditZoneDrawer from '@/components/standalone/firewall/CreateOrEditZoneDrawer.vue'
@@ -95,6 +95,7 @@ function editZone(zone: Zone) {
     />
     <NeTable
       v-else
+      :empty-text="t('ne_table.no_items')"
       :data="firewallConfig.zones"
       :headers="[
         {

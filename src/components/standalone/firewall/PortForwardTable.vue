@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { toRefs } from 'vue'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTable } from '@nethserver/vue-tailwind-lib'
 
 const { t } = useI18n()
 
@@ -103,7 +102,12 @@ function getCellClasses(item: PortForward) {
     >
       {{ t('standalone.port_forward.destination') }}: <strong>{{ header }}</strong>
     </p>
-    <NeTable :data="portForwards" :headers="tableHeaders" class="z-10">
+    <NeTable
+      :empty-text="t('ne_table.no_items')"
+      :data="portForwards"
+      :headers="tableHeaders"
+      class="z-10"
+    >
       <template #name="{ item }: { item: PortForward }">
         <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
       </template>

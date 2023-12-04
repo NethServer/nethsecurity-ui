@@ -3,6 +3,8 @@
   SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+@import '@nethserver/vue-tailwind-lib/dist/vue-tailwind-lib.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

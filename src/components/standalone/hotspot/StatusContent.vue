@@ -6,6 +6,7 @@ import {
   NeSkeleton,
   NeEmptyState,
   NeInlineNotification,
+  NeTable,
   byteFormat1024,
   formatDurationLoc,
   getAxiosErrorMessage
@@ -13,7 +14,6 @@ import {
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
-import NeTable from '@/components/standalone/NeTable.vue'
 
 const { t } = useI18n()
 const emit = defineEmits(['goToSetting'])
@@ -91,6 +91,7 @@ async function loadListSessions() {
       <div v-if="activeConfiguration && hotspotSession.length > 0">
         <NeTable
           :data="hotspotSession"
+          :empty-text="t('ne_table.no_items')"
           :headers="[
             {
               key: 'mac_address',

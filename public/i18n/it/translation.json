@@ -171,7 +171,9 @@
     "cannot_retrieve_ipsec_algorithms": "Impossibile recuperare gli algoritmi IPsec",
     "cannot_retrieve_ipsec_tunnels": "Impossibile recuperare i tunnel IPsec",
     "cannot_migrate": "Impossibile eseguire la migrazione",
-    "cannot_perform_factory_reset": "Impossibile eseguire il ripristino di fabbrica"
+    "cannot_perform_factory_reset": "Impossibile eseguire il ripristino di fabbrica",
+    "invalid_path": "Inserisci un percorso valido.",
+    "cannot_retrieve_proxies": "Impossibile recuperare le rotte"
   },
   "login": {
     "sign_in": "Accedi",
@@ -977,7 +979,7 @@
       },
       "public_endpoints_tooltip": "Gli endpoint pubblici sono un elenco di indirizzi IP o hostname che i client possono utilizzare per raggiungere il server tunnel di OpenVPN.",
       "tcp": "TCP",
-      "name": "Per nome",
+      "name": "Nome",
       "compression": "Compressione",
       "certificate": "Certificato",
       "no_server_tunnel_found": "Nessun tunnel del server trovato",
@@ -1129,6 +1131,14 @@
       "perform_factory_reset_description": "Il reset di fabbrica cancella definitivamente tutti i dati e le impostazioni.",
       "description": "Ripristino di fabbrica cancella tutti i pacchetti installati e le impostazioni personalizzate, reindirizzando il firewall al suo stato originale come era dopo l'installazione.",
       "type_unit_name": "Digitare '{unit}' per confermare"
+    },
+    "reverse_proxy": {
+      "path": "Percorso",
+      "type": "Tipo",
+      "domain": "Dominio",
+      "destination_url": "Destinazione %@",
+      "description": "Descrizione",
+      "certificate": "Certificato"
     }
   },
   "controller": {

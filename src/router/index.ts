@@ -71,6 +71,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/HotspotView.vue')
   },
   {
+    path: 'network/reverse-proxy',
+    name: 'ReverseProxy',
+    component: () => import('../views/standalone/network/ReverseProxyView.vue')
+  },
+  {
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')

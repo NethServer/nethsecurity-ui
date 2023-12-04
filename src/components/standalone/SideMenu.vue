@@ -89,6 +89,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.hotspot.title'),
         to: 'network/hotspot'
+      },
+      {
+        name: t('standalone.reverse_proxy.title'),
+        to: 'network/reverse-proxy'
       }
     ]
   },

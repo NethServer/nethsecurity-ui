@@ -121,8 +121,8 @@ onMounted(() => {
           v-for="(exception, index) in exceptions"
           :key="index"
           :exception="exception"
-          @delete-exception="openDeleteModal"
-          @edit-exception="openCreateEditDrawer"
+          @delete="openDeleteModal"
+          @edit="openCreateEditDrawer"
         />
       </div>
     </template>

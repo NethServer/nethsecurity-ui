@@ -10,8 +10,8 @@ defineProps<{
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  (e: 'delete-exception', item: DpiException): void
-  (e: 'edit-exception', item: DpiException): void
+  delete: [item: DpiException]
+  edit: [item: DpiException]
 }>()
 </script>
 
@@ -23,7 +23,7 @@ const emit = defineEmits<{
         label: t('common.delete'),
         icon: 'trash',
         iconStyle: 'fas',
-        action: () => emit('delete-exception', exception),
+        action: () => emit('delete', exception),
         danger: true
       }
     ]"
@@ -35,7 +35,7 @@ const emit = defineEmits<{
       </div>
     </template>
     <template #topRight>
-      <NeButton kind="tertiary" size="lg" @click="emit('edit-exception', exception)">
+      <NeButton kind="tertiary" size="lg" @click="emit('edit', exception)">
         <template #prefix>
           <font-awesome-icon :icon="['fas', 'pen-to-square']" class="h-4 w-4" aria-hidden="true" />
         </template>

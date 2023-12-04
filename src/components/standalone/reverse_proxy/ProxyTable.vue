@@ -11,8 +11,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'delete', item: ReverseProxy): void
-  (e: 'edit', item: ReverseProxy): void
+  delete: [item: ReverseProxy]
+  edit: [item: ReverseProxy]
 }>()
 
 const tableHeaders = [

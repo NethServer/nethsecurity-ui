@@ -141,8 +141,8 @@ onMounted(() => {
       <ProxyTable
         v-else
         :proxies="proxies"
-        @proxy-delete="openDeleteModal"
-        @proxy-edit="openCreateEditDrawer"
+        @delete="openDeleteModal"
+        @edit="openCreateEditDrawer"
       />
     </template>
   </div>

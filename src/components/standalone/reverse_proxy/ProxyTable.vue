@@ -11,8 +11,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'proxy-delete', item: ReverseProxy): void
-  (e: 'proxy-edit', item: ReverseProxy): void
+  (e: 'delete', item: ReverseProxy): void
+  (e: 'edit', item: ReverseProxy): void
 }>()
 
 const tableHeaders = [
@@ -47,7 +47,7 @@ function getDropdownItems(item: ReverseProxy) {
       icon: 'trash',
       danger: true,
       action: () => {
-        emit('proxy-delete', item)
+        emit('delete', item)
       }
     }
   ]
@@ -75,7 +75,7 @@ function getDropdownItems(item: ReverseProxy) {
     </template>
     <template #menu="{ item }: { item: ReverseProxy }">
       <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('proxy-edit', item)">
+        <NeButton kind="tertiary" @click="emit('edit', item)">
           <template #prefix>
             <font-awesome-icon
               :icon="['fas', 'pen-to-square']"

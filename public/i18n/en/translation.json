@@ -961,7 +961,7 @@
       "delete_exception": "Delete exception",
       "add_exception": "Add exception",
       "edit_exception": "Edit exception",
-      "exceptions_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras bibendum aliquam tortor nec ultricies.",
+      "exceptions_description": "Apply DPI exclusion to exempt certain network addresses, such as the gateway or other important infrastructure, from being blocked.",
       "status": "Status",
       "ip_address": "IP address",
       "exception_name": "Exception name",

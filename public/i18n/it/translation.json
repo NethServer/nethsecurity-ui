@@ -959,7 +959,10 @@
       "available_with_subscription": "Disponibile con sottoscrizione",
       "continue_typing_to_show_other_search_results": "Continua a digitare la query di ricerca per mostrare altri risultati",
       "no_apps": "Nessuna app o protocollo",
-      "no_interfaces_available": "Nessuna interfaccia disponibile"
+      "no_interfaces_available": "Nessuna interfaccia disponibile",
+      "ip_address": "Indirizzo IP",
+      "add_exception": "Aggiungi azione",
+      "status": "Stato"
     },
     "openvpn_tunnel": {
       "auto": "Automatico",

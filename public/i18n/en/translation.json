@@ -1133,6 +1133,9 @@
       "edit_ipsec_tunnel": "Edit IPsec tunnel",
       "choose_network": "Choose network"
     },
+    "users_database": {
+      "title": "Users database"
+    },
     "logs": {
       "title": "Logs",
       "limit_rows": "Lines limit",

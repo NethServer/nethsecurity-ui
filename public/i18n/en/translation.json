@@ -184,7 +184,8 @@
     "cannot_retrieve_proxies": "Cannot retrieve proxies",
     "cannot_create_proxy": "Cannot create proxy",
     "cannot_edit_proxy": "Cannot edit proxy",
-    "cannot_retrieve_certificates": "cannot retrieve certificates"
+    "cannot_retrieve_certificates": "cannot retrieve certificates",
+    "cannot_retrieve_databases": "Cannot retrieve databases"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1134,7 +1135,17 @@
       "choose_network": "Choose network"
     },
     "users_database": {
-      "title": "Users database"
+      "title": "Users database",
+      "local_database": "Local database",
+      "database_configuration": "Database configuration",
+      "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "users": "Users",
+      "users_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "no_users_found": "No users found",
+      "add_user": "Add user",
+      "add_database": "Add database",
+      "no_database_found": "No database found",
+      "configure_database": "Configure database"
     },
     "logs": {
       "title": "Logs",

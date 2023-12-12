@@ -34,7 +34,7 @@ const emit = defineEmits(['database-changed'])
 
 const { t } = useI18n()
 
-const loading = ref(false)
+const isLoadingUsers = ref(false)
 const users = ref<User[]>([])
 const error = ref({
   notificationDescription: '',
@@ -45,7 +45,7 @@ const showDeleteModal = ref(false)
 
 async function fetchUsers() {
   try {
-    loading.value = true
+    isLoadingUsers.value = true
     users.value = (
       await ubusCall('ns.users', 'list-users', { database: props.database.name })
     ).data.users
@@ -53,7 +53,7 @@ async function fetchUsers() {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {
-    loading.value = false
+    isLoadingUsers.value = false
   }
 }
 
@@ -74,8 +74,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="15" />
-  <div v-else class="flex flex-col gap-y-6">
+  <div class="flex flex-col gap-y-6">
     <div>
       <NeTitle level="h3">{{ t('standalone.users_database.database_configuration') }}</NeTitle>
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -156,21 +155,24 @@ onMounted(() => {
         {{ t('standalone.users_database.users_description') }}
       </p>
     </div>
-    <NeEmptyState
-      v-if="users.length == 0"
-      :title="t('standalone.users_database.no_users_found')"
-      :icon="['fas', 'user-group']"
-      :class="[database.type == 'local' ? '' : 'pb-3']"
-      ><NeButton kind="secondary" v-if="database.type === 'local'"
-        ><template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'circle-plus']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
-        >{{ t('standalone.users_database.add_user') }}</NeButton
-      ></NeEmptyState
-    >
+    <NeSkeleton v-if="isLoadingUsers" :lines="10" />
+    <template v-else>
+      <NeEmptyState
+        v-if="users.length == 0"
+        :title="t('standalone.users_database.no_users_found')"
+        :icon="['fas', 'user-group']"
+        :class="[database.type == 'local' ? '' : 'pb-3']"
+        ><NeButton kind="secondary" v-if="database.type === 'local'"
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'circle-plus']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('standalone.users_database.add_user') }}</NeButton
+        ></NeEmptyState
+      >
+    </template>
   </div>
   <CreateOrEditDatabaseDrawer
     :item-to-edit="database"

@@ -17,7 +17,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import CreateOrEditDatabaseDrawer from '@/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue'
 
 export type UserDatabase = {
-  id: string
+  name: string
   type: string
   description: string
   schema?: string
@@ -47,8 +47,8 @@ async function fetchDatabases() {
       })
     )
     tabs.value = databases.value.map((db) => ({
-      name: db.id,
-      label: db.type === 'local' ? t('standalone.users_database.local_database') : db.id
+      name: db.name,
+      label: db.type === 'local' ? t('standalone.users_database.local_database') : db.name
     }))
     selectedTab.value = tabs.value[0].name
   } catch (err: any) {
@@ -102,7 +102,7 @@ onMounted(() => fetchDatabases())
       @selectTab="selectedTab = $event"
     />
     <UsersDatabaseManager
-      :database="(databases.find(x => x.id === selectedTab) as UserDatabase)"
+      :database="(databases.find(x => x.name === selectedTab) as UserDatabase)"
       @database-changed="reloadDatabases"
     />
   </div>

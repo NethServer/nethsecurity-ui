@@ -46,7 +46,7 @@ async function fetchUsers() {
   try {
     loading.value = true
     users.value = (
-      await ubusCall('ns.users', 'list-users', { database: props.database.id })
+      await ubusCall('ns.users', 'list-users', { database: props.database.name })
     ).data.users
   } catch (err: any) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -97,7 +97,7 @@ onMounted(() => {
             {{
               database.type === 'local'
                 ? t('standalone.users_database.local_database')
-                : database.id
+                : database.name
             }}
           </p>
           <p v-if="database.type === 'ldap' && database.schema === 'rfc2307'" class="text-sm">
@@ -111,7 +111,7 @@ onMounted(() => {
           v-if="database.type === 'ldap'"
           class="ml-8 border-l border-gray-800 py-3 pl-8 dark:border-gray-600"
         >
-          <strong>URI:</strong> {{ database.uri }}
+          <strong class="text-sm">URI:</strong><span class="ml-2 text-sm">{{ database.uri }}</span>
         </p>
       </div>
       <div class="flex flex-row items-center">

@@ -14,6 +14,7 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
 import DeleteDatabaseModal from './DeleteDatabaseModal.vue'
+import UsersTable from './UsersTable.vue'
 
 export type User = {
   local: boolean
@@ -149,11 +150,22 @@ onMounted(() => {
       </div>
     </div>
 
-    <div>
-      <NeTitle level="h3">{{ t('standalone.users_database.users') }}</NeTitle>
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.users_database.users_description') }}
-      </p>
+    <div class="flex flex-row items-center justify-between">
+      <div>
+        <NeTitle level="h3">{{ t('standalone.users_database.users') }}</NeTitle>
+        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.users_database.users_description') }}
+        </p>
+      </div>
+      <NeButton kind="secondary" v-if="database.type === 'local' && users.length > 0"
+        ><template #prefix>
+          <font-awesome-icon
+            :icon="['fas', 'circle-plus']"
+            class="h-4 w-4"
+            aria-hidden="true"
+          /> </template
+        >{{ t('standalone.users_database.add_user') }}</NeButton
+      >
     </div>
     <NeSkeleton v-if="isLoadingUsers" :lines="10" />
     <template v-else>
@@ -172,6 +184,7 @@ onMounted(() => {
           >{{ t('standalone.users_database.add_user') }}</NeButton
         ></NeEmptyState
       >
+      <UsersTable v-else :is-ldap-database="database.type === 'ldap'" :users="users" />
     </template>
   </div>
   <CreateOrEditDatabaseDrawer

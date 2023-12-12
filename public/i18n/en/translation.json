@@ -1175,7 +1175,12 @@
       "configure_users_database": "Configure users database",
       "edit_users_database": "Edit users database",
       "delete_database_message": "You are about to delete database '{name}'",
-      "delete_database": "Delete database"
+      "delete_database": "Delete database",
+      "username": "Username",
+      "display_name": "Display name",
+      "password": "Password",
+      "set": "Set",
+      "not_set": "Not set"
     },
     "logs": {
       "title": "Logs",

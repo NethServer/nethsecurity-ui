@@ -13,6 +13,7 @@ import { onMounted } from 'vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
+import DeleteDatabaseModal from './DeleteDatabaseModal.vue'
 
 export type User = {
   local: boolean
@@ -140,7 +141,7 @@ onMounted(() => {
               icon: 'trash',
               danger: true,
               action: () => {
-                console.log('delete')
+                showDeleteModal = true
               }
             }
           ]"
@@ -176,5 +177,11 @@ onMounted(() => {
     :is-shown="showEditDrawer"
     @close="showEditDrawer = false"
     @add-edit-database="emit('database-changed')"
+  />
+  <DeleteDatabaseModal
+    :visible="showDeleteModal"
+    :item-to-delete="database"
+    @close="showDeleteModal = false"
+    @database-deleted="emit('database-changed')"
   />
 </template>

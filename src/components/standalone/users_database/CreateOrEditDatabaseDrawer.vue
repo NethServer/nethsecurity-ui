@@ -157,8 +157,8 @@ async function createOrEditDatabase() {
       validationErrorBag.value = err.errorBag
     } else {
       error.value.notificationTitle = isEditing
-        ? t('error.cannot_edit_dpi_exception')
-        : t('error.cannot_create_dpi_exception')
+        ? t('error.cannot_edit_database')
+        : t('error.cannot_create_database')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()
     }

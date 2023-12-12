@@ -185,7 +185,10 @@
     "cannot_create_proxy": "Cannot create proxy",
     "cannot_edit_proxy": "Cannot edit proxy",
     "cannot_retrieve_certificates": "cannot retrieve certificates",
-    "cannot_retrieve_databases": "Cannot retrieve databases"
+    "cannot_retrieve_databases": "Cannot retrieve databases",
+    "cannot_create_database": "Cannot create database",
+    "cannot_delete_database": "Cannot delete database",
+    "cannot_edit_database": "Cannot edit database"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1168,7 +1171,9 @@
       "test": "Test",
       "configure": "Configure",
       "configure_users_database": "Configure users database",
-      "edit_users_database": "Edit users database"
+      "edit_users_database": "Edit users database",
+      "delete_database_message": "You are about to delete database '{name}'",
+      "delete_database": "Delete database"
     },
     "logs": {
       "title": "Logs",

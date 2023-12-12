@@ -82,7 +82,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 const isLoading = computed(() => {
@@ -159,6 +160,10 @@ async function getNetworkConfig() {
 }
 
 async function listDevices() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+
   // show skeleton only the first time
   if (!devicesIntervalId.value) {
     loading.value.networkDevices = true
@@ -173,7 +178,7 @@ async function listDevices() {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_network_devices')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    //// error details
+    error.value.notificationDetails = err.toString()
   }
   loading.value.networkDevices = false
 }
@@ -574,7 +579,11 @@ function getTxBytes(device: any) {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mb-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <div class="space-y-6 text-sm">
       <div class="flex justify-end gap-4">
         <NeButton kind="tertiary" size="lg" @click="showCreateVlanDeviceDrawer">

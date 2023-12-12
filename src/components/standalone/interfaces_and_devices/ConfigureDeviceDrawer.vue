@@ -197,6 +197,7 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
+  notificationDetails: '',
   interfaceName: '',
   ipv4Address: '',
   ipv4Gateway: '',
@@ -416,7 +417,6 @@ function closeDrawer() {
   emit('close')
 }
 
-// use composable?
 function clearErrors() {
   for (const [key, value] of Object.entries(error.value) as [string, any][]) {
     if (typeof value === 'string') {
@@ -436,7 +436,6 @@ function prepareConfigureDeviceData() {
     interface_name: interfaceName.value,
     protocol: protocol.value,
     zone: zone.value,
-    logical_type: logicalIfaceType.value,
     ip6_enabled: isIpv6Enabled.value
   }
 
@@ -473,6 +472,7 @@ function prepareConfigureDeviceData() {
   }
 
   if (props.deviceType === 'logical') {
+    data.logical_type = logicalIfaceType.value
     data.attached_devices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
   }
 
@@ -500,6 +500,9 @@ function prepareConfigureDeviceData() {
 }
 
 async function configureDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   const isValidationOk = validate()
 
   if (!isValidationOk) {
@@ -516,7 +519,7 @@ async function configureDevice() {
     console.error(err)
     error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_configure_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    //// error details
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.configure = false
     await uciChangesStore.getChanges()
@@ -1041,7 +1044,11 @@ function validate() {
           kind="error"
           :title="error.notificationTitle"
           :description="error.notificationDescription"
-        />
+        >
+          <template #details v-if="error.notificationDetails">
+            {{ error.notificationDetails }}
+          </template>
+        </NeInlineNotification>
       </div>
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />

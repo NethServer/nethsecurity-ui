@@ -63,7 +63,6 @@ async function unconfigureDevice() {
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
-    //// error details
   } finally {
     loading.value.unconfigureDevice = false
     await uciChangesStore.getChanges()

@@ -33,7 +33,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 watch(
@@ -51,6 +52,9 @@ function closeModal() {
 }
 
 async function deleteAlias() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.deleteAlias = true
 
   try {
@@ -66,7 +70,7 @@ async function deleteAlias() {
       'standalone.interfaces_and_devices.cannot_delete_alias_interface'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    //// error details
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.deleteAlias = false
     await uciChangesStore.getChanges()
@@ -99,6 +103,10 @@ async function deleteAlias() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

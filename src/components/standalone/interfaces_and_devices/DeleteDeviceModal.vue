@@ -29,7 +29,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 watch(
@@ -47,6 +48,9 @@ function closeModal() {
 }
 
 async function deleteDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.deleteDevice = true
 
   try {
@@ -59,7 +63,7 @@ async function deleteDevice() {
     console.error(err)
     error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_delete_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    //// error details
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.deleteDevice = false
     await uciChangesStore.getChanges()
@@ -90,6 +94,10 @@ async function deleteDevice() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

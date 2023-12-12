@@ -12,6 +12,7 @@ import {
 import { onMounted } from 'vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
 
 export type User = {
   local: boolean
@@ -28,6 +29,8 @@ const props = defineProps<{
   database: UserDatabase
 }>()
 
+const emit = defineEmits(['database-changed'])
+
 const { t } = useI18n()
 
 const loading = ref(false)
@@ -36,6 +39,8 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
+const showEditDrawer = ref(false)
+const showDeleteModal = ref(false)
 
 async function fetchUsers() {
   try {
@@ -52,11 +57,7 @@ async function fetchUsers() {
 }
 
 function refreshData() {
-  if (props.database.initialized) {
-    fetchUsers()
-  } else {
-    users.value = []
-  }
+  fetchUsers()
 }
 
 watch(
@@ -84,7 +85,6 @@ onMounted(() => {
     <!-- Database Card -->
     <div
       class="flex max-w-2xl flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 p-5 text-gray-700 dark:border-indigo-500 dark:bg-gray-800 dark:text-gray-200 sm:rounded-lg sm:shadow"
-      v-if="database.initialized"
     >
       <div class="flex flex-row items-center">
         <font-awesome-icon
@@ -114,42 +114,32 @@ onMounted(() => {
         :align-to-right="true"
       />
     </div>
+
+    <div>
+      <NeTitle level="h3">{{ t('standalone.users_database.users') }}</NeTitle>
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.users_database.users_description') }}
+      </p>
+    </div>
     <NeEmptyState
-      v-else
-      :title="t('standalone.users_database.no_database_found')"
-      :icon="['fas', 'database']"
-      ><NeButton kind="primary"
+      v-if="users.length == 0"
+      :title="t('standalone.users_database.no_users_found')"
+      :icon="['fas', 'user-group']"
+      ><NeButton kind="secondary" v-if="database.type === 'local'"
         ><template #prefix>
           <font-awesome-icon
-            :icon="['fas', 'wrench']"
+            :icon="['fas', 'circle-plus']"
             class="h-4 w-4"
             aria-hidden="true"
           /> </template
-        >{{ t('standalone.users_database.configure_database') }}</NeButton
+        >{{ t('standalone.users_database.add_user') }}</NeButton
       ></NeEmptyState
     >
-
-    <template v-if="database.initialized">
-      <div>
-        <NeTitle level="h3">{{ t('standalone.users_database.users') }}</NeTitle>
-        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-          {{ t('standalone.users_database.users_description') }}
-        </p>
-      </div>
-      <NeEmptyState
-        v-if="users.length == 0"
-        :title="t('standalone.users_database.no_users_found')"
-        :icon="['fas', 'user-group']"
-        ><NeButton kind="secondary"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.users_database.add_user') }}</NeButton
-        ></NeEmptyState
-      >
-    </template>
   </div>
+  <CreateOrEditDatabaseDrawer
+    :item-to-edit="database"
+    :is-shown="showEditDrawer"
+    @close="showEditDrawer = false"
+    @add-edit-database="emit('database-changed')"
+  />
 </template>

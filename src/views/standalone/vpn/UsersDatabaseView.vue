@@ -13,15 +13,18 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UsersDatabaseManager from '@/components/standalone/users_database/UsersDatabaseManager.vue'
+import { computed } from 'vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import CreateOrEditDatabaseDrawer from '@/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue'
 
 export type UserDatabase = {
   id: string
   type: string
   description: string
-  initialized: boolean
 }
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 
 const loading = ref(true)
 const databases = ref<UserDatabase[]>([])
@@ -29,6 +32,7 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
+const showCreateDrawer = ref(false)
 
 const { tabs, selectedTab } = useTabs([])
 
@@ -54,6 +58,11 @@ async function fetchDatabases() {
   }
 }
 
+async function reloadDatabases() {
+  await uciChangesStore.getChanges()
+  await fetchDatabases()
+}
+
 onMounted(() => fetchDatabases())
 </script>
 
@@ -64,13 +73,7 @@ onMounted(() => fetchDatabases())
       kind="secondary"
       @click="
         () => {
-          console.log('asdasdasd')
-          databases.push({ id: '[name]', type: 'ldap', description: '', initialized: false })
-          tabs = databases.map((db) => ({
-            name: db.id,
-            label: db.type === 'local' ? t('standalone.users_database.local_database') : db.id
-          }))
-          selectedTab = '[name]'
+          showCreateDrawer = true
         }
       "
       ><template #prefix>
@@ -103,6 +106,15 @@ onMounted(() => fetchDatabases())
       class="mb-8"
       @selectTab="selectedTab = $event"
     />
-    <UsersDatabaseManager :database="(databases.find(x => x.id === selectedTab) as UserDatabase)" />
+    <UsersDatabaseManager
+      :database="(databases.find(x => x.id === selectedTab) as UserDatabase)"
+      @database-changed="reloadDatabases"
+    />
   </div>
+  <CreateOrEditDatabaseDrawer
+    :item-to-edit="null"
+    :is-shown="showCreateDrawer"
+    @close="showCreateDrawer = false"
+    @add-edit-database="reloadDatabases"
+  />
 </template>

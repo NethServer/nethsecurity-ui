@@ -92,27 +92,61 @@ onMounted(() => {
           aria-hidden="true"
           :class="`mb-2 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600 md:mb-0 md:mr-5`"
         />
-        <p>
-          {{
-            database.type === 'local' ? t('standalone.users_database.local_database') : database.id
-          }}
+        <div>
+          <p>
+            {{
+              database.type === 'local'
+                ? t('standalone.users_database.local_database')
+                : database.id
+            }}
+          </p>
+          <p v-if="database.type === 'ldap' && database.schema === 'rfc2307'" class="text-sm">
+            {{ t('standalone.users_database.remote_ldap') }}
+          </p>
+          <p v-else-if="database.type === 'ldap' && database.schema === 'ad'" class="text-sm">
+            {{ t('standalone.users_database.remote_active_directory') }}
+          </p>
+        </div>
+        <p
+          v-if="database.type === 'ldap'"
+          class="ml-8 border-l border-gray-800 py-3 pl-8 dark:border-gray-600"
+        >
+          <strong>URI:</strong> {{ database.uri }}
         </p>
       </div>
-      <NeDropdown
-        :items="[
-          {
-            id: 'delete',
-            label: t('common.delete'),
-            iconStyle: 'fas',
-            icon: 'trash',
-            danger: true,
-            action: () => {
-              console.log('delete')
+      <div class="flex flex-row items-center">
+        <NeButton
+          kind="tertiary"
+          @click="showEditDrawer = true"
+          class="mr-2"
+          v-if="database.type === 'ldap'"
+        >
+          <template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'pen-to-square']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </template>
+          {{ t('common.edit') }}
+        </NeButton>
+        <NeDropdown
+          v-if="database.type === 'ldap'"
+          :items="[
+            {
+              id: 'delete',
+              label: t('common.delete'),
+              iconStyle: 'fas',
+              icon: 'trash',
+              danger: true,
+              action: () => {
+                console.log('delete')
+              }
             }
-          }
-        ]"
-        :align-to-right="true"
-      />
+          ]"
+          :align-to-right="true"
+        />
+      </div>
     </div>
 
     <div>
@@ -125,6 +159,7 @@ onMounted(() => {
       v-if="users.length == 0"
       :title="t('standalone.users_database.no_users_found')"
       :icon="['fas', 'user-group']"
+      :class="[database.type == 'local' ? '' : 'pb-3']"
       ><NeButton kind="secondary" v-if="database.type === 'local'"
         ><template #prefix>
           <font-awesome-icon

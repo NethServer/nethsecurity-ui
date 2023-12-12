@@ -13,7 +13,6 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UsersDatabaseManager from '@/components/standalone/users_database/UsersDatabaseManager.vue'
-import { computed } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditDatabaseDrawer from '@/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue'
 
@@ -21,6 +20,8 @@ export type UserDatabase = {
   id: string
   type: string
   description: string
+  schema?: string
+  uri?: string
 }
 
 const { t } = useI18n()
@@ -69,13 +70,7 @@ onMounted(() => fetchDatabases())
 <template>
   <div class="mb-6 flex flex-row items-center justify-between">
     <NeTitle class="!mb-0">{{ t('standalone.users_database.title') }}</NeTitle>
-    <NeButton
-      kind="secondary"
-      @click="
-        () => {
-          showCreateDrawer = true
-        }
-      "
+    <NeButton kind="secondary" @click="showCreateDrawer = true"
       ><template #prefix>
         <font-awesome-icon
           :icon="['fas', 'circle-plus']"

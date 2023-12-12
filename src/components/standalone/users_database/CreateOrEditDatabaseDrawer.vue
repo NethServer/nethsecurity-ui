@@ -11,6 +11,7 @@ import {
   NeToggle,
   NeFormItemLabel,
   NeRadioSelection,
+  NeTooltip,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
@@ -169,7 +170,7 @@ async function createOrEditDatabase() {
 watch(
   () => props.isShown,
   () => {
-    resetForm()
+    if (props.isShown) resetForm()
   }
 )
 </script>
@@ -212,27 +213,67 @@ watch(
         :label="t('standalone.users_database.ldap_uri')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('uri'))"
         placeholder="ldaps://192.168.100.234"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.ldap_uri_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="baseDn"
         :label="t('standalone.users_database.base_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('base_dn'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.base_dn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="userDn"
         :label="t('standalone.users_database.user_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_dn'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.user_dn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="userAttribute"
         :label="t('standalone.users_database.user_attribute')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_attr'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.user_attribute_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
       <NeTextInput
         v-model="userCn"
         :label="t('standalone.users_database.user_cn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_cn'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.user_cn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
       <div>
         <NeFormItemLabel>{{ t('standalone.users_database.starttls') }}</NeFormItemLabel>
         <NeToggle

@@ -188,7 +188,9 @@
     "cannot_retrieve_databases": "Cannot retrieve databases",
     "cannot_create_database": "Cannot create database",
     "cannot_delete_database": "Cannot delete database",
-    "cannot_edit_database": "Cannot edit database"
+    "cannot_edit_database": "Cannot edit database",
+    "cannot_retrieve_database_details": "Cannot retrieve database details",
+    "database_test_failed": "Database test failed"
   },
   "ne_text_input": {
     "show_password": "Show password",

@@ -16,6 +16,19 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 
+type LDAPDatabasePayload = {
+  name: string
+  uri: string
+  schema: string
+  base_dn: string
+  user_dn: string
+  user_attr: string
+  user_cn: string
+  start_tls: string | boolean
+  tls_reqcert: string
+  description: string
+}
+
 const props = defineProps<{
   isShown: boolean
   itemToEdit: UserDatabase | null
@@ -32,9 +45,12 @@ const error = ref({
   notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
+const loading = ref(false)
+const isTestingConfiguration = ref(false)
+const testUserResults = ref<{ name: string; description: string }[] | null>(null)
 
 // Form fields
-const id = ref('')
+const isEditing = ref(false)
 const name = ref('')
 const type = ref('rfc2307')
 const ldapUri = ref('')
@@ -53,11 +69,35 @@ const typeOptions = [
   { id: 'ad', label: t('standalone.users_database.remote_active_directory') }
 ]
 
-function resetForm() {
+async function resetForm() {
+  testUserResults.value = null
   if (props.itemToEdit) {
-    //TODO: populate fields
+    isEditing.value = true
+    try {
+      loading.value = true
+      const databaseData: LDAPDatabasePayload = (
+        await ubusCall('ns.users', 'get-database', {
+          name: props.itemToEdit.name
+        })
+      ).data.database
+      name.value = databaseData.name
+      type.value = databaseData.schema
+      ldapUri.value = databaseData.uri
+      baseDn.value = databaseData.base_dn
+      userDn.value = databaseData.user_dn
+      userCn.value = databaseData.user_cn
+      userAttribute.value = databaseData.user_attr
+      startTls.value = databaseData.start_tls === '1'
+      verifyTlsCertificate.value = databaseData.tls_reqcert === 'always'
+
+      loading.value = false
+    } catch (err: any) {
+      error.value.notificationTitle = t('error.cannot_retrieve_database_details')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
   } else {
-    id.value = ''
+    isEditing.value = false
     name.value = ''
     type.value = 'rfc2307'
     ldapUri.value = ''
@@ -71,11 +111,13 @@ function resetForm() {
 }
 
 function close() {
-  validationErrorBag.value.clear()
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  emit('close')
+  if (!isTestingConfiguration.value) {
+    validationErrorBag.value.clear()
+    error.value.notificationTitle = ''
+    error.value.notificationDescription = ''
+    error.value.notificationDetails = ''
+    emit('close')
+  }
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -106,7 +148,35 @@ function validate() {
 }
 
 async function testDatabaseConfiguration() {
-  //TODO: add test database functionality
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  validationErrorBag.value.clear()
+
+  try {
+    if (validate()) {
+      isTestingConfiguration.value = true
+      const payload = {
+        uri: ldapUri.value,
+        schema: type.value,
+        base_dn: baseDn.value,
+        user_dn: userDn.value,
+        user_attr: userAttribute.value,
+        start_tls: startTls.value,
+        user_cn: 'cn',
+        description: '',
+        tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never'
+      }
+
+      testUserResults.value = (await ubusCall('ns.users', 'test-ldap', payload)).data.users
+    }
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.database_test_failed')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    isTestingConfiguration.value = false
+  }
 }
 
 async function createOrEditDatabase() {
@@ -115,25 +185,12 @@ async function createOrEditDatabase() {
   error.value.notificationDetails = ''
   validationErrorBag.value.clear()
 
-  const isEditing = id.value != ''
-
   try {
     isSavingChanges.value = true
-    const requestType = isEditing ? 'edit-ldap-database' : 'add-ldap-database'
+    const requestType = isEditing.value ? 'edit-ldap-database' : 'add-ldap-database'
 
     if (validate()) {
-      let payload: {
-        name: string
-        uri: string
-        schema: string
-        base_dn: string
-        user_dn: string
-        user_attr: string
-        user_cn: string
-        start_tls: boolean
-        tls_reqcert: string
-        description: string
-      } = {
+      let payload: LDAPDatabasePayload = {
         name: name.value,
         uri: ldapUri.value,
         schema: type.value,
@@ -146,8 +203,6 @@ async function createOrEditDatabase() {
         tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never'
       }
 
-      //TODO: handle edit case
-
       await ubusCall('ns.users', requestType, payload)
       emit('add-edit-database')
       close()
@@ -156,7 +211,7 @@ async function createOrEditDatabase() {
     if (err instanceof ValidationError) {
       validationErrorBag.value = err.errorBag
     } else {
-      error.value.notificationTitle = isEditing
+      error.value.notificationTitle = isEditing.value
         ? t('error.cannot_edit_database')
         : t('error.cannot_create_database')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -181,7 +236,7 @@ watch(
     @close="close()"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     :title="
-      id
+      isEditing
         ? t('standalone.users_database.edit_database')
         : t('standalone.users_database.add_database')
     "
@@ -200,6 +255,7 @@ watch(
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="name"
+        :disabled="isEditing"
         :label="t('standalone.users_database.database_name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
@@ -290,18 +346,32 @@ watch(
           :label="verifyTlsCertificate ? t('common.enabled') : t('common.disabled')"
         />
       </div>
+      <NeInlineNotification
+        v-if="testUserResults"
+        :title="t('standalone.users_database.connection_verified')"
+        :description="t('standalone.users_database.n_users_found', { n: testUserResults.length })"
+        class="mb-6"
+        kind="info"
+      />
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-        <NeButton kind="secondary" class="mr-4" @click="testDatabaseConfiguration()">{{
-          t('standalone.users_database.test')
-        }}</NeButton>
+        <NeButton
+          kind="secondary"
+          class="mr-4"
+          :disabled="isTestingConfiguration"
+          :loading="isTestingConfiguration"
+          @click="testDatabaseConfiguration()"
+          >{{ t('standalone.users_database.test') }}</NeButton
+        >
         <NeButton
           kind="primary"
           @click="createOrEditDatabase()"
-          :disabled="isSavingChanges"
+          :disabled="isSavingChanges || isTestingConfiguration"
           :loading="isSavingChanges"
-          >{{ id ? t('common.save') : t('standalone.users_database.add_database') }}</NeButton
+          >{{
+            isEditing ? t('common.save') : t('standalone.users_database.add_database')
+          }}</NeButton
         >
       </div>
     </div></NeSideDrawer

@@ -825,7 +825,11 @@ function validate() {
             v-model="selectedDevicesForBridgeOrBond"
             :options="bridgeOrBondDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
-            :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bond')"
+            :placeholder="
+              logicalIfaceType === 'bond'
+                ? t('standalone.interfaces_and_devices.select_devices_for_bond')
+                : t('standalone.interfaces_and_devices.select_devices_for_bridge')
+            "
             :invalidMessage="error.selectedDevicesForBridgeOrBond"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"

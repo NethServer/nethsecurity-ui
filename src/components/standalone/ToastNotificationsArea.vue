@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useNotificationsStore } from '../../stores/standalone/notifications'
-import NeAxiosErrorModal from './NeAxiosErrorModal.vue'
+import AxiosErrorModal from './AxiosErrorModal.vue'
 import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 
@@ -33,6 +33,6 @@ const notificationsToShow = computed(() => {
       </div>
     </div>
     <!-- axios error modal -->
-    <NeAxiosErrorModal />
+    <AxiosErrorModal />
   </div>
 </template>

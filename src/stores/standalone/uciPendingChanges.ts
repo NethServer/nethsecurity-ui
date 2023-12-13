@@ -23,9 +23,6 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
 
   const commitChanges = async () => {
     const configsToCommit = Object.keys(changes.value)
-
-    console.log('configs to commit', configsToCommit) ////
-
     const commitPromises = []
 
     for (const config of configsToCommit) {
@@ -39,9 +36,6 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
 
   const revertChanges = async () => {
     const configsToRevert = Object.keys(changes.value)
-
-    console.log('configs to revert', configsToRevert) ////
-
     const revertPromises = []
 
     for (const config of configsToRevert) {

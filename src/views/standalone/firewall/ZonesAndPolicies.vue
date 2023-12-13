@@ -12,15 +12,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import CreateOrEditZoneDrawer from '@/components/standalone/firewall/CreateOrEditZoneDrawer.vue'
 import DeleteZoneModal from '@/components/standalone/firewall/DeleteZoneModal.vue'
-import {
-  SpecialZones,
-  TrafficPolicy,
-  useFirewallStore,
-  Zone,
-  ZoneType
-} from '@/stores/standalone/firewall'
+import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'
 import { isEmpty } from 'lodash-es'
-import { getTrafficToWan, forwardingsToByZone, getZoneColorClasses } from '@/lib/standalone/network'
+import {
+  getTrafficToWan,
+  forwardingsToByZone,
+  getZoneColorClasses,
+  getZoneIcon
+} from '@/lib/standalone/network'
 
 const { t } = useI18n()
 
@@ -33,19 +32,6 @@ const zoneToEdit = ref<Zone>()
 onMounted(() => {
   firewallConfig.fetch()
 })
-
-function icon(zone: Zone): string {
-  switch (zone.type()) {
-    case ZoneType.WAN:
-      return 'earth-americas'
-    case ZoneType.LAN:
-      return 'location-dot'
-    case ZoneType.GUEST:
-      return 'users'
-    case ZoneType.CUSTOM:
-      return 'star'
-  }
-}
 
 function trafficIcon(trafficPolicy: TrafficPolicy): string {
   switch (trafficPolicy) {
@@ -141,7 +127,7 @@ function editZone(zone: Zone) {
             :class="getZoneColorClasses(item.name)"
             class="flex h-10 w-10 items-center justify-center rounded-full"
           >
-            <FontAwesomeIcon :icon="['fas', icon(item)]" class="h-5 w-5" />
+            <FontAwesomeIcon :icon="['fas', getZoneIcon(item.name)]" class="h-5 w-5" />
           </div>
           <span class="uppercase">{{ item.name }}</span>
         </div>

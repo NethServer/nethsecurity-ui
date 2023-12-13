@@ -11,8 +11,6 @@ import { useRoute, useRouter } from 'vue-router'
 import DpiRules from '@/components/standalone/dpi/DpiRules.vue'
 import DpiExceptions from '@/components/standalone/dpi/DpiExceptions.vue'
 
-//// review
-
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()

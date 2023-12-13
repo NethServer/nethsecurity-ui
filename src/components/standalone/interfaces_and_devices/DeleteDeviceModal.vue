@@ -6,17 +6,13 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
   device: {
-    type: Object,
-    required: true
-  },
-  networkConfig: {
     type: Object,
     required: true
   }
@@ -33,7 +29,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 watch(
@@ -50,29 +47,23 @@ function closeModal() {
   emit('close')
 }
 
-async function deleteNetworkDevice() {
-  const sectionFound = props.networkConfig.device?.find(
-    (dev: any) => dev.name === props.device.name
-  )
-
-  await ubusCall('uci', 'delete', {
-    config: 'network',
-    options: null,
-    section: sectionFound['.name']
-  })
-}
-
 async function deleteDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.deleteDevice = true
 
   try {
-    await deleteNetworkDevice()
+    await ubusCall('ns.devices', 'delete-device', {
+      device_name: props.device.name
+    })
     emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_delete_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.deleteDevice = false
     await uciChangesStore.getChanges()
@@ -103,6 +94,10 @@ async function deleteDevice() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

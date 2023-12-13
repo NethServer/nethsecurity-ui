@@ -7,6 +7,7 @@ import { uid } from 'uid/single'
 import { getAxiosErrorMessage, type NeNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore } from './standaloneLogin'
+import { isEmpty } from 'lodash-es'
 
 const NOTIFICATIONS_LIMIT = 30
 const DEFAULT_NOTIFICATION_TIMEOUT = 5000
@@ -34,8 +35,17 @@ export const useNotificationsStore = defineStore('notifications', () => {
       : DEFAULT_NOTIFICATION_TIMEOUT
   }
 
+  const getErrorDescription = (axiosError: any, isUbusCall: boolean) => {
+    if (isUbusCall && JSON.parse(axiosError.config.data)?.method) {
+      return JSON.parse(axiosError.config.data).method
+    } else {
+      return t(getAxiosErrorMessage(axiosError))
+    }
+  }
+
   const createNotificationFromAxiosError = (axiosError: any) => {
-    const notificationTitle = axiosError.config.url.includes('/ubus/call')
+    const isUbusCall = axiosError.config.url.includes('/ubus/call')
+    const notificationTitle = isUbusCall
       ? t('notifications.ubus_call_failed')
       : t('notifications.api_call_failed')
 
@@ -43,18 +53,18 @@ export const useNotificationsStore = defineStore('notifications', () => {
       id: uid(),
       kind: 'error',
       title: notificationTitle,
-      description: t(getAxiosErrorMessage(axiosError)),
+      description: getErrorDescription(axiosError, isUbusCall),
       timestamp: new Date(),
       payload: axiosError,
       primaryLabel: t('notifications.show_details'),
-      secondaryLabel: t('notifications.copy_curl')
+      secondaryLabel: isUbusCall ? t('notifications.copy_command') : t('notifications.copy_curl')
     }
 
     notification.primaryAction = () => {
       showErrorDetails(notification)
     }
     notification.secondaryAction = () => {
-      copyCurlToClipboard(notification)
+      isUbusCall ? copyUbusApiCommandToClipboard(notification) : copyCurlToClipboard(notification)
     }
     addNotification(notification)
   }
@@ -97,6 +107,20 @@ export const useNotificationsStore = defineStore('notifications', () => {
     navigator.clipboard.writeText(curlCommand)
   }
 
+  const copyUbusApiCommandToClipboard = (notification: NeNotification) => {
+    const inputData = JSON.parse(notification.payload.config.data)
+    const ubusPath = inputData.path
+    const ubusMethod = inputData.method
+    const inputPayload = inputData.payload
+    let command = ``
+
+    if (!isEmpty(inputPayload)) {
+      command += `echo '${JSON.stringify(inputPayload)}' | `
+    }
+    command += `/usr/libexec/rpcd/${ubusPath} call ${ubusMethod}`
+    navigator.clipboard.writeText(command)
+  }
+
   const showErrorDetails = (notification: NeNotification) => {
     setAxiosErrorNotificationToShow(notification)
     setAxiosErrorModalOpen(true)
@@ -122,6 +146,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     setAxiosErrorModalOpen,
     setAxiosErrorNotificationToShow,
     copyCurlToClipboard,
+    copyUbusApiCommandToClipboard,
     setNotificationDrawerOpen,
     hideNotification
   }

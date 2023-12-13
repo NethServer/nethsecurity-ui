@@ -58,7 +58,11 @@ export enum TrafficPolicy {
 export enum SpecialZones {
   GUESTS = 'guests',
   LAN = 'lan',
-  WAN = 'wan'
+  WAN = 'wan',
+  DMZ = 'dmz',
+  HOTSPOT = 'hotspot',
+  OPENVPN = 'openvpn',
+  IPSEC = 'ipsec'
 }
 
 /**
@@ -67,7 +71,11 @@ export enum SpecialZones {
 export enum ZoneType {
   LAN,
   WAN,
-  GUEST,
+  GUESTS,
+  DMZ,
+  HOTSPOT,
+  OPENVPN,
+  IPSEC,
   CUSTOM
 }
 
@@ -106,7 +114,15 @@ export class Zone {
       case 'LAN':
         return ZoneType.LAN
       case 'GUESTS':
-        return ZoneType.GUEST
+        return ZoneType.GUESTS
+      case 'DMZ':
+        return ZoneType.DMZ
+      case 'HOTSPOT':
+        return ZoneType.HOTSPOT
+      case 'OPENVPN':
+        return ZoneType.OPENVPN
+      case 'IPSEC':
+        return ZoneType.IPSEC
       default:
         return ZoneType.CUSTOM
     }
@@ -146,6 +162,28 @@ export class Forwarding {
   }
 }
 
+export const zonesSorting = (zone1: any, zone2: any) => {
+  const zonesRanking = ['lan', 'wan', 'guests', 'dmz', 'hotspot', 'openvpn', 'ipsec']
+  let rank1 = zonesRanking.indexOf(zone1.name)
+  let rank2 = zonesRanking.indexOf(zone2.name)
+
+  if (rank1 == -1) {
+    rank1 = 99
+  }
+
+  if (rank2 == -1) {
+    rank2 = 99
+  }
+
+  if (rank1 < rank2) {
+    return -1
+  }
+  if (rank1 > rank2) {
+    return 1
+  }
+  return 0
+}
+
 export const useFirewallStore = defineStore('firewall', () => {
   const error = ref<Error>()
   const zones = ref<Array<Zone>>([])
@@ -156,9 +194,9 @@ export const useFirewallStore = defineStore('firewall', () => {
     Promise.all([
       ubusCall('ns.firewall', 'list_zones').then(
         (response: AxiosResponse<BaseResponse<ZoneResponse>>) => {
-          zones.value = Object.entries(response.data).map(
-            ([name, zoneResponse]) => new Zone(name, zoneResponse)
-          )
+          zones.value = Object.entries(response.data)
+            .map(([name, zoneResponse]) => new Zone(name, zoneResponse))
+            .sort(zonesSorting)
         }
       ),
       ubusCall('ns.firewall', 'list_forwardings').then(

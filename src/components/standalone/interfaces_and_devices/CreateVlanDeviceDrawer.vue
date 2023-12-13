@@ -66,6 +66,7 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
+  notificationDetails: '',
   vlanId: '',
   baseDevice: ''
 })
@@ -118,7 +119,6 @@ function closeDrawer() {
   emit('close')
 }
 
-// use composable?
 function clearErrors() {
   for (const [key, value] of Object.entries(error.value) as [string, any][]) {
     if (typeof value === 'string') {
@@ -131,20 +131,10 @@ function clearErrors() {
   }
 }
 
-async function createDevice() {
-  await ubusCall('uci', 'add', {
-    config: 'network',
-    type: 'device',
-    values: {
-      name: deviceName.value,
-      type: vlanType.value,
-      ifname: baseDevice.value,
-      vid: vlanId.value
-    }
-  })
-}
-
 async function createVlanDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   const isValidationOk = validate()
 
   if (!isValidationOk) {
@@ -153,13 +143,18 @@ async function createVlanDevice() {
   loading.value.create = true
 
   try {
-    await createDevice()
+    await ubusCall('ns.devices', 'create-vlan-device', {
+      vlan_type: vlanType.value,
+      base_device_name: baseDevice.value,
+      vlan_id: vlanId.value
+    })
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_create_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.create = false
     await uciChangesStore.getChanges()
@@ -269,7 +264,11 @@ function validate() {
           kind="error"
           :title="error.notificationTitle"
           :description="error.notificationDescription"
-        />
+        >
+          <template #details v-if="error.notificationDetails">
+            {{ error.notificationDetails }}
+          </template>
+        </NeInlineNotification>
       </div>
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />

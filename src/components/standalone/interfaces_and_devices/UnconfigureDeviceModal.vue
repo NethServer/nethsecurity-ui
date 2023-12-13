@@ -4,28 +4,16 @@
 -->
 
 <script setup lang="ts">
-import {
-  getAliasInterface,
-  getFirewallZone,
-  getInterface,
-  isVlan,
-  isBridge,
-  isBond
-} from '@/lib/standalone/network'
+import { getInterface, isBridge, isBond } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { isEmpty } from 'lodash-es'
-import { computed, ref, watch } from 'vue'
+import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
   device: {
-    type: Object,
-    required: true
-  },
-  firewallConfig: {
     type: Object,
     required: true
   },
@@ -46,106 +34,35 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 const iface = computed(() => {
   return getInterface(props.device, props.networkConfig)
 })
 
-watch(
-  () => props.visible,
-  () => {
-    if (props.visible) {
-      error.value.notificationTitle = ''
-      error.value.notificationDescription = ''
-    }
-  }
-)
-
 function closeModal() {
   emit('close')
 }
 
-async function deleteNetworkInterface(ifaceName: string) {
-  await ubusCall('uci', 'delete', {
-    config: 'network',
-    options: null,
-    section: ifaceName
-  })
-}
-
-async function deleteNetworkDevice() {
-  const sectionFound = props.networkConfig.device?.find(
-    (dev: any) => dev.name === props.device.name
-  )
-
-  await ubusCall('uci', 'delete', {
-    config: 'network',
-    options: null,
-    section: sectionFound['.name']
-  })
-}
-
-async function removeInterfaceFromZone() {
-  const zone = getFirewallZone(iface.value, props.firewallConfig)
-  const sectionName = zone['.name']
-
-  let zoneInterfaces = zone.network.filter((elem: any) => elem !== iface.value['.name'])
-
-  // if interface has an alias, delete it too
-  const aliasFound = getAliasInterface(props.device, props.networkConfig)
-  if (aliasFound) {
-    zoneInterfaces = zoneInterfaces.filter((elem: any) => elem !== aliasFound['.name'])
-  }
-
-  if (isEmpty(zoneInterfaces)) {
-    // firewall zone is now empty, let's delete it
-    await ubusCall('uci', 'delete', {
-      config: 'firewall',
-      section: sectionName,
-      options: 'network'
-    })
-  } else {
-    // update firewall zone
-    await ubusCall('uci', 'set', {
-      config: 'firewall',
-      section: sectionName,
-      values: {
-        network: zoneInterfaces
-      }
-    })
-  }
-}
-
 async function unconfigureDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.unconfigureDevice = true
 
   try {
-    await removeInterfaceFromZone()
-    await deleteNetworkInterface(iface.value['.name'])
-
-    const aliasFound = getAliasInterface(props.device, props.networkConfig)
-    if (aliasFound) {
-      // delete alias interface too
-      await deleteNetworkInterface(aliasFound['.name'])
-    }
-
-    const deviceExists = props.networkConfig.device?.find(
-      (dev: any) => dev.name === props.device.name
-    )
-
-    if (!isVlan(props.device) && !isBond(props.device) && deviceExists) {
-      await deleteNetworkDevice()
-    }
+    await ubusCall('ns.devices', 'unconfigure-device', { iface_name: iface.value['.name'] })
     emit('reloadData')
     emit('close')
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t(
-      'standalone.interfaces_and_devices.cannot_delete_alias_interface'
+      'standalone.interfaces_and_devices.cannot_remove_device_configuration'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.unconfigureDevice = false
     await uciChangesStore.getChanges()
@@ -175,12 +92,12 @@ async function unconfigureDevice() {
     @close="closeModal"
     @primaryClick="unconfigureDevice"
   >
-    <div v-if="getInterface(device, networkConfig)">
+    <div v-if="device && iface">
       <template v-if="isBridge(device)">
         <!-- bridge -->
         {{
           t('standalone.interfaces_and_devices.delete_bridge_explanation', {
-            iface: getInterface(device, networkConfig)['.name'],
+            iface: iface['.name'],
             device: device.name
           })
         }}
@@ -189,7 +106,7 @@ async function unconfigureDevice() {
         <!-- bond -->
         {{
           t('standalone.interfaces_and_devices.delete_bond_explanation', {
-            iface: getInterface(device, networkConfig)['.name']
+            iface: iface['.name']
           })
         }}
       </template>
@@ -197,7 +114,7 @@ async function unconfigureDevice() {
         <!-- physical interfaces and VLAN -->
         {{
           t('standalone.interfaces_and_devices.remove_configuration_explanation', {
-            iface: getInterface(device, networkConfig)['.name'],
+            iface: iface['.name'],
             device: device.name
           })
         }}
@@ -209,6 +126,10 @@ async function unconfigureDevice() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

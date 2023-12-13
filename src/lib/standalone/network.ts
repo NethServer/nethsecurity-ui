@@ -2,9 +2,57 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/firewall'
+import { toUpper } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 
-export function getInterface(deviceOrIface: any, networkConfig: any) {
+export interface DeviceOrIface {
+  name?: string
+  '.name'?: string
+  type?: string
+  '.type'?: string
+  mac?: string
+  mtu?: number
+  up?: boolean
+  ipaddrs?: Ipv4Address[]
+  ip6addrs?: Ipv6Address[]
+  stats?: Stats
+  ipv6?: string
+  ports?: string[]
+  ifname?: string
+  vid?: string
+  proto?: string
+  bonding_policy?: string
+  ipaddr?: string
+  packets_per_slave?: string
+  slaves?: string[]
+  speed?: number
+}
+
+interface Ipv4Address {
+  address: string
+  netmask: string
+  broadcast: string
+}
+
+interface Ipv6Address {
+  address: string
+  netmask: string
+}
+
+interface Stats {
+  collisions: number
+  multicast: number
+  rx_bytes: number
+  rx_dropped: number
+  rx_errors: number
+  rx_packets: number
+  tx_bytes: number
+  tx_dropped: number
+  tx_errors: number
+  tx_packets: number
+}
+
+export function getInterface(deviceOrIface: DeviceOrIface, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
     return deviceOrIface
@@ -13,7 +61,7 @@ export function getInterface(deviceOrIface: any, networkConfig: any) {
   return networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
 }
 
-export function getAliasInterface(device: any, networkConfig: any) {
+export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
   const iface = getInterface(device, networkConfig)
 
   if (!iface) {
@@ -35,22 +83,6 @@ export function getFirewallZone(iface: any, firewallConfig: any) {
   }
 }
 
-export function getZoneLabel(zoneName: string) {
-  switch (zoneName) {
-    case 'lan':
-      return 'LAN'
-    case 'wan':
-      return 'WAN'
-    case 'guests':
-      return 'Guests'
-    case 'openvpnrw':
-      return 'OpenVPN RW'
-    //// dmz
-    default:
-      return zoneName
-  }
-}
-
 export function getZoneColor(zoneName: string) {
   const { t } = useI18n()
 
@@ -61,7 +93,12 @@ export function getZoneColor(zoneName: string) {
       return 'Red'
     case 'guests':
       return 'Blue'
-    //// dmz
+    case 'dmz':
+      return 'Orange'
+    case 'hotspot':
+    case 'openvpn':
+    case 'ipsec':
+      return ''
     default:
       // custom zone
       return t('standalone.interfaces_and_devices.custom_zone')
@@ -76,8 +113,15 @@ export function getZoneColorClasses(zoneName: string) {
       return 'bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-50'
     case 'guests':
       return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
+    case 'dmz':
+      return 'bg-amber-100 text-amber-700 dark:bg-amber-700 dark:text-amber-50'
+    case 'hotspot':
+      return 'bg-sky-100 text-sky-700 dark:bg-sky-700 dark:text-sky-50'
+    case 'openvpn':
+    case 'ipsec':
+      return 'bg-teal-100 text-teal-700 dark:bg-teal-700 dark:text-teal-50'
     default:
-      return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-50'
+      return 'bg-violet-100 text-violet-700 dark:bg-violet-700 dark:text-violet-50'
   }
 }
 
@@ -89,11 +133,16 @@ export function getZoneBorderColorClasses(zoneName: string) {
       return 'border-rose-700 dark:border-rose-700'
     case 'guests':
       return 'border-blue-700 dark:border-blue-700'
-    case 'openvpnrw':
+    case 'dmz':
+      return 'border-amber-700 dark:border-amber-700'
+    case 'hotspot':
+      return 'border-sky-700 dark:border-sky-700'
+    case 'openvpn':
+    case 'ipsec':
       return 'border-teal-700 dark:border-teal-700'
     default:
       // custom zone
-      return 'border-indigo-700 dark:border-indigo-700'
+      return 'border-violet-700 dark:border-violet-700'
   }
 }
 
@@ -104,35 +153,37 @@ export function getZoneIcon(zoneName: string) {
     case 'wan':
       return 'earth-americas'
     case 'guests':
-      return 'user-group'
-    //// dmz
+      return 'users'
+    case 'dmz':
+      return 'shield'
+    case 'hotspot':
+      return 'wifi'
+    case 'openvpn':
+    case 'ipsec':
+      return 'globe'
     default:
       return 'star'
   }
 }
 
-export function isVlan(device: any) {
-  if (device.devtype === 'vlan' || device.vid) {
+export function isVlan(device: DeviceOrIface) {
+  if (device.vid) {
     return true
   } else {
     return false
   }
 }
 
-export function isBridge(device: any) {
-  if (device.devtype === 'bridge' || device.type === 'bridge') {
+export function isBridge(device: DeviceOrIface) {
+  if (device?.type === 'bridge') {
     return true
   } else {
     return false
   }
 }
 
-export function isBond(iface: any) {
-  return iface.proto === 'bonding'
-}
-
-export function isBondDevice(device: any) {
-  return device.devtype === 'bond'
+export function isBond(iface: DeviceOrIface) {
+  return iface?.proto === 'bonding'
 }
 
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {
@@ -149,11 +200,11 @@ export function generateDeviceName(devicePrefix: string, networkConfig: any) {
   return deviceNameGenerated
 }
 
-export function getName(deviceOrIface: any) {
+export function getName(deviceOrIface: DeviceOrIface) {
   if (deviceOrIface['.type'] === 'interface') {
-    return deviceOrIface['.name']
+    return deviceOrIface['.name'] || '-'
   } else {
-    return deviceOrIface.name
+    return deviceOrIface.name || '-'
   }
 }
 

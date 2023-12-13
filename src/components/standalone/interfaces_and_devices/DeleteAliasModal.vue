@@ -4,10 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { getFirewallZone } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -18,10 +17,6 @@ const props = defineProps({
     required: true
   },
   parentInterface: {
-    type: Object,
-    required: true
-  },
-  firewallConfig: {
     type: Object,
     required: true
   }
@@ -38,7 +33,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 watch(
@@ -55,36 +51,17 @@ function closeModal() {
   emit('close')
 }
 
-async function deleteNetworkInterface() {
-  await ubusCall('uci', 'delete', {
-    config: 'network',
-    options: null,
-    section: props.alias['.name']
-  })
-}
-
-async function removeInterfaceFromZone() {
-  const zone = getFirewallZone(props.parentInterface, props.firewallConfig)
-  const sectionName = zone['.name']
-
-  // remove alias from zone interfaces
-  const zoneInterfaces = zone.network.filter((iface: any) => iface !== props.alias['.name'])
-
-  await ubusCall('uci', 'set', {
-    config: 'firewall',
-    section: sectionName,
-    values: {
-      network: zoneInterfaces
-    }
-  })
-}
-
 async function deleteAlias() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.deleteAlias = true
 
   try {
-    await deleteNetworkInterface()
-    await removeInterfaceFromZone()
+    await ubusCall('ns.devices', 'delete-alias-interface', {
+      alias_iface_name: props.alias['.name'],
+      parent_iface_name: props.parentInterface['.name']
+    })
     emit('reloadData')
     emit('close')
   } catch (err: any) {
@@ -93,6 +70,7 @@ async function deleteAlias() {
       'standalone.interfaces_and_devices.cannot_delete_alias_interface'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.deleteAlias = false
     await uciChangesStore.getChanges()
@@ -125,6 +103,10 @@ async function deleteAlias() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

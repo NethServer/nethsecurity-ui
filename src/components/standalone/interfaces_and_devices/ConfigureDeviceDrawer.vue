@@ -5,12 +5,10 @@
 
 <script setup lang="ts">
 import {
-  generateDeviceName,
   getInterface,
   getName,
   getZoneColor,
   getZoneIcon,
-  getZoneLabel,
   isBond,
   isBridge
 } from '@/lib/standalone/network'
@@ -20,11 +18,12 @@ import {
   validateIp6Address,
   validateIpv4Mtu,
   validateIpv6Mtu,
-  validateIpv4SubnetMask,
   validateRequired,
   validateUciName,
   validateHexadecimalString,
-  validateHostname
+  validateHostname,
+  validateIp4Cidr,
+  validateIp6Cidr
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -40,7 +39,7 @@ import {
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
-import { cloneDeep, isEmpty } from 'lodash-es'
+import { cloneDeep, isEmpty, toUpper } from 'lodash-es'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -86,8 +85,6 @@ let zone = ref('lan')
 let protocol = ref('static')
 let ipv4Address = ref('')
 let ipv4AddressRef = ref()
-let ipv4SubnetMask = ref('255.255.255.0')
-let ipv4SubnetMaskRef = ref()
 let ipv4Gateway = ref('')
 let ipv4GatewayRef = ref()
 let isIpv6Enabled = ref(false)
@@ -115,7 +112,6 @@ let logicalIfaceType = ref('bridge')
 let logicalIfaceTypeRef = ref()
 let selectedDevicesForBridgeOrBond: Ref<NeComboboxOption[]> = ref([])
 let selectedDevicesForBridgeOrBondRef = ref<HTMLDivElement | null>()
-let bridgeDeviceName = ref('')
 let bondingPolicy = ref('balance-rr')
 let bondingPolicyRef = ref<HTMLDivElement | null>()
 let bondPrimaryDevice = ref('')
@@ -200,9 +196,9 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
+  notificationDetails: '',
   interfaceName: '',
   ipv4Address: '',
-  ipv4SubnetMask: '',
   ipv4Gateway: '',
   ipv6Address: '',
   ipv6Gateway: '',
@@ -226,7 +222,7 @@ const zoneOptions = computed(() => {
   return allowedZones.map((zone: any) => {
     return {
       id: zone.name,
-      label: getZoneLabel(zone.name),
+      label: toUpper(zone.name),
       description: getZoneColor(zone.name),
       icon: getZoneIcon(zone.name),
       disabled:
@@ -312,7 +308,6 @@ watch(
         zone.value = 'lan'
         protocol.value = 'static'
         ipv4Address.value = ''
-        ipv4SubnetMask.value = '255.255.255.0'
         ipv4Gateway.value = ''
         isIpv6Enabled.value = false
         ipv6Address.value = ''
@@ -338,12 +333,6 @@ watch(
         }
       } else {
         // editing configuration
-
-        // uncommitted changes such as ipv4Mtu, ipv6Mtu and ipv6Enabled are saved inside network configuration
-        const networkConfigDevice = props.networkConfig.device?.find(
-          (d: any) => d.name === props.device.name
-        )
-
         interfaceName.value = props.interfaceToEdit['.name']
         const zoneFound = props.firewallConfig.zone.find((z: any) =>
           z.network?.includes(interfaceName.value)
@@ -351,18 +340,13 @@ watch(
         zone.value = zoneFound.name
         protocol.value = props.interfaceToEdit.proto
         ipv4Address.value = props.interfaceToEdit.ipaddr || ''
-        ipv4SubnetMask.value = props.interfaceToEdit.netmask || '255.255.255.0'
         ipv4Gateway.value = props.interfaceToEdit.gateway || ''
-        isIpv6Enabled.value = networkConfigDevice?.ipv6 === '1' || false
-        ipv6Address.value = props.interfaceToEdit.ip6addr ? props.interfaceToEdit.ip6addr[0] : ''
+        isIpv6Enabled.value = props.device?.ipv6 === '1' || false
+        ipv6Address.value = props.interfaceToEdit.ip6addr ? props.interfaceToEdit.ip6addr : ''
         ipv6Gateway.value = props.interfaceToEdit.ip6gw || ''
-        isExpandedAdvancedSettings.value =
-          networkConfigDevice?.mtu ||
-          networkConfigDevice?.mtu6 ||
-          props.interfaceToEdit.clientid ||
-          props.interfaceToEdit.vendorid
-        ipv4Mtu.value = networkConfigDevice?.mtu || ''
-        ipv6Mtu.value = networkConfigDevice?.mtu6 || ''
+        isExpandedAdvancedSettings.value = false
+        ipv4Mtu.value = props.device?.mtu ? props.device?.mtu.toString() : ''
+        ipv6Mtu.value = props.device?.mtu6 || ''
         dhcpClientId.value = props.interfaceToEdit.clientid || ''
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
         pppoeUsername.value = props.interfaceToEdit.username
@@ -432,7 +416,6 @@ function closeDrawer() {
   emit('close')
 }
 
-// use composable?
 function clearErrors() {
   for (const [key, value] of Object.entries(error.value) as [string, any][]) {
     if (typeof value === 'string') {
@@ -445,370 +428,97 @@ function clearErrors() {
   }
 }
 
-async function createPhysicalDevice() {
-  const res = await ubusCall('uci', 'add', {
-    config: 'network',
-    type: 'device',
-    values: { name: props.device.name }
-  })
-  return res.data.section
-}
-
-async function createBridgeDevice() {
-  const res = await ubusCall('uci', 'add', {
-    config: 'network',
-    type: 'device',
-    values: { name: bridgeDeviceName.value, type: 'bridge' }
-  })
-  return res.data.section
-}
-
-async function createAndSetNetworkDevice() {
-  let deviceSection = null
-
-  // create the device only if needed
-  const deviceAlreadyExists = props.networkConfig.device?.find(
-    (dev: any) => dev.name === props.device.name
-  )
-
-  // create the device only if it doesn't already exists
-  if (!deviceAlreadyExists) {
-    // create device
-
-    if (props.deviceType === 'physical') {
-      deviceSection = await createPhysicalDevice()
-    } else if (logicalIfaceType.value === 'bridge') {
-      deviceSection = await createBridgeDevice()
-    }
-  } else {
-    // device already exists
-
-    const deviceFound = props.networkConfig.device?.find(
-      (dev: any) => dev.name === props.device.name
-    )
-
-    if (deviceFound) {
-      deviceSection = deviceFound['.name']
-    }
+function prepareConfigureDeviceData() {
+  // common data
+  const data: any = {
+    device_type: props.deviceType,
+    interface_name: interfaceName.value,
+    protocol: protocol.value,
+    zone: zone.value,
+    ip6_enabled: isIpv6Enabled.value
   }
 
-  // enable/disable ipv6
-
-  if (protocol.value === 'dhcpv6') {
-    isIpv6Enabled.value = true
-  } else if (protocol.value === 'dhcp') {
-    isIpv6Enabled.value = false
+  if (props.device.name) {
+    data.device_name = props.device.name
   }
 
-  const ipv6Value = isIpv6Enabled.value ? '1' : '0'
-  const values: any = { mtu: ipv4Mtu.value, ipv6: ipv6Value }
-
-  if (isIpv6Enabled.value) {
-    values.mtu6 = ipv6Mtu.value
+  if (props.interfaceToEdit) {
+    data.interface_to_edit = props.interfaceToEdit['.name']
   }
 
-  if (props.deviceType === 'logical' && logicalIfaceType.value === 'bridge') {
-    // attached devices
-    const selectedDevices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
-    values.ports = selectedDevices
+  if (ipv4Address.value) {
+    data.ip4_address = ipv4Address.value
   }
 
-  await ubusCall('uci', 'set', {
-    config: 'network',
-    section: deviceSection,
-    values: values
-  })
-}
-
-async function addInterfaceToFirewallZone() {
-  const fwZone = props.firewallConfig.zone.find((z: any) => z.name === zone.value)
-
-  if (!fwZone.network) {
-    fwZone.network = []
+  if (ipv4Gateway.value) {
+    data.ip4_gateway = ipv4Gateway.value
   }
 
-  // add the new interface to zone interfaces
-  fwZone.network.push(interfaceName.value)
-
-  if (fwZone) {
-    await ubusCall('uci', 'set', {
-      config: 'firewall',
-      section: fwZone['.name'],
-      values: {
-        network: fwZone.network
-      }
-    })
-  }
-}
-
-async function removeInterfaceFromOldFirewallZone(oldZone: any) {
-  oldZone.network = oldZone.network.filter((iface: any) => iface !== interfaceName.value)
-
-  await ubusCall('uci', 'set', {
-    config: 'firewall',
-    section: oldZone['.name'],
-    values: {
-      network: oldZone.network
-    }
-  })
-}
-
-async function setFirewallZone() {
-  if (isConfiguringFromScratch.value) {
-    addInterfaceToFirewallZone()
-  } else {
-    // editing configuration: if firewall zone has changed, remove interface from the old zone
-
-    const oldZone = props.firewallConfig.zone.find((z: any) =>
-      z.network?.includes(interfaceName.value)
-    )
-
-    if (oldZone.name !== zone.value) {
-      removeInterfaceFromOldFirewallZone(oldZone)
-      addInterfaceToFirewallZone()
-    }
-  }
-}
-
-function getBondingValues() {
-  let values: any = {}
-
-  // ipv4 address and netmask
-  values.ipaddr = ipv4Address.value
-  values.netmask = ipv4SubnetMask.value
-
-  // attached devices
-  const selectedDevices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
-  values.slaves = selectedDevices
-
-  // bonding policy
-  values.bonding_policy = bondingPolicy.value
-
-  // need to set unused options to empty string
-  const options = [
-    'packets_per_slave',
-    'primary',
-    'primary_reselect',
-    'fail_over_mac',
-    'num_grat_arp__num_unsol_na',
-    'xmit_hash_policy',
-    'min_links',
-    'ad_actor_sys_prio',
-    'ad_select',
-    'lacp_rate',
-    'lp_interval',
-    'tlb_dynamic_lb',
-    'resend_igmp'
-  ]
-  for (const option of options) {
-    values[option] = ''
+  if (ipv4Mtu.value) {
+    data.ip4_mtu = ipv4Mtu.value
   }
 
-  switch (bondingPolicy.value) {
-    case 'balance-rr':
-      values = { ...values, packets_per_slave: '1' }
-      break
-    case 'active-backup':
-      values = {
-        ...values,
-        primary: bondPrimaryDevice.value,
-        primary_reselect: 'always',
-        fail_over_mac: 'none',
-        num_grat_arp__num_unsol_na: '1'
-      }
-      break
-    case 'balance-xor':
-      values = { ...values, primary: '', xmit_hash_policy: 'layer2' }
-      break
-    case 'broadcast':
-      values = { ...values, primary: '' }
-      break
-    case '802.3ad':
-      values = {
-        ...values,
-        min_links: '0',
-        ad_actor_sys_prio: '65535',
-        ad_select: 'stable',
-        lacp_rate: 'slow',
-        xmit_hash_policy: 'layer2',
-        primary: ''
-      }
-      break
-    case 'balance-tlb':
-      values = {
-        ...values,
-        primary: bondPrimaryDevice.value,
-        primary_reselect: 'always',
-        lp_interval: '1',
-        tlb_dynamic_lb: '1',
-        xmit_hash_policy: 'layer2'
-      }
-      break
-    case 'balance-alb':
-      values = {
-        ...values,
-        primary: bondPrimaryDevice.value,
-        primary_reselect: 'always',
-        lp_interval: '1',
-        xmit_hash_policy: 'layer2',
-        resend_igmp: '1'
-      }
-      break
+  if (ipv6Address.value) {
+    data.ip6_address = ipv6Address.value
   }
-  return values
-}
 
-async function setNetworkConfiguration() {
-  let values: any = {}
+  if (ipv6Gateway.value) {
+    data.ip6_gateway = ipv6Gateway.value
+  }
+
+  if (ipv6Mtu.value) {
+    data.ip6_mtu = ipv6Mtu.value
+  }
+
+  if (props.deviceType === 'logical') {
+    data.logical_type = logicalIfaceType.value
+    data.attached_devices = selectedDevicesForBridgeOrBond.value.map((option: any) => option.id)
+  }
 
   if (props.deviceType === 'logical' && logicalIfaceType.value === 'bond') {
-    values = getBondingValues()
-  } else {
-    // non-bond interfaces
-
-    values.proto = protocol.value
-
-    if (protocol.value === 'static') {
-      // ipv4 address and netmask
-      values.ipaddr = ipv4Address.value
-      values.netmask = ipv4SubnetMask.value
-
-      // ipv6 address
-      if (ipv6Address.value && isIpv6Enabled.value) {
-        values.ip6addr = [ipv6Address.value]
-      } else {
-        values.ip6addr = ''
-      }
-
-      if (zone.value === 'wan') {
-        // gateway
-        values.gateway = ipv4Gateway.value
-
-        // ipv6 gateway
-        if (isIpv6Enabled.value) {
-          values.ip6gw = ipv6Gateway.value
-        } else {
-          values.ip6gw = ''
-        }
-      } else {
-        values.gateway = ''
-        values.ip6gw = ''
-      }
-    } else if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
-      // dhcp client id
-      values.clientid = dhcpClientId.value
-
-      if (protocol.value === 'dhcp') {
-        // dhcp vendor class
-        values.vendorid = dhcpVendorClass.value
-
-        // dhcp hostname to send
-
-        let dhcpHostname = ''
-        let deleteDhcpHostname = false
-
-        switch (dhcpHostnameToSend.value) {
-          case 'deviceHostname':
-            deleteDhcpHostname = true
-            break
-          case 'doNotSendHostname':
-            dhcpHostname = '*'
-            break
-          case 'customHostname':
-            dhcpHostname = dhcpCustomHostname.value
-            break
-        }
-
-        if (dhcpHostname) {
-          values.hostname = dhcpHostname
-        }
-
-        // delete dhcp hostname if needed
-        if (
-          !isConfiguringFromScratch.value &&
-          props.interfaceToEdit.hostname &&
-          deleteDhcpHostname
-        ) {
-          await ubusCall('uci', 'delete', {
-            config: 'network',
-            section: interfaceName.value,
-            options: ['hostname']
-          })
-        }
-      }
-
-      // reset any previous static ip address and gateway
-      values.ipaddr = ''
-      values.netmask = ''
-      values.ip6addr = ''
-      values.gateway = ''
-      values.ip6gw = ''
-    } else if (protocol.value === 'pppoe') {
-      values.username = pppoeUsername.value
-      values.password = pppoePassword.value
-    }
+    data.bonding_policy = bondingPolicy.value
+    data.bond_primary_device = bondPrimaryDevice.value
   }
 
-  // disable "force link" on red interfaces
-  if (zone.value === 'wan') {
-    values.force_link = '0'
+  if (pppoeUsername.value) {
+    data.pppoe_username = pppoeUsername.value
   }
 
-  await ubusCall('uci', 'set', {
-    config: 'network',
-    section: interfaceName.value,
-    values: values
-  })
-}
-
-async function createNetworkInterface() {
-  const values: any = {}
-
-  if (props.deviceType === 'physical') {
-    values.device = props.device.name
-    values.proto = protocol.value
-  } else {
-    if (logicalIfaceType.value === 'bridge') {
-      bridgeDeviceName.value = generateDeviceName('br', props.networkConfig)
-      values.device = bridgeDeviceName.value
-      values.proto = protocol.value
-    } else if (logicalIfaceType.value === 'bond') {
-      values.proto = 'bonding'
-    }
+  if (pppoePassword.value) {
+    data.pppoe_password = pppoePassword.value
   }
 
-  await ubusCall('uci', 'add', {
-    config: 'network',
-    type: 'interface',
-    name: interfaceName.value,
-    values
-  })
+  if (['dhcp', 'dhcpv6'].includes(protocol.value)) {
+    data.dhcp_client_id = dhcpClientId.value
+    data.dhcp_vendor_class = dhcpVendorClass.value
+    data.dhcp_hostname_to_send = dhcpHostnameToSend.value
+    data.dhcp_custom_hostname = dhcpCustomHostname.value
+  }
+
+  return data
 }
 
 async function configureDevice() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   const isValidationOk = validate()
 
   if (!isValidationOk) {
     return
   }
   loading.value.configure = true
+  const configureDeviceData = prepareConfigureDeviceData()
 
   try {
-    if (isConfiguringFromScratch.value) {
-      await createNetworkInterface()
-    }
-    await setNetworkConfiguration()
-    await setFirewallZone()
-
-    if (!(props.deviceType === 'logical' && logicalIfaceType.value === 'bond')) {
-      await createAndSetNetworkDevice()
-    }
+    await ubusCall('ns.devices', 'configure-device', configureDeviceData)
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('standalone.interfaces_and_devices.cannot_configure_device')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.configure = false
     await uciChangesStore.getChanges()
@@ -933,38 +643,12 @@ function validate() {
 
     if (ipv4Address.value) {
       // check sintax
-      let { valid, errMessage } = validateIp4Address(ipv4Address.value)
+      let { valid, errMessage } = validateIp4Cidr(ipv4Address.value)
       if (!valid) {
         error.value.ipv4Address = t(errMessage as string)
         if (isValidationOk) {
           isValidationOk = false
           focusElement(ipv4AddressRef)
-        }
-      }
-    }
-
-    // ipv4 subnet mask
-
-    if (ipv4Address.value) {
-      // check required
-      let { valid, errMessage } = validateRequired(ipv4SubnetMask.value)
-      if (!valid) {
-        error.value.ipv4SubnetMask = t(errMessage as string)
-        if (isValidationOk) {
-          isValidationOk = false
-          focusElement(ipv4SubnetMaskRef)
-        }
-      } else {
-        // check sintax
-        {
-          let { valid, errMessage } = validateIpv4SubnetMask(ipv4SubnetMask.value)
-          if (!valid) {
-            error.value.ipv4SubnetMask = t(errMessage as string)
-            if (isValidationOk) {
-              isValidationOk = false
-              focusElement(ipv4SubnetMaskRef)
-            }
-          }
         }
       }
     }
@@ -1000,9 +684,10 @@ function validate() {
 
       if (ipv6Address.value) {
         // check sintax
-        let { valid, errMessage } = validateIp6Address(ipv6Address.value)
-        if (!valid) {
-          error.value.ipv6Address = t(errMessage as string)
+        let { valid: ip6AddressValid } = validateIp6Address(ipv6Address.value)
+        let { valid: ip6CidrValid } = validateIp6Cidr(ipv6Address.value)
+        if (!ip6AddressValid && !ip6CidrValid) {
+          error.value.ipv6Address = t('error.invalid_ip_v6_address_or_cidr_v6')
           if (isValidationOk) {
             isValidationOk = false
             focusElement(ipv6AddressRef)
@@ -1190,7 +875,7 @@ function validate() {
           card
           :label="t('standalone.interfaces_and_devices.zone')"
           :options="zoneOptions"
-          gridStyle="gap-3 grid-cols-2 md:grid-cols-3"
+          gridStyle="gap-3 grid-cols-2 lg:grid-cols-3"
         />
         <!-- protocol (don't show for bond) -->
         <NeRadioSelection
@@ -1203,19 +888,11 @@ function validate() {
         <div v-show="protocol === 'static'" class="space-y-6">
           <!-- ipv4 address -->
           <NeTextInput
-            :label="t('standalone.interfaces_and_devices.ipv4_address')"
+            :label="t('standalone.interfaces_and_devices.ipv4_address_cidr')"
             v-model.trim="ipv4Address"
             :invalidMessage="t(error.ipv4Address)"
             :disabled="loading.configure"
             ref="ipv4AddressRef"
-          />
-          <!-- ipv4 subnet mask -->
-          <NeTextInput
-            :label="t('standalone.interfaces_and_devices.ipv4_subnet_mask')"
-            v-model.trim="ipv4SubnetMask"
-            :invalidMessage="t(error.ipv4SubnetMask)"
-            :disabled="loading.configure"
-            ref="ipv4SubnetMaskRef"
           />
           <!-- gateway -->
           <NeTextInput
@@ -1366,7 +1043,11 @@ function validate() {
           kind="error"
           :title="error.notificationTitle"
           :description="error.notificationDescription"
-        />
+        >
+          <template #details v-if="error.notificationDetails">
+            {{ error.notificationDetails }}
+          </template>
+        </NeInlineNotification>
       </div>
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />

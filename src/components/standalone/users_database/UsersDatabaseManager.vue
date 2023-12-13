@@ -16,6 +16,7 @@ import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
 import DeleteDatabaseModal from './DeleteDatabaseModal.vue'
 import UsersTable from './UsersTable.vue'
 import DeleteUserModal from './DeleteUserModal.vue'
+import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type User = {
@@ -175,7 +176,10 @@ onMounted(() => {
           {{ t('standalone.users_database.users_description') }}
         </p>
       </div>
-      <NeButton kind="secondary" v-if="database.type === 'local' && users.length > 0"
+      <NeButton
+        kind="secondary"
+        v-if="database.type === 'local' && users.length > 0"
+        @click="openCreateEditUserDrawer(null)"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -192,7 +196,10 @@ onMounted(() => {
         :title="t('standalone.users_database.no_users_found')"
         :icon="['fas', 'user-group']"
         :class="[database.type == 'local' ? '' : 'pb-3']"
-        ><NeButton kind="secondary" v-if="database.type === 'local'"
+        ><NeButton
+          kind="secondary"
+          v-if="database.type === 'local'"
+          @click="openCreateEditUserDrawer(null)"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"
@@ -216,6 +223,12 @@ onMounted(() => {
     :is-shown="showEditDatabaseDrawer"
     @close="showEditDatabaseDrawer = false"
     @add-edit-database="emit('database-changed')"
+  />
+  <CreateOrEditUserDrawer
+    :item-to-edit="selectedUser"
+    :is-shown="showCreateOrEditUserDrawer"
+    @close="showCreateOrEditUserDrawer = false"
+    @add-edit-user="refreshUsers"
   />
   <DeleteDatabaseModal
     :visible="showDeleteDatabaseModal"

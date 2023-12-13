@@ -113,8 +113,7 @@ async function createOrEditUser() {
     } = {
       name: username.value,
       description: displayName.value,
-      // include password only if user is new or if password is specified (when editing the user)
-      ...(!id.value || password.value ? { password: password.value } : {}),
+      password: password.value,
       database: 'main',
       extra: {}
     }

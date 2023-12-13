@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateLDAPUri,
+  validateRequired,
+  type validationOutput
+} from '@/lib/validation'
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -48,6 +53,7 @@ const validationErrorBag = ref(new MessageBag())
 const loading = ref(false)
 const isTestingConfiguration = ref(false)
 const testUserResults = ref<{ name: string; description: string }[] | null>(null)
+const isRetrievingDefaults = ref(false)
 
 // Form fields
 const isEditing = ref(false)
@@ -130,21 +136,41 @@ function runValidators(validators: validationOutput[], label: string): boolean {
   return validators.every((validator) => validator.valid)
 }
 
+function validateUri() {
+  let valid = true
+  const requiredValidator = validateRequired(ldapUri.value)
+  if (!requiredValidator.valid) {
+    validationErrorBag.value.set('uri', [requiredValidator.errMessage as string])
+    valid = false
+  } else {
+    const uriValidator = validateLDAPUri(ldapUri.value)
+    if (!uriValidator.valid) {
+      validationErrorBag.value.set('uri', [uriValidator.errMessage as string])
+      valid = false
+    }
+  }
+
+  return valid
+}
+
 function validate() {
   validationErrorBag.value.clear()
 
   const validators: [validationOutput[], string][] = [
     [[validateRequired(name.value)], 'name'],
-    [[validateRequired(ldapUri.value)], 'uri'],
     [[validateRequired(baseDn.value)], 'base_dn'],
     [[validateRequired(userDn.value)], 'user_dn'],
     [[validateRequired(userAttribute.value)], 'user_attr'],
     [[validateRequired(userCn.value)], 'user_cn']
   ]
 
-  return validators
-    .map(([validator, label]) => runValidators(validator, label))
-    .every((result) => result)
+  const validateUriResult = validateUri()
+
+  return (
+    validators
+      .map(([validator, label]) => runValidators(validator, label))
+      .every((result) => result) && validateUriResult
+  )
 }
 
 async function testDatabaseConfiguration() {
@@ -176,6 +202,32 @@ async function testDatabaseConfiguration() {
     error.value.notificationDetails = err.toString()
   } finally {
     isTestingConfiguration.value = false
+  }
+}
+
+async function getLdapDefaults() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  validationErrorBag.value.delete('uri')
+
+  if (validateUri()) {
+    try {
+      isRetrievingDefaults.value = true
+      const ldapDefaultsResponse = (
+        await ubusCall('ns.users', 'get-ldap-defaults', { uri: ldapUri.value, schema: type.value })
+      ).data.defaults
+      baseDn.value = ldapDefaultsResponse.base_dn
+      userDn.value = ldapDefaultsResponse.user_dn
+      userAttribute.value = ldapDefaultsResponse.user_attr
+      userCn.value = ldapDefaultsResponse.user_cn
+    } catch (err: any) {
+      error.value.notificationTitle = t('error.cannot_retrieve_ldap_defaults')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    } finally {
+      isRetrievingDefaults.value = false
+    }
   }
 }
 
@@ -226,6 +278,14 @@ watch(
   () => props.isShown,
   () => {
     if (props.isShown) resetForm()
+  }
+)
+
+watch(
+  () => [ldapUri.value, type.value],
+  () => {
+    //TODO: call this function only with onblur
+    if (ldapUri.value) getLdapDefaults()
   }
 )
 </script>
@@ -281,6 +341,7 @@ watch(
       <NeTextInput
         v-model="baseDn"
         :label="t('standalone.users_database.base_dn')"
+        :disabled="isRetrievingDefaults"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('base_dn'))"
       >
         <template #tooltip>
@@ -293,6 +354,7 @@ watch(
       </NeTextInput>
       <NeTextInput
         v-model="userDn"
+        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_dn'))"
       >
@@ -306,6 +368,7 @@ watch(
       </NeTextInput>
       <NeTextInput
         v-model="userAttribute"
+        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_attribute')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_attr'))"
       >
@@ -319,6 +382,7 @@ watch(
       >
       <NeTextInput
         v-model="userCn"
+        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_cn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_cn'))"
       >

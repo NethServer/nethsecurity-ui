@@ -106,14 +106,15 @@ async function createOrEditUser() {
     const payload: {
       id?: string
       name: string
-      password: string
+      password?: string
       description: string
       database: string
       extra: {}
     } = {
       name: username.value,
       description: displayName.value,
-      password: password.value,
+      // include password only if user is new or if password is specified (when editing the user)
+      ...(!id.value || password.value ? { password: password.value } : {}),
       database: 'main',
       extra: {}
     }
@@ -186,8 +187,9 @@ watch(
         :optional="true"
         :optional-label="t('common.optional')"
         :is-password="true"
+        :placeholder="id ? t('standalone.users_database.unchanged') : ''"
       />
-      <ul class="text-sm font-normal text-gray-500 dark:text-gray-400">
+      <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('standalone.users_database.password_suggestion_1') }}</li>
         <li>{{ t('standalone.users_database.password_suggestion_2') }}</li>
         <li>{{ t('standalone.users_database.password_suggestion_3') }}</li>
@@ -201,6 +203,7 @@ watch(
         :optional="true"
         :optional-label="t('common.optional')"
         :is-password="true"
+        :placeholder="id ? t('standalone.users_database.unchanged') : ''"
       />
       <hr />
       <div class="flex justify-end">

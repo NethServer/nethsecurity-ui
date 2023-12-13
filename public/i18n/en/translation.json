@@ -54,6 +54,7 @@
     "invalid_path": "Enter a valid path",
     "invalid_fqdn": "Enter a valid full qualified domain name",
     "invalid_url": "Enter a valid URL",
+    "invalid_uri": "Enter a valid URI",
     "invalid_port": "Enter an integer number between 1 and 65535",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "invalid_lease_time": "Invalid lease time",
@@ -194,7 +195,8 @@
     "cannot_delete_user": "Cannot delete user",
     "cannot_create_user": "Cannot create user",
     "cannot_edit_user": "Cannot edit user",
-    "user_already_exists": "User already exists"
+    "user_already_exists": "User already exists",
+    "cannot_retrieve_ldap_defaults": "Cannot retrieve LDAP defaults"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1194,7 +1196,8 @@
       "password_suggestion_2": "At least one uppercase (A-Z)",
       "password_suggestion_3": "At least one lowercase (a-z)",
       "password_suggestion_4": "At least one number (0-9)",
-      "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)"
+      "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
+      "unchanged": "Unchanged"
     },
     "logs": {
       "title": "Logs",

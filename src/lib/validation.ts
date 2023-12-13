@@ -363,6 +363,15 @@ export const validateURL = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateLDAPUri = (value: string): validationOutput => {
+  const re = /^(ldap|ldaps):\/\/[^ "]+$/gi
+
+  if (!value.match(re)) {
+    return { valid: false, errMessage: 'error.invalid_url' }
+  }
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

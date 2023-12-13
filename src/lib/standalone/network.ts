@@ -83,22 +83,6 @@ export function getFirewallZone(iface: any, firewallConfig: any) {
   }
 }
 
-export function getZoneLabel(zoneName: string) {
-  switch (zoneName) {
-    case 'lan':
-      return 'LAN'
-    case 'wan':
-      return 'WAN'
-    case 'guests':
-      return 'Guests'
-    case 'openvpnrw':
-      return 'OpenVPN RW'
-    //// dmz
-    default:
-      return toUpper(zoneName)
-  }
-}
-
 export function getZoneColor(zoneName: string) {
   const { t } = useI18n()
 
@@ -109,7 +93,12 @@ export function getZoneColor(zoneName: string) {
       return 'Red'
     case 'guests':
       return 'Blue'
-    //// dmz
+    case 'dmz':
+      return 'Orange'
+    case 'hotspot':
+    case 'openvpn':
+    case 'ipsec':
+      return ''
     default:
       // custom zone
       return t('standalone.interfaces_and_devices.custom_zone')
@@ -124,8 +113,15 @@ export function getZoneColorClasses(zoneName: string) {
       return 'bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-50'
     case 'guests':
       return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
+    case 'dmz':
+      return 'bg-amber-100 text-amber-700 dark:bg-amber-700 dark:text-amber-50'
+    case 'hotspot':
+      return 'bg-sky-100 text-sky-700 dark:bg-sky-700 dark:text-sky-50'
+    case 'openvpn':
+    case 'ipsec':
+      return 'bg-teal-100 text-teal-700 dark:bg-teal-700 dark:text-teal-50'
     default:
-      return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-50'
+      return 'bg-violet-100 text-violet-700 dark:bg-violet-700 dark:text-violet-50'
   }
 }
 
@@ -137,11 +133,16 @@ export function getZoneBorderColorClasses(zoneName: string) {
       return 'border-rose-700 dark:border-rose-700'
     case 'guests':
       return 'border-blue-700 dark:border-blue-700'
-    case 'openvpnrw':
+    case 'dmz':
+      return 'border-amber-700 dark:border-amber-700'
+    case 'hotspot':
+      return 'border-sky-700 dark:border-sky-700'
+    case 'openvpn':
+    case 'ipsec':
       return 'border-teal-700 dark:border-teal-700'
     default:
       // custom zone
-      return 'border-indigo-700 dark:border-indigo-700'
+      return 'border-violet-700 dark:border-violet-700'
   }
 }
 
@@ -152,8 +153,14 @@ export function getZoneIcon(zoneName: string) {
     case 'wan':
       return 'earth-americas'
     case 'guests':
-      return 'user-group'
-    //// dmz
+      return 'users'
+    case 'dmz':
+      return 'shield'
+    case 'hotspot':
+      return 'wifi'
+    case 'openvpn':
+    case 'ipsec':
+      return 'globe'
     default:
       return 'star'
   }

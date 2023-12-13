@@ -28,7 +28,8 @@ import {
   isBond,
   getName,
   getZoneBorderColorClasses,
-  type DeviceOrIface
+  type DeviceOrIface,
+  getZoneIcon
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -37,6 +38,7 @@ import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devic
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
 import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash-es'
+import { zonesSorting } from '@/stores/standalone/firewall'
 
 interface ZoneWithDeviceNames {
   name: string
@@ -105,7 +107,7 @@ const sortedZonesAndDevices = computed(() => {
     zones.push(zone)
   })
 
-  return zones
+  return zones.sort(zonesSorting)
 })
 
 onMounted(() => {
@@ -137,7 +139,9 @@ async function getFirewallConfig() {
   loading.value.firewallConfig = true
 
   try {
-    firewallConfig.value = await getUciConfig('firewall')
+    const fwConfig = await getUciConfig('firewall')
+    fwConfig.zone.sort(zonesSorting)
+    firewallConfig.value = fwConfig
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_firewall_config')
@@ -205,26 +209,15 @@ function getDeviceBorderStyle(device: any) {
   return getZoneBorderColorClasses(getFirewallZone(iface, firewallConfig.value)?.name)
 }
 
-//// add missing zones (dmz?)
 function getInterfaceIconName(device: any) {
   const iface = getInterface(device, networkConfig.value)
 
   if (!iface) {
-    return 'circle-question'
+    return 'unlock'
   }
 
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
-    case 'lan':
-      return 'location-dot'
-    case 'wan':
-      return 'earth-americas'
-    case 'guests':
-      return 'users'
-    case 'openvpnrw':
-      return 'globe'
-    default:
-      return 'star'
-  }
+  const zoneName = getFirewallZone(iface, firewallConfig.value)?.name
+  return getZoneIcon(zoneName)
 }
 
 function getIconBackgroundStyle(device: any) {
@@ -241,10 +234,15 @@ function getIconBackgroundStyle(device: any) {
       return 'bg-rose-100 dark:bg-rose-700'
     case 'guests':
       return 'bg-blue-100 dark:bg-blue-700'
-    case 'openvpnrw':
+    case 'dmz':
+      return 'bg-amber-100 dark:bg-amber-700'
+    case 'hotspot':
+      return 'bg-sky-100 dark:bg-sky-700'
+    case 'openvpn':
+    case 'ipsec':
       return 'bg-teal-100 dark:bg-teal-700'
     default:
-      return 'bg-indigo-100 dark:bg-indigo-700'
+      return 'bg-violet-100 dark:bg-violet-700'
   }
 }
 
@@ -261,10 +259,15 @@ function getIconForegroundStyle(device: any) {
       return 'text-rose-700 dark:text-rose-50'
     case 'guests':
       return 'text-blue-700 dark:text-blue-50'
-    case 'openvpnrw':
+    case 'dmz':
+      return 'text-amber-700 dark:text-amber-50'
+    case 'hotspot':
+      return 'text-sky-700 dark:text-sky-50'
+    case 'openvpn':
+    case 'ipsec':
       return 'text-teal-700 dark:text-teal-50'
     default:
-      return 'text-indigo-700 dark:text-indigo-50'
+      return 'text-violet-700 dark:text-violet-50'
   }
 }
 

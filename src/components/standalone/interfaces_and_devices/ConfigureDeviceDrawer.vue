@@ -9,7 +9,6 @@ import {
   getName,
   getZoneColor,
   getZoneIcon,
-  getZoneLabel,
   isBond,
   isBridge
 } from '@/lib/standalone/network'
@@ -40,7 +39,7 @@ import {
   getAxiosErrorMessage,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
-import { cloneDeep, isEmpty } from 'lodash-es'
+import { cloneDeep, isEmpty, toUpper } from 'lodash-es'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -223,7 +222,7 @@ const zoneOptions = computed(() => {
   return allowedZones.map((zone: any) => {
     return {
       id: zone.name,
-      label: getZoneLabel(zone.name),
+      label: toUpper(zone.name),
       description: getZoneColor(zone.name),
       icon: getZoneIcon(zone.name),
       disabled:

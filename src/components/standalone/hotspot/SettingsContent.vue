@@ -162,7 +162,6 @@ async function getListDevices() {
         id: item,
         label: item
       }))
-      configurationForm.value.networkDevice = res.data.devices[0]
     } else {
       isError.value = true
       emptyDevices.value = true
@@ -614,7 +613,7 @@ function goToInterfaces() {
             :placeholder="t('standalone.hotspot.settings.configuration_parent_hotspot_placeholder')"
             :label="t('standalone.hotspot.settings.configuration_parent_hotspot')"
             class="grow"
-            :disabled="!isLoggedIn"
+            :disabled="!isLoggedIn || activeConfiguration"
           />
           <NeTextInput
             v-model="configurationForm.unitName"
@@ -631,7 +630,7 @@ function goToInterfaces() {
               t('standalone.hotspot.settings.configuration_unit_description_placeholder')
             "
             :label="t('standalone.hotspot.settings.configuration_unit_description')"
-            :disabled="!isLoggedIn"
+            :disabled="!isLoggedIn || activeConfiguration"
             ref="unitDescriptionRef"
           />
           <NeCombobox

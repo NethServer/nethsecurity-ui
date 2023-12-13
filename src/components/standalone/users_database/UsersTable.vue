@@ -11,7 +11,10 @@ const props = defineProps<{
   isLdapDatabase: boolean
 }>()
 
-const emit = defineEmits(['user-delete', 'user-edit'])
+const emit = defineEmits<{
+  delete: [item: User]
+  edit: [item: User]
+}>()
 
 // Lists the table headers for the users.
 // The headers vary based on the database type: in the case of the local database, the password and menu headers will be included.
@@ -49,7 +52,7 @@ function getDropdownItems(item: User) {
       icon: 'trash',
       danger: true,
       action: () => {
-        emit('user-delete', item)
+        emit('delete', item)
       }
     }
   ]
@@ -76,7 +79,7 @@ function getDropdownItems(item: User) {
     </template>
     <template #menu="{ item }: { item: User }">
       <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('user-edit', item)">
+        <NeButton kind="tertiary" @click="emit('edit', item)">
           <template #prefix>
             <font-awesome-icon
               :icon="['fas', 'pen-to-square']"

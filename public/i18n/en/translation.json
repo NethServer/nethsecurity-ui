@@ -190,7 +190,8 @@
     "cannot_delete_database": "Cannot delete database",
     "cannot_edit_database": "Cannot edit database",
     "cannot_retrieve_database_details": "Cannot retrieve database details",
-    "database_test_failed": "Database test failed"
+    "database_test_failed": "Database test failed",
+    "cannot_delete_user": "Cannot delete user"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1180,7 +1181,9 @@
       "display_name": "Display name",
       "password": "Password",
       "set": "Set",
-      "not_set": "Not set"
+      "not_set": "Not set",
+      "delete_user_message": "You are about to delete user '{name}'",
+      "delete_user": "Delete user"
     },
     "logs": {
       "title": "Logs",

@@ -15,6 +15,8 @@ import { useI18n } from 'vue-i18n'
 import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
 import DeleteDatabaseModal from './DeleteDatabaseModal.vue'
 import UsersTable from './UsersTable.vue'
+import DeleteUserModal from './DeleteUserModal.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type User = {
   local: boolean
@@ -35,14 +37,29 @@ const emit = defineEmits(['database-changed'])
 
 const { t } = useI18n()
 
+const uciChangesStore = useUciPendingChangesStore()
+
 const isLoadingUsers = ref(false)
 const users = ref<User[]>([])
 const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
-const showEditDrawer = ref(false)
-const showDeleteModal = ref(false)
+const showEditDatabaseDrawer = ref(false)
+const showDeleteDatabaseModal = ref(false)
+const showCreateOrEditUserDrawer = ref(false)
+const showDeleteUserModal = ref(false)
+const selectedUser = ref<User | null>(null)
+
+function openCreateEditUserDrawer(itemToEdit: User | null) {
+  selectedUser.value = itemToEdit
+  showCreateOrEditUserDrawer.value = true
+}
+
+function openDeleteUserModal(itemToDelete: User) {
+  selectedUser.value = itemToDelete
+  showDeleteUserModal.value = true
+}
 
 async function fetchUsers() {
   try {
@@ -58,19 +75,20 @@ async function fetchUsers() {
   }
 }
 
-function refreshData() {
+async function refreshUsers() {
+  await uciChangesStore.getChanges()
   fetchUsers()
 }
 
 watch(
   () => props.database,
   () => {
-    refreshData()
+    fetchUsers()
   }
 )
 
 onMounted(() => {
-  refreshData()
+  fetchUsers()
 })
 </script>
 
@@ -118,7 +136,7 @@ onMounted(() => {
       <div class="flex flex-row items-center">
         <NeButton
           kind="tertiary"
-          @click="showEditDrawer = true"
+          @click="showEditDatabaseDrawer = true"
           class="mr-2"
           v-if="database.type === 'ldap'"
         >
@@ -141,7 +159,7 @@ onMounted(() => {
               icon: 'trash',
               danger: true,
               action: () => {
-                showDeleteModal = true
+                showDeleteDatabaseModal = true
               }
             }
           ]"
@@ -184,19 +202,31 @@ onMounted(() => {
           >{{ t('standalone.users_database.add_user') }}</NeButton
         ></NeEmptyState
       >
-      <UsersTable v-else :is-ldap-database="database.type === 'ldap'" :users="users" />
+      <UsersTable
+        v-else
+        :is-ldap-database="database.type === 'ldap'"
+        :users="users"
+        @delete="openDeleteUserModal"
+        @edit="openCreateEditUserDrawer"
+      />
     </template>
   </div>
   <CreateOrEditDatabaseDrawer
     :item-to-edit="database"
-    :is-shown="showEditDrawer"
-    @close="showEditDrawer = false"
+    :is-shown="showEditDatabaseDrawer"
+    @close="showEditDatabaseDrawer = false"
     @add-edit-database="emit('database-changed')"
   />
   <DeleteDatabaseModal
-    :visible="showDeleteModal"
+    :visible="showDeleteDatabaseModal"
     :item-to-delete="database"
-    @close="showDeleteModal = false"
+    @close="showDeleteDatabaseModal = false"
     @database-deleted="emit('database-changed')"
+  />
+  <DeleteUserModal
+    :visible="showDeleteUserModal"
+    :item-to-delete="selectedUser"
+    @close="showDeleteUserModal = false"
+    @user-deleted="refreshUsers"
   />
 </template>

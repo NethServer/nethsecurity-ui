@@ -216,7 +216,7 @@ let error = ref({
 
 const zoneOptions = computed(() => {
   const allowedZones = props.firewallConfig.zone.filter(
-    (zone: any) => !['openvpnrw', 'dedalo'].includes(zone.name)
+    (zone: any) => !['hotspot', 'openvpn', 'ipsec'].includes(zone.name)
   )
 
   return allowedZones.map((zone: any) => {

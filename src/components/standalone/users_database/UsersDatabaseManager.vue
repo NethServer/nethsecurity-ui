@@ -7,7 +7,8 @@ import {
   NeButton,
   NeEmptyState,
   NeSkeleton,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref, watch } from 'vue'
@@ -63,6 +64,8 @@ function openDeleteUserModal(itemToDelete: User) {
 }
 
 async function fetchUsers() {
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   try {
     isLoadingUsers.value = true
     users.value = (
@@ -189,8 +192,19 @@ onMounted(() => {
         >{{ t('standalone.users_database.add_user') }}</NeButton
       >
     </div>
+    <NeInlineNotification
+      v-if="error.notificationDescription"
+      :title="t('error.cannot_retrieve_users')"
+      :description="error.notificationDescription"
+      class="mb-6"
+      kind="error"
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton v-if="isLoadingUsers" :lines="10" />
-    <template v-else>
+    <template v-else-if="!error.notificationDescription">
       <NeEmptyState
         v-if="users.length == 0"
         :title="t('standalone.users_database.no_users_found')"

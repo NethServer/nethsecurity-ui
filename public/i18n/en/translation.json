@@ -196,7 +196,8 @@
     "cannot_create_user": "Cannot create user",
     "cannot_edit_user": "Cannot edit user",
     "user_already_exists": "User already exists",
-    "cannot_retrieve_ldap_defaults": "Cannot retrieve LDAP defaults"
+    "cannot_retrieve_ldap_defaults": "Cannot retrieve LDAP defaults",
+    "cannot_retrieve_users": "Cannot retrieve users"
   },
   "ne_text_input": {
     "show_password": "Show password",

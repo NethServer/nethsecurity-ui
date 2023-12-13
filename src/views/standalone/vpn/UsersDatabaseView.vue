@@ -40,12 +40,7 @@ const { tabs, selectedTab } = useTabs([])
 async function fetchDatabases() {
   try {
     loading.value = true
-    databases.value = (await ubusCall('ns.users', 'list-databases')).data.databases.map(
-      (x: { id: string; type: string; description: string }) => ({
-        ...x,
-        initialized: true
-      })
-    )
+    databases.value = (await ubusCall('ns.users', 'list-databases')).data.databases
     tabs.value = databases.value.map((db) => ({
       name: db.name,
       label: db.type === 'local' ? t('standalone.users_database.local_database') : db.name

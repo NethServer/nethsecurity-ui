@@ -61,6 +61,9 @@ function getDropdownItems(item: User) {
 
 <template>
   <NeTable :data="users" :headers="tableHeaders" :readonly="isLdapDatabase">
+    <template #description="{ item }: { item: User }">
+      <p>{{ item.description ? item.description : '-' }}</p>
+    </template>
     <template #password="{ item }: { item: User }">
       <div :class="['flex', 'flex-row', 'items-center']">
         <font-awesome-icon

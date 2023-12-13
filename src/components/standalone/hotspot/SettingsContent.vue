@@ -162,7 +162,6 @@ async function getListDevices() {
         id: item,
         label: item
       }))
-      configurationForm.value.networkDevice = res.data.devices[0]
     } else {
       isError.value = true
       emptyDevices.value = true

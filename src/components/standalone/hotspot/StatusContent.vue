@@ -145,7 +145,7 @@ async function loadListSessions() {
               <span v-if="item.status === 'pass'">
                 {{ t('standalone.hotspot.status.authenticated') }}
               </span>
-              <span v-if="item.status !== 'pass'">
+              <span v-else>
                 {{ t('standalone.hotspot.status.not_authenticated') }}
               </span>
             </div>

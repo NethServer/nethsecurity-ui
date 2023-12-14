@@ -3,6 +3,7 @@ import {
   MessageBag,
   validateLDAPUri,
   validateRequired,
+  validateUciName,
   type validationOutput
 } from '@/lib/validation'
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
@@ -158,7 +159,7 @@ function validate() {
   validationErrorBag.value.clear()
 
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(name.value)], 'name'],
+    [[validateRequired(name.value), validateUciName(name.value)], 'name'],
     [[validateRequired(baseDn.value)], 'base_dn'],
     [[validateRequired(userDn.value)], 'user_dn'],
     [[validateRequired(userAttribute.value)], 'user_attr'],

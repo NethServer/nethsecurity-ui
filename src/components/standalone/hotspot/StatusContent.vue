@@ -35,9 +35,7 @@ onMounted(async () => {
 async function getConfiguration() {
   try {
     let res = await ubusCall('ns.dedalo', 'get-configuration', {})
-    if (res?.data?.configuration?.connected) {
-      activeConfiguration.value = res.data.configuration.hotspot_id != ''
-    }
+    activeConfiguration.value = res.data.configuration.hotspot_id != ''
   } catch (exception: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -138,16 +136,16 @@ async function loadListSessions() {
           </template>
           <template #login_status="{ item }">
             <div class="flex items-center gap-x-2">
-              <template v-if="item.status && item.status === 'authenticated'">
+              <template v-if="item.status && item.status === 'pass'">
                 <FontAwesomeIcon :icon="faCircleCheck" />
               </template>
               <template v-else>
                 <FontAwesomeIcon :icon="faCircleXmark" />
               </template>
-              <span v-if="item.status === 'authenticated'">
+              <span v-if="item.status === 'pass'">
                 {{ t('standalone.hotspot.status.authenticated') }}
               </span>
-              <span v-if="item.status === 'not authenticated'">
+              <span v-else>
                 {{ t('standalone.hotspot.status.not_authenticated') }}
               </span>
             </div>

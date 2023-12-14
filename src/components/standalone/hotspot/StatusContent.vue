@@ -136,16 +136,16 @@ async function loadListSessions() {
           </template>
           <template #login_status="{ item }">
             <div class="flex items-center gap-x-2">
-              <template v-if="item.status && item.status === 'authenticated'">
+              <template v-if="item.status && item.status === 'pass'">
                 <FontAwesomeIcon :icon="faCircleCheck" />
               </template>
               <template v-else>
                 <FontAwesomeIcon :icon="faCircleXmark" />
               </template>
-              <span v-if="item.status === 'authenticated'">
+              <span v-if="item.status === 'pass'">
                 {{ t('standalone.hotspot.status.authenticated') }}
               </span>
-              <span v-if="item.status === 'not authenticated'">
+              <span v-if="item.status !== 'pass'">
                 {{ t('standalone.hotspot.status.not_authenticated') }}
               </span>
             </div>

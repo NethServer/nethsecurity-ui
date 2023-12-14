@@ -256,7 +256,7 @@ async function createOrEditDatabase() {
       }
 
       await ubusCall('ns.users', requestType, payload)
-      emit('add-edit-database')
+      emit('add-edit-database', name.value)
       close()
     }
   } catch (err: any) {

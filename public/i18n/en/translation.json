@@ -154,6 +154,7 @@
     "cannot_retrieve_devices": "Cannot retrieve devices",
     "cannot_retrieve_applications": "Cannot retrieve applications",
     "zone_already_exists": "Zone already exists",
+    "db_already_exists": "Database already exists",
     "cannot_delete_rule": "Cannote delete rule",
     "upload_file_migration": "Uploaded file is not a valid migration archive",
     "cannot_migrate": "Can't execute migration",
@@ -1198,7 +1199,9 @@
       "password_suggestion_3": "At least one lowercase (a-z)",
       "password_suggestion_4": "At least one number (0-9)",
       "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
-      "unchanged": "Unchanged"
+      "unchanged": "Unchanged",
+      "remote_database_added": "Remote database added",
+      "remote_database_added_description": "{name} added successfully"
     },
     "logs": {
       "title": "Logs",

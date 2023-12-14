@@ -15,6 +15,7 @@ import { useI18n } from 'vue-i18n'
 import UsersDatabaseManager from '@/components/standalone/users_database/UsersDatabaseManager.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditDatabaseDrawer from '@/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 export type UserDatabase = {
   name: string
@@ -26,6 +27,7 @@ export type UserDatabase = {
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const notificationsStore = useNotificationsStore()
 
 const loading = ref(true)
 const databases = ref<UserDatabase[]>([])
@@ -105,6 +107,18 @@ onMounted(() => fetchDatabases())
     :item-to-edit="null"
     :is-shown="showCreateDrawer"
     @close="showCreateDrawer = false"
-    @add-edit-database="reloadDatabases"
+    @add-edit-database="
+      (name) => {
+        notificationsStore.addNotification({
+          id: `add_db_${name}`,
+          kind: 'success',
+          title: t('standalone.users_database.remote_database_added'),
+          description: t('standalone.users_database.remote_database_added_description', {
+            name: name
+          })
+        })
+        reloadDatabases()
+      }
+    "
   />
 </template>

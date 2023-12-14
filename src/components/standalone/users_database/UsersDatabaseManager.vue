@@ -113,7 +113,7 @@ onMounted(() => {
         <font-awesome-icon
           :icon="['fas', 'database']"
           aria-hidden="true"
-          :class="`mb-2 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600 md:mb-0 md:mr-5`"
+          :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
         />
         <div>
           <p>
@@ -132,7 +132,7 @@ onMounted(() => {
         </div>
         <p
           v-if="database.type === 'ldap'"
-          class="ml-8 border-l border-gray-800 py-3 pl-8 dark:border-gray-600"
+          class="ml-4 border-l border-gray-800 py-3 pl-4 dark:border-gray-600 md:ml-8 md:pl-8"
         >
           <strong class="text-sm">URI:</strong><span class="ml-2 text-sm">{{ database.uri }}</span>
         </p>

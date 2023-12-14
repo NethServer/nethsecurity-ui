@@ -35,9 +35,7 @@ onMounted(async () => {
 async function getConfiguration() {
   try {
     let res = await ubusCall('ns.dedalo', 'get-configuration', {})
-    if (res?.data?.configuration?.connected) {
-      activeConfiguration.value = res.data.configuration.hotspot_id != ''
-    }
+    activeConfiguration.value = res.data.configuration.hotspot_id != ''
   } catch (exception: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(exception))

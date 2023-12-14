@@ -136,16 +136,17 @@ function runValidators(validators: validationOutput[], label: string): boolean {
   return validators.every((validator) => validator.valid)
 }
 
-function validateUri() {
+function validateUri(setErrorMessage: boolean) {
   let valid = true
   const requiredValidator = validateRequired(ldapUri.value)
   if (!requiredValidator.valid) {
-    validationErrorBag.value.set('uri', [requiredValidator.errMessage as string])
+    if (setErrorMessage)
+      validationErrorBag.value.set('uri', [requiredValidator.errMessage as string])
     valid = false
   } else {
     const uriValidator = validateLDAPUri(ldapUri.value)
     if (!uriValidator.valid) {
-      validationErrorBag.value.set('uri', [uriValidator.errMessage as string])
+      if (setErrorMessage) validationErrorBag.value.set('uri', [uriValidator.errMessage as string])
       valid = false
     }
   }
@@ -164,7 +165,7 @@ function validate() {
     [[validateRequired(userCn.value)], 'user_cn']
   ]
 
-  const validateUriResult = validateUri()
+  const validateUriResult = validateUri(true)
 
   return (
     validators
@@ -211,7 +212,7 @@ async function getLdapDefaults() {
   error.value.notificationDetails = ''
   validationErrorBag.value.delete('uri')
 
-  if (validateUri()) {
+  if (validateUri(false)) {
     try {
       isRetrievingDefaults.value = true
       const ldapDefaultsResponse = (

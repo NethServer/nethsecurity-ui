@@ -202,7 +202,7 @@ function toggleExpandBond(deviceOrIface: any) {
 }
 
 function getDeviceBorderStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (!iface) {
     return 'border-gray-500 dark:border-gray-500'
@@ -212,7 +212,7 @@ function getDeviceBorderStyle(device: any) {
 }
 
 function getInterfaceIconName(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (!iface) {
     return 'unlock'
@@ -223,7 +223,7 @@ function getInterfaceIconName(device: any) {
 }
 
 function getIconBackgroundStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (!iface) {
     return 'bg-gray-100 dark:bg-gray-500'
@@ -249,7 +249,7 @@ function getIconBackgroundStyle(device: any) {
 }
 
 function getIconForegroundStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (!iface) {
     return 'text-gray-500 dark:text-gray-50'
@@ -274,7 +274,7 @@ function getIconForegroundStyle(device: any) {
 }
 
 function getConfiguredDeviceKebabMenuItems(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   return [
     {
@@ -322,7 +322,7 @@ function showDeleteDeviceModal(device: any) {
 }
 
 function showDeleteAliasModal(alias: any, device: any) {
-  const parentIface = getInterface(device, networkConfig.value)
+  const parentIface = getInterface(device)
   currentAlias.value = alias
   currentParentInterface.value = parentIface
   isShownDeleteAliasModal.value = true
@@ -342,7 +342,7 @@ function getAliasKebabMenuItems(alias: any, device: any) {
 }
 
 function showCreateAliasInterfaceDrawer(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = null
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -352,7 +352,7 @@ function showCreateAliasInterfaceDrawer(device: any) {
 }
 
 function showEditAliasInterfaceDrawer(alias: any, device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = alias
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -367,7 +367,7 @@ function hideCreateOrEditAliasInterfaceDrawer() {
 
 function showConfigureDeviceDrawer(deviceOrIface: any) {
   currentDevice.value = deviceOrIface
-  const iface = getInterface(deviceOrIface, networkConfig.value)
+  const iface = getInterface(deviceOrIface)
 
   if (iface) {
     interfaceToEdit.value = iface
@@ -429,7 +429,7 @@ function getProtocolLabel(protocol: string) {
 
 function getIpv4Addresses(device: any) {
   const ipv4Addresses = []
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   const proto = getProtocolLabel(iface?.proto)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
@@ -462,7 +462,7 @@ function getIpv6Addresses(device: any) {
   }
 
   const ipv6Addresses = []
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   const proto = getProtocolLabel(iface?.proto)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
@@ -518,7 +518,7 @@ function getDeviceMac(device: any) {
 }
 
 function getIpv4Gateway(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (iface?.gateway) {
     return iface.gateway
@@ -528,7 +528,7 @@ function getIpv4Gateway(device: any) {
 }
 
 function getIpv6Gateway(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (iface?.ip6gw) {
     return iface.ip6gw
@@ -655,7 +655,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       v-if="isDeviceConfigurable(device)"
                       class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
                     >
-                      <template v-if="getInterface(device, networkConfig)">
+                      <template v-if="getInterface(device)">
                         <!-- actions for configured devices -->
                         <NeButton
                           kind="tertiary"
@@ -694,7 +694,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       </NeButton>
                       <!-- actions for unconfigured vlan devices -->
                       <NeDropdown
-                        v-if="isVlan(device) && !getInterface(device, networkConfig)"
+                        v-if="isVlan(device) && !getInterface(device)"
                         :items="getUnconfiguredVlanKebabMenuItems(device)"
                         :alignToRight="true"
                       />
@@ -719,8 +719,8 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                             />
                           </div>
                           <div>
-                            <div v-if="getInterface(device, networkConfig)" class="font-semibold">
-                              {{ getInterface(device, networkConfig)['.name'] }}
+                            <div v-if="getInterface(device)" class="font-semibold">
+                              {{ getInterface(device)['.name'] }}
                             </div>
                             <div>{{ device.name }}</div>
                           </div>
@@ -887,7 +887,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                         v-if="isDeviceConfigurable(device)"
                         class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
-                        <template v-if="getInterface(device, networkConfig)">
+                        <template v-if="getInterface(device)">
                           <!-- actions for configured devices -->
                           <NeButton
                             kind="tertiary"
@@ -926,7 +926,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                         </NeButton>
                         <!-- actions for unconfigured vlan devices -->
                         <NeDropdown
-                          v-if="isVlan(device) && !getInterface(device, networkConfig)"
+                          v-if="isVlan(device) && !getInterface(device)"
                           :items="getUnconfiguredVlanKebabMenuItems(device)"
                           :alignToRight="true"
                         />

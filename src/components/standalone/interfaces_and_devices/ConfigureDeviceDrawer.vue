@@ -22,8 +22,7 @@ import {
   validateUciName,
   validateHexadecimalString,
   validateHostname,
-  validateIp4Cidr,
-  validateIp6Cidr
+  validateIp4Cidr
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -256,7 +255,7 @@ const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
       !isBridge(dev) &&
       !isBond(dev) &&
       // hide configured devices
-      !getInterface(dev, props.networkConfig)
+      !getInterface(dev)
   )
 
   return filteredDevices.map((dev: any) => {
@@ -684,10 +683,9 @@ function validate() {
 
       if (ipv6Address.value) {
         // check sintax
-        let { valid: ip6AddressValid } = validateIp6Address(ipv6Address.value)
-        let { valid: ip6CidrValid } = validateIp6Cidr(ipv6Address.value)
-        if (!ip6AddressValid && !ip6CidrValid) {
-          error.value.ipv6Address = t('error.invalid_ip_v6_address_or_cidr_v6')
+        let { valid, errMessage } = validateIp6Address(ipv6Address.value)
+        if (!valid) {
+          error.value.ipv6Address = t(errMessage as string)
           if (isValidationOk) {
             isValidationOk = false
             focusElement(ipv6AddressRef)

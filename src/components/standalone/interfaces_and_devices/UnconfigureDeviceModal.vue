@@ -16,10 +16,6 @@ const props = defineProps({
   device: {
     type: Object,
     required: true
-  },
-  networkConfig: {
-    type: Object,
-    required: true
   }
 })
 
@@ -39,7 +35,7 @@ let error = ref({
 })
 
 const iface = computed(() => {
-  return getInterface(props.device, props.networkConfig)
+  return getInterface(props.device)
 })
 
 function closeModal() {

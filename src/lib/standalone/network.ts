@@ -27,6 +27,7 @@ export interface DeviceOrIface {
   speed?: number
   zone?: string
   hotspot?: HotspotConfig
+  iface?: any
 }
 
 interface Ipv4Address {
@@ -58,31 +59,21 @@ interface HotspotConfig {
   unit_name: string
   unit_description: string
   network: string
-  interface: string
+  interface: string // it's actually a device name
 }
 
-export function getInterface(deviceOrIface: DeviceOrIface, networkConfig: any) {
+//// remove networkConfig param?
+export function getInterface(deviceOrIface: DeviceOrIface) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
     return deviceOrIface
   }
 
-  const iface = networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
-
-  if (iface) {
-    return iface
-  }
-
-  // check if it's a hotspot device
-
-  if (isHotspot(deviceOrIface)) {
-    // return dedalo interface
-    return networkConfig.interface?.find((iface: any) => iface['.name'] === 'dedalo')
-  }
+  return deviceOrIface.iface
 }
 
 export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
-  const iface = getInterface(device, networkConfig)
+  const iface = getInterface(device)
 
   if (!iface) {
     return

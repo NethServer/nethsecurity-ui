@@ -29,7 +29,9 @@ import {
   getName,
   getZoneBorderColorClasses,
   type DeviceOrIface,
-  getZoneIcon
+  getZoneIcon,
+  isIpsec,
+  isHotspot
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -566,6 +568,15 @@ function getTxBytes(device: any) {
     return '-'
   }
 }
+
+function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
+  //// TODO add openvpn
+  if (isIpsec(deviceOrIface) || isHotspot(deviceOrIface)) {
+    return false
+  } else {
+    return true
+  }
+}
 </script>
 
 <template>
@@ -640,7 +651,10 @@ function getTxBytes(device: any) {
                     ]"
                   >
                     <!-- edit button and overflow menu for smaller screens -->
-                    <div class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden">
+                    <div
+                      v-if="isDeviceConfigurable(device)"
+                      class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
+                    >
                       <template v-if="getInterface(device, networkConfig)">
                         <!-- actions for configured devices -->
                         <NeButton
@@ -870,6 +884,7 @@ function getTxBytes(device: any) {
                       </div>
                       <!-- fifth column -->
                       <div
+                        v-if="isDeviceConfigurable(device)"
                         class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
                         <template v-if="getInterface(device, networkConfig)">

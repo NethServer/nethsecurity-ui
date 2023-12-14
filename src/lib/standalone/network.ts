@@ -2,7 +2,6 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/firewall'
-import { toUpper } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 
 export interface DeviceOrIface {
@@ -26,6 +25,8 @@ export interface DeviceOrIface {
   packets_per_slave?: string
   slaves?: string[]
   speed?: number
+  zone?: string
+  hotspot?: HotspotConfig
 }
 
 interface Ipv4Address {
@@ -52,13 +53,32 @@ interface Stats {
   tx_packets: number
 }
 
+interface HotspotConfig {
+  hotspot_id: string
+  unit_name: string
+  unit_description: string
+  network: string
+  interface: string
+}
+
 export function getInterface(deviceOrIface: DeviceOrIface, networkConfig: any) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
     return deviceOrIface
   }
 
-  return networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
+  const iface = networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
+
+  if (iface) {
+    return iface
+  }
+
+  // check if it's a hotspot device
+
+  if (isHotspot(deviceOrIface)) {
+    // return dedalo interface
+    return networkConfig.interface?.find((iface: any) => iface['.name'] === 'dedalo')
+  }
 }
 
 export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
@@ -184,6 +204,14 @@ export function isBridge(device: DeviceOrIface) {
 
 export function isBond(iface: DeviceOrIface) {
   return iface?.proto === 'bonding'
+}
+
+export function isIpsec(device: DeviceOrIface) {
+  return device.zone === 'ipsec'
+}
+
+export function isHotspot(device: DeviceOrIface) {
+  return device.hotspot
 }
 
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {

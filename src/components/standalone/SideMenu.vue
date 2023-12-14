@@ -138,6 +138,10 @@ const navigation: Ref<MenuItem[]> = ref([
     icon: 'globe',
     children: [
       {
+        name: t('standalone.openvpn_rw.title'),
+        to: 'vpn/openvpn-rw'
+      },
+      {
         name: t('standalone.openvpn_tunnel.title'),
         to: 'vpn/openvpn-tunnel'
       },

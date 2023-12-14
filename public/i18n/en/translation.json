@@ -1028,6 +1028,9 @@
     "vpn": {
       "title": "VPN"
     },
+    "openvpn_rw": {
+      "title": "OpenVPN Road Warrior"
+    },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",
       "tabs": {

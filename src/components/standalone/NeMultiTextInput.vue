@@ -17,7 +17,7 @@ export type KeyValueItem = {
 
 const props = withDefaults(
   defineProps<{
-    useKeyCombobox: boolean
+    useKeyCombobox?: boolean
     modelValue: string[] | KeyValueItem[]
     addItemLabel: string
     invalidMessages?: string[]

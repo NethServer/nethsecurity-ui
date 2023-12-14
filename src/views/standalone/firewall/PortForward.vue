@@ -57,7 +57,8 @@ const uciChangesStore = useUciPendingChangesStore()
 const loading = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const portForwards = ref<Record<string, PortForward[]>>({})
 const filter = ref('')
@@ -89,7 +90,8 @@ const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
 function cleanError() {
   error.value = {
     notificationTitle: '',
-    notificationDescription: ''
+    notificationDescription: '',
+    notificationDetails: ''
   }
 }
 
@@ -103,6 +105,7 @@ async function fetchPortForwards() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.generic_error')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -123,6 +126,7 @@ async function toggleEnablePortForward(item: PortForward) {
       item.enabled ? 'error.cannot_disable_port_forward' : 'error.cannot_enable_port_forward'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -148,6 +152,7 @@ async function duplicatePortForward(item: PortForward) {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_duplicate_port_forward')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -206,7 +211,11 @@ onMounted(() => {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       v-if="error.notificationDescription"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState

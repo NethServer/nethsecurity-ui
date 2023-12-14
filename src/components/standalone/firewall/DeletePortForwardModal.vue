@@ -12,23 +12,27 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'port-forward-deleted'])
 
-const { visible, itemToDelete } = toRefs(props)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const isDeleting = ref(false)
 const { t } = useI18n()
 
 async function deletePortForward() {
-  if (itemToDelete.value) {
+  if (props.itemToDelete) {
     try {
-      error.value = ''
+      error.value.notificationDescription = ''
+      error.value.notificationDetails = ''
       isDeleting.value = true
       await ubusCall('ns.redirects', 'delete-redirect', {
-        id: itemToDelete.value.id
+        id: props.itemToDelete.id
       })
       emit('port-forward-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     } finally {
       isDeleting.value = false
     }
@@ -36,7 +40,8 @@ async function deletePortForward() {
 }
 
 function close() {
-  error.value = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   emit('close')
 }
 </script>
@@ -58,10 +63,13 @@ function close() {
       })
     }}
     <NeInlineNotification
-      v-if="error"
+      v-if="error.notificationDescription"
       kind="error"
       :title="t('error.cannot_delete_port_forward')"
-      :description="error"
-    />
+      :description="error.notificationDescription"
+      ><template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
   </NeModal>
 </template>

@@ -47,7 +47,8 @@ const loading = ref(true)
 const isSubmittingRequest = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 const restrictIPValidationErrors = ref<string[]>([])
@@ -129,6 +130,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_protocols')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
     return
   }
 
@@ -142,6 +144,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_zones')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
     return
   }
 
@@ -159,6 +162,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_wan_interfaces')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
     return
   }
   loading.value = false
@@ -171,6 +175,7 @@ watchEffect(() => {
 function close() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   validationErrorBag.value.clear()
   restrictIPValidationErrors.value = []
   showAdvancedSettings.value = false
@@ -254,6 +259,7 @@ function validate(): boolean {
 async function createOrEditPortForward() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   const isEditing = id.value != ''
 
   try {
@@ -288,6 +294,7 @@ async function createOrEditPortForward() {
       : t('error.cannot_create_port_forward')
 
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isSubmittingRequest.value = false
   }
@@ -315,7 +322,11 @@ async function createOrEditPortForward() {
       "
       class="mb-6"
       kind="error"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
     <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
       <div>
@@ -434,6 +445,7 @@ async function createOrEditPortForward() {
           :options="supportedReflectionZones"
           v-model="reflectionZones"
           :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
+          :multiple="true"
         />
       </template>
       <hr />

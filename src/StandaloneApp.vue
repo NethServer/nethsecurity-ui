@@ -9,7 +9,7 @@ import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from './stores/standalone/uciPendingChanges'
-import axios from 'axios'
+import axios, { CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitManagementStore } from './stores/controller/unitManagement'
 import { useRoute } from 'vue-router'
@@ -123,7 +123,8 @@ function configureAxios() {
         }
       } else {
         // show error notification
-        notificationsStore.createNotificationFromAxiosError(error)
+        if (!(error instanceof CanceledError))
+          notificationsStore.createNotificationFromAxiosError(error)
       }
       return Promise.reject(error)
     }

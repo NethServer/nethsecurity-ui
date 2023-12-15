@@ -19,6 +19,7 @@ import UsersTable from './UsersTable.vue'
 import DeleteUserModal from './DeleteUserModal.vue'
 import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { CanceledError } from 'axios'
 
 export type User = {
   local: boolean
@@ -52,6 +53,7 @@ const showDeleteDatabaseModal = ref(false)
 const showCreateOrEditUserDrawer = ref(false)
 const showDeleteUserModal = ref(false)
 const selectedUser = ref<User | null>(null)
+const usersRequestAbortController = ref<AbortController>(new AbortController())
 
 function openCreateEditUserDrawer(itemToEdit: User | null) {
   selectedUser.value = itemToEdit
@@ -69,11 +71,18 @@ async function fetchUsers() {
   try {
     isLoadingUsers.value = true
     users.value = (
-      await ubusCall('ns.users', 'list-users', { database: props.database.name })
+      await ubusCall(
+        'ns.users',
+        'list-users',
+        { database: props.database.name },
+        { signal: usersRequestAbortController.value.signal }
+      )
     ).data.users
   } catch (err: any) {
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    if (!(err instanceof CanceledError)) {
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
   } finally {
     isLoadingUsers.value = false
   }
@@ -87,6 +96,8 @@ async function refreshUsers() {
 watch(
   () => props.database,
   () => {
+    usersRequestAbortController.value.abort()
+    usersRequestAbortController.value = new AbortController()
     fetchUsers()
   }
 )

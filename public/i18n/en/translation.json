@@ -438,7 +438,7 @@
     "update": {
       "title": "Update",
       "bug_security_fixes": "Bug & security fixes",
-      "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages. The system will be updated automatically but you can check and install them at any time.",
+      "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages.",
       "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
       "system_update": "System update",

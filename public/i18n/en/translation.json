@@ -811,7 +811,8 @@
         "downloaded": "Downloaded",
         "uploaded": "Uploaded",
         "authenticated": "Authenticated",
-        "not_authenticated": "Not authenticated"
+        "not_authenticated": "Not authenticated",
+        "temporary": "Temporary"
       },
       "settings": {
         "login": "Login",

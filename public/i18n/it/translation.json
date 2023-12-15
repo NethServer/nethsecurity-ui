@@ -920,7 +920,8 @@
         "no_hotspot_configuration_found": "Nessuna configurazione hotspot trovata",
         "session_key": "Chiave di sessione",
         "empty_sessions_description": "Le sessioni dei client collegati a questa unità appariranno qui.",
-        "session_time": "Tempo di sessione"
+        "session_time": "Tempo di sessione",
+        "temporary": "Temporaneo"
       },
       "title": "Hotspot",
       "tabs": {

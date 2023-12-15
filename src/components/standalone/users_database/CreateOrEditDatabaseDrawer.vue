@@ -21,6 +21,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { watchDebounced } from '@vueuse/core'
 
 type LDAPDatabasePayload = {
   name: string
@@ -284,11 +285,18 @@ watch(
 )
 
 watch(
-  () => [ldapUri.value, type.value],
+  () => type.value,
   () => {
-    //TODO: call this function only with onblur
     if (ldapUri.value) getLdapDefaults()
   }
+)
+
+watchDebounced(
+  () => ldapUri.value,
+  () => {
+    if (ldapUri.value) getLdapDefaults()
+  },
+  { debounce: 500 }
 )
 </script>
 

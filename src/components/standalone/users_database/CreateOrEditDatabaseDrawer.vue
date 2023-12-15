@@ -21,7 +21,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { watchDebounced } from '@vueuse/core'
+import { debounce } from 'lodash-es'
 
 type LDAPDatabasePayload = {
   name: string
@@ -234,6 +234,10 @@ async function getLdapDefaults() {
   }
 }
 
+const debouncedGetLdapDefaults = debounce(() => {
+  getLdapDefaults()
+}, 500)
+
 async function createOrEditDatabase() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
@@ -283,21 +287,6 @@ watch(
     if (props.isShown) resetForm()
   }
 )
-
-watch(
-  () => type.value,
-  () => {
-    if (ldapUri.value) getLdapDefaults()
-  }
-)
-
-watchDebounced(
-  () => ldapUri.value,
-  () => {
-    if (ldapUri.value) getLdapDefaults()
-  },
-  { debounce: 500 }
-)
 </script>
 
 <template>
@@ -336,6 +325,11 @@ watchDebounced(
       />
       <NeTextInput
         v-model="ldapUri"
+        @update:model-value="
+          (_) => {
+            debouncedGetLdapDefaults()
+          }
+        "
         :label="t('standalone.users_database.ldap_uri')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('uri'))"
         placeholder="ldaps://192.168.100.234"

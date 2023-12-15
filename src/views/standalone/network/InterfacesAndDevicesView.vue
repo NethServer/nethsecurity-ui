@@ -414,23 +414,9 @@ function hideCreateVlanDeviceDrawer() {
   isShownCreateVlanDeviceDrawer.value = false
 }
 
-function getProtocolLabel(protocol: string) {
-  switch (protocol) {
-    case 'static':
-      return `(${t('standalone.interfaces_and_devices.protocol_static')})`
-    case 'dhcp':
-      return '(DHCP)'
-    case 'dhcpv6':
-      return '(DHCPv6)'
-    default:
-      return ''
-  }
-}
-
 function getIpv4Addresses(device: any) {
   const ipv4Addresses = []
   const iface = getInterface(device)
-  const proto = getProtocolLabel(iface?.proto)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
@@ -439,7 +425,7 @@ function getIpv4Addresses(device: any) {
     for (const ipv4 of device.ipaddrs) {
       // skip alias addresses
       if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(ipv4.address)) {
-        ipv4Addresses.push({ address: ipv4.address, proto })
+        ipv4Addresses.push({ address: ipv4.address })
       }
     }
   }
@@ -449,7 +435,7 @@ function getIpv4Addresses(device: any) {
   if (iface?.ipaddr) {
     // skip alias addresses
     if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(iface.ipaddr)) {
-      ipv4Addresses.push({ address: iface.ipaddr, proto })
+      ipv4Addresses.push({ address: iface.ipaddr })
     }
   }
   return uniqWith(ipv4Addresses, isEqual)
@@ -463,7 +449,6 @@ function getIpv6Addresses(device: any) {
 
   const ipv6Addresses = []
   const iface = getInterface(device)
-  const proto = getProtocolLabel(iface?.proto)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
@@ -472,7 +457,7 @@ function getIpv6Addresses(device: any) {
     for (const ipv6 of device.ip6addrs) {
       // skip alias addresses
       if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(ipv6.address)) {
-        ipv6Addresses.push({ address: ipv6.address, proto })
+        ipv6Addresses.push({ address: ipv6.address })
       }
     }
   }
@@ -489,7 +474,7 @@ function getIpv6Addresses(device: any) {
 
     // skip alias addresses
     if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(addr)) {
-      ipv6Addresses.push({ address: addr, proto })
+      ipv6Addresses.push({ address: addr })
     }
   }
   return uniqWith(ipv6Addresses, isEqual)
@@ -813,7 +798,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
                             <div>
                               <span class="font-medium">IPv4: </span>
-                              <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
+                              <span>{{ ipv4.address }}</span>
                             </div>
                           </div>
                           <div v-if="getIpv4Gateway(device)">
@@ -827,7 +812,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
                             <div>
                               <span class="font-medium">IPv6: </span>
-                              <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
+                              <span>{{ ipv6.address }}</span>
                             </div>
                           </div>
                           <div v-if="getIpv6Gateway(device)">

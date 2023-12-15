@@ -169,6 +169,7 @@ watch(
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="username"
+        :disabled="Boolean(id)"
         :label="t('standalone.users_database.username')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />

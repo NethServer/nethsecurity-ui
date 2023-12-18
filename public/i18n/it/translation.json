@@ -173,7 +173,14 @@
     "cannot_migrate": "Impossibile eseguire la migrazione",
     "cannot_perform_factory_reset": "Impossibile eseguire il ripristino di fabbrica",
     "invalid_path": "Inserisci un percorso valido.",
-    "cannot_retrieve_proxies": "Impossibile recuperare le rotte"
+    "cannot_retrieve_proxies": "Impossibile recuperare le rotte",
+    "cannot_create_user": "Impossibile creare il tunnel",
+    "cannot_retrieve_database_details": "Impossibile recuperare i dettagli dell'interfaccia",
+    "cannot_retrieve_users": "Impossibile recuperare le rotte",
+    "user_not_found": "Utente non trovato",
+    "user_already_exists": "L'utente esiste già",
+    "cannot_delete_user": "Impossibile eliminare il tunnel",
+    "cannot_retrieve_ldap_defaults": "Impossibile recuperare le impostazioni predefinite"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1143,6 +1150,35 @@
       "destination_url": "Destinazione %@",
       "description": "Descrizione",
       "certificate": "Certificato"
+    },
+    "users_database": {
+      "set": "Imposta",
+      "ldap_uri_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "username": "Nome Utente",
+      "verify_tls_certificate": "Verifica certificato TLS",
+      "test": "Prova",
+      "user_dn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "not_set": "Non impostata",
+      "unchanged": "Invariato",
+      "edit_user": "Modifica Utente",
+      "users_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "add_user": "Aggiungi utente",
+      "user_password": "Password utente",
+      "local_database": "Blocca il database",
+      "display_name": "Nome visualizzato",
+      "remote_database_added_description": "Dominio aggiunto con successo",
+      "base_dn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "no_users_found": "Nessuna copertina trovata",
+      "confirm_user_password": "Conferma la nuova password",
+      "delete_user": "Elimina utente",
+      "type": "Tipo",
+      "configure": "Configura",
+      "database_name": "Nome del database",
+      "user_attribute_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "users": "Utenti",
+      "password": "Password",
+      "user_cn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
     }
   },
   "controller": {

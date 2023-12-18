@@ -45,8 +45,9 @@ async function getConfiguration() {
 async function loadListSessions() {
   try {
     const res = await ubusCall('ns.dedalo', 'list-sessions')
-    if (res.data && res.data.sessions && res.data.sessions.length)
+    if (res.data && res.data.sessions && res.data.sessions.length) {
       hotspotSession.value = res.data.sessions
+    }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_hotspot_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

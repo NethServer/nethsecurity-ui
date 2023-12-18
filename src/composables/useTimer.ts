@@ -33,8 +33,12 @@ export function useTimer({ duration, progressStep, onProgressStep, onTimerFinish
   }
 
   function clearTimer() {
-    if (timeTimeoutRef.value) clearTimeout(timeTimeoutRef.value)
-    if (timerIntervalRef.value) clearInterval(timerIntervalRef.value)
+    if (timeTimeoutRef.value) {
+      clearTimeout(timeTimeoutRef.value)
+    }
+    if (timerIntervalRef.value) {
+      clearInterval(timerIntervalRef.value)
+    }
     currentProgress.value = 0
   }
 

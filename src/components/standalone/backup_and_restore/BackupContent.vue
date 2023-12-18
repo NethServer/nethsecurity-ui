@@ -90,7 +90,9 @@ async function getBackups() {
   if (isEnterprise.value) {
     try {
       let res = await ubusCall('ns.backup', 'registered-list-backups')
-      if (res?.data?.values?.length) listBackups.value = res.data.values
+      if (res?.data?.values?.length) {
+        listBackups.value = res.data.values
+      }
     } catch (exception: any) {
       errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
       errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))

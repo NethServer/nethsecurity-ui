@@ -139,8 +139,9 @@ async function getListParents() {
         id: String(item.id),
         label: item.name
       }))
-      if (!configurationForm.value.parentHotspot)
+      if (!configurationForm.value.parentHotspot) {
         configurationForm.value.parentHotspot = String(res.data.parents[0].id)
+      }
     }
   } catch (exception: any) {
     isError.value = true
@@ -257,7 +258,9 @@ function validateLogin(): boolean {
     }
   }
 
-  if (!isValidationOk && !isFocusInput) focusElement(passwordRef)
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(passwordRef)
+  }
 
   return isValidationOk
 }
@@ -381,8 +384,9 @@ function validateConfiguration(): boolean {
     if (
       !isNaN(Number(configurationForm.value.dhcpLimit)) &&
       Number(configurationForm.value.dhcpLimit) >= 0
-    )
+    ) {
       validDhcpLimit = true
+    }
 
     if (!validDhcpLimit) {
       error.value.dhcpLimit = t('error.invalid_negative_integer')
@@ -396,7 +400,9 @@ function validateConfiguration(): boolean {
     }
   }
 
-  if (!isValidationOk && !isFocusInput) focusElement(dhcpLimitRef)
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(dhcpLimitRef)
+  }
 
   return isValidationOk
 }
@@ -486,11 +492,15 @@ function getDhcpRange(skipDhcpLimit: boolean) {
     ubusCall('ns.dedalo', 'get-dhcp-range', payload)
       .then((response) => {
         if (response.data) {
-          if (response.data.start) configurationForm.value.dhcpRangeStart = response.data.start
-          if (response.data.max_entries)
+          if (response.data.start) {
+            configurationForm.value.dhcpRangeStart = response.data.start
+          }
+          if (response.data.max_entries) {
             configurationForm.value.maxClientsAllowed = response.data.max_entries
-          if (!skipDhcpLimit && response.data.end)
+          }
+          if (!skipDhcpLimit && response.data.end) {
             configurationForm.value.dhcpLimit = response.data.end
+          }
         }
       })
       .catch((exception: AxiosError) => {

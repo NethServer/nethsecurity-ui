@@ -58,8 +58,9 @@ const supportedProtocols = ref<NeComboboxOption[]>([])
 const supportedReflectionZones = ref<NeComboboxOption[]>([])
 const wanInterfaces = ref<NeComboboxOption[]>([])
 const supportedDestinationZones = computed<NeComboboxOption[]>(() => {
-  if (firewallConfig.loading) return []
-  else {
+  if (firewallConfig.loading) {
+    return []
+  } else {
     return [
       { id: 'any', label: t('standalone.port_forward.any_zone') },
       ...firewallConfig.zones
@@ -282,7 +283,9 @@ async function createOrEditPortForward() {
         reflection_zone: reflectionZones.value.map((reflectionZone) => reflectionZone.id)
       }
 
-      if (isEditing) payload.id = id.value
+      if (isEditing) {
+        payload.id = id.value
+      }
 
       await ubusCall('ns.redirects', requestType, payload)
       emit('add-edit-port-forward')

@@ -168,7 +168,9 @@ function validate() {
     }
   }
 
-  if (!isValidationOk && !isFocusInput) focusElement(zonesRef)
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(zonesRef)
+  }
 
   for (let [index, item] of form.value.bypassSource.entries()) {
     if (item) {

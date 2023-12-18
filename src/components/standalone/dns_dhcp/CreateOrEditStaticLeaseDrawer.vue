@@ -100,7 +100,9 @@ async function createOrEditStaticLease() {
         macaddr: macAddress.value
       }
 
-      if (isEditing) payload.lease = id.value
+      if (isEditing) {
+        payload.lease = id.value
+      }
 
       await ubusCall('ns.dhcp', requestType, payload)
       emit('add-edit-lease')

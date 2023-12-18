@@ -53,10 +53,10 @@ const showEditDatabaseDrawer = ref(false)
 const showDeleteDatabaseModal = ref(false)
 const showCreateOrEditUserDrawer = ref(false)
 const showDeleteUserModal = ref(false)
-const selectedUser = ref<User | null>(null)
+const selectedUser = ref<User>()
 const usersRequestAbortController = ref<AbortController>(new AbortController())
 
-function openCreateEditUserDrawer(itemToEdit: User | null) {
+function openCreateEditUserDrawer(itemToEdit?: User) {
   selectedUser.value = itemToEdit
   showCreateOrEditUserDrawer.value = true
 }
@@ -198,7 +198,7 @@ onMounted(() => {
       <NeButton
         kind="secondary"
         v-if="database.type === 'local' && users.length > 0"
-        @click="openCreateEditUserDrawer(null)"
+        @click="openCreateEditUserDrawer()"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -229,7 +229,7 @@ onMounted(() => {
         ><NeButton
           kind="secondary"
           v-if="database.type === 'local'"
-          @click="openCreateEditUserDrawer(null)"
+          @click="openCreateEditUserDrawer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"

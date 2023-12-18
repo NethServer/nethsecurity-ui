@@ -106,7 +106,6 @@ onMounted(() => fetchDatabases())
     />
   </div>
   <CreateOrEditDatabaseDrawer
-    :item-to-edit="null"
     :is-shown="showCreateDrawer"
     @close="showCreateDrawer = false"
     @add-edit-database="

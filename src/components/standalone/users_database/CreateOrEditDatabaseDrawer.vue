@@ -38,7 +38,7 @@ type LDAPDatabasePayload = {
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit: UserDatabase | null
+  itemToEdit?: UserDatabase
 }>()
 
 const { t } = useI18n()

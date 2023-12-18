@@ -8,7 +8,7 @@ import type { User } from './UsersDatabaseManager.vue'
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: User | null
+  itemToDelete?: User
 }>()
 
 const emit = defineEmits(['close', 'user-deleted'])

@@ -19,7 +19,7 @@ import type { User } from './UsersDatabaseManager.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit: User | null
+  itemToEdit?: User
 }>()
 
 const { t } = useI18n()

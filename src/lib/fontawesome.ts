@@ -71,7 +71,8 @@ import {
   faWifi,
   faWrench as fasWrench,
   faXmark as fasXmark,
-  faBell as fasBell
+  faBell as fasBell,
+  faDatabase
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -208,4 +209,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faKey)
   library.add(fasBell)
   library.add(farBell)
+  library.add(faDatabase)
 }

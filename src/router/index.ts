@@ -116,6 +116,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/vpn/IPsecTunnelView.vue')
   },
   {
+    path: 'vpn/users-database',
+    name: 'UsersDatabase',
+    component: () => import('../views/standalone/vpn/UsersDatabaseView.vue')
+  },
+  {
     path: 'logs',
     name: 'Logs',
     component: () => import('../views/standalone/LogsView.vue')

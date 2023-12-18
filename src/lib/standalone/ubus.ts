@@ -1,7 +1,7 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import axios from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { MessageBag } from '../validation'
@@ -16,7 +16,12 @@ export class ValidationError extends Error {
   }
 }
 
-export const ubusCall = async (path: string, method: any, payload: any = {}) => {
+export const ubusCall = async (
+  path: string,
+  method: any,
+  payload: any = {},
+  config?: AxiosRequestConfig
+) => {
   const loginStore = useLoginStore()
 
   try {
@@ -26,7 +31,8 @@ export const ubusCall = async (path: string, method: any, payload: any = {}) => 
       {
         headers: {
           Authorization: `Bearer ${loginStore.token}`
-        }
+        },
+        ...config
       }
     )
     return res.data

@@ -39,9 +39,12 @@ const showCreateDrawer = ref(false)
 
 const { tabs, selectedTab } = useTabs([])
 
-async function fetchDatabases() {
+async function fetchDatabases(resetSelectedTab: boolean = false) {
   try {
     loading.value = true
+    if (resetSelectedTab) {
+      selectedTab.value = ''
+    }
     databases.value = (await ubusCall('ns.users', 'list-databases')).data.databases
     tabs.value = databases.value.map((db) => ({
       name: db.name,
@@ -58,9 +61,9 @@ async function fetchDatabases() {
   }
 }
 
-async function reloadDatabases() {
+async function reloadDatabases(resetSelectedTab: boolean = false) {
   await uciChangesStore.getChanges()
-  await fetchDatabases()
+  await fetchDatabases(resetSelectedTab)
 }
 
 onMounted(() => fetchDatabases())
@@ -102,7 +105,8 @@ onMounted(() => fetchDatabases())
     />
     <UsersDatabaseManager
       :database="(databases.find(x => x.name === selectedTab) as UserDatabase)"
-      @database-changed="reloadDatabases"
+      @database-changed="reloadDatabases()"
+      @database-deleted="reloadDatabases(true)"
     />
   </div>
   <CreateOrEditDatabaseDrawer

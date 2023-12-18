@@ -37,7 +37,7 @@ const props = defineProps<{
   database: UserDatabase
 }>()
 
-const emit = defineEmits(['database-changed'])
+const emit = defineEmits(['database-changed', 'database-deleted'])
 
 const { t } = useI18n()
 
@@ -264,7 +264,7 @@ onMounted(() => {
     :visible="showDeleteDatabaseModal"
     :item-to-delete="database"
     @close="showDeleteDatabaseModal = false"
-    @database-deleted="emit('database-changed')"
+    @database-deleted="emit('database-deleted')"
   />
   <DeleteUserModal
     :visible="showDeleteUserModal"

@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NeButton, NeDropdown } from '@nethserver/vue-tailwind-lib'
+import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 
 const { t } = useI18n()
+
+defineProps<{
+  serverData: RWServer
+  connectedClients: number
+}>()
 
 const emit = defineEmits(['delete-server', 'edit-server'])
 </script>
@@ -33,13 +39,13 @@ const emit = defineEmits(['delete-server', 'edit-server'])
                 aria-hidden="true"
               />
               <p>
-                {{ true ? t('common.enabled') : t('common.disabled') }}
+                {{ serverData.enabled === '1' ? t('common.enabled') : t('common.disabled') }}
               </p>
             </div>
           </div>
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.authentication_mode') }}:</p>
-            <p>Username and password</p>
+            <p>{{ t(`standalone.openvpn_rw.${serverData.ns_auth_mode}`) }}</p>
           </div>
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.database') }}:</p>
@@ -87,7 +93,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
         />
         <p class="mx-2">Connected clients</p>
       </div>
-      <p class="ml-4 text-3xl">2</p>
+      <p class="ml-4 text-3xl">{{ connectedClients }}</p>
     </div>
   </div>
 </template>

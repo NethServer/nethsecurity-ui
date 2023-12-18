@@ -201,7 +201,8 @@
     "user_already_exists": "User already exists",
     "cannot_retrieve_ldap_defaults": "Cannot retrieve LDAP defaults",
     "cannot_retrieve_users": "Cannot retrieve users",
-    "cannot_retrieve_zones_for_device_configuration": "Cannot retrieve zones for device configuration"
+    "cannot_retrieve_zones_for_device_configuration": "Cannot retrieve zones for device configuration",
+    "cannot_retrieve_rw_server": "Cannot retrieve RW server"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1069,7 +1070,11 @@
       "status": "Status",
       "connected_clients": "Connected clients",
       "roadwarrior_accounts": "RoadWarrior accounts",
-      "roadwarrior_accounts_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      "roadwarrior_accounts_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "username_password": "Username and password",
+      "certificate": "Certificate",
+      "username_password_certificate": "Username, password and certificate",
+      "username_otp_certificate": "Username and OTP certificate"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

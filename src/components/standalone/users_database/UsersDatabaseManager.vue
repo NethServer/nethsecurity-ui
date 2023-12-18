@@ -20,6 +20,7 @@ import DeleteUserModal from './DeleteUserModal.vue'
 import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { CanceledError } from 'axios'
+import { onUnmounted } from 'vue'
 
 export type User = {
   local: boolean
@@ -101,6 +102,10 @@ watch(
     fetchUsers()
   }
 )
+
+onUnmounted(() => {
+  usersRequestAbortController.value.abort()
+})
 
 onMounted(() => {
   fetchUsers()

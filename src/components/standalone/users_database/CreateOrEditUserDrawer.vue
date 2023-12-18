@@ -118,7 +118,9 @@ async function createOrEditUser() {
       extra: {}
     }
 
-    if (id.value) payload.id = id.value
+    if (id.value) {
+      payload.id = id.value
+    }
 
     if (validate()) {
       await ubusCall('ns.users', requestType, payload)
@@ -143,7 +145,9 @@ async function createOrEditUser() {
 watch(
   () => props.isShown,
   () => {
-    if (props.isShown) resetForm()
+    if (props.isShown) {
+      resetForm()
+    }
   }
 )
 </script>

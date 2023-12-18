@@ -123,8 +123,9 @@ function configureAxios() {
         }
       } else {
         // show error notification
-        if (!(error instanceof CanceledError))
+        if (!(error instanceof CanceledError)) {
           notificationsStore.createNotificationFromAxiosError(error)
+        }
       }
       return Promise.reject(error)
     }

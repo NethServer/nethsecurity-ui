@@ -887,7 +887,7 @@ function validate() {
           :options="protocolOptions"
         />
         <!-- fields for static protocol -->
-        <div v-show="protocol === 'static'" class="space-y-6">
+        <div v-show="['static', 'bonding'].includes(protocol)" class="space-y-6">
           <!-- ipv4 address -->
           <NeTextInput
             :label="t('standalone.interfaces_and_devices.ipv4_address_cidr')"

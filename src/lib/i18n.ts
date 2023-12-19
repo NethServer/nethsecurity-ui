@@ -5,11 +5,18 @@ export async function loadLocaleMessages(setLocaleMessage: any, lang: string): P
     const response = await fetch(`/i18n/${lang}/translation.json`)
     const messages = await response.json()
     setLocaleMessage(lang, messages)
+
+    if (lang !== 'en') {
+      // load english as fallback for missing strings
+      const response = await fetch(`/i18n/en/translation.json`)
+      const messages = await response.json()
+      setLocaleMessage('en', messages)
+    }
     return lang
   } catch (error) {
     console.warn(`Cannot import ${lang} language messages`, error)
 
-    // fallback to english
+    // language not supported, fallback to english
     if (lang !== 'en') {
       console.warn(`Falling back to English`)
       return loadLocaleMessages(setLocaleMessage, 'en')

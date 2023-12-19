@@ -1,7 +1,7 @@
 {
   "common": {
-    "save": "Save",
-    "cancel": "Cancel",
+    "save": "Salva",
+    "cancel": "Annulla",
     "show_password": "Mostra password",
     "hide_password": "Nascondi password",
     "search": "Ricerca",

@@ -29,7 +29,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
       <div
         class="ml-4 mr-10 grow border-l border-gray-800 py-3 pl-4 text-sm dark:border-gray-600 md:ml-8 md:pl-8"
       >
-        <div class="flex max-w-xl flex-col justify-between gap-x-4 sm:flex-row">
+        <div class="flex max-w-xl flex-col justify-between gap-y-4 sm:flex-row sm:gap-x-4">
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}:</p>
             <div :class="['flex', 'flex-row', 'items-center']">
@@ -49,7 +49,13 @@ const emit = defineEmits(['delete-server', 'edit-server'])
           </div>
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.database') }}:</p>
-            <p>Local Database</p>
+            <p>
+              {{
+                serverData.ns_user_db === 'main'
+                  ? t('standalone.openvpn_rw.local_database')
+                  : serverData.ns_user_db
+              }}
+            </p>
           </div>
         </div>
       </div>

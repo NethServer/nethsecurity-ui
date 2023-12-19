@@ -1040,7 +1040,7 @@
       "server_name": "Server name",
       "user_database": "User database",
       "create_accounts_for_all_users": "Create account for all users",
-      "create_accounts_for_all_users_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "create_accounts_for_all_users_tooltip": "All accounts created will have a certificate valid for 3650 days.",
       "authentication_mode": "Authentication mode",
       "mode": "Mode",
       "routed": "Routed",
@@ -1075,7 +1075,8 @@
       "username_password": "Username and password",
       "certificate": "Certificate",
       "username_password_certificate": "Username, password and certificate",
-      "username_otp_certificate": "Username and OTP certificate"
+      "username_otp_certificate": "Username and OTP certificate",
+      "local_database": "Local database"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

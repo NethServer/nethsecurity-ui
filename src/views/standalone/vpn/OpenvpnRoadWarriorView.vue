@@ -36,6 +36,7 @@ export type RWServer = {
   ns_dhcp_options: { option: string; value: string }[]
   ns_pool_start: string[]
   ns_pool_end: string[]
+  ns_user_db: string
 }
 
 export type RWUser = {

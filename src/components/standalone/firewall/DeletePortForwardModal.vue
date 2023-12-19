@@ -2,7 +2,7 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{

@@ -115,10 +115,10 @@ function goToMultiwan() {
       :icon="['fas', 'circle-info']"
     />
     <!-- three-column spacer (only from 3xl screen) -->
-    <div class="col-span-3 hidden 3xl:block"></div>
-    <WanTrafficCard class="sm:col-span-2 xl:row-span-2" />
+    <div class="col-span-2 hidden 3xl:block"></div>
+    <WanTrafficCard class="sm:col-span-2 3xl:col-span-3" />
     <!-- realtime traffic -->
-    <RealTimeTrafficCard class="sm:col-span-2 xl:row-span-2" />
+    <RealTimeTrafficCard class="sm:col-span-2 3xl:col-span-3" />
     <!-- top hosts -->
     <NeCard
       :title="t('standalone.dashboard.today_top_hosts')"

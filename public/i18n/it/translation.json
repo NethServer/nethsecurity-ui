@@ -325,7 +325,7 @@
     "report": {
       "title": "Report",
       "ping_latency_monitor": {
-        "add_host": "Aggiungi post",
+        "add_host": "Aggiungi host",
         "host_to_monitor": "Host per monitorare",
         "description": "Impostare lo strumento di monitoraggio per valutare il tempo di andata e ritorno e la perdita di pacchetti inviando messaggi ping agli host di rete. Questo strumento viene utilizzato per il monitoraggio della qualità della connettività di rete. È possibile aggiungere uno o più host per monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
       },
@@ -982,7 +982,7 @@
       "local_networks": "Rete locale",
       "tunnel_name": "Nome del tunnel",
       "import": "Importa",
-      "delete_tunnel_message": "Stai per eliminare il tunnel '{name} '",
+      "delete_tunnel_message": "Stai per eliminare il tunnel '{name}'",
       "tabs": {
         "client_tunnel": "Tunnel cliente",
         "server_tunnel": "Tunnel del server"
@@ -1039,7 +1039,7 @@
       "not_connected": "Non connesso",
       "add_client_tunnel": "Aggiungere tunnel client",
       "udp": "UDP",
-      "public_endpoints": "Pubblicazioni",
+      "public_endpoints": "Endpoint pubblici",
       "enforce_minimum_tls_version": "Fornire una versione TLS minima",
       "extra_remote_networks_tooltip": "Quando la VPN è attiva, questi indirizzi di rete verranno aggiunti come percorsi statici indipendentemente dalla configurazione ricevuta dal server OpenVPN.",
       "connected": "Connesso",
@@ -1146,7 +1146,7 @@
       "path": "Percorso",
       "type": "Tipo",
       "domain": "Dominio",
-      "destination_url": "Destinazione %@",
+      "destination_url": "URL di destinazione",
       "description": "Descrizione",
       "certificate": "Certificato"
     },
@@ -1216,11 +1216,20 @@
     "dropzone_label": "Trascina un file o clicca per eseguire l'upload"
   },
   "notifications": {
-    "title": "Notificazioni",
+    "title": "Notifiche",
     "response": "Risposta",
-    "show_details": "Mostra i dettagli",
+    "show_details": "Mostra dettagli",
     "request": "Richiesta",
     "status": "Stato",
-    "copy_curl": "Copia _URL"
+    "copy_curl": "Copia cURL",
+    "no_notification": "Nessuna notifica",
+    "api_call_failed": "Chiamata API fallita",
+    "no_payload": "Nessun payload",
+    "request_body": "Contenuto della richiesta",
+    "ubus_call_failed": "Chiamata Ubus fallita",
+    "axios_message": "Messaggio Axios",
+    "copy_command": "Copia comando",
+    "response_message": "Messaggio della risposta",
+    "request_url": "URL della richiesta"
   }
 }

@@ -326,7 +326,7 @@
       "title": "Report",
       "ping_latency_monitor": {
         "add_host": "Aggiungi host",
-        "host_to_monitor": "Host per monitorare",
+        "host_to_monitor": "Host da monitorare",
         "description": "Impostare lo strumento di monitoraggio per valutare il tempo di andata e ritorno e la perdita di pacchetti inviando messaggi ping agli host di rete. Questo strumento viene utilizzato per il monitoraggio della qualità della connettività di rete. È possibile aggiungere uno o più host per monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
       },
       "tabs": {

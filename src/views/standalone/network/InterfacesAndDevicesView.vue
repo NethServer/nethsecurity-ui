@@ -34,7 +34,8 @@ import {
   isHotspot,
   isOpenVpn,
   type ZoneWithDevices,
-  getUiZoneName
+  getUiZoneName,
+  type ZoneWithDeviceNames
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -478,7 +479,6 @@ function isDeviceUp(device: any) {
   if (isVlan(device)) {
     device = getVlanParent(device)
   }
-
   return device?.up
 }
 
@@ -491,7 +491,7 @@ function getDeviceMac(device: any) {
   if (device?.mac) {
     return toUpper(device.mac)
   } else {
-    return '-'
+    return null
   }
 }
 
@@ -530,7 +530,7 @@ function getRxBytes(device: any) {
   if (device?.stats?.rx_bytes) {
     return byteFormat1000(device.stats.rx_bytes)
   } else {
-    return '-'
+    return null
   }
 }
 
@@ -543,7 +543,7 @@ function getTxBytes(device: any) {
   if (device?.stats?.tx_bytes) {
     return byteFormat1000(device.stats.tx_bytes)
   } else {
-    return '-'
+    return null
   }
 }
 
@@ -673,7 +673,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                     >
                       <!-- first column -->
                       <div
-                        class="flex flex-wrap items-start gap-8 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
+                        class="flex flex-wrap items-start gap-4 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
                       >
                         <div class="flex items-center">
                           <div
@@ -771,18 +771,24 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                         </div>
                         <!-- vlan badge -->
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
+                        <!-- openvpn tunnel badge -->
+                        <NeBadge v-if="isOpenVpn(device)" size="sm" kind="primary" text="OVPN" />
+                        <!-- ipsec tunnel badge -->
+                        <NeBadge v-if="isIpsec(device)" size="sm" kind="primary" text="IPSEC" />
                       </div>
                       <!-- second column -->
                       <div class="space-y-2">
-                        <div>
+                        <div v-if="getDeviceMac(device)">
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
                         <div>
-                          <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
-                            <div>
-                              <span class="font-medium">IPv4: </span>
-                              <span>{{ ipv4.address }}</span>
+                          <div v-if="getIpv4Addresses(device)?.length">
+                            <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
+                              <div>
+                                <span class="font-medium">IPv4: </span>
+                                <span>{{ ipv4.address }}</span>
+                              </div>
                             </div>
                           </div>
                           <div v-if="getIpv4Gateway(device)">
@@ -793,10 +799,12 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           </div>
                         </div>
                         <div>
-                          <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
-                            <div>
-                              <span class="font-medium">IPv6: </span>
-                              <span>{{ ipv6.address }}</span>
+                          <div v-if="getIpv6Addresses(device)?.length">
+                            <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
+                              <div>
+                                <span class="font-medium">IPv6: </span>
+                                <span>{{ ipv6.address }}</span>
+                              </div>
                             </div>
                           </div>
                           <div v-if="getIpv6Gateway(device)">
@@ -809,16 +817,16 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       </div>
                       <!-- third column -->
                       <div>
-                        <div>
+                        <div v-if="getRxBytes(device)">
                           <span class="font-medium">RX: </span>
-                          <span>{{ getRxBytes(device) }}</span>
+                          <span>{{ getRxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.rx_packets">
                             ({{ device.stats.rx_packets }} pkts)</span
                           >
                         </div>
-                        <div>
+                        <div v-if="getTxBytes(device)">
                           <span class="font-medium">TX: </span>
-                          <span>{{ getTxBytes(device) }}</span>
+                          <span>{{ getTxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.tx_packets">
                             ({{ device.stats.tx_packets || '-' }} pkts)</span
                           >
@@ -839,14 +847,12 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                                 : t('standalone.interfaces_and_devices.down')
                             }}</span>
                           </div>
-                          <div>
+                          <div v-if="device.speed && device.speed !== -1">
                             <span class="font-medium"
                               >{{ t('standalone.interfaces_and_devices.speed') }}:
                             </span>
                             <span>
-                              {{
-                                device.speed && device.speed !== -1 ? `${device.speed} Mbps` : '-'
-                              }}
+                              {{ `${device.speed} Mbps` }}
                             </span>
                           </div>
                         </div>

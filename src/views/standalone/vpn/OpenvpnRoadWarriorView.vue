@@ -15,6 +15,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { computed } from 'vue'
+import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 
 export type RWServer = {
   proto: string
@@ -71,12 +72,16 @@ const error = ref({
   notificationDetails: ''
 })
 
+const showDeleteServerModal = ref(false)
+
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
 
 async function fetchUsers() {
   try {
     loading.value = true
-    users.value = await ubusCall('ns.ovpnrw', 'list-users')
+    users.value = (
+      await ubusCall('ns.ovpnrw', 'list-users', { instance: instanceName.value })
+    ).data.users
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_users')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -151,8 +156,19 @@ onMounted(() => {
         >{{ t('standalone.openvpn_rw.create_server') }}</NeButton
       ></NeEmptyState
     >
-    <RWServerDetails v-else :connected-clients="connectedClients" :server-data="instanceData" />
+    <RWServerDetails
+      v-else
+      :connected-clients="connectedClients"
+      :server-data="instanceData"
+      @delete-server="showDeleteServerModal = true"
+    />
 
     <RWAccountsManager v-if="instanceData" />
   </div>
+  <DeleteRWServerModal
+    :visible="showDeleteServerModal"
+    :instance-name="instanceName"
+    @close="showDeleteServerModal = false"
+    @server-deleted="reloadServer"
+  />
 </template>

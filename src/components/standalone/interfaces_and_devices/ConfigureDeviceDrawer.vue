@@ -22,8 +22,7 @@ import {
   validateUciName,
   validateHexadecimalString,
   validateHostname,
-  validateIp4Cidr,
-  validateIp6Cidr
+  validateIp4Cidr
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -216,7 +215,7 @@ let error = ref({
 
 const zoneOptions = computed(() => {
   const allowedZones = props.firewallConfig.zone.filter(
-    (zone: any) => !['openvpnrw', 'dedalo'].includes(zone.name)
+    (zone: any) => !['hotspot', 'openvpn', 'ipsec'].includes(zone.name)
   )
 
   return allowedZones.map((zone: any) => {
@@ -256,7 +255,7 @@ const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
       !isBridge(dev) &&
       !isBond(dev) &&
       // hide configured devices
-      !getInterface(dev, props.networkConfig)
+      !getInterface(dev)
   )
 
   return filteredDevices.map((dev: any) => {
@@ -684,10 +683,9 @@ function validate() {
 
       if (ipv6Address.value) {
         // check sintax
-        let { valid: ip6AddressValid } = validateIp6Address(ipv6Address.value)
-        let { valid: ip6CidrValid } = validateIp6Cidr(ipv6Address.value)
-        if (!ip6AddressValid && !ip6CidrValid) {
-          error.value.ipv6Address = t('error.invalid_ip_v6_address_or_cidr_v6')
+        let { valid, errMessage } = validateIp6Address(ipv6Address.value)
+        if (!valid) {
+          error.value.ipv6Address = t(errMessage as string)
           if (isValidationOk) {
             isValidationOk = false
             focusElement(ipv6AddressRef)
@@ -825,7 +823,11 @@ function validate() {
             v-model="selectedDevicesForBridgeOrBond"
             :options="bridgeOrBondDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
-            :placeholder="t('standalone.interfaces_and_devices.select_devices_for_bond')"
+            :placeholder="
+              logicalIfaceType === 'bond'
+                ? t('standalone.interfaces_and_devices.select_devices_for_bond')
+                : t('standalone.interfaces_and_devices.select_devices_for_bridge')
+            "
             :invalidMessage="error.selectedDevicesForBridgeOrBond"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
@@ -885,7 +887,7 @@ function validate() {
           :options="protocolOptions"
         />
         <!-- fields for static protocol -->
-        <div v-show="protocol === 'static'" class="space-y-6">
+        <div v-show="['static', 'bonding'].includes(protocol)" class="space-y-6">
           <!-- ipv4 address -->
           <NeTextInput
             :label="t('standalone.interfaces_and_devices.ipv4_address_cidr')"

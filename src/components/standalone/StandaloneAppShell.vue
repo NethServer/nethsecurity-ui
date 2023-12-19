@@ -312,13 +312,7 @@ function openNotificationsDrawer() {
                   />
                 </template>
                 <span>
-                  {{
-                    t(
-                      'standalone.uci_changes.unsaved_changes',
-                      { count: uciChangesStore.numChanges },
-                      uciChangesStore.numChanges
-                    )
-                  }}
+                  {{ t('standalone.uci_changes.unsaved_changes') }}
                 </span>
                 <span
                   v-if="isChangesButtonFlashing"

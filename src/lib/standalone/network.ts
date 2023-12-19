@@ -2,7 +2,6 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/firewall'
-import { toUpper } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 
 export interface DeviceOrIface {
@@ -26,6 +25,20 @@ export interface DeviceOrIface {
   packets_per_slave?: string
   slaves?: string[]
   speed?: number
+  zone?: string
+  hotspot?: HotspotConfig
+  iface?: any
+  openvpn?: any
+}
+
+export interface ZoneWithDevices {
+  name: string
+  devices: DeviceOrIface[]
+}
+
+export interface ZoneWithDeviceNames {
+  name: string
+  devices: string[]
 }
 
 interface Ipv4Address {
@@ -52,17 +65,25 @@ interface Stats {
   tx_packets: number
 }
 
-export function getInterface(deviceOrIface: DeviceOrIface, networkConfig: any) {
+interface HotspotConfig {
+  hotspot_id: string
+  unit_name: string
+  unit_description: string
+  network: string
+  interface: string // it's actually a device name
+}
+
+export function getInterface(deviceOrIface: DeviceOrIface) {
   // if deviceOrIface is an interface, just return it as it is
   if (deviceOrIface['.type'] === 'interface') {
     return deviceOrIface
   }
 
-  return networkConfig.interface?.find((iface: any) => iface.device === deviceOrIface.name)
+  return deviceOrIface.iface
 }
 
 export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
-  const iface = getInterface(device, networkConfig)
+  const iface = getInterface(device)
 
   if (!iface) {
     return
@@ -83,6 +104,16 @@ export function getFirewallZone(iface: any, firewallConfig: any) {
   }
 }
 
+export function getUiZoneName(deviceOrIface: DeviceOrIface, devicesByZone: ZoneWithDeviceNames[]) {
+  for (const zone of devicesByZone) {
+    for (const zoneDev of zone.devices) {
+      if (zoneDev === getName(deviceOrIface)) {
+        return zone.name
+      }
+    }
+  }
+}
+
 export function getZoneColor(zoneName: string) {
   const { t } = useI18n()
 
@@ -96,8 +127,8 @@ export function getZoneColor(zoneName: string) {
     case 'dmz':
       return 'Orange'
     case 'hotspot':
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
+    case 'unassigned':
       return ''
     default:
       // custom zone
@@ -119,7 +150,10 @@ export function getZoneColorClasses(zoneName: string) {
       return 'bg-sky-100 text-sky-700 dark:bg-sky-700 dark:text-sky-50'
     case 'openvpn':
     case 'ipsec':
+    case 'vpn':
       return 'bg-teal-100 text-teal-700 dark:bg-teal-700 dark:text-teal-50'
+    case 'unassigned':
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-50'
     default:
       return 'bg-violet-100 text-violet-700 dark:bg-violet-700 dark:text-violet-50'
   }
@@ -137,9 +171,10 @@ export function getZoneBorderColorClasses(zoneName: string) {
       return 'border-amber-700 dark:border-amber-700'
     case 'hotspot':
       return 'border-sky-700 dark:border-sky-700'
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
       return 'border-teal-700 dark:border-teal-700'
+    case 'unassigned':
+      return 'border-gray-500 dark:border-gray-500'
     default:
       // custom zone
       return 'border-violet-700 dark:border-violet-700'
@@ -160,7 +195,10 @@ export function getZoneIcon(zoneName: string) {
       return 'wifi'
     case 'openvpn':
     case 'ipsec':
+    case 'vpn':
       return 'globe'
+    case 'unassigned':
+      return 'unlock'
     default:
       return 'star'
   }
@@ -184,6 +222,18 @@ export function isBridge(device: DeviceOrIface) {
 
 export function isBond(iface: DeviceOrIface) {
   return iface?.proto === 'bonding'
+}
+
+export function isIpsec(device: DeviceOrIface) {
+  return device.zone === 'ipsec'
+}
+
+export function isOpenVpn(device: DeviceOrIface) {
+  return device.openvpn
+}
+
+export function isHotspot(device: DeviceOrIface) {
+  return device.hotspot
 }
 
 export function generateDeviceName(devicePrefix: string, networkConfig: any) {

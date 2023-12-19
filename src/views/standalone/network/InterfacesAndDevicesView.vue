@@ -29,7 +29,13 @@ import {
   getName,
   getZoneBorderColorClasses,
   type DeviceOrIface,
-  getZoneIcon
+  getZoneIcon,
+  isIpsec,
+  isHotspot,
+  isOpenVpn,
+  type ZoneWithDevices,
+  getUiZoneName,
+  type ZoneWithDeviceNames
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -39,16 +45,6 @@ import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devic
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
 import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash-es'
 import { zonesSorting } from '@/stores/standalone/firewall'
-
-interface ZoneWithDeviceNames {
-  name: string
-  devices: string[]
-}
-
-interface ZoneWithDevices {
-  name: string
-  devices: DeviceOrIface[]
-}
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -199,35 +195,34 @@ function toggleExpandBond(deviceOrIface: any) {
   isExpandedBond.value[getName(deviceOrIface)] = !isExpandedBond.value[getName(deviceOrIface)]
 }
 
-function getDeviceBorderStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+function getDeviceBorderStyle(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (zoneName) {
+    return getZoneBorderColorClasses(zoneName)
+  } else {
     return 'border-gray-500 dark:border-gray-500'
   }
-
-  return getZoneBorderColorClasses(getFirewallZone(iface, firewallConfig.value)?.name)
 }
 
-function getInterfaceIconName(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+function getInterfaceIconName(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
-    return 'unlock'
+  if (zoneName) {
+    return getZoneIcon(zoneName)
+  } else {
+    return 'circle-question'
   }
-
-  const zoneName = getFirewallZone(iface, firewallConfig.value)?.name
-  return getZoneIcon(zoneName)
 }
 
-function getIconBackgroundStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+function getIconBackgroundStyle(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (!zoneName) {
     return 'bg-gray-100 dark:bg-gray-500'
   }
 
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
+  switch (zoneName) {
     case 'lan':
       return 'bg-green-100 dark:bg-green-700'
     case 'wan':
@@ -238,21 +233,23 @@ function getIconBackgroundStyle(device: any) {
       return 'bg-amber-100 dark:bg-amber-700'
     case 'hotspot':
       return 'bg-sky-100 dark:bg-sky-700'
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
       return 'bg-teal-100 dark:bg-teal-700'
+    case 'unassigned':
+      return 'bg-gray-100 dark:bg-gray-500'
     default:
       return 'bg-violet-100 dark:bg-violet-700'
   }
 }
 
 function getIconForegroundStyle(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (!zoneName) {
     return 'text-gray-500 dark:text-gray-50'
   }
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
+
+  switch (zoneName) {
     case 'lan':
       return 'text-green-700 dark:text-green-50'
     case 'wan':
@@ -263,8 +260,7 @@ function getIconForegroundStyle(device: any) {
       return 'text-amber-700 dark:text-amber-50'
     case 'hotspot':
       return 'text-sky-700 dark:text-sky-50'
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
       return 'text-teal-700 dark:text-teal-50'
     default:
       return 'text-violet-700 dark:text-violet-50'
@@ -272,7 +268,7 @@ function getIconForegroundStyle(device: any) {
 }
 
 function getConfiguredDeviceKebabMenuItems(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   return [
     {
@@ -320,7 +316,7 @@ function showDeleteDeviceModal(device: any) {
 }
 
 function showDeleteAliasModal(alias: any, device: any) {
-  const parentIface = getInterface(device, networkConfig.value)
+  const parentIface = getInterface(device)
   currentAlias.value = alias
   currentParentInterface.value = parentIface
   isShownDeleteAliasModal.value = true
@@ -340,7 +336,7 @@ function getAliasKebabMenuItems(alias: any, device: any) {
 }
 
 function showCreateAliasInterfaceDrawer(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = null
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -350,7 +346,7 @@ function showCreateAliasInterfaceDrawer(device: any) {
 }
 
 function showEditAliasInterfaceDrawer(alias: any, device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
   currentInterface.value = iface
   aliasToEdit.value = alias
   currentNetworkConfigDevice.value = networkConfig.value.device.find(
@@ -365,7 +361,7 @@ function hideCreateOrEditAliasInterfaceDrawer() {
 
 function showConfigureDeviceDrawer(deviceOrIface: any) {
   currentDevice.value = deviceOrIface
-  const iface = getInterface(deviceOrIface, networkConfig.value)
+  const iface = getInterface(deviceOrIface)
 
   if (iface) {
     interfaceToEdit.value = iface
@@ -412,23 +408,9 @@ function hideCreateVlanDeviceDrawer() {
   isShownCreateVlanDeviceDrawer.value = false
 }
 
-function getProtocolLabel(protocol: string) {
-  switch (protocol) {
-    case 'static':
-      return `(${t('standalone.interfaces_and_devices.protocol_static')})`
-    case 'dhcp':
-      return '(DHCP)'
-    case 'dhcpv6':
-      return '(DHCPv6)'
-    default:
-      return ''
-  }
-}
-
 function getIpv4Addresses(device: any) {
   const ipv4Addresses = []
-  const iface = getInterface(device, networkConfig.value)
-  const proto = getProtocolLabel(iface?.proto)
+  const iface = getInterface(device)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
@@ -437,7 +419,7 @@ function getIpv4Addresses(device: any) {
     for (const ipv4 of device.ipaddrs) {
       // skip alias addresses
       if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(ipv4.address)) {
-        ipv4Addresses.push({ address: ipv4.address, proto })
+        ipv4Addresses.push({ address: ipv4.address })
       }
     }
   }
@@ -447,7 +429,7 @@ function getIpv4Addresses(device: any) {
   if (iface?.ipaddr) {
     // skip alias addresses
     if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(iface.ipaddr)) {
-      ipv4Addresses.push({ address: iface.ipaddr, proto })
+      ipv4Addresses.push({ address: iface.ipaddr })
     }
   }
   return uniqWith(ipv4Addresses, isEqual)
@@ -460,8 +442,7 @@ function getIpv6Addresses(device: any) {
   }
 
   const ipv6Addresses = []
-  const iface = getInterface(device, networkConfig.value)
-  const proto = getProtocolLabel(iface?.proto)
+  const iface = getInterface(device)
   const aliasIface = getAliasInterface(device, networkConfig.value)
 
   // device ip addresses
@@ -470,7 +451,7 @@ function getIpv6Addresses(device: any) {
     for (const ipv6 of device.ip6addrs) {
       // skip alias addresses
       if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(ipv6.address)) {
-        ipv6Addresses.push({ address: ipv6.address, proto })
+        ipv6Addresses.push({ address: ipv6.address })
       }
     }
   }
@@ -487,7 +468,7 @@ function getIpv6Addresses(device: any) {
 
     // skip alias addresses
     if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(addr)) {
-      ipv6Addresses.push({ address: addr, proto })
+      ipv6Addresses.push({ address: addr })
     }
   }
   return uniqWith(ipv6Addresses, isEqual)
@@ -498,7 +479,6 @@ function isDeviceUp(device: any) {
   if (isVlan(device)) {
     device = getVlanParent(device)
   }
-
   return device?.up
 }
 
@@ -511,12 +491,12 @@ function getDeviceMac(device: any) {
   if (device?.mac) {
     return toUpper(device.mac)
   } else {
-    return '-'
+    return null
   }
 }
 
 function getIpv4Gateway(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (iface?.gateway) {
     return iface.gateway
@@ -526,7 +506,7 @@ function getIpv4Gateway(device: any) {
 }
 
 function getIpv6Gateway(device: any) {
-  const iface = getInterface(device, networkConfig.value)
+  const iface = getInterface(device)
 
   if (iface?.ip6gw) {
     return iface.ip6gw
@@ -550,7 +530,7 @@ function getRxBytes(device: any) {
   if (device?.stats?.rx_bytes) {
     return byteFormat1000(device.stats.rx_bytes)
   } else {
-    return '-'
+    return null
   }
 }
 
@@ -563,7 +543,15 @@ function getTxBytes(device: any) {
   if (device?.stats?.tx_bytes) {
     return byteFormat1000(device.stats.tx_bytes)
   } else {
-    return '-'
+    return null
+  }
+}
+
+function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
+  if (isOpenVpn(deviceOrIface) || isIpsec(deviceOrIface) || isHotspot(deviceOrIface)) {
+    return false
+  } else {
+    return true
   }
 }
 </script>
@@ -601,14 +589,6 @@ function getTxBytes(device: any) {
           </template>
           {{ t('standalone.interfaces_and_devices.create_logical_interface') }}
         </NeButton>
-        <!-- kebab menu -->
-        <!-- <NeButton size="lg" disabled>
-          <font-awesome-icon
-            :icon="['fas', 'ellipsis-vertical']"
-            aria-hidden="true"
-            :class="`h-4 w-4`"
-          />
-        </NeButton> -->
       </div>
       <!-- skeleton -->
       <div v-if="isLoading" class="flex animate-pulse">
@@ -640,8 +620,11 @@ function getTxBytes(device: any) {
                     ]"
                   >
                     <!-- edit button and overflow menu for smaller screens -->
-                    <div class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden">
-                      <template v-if="getInterface(device, networkConfig)">
+                    <div
+                      v-if="isDeviceConfigurable(device)"
+                      class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
+                    >
+                      <template v-if="getInterface(device)">
                         <!-- actions for configured devices -->
                         <NeButton
                           kind="tertiary"
@@ -680,7 +663,7 @@ function getTxBytes(device: any) {
                       </NeButton>
                       <!-- actions for unconfigured vlan devices -->
                       <NeDropdown
-                        v-if="isVlan(device) && !getInterface(device, networkConfig)"
+                        v-if="isVlan(device) && !getInterface(device)"
                         :items="getUnconfiguredVlanKebabMenuItems(device)"
                         :alignToRight="true"
                       />
@@ -690,7 +673,7 @@ function getTxBytes(device: any) {
                     >
                       <!-- first column -->
                       <div
-                        class="flex flex-wrap items-start gap-8 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
+                        class="flex flex-wrap items-start gap-4 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
                       >
                         <div class="flex items-center">
                           <div
@@ -705,8 +688,8 @@ function getTxBytes(device: any) {
                             />
                           </div>
                           <div>
-                            <div v-if="getInterface(device, networkConfig)" class="font-semibold">
-                              {{ getInterface(device, networkConfig)['.name'] }}
+                            <div v-if="getInterface(device)" class="font-semibold">
+                              {{ getInterface(device)['.name'] }}
                             </div>
                             <div>{{ device.name }}</div>
                           </div>
@@ -788,18 +771,24 @@ function getTxBytes(device: any) {
                         </div>
                         <!-- vlan badge -->
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
+                        <!-- openvpn tunnel badge -->
+                        <NeBadge v-if="isOpenVpn(device)" size="sm" kind="primary" text="OVPN" />
+                        <!-- ipsec tunnel badge -->
+                        <NeBadge v-if="isIpsec(device)" size="sm" kind="primary" text="IPSEC" />
                       </div>
                       <!-- second column -->
                       <div class="space-y-2">
-                        <div>
+                        <div v-if="getDeviceMac(device)">
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
                         <div>
-                          <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
-                            <div>
-                              <span class="font-medium">IPv4: </span>
-                              <span>{{ ipv4.address }} {{ ipv4.proto }}</span>
+                          <div v-if="getIpv4Addresses(device)?.length">
+                            <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
+                              <div>
+                                <span class="font-medium">IPv4: </span>
+                                <span>{{ ipv4.address }}</span>
+                              </div>
                             </div>
                           </div>
                           <div v-if="getIpv4Gateway(device)">
@@ -810,10 +799,12 @@ function getTxBytes(device: any) {
                           </div>
                         </div>
                         <div>
-                          <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
-                            <div>
-                              <span class="font-medium">IPv6: </span>
-                              <span>{{ ipv6.address }} {{ ipv6.proto }}</span>
+                          <div v-if="getIpv6Addresses(device)?.length">
+                            <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
+                              <div>
+                                <span class="font-medium">IPv6: </span>
+                                <span>{{ ipv6.address }}</span>
+                              </div>
                             </div>
                           </div>
                           <div v-if="getIpv6Gateway(device)">
@@ -826,16 +817,16 @@ function getTxBytes(device: any) {
                       </div>
                       <!-- third column -->
                       <div>
-                        <div>
+                        <div v-if="getRxBytes(device)">
                           <span class="font-medium">RX: </span>
-                          <span>{{ getRxBytes(device) }}</span>
+                          <span>{{ getRxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.rx_packets">
                             ({{ device.stats.rx_packets }} pkts)</span
                           >
                         </div>
-                        <div>
+                        <div v-if="getTxBytes(device)">
                           <span class="font-medium">TX: </span>
-                          <span>{{ getTxBytes(device) }}</span>
+                          <span>{{ getTxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.tx_packets">
                             ({{ device.stats.tx_packets || '-' }} pkts)</span
                           >
@@ -856,23 +847,22 @@ function getTxBytes(device: any) {
                                 : t('standalone.interfaces_and_devices.down')
                             }}</span>
                           </div>
-                          <div>
+                          <div v-if="device.speed && device.speed !== -1">
                             <span class="font-medium"
                               >{{ t('standalone.interfaces_and_devices.speed') }}:
                             </span>
                             <span>
-                              {{
-                                device.speed && device.speed !== -1 ? `${device.speed} Mbps` : '-'
-                              }}
+                              {{ `${device.speed} Mbps` }}
                             </span>
                           </div>
                         </div>
                       </div>
                       <!-- fifth column -->
                       <div
+                        v-if="isDeviceConfigurable(device)"
                         class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
-                        <template v-if="getInterface(device, networkConfig)">
+                        <template v-if="getInterface(device)">
                           <!-- actions for configured devices -->
                           <NeButton
                             kind="tertiary"
@@ -911,7 +901,7 @@ function getTxBytes(device: any) {
                         </NeButton>
                         <!-- actions for unconfigured vlan devices -->
                         <NeDropdown
-                          v-if="isVlan(device) && !getInterface(device, networkConfig)"
+                          v-if="isVlan(device) && !getInterface(device)"
                           :items="getUnconfiguredVlanKebabMenuItems(device)"
                           :alignToRight="true"
                         />

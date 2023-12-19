@@ -175,7 +175,7 @@ async function revertChanges() {
       <NeExpandable
         v-for="config in Object.keys(uciChangesStore.changes)"
         :key="config"
-        :title="`/etc/config/${config}`"
+        :title="`/etc/config/${config} (${uciChangesStore.changes[config].length})`"
         :expanded="expandedChanges[config]"
         @setExpanded="(ev) => toggleExpand(config, ev)"
       >

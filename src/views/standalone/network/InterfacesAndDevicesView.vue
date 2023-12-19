@@ -31,7 +31,10 @@ import {
   type DeviceOrIface,
   getZoneIcon,
   isIpsec,
-  isHotspot
+  isHotspot,
+  isOpenVpn,
+  type ZoneWithDevices,
+  getUiZoneName
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -41,16 +44,6 @@ import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devic
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
 import { isEmpty, isEqual, uniqWith, toUpper } from 'lodash-es'
 import { zonesSorting } from '@/stores/standalone/firewall'
-
-interface ZoneWithDeviceNames {
-  name: string
-  devices: string[]
-}
-
-interface ZoneWithDevices {
-  name: string
-  devices: DeviceOrIface[]
-}
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -201,35 +194,34 @@ function toggleExpandBond(deviceOrIface: any) {
   isExpandedBond.value[getName(deviceOrIface)] = !isExpandedBond.value[getName(deviceOrIface)]
 }
 
-function getDeviceBorderStyle(device: any) {
-  const iface = getInterface(device)
+function getDeviceBorderStyle(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (zoneName) {
+    return getZoneBorderColorClasses(zoneName)
+  } else {
     return 'border-gray-500 dark:border-gray-500'
   }
-
-  return getZoneBorderColorClasses(getFirewallZone(iface, firewallConfig.value)?.name)
 }
 
-function getInterfaceIconName(device: any) {
-  const iface = getInterface(device)
+function getInterfaceIconName(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
-    return 'unlock'
+  if (zoneName) {
+    return getZoneIcon(zoneName)
+  } else {
+    return 'circle-question'
   }
-
-  const zoneName = getFirewallZone(iface, firewallConfig.value)?.name
-  return getZoneIcon(zoneName)
 }
 
-function getIconBackgroundStyle(device: any) {
-  const iface = getInterface(device)
+function getIconBackgroundStyle(device: DeviceOrIface) {
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (!zoneName) {
     return 'bg-gray-100 dark:bg-gray-500'
   }
 
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
+  switch (zoneName) {
     case 'lan':
       return 'bg-green-100 dark:bg-green-700'
     case 'wan':
@@ -240,21 +232,23 @@ function getIconBackgroundStyle(device: any) {
       return 'bg-amber-100 dark:bg-amber-700'
     case 'hotspot':
       return 'bg-sky-100 dark:bg-sky-700'
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
       return 'bg-teal-100 dark:bg-teal-700'
+    case 'unassigned':
+      return 'bg-gray-100 dark:bg-gray-500'
     default:
       return 'bg-violet-100 dark:bg-violet-700'
   }
 }
 
 function getIconForegroundStyle(device: any) {
-  const iface = getInterface(device)
+  const zoneName = getUiZoneName(device, devicesByZone.value)
 
-  if (!iface) {
+  if (!zoneName) {
     return 'text-gray-500 dark:text-gray-50'
   }
-  switch (getFirewallZone(iface, firewallConfig.value)?.name) {
+
+  switch (zoneName) {
     case 'lan':
       return 'text-green-700 dark:text-green-50'
     case 'wan':
@@ -265,8 +259,7 @@ function getIconForegroundStyle(device: any) {
       return 'text-amber-700 dark:text-amber-50'
     case 'hotspot':
       return 'text-sky-700 dark:text-sky-50'
-    case 'openvpn':
-    case 'ipsec':
+    case 'vpn':
       return 'text-teal-700 dark:text-teal-50'
     default:
       return 'text-violet-700 dark:text-violet-50'
@@ -555,8 +548,7 @@ function getTxBytes(device: any) {
 }
 
 function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
-  //// TODO add openvpn
-  if (isIpsec(deviceOrIface) || isHotspot(deviceOrIface)) {
+  if (isOpenVpn(deviceOrIface) || isIpsec(deviceOrIface) || isHotspot(deviceOrIface)) {
     return false
   } else {
     return true
@@ -597,14 +589,6 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
           </template>
           {{ t('standalone.interfaces_and_devices.create_logical_interface') }}
         </NeButton>
-        <!-- kebab menu -->
-        <!-- <NeButton size="lg" disabled>
-          <font-awesome-icon
-            :icon="['fas', 'ellipsis-vertical']"
-            aria-hidden="true"
-            :class="`h-4 w-4`"
-          />
-        </NeButton> -->
       </div>
       <!-- skeleton -->
       <div v-if="isLoading" class="flex animate-pulse">

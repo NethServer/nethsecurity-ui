@@ -1171,7 +1171,7 @@
       "base_dn": "Base DN",
       "base_dn_tooltip": "Base Distinguished Name (DN) that serves as the starting point for LDAP searches. Example: 'dc=secureexample,dc=com' for Active Directory or 'dc=directory,dc=nh' for NethServer OpenLDAP",
       "user_dn": "User DN",
-      "user_dn_tooltip": "Distinguished Name (DN) for the user in the LDAP directory. The DN uniquely identifies the user's location within the LDAP tree structure. Example: `cn=Users,dc=secureexample,dc=com` for Active Directory or `ou=People,dc=directory,dc=nh` for NethServer OpenLDAP",
+      "user_dn_tooltip": "Distinguished Name (DN) for the user in the LDAP directory. The DN uniquely identifies the user's location within the LDAP tree structure. Example: 'cn=Users,dc=secureexample,dc=com' for Active Directory or 'ou=People,dc=directory,dc=nh' for NethServer OpenLDAP",
       "user_cn": "User CN field",
       "user_cn_tooltip": "Common Name (CN) for the user. The CN is a component of the user's DN and typically represents the user's full name or another identifier. Example: `cn`",
       "user_attribute": "User attribute field",

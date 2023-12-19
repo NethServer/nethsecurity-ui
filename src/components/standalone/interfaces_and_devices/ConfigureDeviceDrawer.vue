@@ -34,6 +34,8 @@ import {
   NeRadioSelection,
   NeCheckbox,
   NeCombobox,
+  NeCard,
+  NeSkeleton,
   focusElement,
   getAxiosErrorMessage,
   type NeComboboxOption
@@ -55,10 +57,6 @@ const props = defineProps({
   },
   allDevices: {
     type: Array,
-    required: true
-  },
-  firewallConfig: {
-    type: Object,
     required: true
   },
   networkConfig: {
@@ -115,6 +113,7 @@ let bondingPolicy = ref('balance-rr')
 let bondingPolicyRef = ref<HTMLDivElement | null>()
 let bondPrimaryDevice = ref('')
 let bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
+let allowedZones = ref<any>([])
 
 let protocolBaseOptions = [
   {
@@ -189,7 +188,8 @@ const bondingPolicyOptions = [
 ]
 
 let loading = ref({
-  configure: false
+  configure: false,
+  listZonesForDeviceConfig: false
 })
 
 let error = ref({
@@ -214,11 +214,7 @@ let error = ref({
 })
 
 const zoneOptions = computed(() => {
-  const allowedZones = props.firewallConfig.zone.filter(
-    (zone: any) => !['hotspot', 'openvpn', 'ipsec'].includes(zone.name)
-  )
-
-  return allowedZones.map((zone: any) => {
+  return allowedZones.value.map((zone: any) => {
     return {
       id: zone.name,
       label: toUpper(zone.name),
@@ -298,6 +294,8 @@ watch(
   () => {
     if (props.isShown) {
       clearErrors()
+      listZonesForDeviceConfig()
+
       // periodic devices reload can cause some glitches to NeCombobox
       internalAllDevices.value = cloneDeep(props.allDevices)
 
@@ -333,10 +331,7 @@ watch(
       } else {
         // editing configuration
         interfaceName.value = props.interfaceToEdit['.name']
-        const zoneFound = props.firewallConfig.zone.find((z: any) =>
-          z.network?.includes(interfaceName.value)
-        )
-        zone.value = zoneFound.name
+        // (zone is set inside listZonesForDeviceConfig function)
         protocol.value = props.interfaceToEdit.proto
         ipv4Address.value = props.interfaceToEdit.ipaddr || ''
         ipv4Gateway.value = props.interfaceToEdit.gateway || ''
@@ -793,6 +788,25 @@ function validate() {
 
   return isValidationOk
 }
+
+async function listZonesForDeviceConfig() {
+  loading.value.listZonesForDeviceConfig = true
+  try {
+    const res = await ubusCall('ns.devices', 'list-zones-for-device-config')
+    allowedZones.value = res.data.zones
+
+    const zoneFound = allowedZones.value.find((z: any) => z.network?.includes(interfaceName.value))
+    if (zoneFound) {
+      zone.value = zoneFound.name
+    }
+  } catch (err: any) {
+    console.error(err)
+    error.value.notificationTitle = t('error.cannot_retrieve_zones_for_device_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  }
+  loading.value.listZonesForDeviceConfig = false
+}
 </script>
 
 <template>
@@ -871,8 +885,20 @@ function validate() {
           :disabled="!isConfiguringFromScratch || loading.configure"
           ref="interfaceNameRef"
         />
+        <!-- zone skeleton -->
+        <div v-if="loading.listZonesForDeviceConfig">
+          <NeFormItemLabel>
+            {{ t('standalone.interfaces_and_devices.zone') }}
+          </NeFormItemLabel>
+          <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            <NeCard v-for="index in 3" :key="index" :skeletonLines="1">
+              <NeSkeleton size="sm" :lines="2" />
+            </NeCard>
+          </div>
+        </div>
         <!-- zone -->
         <NeRadioSelection
+          v-else
           v-model="zone"
           card
           :label="t('standalone.interfaces_and_devices.zone')"

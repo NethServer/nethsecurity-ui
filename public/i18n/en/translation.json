@@ -1169,7 +1169,7 @@
       "ldap_uri": "LDAP URI",
       "ldap_uri_tooltip": "LDAP Uniform Resource Identifier (URI) that specifies the location of the LDAP server. This includes the protocol (e.g., ldap:// or ldaps://) and the server address with the port number. Example: ldaps://ldap.secureexample.com:636",
       "base_dn": "Base DN",
-      "base_dn_tooltip": "Base Distinguished Name (DN) that serves as the starting point for LDAP searches. Example: `dc=secureexample,dc=com` for Active Directory or `dc=directory,dc=nh` for NethServer OpenLDAP",
+      "base_dn_tooltip": "Base Distinguished Name (DN) that serves as the starting point for LDAP searches. Example: 'dc=secureexample,dc=com' for Active Directory or 'dc=directory,dc=nh' for NethServer OpenLDAP",
       "user_dn": "User DN",
       "user_dn_tooltip": "Distinguished Name (DN) for the user in the LDAP directory. The DN uniquely identifies the user's location within the LDAP tree structure. Example: `cn=Users,dc=secureexample,dc=com` for Active Directory or `ou=People,dc=directory,dc=nh` for NethServer OpenLDAP",
       "user_cn": "User CN field",

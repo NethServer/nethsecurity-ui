@@ -173,7 +173,14 @@
     "cannot_migrate": "Impossibile eseguire la migrazione",
     "cannot_perform_factory_reset": "Impossibile eseguire il ripristino di fabbrica",
     "invalid_path": "Inserisci un percorso valido.",
-    "cannot_retrieve_proxies": "Impossibile recuperare le rotte"
+    "cannot_retrieve_proxies": "Impossibile recuperare i proxy",
+    "cannot_create_user": "Impossibile creare l'utente",
+    "cannot_retrieve_database_details": "Impossibile recuperare i dettagli del database",
+    "cannot_retrieve_users": "Impossibile recuperare gli utenti",
+    "user_not_found": "Utente non trovato",
+    "user_already_exists": "L'utente esiste già",
+    "cannot_delete_user": "Impossibile eliminare l'utente",
+    "cannot_retrieve_ldap_defaults": "Impossibile recuperare i valori di default di LDAP"
   },
   "login": {
     "sign_in": "Accedi",
@@ -920,7 +927,8 @@
         "no_hotspot_configuration_found": "Nessuna configurazione hotspot trovata",
         "session_key": "Chiave di sessione",
         "empty_sessions_description": "Le sessioni dei client collegati a questa unità appariranno qui.",
-        "session_time": "Tempo di sessione"
+        "session_time": "Tempo di sessione",
+        "temporary": "Temporaneo"
       },
       "title": "Hotspot",
       "tabs": {
@@ -1142,6 +1150,35 @@
       "destination_url": "Destinazione %@",
       "description": "Descrizione",
       "certificate": "Certificato"
+    },
+    "users_database": {
+      "set": "Imposta",
+      "ldap_uri_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "username": "Nome utente",
+      "verify_tls_certificate": "Verifica certificato TLS",
+      "test": "Test",
+      "user_dn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "not_set": "Non impostata",
+      "unchanged": "Invariata",
+      "edit_user": "Modifica utente",
+      "users_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "add_user": "Aggiungi utente",
+      "user_password": "Password utente",
+      "local_database": "Database locale",
+      "display_name": "Nome visualizzato",
+      "remote_database_added_description": "{name} aggiunto con successo",
+      "base_dn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "no_users_found": "Nessun utente trovato",
+      "confirm_user_password": "Conferma password utente",
+      "delete_user": "Elimina utente",
+      "type": "Tipo",
+      "configure": "Configura",
+      "database_name": "Nome database",
+      "user_attribute_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "users": "Utenti",
+      "password": "Password",
+      "user_cn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
     }
   },
   "controller": {

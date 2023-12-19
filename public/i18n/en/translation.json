@@ -885,7 +885,7 @@
       "go_to_certificates": "Go to Certificates",
       "path_tooltip": "Type resource path beginning with a '/' to create a “resource path” matching rule",
       "domain_tooltip": "Type website fully qualified domain name to create a “web site name” matching rule",
-      "destination_url_tooltip": "This path specifies the location to which incoming requests will be forwarded. Example: `http://destination-server:port/path`",
+      "destination_url_tooltip": "This path specifies the location to which incoming requests will be forwarded. Example: 'http://destination-server:port/path'",
       "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks"
     },
     "users_and_objects": {

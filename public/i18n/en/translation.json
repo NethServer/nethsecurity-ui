@@ -329,7 +329,7 @@
     },
     "uci_changes": {
       "configuration_changes": "Configuration changes",
-      "unsaved_changes": "{count} unsaved change | {count} unsaved changes",
+      "unsaved_changes": "Unsaved changes",
       "apply": "Apply changes",
       "revert": "Revert changes"
     },

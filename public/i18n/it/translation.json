@@ -437,7 +437,7 @@
     },
     "uci_changes": {
       "configuration_changes": "Modifiche alla configurazione",
-      "unsaved_changes": "{count} modifica non salvata | {count} modifiche non salvate",
+      "unsaved_changes": "Modifiche non salvate",
       "apply": "Applica le modifiche",
       "revert": "Scarta le modifiche"
     },

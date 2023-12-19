@@ -1175,7 +1175,7 @@
       "user_cn": "User CN field",
       "user_cn_tooltip": "Common Name (CN) for the user. The CN is a component of the user's DN and typically represents the user's full name or another identifier. Example: 'cn'",
       "user_attribute": "User attribute field",
-      "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Example: `uid` for OpenLDAP or `sAMAccountName` for Active Directory",
+      "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Example: 'uid' for OpenLDAP or 'sAMAccountName' for Active Directory",
       "starttls": "StartTLS",
       "verify_tls_certificate": "Verify TLS certificate",
       "connection_verified": "Connection verified",

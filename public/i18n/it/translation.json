@@ -1177,7 +1177,8 @@
       "users": "Utenti",
       "password": "Password",
       "user_cn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-      "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+      "n_users_found": "Nessun utente trovato"
     }
   },
   "controller": {

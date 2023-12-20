@@ -860,7 +860,8 @@
         "unregister": "Unregister",
         "unregister_unit": "Unregister hotspot unit",
         "unregister_unit_modal_description": "The hotspot unit will be detached from the remote hotspot manager. Local firewall and network configurations will not be changed.",
-        "empty_network_device_link": "Go to Interfaces and devices"
+        "empty_network_device_link": "Go to Interfaces and devices",
+        "hotspot_configuration_saved": "Hotspot configuration saved"
       }
     },
     "reverse_proxy": {

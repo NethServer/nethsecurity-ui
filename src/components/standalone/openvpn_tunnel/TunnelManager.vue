@@ -26,6 +26,7 @@ export type ServerTunnel = {
   local_network: string[]
   remote_network: string[]
   vpn_network: string
+  connected: boolean
 }
 
 export type ClientTunnel = {
@@ -36,6 +37,7 @@ export type ClientTunnel = {
   port: string
   remote_host: string[]
   remote_network: string[]
+  connected: boolean
 }
 
 type Tunnel = ServerTunnel | ClientTunnel

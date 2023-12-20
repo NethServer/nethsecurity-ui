@@ -79,6 +79,7 @@ const error = ref({
 const isInitializingInstance = ref(false)
 const showDeleteServerModal = ref(false)
 const showCreateOrEditServerModal = ref(false)
+const loadingError = ref(false)
 
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
 
@@ -92,6 +93,7 @@ async function fetchUsers() {
     error.value.notificationTitle = t('error.cannot_retrieve_users')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+    loadingError.value = true
   } finally {
     loading.value = false
   }
@@ -114,6 +116,7 @@ async function fetchServer() {
     error.value.notificationTitle = t('error.cannot_retrieve_rw_server')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+    loadingError.value = true
   } finally {
     loading.value = false
   }
@@ -133,7 +136,7 @@ async function initAndConfigureServer() {
       await ubusCall('ns.ovpnrw', 'add-instance')
       await reloadServer()
     } catch (err: any) {
-      error.value.notificationTitle = t('error.cannot_retrieve_rw_server')
+      error.value.notificationTitle = t('error.cannot_initialize_server')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()
       return
@@ -163,7 +166,7 @@ onMounted(() => {
     </template></NeInlineNotification
   >
   <NeSkeleton v-if="loading" :lines="20" />
-  <div class="flex flex-col gap-y-6" v-else>
+  <div class="flex flex-col gap-y-6" v-else-if="!loadingError">
     <div class="flex flex-col">
       <NeTitle level="h3">{{ t('standalone.openvpn_rw.roadwarrior_server') }}</NeTitle>
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -191,7 +194,7 @@ onMounted(() => {
     <RWServerDetails
       v-else
       :connected-clients="connectedClients"
-      :server-data="instanceData"
+      :server="instanceData"
       @delete-server="showDeleteServerModal = true"
       @edit-server="showCreateOrEditServerModal = true"
     />

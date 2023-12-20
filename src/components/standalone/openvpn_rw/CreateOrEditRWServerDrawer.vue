@@ -32,7 +32,6 @@ const props = defineProps<{
   itemToEdit?: RWServer
   instanceName?: string
 }>()
-const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -54,7 +53,7 @@ const showAdvancedSettings = ref(false)
 // form fields
 const enabled = ref(true)
 const name = ref('')
-const userDatabase = ref('')
+const userDatabase = ref('main')
 const createAccountForAllUsers = ref(false)
 const authMode = ref('username_password')
 const mode = ref('routed')
@@ -69,13 +68,11 @@ const compression = ref('disabled')
 const digest = ref('auto')
 const cipher = ref('auto')
 const minimumTLSVersion = ref('auto')
-
 const bridge = ref('')
 const rangeIpStart = ref('')
 const rangeIpEnd = ref('')
 
 const customOptions = ref<KeyValueItem[]>([])
-
 const digestOptions = ref<NeComboboxOption[]>([])
 const cipherOptions = ref<NeComboboxOption[]>([])
 const authModeOptions = ref<NeComboboxOption[]>([])
@@ -83,11 +80,10 @@ const bridgesOptions = ref<NeComboboxOption[]>([])
 const userDatabaseOptions = ref<NeComboboxOption[]>([])
 const availableCustomOptions = ref<NeComboboxOption[]>([])
 
-//TODO: export options to separate files for reuse with ovpn tunnels?
 const compressionOptions = [
   {
     id: 'disabled',
-    label: t('standalone.openvpn_tunnel.disabled')
+    label: t('common.disabled')
   },
   {
     id: 'lz0',
@@ -102,29 +98,29 @@ const compressionOptions = [
 const modeOptions = [
   {
     id: 'bridged',
-    label: t('standalone.openvpn_tunnel.bridged')
+    label: t('standalone.openvpn_rw.bridged')
   },
   {
     id: 'routed',
-    label: t('standalone.openvpn_tunnel.routed')
+    label: t('standalone.openvpn_rw.routed')
   }
 ]
 
 const protocolOptions = [
   {
     id: 'udp',
-    label: t('standalone.openvpn_tunnel.udp')
+    label: t('standalone.openvpn_rw.udp')
   },
   {
     id: 'tcp',
-    label: t('standalone.openvpn_tunnel.tcp')
+    label: t('standalone.openvpn_rw.tcp')
   }
 ]
 
 const tlsOptions = [
   {
     id: 'auto',
-    label: t('standalone.openvpn_tunnel.auto')
+    label: t('standalone.openvpn_rw.auto')
   },
   {
     id: '1.1',
@@ -143,10 +139,10 @@ async function fetchOptions() {
       // Default value for the cipher option (auto)
       {
         id: 'auto',
-        label: t('standalone.openvpn_tunnel.auto'),
-        description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
+        label: t('standalone.openvpn_rw.auto'),
+        description: `(${t('standalone.openvpn_rw.server_client_negotiation')})`
       },
-      // List containing the available ciphers returned from the ns.ovpntunnel service, mapped into NeCombobox options
+      // List containing the available ciphers returned from the ns.ovpnrw service, mapped into NeCombobox options
       ...(await ubusCall('ns.ovpnrw', 'list-cipher')).data.ciphers.map(
         (cipher: { name: string; description: string }) => ({
           id: cipher.name,
@@ -158,10 +154,10 @@ async function fetchOptions() {
       // Default value for the digest option (auto)
       {
         id: 'auto',
-        label: t('standalone.openvpn_tunnel.auto'),
-        description: `(${t('standalone.openvpn_tunnel.server_client_negotiation')})`
+        label: t('standalone.openvpn_rw.auto'),
+        description: `(${t('standalone.openvpn_rw.server_client_negotiation')})`
       },
-      // List containing the available digests returned from the ns.ovpntunnel service, mapped into NeCombobox options
+      // List containing the available digests returned from the ns.ovpnrw service, mapped into NeCombobox options
       ...(await ubusCall('ns.ovpnrw', 'list-digest')).data.digests.map(
         (digest: { name: string; description: string }) => ({
           id: digest.name,
@@ -209,7 +205,7 @@ async function resetForm() {
   const serverData = props.itemToEdit
 
   name.value = serverData?.ns_description ?? ''
-  userDatabase.value = serverData?.ns_user_db ?? ''
+  userDatabase.value = serverData?.ns_user_db ? serverData.ns_user_db : 'main'
   createAccountForAllUsers.value = false
   authMode.value = serverData?.ns_auth_mode ?? 'username_password'
   mode.value = serverData?.dev_type === 'tun' ? 'routed' : 'bridged'
@@ -376,14 +372,13 @@ async function createOrEditServer() {
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()
     }
-    return
-  } finally {
     isSavingChanges.value = false
+    return
   }
 
   // import all users for new instance if specified by user
   try {
-    if (props.itemToEdit?.ns_description && createAccountForAllUsers.value) {
+    if (!props.itemToEdit?.ns_description && createAccountForAllUsers.value) {
       await ubusCall('ns.ovpnrw', 'import-users', { instance: props.instanceName })
     }
   } catch (err: any) {
@@ -482,7 +477,7 @@ watch(
         v-model="authMode"
       />
       <NeRadioSelection
-        :label="t('standalone.openvpn_tunnel.mode')"
+        :label="t('standalone.openvpn_rw.mode')"
         :options="modeOptions"
         v-model="mode"
       />
@@ -539,7 +534,7 @@ watch(
       </div>
       <template v-if="showAdvancedSettings">
         <NeRadioSelection
-          :label="t('standalone.openvpn_tunnel.protocol')"
+          :label="t('standalone.openvpn_rw.protocol')"
           :options="protocolOptions"
           v-model="protocol"
         />
@@ -573,28 +568,28 @@ watch(
           />
         </div>
         <NeCombobox
-          :label="t('standalone.openvpn_tunnel.compression')"
+          :label="t('standalone.openvpn_rw.compression')"
           :options="compressionOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="compression"
         />
         <NeCombobox
-          :label="t('standalone.openvpn_tunnel.digest')"
+          :label="t('standalone.openvpn_rw.digest')"
           :options="digestOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="digest"
         />
         <NeCombobox
-          :label="t('standalone.openvpn_tunnel.cipher')"
+          :label="t('standalone.openvpn_rw.cipher')"
           :options="cipherOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="cipher"
         />
         <NeCombobox
-          :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
+          :label="t('standalone.openvpn_rw.enforce_minimum_tls_version')"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"

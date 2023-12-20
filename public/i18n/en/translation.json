@@ -213,7 +213,8 @@
     "cannot_retrieve_server_options": "Cannot retrieve server options",
     "cannot_edit_server": "Cannot edit server",
     "cannot_create_server": "Cannot create server",
-    "cannot_import_users": "Cannot import users"
+    "cannot_import_users": "Cannot import users",
+    "cannot_initialize_server": "Cannot initialize server"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1063,6 +1064,8 @@
       "protocol": "Protocol",
       "udp": "UDP",
       "tcp": "TCP",
+      "auto": "Auto",
+      "server_client_negotiation": "Server/client negotiation",
       "port": "Port",
       "route_all_client_traffic_through_vpn": "Route all client traffic through VPN",
       "push_custom_network_routes": "Push custom networks routes",

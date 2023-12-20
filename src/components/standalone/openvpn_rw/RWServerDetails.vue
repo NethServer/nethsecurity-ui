@@ -6,7 +6,7 @@ import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue
 const { t } = useI18n()
 
 defineProps<{
-  serverData: RWServer
+  server: RWServer
   connectedClients: number
 }>()
 
@@ -24,7 +24,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
           aria-hidden="true"
           :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
         />
-        <p>{{ serverData.ns_description }}</p>
+        <p>{{ server.ns_description }}</p>
       </div>
       <div
         class="ml-4 mr-10 grow border-l border-gray-800 py-3 pl-4 text-sm dark:border-gray-600 md:ml-8 md:pl-8"
@@ -39,21 +39,21 @@ const emit = defineEmits(['delete-server', 'edit-server'])
                 aria-hidden="true"
               />
               <p>
-                {{ serverData.enabled === '1' ? t('common.enabled') : t('common.disabled') }}
+                {{ server.enabled === '1' ? t('common.enabled') : t('common.disabled') }}
               </p>
             </div>
           </div>
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.authentication_mode') }}:</p>
-            <p>{{ t(`standalone.openvpn_rw.${serverData.ns_auth_mode}`) }}</p>
+            <p>{{ t(`standalone.openvpn_rw.${server.ns_auth_mode}`) }}</p>
           </div>
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.database') }}:</p>
             <p>
               {{
-                serverData.ns_user_db === 'main'
+                server.ns_user_db === 'main'
                   ? t('standalone.openvpn_rw.local_database')
-                  : serverData.ns_user_db
+                  : server.ns_user_db
               }}
             </p>
           </div>

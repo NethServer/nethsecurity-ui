@@ -27,8 +27,7 @@ async function deleteServer() {
       error.value.notificationDetails = ''
       isDeleting.value = true
       await ubusCall('ns.ovpnrw', 'remove-instance', {
-        instance: props.instanceName,
-        database: 'main'
+        instance: props.instanceName
       })
       emit('server-deleted')
       emit('close')

@@ -16,6 +16,7 @@ import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
+import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
 
 export type RWServer = {
   proto: string
@@ -28,15 +29,17 @@ export type RWServer = {
   cipher: string
   tls_version_min: string
   ns_auth_mode: string
-  ns_bridge: string
+  ns_bridge?: string
   server: string
   ns_public_ip: string[]
   ns_redirect_gateway: string
   ns_local: string[]
   ns_dhcp_options: { option: string; value: string }[]
-  ns_pool_start: string[]
-  ns_pool_end: string[]
+  ns_pool_start?: string
+  ns_pool_end?: string
   ns_user_db: string
+  compress?: string
+  ns_description: string
 }
 
 export type RWUser = {
@@ -73,7 +76,9 @@ const error = ref({
   notificationDetails: ''
 })
 
+const isInitializingInstance = ref(false)
 const showDeleteServerModal = ref(false)
+const showCreateOrEditServerModal = ref(false)
 
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
 
@@ -101,7 +106,9 @@ async function fetchServer() {
       instanceData.value = (
         await ubusCall('ns.ovpnrw', 'get-configuration', { instance: instanceName.value })
       ).data
-      await fetchUsers()
+      if (instanceData.value?.ns_description) {
+        await fetchUsers()
+      }
     }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_rw_server')
@@ -114,7 +121,27 @@ async function fetchServer() {
 
 async function reloadServer() {
   await uciChangesStore.getChanges()
+  instanceName.value = ''
+  instanceData.value = undefined
   await fetchServer()
+}
+
+async function initAndConfigureServer() {
+  if (!instanceName.value) {
+    isInitializingInstance.value = true
+    try {
+      await ubusCall('ns.ovpnrw', 'add-instance')
+      await reloadServer()
+    } catch (err: any) {
+      error.value.notificationTitle = t('error.cannot_retrieve_rw_server')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+      return
+    } finally {
+      isInitializingInstance.value = false
+    }
+  }
+  showCreateOrEditServerModal.value = true
 }
 
 onMounted(() => {
@@ -144,10 +171,14 @@ onMounted(() => {
       </p>
     </div>
     <NeEmptyState
-      v-if="!instanceData"
+      v-if="!instanceData || !instanceData.ns_description"
       :title="t('standalone.openvpn_rw.no_openvpn_rw_server_found')"
       :icon="['fas', 'globe']"
-      ><NeButton kind="primary" @click="() => {}"
+      ><NeButton
+        kind="primary"
+        @click="initAndConfigureServer()"
+        :loading="isInitializingInstance"
+        :disabled="isInitializingInstance"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'wrench']"
@@ -162,14 +193,22 @@ onMounted(() => {
       :connected-clients="connectedClients"
       :server-data="instanceData"
       @delete-server="showDeleteServerModal = true"
+      @edit-server="showCreateOrEditServerModal = true"
     />
 
-    <RWAccountsManager v-if="instanceData" />
+    <RWAccountsManager v-if="instanceData && instanceData.ns_description" />
   </div>
   <DeleteRWServerModal
     :visible="showDeleteServerModal"
     :instance-name="instanceName"
     @close="showDeleteServerModal = false"
     @server-deleted="reloadServer"
+  />
+  <CreateOrEditRWServerDrawer
+    :item-to-edit="instanceData"
+    :instance-name="instanceName"
+    :is-shown="showCreateOrEditServerModal"
+    @close="showCreateOrEditServerModal = false"
+    @add-edit-server="reloadServer"
   />
 </template>

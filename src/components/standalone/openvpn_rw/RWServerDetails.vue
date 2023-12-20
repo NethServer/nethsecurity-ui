@@ -24,7 +24,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
           aria-hidden="true"
           :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
         />
-        <p>{{ t('standalone.openvpn_rw.rw_server') }}</p>
+        <p>{{ serverData.ns_description }}</p>
       </div>
       <div
         class="ml-4 mr-10 grow border-l border-gray-800 py-3 pl-4 text-sm dark:border-gray-600 md:ml-8 md:pl-8"

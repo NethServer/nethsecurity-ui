@@ -157,6 +157,12 @@
     "cannot_retrieve_applications": "Cannot retrieve applications",
     "zone_already_exists": "Zone already exists",
     "db_already_exists": "Database already exists",
+    "user_db_not_found": "User database not found",
+    "bridge_not_found": "Bridge not found",
+    "start_not_in_network": "Start not in network",
+    "end_not_in_network": "End not in network",
+    "ip_already_used": "IP is already used",
+    "start_must_be_greater_then_end": "Start must be greater than end",
     "cannot_delete_rule": "Cannote delete rule",
     "upload_file_migration": "Uploaded file is not a valid migration archive",
     "cannot_migrate": "Can't execute migration",
@@ -203,7 +209,11 @@
     "cannot_retrieve_users": "Cannot retrieve users",
     "cannot_retrieve_zones_for_device_configuration": "Cannot retrieve zones for device configuration",
     "cannot_retrieve_rw_server": "Cannot retrieve RW server",
-    "cannot_delete_server": "Cannot delete server"
+    "cannot_delete_server": "Cannot delete server",
+    "cannot_retrieve_server_options": "Cannot retrieve server options",
+    "cannot_edit_server": "Cannot edit server",
+    "cannot_create_server": "Cannot create server",
+    "cannot_import_users": "Cannot import users"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1037,6 +1047,7 @@
       "roadwarrior_server_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       "no_openvpn_rw_server_found": "No OpenVPN RoadWarrior server found",
       "create_server": "Create server",
+      "edit_server": "Edit server",
       "server_name": "Server name",
       "user_database": "User database",
       "create_accounts_for_all_users": "Create account for all users",
@@ -1055,6 +1066,9 @@
       "port": "Port",
       "route_all_client_traffic_through_vpn": "Route all client traffic through VPN",
       "push_custom_network_routes": "Push custom networks routes",
+      "bridge": "Bridge",
+      "range_ip_start": "Range IP start",
+      "range_ip_end": "Range IP end",
       "add_network": "Add network",
       "allow_client_to_client_network_traffic": "Allow client-to-client network traffic",
       "compression": "Compression",
@@ -1076,7 +1090,8 @@
       "certificate": "Certificate",
       "username_password_certificate": "Username, password and certificate",
       "username_otp_certificate": "Username and OTP certificate",
-      "local_database": "Local database"
+      "local_database": "Local database",
+      "custom_option_combobox_placeholder": "Search key"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

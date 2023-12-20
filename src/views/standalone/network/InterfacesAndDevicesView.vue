@@ -1123,7 +1123,6 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
       :device="currentDevice"
       :deviceType="deviceToConfigureType"
       :allDevices="allDevices"
-      :firewallConfig="firewallConfig"
       :networkConfig="networkConfig"
       :isShown="isShownConfigureDeviceDrawer"
       :interfaceToEdit="interfaceToEdit"

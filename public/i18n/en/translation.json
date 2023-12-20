@@ -355,7 +355,7 @@
     "ssh": {
       "title": "SSH",
       "ssh_access": {
-        "description": "Dropbear offers SSH network shell access and an integrated SCP server",
+        "description": "SSH network shell access and integrated SCP server",
         "title": "SSH Access",
         "tcp_port_label": "TCP Port",
         "allow_ssh_password_auth": "Allow SSH password authentication",
@@ -434,7 +434,7 @@
         "migrate": "Migrate",
         "remap_interfaces": "Remap interfaces",
         "remap_interfaces_description": "During interface remapping, if one or more interfaces change their IP address, you have to login again on the new IP address.",
-        "migration_in_progress": "Migrating and rebooting, please wait",
+        "migration_in_progress": "Migrating and rebooting, please wait...",
         "success_migration": "Migration performed successfully",
         "to": "to"
       }
@@ -452,14 +452,14 @@
       "reboot_in_progress": "The unit is rebooting, please wait..."
     },
     "update": {
-      "title": "Update",
+      "title": "Updates",
       "bug_security_fixes": "Bug & security fixes",
       "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages.",
       "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
       "system_update": "System update",
       "system_update_description": "New features are released with images. If a new image is available you can update the system to a new version. Alternatively upload a compatible firmware image.",
-      "system_update_first_tip": "Back up your configuration before updating your {productName} system",
+      "system_update_first_tip": "Backup your configuration before updating your {productName} system",
       "system_update_second_tip": "The current settings and configuration will be preserved",
       "installed_release": "Installed release: {release}",
       "update_with_image_file": "Update with image file",
@@ -514,7 +514,7 @@
       "perform_factory_reset_description": "Factory reset permanently erases all data and settings.",
       "perform_factory_confirm": "Confirm reset",
       "type_unit_name": "Type '{unit}' to confirm",
-      "resetting_description": "Resetting and rebooting the unit, please wait"
+      "resetting_description": "Resetting and rebooting the unit, please wait..."
     },
     "network": {
       "title": "Network"

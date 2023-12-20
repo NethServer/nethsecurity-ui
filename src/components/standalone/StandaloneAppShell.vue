@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {
   Dialog,
   DialogPanel,
@@ -20,7 +20,7 @@ import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton, NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
@@ -29,12 +29,18 @@ import router from '@/router'
 import ToastNotificationsArea from './ToastNotificationsArea.vue'
 import NotificationDrawer from './NotificationDrawer.vue'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 const themeStore = useThemeStore()
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const unitName = ref('')
+
+let loading = ref({
+  systemBoard: false
+})
 
 const accountMenu = [
   {
@@ -85,6 +91,17 @@ watch(
 function openNotificationsDrawer() {
   notificationsStore.setNotificationDrawerOpen(true)
 }
+
+async function getSystemBoard() {
+  loading.value.systemBoard = true
+  const systemBoard = await ubusCall('system', 'board')
+  unitName.value = systemBoard.data.hostname
+  loading.value.systemBoard = false
+}
+
+onMounted(() => {
+  getSystemBoard()
+})
 </script>
 
 <template>
@@ -252,6 +269,19 @@ function openNotificationsDrawer() {
                 @close="showUciChangesModal = false"
               />
             </div>
+
+            <!-- unit name -->
+            <div class="hidden text-sm lg:block lg:h-6" aria-hidden="true">
+              <NeSkeleton v-if="loading.systemBoard" class="w-28" />
+              <span v-else>{{ unitName }}</span>
+            </div>
+
+            <!-- separator -->
+            <div
+              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-gray-700"
+              aria-hidden="true"
+            />
+
             <!-- help -->
             <a
               href="https://docs.nethsecurity.org/"
@@ -264,14 +294,7 @@ function openNotificationsDrawer() {
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
-              <span>{{ t('common.help') }}</span>
             </a>
-
-            <!-- Separator -->
-            <div
-              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-gray-700"
-              aria-hidden="true"
-            />
 
             <!-- theme switcher -->
             <button

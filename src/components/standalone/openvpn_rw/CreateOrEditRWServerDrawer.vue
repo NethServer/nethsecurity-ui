@@ -331,7 +331,9 @@ async function createOrEditServer() {
   error.value.notificationDetails = ''
   const isEditing = Boolean(props.itemToEdit?.ns_description)
 
-  if (!validate()) return
+  if (!validate()) {
+    return
+  }
 
   isSavingChanges.value = true
 

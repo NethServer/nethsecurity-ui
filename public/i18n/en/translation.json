@@ -1094,7 +1094,9 @@
       "username_password_certificate": "Username, password and certificate",
       "username_otp_certificate": "Username and OTP certificate",
       "local_database": "Local database",
-      "custom_option_combobox_placeholder": "Search key"
+      "custom_option_combobox_placeholder": "Search key",
+      "strong": "Strong",
+      "weak": "Weak"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

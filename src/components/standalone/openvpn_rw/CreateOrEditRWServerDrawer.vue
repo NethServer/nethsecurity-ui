@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs, watch } from 'vue'
+import { ref, watch } from 'vue'
 import {
   MessageBag,
   validateIp4Cidr,
@@ -146,7 +146,8 @@ async function fetchOptions() {
       ...(await ubusCall('ns.ovpnrw', 'list-cipher')).data.ciphers.map(
         (cipher: { name: string; description: string }) => ({
           id: cipher.name,
-          label: cipher.name
+          label: cipher.name,
+          description: '(' + t('standalone.openvpn_rw.' + cipher.description) + ')'
         })
       )
     ]
@@ -161,7 +162,8 @@ async function fetchOptions() {
       ...(await ubusCall('ns.ovpnrw', 'list-digest')).data.digests.map(
         (digest: { name: string; description: string }) => ({
           id: digest.name,
-          label: digest.name
+          label: digest.name,
+          description: '(' + t('standalone.openvpn_rw.' + digest.description) + ')'
         })
       )
     ]

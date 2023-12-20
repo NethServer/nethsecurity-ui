@@ -21,7 +21,6 @@ import {
   faCircleCheck as fasCircleCheck,
   faCircleChevronDown,
   faCircleChevronUp,
-  faCircleHalfStroke as fasCircleHalfStroke,
   faCircleInfo as fasCircleInfo,
   faCircleMinus as fasCircleMinus,
   faCirclePlus as fasCirclePlus,
@@ -131,7 +130,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCircleQuestion)
   library.add(fasMoon)
   library.add(fasSun)
-  library.add(fasCircleHalfStroke)
   library.add(fasCircleUser)
   library.add(fasChevronDown)
   library.add(fasChevronUp)

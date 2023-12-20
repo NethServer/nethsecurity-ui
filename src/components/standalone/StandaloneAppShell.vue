@@ -304,14 +304,7 @@ onMounted(() => {
             >
               <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
               <font-awesome-icon
-                :icon="[
-                  'fas',
-                  themeStore.theme === 'light'
-                    ? 'moon'
-                    : themeStore.theme === 'dark'
-                    ? 'sun'
-                    : 'circle-half-stroke'
-                ]"
+                :icon="['fas', themeStore.isLight ? 'moon' : 'sun']"
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />

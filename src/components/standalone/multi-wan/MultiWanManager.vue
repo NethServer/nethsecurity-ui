@@ -139,7 +139,7 @@ function policyIcon(policy: Policy) {
           <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
             {{ t('standalone.multi_wan.policy') }}
           </h6>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
             {{ t('standalone.multi_wan.policy_description') }}
           </p>
         </div>
@@ -268,7 +268,7 @@ function policyIcon(policy: Policy) {
             <h6 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-50">
               {{ t('standalone.multi_wan.rules') }}
             </h6>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
               {{ t('standalone.multi_wan.rules_description') }}
             </p>
           </div>

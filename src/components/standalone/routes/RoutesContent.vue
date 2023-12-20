@@ -179,7 +179,7 @@ function scrollToMainTable() {
     <div class="space-y-8">
       <div class="flex">
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
             {{ t('standalone.routes.route_description') }}
           </p>
         </div>

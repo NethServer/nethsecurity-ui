@@ -232,6 +232,11 @@ export function isOpenVpn(device: DeviceOrIface) {
   return device.openvpn
 }
 
+export function isVpn(device: DeviceOrIface) {
+  //// TODO add openvpn RW
+  return isOpenVpn(device) || isIpsec(device)
+}
+
 export function isHotspot(device: DeviceOrIface) {
   return device.hotspot
 }

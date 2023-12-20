@@ -113,7 +113,7 @@ let bondingPolicy = ref('balance-rr')
 let bondingPolicyRef = ref<HTMLDivElement | null>()
 let bondPrimaryDevice = ref('')
 let bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
-let allowedZones = ref<any>([])
+let allowedZones = ref<Array<any>>([])
 
 let protocolBaseOptions = [
   {

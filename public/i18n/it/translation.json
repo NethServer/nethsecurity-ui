@@ -1088,7 +1088,7 @@
       "remote_ip_address_tooltip": "Inserisci l'indirizzo IP pubblico o l'host del server remoto. Se il server remoto ha un indirizzo IP dinamico, è sufficiente inserire 'qualsiasi'",
       "edit_ipsec_tunnel": "Modifica del tunnel IPsec",
       "ike_version": "Versione IKE",
-      "delete_tunnel_message": "Stai per eliminare il tunnel '{name} '",
+      "delete_tunnel_message": "Stai per eliminare il tunnel '{name}'",
       "choose_network": "Scegli la rete",
       "connection": "Connessione:",
       "add_network": "Aggiungi rete",
@@ -1178,7 +1178,9 @@
       "password": "Password",
       "user_cn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
       "database_configuration_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-      "n_users_found": "Nessun utente trovato"
+      "n_users_found": "Nessun utente trovato",
+      "delete_user_message": "Stai per eliminare il tunnel '{name}'",
+      "delete_database_message": "Stai per eliminare il tunnel '{name}'"
     }
   },
   "controller": {

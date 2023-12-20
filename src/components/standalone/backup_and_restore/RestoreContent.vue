@@ -184,8 +184,9 @@ async function restoreBackup() {
       let payload = {}
       let methodCall = 'restore'
 
-      if (isSetPassphrase.value)
+      if (isSetPassphrase.value) {
         Object.assign(payload, { passphrase: formRestore.value.passphrase })
+      }
 
       if (isEnterprise.value && typeRestore.value === 'from_backup') {
         methodCall = 'registered-restore'

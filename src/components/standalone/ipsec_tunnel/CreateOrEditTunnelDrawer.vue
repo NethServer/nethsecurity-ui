@@ -412,7 +412,9 @@ async function createOrEditTunnel() {
       presharedKeyMode.value == 'import' ? presharedKey.value : generatedPresharedKey.value
   }
 
-  if (isEditing) payload.id = id.value
+  if (isEditing) {
+    payload.id = id.value
+  }
 
   try {
     isSavingChanges.value = true

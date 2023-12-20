@@ -100,7 +100,9 @@ async function createOrEditDnsRecord() {
         wildcard: wildcard.value
       }
 
-      if (isEditing) payload.record = id.value
+      if (isEditing) {
+        payload.record = id.value
+      }
 
       await ubusCall('ns.dns', requestType, payload)
       emit('add-edit-record')

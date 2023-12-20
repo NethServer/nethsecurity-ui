@@ -76,8 +76,9 @@ async function fetchUpdatesStatus() {
     const lastPackageUpdateCheckResponse = (
       await ubusCall('ns.update', 'get-package-updates-last-check')
     ).data
-    if (lastPackageUpdateCheckResponse.lastCheck > 0)
+    if (lastPackageUpdateCheckResponse.lastCheck > 0) {
       lastPackageUpdateCheck.value = new Date(lastPackageUpdateCheckResponse.lastCheck * 1000)
+    }
     loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_updates_status')
@@ -93,7 +94,9 @@ async function checkPackageUpdates() {
     noPackageUpdatesAvailable.value = false
     packageUpdates.value = (await ubusCall('ns.update', 'check-package-updates')).data.updates
 
-    if (packageUpdates.value.length == 0) noPackageUpdatesAvailable.value = true
+    if (packageUpdates.value.length == 0) {
+      noPackageUpdatesAvailable.value = true
+    }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_package_updates')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

@@ -101,7 +101,9 @@ async function loadMainTable() {
       protocol: props.protocol
     })
 
-    if (res.data) table.value = res.data.table
+    if (res.data) {
+      table.value = res.data.table
+    }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

@@ -95,7 +95,9 @@ async function saveScheduleOrBeginUpdate() {
   scheduleDateValidationError.value = ''
   isSavingChanges.value = true
   if (scheduleMode.value == 'date_time') {
-    if (!validateScheduleDate()) return
+    if (!validateScheduleDate()) {
+      return
+    }
 
     try {
       await ubusCall('ns.update', 'schedule-system-update', {
@@ -130,7 +132,9 @@ async function saveScheduleOrBeginUpdate() {
 watch(
   () => props.isShown,
   () => {
-    if (props.isShown) resetForm()
+    if (props.isShown) {
+      resetForm()
+    }
   }
 )
 </script>

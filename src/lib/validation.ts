@@ -126,8 +126,9 @@ export const validateIp6Cidr = (ip4Cidr: String): validationOutput => {
 }
 
 export const validateIpCidr = (ipCidr: string): validationOutput => {
-  if (!validateIp4Cidr(ipCidr).valid && !validateIp6Cidr(ipCidr).valid)
+  if (!validateIp4Cidr(ipCidr).valid && !validateIp6Cidr(ipCidr).valid) {
     return { valid: false, errMessage: 'error.invalid_cidr_address' }
+  }
 
   return { valid: true }
 }
@@ -308,15 +309,17 @@ export const validateFile = (
   if (format) {
     const filenameSplit = value.name.split('.')
 
-    if (filenameSplit.length < format.split('.').length)
+    if (filenameSplit.length < format.split('.').length) {
       return { valid: false, errMessage: 'error.invalid_file_format' }
+    }
 
     const extension = filenameSplit
       .slice(filenameSplit.length - format.split('.').length, filenameSplit.length)
       .join('.')
 
-    if (extension.toLowerCase() != format.toLowerCase())
+    if (extension.toLowerCase() != format.toLowerCase()) {
       return { valid: false, errMessage: 'error.invalid_file_format' }
+    }
   }
 
   return { valid: true }

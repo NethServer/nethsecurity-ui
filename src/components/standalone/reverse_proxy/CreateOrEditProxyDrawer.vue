@@ -134,7 +134,9 @@ async function createOrEditProxy() {
 
   clearValidationErrors()
 
-  if (!validate()) return
+  if (!validate()) {
+    return
+  }
 
   const requestType =
     type.value === 'domain'

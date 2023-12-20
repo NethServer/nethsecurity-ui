@@ -50,7 +50,9 @@ async function downloadBackup() {
     let res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.backup) {
       let extension = '.tar.gz'
-      if (props.isSetPassphrase) extension += '.gpg'
+      if (props.isSetPassphrase) {
+        extension += '.gpg'
+      }
       let link = document.createElement('a')
       link.href = `data:application/gzip;base64,${res.data.backup}`
       link.download = 'backup' + extension

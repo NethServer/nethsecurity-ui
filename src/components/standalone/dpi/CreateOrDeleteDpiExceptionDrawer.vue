@@ -97,7 +97,9 @@ async function createOrEditException() {
         enabled: enabled.value
       }
 
-      if (isEditing) payload['config-name'] = id.value
+      if (isEditing) {
+        payload['config-name'] = id.value
+      }
 
       await ubusCall('ns.dpi', requestType, payload)
       emit('add-edit-exception')

@@ -121,18 +121,42 @@ watch(
     if (props.editRoute) {
       let selectedRoute = props.editRoute
       if (selectedRoute && selectedRoute.item) {
-        if (selectedRoute.item.id) form.value.id = selectedRoute.item.id
-        if (selectedRoute.item.disabled) form.value.status = selectedRoute.item.disabled === '0'
-        if (selectedRoute.item.ns_description) form.value.name = selectedRoute.item.ns_description
-        if (selectedRoute.item.target) form.value.network_address = selectedRoute.item.target
-        if (selectedRoute.item.gateway) form.value.gateway = selectedRoute.item.gateway
-        if (selectedRoute.item.metric) form.value.metric = selectedRoute.item.metric
-        if (selectedRoute.item.interface) form.value.routeInterface = selectedRoute.item.interface
-        if (selectedRoute.item.type) form.value.routeType = selectedRoute.item.type
-        if (selectedRoute.item.mtu) form.value.mtu = selectedRoute.item.mtu
-        if (selectedRoute.item.onlink) form.value.onlink = selectedRoute.item.onlink === '1'
-      } else form.value = { ...originalForm }
-    } else form.value = { ...originalForm }
+        if (selectedRoute.item.id) {
+          form.value.id = selectedRoute.item.id
+        }
+        if (selectedRoute.item.disabled) {
+          form.value.status = selectedRoute.item.disabled === '0'
+        }
+        if (selectedRoute.item.ns_description) {
+          form.value.name = selectedRoute.item.ns_description
+        }
+        if (selectedRoute.item.target) {
+          form.value.network_address = selectedRoute.item.target
+        }
+        if (selectedRoute.item.gateway) {
+          form.value.gateway = selectedRoute.item.gateway
+        }
+        if (selectedRoute.item.metric) {
+          form.value.metric = selectedRoute.item.metric
+        }
+        if (selectedRoute.item.interface) {
+          form.value.routeInterface = selectedRoute.item.interface
+        }
+        if (selectedRoute.item.type) {
+          form.value.routeType = selectedRoute.item.type
+        }
+        if (selectedRoute.item.mtu) {
+          form.value.mtu = selectedRoute.item.mtu
+        }
+        if (selectedRoute.item.onlink) {
+          form.value.onlink = selectedRoute.item.onlink === '1'
+        }
+      } else {
+        form.value = { ...originalForm }
+      }
+    } else {
+      form.value = { ...originalForm }
+    }
   }
 )
 
@@ -147,10 +171,14 @@ function getDrawerTitle() {
   let title = ''
   if (props.protocol === 'ipv4') {
     title = t('standalone.routes.create_route_ipv4')
-    if (props.editRoute.item) title = t('standalone.routes.edit_route_ipv4')
+    if (props.editRoute.item) {
+      title = t('standalone.routes.edit_route_ipv4')
+    }
   } else if (props.protocol === 'ipv6') {
     title = t('standalone.routes.create_route_ipv6')
-    if (props.editRoute.item) title = t('standalone.routes.edit_route_ipv6')
+    if (props.editRoute.item) {
+      title = t('standalone.routes.edit_route_ipv6')
+    }
   }
   return title
 }
@@ -197,11 +225,12 @@ async function getFirewallData() {
         getRouteTypes.data &&
         getRouteTypes.data.types &&
         getRouteTypes.data.types.length
-      )
+      ) {
         routeTypes.value = getRouteTypes.data.types.map((item: RouteType) => ({
           id: item,
           label: item
         }))
+      }
     } catch (exception: any) {
       errorLoadingData.value.notificationTitle = t('error.cannot_retrieve_route_types')
       errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -278,7 +307,9 @@ function validate(): boolean {
   if (form.value.metric) {
     let validMetric = false
 
-    if (!isNaN(Number(form.value.metric)) && Number(form.value.metric) >= 0) validMetric = true
+    if (!isNaN(Number(form.value.metric)) && Number(form.value.metric) >= 0) {
+      validMetric = true
+    }
 
     if (!validMetric) {
       error.value.metric = t('error.invalid_metric')
@@ -323,7 +354,9 @@ function validate(): boolean {
     }
   }
 
-  if (!isValidationOk && !isFocusInput) focusElement(mtuRef)
+  if (!isValidationOk && !isFocusInput) {
+    focusElement(mtuRef)
+  }
 
   return isValidationOk
 }
@@ -353,7 +386,9 @@ function createRoute() {
       .then((response) => {
         if (response.data && response.data.id) {
           let methodUpdateStatus = 'enable-route'
-          if (!form.value.status) methodUpdateStatus = 'disable-route'
+          if (!form.value.status) {
+            methodUpdateStatus = 'disable-route'
+          }
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id
@@ -401,7 +436,9 @@ function submit() {
       .then((response) => {
         if (response.data && response.data.id) {
           let methodUpdateStatus = 'enable-route'
-          if (!form.value.status) methodUpdateStatus = 'disable-route'
+          if (!form.value.status) {
+            methodUpdateStatus = 'disable-route'
+          }
 
           ubusCall('ns.routes', methodUpdateStatus, {
             id: response.data.id

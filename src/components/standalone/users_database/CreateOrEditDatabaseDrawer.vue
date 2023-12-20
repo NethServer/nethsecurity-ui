@@ -142,13 +142,16 @@ function validateUri(setErrorMessage: boolean) {
   let valid = true
   const requiredValidator = validateRequired(ldapUri.value)
   if (!requiredValidator.valid) {
-    if (setErrorMessage)
+    if (setErrorMessage) {
       validationErrorBag.value.set('uri', [requiredValidator.errMessage as string])
+    }
     valid = false
   } else {
     const uriValidator = validateLDAPUri(ldapUri.value)
     if (!uriValidator.valid) {
-      if (setErrorMessage) validationErrorBag.value.set('uri', [uriValidator.errMessage as string])
+      if (setErrorMessage) {
+        validationErrorBag.value.set('uri', [uriValidator.errMessage as string])
+      }
       valid = false
     }
   }
@@ -284,7 +287,9 @@ async function createOrEditDatabase() {
 watch(
   () => props.isShown,
   () => {
-    if (props.isShown) resetForm()
+    if (props.isShown) {
+      resetForm()
+    }
   }
 )
 </script>

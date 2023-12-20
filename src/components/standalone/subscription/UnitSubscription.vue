@@ -47,7 +47,9 @@ const errors = ref({
 })
 
 const expirationDateString = computed(() => {
-  if (!subscriptionData.value) return ''
+  if (!subscriptionData.value) {
+    return ''
+  }
 
   return subscriptionData.value.expiration == 0
     ? t('standalone.subscription.no_expiration')
@@ -71,7 +73,9 @@ async function subscribe() {
   try {
     errors.value.request = ''
 
-    if (!validateAuthToken()) return
+    if (!validateAuthToken()) {
+      return
+    }
 
     isProcessingRequest.value = true
     await ubusCall('ns.subscription', 'register', { secret: authToken.value })

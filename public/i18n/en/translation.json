@@ -618,7 +618,8 @@
       "primary_device_not_included": "Primary device must be included in selected devices",
       "no_devices_available": "No devices available",
       "custom_zone": "Custom",
-      "cannot_remove_device_configuration": "Cannot remove device configuration"
+      "cannot_remove_device_configuration": "Cannot remove device configuration",
+      "hotspot_network": "Network"
     },
     "multi_wan": {
       "title": "MultiWAN",

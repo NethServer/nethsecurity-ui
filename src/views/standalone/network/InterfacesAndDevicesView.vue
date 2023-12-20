@@ -783,6 +783,13 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
+                        <!-- hotspot network -->
+                        <div v-if="isHotspot(device)">
+                          <span class="font-medium"
+                            >{{ t('standalone.interfaces_and_devices.hotspot_network') }}:
+                          </span>
+                          <span>{{ device.hotspot?.network }}</span>
+                        </div>
                         <div>
                           <div v-if="getIpv4Addresses(device)?.length">
                             <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">

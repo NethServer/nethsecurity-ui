@@ -38,6 +38,7 @@ async function loadI18n() {
     legacy: false,
     missingWarn: false,
     fallbackWarn: false,
+    fallbackLocale: 'en',
     locale
   })
   app.use(i18n)

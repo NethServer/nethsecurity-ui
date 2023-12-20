@@ -6,21 +6,12 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
-import {
-  Dialog,
-  DialogPanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
+import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeButton, NeSkeleton } from '@nethserver/vue-tailwind-lib'
+import { NeButton, NeDropdown, NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
@@ -42,19 +33,6 @@ let loading = ref({
   systemBoard: false
 })
 
-const accountMenu = [
-  {
-    name: t('standalone.shell.account'),
-    action: () => router.push('/standalone/user'),
-    disabled: !isStandaloneMode()
-  },
-  {
-    name: t('standalone.shell.sign_out'),
-    action: loginStore.logout,
-    disabled: !isStandaloneMode()
-  }
-]
-
 const sidebarOpen = ref(false)
 
 let showUciChangesModal = ref(false)
@@ -70,6 +48,34 @@ const logoFilename = computed(() => {
   } else {
     return 'logo_dark.svg'
   }
+})
+
+const accountMenuOptions = computed(() => {
+  return [
+    {
+      id: 'account',
+      label: t('standalone.shell.account'),
+      icon: 'circle-user',
+      iconStyle: 'fas',
+      action: () => router.push('/standalone/user'),
+      disabled: !isStandaloneMode()
+    },
+    {
+      id: 'theme',
+      label: t('standalone.shell.toggle_theme'),
+      icon: themeStore.isLight ? 'moon' : 'sun',
+      iconStyle: 'fas',
+      action: themeStore.toggleTheme
+    },
+    {
+      id: 'logout',
+      label: t('standalone.shell.sign_out'),
+      icon: 'right-from-bracket',
+      iconStyle: 'fas',
+      action: loginStore.logout,
+      disabled: !isStandaloneMode()
+    }
+  ]
 })
 
 watch(
@@ -296,20 +302,6 @@ onMounted(() => {
               />
             </a>
 
-            <!-- theme switcher -->
-            <button
-              type="button"
-              @click="themeStore.toggleTheme()"
-              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
-            >
-              <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
-              <font-awesome-icon
-                :icon="['fas', themeStore.isLight ? 'moon' : 'sun']"
-                class="h-6 w-6 shrink-0"
-                aria-hidden="true"
-              />
-            </button>
-
             <!-- notifications -->
             <button
               type="button"
@@ -324,54 +316,22 @@ onMounted(() => {
               />
             </button>
 
-            <!-- //// use NeDropdown component -->
-            <!-- Profile dropdown -->
-            <Menu as="div" class="relative">
-              <MenuButton :class="['-m-1.5 flex items-center p-1.5', topBarButtonsColorClasses]">
-                <span class="sr-only">{{ t('standalone.shell.open_user_menu') }}</span>
-                <font-awesome-icon
-                  :icon="['fas', 'circle-user']"
-                  class="h-6 w-6 shrink-0"
-                  aria-hidden="true"
-                />
-                <span class="hidden lg:flex lg:items-center">
+            <!-- profile dropdown -->
+            <NeDropdown
+              :items="accountMenuOptions"
+              :alignToRight="true"
+              :openMenuAriaLabel="t('standalone.shell.open_user_menu')"
+            >
+              <template #button>
+                <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
                   <font-awesome-icon
-                    :icon="['fas', 'chevron-down']"
-                    class="ml-2 h-3 w-3 shrink-0"
+                    :icon="['fas', 'circle-user']"
+                    class="h-6 w-6 shrink-0"
                     aria-hidden="true"
                   />
-                </span>
-              </MenuButton>
-              <transition
-                enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95"
-              >
-                <MenuItems
-                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none dark:bg-gray-950 dark:ring-gray-100/5"
-                >
-                  <MenuItem
-                    v-for="item in accountMenu"
-                    :key="item.name"
-                    v-slot="{ active }"
-                    :disabled="item.disabled"
-                    :class="[item.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer']"
-                  >
-                    <a
-                      @click="item.action"
-                      :class="[
-                        active ? 'bg-gray-100 dark:bg-gray-800' : '',
-                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200'
-                      ]"
-                      >{{ item.name }}</a
-                    >
-                  </MenuItem>
-                </MenuItems>
-              </transition>
-            </Menu>
+                </button>
+              </template>
+            </NeDropdown>
           </div>
         </div>
       </div>

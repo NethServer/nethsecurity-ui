@@ -41,7 +41,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-server', 'edit-server'])
+const emit = defineEmits(['close', 'add-edit-server'])
 
 const loading = ref(false)
 const isSavingChanges = ref(false)
@@ -400,11 +400,7 @@ async function createOrEditServer() {
     isSavingChanges.value = false
   }
 
-  if (isEditing) {
-    emit('edit-server')
-  } else {
-    emit('add-server')
-  }
+  emit('add-edit-server')
   close()
 }
 

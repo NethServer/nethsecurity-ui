@@ -1058,7 +1058,7 @@
       "bridged": "Bridged",
       "vpn_network": "VPN network",
       "vpn_network_tooltip": "The VPN network is a virtual network used by clients; please select a network not used in any other firewall configuration.",
-      "public_ip_hostname_unit": "Public IP / hostname of this unit",
+      "public_ip_hostname_unit": "Public IP/hostname of this unit",
       "add_public_ip_host": "Add public IP/host",
       "protocol": "Protocol",
       "udp": "UDP",
@@ -1081,7 +1081,7 @@
       "custom_dhcp_options_tooltip": "Send additional DHCP options to clients; especially useful for configuring an OpenVPN client to connect to a Windows network over the VPN",
       "create": "Create",
       "add_option": "Add option",
-      "delete_roadwarrior_server": "Delete RoadWarrior server",
+      "delete_roadwarrior_server": "Delete Road Warrior server",
       "delete_roadwarrior_server_message": "This action will also delete all accounts for this server.",
       "database": "Database",
       "status": "Status",
@@ -1095,8 +1095,7 @@
       "local_database": "Local database",
       "custom_option_combobox_placeholder": "Search key",
       "strong": "Strong",
-      "weak": "Weak",
-      "roadwarrior_server_configured": "Road Warrior server configured"
+      "weak": "Weak"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

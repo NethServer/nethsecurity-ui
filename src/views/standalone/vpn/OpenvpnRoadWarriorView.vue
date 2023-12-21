@@ -219,16 +219,6 @@ onMounted(() => {
     :instance-name="instanceName"
     :is-shown="showCreateOrEditServerModal"
     @close="showCreateOrEditServerModal = false"
-    @edit-server="reloadServer"
-    @add-server="
-      () => {
-        notificationsStore.addNotification({
-          id: 'add-rw-server',
-          kind: 'success',
-          title: t('standalone.openvpn_rw.roadwarrior_server_configured')
-        })
-        reloadServer()
-      }
-    "
+    @add-edit-server="reloadServer"
   />
 </template>

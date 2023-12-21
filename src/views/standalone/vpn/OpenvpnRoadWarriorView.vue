@@ -22,7 +22,6 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 export type RWServer = {
   proto: string
@@ -71,7 +70,6 @@ export type RWUser = {
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
-const notificationsStore = useNotificationsStore()
 
 const loading = ref(true)
 const instanceName = ref('')

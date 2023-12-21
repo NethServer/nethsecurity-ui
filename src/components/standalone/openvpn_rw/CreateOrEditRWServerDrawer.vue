@@ -360,7 +360,7 @@ async function createOrEditServer() {
       ns_local: pushCustomNetworkRoutes.value,
       ns_redirect_gateway: routeTrafficThroughVpn.value ? '1' : '0',
       client_to_client: clientToClientNetworkTraffic.value ? '1' : '0',
-      compress: compression.value === 'auto' ? '' : compression.value,
+      compress: compression.value === 'disabled' ? '' : compression.value,
       cipher: cipher.value === 'auto' ? '' : cipher.value,
       auth: digest.value === 'auto' ? '' : digest.value,
       tls_version_min: minimumTLSVersion.value === 'auto' ? '' : minimumTLSVersion.value,

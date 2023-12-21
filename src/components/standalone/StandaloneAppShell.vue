@@ -324,11 +324,18 @@ onMounted(() => {
             >
               <template #button>
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
-                  <font-awesome-icon
-                    :icon="['fas', 'circle-user']"
-                    class="h-6 w-6 shrink-0"
-                    aria-hidden="true"
-                  />
+                  <div class="flex items-center gap-2">
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-user']"
+                      class="h-6 w-6 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <font-awesome-icon
+                      :icon="['fas', 'chevron-down']"
+                      class="h-3 w-3 shrink-0"
+                      aria-hidden="true"
+                    />
+                  </div>
                 </button>
               </template>
             </NeDropdown>

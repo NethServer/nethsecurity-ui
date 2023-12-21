@@ -39,8 +39,13 @@ const emit = defineEmits(['delete-server', 'edit-server'])
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}:</p>
             <div :class="['flex', 'flex-row', 'items-center']">
               <font-awesome-icon
-                :icon="['fas', true ? 'circle-check' : 'circle-xmark']"
-                :class="['mr-2', 'h-4', 'w-4', true ? 'text-green-500' : 'text-rose-500']"
+                :icon="['fas', server.enabled == '1' ? 'circle-check' : 'circle-xmark']"
+                :class="[
+                  'mr-2',
+                  'h-4',
+                  'w-4',
+                  server.enabled == '1' ? 'text-green-500' : 'text-rose-500'
+                ]"
                 aria-hidden="true"
               />
               <p>
@@ -98,7 +103,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
     >
       <div class="flex flex-row items-center">
         <font-awesome-icon
-          :icon="['fas', 'circle-info']"
+          :icon="['fas', 'user-group']"
           aria-hidden="true"
           :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
         />

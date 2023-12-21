@@ -75,14 +75,19 @@ let error = ref({
   interface: '',
   listApplicationsErrorTitle: '',
   listApplicationsErrorDescription: '',
+  listApplicationsErrorDetails: '',
   listDevicesErrorTitle: '',
   listDevicesErrorDescription: '',
+  listDevicesErrorDetails: '',
   listPopularAppsErrorTitle: '',
   listPopularAppsErrorDescription: '',
+  listPopularAppsErrorDetails: '',
   addRuleErrorTitle: '',
   addRuleErrorDescription: '',
+  addRuleErrorDetails: '',
   editRuleErrorTitle: '',
-  editRuleErrorDescription: ''
+  editRuleErrorDescription: '',
+  editRuleErrorDetails: ''
 })
 const errorBag = ref(new MessageBag())
 
@@ -154,12 +159,19 @@ function clearErrors() {
   error.value.interface = ''
   error.value.listApplicationsErrorTitle = ''
   error.value.listApplicationsErrorDescription = ''
+  error.value.listApplicationsErrorDetails = ''
   error.value.listDevicesErrorTitle = ''
   error.value.listDevicesErrorDescription = ''
+  error.value.listDevicesErrorDetails = ''
   error.value.listPopularAppsErrorTitle = ''
   error.value.listPopularAppsErrorDescription = ''
+  error.value.listPopularAppsErrorDetails = ''
   error.value.addRuleErrorTitle = ''
+  error.value.addRuleErrorDescription = ''
+  error.value.addRuleErrorDetails = ''
   error.value.editRuleErrorTitle = ''
+  error.value.editRuleErrorDescription = ''
+  error.value.editRuleErrorDetails = ''
 }
 
 function clearSearch() {
@@ -172,6 +184,7 @@ function clearSearch() {
 async function listPopularApps() {
   error.value.listPopularAppsErrorTitle = ''
   error.value.listPopularAppsErrorDescription = ''
+  error.value.listPopularAppsErrorDetails = ''
   loading.value.listPopularApps = true
 
   try {
@@ -194,6 +207,7 @@ async function listPopularApps() {
     console.error(err)
     error.value.listPopularAppsErrorTitle = t('error.cannot_retrieve_popular_apps')
     error.value.listPopularAppsErrorDescription = t(getAxiosErrorMessage(err))
+    error.value.listPopularAppsErrorDetails = err.toString()
   } finally {
     loading.value.listPopularApps = false
   }
@@ -202,6 +216,7 @@ async function listPopularApps() {
 async function listDevices() {
   error.value.listDevicesErrorTitle = ''
   error.value.listDevicesErrorDescription = ''
+  error.value.listDevicesErrorDetails = ''
   loading.value.listDevices = true
 
   try {
@@ -232,6 +247,7 @@ async function listDevices() {
     console.error(err)
     error.value.listDevicesErrorTitle = t('error.cannot_retrieve_devices')
     error.value.listDevicesErrorDescription = t(getAxiosErrorMessage(err))
+    error.value.listDevicesErrorDetails = err.toString()
   } finally {
     loading.value.listDevices = false
   }
@@ -256,6 +272,7 @@ async function searchApps() {
   }
   error.value.listApplicationsErrorTitle = ''
   error.value.listApplicationsErrorDescription = ''
+  error.value.listApplicationsErrorDetails = ''
   loading.value.listApplications = true
 
   try {
@@ -271,6 +288,7 @@ async function searchApps() {
     console.error(err)
     error.value.listApplicationsErrorTitle = t('error.cannot_retrieve_applications')
     error.value.listApplicationsErrorDescription = t(getAxiosErrorMessage(err))
+    error.value.listApplicationsErrorDetails = err.toString()
   } finally {
     loading.value.listApplications = false
   }
@@ -348,6 +366,7 @@ async function addRule() {
   }
   error.value.addRuleErrorTitle = ''
   error.value.addRuleErrorDescription = ''
+  error.value.addRuleErrorDetails = ''
   loading.value.addRule = true
 
   const selectedApplicationNames = getSelectedApplicationNames()
@@ -368,6 +387,7 @@ async function addRule() {
     console.error(err)
     error.value.addRuleErrorTitle = t('error.cannot_create_dpi_rule')
     error.value.addRuleErrorDescription = t(getAxiosErrorMessage(err))
+    error.value.addRuleErrorDetails = err.toString()
   } finally {
     loading.value.addRule = false
   }
@@ -381,6 +401,7 @@ async function editRule() {
   }
   error.value.editRuleErrorTitle = ''
   error.value.editRuleErrorDescription = ''
+  error.value.editRuleErrorDetails = ''
   loading.value.editRule = true
 
   const selectedApplicationNames = getSelectedApplicationNames()
@@ -402,6 +423,7 @@ async function editRule() {
     console.error(err)
     error.value.editRuleErrorTitle = t('error.cannot_edit_dpi_rule')
     error.value.editRuleErrorDescription = t(getAxiosErrorMessage(err))
+    error.value.editRuleErrorDetails = err.toString()
   } finally {
     loading.value.editRule = false
   }
@@ -444,7 +466,11 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         kind="error"
         :title="error.listDevicesErrorTitle"
         :description="error.listDevicesErrorDescription"
-      />
+      >
+        <template #details v-if="error.listDevicesErrorDetails">
+          {{ error.listDevicesErrorDetails }}
+        </template>
+      </NeInlineNotification>
       <!-- source interface -->
       <NeCombobox
         v-model="sourceIface"
@@ -497,14 +523,22 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
             kind="error"
             :title="error.listPopularAppsErrorTitle"
             :description="error.listPopularAppsErrorDescription"
-          />
+          >
+            <template #details v-if="error.listPopularAppsErrorDetails">
+              {{ error.listPopularAppsErrorDetails }}
+            </template>
+          </NeInlineNotification>
           <!-- list applications error -->
           <NeInlineNotification
             v-if="error.listApplicationsErrorTitle"
             kind="error"
             :title="error.listApplicationsErrorTitle"
             :description="error.listApplicationsErrorDescription"
-          />
+          >
+            <template #details v-if="error.listApplicationsErrorDetails">
+              {{ error.listApplicationsErrorDetails }}
+            </template>
+          </NeInlineNotification>
           <!-- skeleton -->
           <template v-else-if="loading.listPopularApps || loading.listApplications">
             <div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 2xl:grid-cols-3">
@@ -596,13 +630,21 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         kind="error"
         :title="error.addRuleErrorTitle"
         :description="error.addRuleErrorDescription"
-      />
+      >
+        <template #details v-if="error.addRuleErrorDetails">
+          {{ error.addRuleErrorDetails }}
+        </template>
+      </NeInlineNotification>
       <NeInlineNotification
         v-if="error.editRuleErrorTitle"
         kind="error"
         :title="error.editRuleErrorTitle"
         :description="error.editRuleErrorDescription"
-      />
+      >
+        <template #details v-if="error.editRuleErrorDetails">
+          {{ error.editRuleErrorDetails }}
+        </template>
+      </NeInlineNotification>
     </div>
   </NeModal>
 </template>

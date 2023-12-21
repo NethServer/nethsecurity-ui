@@ -36,7 +36,8 @@ let loading = ref({
 })
 
 let error = ref({
-  listRules: ''
+  listRules: '',
+  listRulesDetails: ''
 })
 
 onMounted(() => {
@@ -52,6 +53,7 @@ function loadData() {
 async function listRules() {
   loading.value.listRules = true
   error.value.listRules = ''
+  error.value.listRulesDetails = ''
 
   try {
     const res = await ubusCall('ns.dpi', 'list-rules')
@@ -59,6 +61,7 @@ async function listRules() {
   } catch (err: any) {
     console.error(err)
     error.value.listRules = t(getAxiosErrorMessage(err))
+    error.value.listRulesDetails = err.toString()
   } finally {
     loading.value.listRules = false
   }
@@ -105,7 +108,11 @@ function showDeleteRuleModal(rule: DpiRule) {
       :title="t('error.cannot_retrieve_dpi_rules')"
       :description="error.listRules"
       class="mb-5"
-    />
+    >
+      <template #details v-if="error.listRulesDetails">
+        {{ error.listRulesDetails }}
+      </template>
+    </NeInlineNotification>
     <!-- skeleton -->
     <template v-else-if="loading.listRules">
       <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 2xl:grid-cols-3">

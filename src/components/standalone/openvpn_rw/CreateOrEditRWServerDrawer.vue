@@ -397,11 +397,13 @@ async function createOrEditServer() {
 }
 
 function close() {
-  cleanValidationErrors()
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  emit('close')
+  if (!isSavingChanges.value) {
+    cleanValidationErrors()
+    error.value.notificationTitle = ''
+    error.value.notificationDescription = ''
+    error.value.notificationDetails = ''
+    emit('close')
+  }
 }
 
 watch(
@@ -623,7 +625,9 @@ watch(
           @click="createOrEditServer()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
-          >{{ t('common.save') }}</NeButton
+          >{{
+            itemToEdit?.ns_description ? t('common.save') : t('standalone.openvpn_rw.create')
+          }}</NeButton
         >
       </div>
     </div></NeSideDrawer

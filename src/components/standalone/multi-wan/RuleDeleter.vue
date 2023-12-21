@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2023 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
 import type { Rule } from '@/composables/useMwan'

@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2023 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import { NeButton, NeCombobox, NeSideDrawer, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, toRef } from 'vue'

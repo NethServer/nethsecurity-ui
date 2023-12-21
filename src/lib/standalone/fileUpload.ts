@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import axios, { type AxiosProgressEvent } from 'axios'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'

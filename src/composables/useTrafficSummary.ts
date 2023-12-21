@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { padStart, upperFirst } from 'lodash-es'

@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import type { Ref } from 'vue'
 import { computed, ref, watch } from 'vue'
 import type { Policy } from '@/composables/useMwan'

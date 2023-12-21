@@ -70,6 +70,10 @@ const tableHeaders = [
     key: 'status'
   },
   {
+    label: t('standalone.openvpn_tunnel.connection'),
+    key: 'connected'
+  },
+  {
     label: '',
     key: 'menu'
   }
@@ -182,6 +186,31 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
             item.enabled
               ? t('standalone.openvpn_tunnel.enabled')
               : t('standalone.openvpn_tunnel.disabled')
+          }}
+        </p>
+      </div>
+    </template>
+    <template #connected="{ item }: { item: ServerTunnel | ClientTunnel }">
+      <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
+        <font-awesome-icon
+          :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
+          :class="[
+            'mr-2',
+            'h-5',
+            'w-5',
+            item.connected && item.enabled
+              ? 'text-green-600 dark:text-green-400'
+              : item.enabled
+              ? 'text-red-600 dark:text-red-400'
+              : ''
+          ]"
+          aria-hidden="true"
+        />
+        <p>
+          {{
+            item.connected
+              ? t('standalone.openvpn_tunnel.connected')
+              : t('standalone.openvpn_tunnel.not_connected')
           }}
         </p>
       </div>

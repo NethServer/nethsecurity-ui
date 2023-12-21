@@ -180,7 +180,7 @@ function validate() {
               </div>
               <div class="text-sm leading-6">
                 <a
-                  href="https://docs.nethsecurity.org/"
+                  href="https://docs.nethsecurity.org/en/latest/remote_access.html#default-credentials"
                   target="_blank"
                   rel="noreferrer"
                   class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"

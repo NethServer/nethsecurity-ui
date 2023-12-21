@@ -1,0 +1,1165 @@
+diff --git a/src/components/standalone/AxiosErrorModal.vue b/src/components/standalone/AxiosErrorModal.vue
+index d832521..fbcf2f8 100644
+--- a/src/components/standalone/AxiosErrorModal.vue
++++ b/src/components/standalone/AxiosErrorModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { NeButton, NeFormItemLabel, NeModal } from '@nethserver/vue-tailwind-lib'
+ import { computed, ref, watch } from 'vue'
+diff --git a/src/components/standalone/FilterableListItemLayout.vue b/src/components/standalone/FilterableListItemLayout.vue
+index 046ec09..a46c152 100644
+--- a/src/components/standalone/FilterableListItemLayout.vue
++++ b/src/components/standalone/FilterableListItemLayout.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts" generic="T">
+ import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+ import { computed, onMounted, type Ref } from 'vue'
+diff --git a/src/components/standalone/NeAxiosErrorModal.vue b/src/components/standalone/NeAxiosErrorModal.vue
+index 8772cdc..90821ca 100644
+--- a/src/components/standalone/NeAxiosErrorModal.vue
++++ b/src/components/standalone/NeAxiosErrorModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { NeButton, NeFormItemLabel, NeModal } from '@nethserver/vue-tailwind-lib'
+ import { computed, ref, watch } from 'vue'
+diff --git a/src/components/standalone/NeCopyField.vue b/src/components/standalone/NeCopyField.vue
+index 92b15f9..dfc9e13 100644
+--- a/src/components/standalone/NeCopyField.vue
++++ b/src/components/standalone/NeCopyField.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ const props = defineProps<{
+   value: string
+diff --git a/src/components/standalone/NeMultiTextInput.vue b/src/components/standalone/NeMultiTextInput.vue
+index 79b86ab..82c3430 100644
+--- a/src/components/standalone/NeMultiTextInput.vue
++++ b/src/components/standalone/NeMultiTextInput.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted } from 'vue'
+ import { ref } from 'vue'
+diff --git a/src/components/standalone/NeStepper.vue b/src/components/standalone/NeStepper.vue
+index 8d27e02..820f9d4 100644
+--- a/src/components/standalone/NeStepper.vue
++++ b/src/components/standalone/NeStepper.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeProgressBar } from '@nethserver/vue-tailwind-lib'
+ import { range } from 'lodash-es'
+diff --git a/src/components/standalone/NeTable.vue b/src/components/standalone/NeTable.vue
+index 7ed930e..578ccf5 100644
+--- a/src/components/standalone/NeTable.vue
++++ b/src/components/standalone/NeTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { PropType } from 'vue'
+ import { NeSkeleton } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/ToastNotificationsArea.vue b/src/components/standalone/ToastNotificationsArea.vue
+index afc8571..bae4a99 100644
+--- a/src/components/standalone/ToastNotificationsArea.vue
++++ b/src/components/standalone/ToastNotificationsArea.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { computed } from 'vue'
+ import { useNotificationsStore } from '../../stores/standalone/notifications'
+diff --git a/src/components/standalone/backup_and_restore/BackupContent.vue b/src/components/standalone/backup_and_restore/BackupContent.vue
+index c7effaa..e1f8fdf 100644
+--- a/src/components/standalone/backup_and_restore/BackupContent.vue
++++ b/src/components/standalone/backup_and_restore/BackupContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/MigrationContent.vue b/src/components/standalone/backup_and_restore/MigrationContent.vue
+index eb19bf1..d36d1c2 100644
+--- a/src/components/standalone/backup_and_restore/MigrationContent.vue
++++ b/src/components/standalone/backup_and_restore/MigrationContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/MigrationDrawer.vue b/src/components/standalone/backup_and_restore/MigrationDrawer.vue
+index 1bdcc63..8905713 100644
+--- a/src/components/standalone/backup_and_restore/MigrationDrawer.vue
++++ b/src/components/standalone/backup_and_restore/MigrationDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/ModalDownloadBackup.vue b/src/components/standalone/backup_and_restore/ModalDownloadBackup.vue
+index dcf7c0c..1fefa0d 100644
+--- a/src/components/standalone/backup_and_restore/ModalDownloadBackup.vue
++++ b/src/components/standalone/backup_and_restore/ModalDownloadBackup.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/ModalRunBackup.vue b/src/components/standalone/backup_and_restore/ModalRunBackup.vue
+index 51a861d..29a06b1 100644
+--- a/src/components/standalone/backup_and_restore/ModalRunBackup.vue
++++ b/src/components/standalone/backup_and_restore/ModalRunBackup.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/RestoreContent.vue b/src/components/standalone/backup_and_restore/RestoreContent.vue
+index 5422e01..ffdfb8d 100644
+--- a/src/components/standalone/backup_and_restore/RestoreContent.vue
++++ b/src/components/standalone/backup_and_restore/RestoreContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/backup_and_restore/SetPassphraseDrawer.vue b/src/components/standalone/backup_and_restore/SetPassphraseDrawer.vue
+index 862682a..417a36e 100644
+--- a/src/components/standalone/backup_and_restore/SetPassphraseDrawer.vue
++++ b/src/components/standalone/backup_and_restore/SetPassphraseDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue b/src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue
+index 36cd2e5..ddf386f 100644
+--- a/src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue
++++ b/src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref, toRefs } from 'vue'
+ import type { DnsRecord } from './DnsRecords.vue'
+diff --git a/src/components/standalone/dns_dhcp/CreateOrEditStaticLeaseDrawer.vue b/src/components/standalone/dns_dhcp/CreateOrEditStaticLeaseDrawer.vue
+index 1c7dbe6..23aecd7 100644
+--- a/src/components/standalone/dns_dhcp/CreateOrEditStaticLeaseDrawer.vue
++++ b/src/components/standalone/dns_dhcp/CreateOrEditStaticLeaseDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref, toRefs } from 'vue'
+ import {
+diff --git a/src/components/standalone/dns_dhcp/DeleteDnsRecordModal.vue b/src/components/standalone/dns_dhcp/DeleteDnsRecordModal.vue
+index c1e0d15..edc576a 100644
+--- a/src/components/standalone/dns_dhcp/DeleteDnsRecordModal.vue
++++ b/src/components/standalone/dns_dhcp/DeleteDnsRecordModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/dns_dhcp/DeleteStaticLeaseModal.vue b/src/components/standalone/dns_dhcp/DeleteStaticLeaseModal.vue
+index e835ea2..0b58df4 100644
+--- a/src/components/standalone/dns_dhcp/DeleteStaticLeaseModal.vue
++++ b/src/components/standalone/dns_dhcp/DeleteStaticLeaseModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/dns_dhcp/DhcpManager.vue b/src/components/standalone/dns_dhcp/DhcpManager.vue
+index e265e8d..f8cc422 100644
+--- a/src/components/standalone/dns_dhcp/DhcpManager.vue
++++ b/src/components/standalone/dns_dhcp/DhcpManager.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import {
+diff --git a/src/components/standalone/dns_dhcp/DnsManager.vue b/src/components/standalone/dns_dhcp/DnsManager.vue
+index ea65687..61e55b2 100644
+--- a/src/components/standalone/dns_dhcp/DnsManager.vue
++++ b/src/components/standalone/dns_dhcp/DnsManager.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import NeMultiTextInput from '../NeMultiTextInput.vue'
+diff --git a/src/components/standalone/dns_dhcp/DnsRecords.vue b/src/components/standalone/dns_dhcp/DnsRecords.vue
+index c2e2634..f455574 100644
+--- a/src/components/standalone/dns_dhcp/DnsRecords.vue
++++ b/src/components/standalone/dns_dhcp/DnsRecords.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/dns_dhcp/DnsRecordsTable.vue b/src/components/standalone/dns_dhcp/DnsRecordsTable.vue
+index 73e8034..99b089d 100644
+--- a/src/components/standalone/dns_dhcp/DnsRecordsTable.vue
++++ b/src/components/standalone/dns_dhcp/DnsRecordsTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import { toRefs } from 'vue'
+diff --git a/src/components/standalone/dns_dhcp/DynamicLeases.vue b/src/components/standalone/dns_dhcp/DynamicLeases.vue
+index 2302402..44750b9 100644
+--- a/src/components/standalone/dns_dhcp/DynamicLeases.vue
++++ b/src/components/standalone/dns_dhcp/DynamicLeases.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import FilterableListItemLayout from '../FilterableListItemLayout.vue'
+diff --git a/src/components/standalone/dns_dhcp/EditDhcpInterfaceDrawer.vue b/src/components/standalone/dns_dhcp/EditDhcpInterfaceDrawer.vue
+index 08ccb19..1bfd9de 100644
+--- a/src/components/standalone/dns_dhcp/EditDhcpInterfaceDrawer.vue
++++ b/src/components/standalone/dns_dhcp/EditDhcpInterfaceDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref, toRefs, watch } from 'vue'
+ import {
+diff --git a/src/components/standalone/dns_dhcp/LeasesTable.vue b/src/components/standalone/dns_dhcp/LeasesTable.vue
+index 77f641f..d5a7028 100644
+--- a/src/components/standalone/dns_dhcp/LeasesTable.vue
++++ b/src/components/standalone/dns_dhcp/LeasesTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import NeTable from '../NeTable.vue'
+diff --git a/src/components/standalone/dns_dhcp/StaticLeases.vue b/src/components/standalone/dns_dhcp/StaticLeases.vue
+index 7665e0c..e6e02d8 100644
+--- a/src/components/standalone/dns_dhcp/StaticLeases.vue
++++ b/src/components/standalone/dns_dhcp/StaticLeases.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue b/src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue
+index 779bdd9..5c11f96 100644
+--- a/src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue
++++ b/src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import type { DpiException } from './DpiExceptions.vue'
+diff --git a/src/components/standalone/dpi/DeleteDpiExceptionModal.vue b/src/components/standalone/dpi/DeleteDpiExceptionModal.vue
+index 70ab24e..4f20eb4 100644
+--- a/src/components/standalone/dpi/DeleteDpiExceptionModal.vue
++++ b/src/components/standalone/dpi/DeleteDpiExceptionModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+ import { ref } from 'vue'
+diff --git a/src/components/standalone/dpi/DpiExceptionCard.vue b/src/components/standalone/dpi/DpiExceptionCard.vue
+index 4fa47a4..3345dc0 100644
+--- a/src/components/standalone/dpi/DpiExceptionCard.vue
++++ b/src/components/standalone/dpi/DpiExceptionCard.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import type { DpiException } from './DpiExceptions.vue'
+diff --git a/src/components/standalone/dpi/DpiExceptions.vue b/src/components/standalone/dpi/DpiExceptions.vue
+index 8aae8bd..021a284 100644
+--- a/src/components/standalone/dpi/DpiExceptions.vue
++++ b/src/components/standalone/dpi/DpiExceptions.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/factory_reset/FactoryResetContent.vue b/src/components/standalone/factory_reset/FactoryResetContent.vue
+index aea6537..a83ee90 100644
+--- a/src/components/standalone/factory_reset/FactoryResetContent.vue
++++ b/src/components/standalone/factory_reset/FactoryResetContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue b/src/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue
+index 2133757..d9abf0a 100644
+--- a/src/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue
++++ b/src/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import {
+diff --git a/src/components/standalone/firewall/CreateOrEditZoneDrawer.vue b/src/components/standalone/firewall/CreateOrEditZoneDrawer.vue
+index 6b6860f..6b0ebec 100644
+--- a/src/components/standalone/firewall/CreateOrEditZoneDrawer.vue
++++ b/src/components/standalone/firewall/CreateOrEditZoneDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+ import {
+diff --git a/src/components/standalone/firewall/DeletePortForwardModal.vue b/src/components/standalone/firewall/DeletePortForwardModal.vue
+index ae63160..ec787c3 100644
+--- a/src/components/standalone/firewall/DeletePortForwardModal.vue
++++ b/src/components/standalone/firewall/DeletePortForwardModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
+diff --git a/src/components/standalone/firewall/DeleteZoneModal.vue b/src/components/standalone/firewall/DeleteZoneModal.vue
+index afd42aa..416dabb 100644
+--- a/src/components/standalone/firewall/DeleteZoneModal.vue
++++ b/src/components/standalone/firewall/DeleteZoneModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+ import type { PropType } from 'vue'
+diff --git a/src/components/standalone/firewall/PortForwardTable.vue b/src/components/standalone/firewall/PortForwardTable.vue
+index 39dc6d3..ed7b422 100644
+--- a/src/components/standalone/firewall/PortForwardTable.vue
++++ b/src/components/standalone/firewall/PortForwardTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
+diff --git a/src/components/standalone/hotspot/SettingsContent.vue b/src/components/standalone/hotspot/SettingsContent.vue
+index 7ef29f8..e39b540 100644
+--- a/src/components/standalone/hotspot/SettingsContent.vue
++++ b/src/components/standalone/hotspot/SettingsContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { onMounted, ref } from 'vue'
+ import {
+diff --git a/src/components/standalone/hotspot/StatusContent.vue b/src/components/standalone/hotspot/StatusContent.vue
+index 3bd9df2..2233e79 100644
+--- a/src/components/standalone/hotspot/StatusContent.vue
++++ b/src/components/standalone/hotspot/StatusContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue b/src/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue
+index b08569b..aec59e9 100644
+--- a/src/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue
++++ b/src/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   MessageBag,
+diff --git a/src/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue b/src/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue
+index dd5df8b..e50e335 100644
+--- a/src/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue
++++ b/src/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+ import { ref, toRefs } from 'vue'
+diff --git a/src/components/standalone/ipsec_tunnel/TunnelTable.vue b/src/components/standalone/ipsec_tunnel/TunnelTable.vue
+index 4baf6b5..8662408 100644
+--- a/src/components/standalone/ipsec_tunnel/TunnelTable.vue
++++ b/src/components/standalone/ipsec_tunnel/TunnelTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import NeTable from '../NeTable.vue'
+diff --git a/src/components/standalone/multi-wan/PolicyCreator.vue b/src/components/standalone/multi-wan/PolicyCreator.vue
+index c2a32e9..f7cfccd 100644
+--- a/src/components/standalone/multi-wan/PolicyCreator.vue
++++ b/src/components/standalone/multi-wan/PolicyCreator.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+ import {
+diff --git a/src/components/standalone/multi-wan/PolicyDeleter.vue b/src/components/standalone/multi-wan/PolicyDeleter.vue
+index a520ba2..604c522 100644
+--- a/src/components/standalone/multi-wan/PolicyDeleter.vue
++++ b/src/components/standalone/multi-wan/PolicyDeleter.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+ import type { PropType } from 'vue'
+diff --git a/src/components/standalone/multi-wan/PolicyEditor.vue b/src/components/standalone/multi-wan/PolicyEditor.vue
+index 93512b4..8773362 100644
+--- a/src/components/standalone/multi-wan/PolicyEditor.vue
++++ b/src/components/standalone/multi-wan/PolicyEditor.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { PropType } from 'vue'
+ import { computed, onMounted, reactive, ref, toRef } from 'vue'
+diff --git a/src/components/standalone/multi-wan/RuleCreator.vue b/src/components/standalone/multi-wan/RuleCreator.vue
+index a285184..48bed8b 100644
+--- a/src/components/standalone/multi-wan/RuleCreator.vue
++++ b/src/components/standalone/multi-wan/RuleCreator.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { NeButton, NeCombobox, NeSideDrawer, NeTextInput } from '@nethserver/vue-tailwind-lib'
+ import { ref, toRef } from 'vue'
+diff --git a/src/components/standalone/multi-wan/RuleDeleter.vue b/src/components/standalone/multi-wan/RuleDeleter.vue
+index d30c5ad..a0806c2 100644
+--- a/src/components/standalone/multi-wan/RuleDeleter.vue
++++ b/src/components/standalone/multi-wan/RuleDeleter.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+ import type { Rule } from '@/composables/useMwan'
+diff --git a/src/components/standalone/multi-wan/RuleEditor.vue b/src/components/standalone/multi-wan/RuleEditor.vue
+index 4ed2f3d..0730957 100644
+--- a/src/components/standalone/multi-wan/RuleEditor.vue
++++ b/src/components/standalone/multi-wan/RuleEditor.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { useI18n } from 'vue-i18n'
+ import { ref, toRef } from 'vue'
+diff --git a/src/components/standalone/multi-wan/RuleManager.vue b/src/components/standalone/multi-wan/RuleManager.vue
+index 6b8b784..29e2092 100644
+--- a/src/components/standalone/multi-wan/RuleManager.vue
++++ b/src/components/standalone/multi-wan/RuleManager.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import NeTable from '@/components/standalone/NeTable.vue'
+ import { ref, watch } from 'vue'
+diff --git a/src/components/standalone/openvpn_tunnel/CreateOrEditTunnelDrawer.vue b/src/components/standalone/openvpn_tunnel/CreateOrEditTunnelDrawer.vue
+index 44f68b4..dcb62f9 100644
+--- a/src/components/standalone/openvpn_tunnel/CreateOrEditTunnelDrawer.vue
++++ b/src/components/standalone/openvpn_tunnel/CreateOrEditTunnelDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref, toRefs, watch } from 'vue'
+ import {
+diff --git a/src/components/standalone/openvpn_tunnel/DeleteTunnelModal.vue b/src/components/standalone/openvpn_tunnel/DeleteTunnelModal.vue
+index a4ea3cd..c8eec91 100644
+--- a/src/components/standalone/openvpn_tunnel/DeleteTunnelModal.vue
++++ b/src/components/standalone/openvpn_tunnel/DeleteTunnelModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+ import { ref, toRefs } from 'vue'
+diff --git a/src/components/standalone/openvpn_tunnel/DownloadTunnelModal.vue b/src/components/standalone/openvpn_tunnel/DownloadTunnelModal.vue
+index 52ee78f..cc74a47 100644
+--- a/src/components/standalone/openvpn_tunnel/DownloadTunnelModal.vue
++++ b/src/components/standalone/openvpn_tunnel/DownloadTunnelModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   NeModal,
+diff --git a/src/components/standalone/openvpn_tunnel/ImportConfigurationDrawer.vue b/src/components/standalone/openvpn_tunnel/ImportConfigurationDrawer.vue
+index ca93009..a7ea2e8 100644
+--- a/src/components/standalone/openvpn_tunnel/ImportConfigurationDrawer.vue
++++ b/src/components/standalone/openvpn_tunnel/ImportConfigurationDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { validateFile } from '@/lib/validation'
+diff --git a/src/components/standalone/openvpn_tunnel/TunnelManager.vue b/src/components/standalone/openvpn_tunnel/TunnelManager.vue
+index 1b6f625..ad2a6d7 100644
+--- a/src/components/standalone/openvpn_tunnel/TunnelManager.vue
++++ b/src/components/standalone/openvpn_tunnel/TunnelManager.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   NeEmptyState,
+diff --git a/src/components/standalone/openvpn_tunnel/TunnelTable.vue b/src/components/standalone/openvpn_tunnel/TunnelTable.vue
+index b00ee3a..c4682d3 100644
+--- a/src/components/standalone/openvpn_tunnel/TunnelTable.vue
++++ b/src/components/standalone/openvpn_tunnel/TunnelTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import NeTable from '../NeTable.vue'
+diff --git a/src/components/standalone/report/PingContent.vue b/src/components/standalone/report/PingContent.vue
+index 0608ef8..98a5992 100644
+--- a/src/components/standalone/report/PingContent.vue
++++ b/src/components/standalone/report/PingContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/report/ReportContent.vue b/src/components/standalone/report/ReportContent.vue
+index 748b1e9..ef48c3f 100644
+--- a/src/components/standalone/report/ReportContent.vue
++++ b/src/components/standalone/report/ReportContent.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import { useI18n } from 'vue-i18n'
+ import { NeButton } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue b/src/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue
+index fc4032c..7e41f88 100644
+--- a/src/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue
++++ b/src/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   MessageBag,
+diff --git a/src/components/standalone/reverse_proxy/DeleteProxyModal.vue b/src/components/standalone/reverse_proxy/DeleteProxyModal.vue
+index 091abed..d962b1b 100644
+--- a/src/components/standalone/reverse_proxy/DeleteProxyModal.vue
++++ b/src/components/standalone/reverse_proxy/DeleteProxyModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+ import { ref } from 'vue'
+diff --git a/src/components/standalone/reverse_proxy/ProxyTable.vue b/src/components/standalone/reverse_proxy/ProxyTable.vue
+index 8436184..87ae1d4 100644
+--- a/src/components/standalone/reverse_proxy/ProxyTable.vue
++++ b/src/components/standalone/reverse_proxy/ProxyTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import NeTable from '../NeTable.vue'
+diff --git a/src/components/standalone/routes/CreateOrEditRouteDrawer.vue b/src/components/standalone/routes/CreateOrEditRouteDrawer.vue
+index 2d5c643..884d109 100644
+--- a/src/components/standalone/routes/CreateOrEditRouteDrawer.vue
++++ b/src/components/standalone/routes/CreateOrEditRouteDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import {
+   getAxiosErrorMessage,
+diff --git a/src/components/standalone/ssh/SshConfig.vue b/src/components/standalone/ssh/SshConfig.vue
+index 4681e3d..4bde90c 100644
+--- a/src/components/standalone/ssh/SshConfig.vue
++++ b/src/components/standalone/ssh/SshConfig.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { Ref } from 'vue'
+ import { onMounted, ref } from 'vue'
+diff --git a/src/components/standalone/ssh/SshKeys.vue b/src/components/standalone/ssh/SshKeys.vue
+index 341c604..e441076 100644
+--- a/src/components/standalone/ssh/SshKeys.vue
++++ b/src/components/standalone/ssh/SshKeys.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import type { Ref } from 'vue'
+ import { onMounted, ref } from 'vue'
+diff --git a/src/components/standalone/subscription/RemoteSupport.vue b/src/components/standalone/subscription/RemoteSupport.vue
+index 2413b71..dbd008d 100644
+--- a/src/components/standalone/subscription/RemoteSupport.vue
++++ b/src/components/standalone/subscription/RemoteSupport.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import FormLayout from '../FormLayout.vue'
+diff --git a/src/components/standalone/update/ScheduleUpdateDrawer.vue b/src/components/standalone/update/ScheduleUpdateDrawer.vue
+index 17ef4f0..b4b1699 100644
+--- a/src/components/standalone/update/ScheduleUpdateDrawer.vue
++++ b/src/components/standalone/update/ScheduleUpdateDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   NeSideDrawer,
+diff --git a/src/components/standalone/update/SystemUpdateInProgressModal.vue b/src/components/standalone/update/SystemUpdateInProgressModal.vue
+index 7c5cb8d..f3c4a4d 100644
+--- a/src/components/standalone/update/SystemUpdateInProgressModal.vue
++++ b/src/components/standalone/update/SystemUpdateInProgressModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeProgressBar, NeModal } from '@nethserver/vue-tailwind-lib'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/components/standalone/update/UpdatePackagesModal.vue b/src/components/standalone/update/UpdatePackagesModal.vue
+index aa5fa92..8af532d 100644
+--- a/src/components/standalone/update/UpdatePackagesModal.vue
++++ b/src/components/standalone/update/UpdatePackagesModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useTimer } from '@/composables/useTimer'
+ import { ubusCall } from '@/lib/standalone/ubus'
+diff --git a/src/components/standalone/update/UploadImageDrawer.vue b/src/components/standalone/update/UploadImageDrawer.vue
+index 57f6a1e..88891c0 100644
+--- a/src/components/standalone/update/UploadImageDrawer.vue
++++ b/src/components/standalone/update/UploadImageDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { validateFile } from '@/lib/validation'
+ import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue b/src/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue
+index d5a7a72..92e0700 100644
+--- a/src/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue
++++ b/src/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   MessageBag,
+diff --git a/src/components/standalone/users_database/CreateOrEditUserDrawer.vue b/src/components/standalone/users_database/CreateOrEditUserDrawer.vue
+index fe1c22b..df19321 100644
+--- a/src/components/standalone/users_database/CreateOrEditUserDrawer.vue
++++ b/src/components/standalone/users_database/CreateOrEditUserDrawer.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import {
+   MessageBag,
+diff --git a/src/components/standalone/users_database/DeleteDatabaseModal.vue b/src/components/standalone/users_database/DeleteDatabaseModal.vue
+index a68aea7..3e8ec39 100644
+--- a/src/components/standalone/users_database/DeleteDatabaseModal.vue
++++ b/src/components/standalone/users_database/DeleteDatabaseModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
+diff --git a/src/components/standalone/users_database/DeleteUserModal.vue b/src/components/standalone/users_database/DeleteUserModal.vue
+index d02f89d..79f301f 100644
+--- a/src/components/standalone/users_database/DeleteUserModal.vue
++++ b/src/components/standalone/users_database/DeleteUserModal.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+diff --git a/src/components/standalone/users_database/UsersDatabaseManager.vue b/src/components/standalone/users_database/UsersDatabaseManager.vue
+index 4fac3fe..56c2795 100644
+--- a/src/components/standalone/users_database/UsersDatabaseManager.vue
++++ b/src/components/standalone/users_database/UsersDatabaseManager.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
+diff --git a/src/components/standalone/users_database/UsersTable.vue b/src/components/standalone/users_database/UsersTable.vue
+index dc34c62..f14646b 100644
+--- a/src/components/standalone/users_database/UsersTable.vue
++++ b/src/components/standalone/users_database/UsersTable.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import NeTable from '../NeTable.vue'
+diff --git a/src/composables/useMwan.ts b/src/composables/useMwan.ts
+index 6c04d0b..0e78be9 100644
+--- a/src/composables/useMwan.ts
++++ b/src/composables/useMwan.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { onMounted, ref } from 'vue'
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import type { AxiosResponse } from 'axios'
+diff --git a/src/composables/useMwanDefaults.ts b/src/composables/useMwanDefaults.ts
+index 0f3e754..0b1263f 100644
+--- a/src/composables/useMwanDefaults.ts
++++ b/src/composables/useMwanDefaults.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import type { AxiosResponse } from 'axios'
+ import { AxiosError } from 'axios'
+diff --git a/src/composables/usePolicyForm.ts b/src/composables/usePolicyForm.ts
+index 8c3bd98..bab721e 100644
+--- a/src/composables/usePolicyForm.ts
++++ b/src/composables/usePolicyForm.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import type { Ref } from 'vue'
+ import { computed, ref, watch } from 'vue'
+ import type { Policy } from '@/composables/useMwan'
+diff --git a/src/composables/useRuleForm.ts b/src/composables/useRuleForm.ts
+index 4e25bf4..0cee716 100644
+--- a/src/composables/useRuleForm.ts
++++ b/src/composables/useRuleForm.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { useI18n } from 'vue-i18n'
+ import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+ import type { Ref } from 'vue'
+diff --git a/src/composables/useTabs.ts b/src/composables/useTabs.ts
+index d174746..4c541b6 100644
+--- a/src/composables/useTabs.ts
++++ b/src/composables/useTabs.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import type { Tab } from 'node_modules/@nethserver/vue-tailwind-lib/dist/components/NeTabs.vue'
+ import { ref, watch } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+diff --git a/src/composables/useTimer.ts b/src/composables/useTimer.ts
+index cf799f1..adcd55f 100644
+--- a/src/composables/useTimer.ts
++++ b/src/composables/useTimer.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { onUnmounted, ref } from 'vue'
+ 
+ export type TimerOptions = {
+diff --git a/src/composables/useTrafficSummary.ts b/src/composables/useTrafficSummary.ts
+index 1e68a87..c9d8e8f 100644
+--- a/src/composables/useTrafficSummary.ts
++++ b/src/composables/useTrafficSummary.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { onMounted, onUnmounted, ref } from 'vue'
+ import { ubusCall } from '@/lib/standalone/ubus'
+ import { padStart, upperFirst } from 'lodash-es'
+diff --git a/src/lib/fontawesome.ts b/src/lib/fontawesome.ts
+index 44409d5..387a99e 100644
+--- a/src/lib/fontawesome.ts
++++ b/src/lib/fontawesome.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { library } from '@fortawesome/fontawesome-svg-core'
+ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+ import {
+diff --git a/src/lib/i18n.ts b/src/lib/i18n.ts
+index 0b0d0b6..be6806d 100644
+--- a/src/lib/i18n.ts
++++ b/src/lib/i18n.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { createI18n } from 'vue-i18n'
+ 
+ export async function loadLocaleMessages(setLocaleMessage: any, lang: string): Promise<string> {
+diff --git a/src/lib/router.ts b/src/lib/router.ts
+index 7de163a..cf872cd 100644
+--- a/src/lib/router.ts
++++ b/src/lib/router.ts
+@@ -4,25 +4,6 @@
+ import { isStandaloneMode } from './config'
+ import { useUnitManagementStore } from '@/stores/controller/unitManagement'
+ 
+-//// delete?
+-// export const goToStandalonePage = (path: string) => {
+-//   const router = useRouter()
+-
+-//   if (isStandaloneMode()) {
+-//     // standalone
+-//     router.push(`/standalone/${path}`)
+-//   } else {
+-//     // controller
+-//     const unitManagementStore = useUnitManagementStore()
+-
+-//     if (unitManagementStore.isManagingUnit) {
+-//       router.push(`/controller/manage/${unitManagementStore.unitName}/${path}`)
+-//     } else {
+-//       router.push(`/controller/${path}`)
+-//     }
+-//   }
+-// }
+-
+ /**
+  * Used in <router-link> elements of standalone UI to build the full path of destination page
+  *
+diff --git a/src/lib/standalone/fileUpload.ts b/src/lib/standalone/fileUpload.ts
+index 59bfbd9..944aa2d 100644
+--- a/src/lib/standalone/fileUpload.ts
++++ b/src/lib/standalone/fileUpload.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import axios, { type AxiosProgressEvent } from 'axios'
+ import { getStandaloneApiEndpoint } from '../config'
+ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+diff --git a/src/stores/standalone/firewall.ts b/src/stores/standalone/firewall.ts
+index 8187ec9..d6eef60 100644
+--- a/src/stores/standalone/firewall.ts
++++ b/src/stores/standalone/firewall.ts
+@@ -1,3 +1,6 @@
++//  Copyright (C) 2023 Nethesis S.r.l.
++//  SPDX-License-Identifier: GPL-3.0-or-later
++
+ import { defineStore } from 'pinia'
+ import { ref } from 'vue'
+ import { ubusCall } from '@/lib/standalone/ubus'
+diff --git a/src/views/standalone/firewall/PortForward.vue b/src/views/standalone/firewall/PortForward.vue
+index 432821c..f4a2f49 100644
+--- a/src/views/standalone/firewall/PortForward.vue
++++ b/src/views/standalone/firewall/PortForward.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import {
+diff --git a/src/views/standalone/firewall/ZonesAndPolicies.vue b/src/views/standalone/firewall/ZonesAndPolicies.vue
+index 3ad19eb..6f59532 100644
+--- a/src/views/standalone/firewall/ZonesAndPolicies.vue
++++ b/src/views/standalone/firewall/ZonesAndPolicies.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script lang="ts" setup>
+ import {
+   NeBadge,
+diff --git a/src/views/standalone/network/DnsDhcpView.vue b/src/views/standalone/network/DnsDhcpView.vue
+index d8a53e7..30f9c70 100644
+--- a/src/views/standalone/network/DnsDhcpView.vue
++++ b/src/views/standalone/network/DnsDhcpView.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
+ import { useI18n } from 'vue-i18n'
+diff --git a/src/views/standalone/network/ReverseProxyView.vue b/src/views/standalone/network/ReverseProxyView.vue
+index 8bc3f2a..1bc92ca 100644
+--- a/src/views/standalone/network/ReverseProxyView.vue
++++ b/src/views/standalone/network/ReverseProxyView.vue
+@@ -1,3 +1,8 @@
++<!--
++  Copyright (C) 2023 Nethesis S.r.l.
++  SPDX-License-Identifier: GPL-3.0-or-later
++-->
++
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ import {

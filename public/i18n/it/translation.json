@@ -1046,7 +1046,9 @@
       "choose_network": "Scegli la rete",
       "server_client_negotiation": "Contrattazione server/client",
       "digest": "Impronta (Digest)",
-      "disabled": "Disattivato"
+      "disabled": "Disattivato",
+      "weak": "Debole",
+      "strong": "Forte"
     },
     "ipsec_tunnel": {
       "local_identifier_tooltip": "Si prega di inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",

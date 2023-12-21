@@ -35,7 +35,8 @@ import {
   isOpenVpn,
   type ZoneWithDevices,
   getUiZoneName,
-  type ZoneWithDeviceNames
+  type ZoneWithDeviceNames,
+  isVpn
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -603,7 +604,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
       <template v-else-if="!error.notificationTitle" v-for="zone in sortedZonesAndDevices">
         <template v-if="!isEmpty(zone.devices)">
           <div :key="zone.name">
-            <NeTitle level="h3">{{
+            <NeTitle level="h4">{{
               te(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 ? t(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 : toUpper(zone.name)
@@ -782,6 +783,13 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           <span class="font-medium">MAC: </span>
                           <span>{{ getDeviceMac(device) }}</span>
                         </div>
+                        <!-- hotspot network -->
+                        <div v-if="isHotspot(device)">
+                          <span class="font-medium"
+                            >{{ t('standalone.interfaces_and_devices.hotspot_network') }}:
+                          </span>
+                          <span>{{ device.hotspot?.network }}</span>
+                        </div>
                         <div>
                           <div v-if="getIpv4Addresses(device)?.length">
                             <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
@@ -834,7 +842,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       </div>
                       <!-- fourth column -->
                       <div>
-                        <div>
+                        <div v-if="!isVpn(device)">
                           <div class="mb-2 flex items-center gap-2">
                             <font-awesome-icon
                               :icon="['fas', isDeviceUp(device) ? 'circle-check' : 'circle-xmark']"

@@ -13,7 +13,7 @@ import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
-import DrawerSetPassphrase from '@/components/standalone/backup_and_restore/DrawerSetPassphrase.vue'
+import SetPassphraseDrawer from '@/components/standalone/backup_and_restore/SetPassphraseDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
@@ -246,7 +246,7 @@ function successSetPassphrase() {
     @success="successRunBackup()"
     @close="showRunBackupModal = false"
   />
-  <DrawerSetPassphrase
+  <SetPassphraseDrawer
     :showPassphraseDrawer="showPassphraseDrawer"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"

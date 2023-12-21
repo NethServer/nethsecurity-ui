@@ -9,9 +9,10 @@ import {
   NeModal,
   NeSkeleton,
   NeTextInput,
-  NeTooltip
+  NeTooltip,
+  type NeNotification
 } from '@nethserver/vue-tailwind-lib'
-import { faSave, faRightToBracket, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
@@ -21,9 +22,12 @@ import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import { uid } from 'uid/single'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
+const notificationsStore = useNotificationsStore()
 
 interface Login {
   hostname: string
@@ -83,7 +87,6 @@ let loadingDhcpRange = ref(false)
 let showUnregisterModal = ref(false)
 let emptyDevices = ref(false)
 let saving = ref(false)
-let successSaving = ref(false)
 let hostnameRef = ref()
 let usernameRef = ref()
 let passwordRef = ref()
@@ -411,7 +414,6 @@ function saveConfiguration() {
   clearErrors()
   if (validateConfiguration()) {
     saving.value = true
-    successSaving.value = false
 
     let payload = {
       network: configurationForm.value.networkAddress,
@@ -424,10 +426,13 @@ function saveConfiguration() {
 
     ubusCall('ns.dedalo', 'set-configuration', payload)
       .then(() => {
-        successSaving.value = true
-        setTimeout(function () {
-          successSaving.value = false
-        }, 5000)
+        const notification: NeNotification = {
+          id: uid(),
+          kind: 'success',
+          title: t('standalone.hotspot.settings.hotspot_configuration_saved'),
+          timestamp: new Date()
+        }
+        notificationsStore.addNotification(notification)
       })
       .catch((exception: AxiosError) => {
         errorSave.value.notificationTitle = t('error.cannot_save_configuration')
@@ -726,11 +731,6 @@ function goToInterfaces() {
         />
         <div class="flex justify-end">
           <div>
-            <FontAwesomeIcon
-              v-if="successSaving"
-              :icon="faCircleCheck"
-              class="mr-2 text-green-500"
-            />
             <NeButton
               v-if="isLoggedIn"
               :disabled="saving"

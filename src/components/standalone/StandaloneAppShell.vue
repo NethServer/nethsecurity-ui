@@ -5,22 +5,13 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { computed, ref, watch } from 'vue'
-import {
-  Dialog,
-  DialogPanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton, NeDropdown, NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
@@ -29,25 +20,18 @@ import router from '@/router'
 import ToastNotificationsArea from './ToastNotificationsArea.vue'
 import NotificationDrawer from './NotificationDrawer.vue'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
 const themeStore = useThemeStore()
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const unitName = ref('')
 
-const accountMenu = [
-  {
-    name: t('standalone.shell.account'),
-    action: () => router.push('/standalone/user'),
-    disabled: !isStandaloneMode()
-  },
-  {
-    name: t('standalone.shell.sign_out'),
-    action: loginStore.logout,
-    disabled: !isStandaloneMode()
-  }
-]
+let loading = ref({
+  systemBoard: false
+})
 
 const sidebarOpen = ref(false)
 
@@ -64,6 +48,34 @@ const logoFilename = computed(() => {
   } else {
     return 'logo_dark.svg'
   }
+})
+
+const accountMenuOptions = computed(() => {
+  return [
+    {
+      id: 'account',
+      label: t('standalone.shell.account'),
+      icon: 'circle-user',
+      iconStyle: 'fas',
+      action: () => router.push('/standalone/user'),
+      disabled: !isStandaloneMode()
+    },
+    {
+      id: 'theme',
+      label: t('standalone.shell.toggle_theme'),
+      icon: themeStore.isLight ? 'moon' : 'sun',
+      iconStyle: 'fas',
+      action: themeStore.toggleTheme
+    },
+    {
+      id: 'logout',
+      label: t('standalone.shell.sign_out'),
+      icon: 'right-from-bracket',
+      iconStyle: 'fas',
+      action: loginStore.logout,
+      disabled: !isStandaloneMode()
+    }
+  ]
 })
 
 watch(
@@ -85,6 +97,17 @@ watch(
 function openNotificationsDrawer() {
   notificationsStore.setNotificationDrawerOpen(true)
 }
+
+async function getSystemBoard() {
+  loading.value.systemBoard = true
+  const systemBoard = await ubusCall('system', 'board')
+  unitName.value = systemBoard.data.hostname
+  loading.value.systemBoard = false
+}
+
+onMounted(() => {
+  getSystemBoard()
+})
 </script>
 
 <template>
@@ -135,7 +158,7 @@ function openNotificationsDrawer() {
                   </button>
                 </div>
               </TransitionChild>
-              <!-- Sidebar component, swap this element with another sidebar if you like -->
+              <!-- Sidebar component -->
               <div
                 class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-2 pb-4 dark:bg-gray-950"
               >
@@ -154,42 +177,6 @@ function openNotificationsDrawer() {
                         <SideMenu />
                       </ul>
                     </li>
-                    <!-- <li> //// 
-                      <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-                      <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-for="team in teams" :key="team.name">
-                          <a
-                            :href="team.href"
-                            :class="[
-                              team.current
-                                ? 'bg-gray-50 text-primary-600'
-                                : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                            ]"
-                          >
-                            <span
-                              :class="[
-                                team.current
-                                  ? 'text-primary-600 border-primary-600'
-                                  : 'text-gray-400 border-gray-200 group-hover:border-primary-600 group-hover:text-primary-600',
-                                'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white'
-                              ]"
-                              >{{ team.initial }}</span
-                            >
-                            <span class="truncate">{{ team.name }}</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li> -->
-                    <li class="mt-auto">
-                      <!-- //// use tertiary button with icon -->
-                      <!-- <a
-                        href="#"
-                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-700 hover:bg-gray-100 hover:text-primary-800 dark:text-primary-500 dark:hover:bg-gray-900 dark:hover:text-primary-500"
-                      >
-                        Minimize
-                      </a> -->
-                    </li>
                   </ul>
                 </nav>
               </div>
@@ -202,7 +189,7 @@ function openNotificationsDrawer() {
     <!-- Static sidebar for desktop -->
     <!-- //// removed lg:inset-y-0 class -->
     <div class="hidden lg:fixed lg:z-50 lg:flex lg:h-screen lg:w-72 lg:flex-col">
-      <!-- Sidebar component, swap this element with another sidebar if you like -->
+      <!-- Sidebar component -->
       <div
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-2 pb-4 dark:border-gray-700 dark:bg-gray-950"
       >
@@ -219,42 +206,6 @@ function openNotificationsDrawer() {
               <ul role="list" class="space-y-2">
                 <SideMenu />
               </ul>
-            </li>
-            <!-- <li> //// 
-              <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-              <ul role="list" class="-mx-2 mt-2 space-y-1">
-                <li v-for="team in teams" :key="team.name">
-                  <a
-                    :href="team.href"
-                    :class="[
-                      team.current
-                        ? 'bg-gray-50 text-primary-600'
-                        : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50',
-                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                    ]"
-                  >
-                    <span
-                      :class="[
-                        team.current
-                          ? 'text-primary-600 border-primary-600'
-                          : 'text-gray-400 border-gray-200 group-hover:border-primary-600 group-hover:text-primary-600',
-                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white'
-                      ]"
-                      >{{ team.initial }}</span
-                    >
-                    <span class="truncate">{{ team.name }}</span>
-                  </a>
-                </li>
-              </ul>
-            </li> -->
-            <li class="mt-auto">
-              <!-- //// use tertiary button with icon -->
-              <!-- <a
-                href="#"
-                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-700 hover:bg-gray-100 hover:text-primary-800 dark:text-primary-500 dark:hover:bg-gray-900 dark:hover:text-primary-500"
-              >
-                Minimize
-              </a> -->
             </li>
           </ul>
         </nav>
@@ -324,6 +275,19 @@ function openNotificationsDrawer() {
                 @close="showUciChangesModal = false"
               />
             </div>
+
+            <!-- unit name -->
+            <div class="hidden text-sm lg:block lg:h-6" aria-hidden="true">
+              <NeSkeleton v-if="loading.systemBoard" class="w-28" />
+              <span v-else>{{ unitName }}</span>
+            </div>
+
+            <!-- separator -->
+            <div
+              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-gray-700"
+              aria-hidden="true"
+            />
+
             <!-- help -->
             <a
               href="https://docs.nethsecurity.org/"
@@ -336,35 +300,7 @@ function openNotificationsDrawer() {
                 class="h-6 w-6 shrink-0"
                 aria-hidden="true"
               />
-              <span>{{ t('common.help') }}</span>
             </a>
-
-            <!-- Separator -->
-            <div
-              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-gray-700"
-              aria-hidden="true"
-            />
-
-            <!-- theme switcher -->
-            <button
-              type="button"
-              @click="themeStore.toggleTheme()"
-              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
-            >
-              <span class="sr-only">{{ t('standalone.shell.toggle_theme') }}</span>
-              <font-awesome-icon
-                :icon="[
-                  'fas',
-                  themeStore.theme === 'light'
-                    ? 'moon'
-                    : themeStore.theme === 'dark'
-                    ? 'sun'
-                    : 'circle-half-stroke'
-                ]"
-                class="h-6 w-6 shrink-0"
-                aria-hidden="true"
-              />
-            </button>
 
             <!-- notifications -->
             <button
@@ -380,64 +316,29 @@ function openNotificationsDrawer() {
               />
             </button>
 
-            <!-- //// use NeDropdown component -->
-            <!-- Profile dropdown -->
-            <Menu as="div" class="relative">
-              <MenuButton :class="['-m-1.5 flex items-center p-1.5', topBarButtonsColorClasses]">
-                <span class="sr-only">{{ t('standalone.shell.open_user_menu') }}</span>
-                <font-awesome-icon
-                  :icon="['fas', 'circle-user']"
-                  class="h-6 w-6 shrink-0"
-                  aria-hidden="true"
-                />
-                <!-- <img //// 
-                  class="h-8 w-8 rounded-full bg-gray-50"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                /> -->
-                <span class="hidden lg:flex lg:items-center">
-                  <!-- <span //// 
-                    class="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                    aria-hidden="true"
-                    >Tom Cook</span
-                  > -->
-                  <font-awesome-icon
-                    :icon="['fas', 'chevron-down']"
-                    class="ml-2 h-3 w-3 shrink-0"
-                    aria-hidden="true"
-                  />
-                </span>
-              </MenuButton>
-              <transition
-                enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95"
-              >
-                <MenuItems
-                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none dark:bg-gray-950 dark:ring-gray-100/5"
-                >
-                  <MenuItem
-                    v-for="item in accountMenu"
-                    :key="item.name"
-                    v-slot="{ active }"
-                    :disabled="item.disabled"
-                    :class="[item.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer']"
-                  >
-                    <a
-                      @click="item.action"
-                      :class="[
-                        active ? 'bg-gray-100 dark:bg-gray-800' : '',
-                        'block px-3 py-1 text-sm leading-6 text-gray-700 dark:text-gray-200'
-                      ]"
-                      >{{ item.name }}</a
-                    >
-                  </MenuItem>
-                </MenuItems>
-              </transition>
-            </Menu>
+            <!-- profile dropdown -->
+            <NeDropdown
+              :items="accountMenuOptions"
+              :alignToRight="true"
+              :openMenuAriaLabel="t('standalone.shell.open_user_menu')"
+            >
+              <template #button>
+                <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
+                  <div class="flex items-center gap-2">
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-user']"
+                      class="h-6 w-6 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <font-awesome-icon
+                      :icon="['fas', 'chevron-down']"
+                      class="h-3 w-3 shrink-0"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </button>
+              </template>
+            </NeDropdown>
           </div>
         </div>
       </div>

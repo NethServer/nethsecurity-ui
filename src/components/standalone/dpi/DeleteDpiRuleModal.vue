@@ -27,7 +27,8 @@ let loading = ref({
 
 let error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 watch(
@@ -36,6 +37,7 @@ watch(
     if (props.visible) {
       error.value.notificationTitle = ''
       error.value.notificationDescription = ''
+      error.value.notificationDetails = ''
     }
   }
 )
@@ -46,6 +48,7 @@ async function deleteRule() {
   }
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   loading.value.deleteRule = true
 
   try {
@@ -58,6 +61,7 @@ async function deleteRule() {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_delete_rule')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     loading.value.deleteRule = false
   }
@@ -85,6 +89,10 @@ async function deleteRule() {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

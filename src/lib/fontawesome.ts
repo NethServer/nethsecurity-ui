@@ -21,7 +21,6 @@ import {
   faCircleCheck as fasCircleCheck,
   faCircleChevronDown,
   faCircleChevronUp,
-  faCircleHalfStroke as fasCircleHalfStroke,
   faCircleInfo as fasCircleInfo,
   faCircleMinus as fasCircleMinus,
   faCirclePlus as fasCirclePlus,
@@ -72,7 +71,8 @@ import {
   faWrench as fasWrench,
   faXmark as fasXmark,
   faBell as fasBell,
-  faDatabase
+  faDatabase,
+  faRightFromBracket as fasRightFromBracket
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -131,7 +131,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCircleQuestion)
   library.add(fasMoon)
   library.add(fasSun)
-  library.add(fasCircleHalfStroke)
   library.add(fasCircleUser)
   library.add(fasChevronDown)
   library.add(fasChevronUp)
@@ -210,4 +209,5 @@ export async function loadFontAwesome(app: any) {
   library.add(fasBell)
   library.add(farBell)
   library.add(faDatabase)
+  library.add(fasRightFromBracket)
 }

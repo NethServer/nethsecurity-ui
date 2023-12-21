@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import DrawerMigration from '@/components/standalone/backup_and_restore/DrawerMigration.vue'
+import MigrationDrawer from '@/components/standalone/backup_and_restore/MigrationDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
@@ -60,7 +60,7 @@ function successMigration() {
           </NeButton>
         </div>
       </div>
-      <DrawerMigration
+      <MigrationDrawer
         :showMigrationDrawer="showMigrationDrawer"
         @success="successMigration()"
         @close="showMigrationDrawer = false"

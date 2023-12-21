@@ -612,7 +612,7 @@ watch(
         />
         <NeMultiTextInput
           v-model="customOptions"
-          :title="t('standalone.openvpn_rw.custom_options')"
+          :title="t('standalone.openvpn_rw.custom_dhcp_options')"
           :use-key-combobox="true"
           :add-item-label="t('standalone.openvpn_rw.add_option')"
           :optional="true"
@@ -622,7 +622,7 @@ watch(
           ><template #tooltip>
             <NeTooltip>
               <template #content>
-                {{ t('standalone.openvpn_rw.custom_options_tooltip') }}
+                {{ t('standalone.openvpn_rw.custom_dhcp_options_tooltip') }}
               </template>
             </NeTooltip>
           </template></NeMultiTextInput

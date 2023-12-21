@@ -56,14 +56,14 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.openvpn_rw.delete_server_rw')"
+    :title="t('standalone.openvpn_rw.delete_roadwarrior_server')"
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     @primaryClick="deleteServer()"
     @close="close()"
   >
-    {{ t('standalone.openvpn_rw.delete_server_rw_message') }}
+    {{ t('standalone.openvpn_rw.delete_roadwarrior_server_message') }}
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"

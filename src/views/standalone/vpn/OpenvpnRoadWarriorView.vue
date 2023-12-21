@@ -225,8 +225,7 @@ onMounted(() => {
         notificationsStore.addNotification({
           id: 'add-rw-server',
           kind: 'success',
-          title: t('standalone.openvpn_rw.server_configured'),
-          description: t('standalone.openvpn_rw.roadwarrior_server_configured_successfully')
+          title: t('standalone.openvpn_rw.roadwarrior_server_configured')
         })
         reloadServer()
       }

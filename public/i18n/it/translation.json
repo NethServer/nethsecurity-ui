@@ -573,7 +573,8 @@
       "bond_balance_alb": "Adaptive load balancing",
       "bond_balance_rr": "Round-robin",
       "no_devices_available": "Nessun dispositivo disponibile",
-      "custom_zone": "Personalizzata"
+      "custom_zone": "Personalizzata",
+      "hotspot_network": "Rete"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -1138,7 +1139,7 @@
       "perform_factory_confirm": "Confermare il ripristino",
       "perform_factory_reset": "Eseguire il reset di fabbrica",
       "current_version": "Versione attuale",
-      "resetting_description": "Ripristinare e riavviare l'unità, attendere",
+      "resetting_description": "Aggiornamento e riavvio dell'unità in corso, si prega di attendere...",
       "description_helper": "Il reset di fabbrica ripristina la versione attualmente installata.",
       "perform_factory_reset_description": "Il reset di fabbrica cancella definitivamente tutti i dati e le impostazioni.",
       "description": "Ripristino di fabbrica cancella tutti i pacchetti installati e le impostazioni personalizzate, reindirizzando il firewall al suo stato originale come era dopo l'installazione.",

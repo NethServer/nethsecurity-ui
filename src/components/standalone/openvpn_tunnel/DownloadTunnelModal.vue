@@ -19,7 +19,10 @@ const { t } = useI18n()
 const emit = defineEmits(['close', 'tunnel-downloaded'])
 
 const { visible, itemToDownload } = toRefs(props)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const isDownloading = ref(false)
 const downloadMode = ref<
   'nethsecurity_client_configuration' | 'private_key_tunnel_ca_certificates' | ''
@@ -36,7 +39,8 @@ const downloadOptions = [
 async function downloadTunnel() {
   if (itemToDownload.value && downloadMode.value) {
     try {
-      error.value = ''
+      error.value.notificationDescription = ''
+      error.value.notificationDetails = ''
       isDownloading.value = true
       if (downloadMode.value == 'nethsecurity_client_configuration') {
         const exportedJsonPayload = JSON.stringify(
@@ -60,7 +64,8 @@ async function downloadTunnel() {
       emit('tunnel-downloaded')
       close()
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     } finally {
       isDownloading.value = false
     }
@@ -68,7 +73,8 @@ async function downloadTunnel() {
 }
 
 function close() {
-  error.value = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   downloadMode.value = ''
   emit('close')
 }
@@ -106,8 +112,12 @@ function close() {
       v-if="error"
       kind="error"
       :title="t('error.cannot_download_tunnel')"
-      :description="error"
+      :description="error.notificationDescription"
       class="mt-4"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
   </NeModal>
 </template>

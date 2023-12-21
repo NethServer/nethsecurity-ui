@@ -59,7 +59,8 @@ const showDownloadModal = ref(false)
 const showImportConfigurationDrawer = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 
 async function fetchTunnels() {
@@ -77,6 +78,7 @@ async function fetchTunnels() {
       ? t('error.cannot_retrieve_client_tunnels')
       : t('error.cannot_retrieve_server_tunnels')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -110,7 +112,8 @@ function closeModalsAndDrawers() {
 function cleanError() {
   error.value = {
     notificationTitle: '',
-    notificationDescription: ''
+    notificationDescription: '',
+    notificationDetails: ''
   }
 }
 
@@ -126,6 +129,7 @@ async function toggleTunnelEnable(tunnel: Tunnel) {
       tunnel.enabled ? 'error.cannot_disable_tunnel' : 'error.cannot_enable_tunnel'
     )
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -195,7 +199,11 @@ onMounted(() => {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       v-if="error.notificationTitle"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState

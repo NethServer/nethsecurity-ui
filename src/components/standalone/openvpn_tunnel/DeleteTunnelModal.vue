@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -14,20 +14,24 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'tunnel-deleted'])
 
-const { visible, itemToDelete } = toRefs(props)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const isDeleting = ref(false)
 
 async function deleteTunnel() {
-  if (itemToDelete.value) {
+  if (props.itemToDelete) {
     try {
-      error.value = ''
+      error.value.notificationDescription = ''
+      error.value.notificationDetails = ''
       isDeleting.value = true
-      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { id: itemToDelete.value.id })
+      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { id: props.itemToDelete.id })
       emit('tunnel-deleted')
       emit('close')
     } catch (err: any) {
-      error.value = t(getAxiosErrorMessage(err))
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     } finally {
       isDeleting.value = false
     }
@@ -35,7 +39,8 @@ async function deleteTunnel() {
 }
 
 function close() {
-  error.value = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   emit('close')
 }
 </script>
@@ -60,8 +65,12 @@ function close() {
       v-if="error"
       kind="error"
       :title="t('error.cannot_delete_tunnel')"
-      :description="error"
+      :description="error.notificationDescription"
       class="my-2"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
   </NeModal>
 </template>

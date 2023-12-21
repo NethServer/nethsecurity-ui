@@ -1100,7 +1100,9 @@
       "extra_remote_networks_tooltip": "When the VPN is active, these network addresses will be added as static routes regardless of the configuration received from the OpenVPN server.",
       "topology_tooltip_subnet_title": "Subnet (recommended)",
       "topology_tooltip_subnet_description": "This method offers a straightforward configuration approach. Instead of using a point-to-point setup, utilize a subnet configuration by specifying a local IP address and subnet mask for the tun interface. In this mode, each connected client is assigned a unique IP address, and it is compatible with Windows systems as well.",
-      "topology_tooltip_p2p_description": "Implement a point-to-point topology where the client's tun interface remote endpoint consistently points to the server's tun interface local endpoint. This configuration assigns a single IP address to each connected client. Utilize this mode exclusively when none of the connected clients operate on Windows systems."
+      "topology_tooltip_p2p_description": "Implement a point-to-point topology where the client's tun interface remote endpoint consistently points to the server's tun interface local endpoint. This configuration assigns a single IP address to each connected client. Utilize this mode exclusively when none of the connected clients operate on Windows systems.",
+      "strong": "Strong",
+      "weak": "Weak"
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",

@@ -217,7 +217,8 @@ async function fetchOptions() {
       ...(await ubusCall('ns.ovpntunnel', 'list-cipher')).data.ciphers.map(
         (cipher: { name: string; description: string }) => ({
           id: cipher.name,
-          label: cipher.name
+          label: cipher.name,
+          description: '(' + t('standalone.openvpn_tunnel.' + cipher.description) + ')'
         })
       )
     ]
@@ -232,7 +233,8 @@ async function fetchOptions() {
       ...(await ubusCall('ns.ovpntunnel', 'list-digest')).data.digests.map(
         (digest: { name: string; description: string }) => ({
           id: digest.name,
-          label: digest.name
+          label: digest.name,
+          description: '(' + t('standalone.openvpn_tunnel.' + digest.description) + ')'
         })
       )
     ]

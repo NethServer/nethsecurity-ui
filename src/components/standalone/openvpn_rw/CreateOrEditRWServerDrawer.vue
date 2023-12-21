@@ -184,7 +184,7 @@ async function fetchOptions() {
         id: userDatabase.name,
         label:
           userDatabase.name === 'main'
-            ? t(`standalone.openvpn_rw.local_database`)
+            ? t('standalone.openvpn_rw.local_database')
             : userDatabase.name,
         description: userDatabase.description
       })
@@ -420,6 +420,7 @@ watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
+      showAdvancedSettings.value = false
       fetchOptions().then(() => {
         resetForm()
       })

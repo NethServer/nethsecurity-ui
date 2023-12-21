@@ -102,7 +102,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
           aria-hidden="true"
           :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
         />
-        <p class="mx-2">Connected clients</p>
+        <p class="mx-2">{{ t('standalone.openvpn_rw.connected_clients') }}</p>
       </div>
       <p class="ml-4 text-3xl">{{ connectedClients }}</p>
     </div>

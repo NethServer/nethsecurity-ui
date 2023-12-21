@@ -357,6 +357,17 @@ export const validateFQDN = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateIpAddressOrFQDN = (value: string) => {
+  const ipValidator = validateIpAddress(value)
+  const fqdnValidator = validateFQDN(value)
+
+  if (!ipValidator.valid && !fqdnValidator.valid) {
+    return { valid: false, errMessage: 'error.invalid_ip_address_or_fqdn' }
+  }
+
+  return { valid: true }
+}
+
 export const validateURL = (value: string): validationOutput => {
   const re = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi
 

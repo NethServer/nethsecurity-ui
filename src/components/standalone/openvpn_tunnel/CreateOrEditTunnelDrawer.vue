@@ -4,6 +4,7 @@ import {
   MessageBag,
   validateIp4Cidr,
   validateIpAddress,
+  validateIpAddressOrFQDN,
   validatePort,
   validateRequired,
   validateRequiredOption,
@@ -463,7 +464,7 @@ function validate() {
     // public endpoints validation
     let validPublicEndpoints = true
     for (let [index, publicEndpoint] of publicEndpoints.value.entries()) {
-      let validators = [validateRequired(publicEndpoint), validateIpAddress(publicEndpoint)]
+      let validators = [validateRequired(publicEndpoint), validateIpAddressOrFQDN(publicEndpoint)]
       for (let validator of validators) {
         if (!validator.valid) {
           publicEndpointsValidationErrors.value[index] = t(validator.errMessage as string)

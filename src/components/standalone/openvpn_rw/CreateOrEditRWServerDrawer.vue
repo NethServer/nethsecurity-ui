@@ -364,10 +364,12 @@ async function createOrEditServer() {
       cipher: cipher.value === 'auto' ? '' : cipher.value,
       auth: digest.value === 'auto' ? '' : digest.value,
       tls_version_min: minimumTLSVersion.value === 'auto' ? '' : minimumTLSVersion.value,
-      ns_dhcp_options: customOptions.value.map((option) => ({
-        option: option.key,
-        value: option.value
-      }))
+      ns_dhcp_options: customOptions.value
+        .filter((option) => option.key)
+        .map((option) => ({
+          option: option.key,
+          value: option.value
+        }))
     })
   } catch (err: any) {
     if (err instanceof ValidationError) {

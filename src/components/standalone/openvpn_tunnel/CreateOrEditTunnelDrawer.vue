@@ -9,6 +9,7 @@ import {
   MessageBag,
   validateIp4Cidr,
   validateIpAddress,
+  validateIpAddressOrFQDN,
   validatePort,
   validateRequired,
   validateRequiredOption,
@@ -91,7 +92,8 @@ const loading = ref(false)
 const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 const remoteNetworksValidationErrors = ref<string[]>([])
@@ -247,6 +249,7 @@ async function fetchOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_tunnel_options')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -350,6 +353,7 @@ async function resetForm() {
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_tunnel_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
   }
   loading.value = false
@@ -468,7 +472,7 @@ function validate() {
     // public endpoints validation
     let validPublicEndpoints = true
     for (let [index, publicEndpoint] of publicEndpoints.value.entries()) {
-      let validators = [validateRequired(publicEndpoint), validateIpAddress(publicEndpoint)]
+      let validators = [validateRequired(publicEndpoint), validateIpAddressOrFQDN(publicEndpoint)]
       for (let validator of validators) {
         if (!validator.valid) {
           publicEndpointsValidationErrors.value[index] = t(validator.errMessage as string)
@@ -490,6 +494,7 @@ function validate() {
 async function createOrEditTunnel() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   const isEditing = id.value != ''
 
   try {
@@ -560,6 +565,7 @@ async function createOrEditTunnel() {
       : t('error.cannot_create_tunnel')
 
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isSavingChanges.value = false
   }
@@ -569,6 +575,7 @@ function close() {
   cleanValidationErrors()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   emit('close')
 }
 
@@ -616,7 +623,11 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+    >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton :lines="20" v-if="loading" />
     <div class="flex flex-col gap-y-6" v-else>
       <div>

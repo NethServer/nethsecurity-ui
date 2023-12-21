@@ -17,6 +17,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 export type RWServer = {
   proto: string
@@ -65,6 +66,7 @@ export type RWUser = {
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const notificationsStore = useNotificationsStore()
 
 const loading = ref(true)
 const instanceName = ref('')
@@ -212,6 +214,17 @@ onMounted(() => {
     :instance-name="instanceName"
     :is-shown="showCreateOrEditServerModal"
     @close="showCreateOrEditServerModal = false"
-    @add-edit-server="reloadServer"
+    @edit-server="reloadServer"
+    @add-server="
+      () => {
+        notificationsStore.addNotification({
+          id: 'add-rw-server',
+          kind: 'success',
+          title: t('standalone.openvpn_rw.server_configured'),
+          description: t('standalone.openvpn_rw.roadwarrior_server_configured_successfully')
+        })
+        reloadServer()
+      }
+    "
   />
 </template>

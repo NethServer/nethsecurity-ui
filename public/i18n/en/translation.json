@@ -1096,7 +1096,9 @@
       "local_database": "Local database",
       "custom_option_combobox_placeholder": "Search key",
       "strong": "Strong",
-      "weak": "Weak"
+      "weak": "Weak",
+      "server_configured": "Server configured",
+      "roadwarrior_server_configured_successfully": "RoadWarrior server configured successfully"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

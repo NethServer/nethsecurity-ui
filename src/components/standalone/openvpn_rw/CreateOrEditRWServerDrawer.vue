@@ -4,6 +4,7 @@ import {
   MessageBag,
   validateIp4Cidr,
   validateIpAddress,
+  validateIpAddressOrFQDN,
   validatePort,
   validateRequired,
   type validationOutput
@@ -35,7 +36,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-edit-server'])
+const emit = defineEmits(['close', 'add-server', 'edit-server'])
 
 const loading = ref(false)
 const isSavingChanges = ref(false)
@@ -280,7 +281,7 @@ function validate() {
     validPublicIpOrHostname = false
   } else {
     publicIpOrHostnameValidationErrors.value = validateMultiTextFields(
-      [validateRequired, validateIpAddress],
+      [validateRequired, validateIpAddressOrFQDN],
       publicIpOrHostname.value
     )
     validPublicIpOrHostname = publicIpOrHostnameValidationErrors.value.every((x) => x === '')
@@ -392,7 +393,11 @@ async function createOrEditServer() {
     isSavingChanges.value = false
   }
 
-  emit('add-edit-server')
+  if (isEditing) {
+    emit('edit-server')
+  } else {
+    emit('add-server')
+  }
   close()
 }
 

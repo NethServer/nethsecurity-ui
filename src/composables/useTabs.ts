@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import type { Tab } from 'node_modules/@nethserver/vue-tailwind-lib/dist/components/NeTabs.vue'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

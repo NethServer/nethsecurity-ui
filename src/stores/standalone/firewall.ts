@@ -1,3 +1,6 @@
+//  Copyright (C) 2023 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

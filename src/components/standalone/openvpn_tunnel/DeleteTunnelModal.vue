@@ -22,10 +22,10 @@ const isDeleting = ref(false)
 
 async function deleteTunnel() {
   if (props.itemToDelete) {
+    error.value.notificationDescription = ''
+    error.value.notificationDetails = ''
+    isDeleting.value = true
     try {
-      error.value.notificationDescription = ''
-      error.value.notificationDetails = ''
-      isDeleting.value = true
       await ubusCall('ns.ovpntunnel', 'delete-tunnel', { id: props.itemToDelete.id })
       emit('tunnel-deleted')
       emit('close')

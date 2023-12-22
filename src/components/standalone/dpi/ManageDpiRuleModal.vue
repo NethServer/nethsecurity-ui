@@ -12,13 +12,12 @@ import {
   getAppIcon
 } from '@/lib/standalone/dpi'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeModal,
   NeInlineNotification,
   NeToggle,
   NeTextInput,
-  NeCombobox,
-  type NeComboboxOption,
   NeTooltip,
   NeCard,
   NeButton,
@@ -481,6 +480,8 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         :noResultsLabel="t('ne_combobox.no_results')"
         :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
         :noOptionsLabel="t('standalone.dpi.no_interfaces_available')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
         class="max-w-xs"
         ref="interfaceRef"
       >

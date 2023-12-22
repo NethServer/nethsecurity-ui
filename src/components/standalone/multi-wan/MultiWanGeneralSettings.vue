@@ -7,11 +7,10 @@
 import { onMounted, ref } from 'vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeCombobox,
   NeFormItemLabel,
   NeInlineNotification,
   NeSkeleton,
@@ -229,18 +228,33 @@ onMounted(() => {
           :invalid-message="messageBag.get('ping.timeout')?.[0]"
           :label="t('standalone.multi_wan.ping_timeout')"
           :options="timeoutOptions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model.number="data.ping_interval"
           :disabled="sending"
           :label="t('standalone.multi_wan.ping_interval')"
           :options="timeoutOptions([1, 3, 5, 10, 20, 30, 60, 300, 600, 900, 1800, 3600])"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model.number="data.ping_failure_interval"
           :disabled="sending"
           :label="t('standalone.multi_wan.ping_failure_interval')"
           :options="timeoutOptions([1, 3, 5, 10, 20, 30, 60, 300, 600, 900, 1800, 3600])"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </div>
     </FormLayout>
@@ -255,12 +269,22 @@ onMounted(() => {
           :disabled="sending"
           :label="t('standalone.multi_wan.interface_down')"
           :options="pingsOptions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="data.interface_up_threshold"
           :disabled="sending"
           :label="t('standalone.multi_wan.interface_up')"
           :options="pingsOptions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </div>
     </FormLayout>

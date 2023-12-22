@@ -6,7 +6,8 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { ref, toRef } from 'vue'
-import { NeButton, NeCombobox, NeSideDrawer, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox } from '@nethesis/vue-components'
+import { NeButton, NeSideDrawer, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { MessageBag } from '@/lib/validation'
 import type { Policy, Rule } from '@/composables/useMwan'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
@@ -92,6 +93,11 @@ function save() {
         :options="policyDropdownOptions"
         :placeholder="policyDropdownPlaceholder"
         name="policy"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeCombobox
         v-model="protocol"
@@ -101,6 +107,11 @@ function save() {
         :options="protocolOptions"
         :placeholder="protocolOptions[0].label"
         name="protocol"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeTextInput
         v-model="sourceAddress"

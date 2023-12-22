@@ -5,11 +5,11 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { NeBadge } from '@nethesis/vue-components'
 import {
   NeTitle,
   NeButton,
   NeDropdown,
-  NeBadge,
   NeInlineNotification,
   getAxiosErrorMessage,
   byteFormat1000

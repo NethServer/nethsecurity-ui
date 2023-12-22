@@ -16,16 +16,15 @@ import {
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeSkeleton,
   NeInlineNotification,
   NeTextInput,
-  NeCombobox,
   NeButton,
   NeRadioSelection,
   NeTooltip,
-  type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
@@ -316,6 +315,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="certificateOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </template>
       <NeTextInput

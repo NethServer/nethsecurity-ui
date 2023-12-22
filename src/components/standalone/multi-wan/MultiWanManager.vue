@@ -6,15 +6,22 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { NeBadge } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
-  NeBadge,
   NeButton,
   NeDropdown,
   NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCirclePlus,
+  faCircleCheck,
+  faCircleXmark,
+  faWarning,
+  faCircleStop,
+  faClock
+} from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import type { Member, Policy, Rule } from '@/composables/useMwan'
 import { useMwan } from '@/composables/useMwan'
@@ -92,16 +99,16 @@ function reloadConfig() {
 function badgeIcon(member: Member) {
   switch (member.status) {
     case 'online':
-      return ['fas', 'circle-check']
+      return faCircleCheck
     case 'offline':
-      return ['fas', 'circle-xmark']
+      return faCircleXmark
     case 'disconnecting':
     case 'connecting':
-      return ['fas', 'warning']
+      return faWarning
     case 'disabled':
-      return ['fas', 'circle-stop']
+      return faCircleStop
     default:
-      return ['fas', 'clock']
+      return faClock
   }
 }
 

@@ -8,16 +8,15 @@ import { getName, isBond, isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired, validateVlanId } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeTextInput,
   NeButton,
   NeInlineNotification,
   NeRadioSelection,
-  NeCombobox,
   focusElement,
-  getAxiosErrorMessage,
-  type NeComboboxOption
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { cloneDeep } from 'lodash-es'
 import { ref, watch, computed, type Ref } from 'vue'
@@ -258,6 +257,9 @@ function validate() {
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :disabled="loading.create"
           ref="baseDeviceRef"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeInlineNotification
           v-if="error.notificationTitle"

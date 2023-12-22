@@ -6,19 +6,18 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import {
-  NeButton,
-  NeTextInput,
-  type NeComboboxOption,
-  NeCombobox
-} from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
 import { zip } from 'lodash-es'
+import { useI18n } from 'vue-i18n'
 
 export type KeyValueItem = {
   key: string
   value: string
 }
+
+const { t } = useI18n()
 
 const props = withDefaults(
   defineProps<{
@@ -131,10 +130,15 @@ onMounted(() => {
           <NeCombobox
             :options="keyOptions"
             :model-value="keys[i]"
-            @update:model-value="(e) => updateModelKey(i, e)"
+            @update:model-value="(e: any) => updateModelKey(i, e)"
             :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
             :placeholder="comboboxPlaceholder"
             v-if="useKeyCombobox"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <NeTextInput
             :value="useKeyCombobox ? items[i] : items[i]"

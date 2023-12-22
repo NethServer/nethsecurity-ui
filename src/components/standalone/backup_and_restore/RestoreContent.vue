@@ -7,12 +7,12 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeCombobox } from '@nethesis/vue-components'
 import {
   NeModal,
   NeTitle,
   NeButton,
   NeTooltip,
-  NeCombobox,
   NeSkeleton,
   NeTextInput,
   NeFileInput,
@@ -297,6 +297,11 @@ function setRestoreTimer() {
               :options="listBackups"
               :label="t('standalone.backup_and_restore.restore.backup')"
               :invalid-message="errorRestore.backup"
+              :noResultsLabel="t('ne_combobox.no_results')"
+              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+              :noOptionsLabel="t('ne_combobox.no_options_label')"
+              :selected-label="t('ne_combobox.selected')"
+              :user-input-label="t('ne_combobox.user_input_label')"
               class="grow"
               ref="backupRef"
             />

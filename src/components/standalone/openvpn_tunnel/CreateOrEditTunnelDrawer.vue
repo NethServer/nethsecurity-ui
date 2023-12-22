@@ -16,6 +16,7 @@ import {
   validateUciName,
   type validationOutput
 } from '@/lib/validation'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeInlineNotification,
@@ -24,11 +25,9 @@ import {
   NeButton,
   getAxiosErrorMessage,
   NeTooltip,
-  NeCombobox,
   NeFormItemLabel,
   NeTextArea,
   NeSkeleton,
-  type NeComboboxOption,
   NeRadioSelection
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
@@ -680,6 +679,7 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :accept-user-input="true"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -841,6 +841,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="compression"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.digest')"
@@ -848,6 +851,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="digest"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.cipher')"
@@ -855,6 +861,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           v-model="cipher"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
@@ -863,6 +872,9 @@ watch(
           :options="tlsOptions"
           v-model="minimumTLSVersion"
           v-if="!isClientTunnel"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </template>
       <hr />

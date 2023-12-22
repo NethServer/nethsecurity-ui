@@ -5,11 +5,11 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+import { NeCombobox } from '@nethesis/vue-components'
 import {
   focusElement,
   getAxiosErrorMessage,
   NeButton,
-  NeCombobox,
   NeInlineNotification,
   NeModal,
   NeSkeleton,
@@ -634,6 +634,11 @@ function goToInterfaces() {
             :label="t('standalone.hotspot.settings.configuration_parent_hotspot')"
             class="grow"
             :disabled="!isLoggedIn || activeConfiguration"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <NeTextInput
             v-model="configurationForm.unitName"
@@ -662,6 +667,11 @@ function goToInterfaces() {
             :disabled="!isLoggedIn"
             class="grow"
             ref="networkDeviceRef"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           >
             <template #tooltip>
               <NeTooltip>

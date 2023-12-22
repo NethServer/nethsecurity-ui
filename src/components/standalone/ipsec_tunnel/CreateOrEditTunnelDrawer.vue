@@ -17,19 +17,18 @@ import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeStepper from '../NeStepper.vue'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeSkeleton,
   NeButton,
   NeToggle,
   NeTextInput,
-  NeCombobox,
   NeTooltip,
   NeRadioSelection,
   NeFormItemLabel,
   NeTitle,
   NeInlineNotification,
-  type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -514,6 +513,9 @@ watch(
           :options="wanOptions"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeTextInput
           v-model="remoteIpAddress"
@@ -540,6 +542,7 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :accept-user-input="true"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
         />
         <NeMultiTextInput
           v-model="remoteNetworks"
@@ -617,6 +620,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="ikeVersionOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="ikeEncryptionAlgorithm"
@@ -625,6 +631,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="encryptionOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="ikeIntegrityAlgorithm"
@@ -633,6 +642,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="integrityOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="ikeDiffieHellmanGroup"
@@ -641,6 +653,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="diffieHellmanOptions.filter((x) => x.id != '')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeTextInput
           v-model="ikeKeyLifetime"
@@ -656,6 +671,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="encryptionOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="espIntegrityAlgorithm"
@@ -664,6 +682,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="integrityOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="espDiffieHellmanGroup"
@@ -672,6 +693,9 @@ watch(
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
           :options="diffieHellmanOptions"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeTextInput
           v-model="espKeyLifetime"

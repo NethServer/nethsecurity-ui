@@ -7,6 +7,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeCombobox } from '@nethesis/vue-components'
 import {
   NeModal,
   NeTitle,
@@ -18,7 +19,6 @@ import {
   getAxiosErrorMessage,
   NeFormItemLabel,
   NeSkeleton,
-  NeCombobox,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'
@@ -289,6 +289,11 @@ function setMigrationTimer() {
                   :options="listDevices"
                   :invalid-message="errorMigration.devices[index]"
                   :ref="'deviceMigration' + index"
+                  :noResultsLabel="t('ne_combobox.no_results')"
+                  :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+                  :noOptionsLabel="t('ne_combobox.no_options_label')"
+                  :selected-label="t('ne_combobox.selected')"
+                  :user-input-label="t('ne_combobox.user_input_label')"
                 />
               </div>
             </div>

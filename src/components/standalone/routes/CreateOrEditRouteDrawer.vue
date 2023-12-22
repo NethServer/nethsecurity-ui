@@ -4,11 +4,11 @@
 -->
 
 <script lang="ts" setup>
+import { NeCombobox } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   focusElement,
   NeButton,
-  NeCombobox,
   NeInlineNotification,
   NeSideDrawer,
   NeSkeleton,
@@ -530,6 +530,11 @@ function submit() {
         :label="t('standalone.routes.route_interface')"
         :placeholder="t('standalone.routes.route_choose_interface')"
         class="grow"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeButton
         kind="tertiary"
@@ -554,6 +559,11 @@ function submit() {
             :label="t('standalone.routes.route_type')"
             :placeholder="t('standalone.routes.route_choose_type')"
             class="grow"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <NeTextInput
             v-model="form.mtu"

@@ -4,10 +4,9 @@
 -->
 
 <script lang="ts" setup>
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeButton,
-  NeCombobox,
   NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
@@ -178,6 +177,11 @@ function create() {
                 :options="availableGateways"
                 :placeholder="t('standalone.multi_wan.choose_gateway')"
                 class="grow"
+                :noResultsLabel="t('ne_combobox.no_results')"
+                :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+                :noOptionsLabel="t('ne_combobox.no_options_label')"
+                :selected-label="t('ne_combobox.selected')"
+                :user-input-label="t('ne_combobox.user_input_label')"
               />
               <NeTextInput
                 v-if="policyForm.selection != 'backup'"

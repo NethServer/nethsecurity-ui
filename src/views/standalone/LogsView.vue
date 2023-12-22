@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
-  NeCombobox,
   NeInlineNotification,
   NeTextInput,
   NeTitle,
@@ -156,6 +155,11 @@ function fetchData() {
         :invalid-message="errorBag.getFirstFor('limits')"
         :label="t('standalone.logs.limit_rows')"
         :options="logLimitComboboxOption"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <div class="col-span-1 flex gap-8 sm:col-span-2">
         <NeToggle v-model="wrapRow" :label="t('standalone.logs.wrap_row')" />

@@ -78,6 +78,7 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 const loading = ref(true)
+const loadingUsers = ref(true)
 const instanceName = ref('')
 const instanceData = ref<RWServer>()
 const users = ref<RWUser[]>([])
@@ -96,7 +97,7 @@ const connectedClients = computed(() => users.value.filter((x) => x.connected).l
 
 async function fetchUsers() {
   try {
-    loading.value = true
+    loadingUsers.value = true
     users.value = (
       await ubusCall('ns.ovpnrw', 'list-users', { instance: instanceName.value })
     ).data.users
@@ -106,7 +107,7 @@ async function fetchUsers() {
     error.value.notificationDetails = err.toString()
     loadingError.value = true
   } finally {
-    loading.value = false
+    loadingUsers.value = false
   }
 }
 
@@ -138,6 +139,11 @@ async function reloadServer() {
   instanceName.value = ''
   instanceData.value = undefined
   await fetchServer()
+}
+
+async function reloadUsers() {
+  await uciChangesStore.getChanges()
+  await fetchUsers()
 }
 
 async function initAndConfigureServer() {
@@ -214,6 +220,9 @@ onMounted(() => {
       v-if="instanceData && instanceData.ns_description"
       :users="users"
       :server="instanceData"
+      :instance-name="instanceName"
+      :is-loading="loadingUsers"
+      @update-users="reloadUsers"
     />
   </div>
   <DeleteRWServerModal

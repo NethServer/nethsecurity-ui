@@ -90,9 +90,9 @@ function getDropdownItems(item: RWUser) {
       : []),
     {
       id: 'enable_disable',
-      label: item.openvpn_enabled ? t('common.disable') : t('common.enable'),
+      label: item.openvpn_enabled === '1' ? t('common.disable') : t('common.enable'),
       iconStyle: 'fas',
-      icon: item.openvpn_enabled ? 'circle-xmark' : 'circle-check',
+      icon: item.openvpn_enabled === '1' ? 'circle-xmark' : 'circle-check',
       action: () => {
         emit('enableDisable', item)
       }
@@ -121,7 +121,7 @@ function getDropdownItems(item: RWUser) {
 }
 
 function getCellClasses(item: RWUser) {
-  return !item.openvpn_enabled ? ['text-gray-400', 'dark:text-gray-700'] : []
+  return item.openvpn_enabled === '0' ? ['opacity-50'] : []
 }
 </script>
 

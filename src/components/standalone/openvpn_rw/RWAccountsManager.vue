@@ -11,19 +11,142 @@ import {
   NeTextInput,
   NeCombobox,
   NeButton,
-  type NeComboboxOption
+  NeSkeleton,
+  NeInlineNotification,
+  type NeComboboxOption,
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { computed } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import RWAccountsTable from './RWAccountsTable.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
-const props = defineProps<{ users: RWUser[]; server: RWServer }>()
+const props = defineProps<{
+  users: RWUser[]
+  server: RWServer
+  instanceName: string
+  isLoading: boolean
+}>()
+const emit = defineEmits(['update-users'])
 
 const { t } = useI18n()
 
 const filter = ref('')
 const connectionFilter = ref<'all' | 'connected' | 'not_connected'>('all')
+const error = ref({
+  notificationTitle: '',
+  notificationDescription: '',
+  notificationDetails: ''
+})
+const selectedAccount = ref<RWUser>()
+const showDeleteAccountModal = ref(false)
+const showCreateOrEditAccountDrawer = ref(false)
+const showRenewCertificateDrawer = ref(false)
+
+function cleanError() {
+  error.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    notificationDetails: ''
+  }
+}
+
+function openCreateEditDrawer(item?: RWUser) {
+  selectedAccount.value = item
+  showCreateOrEditAccountDrawer.value = true
+}
+
+function openDeleteModal(item: RWUser) {
+  selectedAccount.value = item
+  showDeleteAccountModal.value = true
+}
+
+function openRenewCertificateDrawer(item: RWUser) {
+  selectedAccount.value = item
+  showRenewCertificateDrawer.value = true
+}
+
+function createDownloadableFile(content: string, filename: string) {
+  let downloadElement = document.createElement('a')
+  downloadElement.setAttribute(
+    'href',
+    'data:text/json;charset=utf-8,' + encodeURIComponent(content)
+  )
+  downloadElement.setAttribute('download', filename)
+  document.body.appendChild(downloadElement)
+  downloadElement.click()
+  downloadElement.remove()
+}
+
+async function toggleAccountEnable(item: RWUser) {
+  cleanError()
+  try {
+    await ubusCall('ns.ovpnrw', item.openvpn_enabled === '1' ? 'disable-user' : 'enable-user', {
+      username: item.name,
+      instance: props.instanceName
+    })
+    emit('update-users')
+  } catch (err: any) {
+    error.value.notificationTitle =
+      item.openvpn_enabled === '1'
+        ? t('standalone.openvpn_rw.cannot_disable_account')
+        : t('standalone.openvpn_rw.cannot_enable_account')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  }
+}
+
+async function downloadConfiguration(item: RWUser) {
+  cleanError()
+  try {
+    const configuration = (
+      await ubusCall('ns.ovpnrw', 'download-user-configuration', {
+        username: item.name,
+        instance: props.instanceName
+      })
+    ).data.data
+    createDownloadableFile(configuration, `${item.name}.ovpn`)
+  } catch (err: any) {
+    error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  }
+}
+
+async function downloadCertificate(item: RWUser) {
+  cleanError()
+  try {
+    const certificate = (
+      await ubusCall('ns.ovpnrw', 'download-user-certificate', {
+        username: item.name,
+        instance: props.instanceName
+      })
+    ).data.data
+    createDownloadableFile(certificate, `${item.name}.crt`)
+  } catch (err: any) {
+    error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  }
+}
+
+async function downloadQrCode(item: RWUser) {
+  cleanError()
+  try {
+    const certificate = (
+      await ubusCall('ns.ovpnrw', 'download-user-2fa', {
+        username: item.name,
+        instance: props.instanceName
+      })
+    ).data.data
+    createDownloadableFile(certificate, `${item.name}.svg`)
+  } catch (err: any) {
+    error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_qr_code')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  }
+}
 
 const connectionFilterOptions = ref<NeComboboxOption[]>([
   {
@@ -65,40 +188,66 @@ const filteredUsers = computed(() => {
       {{ t('standalone.openvpn_rw.roadwarrior_accounts_description') }}
     </p>
   </div>
-  <div class="flex flex-row items-center justify-between">
-    <div class="flex flex-row gap-x-3">
-      <NeTextInput v-model="filter" placeholder="Filter" />
-      <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
-    </div>
-    <NeButton kind="secondary" @click="() => {}" class="ml-2" v-if="users.length > 0">
-      <template #prefix>
-        <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
-      </template>
-      {{ t('standalone.openvpn_rw.add_vpn_account') }}
-    </NeButton>
-  </div>
-  <NeEmptyState
-    v-if="users.length == 0"
-    :title="t('standalone.openvpn_rw.no_users_found')"
-    :icon="['fas', 'user-group']"
+  <NeInlineNotification
+    v-if="error.notificationDescription"
+    :title="t('error.cannot_retrieve_databases')"
+    :description="error.notificationDescription"
+    class="mb-6"
+    kind="error"
   >
-    <NeButton kind="secondary" @click="() => {}">
-      <template #prefix>
-        <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
-      </template>
-      {{ t('standalone.openvpn_rw.add_vpn_account') }}
-    </NeButton>
-  </NeEmptyState>
+    <template #details v-if="error.notificationDetails">
+      {{ error.notificationDetails }}
+    </template></NeInlineNotification
+  >
+  <NeSkeleton v-if="isLoading" :lines="8" />
   <template v-else>
-    <RWAccountsTable
-      v-if="filteredUsers.length > 0"
-      :users="filteredUsers"
-      :authentication-mode="server.ns_auth_mode"
-    />
+    <div class="flex flex-row items-center justify-between">
+      <div class="flex flex-row gap-x-3">
+        <NeTextInput v-model="filter" placeholder="Filter" />
+        <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
+      </div>
+      <NeButton
+        kind="secondary"
+        @click="openCreateEditDrawer()"
+        class="ml-2"
+        v-if="users.length > 0"
+      >
+        <template #prefix>
+          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ t('standalone.openvpn_rw.add_vpn_account') }}
+      </NeButton>
+    </div>
     <NeEmptyState
-      v-else
+      v-if="users.length == 0"
       :title="t('standalone.openvpn_rw.no_users_found')"
       :icon="['fas', 'user-group']"
-    />
+    >
+      <NeButton kind="secondary" @click="openCreateEditDrawer()">
+        <template #prefix>
+          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ t('standalone.openvpn_rw.add_vpn_account') }}
+      </NeButton>
+    </NeEmptyState>
+    <template v-else>
+      <RWAccountsTable
+        v-if="filteredUsers.length > 0"
+        :users="filteredUsers"
+        :authentication-mode="server.ns_auth_mode"
+        @delete="openDeleteModal"
+        @edit="openCreateEditDrawer"
+        @download-certificate="downloadCertificate"
+        @download-configuration="downloadConfiguration"
+        @download-qr-code="downloadQrCode"
+        @enable-disable="toggleAccountEnable"
+        @regenerate-certificate="openRenewCertificateDrawer"
+      />
+      <NeEmptyState
+        v-else
+        :title="t('standalone.openvpn_rw.no_users_found')"
+        :icon="['fas', 'user-group']"
+      />
+    </template>
   </template>
 </template>

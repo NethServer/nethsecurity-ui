@@ -1087,7 +1087,7 @@
       "status": "Status",
       "connected_clients": "Connected clients",
       "roadwarrior_accounts": "Road Warrior accounts",
-      "roadwarrior_accounts_description": "Users in this list can connect to the OpenVPN Road Warrior server. Only users with a configured password can use the 'username and password' authentication mode. If the selected authentication mode requires an x509 certificate, the certificate must be valid.",
+      "roadwarrior_accounts_description": "Users in this list can connect to the OpenVPN Road Warrior server. Only users with a configured password can use the 'username and password' authentication mode. If the selected authentication mode requires an x509 certificate, the certificate must be valid. Changes to users take effect immediately.",
       "username_password": "Username and password",
       "certificate": "Certificate",
       "username_password_certificate": "Username, password and certificate",

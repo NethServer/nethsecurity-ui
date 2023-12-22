@@ -219,7 +219,8 @@
     "cannot_disable_account": "Cannot disable account",
     "cannot_download_configuration": "Cannot download configuration",
     "cannot_download_certificate": "Cannot download certificate",
-    "cannot_download_qr_code": "Cannot download QR code"
+    "cannot_download_qr_code": "Cannot download QR code",
+    "cannot_delete_account": "Cannot delete account"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1118,7 +1119,9 @@
       "no_users_found": "No users found",
       "connection_all": "Connection: All",
       "connection_connected": "Connection: Connected",
-      "connection_not_connected": "Connection: Not connected"
+      "connection_not_connected": "Connection: Not connected",
+      "delete_account": "Delete account",
+      "delete_account_message": "This action will also delete the certificate, if present."
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

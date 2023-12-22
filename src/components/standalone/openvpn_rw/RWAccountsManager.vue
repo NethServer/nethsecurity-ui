@@ -21,6 +21,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import RWAccountsTable from './RWAccountsTable.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
 
 const props = defineProps<{
   users: RWUser[]
@@ -250,4 +251,11 @@ const filteredUsers = computed(() => {
       />
     </template>
   </template>
+  <DeleteRWAccountModal
+    :visible="showDeleteAccountModal"
+    :account="selectedAccount"
+    :instance-name="instanceName"
+    @account-deleted="emit('update-users')"
+    @close="showDeleteAccountModal = false"
+  />
 </template>

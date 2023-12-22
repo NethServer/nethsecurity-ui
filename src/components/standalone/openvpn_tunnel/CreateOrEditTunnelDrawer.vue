@@ -143,7 +143,7 @@ const compressionOptions = [
   },
   {
     id: 'lz0',
-    label: 'LZ0'
+    label: 'LZO'
   },
   {
     id: 'lz4',

@@ -92,8 +92,8 @@ const compressionOptions = [
     label: t('common.disabled')
   },
   {
-    id: 'lz0',
-    label: 'LZ0'
+    id: 'lzo',
+    label: 'LZO'
   },
   {
     id: 'lz4',

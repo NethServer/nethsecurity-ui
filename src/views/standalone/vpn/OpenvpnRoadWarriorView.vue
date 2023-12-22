@@ -23,6 +23,12 @@ import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
 
+export type RWAuthenticationMode =
+  | 'username_password'
+  | 'certificate'
+  | 'username_password_certificate'
+  | 'username_otp_certificate'
+
 export type RWServer = {
   proto: string
   port: string
@@ -33,7 +39,7 @@ export type RWServer = {
   auth: string
   cipher: string
   tls_version_min: string
-  ns_auth_mode: string
+  ns_auth_mode: RWAuthenticationMode
   ns_bridge?: string
   server: string
   ns_public_ip: string[]
@@ -204,7 +210,11 @@ onMounted(() => {
       @edit-server="showCreateOrEditServerModal = true"
     />
 
-    <RWAccountsManager v-if="instanceData && instanceData.ns_description" />
+    <RWAccountsManager
+      v-if="instanceData && instanceData.ns_description"
+      :users="users"
+      :server="instanceData"
+    />
   </div>
   <DeleteRWServerModal
     :visible="showDeleteServerModal"

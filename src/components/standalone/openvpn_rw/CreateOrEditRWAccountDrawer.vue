@@ -7,10 +7,7 @@
 import { ref, watch } from 'vue'
 import {
   MessageBag,
-  validateIp4Cidr,
   validateIpAddress,
-  validateIpAddressOrFQDN,
-  validatePort,
   validatePositiveInteger,
   validateRequired,
   type validationOutput
@@ -128,7 +125,7 @@ function validate() {
     .every((result) => result)
 }
 
-async function createOrEditServer() {
+async function createOrEditAccount() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
@@ -246,7 +243,7 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditServer()"
+          @click="createOrEditAccount()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
           >{{

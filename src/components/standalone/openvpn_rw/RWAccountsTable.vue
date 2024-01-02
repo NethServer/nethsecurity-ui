@@ -169,11 +169,27 @@ function getCellClasses(item: RWUser) {
               : '-'
           }}
         </p>
-        <font-awesome-icon
-          v-if="item.expired"
-          :icon="['fas', 'triangle-exclamation']"
-          class="h-4 w-4 text-amber-500"
-        />
+        <tippy interactive theme="tailwind" v-if="item.expired">
+          <span class="cursor-pointer">
+            <slot name="trigger">
+              <font-awesome-icon
+                :icon="['fas', 'triangle-exclamation']"
+                class="h-4 w-4 text-amber-500"
+              />
+            </slot>
+          </span>
+          <template #content>
+            <div class="text-center">
+              <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
+              <p
+                class="cursor-pointer text-primary-800"
+                @click="emit('regenerateCertificate', item)"
+              >
+                {{ t('standalone.openvpn_rw.renew_certificate') }}
+              </p>
+            </div>
+          </template>
+        </tippy>
       </div>
     </template>
     <template #reserved_ip="{ item }: { item: RWUser }">

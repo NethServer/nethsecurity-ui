@@ -1138,7 +1138,8 @@
       "choose_user_from_database": "Choose user from database",
       "renew_certificate": "Renew certificate",
       "renew": "Renew",
-      "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect."
+      "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect.",
+      "this_certificate_expired": "This certificate expired"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

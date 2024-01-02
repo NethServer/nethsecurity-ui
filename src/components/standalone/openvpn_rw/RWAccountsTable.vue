@@ -136,6 +136,7 @@ function getCellClasses(item: RWUser) {
           interactive
           theme="tailwind"
           v-if="
+            item.local &&
             !item.password &&
             (authenticationMode === 'username_password' ||
               authenticationMode === 'username_password_certificate')

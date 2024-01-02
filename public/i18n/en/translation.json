@@ -1133,13 +1133,16 @@
       "delete_account_message": "This action will also delete the certificate, if present.",
       "user": "User",
       "certificate_expiration_days": "Certificate expiration (days)",
-      "create_account": "Create account",
       "edit_account": "Edit account",
+      "edit_vpn_account": "Edit VPN account",
+      "add_account": "Add account",
       "choose_user_from_database": "Choose user from database",
       "renew_certificate": "Renew certificate",
       "renew": "Renew",
       "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect.",
-      "this_certificate_expired": "This certificate expired"
+      "this_certificate_expired": "This certificate expired",
+      "certificate_expired": "Certificate expired",
+      "certificate_expired_message": "This account has an expired certificate"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

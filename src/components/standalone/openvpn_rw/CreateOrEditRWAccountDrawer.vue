@@ -195,8 +195,8 @@ watch(
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     :title="
       itemToEdit
-        ? t('standalone.openvpn_rw.edit_account')
-        : t('standalone.openvpn_rw.create_account')
+        ? t('standalone.openvpn_rw.edit_vpn_account')
+        : t('standalone.openvpn_rw.add_vpn_account')
     "
   >
     <NeInlineNotification
@@ -225,6 +225,12 @@ watch(
         v-model="username"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
       />
+      <NeInlineNotification
+        v-if="itemToEdit?.expired"
+        kind="warning"
+        :title="t('standalone.openvpn_rw.certificate_expired')"
+        :description="t('standalone.openvpn_rw.certificate_expired_message')"
+      />
       <NeTextInput
         v-model="reservedIp"
         :label="t('standalone.openvpn_rw.reserved_ip')"
@@ -249,7 +255,7 @@ watch(
           >{{
             Boolean(itemToEdit)
               ? t('standalone.openvpn_rw.edit_account')
-              : t('standalone.openvpn_rw.create_account')
+              : t('standalone.openvpn_rw.add_account')
           }}</NeButton
         >
       </div>

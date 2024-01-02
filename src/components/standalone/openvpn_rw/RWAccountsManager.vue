@@ -203,29 +203,8 @@ const filteredUsers = computed(() => {
     </template></NeInlineNotification
   >
   <NeSkeleton v-if="isLoading" :lines="8" />
-  <template v-else>
-    <div class="flex flex-row items-center justify-between">
-      <div class="flex flex-row gap-x-3">
-        <NeTextInput v-model="filter" placeholder="Filter" />
-        <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
-      </div>
-      <NeButton
-        kind="secondary"
-        @click="openCreateEditDrawer()"
-        class="ml-2"
-        v-if="users.length > 0"
-      >
-        <template #prefix>
-          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
-        </template>
-        {{ t('standalone.openvpn_rw.add_vpn_account') }}
-      </NeButton>
-    </div>
-    <NeEmptyState
-      v-if="users.length == 0"
-      :title="t('standalone.openvpn_rw.no_users_found')"
-      :icon="['fas', 'user-group']"
-    >
+  <template v-else-if="users.length == 0">
+    <NeEmptyState :title="t('standalone.openvpn_rw.no_users_found')" :icon="['fas', 'user-group']">
       <NeButton kind="secondary" @click="openCreateEditDrawer()">
         <template #prefix>
           <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
@@ -233,25 +212,37 @@ const filteredUsers = computed(() => {
         {{ t('standalone.openvpn_rw.add_vpn_account') }}
       </NeButton>
     </NeEmptyState>
-    <template v-else>
-      <RWAccountsTable
-        v-if="filteredUsers.length > 0"
-        :users="filteredUsers"
-        :authentication-mode="server.ns_auth_mode"
-        @delete="openDeleteModal"
-        @edit="openCreateEditDrawer"
-        @download-certificate="downloadCertificate"
-        @download-configuration="downloadConfiguration"
-        @download-qr-code="downloadQrCode"
-        @enable-disable="toggleAccountEnable"
-        @regenerate-certificate="openRenewCertificateDrawer"
-      />
-      <NeEmptyState
-        v-else
-        :title="t('standalone.openvpn_rw.no_users_found')"
-        :icon="['fas', 'user-group']"
-      />
-    </template>
+  </template>
+  <template v-else>
+    <div class="flex flex-row items-center justify-between">
+      <div class="flex flex-row gap-x-3">
+        <NeTextInput v-model="filter" placeholder="Filter" />
+        <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
+      </div>
+      <NeButton kind="secondary" @click="openCreateEditDrawer()" class="ml-2">
+        <template #prefix>
+          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ t('standalone.openvpn_rw.add_vpn_account') }}
+      </NeButton>
+    </div>
+    <RWAccountsTable
+      v-if="filteredUsers.length > 0"
+      :users="filteredUsers"
+      :authentication-mode="server.ns_auth_mode"
+      @delete="openDeleteModal"
+      @edit="openCreateEditDrawer"
+      @download-certificate="downloadCertificate"
+      @download-configuration="downloadConfiguration"
+      @download-qr-code="downloadQrCode"
+      @enable-disable="toggleAccountEnable"
+      @regenerate-certificate="openRenewCertificateDrawer"
+    />
+    <NeEmptyState
+      v-else
+      :title="t('standalone.openvpn_rw.no_users_found')"
+      :icon="['fas', 'user-group']"
+    />
   </template>
   <DeleteRWAccountModal
     :visible="showDeleteAccountModal"

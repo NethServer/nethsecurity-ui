@@ -23,6 +23,7 @@ import RWAccountsTable from './RWAccountsTable.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
 import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
+import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 
 const props = defineProps<{
   users: RWUser[]
@@ -266,5 +267,12 @@ const filteredUsers = computed(() => {
     :item-to-edit="selectedAccount"
     @close="showCreateOrEditAccountDrawer = false"
     @add-edit-account="emit('update-users')"
+  />
+  <RenewCertificateDrawer
+    :account="selectedAccount"
+    :instance-name="instanceName"
+    :is-shown="showRenewCertificateDrawer"
+    @close="showRenewCertificateDrawer = false"
+    @renew-certificate="emit('update-users')"
   />
 </template>

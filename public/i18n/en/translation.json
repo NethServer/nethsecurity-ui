@@ -228,7 +228,8 @@
     "reserved_ip_already_used": "Reserved IP is already used",
     "user_db_not_configured": "User database is not configured",
     "db_not_found": "Database not found",
-    "user_certificate_already_exists": "User certificate already exists"
+    "user_certificate_already_exists": "User certificate already exists",
+    "cannot_renew_certificate": "Cannot renew certificate"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1134,7 +1135,10 @@
       "certificate_expiration_days": "Certificate expiration (days)",
       "create_account": "Create account",
       "edit_account": "Edit account",
-      "choose_user_from_database": "Choose user from database"
+      "choose_user_from_database": "Choose user from database",
+      "renew_certificate": "Renew certificate",
+      "renew": "Renew",
+      "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect."
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

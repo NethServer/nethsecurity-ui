@@ -220,7 +220,15 @@
     "cannot_download_configuration": "Cannot download configuration",
     "cannot_download_certificate": "Cannot download certificate",
     "cannot_download_qr_code": "Cannot download QR code",
-    "cannot_delete_account": "Cannot delete account"
+    "cannot_delete_account": "Cannot delete account",
+    "cannot_create_account": "Cannot create account",
+    "cannot_edit_account": "Cannot edit account",
+    "user_add_failed": "User add failed",
+    "reserved_ip_must_be_in_server_network": "Reserved IP must be in server network",
+    "reserved_ip_already_used": "Reserved IP is already used",
+    "user_db_not_configured": "User database is not configured",
+    "db_not_found": "Database not found",
+    "user_certificate_already_exists": "User certificate already exists"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1121,7 +1129,12 @@
       "connection_connected": "Connection: Connected",
       "connection_not_connected": "Connection: Not connected",
       "delete_account": "Delete account",
-      "delete_account_message": "This action will also delete the certificate, if present."
+      "delete_account_message": "This action will also delete the certificate, if present.",
+      "user": "User",
+      "certificate_expiration_days": "Certificate expiration (days)",
+      "create_account": "Create account",
+      "edit_account": "Edit account",
+      "choose_user_from_database": "Choose user from database"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

@@ -22,6 +22,7 @@ import { useI18n } from 'vue-i18n'
 import RWAccountsTable from './RWAccountsTable.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
+import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 
 const props = defineProps<{
   users: RWUser[]
@@ -257,5 +258,13 @@ const filteredUsers = computed(() => {
     :instance-name="instanceName"
     @account-deleted="emit('update-users')"
     @close="showDeleteAccountModal = false"
+  />
+  <CreateOrEditRWAccountDrawer
+    :is-shown="showCreateOrEditAccountDrawer"
+    :instance-data="server"
+    :instance-name="instanceName"
+    :item-to-edit="selectedAccount"
+    @close="showCreateOrEditAccountDrawer = false"
+    @add-edit-account="emit('update-users')"
   />
 </template>

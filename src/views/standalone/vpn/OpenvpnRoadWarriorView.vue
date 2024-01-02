@@ -53,7 +53,7 @@ export type RWServer = {
   ns_description: string
 }
 
-export type RWUser = {
+export type RWAccount = {
   local: boolean
   database: string
   name: string
@@ -81,7 +81,7 @@ const loading = ref(true)
 const loadingUsers = ref(true)
 const instanceName = ref('')
 const instanceData = ref<RWServer>()
-const users = ref<RWUser[]>([])
+const users = ref<RWAccount[]>([])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { RWServer, RWUser } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import {
   NeEmptyState,
   NeTitle,
@@ -26,7 +26,7 @@ import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 
 const props = defineProps<{
-  users: RWUser[]
+  users: RWAccount[]
   server: RWServer
   instanceName: string
   isLoading: boolean
@@ -42,7 +42,7 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
-const selectedAccount = ref<RWUser>()
+const selectedAccount = ref<RWAccount>()
 const showDeleteAccountModal = ref(false)
 const showCreateOrEditAccountDrawer = ref(false)
 const showRenewCertificateDrawer = ref(false)
@@ -55,17 +55,17 @@ function cleanError() {
   }
 }
 
-function openCreateEditDrawer(item?: RWUser) {
+function openCreateEditDrawer(item?: RWAccount) {
   selectedAccount.value = item
   showCreateOrEditAccountDrawer.value = true
 }
 
-function openDeleteModal(item: RWUser) {
+function openDeleteModal(item: RWAccount) {
   selectedAccount.value = item
   showDeleteAccountModal.value = true
 }
 
-function openRenewCertificateDrawer(item: RWUser) {
+function openRenewCertificateDrawer(item: RWAccount) {
   selectedAccount.value = item
   showRenewCertificateDrawer.value = true
 }
@@ -82,17 +82,17 @@ function createDownloadableFile(content: string, filename: string) {
   downloadElement.remove()
 }
 
-async function toggleAccountEnable(item: RWUser) {
+async function toggleAccountEnable(account: RWAccount) {
   cleanError()
   try {
-    await ubusCall('ns.ovpnrw', item.openvpn_enabled === '1' ? 'disable-user' : 'enable-user', {
-      username: item.name,
+    await ubusCall('ns.ovpnrw', account.openvpn_enabled === '1' ? 'disable-user' : 'enable-user', {
+      username: account.name,
       instance: props.instanceName
     })
     emit('update-users')
   } catch (err: any) {
     error.value.notificationTitle =
-      item.openvpn_enabled === '1'
+      account.openvpn_enabled === '1'
         ? t('standalone.openvpn_rw.cannot_disable_account')
         : t('standalone.openvpn_rw.cannot_enable_account')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -100,16 +100,16 @@ async function toggleAccountEnable(item: RWUser) {
   }
 }
 
-async function downloadConfiguration(item: RWUser) {
+async function downloadConfiguration(account: RWAccount) {
   cleanError()
   try {
     const configuration = (
       await ubusCall('ns.ovpnrw', 'download-user-configuration', {
-        username: item.name,
+        username: account.name,
         instance: props.instanceName
       })
     ).data.data
-    createDownloadableFile(configuration, `${item.name}.ovpn`)
+    createDownloadableFile(configuration, `${account.name}.ovpn`)
   } catch (err: any) {
     error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -117,16 +117,16 @@ async function downloadConfiguration(item: RWUser) {
   }
 }
 
-async function downloadCertificate(item: RWUser) {
+async function downloadCertificate(account: RWAccount) {
   cleanError()
   try {
     const certificate = (
       await ubusCall('ns.ovpnrw', 'download-user-certificate', {
-        username: item.name,
+        username: account.name,
         instance: props.instanceName
       })
     ).data.data
-    createDownloadableFile(certificate, `${item.name}.crt`)
+    createDownloadableFile(certificate, `${account.name}.crt`)
   } catch (err: any) {
     error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -134,16 +134,16 @@ async function downloadCertificate(item: RWUser) {
   }
 }
 
-async function downloadQrCode(item: RWUser) {
+async function downloadQrCode(account: RWAccount) {
   cleanError()
   try {
     const certificate = (
       await ubusCall('ns.ovpnrw', 'download-user-2fa', {
-        username: item.name,
+        username: account.name,
         instance: props.instanceName
       })
     ).data.data
-    createDownloadableFile(certificate, `${item.name}.svg`)
+    createDownloadableFile(certificate, `${account.name}.svg`)
   } catch (err: any) {
     error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_qr_code')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

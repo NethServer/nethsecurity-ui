@@ -18,14 +18,14 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import type { RWUser } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
-  account?: RWUser
+  account?: RWAccount
   instanceName: string
 }>()
 
@@ -35,7 +35,7 @@ const { t } = useI18n()
 
 const showConfirmModal = ref(false)
 const isRenewingCertificate = ref(false)
-const error = ref({
+const modalError = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
@@ -81,8 +81,8 @@ async function renewUserCertificate() {
     emit('renew-certificate')
     closeConfirmModal()
   } catch (err: any) {
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    modalError.value.notificationDescription = t(getAxiosErrorMessage(err))
+    modalError.value.notificationDetails = err.toString()
     isRenewingCertificate.value = false
   }
 }
@@ -93,8 +93,8 @@ function closeDrawer() {
 
 function closeConfirmModal() {
   if (!isRenewingCertificate.value) {
-    error.value.notificationDescription = ''
-    error.value.notificationDetails = ''
+    modalError.value.notificationDescription = ''
+    modalError.value.notificationDetails = ''
     showConfirmModal.value = false
   }
 }
@@ -159,13 +159,13 @@ watch(
   >
     {{ t('standalone.openvpn_rw.renew_certificate_confirm_message', { username: username }) }}
     <NeInlineNotification
-      v-if="error.notificationDescription"
+      v-if="modalError.notificationDescription"
       kind="error"
       :title="t('error.cannot_renew_certificate')"
-      :description="error.notificationDescription"
+      :description="modalError.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
+      ><template #details v-if="modalError.notificationDetails">
+        {{ modalError.notificationDetails }}
       </template></NeInlineNotification
     >
   </NeModal>

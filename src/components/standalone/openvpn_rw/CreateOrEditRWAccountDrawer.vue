@@ -26,12 +26,12 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import type { RWServer, RWUser } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import type { User } from '../users_database/UsersDatabaseManager.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit?: RWUser
+  itemToEdit?: RWAccount
   instanceData: RWServer
   instanceName: string
 }>()
@@ -69,11 +69,12 @@ async function fetchOptions() {
       label: user.name,
       description: user.description
     }))
-    loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_users')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    loading.value = false
   }
 }
 
@@ -108,7 +109,7 @@ function validate() {
     ]
   ]
 
-  // applied only if field is filled in
+  // applied only if reserved ip field is filled in
   const reservedIpValidator: [validationOutput[], string] = [
     [validateIpAddress(reservedIp.value)],
     'ipaddr'

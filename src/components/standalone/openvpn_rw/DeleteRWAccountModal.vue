@@ -9,12 +9,12 @@ import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeModal, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
-import type { RWUser } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 
 const props = defineProps<{
   visible: boolean
   instanceName: string
-  account?: RWUser
+  account?: RWAccount
 }>()
 
 const emit = defineEmits(['close', 'account-deleted'])

@@ -9,24 +9,24 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
 import type {
   RWAuthenticationMode,
-  RWUser
+  RWAccount
 } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  users: RWUser[]
+  users: RWAccount[]
   authenticationMode: RWAuthenticationMode
 }>()
 
 const emit = defineEmits<{
-  delete: [item: RWUser]
-  edit: [item: RWUser]
-  enableDisable: [item: RWUser]
-  downloadConfiguration: [item: RWUser]
-  downloadCertificate: [item: RWUser]
-  downloadQrCode: [item: RWUser]
-  regenerateCertificate: [item: RWUser]
+  delete: [item: RWAccount]
+  edit: [item: RWAccount]
+  enableDisable: [item: RWAccount]
+  downloadConfiguration: [item: RWAccount]
+  downloadCertificate: [item: RWAccount]
+  downloadQrCode: [item: RWAccount]
+  regenerateCertificate: [item: RWAccount]
 }>()
 
 const tableHeaders = [
@@ -52,7 +52,7 @@ const tableHeaders = [
   }
 ]
 
-function getDropdownItems(item: RWUser) {
+function getDropdownItems(item: RWAccount) {
   return [
     {
       id: 'download_configuration',
@@ -120,14 +120,14 @@ function getDropdownItems(item: RWUser) {
   ]
 }
 
-function getCellClasses(item: RWUser) {
+function getCellClasses(item: RWAccount) {
   return item.openvpn_enabled === '0' ? ['opacity-50'] : []
 }
 </script>
 
 <template>
   <NeTable :data="users" :headers="tableHeaders">
-    <template #name="{ item }: { item: RWUser }">
+    <template #name="{ item }: { item: RWAccount }">
       <div class="flex flex-row gap-x-3">
         <p :class="[getCellClasses(item)]">
           {{ item.name }}
@@ -161,7 +161,7 @@ function getCellClasses(item: RWUser) {
         </tippy>
       </div>
     </template>
-    <template #expiration="{ item }: { item: RWUser }">
+    <template #expiration="{ item }: { item: RWAccount }">
       <div class="flex flex-row gap-x-3">
         <p :class="[getCellClasses(item)]">
           {{
@@ -193,12 +193,12 @@ function getCellClasses(item: RWUser) {
         </tippy>
       </div>
     </template>
-    <template #reserved_ip="{ item }: { item: RWUser }">
+    <template #reserved_ip="{ item }: { item: RWAccount }">
       <p :class="[getCellClasses(item)]">
         {{ item.openvpn_ipaddr ? item.openvpn_ipaddr : '-' }}
       </p>
     </template>
-    <template #connection="{ item }: { item: RWUser }">
+    <template #connection="{ item }: { item: RWAccount }">
       <div :class="['flex', 'flex-row', 'items-center', getCellClasses(item)]">
         <font-awesome-icon
           :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
@@ -219,7 +219,7 @@ function getCellClasses(item: RWUser) {
         </p>
       </div>
     </template>
-    <template #menu="{ item }: { item: RWUser }">
+    <template #menu="{ item }: { item: RWAccount }">
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('edit', item)">
           <template #prefix>

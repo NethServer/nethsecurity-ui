@@ -63,6 +63,7 @@ function close() {
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    primary-button-kind="danger"
     @primaryClick="deleteAccount()"
     @close="close()"
   >

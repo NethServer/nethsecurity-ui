@@ -36,7 +36,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
       >
         <div class="flex max-w-xl flex-col justify-between gap-y-4 sm:flex-row sm:gap-x-4">
           <div>
-            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}:</p>
+            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}</p>
             <div :class="['flex', 'flex-row', 'items-center']">
               <font-awesome-icon
                 :icon="['fas', server.enabled == '1' ? 'circle-check' : 'circle-xmark']"
@@ -54,11 +54,11 @@ const emit = defineEmits(['delete-server', 'edit-server'])
             </div>
           </div>
           <div>
-            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.authentication_mode') }}:</p>
+            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.authentication_mode') }}</p>
             <p>{{ t(`standalone.openvpn_rw.${server.ns_auth_mode}`) }}</p>
           </div>
           <div>
-            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.database') }}:</p>
+            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.database') }}</p>
             <p>
               {{
                 server.ns_user_db === 'main'

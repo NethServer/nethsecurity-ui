@@ -175,20 +175,20 @@ function getCellClasses(item: RWAccount) {
           </span>
           <template #content>
             <div>
-              <ul class="list-inside list-disc px-2 py-1">
-                <li class="py-2">
+              <div class="px-2 py-1">
+                <div class="py-1">
                   <span class="mr-2 inline-block font-semibold"
                     >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
                   >
                   <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
-                </li>
-                <li class="py-2">
+                </div>
+                <div class="py-1">
                   <span class="mr-2 inline-block font-semibold"
                     >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
                   >
                   <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
-                </li>
-                <li class="py-2">
+                </div>
+                <div class="py-1">
                   <span class="mr-2 inline-block font-semibold"
                     >{{ t('standalone.openvpn_rw.started') }}:</span
                   >
@@ -197,8 +197,8 @@ function getCellClasses(item: RWAccount) {
                       (item.since as number) * 1000
                     ).toLocaleTimeString()}`
                   }}</span>
-                </li>
-                <li class="py-2 align-top">
+                </div>
+                <div class="py-1 align-top">
                   <span class="mr-2 inline-block align-top font-semibold"
                     >{{ t('standalone.openvpn_rw.traffic') }}:</span
                   >
@@ -209,8 +209,8 @@ function getCellClasses(item: RWAccount) {
                     }}
                     KB {{ t('standalone.openvpn_rw.received') }}</span
                   >
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
           </template>
         </tippy>

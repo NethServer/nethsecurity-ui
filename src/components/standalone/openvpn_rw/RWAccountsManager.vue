@@ -278,7 +278,16 @@ const filteredUsers = computed(() => {
         emit('update-users')
       }
     "
-    @edit-account="emit('update-users')"
+    @edit-account="
+      () => {
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'edit-account',
+          title: t('standalone.openvpn_rw.account_edited')
+        })
+        emit('update-users')
+      }
+    "
   />
   <RenewCertificateDrawer
     :account="selectedAccount"

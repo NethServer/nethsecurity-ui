@@ -12,6 +12,7 @@ import {
   NeCombobox,
   NeButton,
   NeSkeleton,
+  NeModal,
   NeInlineNotification,
   type NeComboboxOption,
   getAxiosErrorMessage
@@ -49,6 +50,7 @@ const selectedAccount = ref<RWAccount>()
 const showDeleteAccountModal = ref(false)
 const showCreateOrEditAccountDrawer = ref(false)
 const showRenewCertificateDrawer = ref(false)
+const showConfirmDisableModal = ref(false)
 
 function cleanError() {
   error.value = {
@@ -100,6 +102,15 @@ async function toggleAccountEnable(account: RWAccount) {
         : t('standalone.openvpn_rw.cannot_enable_account')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  }
+}
+
+async function handleToggleAccountEnableRequest(account: RWAccount) {
+  if (account.connected && account.openvpn_enabled == '1') {
+    selectedAccount.value = account
+    showConfirmDisableModal.value = true
+  } else {
+    await toggleAccountEnable(account)
   }
 }
 
@@ -268,7 +279,7 @@ const filteredUsers = computed(() => {
       @download-certificate="downloadCertificate"
       @download-configuration="downloadConfiguration"
       @download-qr-code="downloadQrCode"
-      @enable-disable="toggleAccountEnable"
+      @enable-disable="handleToggleAccountEnableRequest"
       @regenerate-certificate="openRenewCertificateDrawer"
     />
     <NeEmptyState
@@ -327,4 +338,19 @@ const filteredUsers = computed(() => {
     @close="showRenewCertificateDrawer = false"
     @renew-certificate="emit('update-users')"
   />
+  <!-- confirm account disable modal -->
+  <NeModal
+    :visible="showConfirmDisableModal"
+    kind="warning"
+    :title="t('standalone.openvpn_rw.disable_account')"
+    :primaryLabel="t('common.disable')"
+    primary-button-kind="danger"
+    @primaryClick="() => {
+      showConfirmDisableModal = false
+      toggleAccountEnable(selectedAccount as RWAccount)
+    }"
+    @close="showConfirmDisableModal = false"
+  >
+    {{ t('standalone.openvpn_rw.disable_account_message') }}
+  </NeModal>
 </template>

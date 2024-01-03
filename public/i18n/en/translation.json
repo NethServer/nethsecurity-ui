@@ -1153,7 +1153,9 @@
       "started": "Started",
       "traffic": "Traffic",
       "sent": "sent",
-      "received": "received"
+      "received": "received",
+      "disable_account": "Disable account",
+      "disable_account_message": "The user is currently connected via VPN. Disabling the user will terminate the current VPN session."
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

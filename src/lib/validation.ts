@@ -326,6 +326,11 @@ export const validateFile = (
 }
 
 export const validatePositiveInteger = (value: string): validationOutput => {
+  // check if value contains any non-numeric characters
+  if (/\D/.test(value)) {
+    return { valid: false, errMessage: 'error.invalid_negative_integer' }
+  }
+
   const intValue = Number.parseInt(value)
 
   if (intValue < 0) {

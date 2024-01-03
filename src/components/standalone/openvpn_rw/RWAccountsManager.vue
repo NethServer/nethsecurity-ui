@@ -39,6 +39,7 @@ const notificationsStore = useNotificationsStore()
 
 const filter = ref('')
 const connectionFilter = ref<'all' | 'connected' | 'not_connected'>('all')
+const expirationFilter = ref<'all' | 'expired' | 'not_expired'>('all')
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -168,6 +169,21 @@ const connectionFilterOptions = ref<NeComboboxOption[]>([
   }
 ])
 
+const expirationFilterOptions = ref<NeComboboxOption[]>([
+  {
+    id: 'all',
+    label: t('standalone.openvpn_rw.expiration_all')
+  },
+  {
+    id: 'expired',
+    label: t('standalone.openvpn_rw.expiration_expired')
+  },
+  {
+    id: 'not_expired',
+    label: t('standalone.openvpn_rw.expiration_not_expired')
+  }
+])
+
 const filteredUsers = computed(() => {
   return props.users.filter((user) => {
     let result = true
@@ -179,6 +195,12 @@ const filteredUsers = computed(() => {
       result = result && user.connected
     } else if (connectionFilter.value === 'not_connected') {
       result = result && !user.connected
+    }
+
+    if (expirationFilter.value === 'expired') {
+      result = result && user.expired
+    } else if (expirationFilter.value === 'not_expired') {
+      result = result && !user.expired
     }
 
     return result
@@ -220,6 +242,7 @@ const filteredUsers = computed(() => {
       <div class="flex flex-row gap-x-3">
         <NeTextInput v-model="filter" placeholder="Filter" />
         <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
+        <NeCombobox v-model="expirationFilter" :options="expirationFilterOptions" />
       </div>
       <NeButton kind="secondary" @click="openCreateEditDrawer()" class="ml-2">
         <template #prefix>

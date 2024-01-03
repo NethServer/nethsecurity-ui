@@ -157,30 +157,30 @@ async function downloadQrCode(account: RWAccount) {
 const connectionFilterOptions = ref<NeComboboxOption[]>([
   {
     id: 'all',
-    label: t('standalone.openvpn_rw.connection_all')
+    label: t('standalone.openvpn_rw.all_connections')
   },
   {
     id: 'connected',
-    label: t('standalone.openvpn_rw.connection_connected')
+    label: t('standalone.openvpn_rw.connected')
   },
   {
     id: 'not_connected',
-    label: t('standalone.openvpn_rw.connection_not_connected')
+    label: t('standalone.openvpn_rw.not_connected')
   }
 ])
 
 const expirationFilterOptions = ref<NeComboboxOption[]>([
   {
     id: 'all',
-    label: t('standalone.openvpn_rw.expiration_all')
+    label: t('standalone.openvpn_rw.any_expiration')
   },
   {
     id: 'expired',
-    label: t('standalone.openvpn_rw.expiration_expired')
+    label: t('standalone.openvpn_rw.expired')
   },
   {
     id: 'not_expired',
-    label: t('standalone.openvpn_rw.expiration_not_expired')
+    label: t('standalone.openvpn_rw.not_expired')
   }
 ])
 
@@ -241,8 +241,16 @@ const filteredUsers = computed(() => {
     <div class="flex flex-row items-center justify-between">
       <div class="flex flex-row gap-x-3">
         <NeTextInput v-model="filter" placeholder="Filter" />
-        <NeCombobox v-model="connectionFilter" :options="connectionFilterOptions" />
-        <NeCombobox v-model="expirationFilter" :options="expirationFilterOptions" />
+        <NeCombobox
+          class="max-w-[12rem]"
+          v-model="connectionFilter"
+          :options="connectionFilterOptions"
+        />
+        <NeCombobox
+          class="max-w-[12rem]"
+          v-model="expirationFilter"
+          :options="expirationFilterOptions"
+        />
       </div>
       <NeButton kind="secondary" @click="openCreateEditDrawer()" class="ml-2">
         <template #prefix>

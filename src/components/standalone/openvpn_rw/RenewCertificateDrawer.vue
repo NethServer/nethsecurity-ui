@@ -124,6 +124,7 @@ watch(
       />
       <NeTextInput
         v-model="certificateExpiration"
+        type="number"
         :label="t('standalone.openvpn_rw.certificate_expiration_days')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('expiration'))"
       />

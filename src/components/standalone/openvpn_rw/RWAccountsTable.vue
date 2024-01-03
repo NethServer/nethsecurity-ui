@@ -132,6 +132,7 @@ function getCellClasses(item: RWAccount) {
         <p :class="[getCellClasses(item)]">
           {{ item.name }}
         </p>
+        <!-- password not configured warning -->
         <tippy
           interactive
           theme="tailwind"
@@ -153,9 +154,63 @@ function getCellClasses(item: RWAccount) {
           <template #content>
             <div class="text-center">
               <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
-              <router-link class="text-primary-800" to="/standalone/vpn/users-database">{{
-                t('standalone.openvpn_rw.edit_user_database')
-              }}</router-link>
+              <router-link
+                class="text-primary-500 dark:text-primary-800"
+                to="/standalone/vpn/users-database"
+                >{{ t('standalone.openvpn_rw.edit_user_database') }}</router-link
+              >
+            </div>
+          </template>
+        </tippy>
+      </div>
+      <!-- more info button -->
+      <div v-if="item.connected">
+        <tippy interactive placement="bottom" trigger="click" theme="tailwind">
+          <span class="cursor-pointer">
+            <slot name="trigger">
+              <NeButton size="sm" kind="tertiary" class="-mx-2">{{
+                t('standalone.openvpn_rw.more_info')
+              }}</NeButton>
+            </slot>
+          </span>
+          <template #content>
+            <div>
+              <ul class="list-inside list-disc px-2 py-1">
+                <li class="py-2">
+                  <span class="mr-2 inline-block font-semibold"
+                    >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
+                  >
+                  <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
+                </li>
+                <li class="py-2">
+                  <span class="mr-2 inline-block font-semibold"
+                    >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
+                  >
+                  <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
+                </li>
+                <li class="py-2">
+                  <span class="mr-2 inline-block font-semibold"
+                    >{{ t('standalone.openvpn_rw.started') }}:</span
+                  >
+                  <span class="text-gray-300 dark:text-gray-500">{{
+                    `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
+                      (item.since as number) * 1000
+                    ).toLocaleTimeString()}`
+                  }}</span>
+                </li>
+                <li class="py-2 align-top">
+                  <span class="mr-2 inline-block align-top font-semibold"
+                    >{{ t('standalone.openvpn_rw.traffic') }}:</span
+                  >
+                  <span class="inline-block align-top text-gray-300 dark:text-gray-500"
+                    >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
+                    {{ t('standalone.openvpn_rw.sent') }}<br />{{
+                      parseInt(item.bytes_received as string) / 1000
+                    }}
+                    KB {{ t('standalone.openvpn_rw.received') }}</span
+                  >
+                </li>
+              </ul>
             </div>
           </template>
         </tippy>
@@ -170,6 +225,7 @@ function getCellClasses(item: RWAccount) {
               : '-'
           }}
         </p>
+        <!-- certificate expired warning -->
         <tippy interactive theme="tailwind" v-if="item.expired">
           <span class="cursor-pointer">
             <slot name="trigger">
@@ -183,7 +239,7 @@ function getCellClasses(item: RWAccount) {
             <div class="text-center">
               <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
               <p
-                class="cursor-pointer text-primary-800"
+                class="cursor-pointer text-primary-500 dark:text-primary-800"
                 @click="emit('regenerateCertificate', item)"
               >
                 {{ t('standalone.openvpn_rw.renew_certificate') }}

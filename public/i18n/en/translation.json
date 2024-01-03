@@ -1144,7 +1144,14 @@
       "certificate_expired": "Certificate expired",
       "certificate_expired_message": "This account has an expired certificate",
       "account_created": "Account created",
-      "account_deleted": "Account deleted"
+      "account_deleted": "Account deleted",
+      "more_info": "More info",
+      "virtual_ip": "Virtual IP",
+      "remote_ip": "Remote IP",
+      "started": "Started",
+      "traffic": "Traffic",
+      "sent": "sent",
+      "received": "received"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

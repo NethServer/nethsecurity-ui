@@ -53,7 +53,7 @@ const validationErrorBag = ref(new MessageBag())
 const enabled = ref(true)
 const username = ref('')
 const reservedIp = ref('')
-const certificateExpiration = ref('')
+const certificateExpiration = ref('3650')
 
 const usernameOptions = ref<NeComboboxOption[]>([])
 
@@ -82,7 +82,7 @@ async function resetForm() {
   enabled.value = props.itemToEdit ? props.itemToEdit.openvpn_enabled === '1' : true
   username.value = props.itemToEdit?.name ?? usernameOptions.value?.[0].id ?? ''
   reservedIp.value = props.itemToEdit?.openvpn_ipaddr ?? ''
-  certificateExpiration.value = ''
+  certificateExpiration.value = props.itemToEdit ? '' : '3650'
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {

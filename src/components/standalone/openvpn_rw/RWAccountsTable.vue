@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTooltip } from '@nethserver/vue-tailwind-lib'
 import type {
   RWAuthenticationMode,
   RWAccount
@@ -133,9 +133,8 @@ function getCellClasses(item: RWAccount) {
           {{ item.name }}
         </p>
         <!-- password not configured warning -->
-        <tippy
+        <NeTooltip
           interactive
-          theme="tailwind"
           v-if="
             item.local &&
             !item.password &&
@@ -143,14 +142,12 @@ function getCellClasses(item: RWAccount) {
               authenticationMode === 'username_password_certificate')
           "
         >
-          <span class="cursor-pointer">
-            <slot name="trigger">
-              <font-awesome-icon
-                :icon="['fas', 'triangle-exclamation']"
-                class="h-4 w-4 text-amber-500"
-              />
-            </slot>
-          </span>
+          <template #trigger>
+            <font-awesome-icon
+              :icon="['fas', 'triangle-exclamation']"
+              class="h-4 w-4 text-amber-500"
+            />
+          </template>
           <template #content>
             <div class="text-center">
               <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
@@ -161,60 +158,56 @@ function getCellClasses(item: RWAccount) {
               >
             </div>
           </template>
-        </tippy>
+        </NeTooltip>
       </div>
       <!-- more info button -->
-      <div v-if="item.connected">
-        <tippy interactive placement="bottom" trigger="click" theme="tailwind">
-          <span class="cursor-pointer">
-            <slot name="trigger">
-              <NeButton size="sm" kind="tertiary" class="-mx-2">{{
-                t('standalone.openvpn_rw.more_info')
-              }}</NeButton>
-            </slot>
-          </span>
-          <template #content>
-            <div>
-              <div class="px-2 py-1">
-                <div class="py-1">
-                  <span class="mr-2 inline-block font-semibold"
-                    >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
-                  >
-                  <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
-                </div>
-                <div class="py-1">
-                  <span class="mr-2 inline-block font-semibold"
-                    >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
-                  >
-                  <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
-                </div>
-                <div class="py-1">
-                  <span class="mr-2 inline-block font-semibold"
-                    >{{ t('standalone.openvpn_rw.started') }}:</span
-                  >
-                  <span class="text-gray-300 dark:text-gray-500">{{
-                    `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
-                      (item.since as number) * 1000
-                    ).toLocaleTimeString()}`
-                  }}</span>
-                </div>
-                <div class="py-1 align-top">
-                  <span class="mr-2 inline-block align-top font-semibold"
-                    >{{ t('standalone.openvpn_rw.traffic') }}:</span
-                  >
-                  <span class="inline-block align-top text-gray-300 dark:text-gray-500"
-                    >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
-                    {{ t('standalone.openvpn_rw.sent') }}<br />{{
-                      parseInt(item.bytes_received as string) / 1000
-                    }}
-                    KB {{ t('standalone.openvpn_rw.received') }}</span
-                  >
-                </div>
+      <NeTooltip interactive placement="bottom" v-if="item.connected">
+        <template #trigger>
+          <NeButton size="sm" kind="tertiary" class="-mx-2">{{
+            t('standalone.openvpn_rw.more_info')
+          }}</NeButton>
+        </template>
+        <template #content>
+          <div>
+            <div class="px-2 py-1">
+              <div class="py-1">
+                <span class="mr-2 inline-block font-semibold"
+                  >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
+                >
+                <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
+              </div>
+              <div class="py-1">
+                <span class="mr-2 inline-block font-semibold"
+                  >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
+                >
+                <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
+              </div>
+              <div class="py-1">
+                <span class="mr-2 inline-block font-semibold"
+                  >{{ t('standalone.openvpn_rw.started') }}:</span
+                >
+                <span class="text-gray-300 dark:text-gray-500">{{
+                  `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
+                    (item.since as number) * 1000
+                  ).toLocaleTimeString()}`
+                }}</span>
+              </div>
+              <div class="py-1 align-top">
+                <span class="mr-2 inline-block align-top font-semibold"
+                  >{{ t('standalone.openvpn_rw.traffic') }}:</span
+                >
+                <span class="inline-block align-top text-gray-300 dark:text-gray-500"
+                  >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
+                  {{ t('standalone.openvpn_rw.sent') }}<br />{{
+                    parseInt(item.bytes_received as string) / 1000
+                  }}
+                  KB {{ t('standalone.openvpn_rw.received') }}</span
+                >
               </div>
             </div>
-          </template>
-        </tippy>
-      </div>
+          </div>
+        </template>
+      </NeTooltip>
     </template>
     <template #expiration="{ item }: { item: RWAccount }">
       <div class="flex flex-row gap-x-3">
@@ -226,15 +219,13 @@ function getCellClasses(item: RWAccount) {
           }}
         </p>
         <!-- certificate expired warning -->
-        <tippy interactive theme="tailwind" v-if="item.expired">
-          <span class="cursor-pointer">
-            <slot name="trigger">
-              <font-awesome-icon
-                :icon="['fas', 'triangle-exclamation']"
-                class="h-4 w-4 text-amber-500"
-              />
-            </slot>
-          </span>
+        <NeTooltip interactive v-if="item.expired">
+          <template #trigger>
+            <font-awesome-icon
+              :icon="['fas', 'triangle-exclamation']"
+              class="h-4 w-4 text-amber-500"
+            />
+          </template>
           <template #content>
             <div class="text-center">
               <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
@@ -246,7 +237,7 @@ function getCellClasses(item: RWAccount) {
               </p>
             </div>
           </template>
-        </tippy>
+        </NeTooltip>
       </div>
     </template>
     <template #reserved_ip="{ item }: { item: RWAccount }">

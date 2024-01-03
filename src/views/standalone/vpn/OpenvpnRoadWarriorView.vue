@@ -23,6 +23,12 @@ import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
 
+export type RWAuthenticationMode =
+  | 'username_password'
+  | 'certificate'
+  | 'username_password_certificate'
+  | 'username_otp_certificate'
+
 export type RWServer = {
   proto: string
   port: string
@@ -33,7 +39,7 @@ export type RWServer = {
   auth: string
   cipher: string
   tls_version_min: string
-  ns_auth_mode: string
+  ns_auth_mode: RWAuthenticationMode
   ns_bridge?: string
   server: string
   ns_public_ip: string[]
@@ -47,7 +53,7 @@ export type RWServer = {
   ns_description: string
 }
 
-export type RWUser = {
+export type RWAccount = {
   local: boolean
   database: string
   name: string
@@ -72,9 +78,10 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
 const loading = ref(true)
+const loadingUsers = ref(true)
 const instanceName = ref('')
 const instanceData = ref<RWServer>()
-const users = ref<RWUser[]>([])
+const users = ref<RWAccount[]>([])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -90,7 +97,7 @@ const connectedClients = computed(() => users.value.filter((x) => x.connected).l
 
 async function fetchUsers() {
   try {
-    loading.value = true
+    loadingUsers.value = true
     users.value = (
       await ubusCall('ns.ovpnrw', 'list-users', { instance: instanceName.value })
     ).data.users
@@ -100,7 +107,7 @@ async function fetchUsers() {
     error.value.notificationDetails = err.toString()
     loadingError.value = true
   } finally {
-    loading.value = false
+    loadingUsers.value = false
   }
 }
 
@@ -132,6 +139,11 @@ async function reloadServer() {
   instanceName.value = ''
   instanceData.value = undefined
   await fetchServer()
+}
+
+async function reloadUsers() {
+  await uciChangesStore.getChanges()
+  await fetchUsers()
 }
 
 async function initAndConfigureServer() {
@@ -204,7 +216,14 @@ onMounted(() => {
       @edit-server="showCreateOrEditServerModal = true"
     />
 
-    <RWAccountsManager v-if="instanceData && instanceData.ns_description" />
+    <RWAccountsManager
+      v-if="instanceData && instanceData.ns_description"
+      :users="users"
+      :server="instanceData"
+      :instance-name="instanceName"
+      :is-loading="loadingUsers"
+      @update-users="reloadUsers"
+    />
   </div>
   <DeleteRWServerModal
     :visible="showDeleteServerModal"

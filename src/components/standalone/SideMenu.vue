@@ -27,7 +27,8 @@ const menuExpanded: any = ref({
   system: false,
   network: false,
   firewall: false,
-  security: false
+  security: false,
+  vpn: false
 })
 
 const navigation: Ref<MenuItem[]> = ref([

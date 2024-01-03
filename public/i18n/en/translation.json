@@ -1139,7 +1139,7 @@
       "choose_user_from_database": "Choose user from database",
       "renew_certificate": "Renew certificate",
       "renew": "Renew",
-      "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect.",
+      "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate. You will need to download the new certificate to reconnect.",
       "this_certificate_expired": "This certificate expired",
       "certificate_expired": "Certificate expired",
       "certificate_expired_message": "This account has an expired certificate",

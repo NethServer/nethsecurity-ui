@@ -122,8 +122,12 @@ function configureAxios() {
           //// page refresh needed?
         }
       } else {
-        // show error notification
-        if (!(error instanceof CanceledError)) {
+        // show error notification only if error is not caused from cancellation
+        // and if it isn't a validation error
+        if (
+          !(error instanceof CanceledError) &&
+          !error.response?.data?.data?.validation?.errors?.length
+        ) {
           notificationsStore.createNotificationFromAxiosError(error)
         }
       }

@@ -114,8 +114,8 @@ const remoteP2pIp = ref('')
 const presharedKey = ref('')
 const protocol = ref<'tcp' | 'udp'>('udp')
 const compression = ref('disabled')
-const digest = ref('auto')
-const cipher = ref('auto')
+const digest = ref('SHA256')
+const cipher = ref('AES-256-GCM')
 
 // Server tunnel form fields
 const publicEndpoints = ref<string[]>([''])
@@ -317,8 +317,8 @@ async function resetForm() {
     topology.value = 'subnet'
     protocol.value = 'udp'
     compression.value = 'disabled'
-    digest.value = 'auto'
-    cipher.value = 'auto'
+    digest.value = 'SHA256'
+    cipher.value = 'AES-256-GCM'
 
     if (!props.isClientTunnel) {
       minimumTLSVersion.value = 'auto'

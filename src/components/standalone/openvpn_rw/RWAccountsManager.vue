@@ -24,6 +24,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
 import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 const props = defineProps<{
   users: RWAccount[]
@@ -34,6 +35,7 @@ const props = defineProps<{
 const emit = defineEmits(['update-users'])
 
 const { t } = useI18n()
+const notificationsStore = useNotificationsStore()
 
 const filter = ref('')
 const connectionFilter = ref<'all' | 'connected' | 'not_connected'>('all')
@@ -248,7 +250,16 @@ const filteredUsers = computed(() => {
     :visible="showDeleteAccountModal"
     :account="selectedAccount"
     :instance-name="instanceName"
-    @account-deleted="emit('update-users')"
+    @account-deleted="
+      () => {
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'delete-account',
+          title: t('standalone.openvpn_rw.account_deleted')
+        })
+        emit('update-users')
+      }
+    "
     @close="showDeleteAccountModal = false"
   />
   <CreateOrEditRWAccountDrawer
@@ -257,7 +268,17 @@ const filteredUsers = computed(() => {
     :instance-name="instanceName"
     :item-to-edit="selectedAccount"
     @close="showCreateOrEditAccountDrawer = false"
-    @add-edit-account="emit('update-users')"
+    @add-account="
+      () => {
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'add-account',
+          title: t('standalone.openvpn_rw.account_created')
+        })
+        emit('update-users')
+      }
+    "
+    @edit-account="emit('update-users')"
   />
   <RenewCertificateDrawer
     :account="selectedAccount"

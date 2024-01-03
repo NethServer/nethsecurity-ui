@@ -1142,7 +1142,9 @@
       "renew_certificate_confirm_message": "Renew certificate for '{username}'? This will revoke the current certificate, download the new certificate to reconnect.",
       "this_certificate_expired": "This certificate expired",
       "certificate_expired": "Certificate expired",
-      "certificate_expired_message": "This account has an expired certificate"
+      "certificate_expired_message": "This account has an expired certificate",
+      "account_created": "Account created",
+      "account_deleted": "Account deleted"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

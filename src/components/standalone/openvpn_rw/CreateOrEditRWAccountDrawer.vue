@@ -38,7 +38,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-edit-account'])
+const emit = defineEmits(['close', 'add-account', 'edit-account'])
 
 const loading = ref(false)
 const isSavingChanges = ref(false)
@@ -149,7 +149,13 @@ async function createOrEditAccount() {
       ...(isEditing ? {} : { expiration: certificateExpiration.value })
     })
     isSavingChanges.value = false
-    emit('add-edit-account')
+
+    if (isEditing) {
+      emit('edit-account')
+    } else {
+      emit('add-account')
+    }
+
     close()
   } catch (err: any) {
     if (err instanceof ValidationError) {

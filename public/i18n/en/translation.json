@@ -1082,7 +1082,7 @@
       "server_client_negotiation": "Server/client negotiation",
       "port": "Port",
       "route_all_client_traffic_through_vpn": "Route all client traffic through VPN",
-      "push_custom_network_routes": "Push custom networks routes",
+      "push_custom_network_routes": "Push networks routes",
       "bridge": "Bridge",
       "range_ip_start": "Range IP start",
       "range_ip_end": "Range IP end",

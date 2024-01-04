@@ -214,7 +214,6 @@ async function fetchOptions() {
   try {
     loading.value = true
     cipherOptions.value = [
-      // Default value for the cipher option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
@@ -230,7 +229,6 @@ async function fetchOptions() {
       )
     ]
     digestOptions.value = [
-      // Default value for the digest option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
@@ -287,9 +285,11 @@ async function resetForm() {
     remoteP2pIp.value = tunnelData.ifconfig_remote ?? ''
     presharedKey.value = tunnelData.secret ?? ''
     topology.value = localP2pIp.value || remoteP2pIp.value || presharedKey.value ? 'p2p' : 'subnet'
+    compression.value = tunnelData.compress ?? 'disabled'
+
+    // if the cipher and/or digest fields are not present in payload, server-client negotiation is used
     cipher.value = tunnelData.cipher ?? 'auto'
     digest.value = tunnelData.auth ?? 'auto'
-    compression.value = tunnelData.compress ?? 'disabled'
 
     if (props.isClientTunnel) {
       const clientTunnelData = tunnelData as ClientTunnelPayload

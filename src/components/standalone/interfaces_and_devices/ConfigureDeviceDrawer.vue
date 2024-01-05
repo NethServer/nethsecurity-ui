@@ -25,6 +25,7 @@ import {
   validateIp4Cidr
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeFormItemLabel,
   NeSideDrawer,
@@ -33,12 +34,10 @@ import {
   NeInlineNotification,
   NeRadioSelection,
   NeCheckbox,
-  NeCombobox,
   NeCard,
   NeSkeleton,
   focusElement,
-  getAxiosErrorMessage,
-  type NeComboboxOption
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { cloneDeep, isEmpty, toUpper } from 'lodash-es'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
@@ -848,6 +847,8 @@ async function listZonesForDeviceConfig() {
             :noOptionsLabel="t('standalone.interfaces_and_devices.no_devices_available')"
             :disabled="loading.configure"
             ref="selectedDevicesForBridgeOrBondRef"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <!-- bonding policy -->
           <NeCombobox
@@ -860,6 +861,9 @@ async function listZonesForDeviceConfig() {
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
             ref="bondingPolicyRef"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <!-- bond primary device -->
           <NeCombobox
@@ -875,6 +879,9 @@ async function listZonesForDeviceConfig() {
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
             ref="bondPrimaryDeviceRef"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
         </template>
         <!-- name -->

@@ -7,16 +7,15 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHost, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeButton,
   NeCheckbox,
   NeToggle,
   NeSkeleton,
-  NeCombobox,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { isEmpty, uniq } from 'lodash-es'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -297,6 +296,9 @@ function resetNtpServerErrors() {
                     :noResultsLabel="t('ne_combobox.no_results')"
                     :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
                     :disabled="loading.save"
+                    :noOptionsLabel="t('ne_combobox.no_options_label')"
+                    :selected-label="t('ne_combobox.selected')"
+                    :user-input-label="t('ne_combobox.user_input_label')"
                   />
                 </div>
               </Transition>

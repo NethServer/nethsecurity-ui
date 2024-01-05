@@ -9,8 +9,8 @@ import { CYAN_500, CYAN_600, INDIGO_400, INDIGO_600 } from '@/lib/color'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useThemeStore } from '@/stores/theme'
+import { NeCombobox } from '@nethesis/vue-components'
 import {
-  NeCombobox,
   NeSkeleton,
   NeCard,
   getAxiosErrorMessage,
@@ -164,9 +164,12 @@ async function getInterfaceTraffic() {
       <NeCombobox
         v-model="selectedDevice"
         :options="wanOptions"
+        :disabled="loading.listWans || loading.getInterfaceTraffic"
         :noResultsLabel="t('ne_combobox.no_results')"
         :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :disabled="loading.listWans || loading.getInterfaceTraffic"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
         class="mb-4"
       />
       <NeSkeleton v-if="loading.getInterfaceTraffic" :lines="6"></NeSkeleton>

@@ -7,17 +7,16 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSkeleton,
   NeTextInput,
   NeToggle,
   NeTooltip,
-  NeCombobox,
   NeButton,
   NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
-  type NeComboboxOption,
   NeFormItemLabel
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
@@ -301,6 +300,11 @@ function save() {
             :options="zones"
             :invalid-message="error.zones"
             ref="zonesRef"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <NeMultiTextInput
             v-model="form.bypassSource"

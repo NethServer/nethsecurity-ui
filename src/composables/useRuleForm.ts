@@ -2,7 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useI18n } from 'vue-i18n'
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { type NeComboboxOption } from '@nethesis/vue-components'
 import type { Ref } from 'vue'
 import { computed, ref, watch } from 'vue'
 import type { Policy, Rule } from '@/composables/useMwan'

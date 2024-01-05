@@ -4,11 +4,10 @@
 -->
 
 <script lang="ts" setup>
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeCombobox,
   NeInlineNotification,
   NeRadioSelection,
   NeTextInput,
@@ -261,6 +260,11 @@ function validate(): boolean {
         :options="zoneComboboxOptions"
         :placeholder="forwardPlaceholder"
         multiple
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeCombobox
         v-model="forwardsFrom"
@@ -269,6 +273,11 @@ function validate(): boolean {
         :options="zoneComboboxOptions"
         :placeholder="forwardPlaceholder"
         multiple
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeToggle
         v-model="trafficToWan"

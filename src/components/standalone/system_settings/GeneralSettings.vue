@@ -7,13 +7,13 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeCombobox } from '@nethesis/vue-components'
 import {
   NeButton,
   NeTextInput,
   NeTextArea,
   NeFormItemLabel,
   NeSkeleton,
-  NeCombobox,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -281,6 +281,9 @@ async function syncWithNtpServer() {
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
             :disabled="loading.save"
             ref="timezoneRef"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
           />
           <!-- local time -->
           <div>

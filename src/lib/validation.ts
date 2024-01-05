@@ -1,7 +1,7 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import type { NeComboboxOption } from '@nethserver/vue-tailwind-lib'
+import { type NeComboboxOption } from '@nethesis/vue-components'
 
 export interface validationOutput {
   valid: Boolean

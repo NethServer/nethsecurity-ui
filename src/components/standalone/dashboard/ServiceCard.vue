@@ -5,9 +5,11 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, NeBadge, NeSkeleton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeBadge } from '@nethesis/vue-components'
+import { NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   serviceName: { type: String },
@@ -134,13 +136,13 @@ function getBadgeText(status: string) {
 function getBadgeIcon(status: string) {
   switch (status) {
     case 'ok':
-      return ['fas', 'check']
+      return faCheck
     case 'warning':
-      return ['fas', 'warning']
+      return faWarning
     case 'disabled':
-      return ['fas', 'xmark']
+      return faXmark
     default:
-      return ['fas', 'xmark']
+      return faXmark
   }
 }
 </script>

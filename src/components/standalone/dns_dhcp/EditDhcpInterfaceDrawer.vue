@@ -13,6 +13,7 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import { watchEffect } from 'vue'
+import { type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeInlineNotification,
@@ -21,8 +22,7 @@ import {
   NeButton,
   NeSkeleton,
   NeTooltip,
-  getAxiosErrorMessage,
-  type NeComboboxOption
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'

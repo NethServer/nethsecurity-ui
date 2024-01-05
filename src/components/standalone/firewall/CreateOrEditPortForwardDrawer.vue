@@ -5,17 +5,16 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeToggle,
   NeTextInput,
-  NeCombobox,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
   NeTooltip,
   NeFormItemLabel,
-  type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { toRefs, ref, watch } from 'vue'
@@ -358,6 +357,11 @@ async function createOrEditPortForward() {
         :options="supportedProtocols"
         v-model="protocols"
         :invalid-message="validationErrorBag.getFirstFor('protocols')"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeTextInput
         :label="t('standalone.port_forward.source_port')"
@@ -401,13 +405,22 @@ async function createOrEditPortForward() {
           :label="t('standalone.port_forward.destination_zone')"
           :placeholder="t('standalone.port_forward.choose_zone')"
           :options="supportedDestinationZones"
-          :selected-label="t('standalone.port_forward.any_zone')"
           v-model="destinationZone"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           :label="t('standalone.port_forward.wan_ip')"
           :options="wanInterfaces"
           v-model="wan"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeMultiTextInput
           :title="t('standalone.port_forward.restrict_access_to')"
@@ -454,6 +467,11 @@ async function createOrEditPortForward() {
           v-model="reflectionZones"
           :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
           :multiple="true"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </template>
       <hr />

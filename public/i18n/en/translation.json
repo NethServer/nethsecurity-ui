@@ -229,7 +229,10 @@
     "user_db_not_configured": "User database is not configured",
     "db_not_found": "Database not found",
     "user_certificate_already_exists": "User certificate already exists",
-    "cannot_renew_certificate": "Cannot renew certificate"
+    "cannot_renew_certificate": "Cannot renew certificate",
+    "cannot_retrieve_qos_interfaces": "Cannot retrieve QoS interfaces",
+    "cannot_enable_qos_interface": "Cannot enable QoS interface",
+    "cannot_disable_qos_interface": "Cannot disable QoS interface"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -922,7 +925,14 @@
     },
     "qos": {
       "title_short": "QoS",
-      "title": "Quality of Service"
+      "title": "Quality of Service",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
+      "no_interface_found": "No interface found",
+      "add_qos_interface": "Add QoS interface",
+      "interface": "Interface",
+      "download_speed": "Download speed",
+      "upload_speed": "Upload speed",
+      "status": "Status"
     },
     "users_and_objects": {
       "title": "Users & objects"

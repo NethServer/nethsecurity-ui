@@ -76,7 +76,8 @@ import {
   faBell as fasBell,
   faDatabase,
   faRightFromBracket as fasRightFromBracket,
-  faTriangleExclamation
+  faTriangleExclamation,
+  faChartSimple
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -215,4 +216,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faDatabase)
   library.add(fasRightFromBracket)
   library.add(faTriangleExclamation)
+  library.add(faChartSimple)
 }

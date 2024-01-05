@@ -32,7 +32,9 @@ import {
   getZoneIcon,
   isIpsec,
   isHotspot,
-  isOpenVpn,
+  isOpenVpnTunnel,
+  isOpenVpnRw,
+  getInterfaceDisplayName,
   type ZoneWithDevices,
   getUiZoneName,
   type ZoneWithDeviceNames,
@@ -549,7 +551,12 @@ function getTxBytes(device: any) {
 }
 
 function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
-  if (isOpenVpn(deviceOrIface) || isIpsec(deviceOrIface) || isHotspot(deviceOrIface)) {
+  if (
+    isOpenVpnTunnel(deviceOrIface) ||
+    isOpenVpnRw(deviceOrIface) ||
+    isIpsec(deviceOrIface) ||
+    isHotspot(deviceOrIface)
+  ) {
     return false
   } else {
     return true
@@ -689,8 +696,8 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                             />
                           </div>
                           <div>
-                            <div v-if="getInterface(device)" class="font-semibold">
-                              {{ getInterface(device)['.name'] }}
+                            <div v-if="getInterfaceDisplayName(device)" class="font-semibold">
+                              {{ getInterfaceDisplayName(device) }}
                             </div>
                             <div>{{ device.name }}</div>
                           </div>
@@ -773,7 +780,19 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                         <!-- vlan badge -->
                         <NeBadge v-if="isVlan(device)" size="sm" kind="primary" text="VLAN" />
                         <!-- openvpn tunnel badge -->
-                        <NeBadge v-if="isOpenVpn(device)" size="sm" kind="primary" text="OVPN" />
+                        <NeBadge
+                          v-if="isOpenVpnTunnel(device)"
+                          size="sm"
+                          kind="primary"
+                          :text="t('standalone.openvpn_tunnel.short_name')"
+                        />
+                        <!-- openvpn rw badge -->
+                        <NeBadge
+                          v-if="isOpenVpnRw(device)"
+                          size="sm"
+                          kind="primary"
+                          :text="t('standalone.openvpn_rw.short_name')"
+                        />
                         <!-- ipsec tunnel badge -->
                         <NeBadge v-if="isIpsec(device)" size="sm" kind="primary" text="IPSEC" />
                       </div>

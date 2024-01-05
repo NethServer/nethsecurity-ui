@@ -1059,6 +1059,7 @@
     },
     "openvpn_rw": {
       "title": "OpenVPN Road Warrior",
+      "short_name": "OVPN RW",
       "roadwarrior_server": "Road Warrior server",
       "roadwarrior_server_description": "The OpenVPN Road Warrior is a VPN server designed for remote users, providing secure access to a private network from any internet location.",
       "no_openvpn_rw_server_found": "No OpenVPN Road Warrior server found",
@@ -1160,6 +1161,7 @@
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",
+      "short_name": "OVPN TUN",
       "tabs": {
         "server_tunnel": "Server tunnel",
         "client_tunnel": "Client tunnel"

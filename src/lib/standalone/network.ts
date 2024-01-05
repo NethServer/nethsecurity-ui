@@ -29,6 +29,7 @@ export interface DeviceOrIface {
   hotspot?: HotspotConfig
   iface?: any
   openvpn?: any
+  openvpn_rw?: any
 }
 
 export interface ZoneWithDevices {
@@ -80,6 +81,18 @@ export function getInterface(deviceOrIface: DeviceOrIface) {
   }
 
   return deviceOrIface.iface
+}
+
+export function getInterfaceDisplayName(deviceOrIface: DeviceOrIface) {
+  if (isOpenVpnRw(deviceOrIface)) {
+    return deviceOrIface.openvpn_rw.ns_description
+  } else {
+    if (getInterface(deviceOrIface)) {
+      return getInterface(deviceOrIface)['.name']
+    } else {
+      return ''
+    }
+  }
 }
 
 export function getAliasInterface(device: DeviceOrIface, networkConfig: any) {
@@ -230,13 +243,16 @@ export function isIpsec(device: DeviceOrIface) {
   return device.zone === 'ipsec'
 }
 
-export function isOpenVpn(device: DeviceOrIface) {
+export function isOpenVpnTunnel(device: DeviceOrIface) {
   return device.openvpn
 }
 
+export function isOpenVpnRw(device: DeviceOrIface) {
+  return device.openvpn_rw
+}
+
 export function isVpn(device: DeviceOrIface) {
-  //// TODO add openvpn RW
-  return isOpenVpn(device) || isIpsec(device)
+  return isOpenVpnTunnel(device) || isOpenVpnRw(device) || isIpsec(device)
 }
 
 export function isHotspot(device: DeviceOrIface) {

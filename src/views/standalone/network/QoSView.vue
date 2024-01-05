@@ -20,6 +20,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import QoSInterfaceTable from '@/components/standalone/qos/QoSInterfaceTable.vue'
 import DeleteQoSInterfaceModal from '@/components/standalone/qos/DeleteQoSInterfaceModal.vue'
 import CreateOrEditQoSInterfaceDrawer from '@/components/standalone/qos/CreateOrEditQoSInterfaceDrawer.vue'
+import { useFirewallStore } from '@/stores/standalone/firewall'
 
 export type QoSInterface = {
   interface: string
@@ -31,6 +32,7 @@ export type QoSInterface = {
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const firewallConfig = useFirewallStore()
 
 const error = ref({
   notificationTitle: '',
@@ -57,6 +59,11 @@ function openDeleteInterfaceModal(itemToDelete: QoSInterface) {
 async function fetchInterfaces() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
+
+  if (firewallConfig.loading || firewallConfig.error) {
+    firewallConfig.fetch()
+  }
+
   try {
     loading.value = true
     qosInterfaces.value = (await ubusCall('ns.qos', 'list')).data.rules
@@ -121,14 +128,20 @@ onMounted(() => {
       >
     </div>
     <NeInlineNotification
-      v-if="error.notificationDescription"
-      :title="t('error.cannot_retrieve_users')"
-      :description="error.notificationDescription"
+      v-if="error.notificationDescription || firewallConfig.error"
+      :title="
+        firewallConfig.error ? t('error.cannot_load_firewall_config') : error.notificationTitle
+      "
+      :description="
+        firewallConfig.error
+          ? t(getAxiosErrorMessage(firewallConfig.error))
+          : error.notificationDescription
+      "
       class="mb-6"
       kind="error"
     >
       <template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
+        {{ firewallConfig.error ? firewallConfig.error.toString() : error.notificationDetails }}
       </template></NeInlineNotification
     >
     <NeSkeleton v-if="loading" :lines="10" />
@@ -150,6 +163,7 @@ onMounted(() => {
       <QoSInterfaceTable
         v-else
         :qos-interfaces="qosInterfaces"
+        :firewall-zones="firewallConfig.zones"
         @edit="openCreateEditInterfaceDrawer"
         @delete="openDeleteInterfaceModal"
         @enable-disable="toggleInterfaceEnable"

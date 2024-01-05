@@ -8,11 +8,18 @@ import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeButton, NeDropdown } from '@nethserver/vue-tailwind-lib'
+import type { Zone } from '@/stores/standalone/firewall'
+import {
+  getZoneIcon,
+  getZoneIconForegroundStyle,
+  getZoneIconBackgroundStyle
+} from '@/lib/standalone/network'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   qosInterfaces: QoSInterface[]
+  firewallZones: Zone[]
 }>()
 
 const emit = defineEmits<{
@@ -71,6 +78,10 @@ function getDropdownItems(item: QoSInterface) {
 function getCellClasses(item: QoSInterface) {
   return item.disabled ? ['opacity-50'] : []
 }
+
+function getZoneForInterface(item: QoSInterface) {
+  return props.firewallZones.find((zone) => zone.interfaces.includes(item.interface))?.name ?? ''
+}
 </script>
 
 <template>
@@ -78,12 +89,14 @@ function getCellClasses(item: QoSInterface) {
     <template #interface="{ item }: { item: QoSInterface }">
       <div class="flex flex-row items-center gap-x-4">
         <div
-          :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-700`"
+          :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${getZoneIconBackgroundStyle(
+            getZoneForInterface(item)
+          )}`"
         >
           <font-awesome-icon
-            :icon="['fas', 'earth-americas']"
+            :icon="['fas', getZoneIcon(getZoneForInterface(item))]"
             aria-hidden="true"
-            :class="`h-5 w-5  text-rose-700  dark:text-rose-50`"
+            :class="`h-5 w-5 ${getZoneIconForegroundStyle(getZoneForInterface(item))}`"
           />
         </div>
         <p :class="[...getCellClasses(item)]">{{ item.interface }} ({{ item.device }})</p>

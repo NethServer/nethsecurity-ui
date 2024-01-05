@@ -36,7 +36,9 @@ import {
   type ZoneWithDevices,
   getUiZoneName,
   type ZoneWithDeviceNames,
-  isVpn
+  isVpn,
+  getZoneIconBackgroundStyle,
+  getZoneIconForegroundStyle
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -218,54 +220,12 @@ function getInterfaceIconName(device: DeviceOrIface) {
 
 function getIconBackgroundStyle(device: DeviceOrIface) {
   const zoneName = getUiZoneName(device, devicesByZone.value)
-
-  if (!zoneName) {
-    return 'bg-gray-100 dark:bg-gray-500'
-  }
-
-  switch (zoneName) {
-    case 'lan':
-      return 'bg-green-100 dark:bg-green-700'
-    case 'wan':
-      return 'bg-rose-100 dark:bg-rose-700'
-    case 'guests':
-      return 'bg-blue-100 dark:bg-blue-700'
-    case 'dmz':
-      return 'bg-amber-100 dark:bg-amber-700'
-    case 'hotspot':
-      return 'bg-sky-100 dark:bg-sky-700'
-    case 'vpn':
-      return 'bg-teal-100 dark:bg-teal-700'
-    case 'unassigned':
-      return 'bg-gray-100 dark:bg-gray-500'
-    default:
-      return 'bg-violet-100 dark:bg-violet-700'
-  }
+  return getZoneIconBackgroundStyle(zoneName)
 }
 
 function getIconForegroundStyle(device: any) {
   const zoneName = getUiZoneName(device, devicesByZone.value)
-
-  if (!zoneName) {
-    return 'text-gray-500 dark:text-gray-50'
-  }
-
-  switch (zoneName) {
-    case 'lan':
-      return 'text-green-700 dark:text-green-50'
-    case 'wan':
-      return 'text-rose-700 dark:text-rose-50'
-    case 'guests':
-      return 'text-blue-700 dark:text-blue-50'
-    case 'dmz':
-      return 'text-amber-700 dark:text-amber-50'
-    case 'hotspot':
-      return 'text-sky-700 dark:text-sky-50'
-    case 'vpn':
-      return 'text-teal-700 dark:text-teal-50'
-    default:
-      return 'text-violet-700 dark:text-violet-50'
-  }
+  return getZoneIconForegroundStyle(zoneName)
 }
 
 function getConfiguredDeviceKebabMenuItems(device: any) {

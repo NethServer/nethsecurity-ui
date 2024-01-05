@@ -148,6 +148,7 @@ export function getZoneColorClasses(zoneName: string) {
       return 'bg-amber-100 text-amber-700 dark:bg-amber-700 dark:text-amber-50'
     case 'hotspot':
       return 'bg-sky-100 text-sky-700 dark:bg-sky-700 dark:text-sky-50'
+    case 'rwopenvpn':
     case 'openvpn':
     case 'ipsec':
     case 'vpn':
@@ -193,6 +194,7 @@ export function getZoneIcon(zoneName: string) {
       return 'shield'
     case 'hotspot':
       return 'wifi'
+    case 'rwopenvpn':
     case 'openvpn':
     case 'ipsec':
     case 'vpn':

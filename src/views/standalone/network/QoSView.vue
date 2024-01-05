@@ -19,6 +19,7 @@ import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import QoSInterfaceTable from '@/components/standalone/qos/QoSInterfaceTable.vue'
 import DeleteQoSInterfaceModal from '@/components/standalone/qos/DeleteQoSInterfaceModal.vue'
+import CreateOrEditQoSInterfaceDrawer from '@/components/standalone/qos/CreateOrEditQoSInterfaceDrawer.vue'
 
 export type QoSInterface = {
   interface: string
@@ -160,5 +161,11 @@ onMounted(() => {
     :item-to-delete="selectedInterface"
     @close="showDeleteInterfaceModal = false"
     @qos-interface-deleted="refreshInterfaces"
+  />
+  <CreateOrEditQoSInterfaceDrawer
+    :is-shown="showCreateOrEditInterfaceDrawer"
+    :item-to-edit="selectedInterface"
+    @close="showCreateOrEditInterfaceDrawer = false"
+    @add-edit-qos-interface="refreshInterfaces"
   />
 </template>

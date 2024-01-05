@@ -233,7 +233,9 @@
     "cannot_retrieve_qos_interfaces": "Cannot retrieve QoS interfaces",
     "cannot_enable_qos_interface": "Cannot enable QoS interface",
     "cannot_disable_qos_interface": "Cannot disable QoS interface",
-    "cannot_delete_qos_interface": "Cannot delete QoS interface"
+    "cannot_delete_qos_interface": "Cannot delete QoS interface",
+    "cannot_edit_qos_interface": "Cannot edit QoS interface",
+    "cannot_create_qos_interace": "Cannot create QoS interface"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -930,12 +932,15 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
       "no_interface_found": "No interface found",
       "add_qos_interface": "Add QoS interface",
+      "edit_qos_interface": "Edit QoS interface",
       "interface": "Interface",
       "download_speed": "Download speed",
       "upload_speed": "Upload speed",
       "status": "Status",
       "delete_qos_interface": "Delete QoS interface",
-      "delete_qos_interface_message": "Are you sure you want to delete '{interface}'?"
+      "delete_qos_interface_message": "Are you sure you want to delete '{interface}'?",
+      "choose_interface": "Choose interface",
+      "add_interface": "Add interface"
     },
     "users_and_objects": {
       "title": "Users & objects"

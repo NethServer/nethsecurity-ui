@@ -114,8 +114,8 @@ const remoteP2pIp = ref('')
 const presharedKey = ref('')
 const protocol = ref<'tcp' | 'udp'>('udp')
 const compression = ref('disabled')
-const digest = ref('auto')
-const cipher = ref('auto')
+const digest = ref('SHA256')
+const cipher = ref('AES-256-GCM')
 
 // Server tunnel form fields
 const publicEndpoints = ref<string[]>([''])
@@ -214,7 +214,6 @@ async function fetchOptions() {
   try {
     loading.value = true
     cipherOptions.value = [
-      // Default value for the cipher option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
@@ -230,7 +229,6 @@ async function fetchOptions() {
       )
     ]
     digestOptions.value = [
-      // Default value for the digest option (auto)
       {
         id: 'auto',
         label: t('standalone.openvpn_tunnel.auto'),
@@ -287,9 +285,11 @@ async function resetForm() {
     remoteP2pIp.value = tunnelData.ifconfig_remote ?? ''
     presharedKey.value = tunnelData.secret ?? ''
     topology.value = localP2pIp.value || remoteP2pIp.value || presharedKey.value ? 'p2p' : 'subnet'
+    compression.value = tunnelData.compress ?? 'disabled'
+
+    // if the cipher and/or digest fields are not present in payload, server-client negotiation is used
     cipher.value = tunnelData.cipher ?? 'auto'
     digest.value = tunnelData.auth ?? 'auto'
-    compression.value = tunnelData.compress ?? 'disabled'
 
     if (props.isClientTunnel) {
       const clientTunnelData = tunnelData as ClientTunnelPayload
@@ -317,8 +317,8 @@ async function resetForm() {
     topology.value = 'subnet'
     protocol.value = 'udp'
     compression.value = 'disabled'
-    digest.value = 'auto'
-    cipher.value = 'auto'
+    digest.value = 'SHA256'
+    cipher.value = 'AES-256-GCM'
 
     if (!props.isClientTunnel) {
       minimumTLSVersion.value = 'auto'

@@ -920,6 +920,10 @@
       "destination_url_tooltip": "This path specifies the location to which incoming requests will be forwarded. Example: 'http://destination-server:port/path'",
       "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks"
     },
+    "qos": {
+      "title_short": "QoS",
+      "title": "Quality of Service"
+    },
     "users_and_objects": {
       "title": "Users & objects"
     },

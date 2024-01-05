@@ -76,6 +76,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/ReverseProxyView.vue')
   },
   {
+    path: 'network/qos',
+    name: 'QualityOfService',
+    component: () => import('../views/standalone/network/QoSView.vue')
+  },
+  {
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')

@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { watch } from 'vue'
 import { useTimer } from '@/composables/useTimer'
 
-const REBOOT_WAIT_TIME = 45000
+const REBOOT_WAIT_TIME = 60000
 
 const { t } = useI18n()
 

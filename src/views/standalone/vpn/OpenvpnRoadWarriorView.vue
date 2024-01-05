@@ -182,7 +182,7 @@ onMounted(() => {
       {{ error.notificationDetails }}
     </template></NeInlineNotification
   >
-  <NeSkeleton v-if="loading" :lines="20" />
+  <NeSkeleton v-if="loading" size="lg" :lines="10" />
   <div class="flex flex-col gap-y-6" v-else-if="!loadingError">
     <div class="flex flex-col">
       <NeTitle level="h3">{{ t('standalone.openvpn_rw.roadwarrior_server') }}</NeTitle>

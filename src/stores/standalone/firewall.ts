@@ -65,6 +65,7 @@ export enum SpecialZones {
   DMZ = 'dmz',
   HOTSPOT = 'hotspot',
   OPENVPN = 'openvpn',
+  RWOPENVPN = 'rwopenvpn',
   IPSEC = 'ipsec'
 }
 
@@ -78,6 +79,7 @@ export enum ZoneType {
   DMZ,
   HOTSPOT,
   OPENVPN,
+  RWOPENVPN,
   IPSEC,
   CUSTOM
 }
@@ -124,6 +126,8 @@ export class Zone {
         return ZoneType.HOTSPOT
       case 'OPENVPN':
         return ZoneType.OPENVPN
+      case 'RWOPENVPN':
+        return ZoneType.RWOPENVPN
       case 'IPSEC':
         return ZoneType.IPSEC
       default:
@@ -166,7 +170,7 @@ export class Forwarding {
 }
 
 export const zonesSorting = (zone1: any, zone2: any) => {
-  const zonesRanking = ['lan', 'wan', 'guests', 'dmz', 'hotspot', 'openvpn', 'ipsec']
+  const zonesRanking = ['lan', 'wan', 'guests', 'dmz', 'hotspot', 'openvpn', 'rwopenvpn', 'ipsec']
   let rank1 = zonesRanking.indexOf(zone1.name)
   let rank2 = zonesRanking.indexOf(zone2.name)
 

@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { watch } from 'vue'
 import { useTimer } from '@/composables/useTimer'
 
-const REBOOT_WAIT_TIME = 45000
+const REBOOT_WAIT_TIME = 60000
 
 const { t } = useI18n()
 
@@ -41,7 +41,7 @@ watch(
     :title="t('standalone.update.system_update')"
     :primary-button-disabled="true"
     :primary-button-loading="true"
-    :primary-label="t('standalone.update.title')"
+    :primary-label="t('standalone.update.update')"
     kind="info"
     :cancel-label="''"
   >

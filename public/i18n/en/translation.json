@@ -513,7 +513,8 @@
       "cancel_update_description": "The scheduled update to version '{version}' will be canceled",
       "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
       "update_system": "Update system",
-      "edit_scheduled_date": "Edit scheduled date"
+      "edit_scheduled_date": "Edit scheduled date",
+      "update": "Update"
     },
     "storage": {
       "title": "Storage",

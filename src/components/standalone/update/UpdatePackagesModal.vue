@@ -71,7 +71,7 @@ async function updatePackages() {
     :visible="packageUpdates.length > 0"
     kind="info"
     :title="t('standalone.update.bug_security_fixes_to_update')"
-    :primary-label="t('standalone.update.title')"
+    :primary-label="t('standalone.update.update')"
     :primary-button-disabled="isUpdatingPackages"
     :primary-button-loading="isUpdatingPackages"
     :cancel-label="!isUpdatingPackages ? t('common.cancel') : ''"

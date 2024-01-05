@@ -1138,7 +1138,8 @@
       "updated_at": "Aggiornamenti controllati il {lastCheck}",
       "update_with_image_file": "Aggiorna con file immagine",
       "image_file": "File immagine",
-      "check_for_fixes": "Controlla aggiornamenti"
+      "check_for_fixes": "Controlla aggiornamenti",
+      "update": "Aggiorna"
     },
     "factory_reset": {
       "title": "Ripristino completo impostazioni di fabbrica",

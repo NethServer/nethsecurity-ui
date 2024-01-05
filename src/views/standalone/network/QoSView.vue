@@ -18,6 +18,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import QoSInterfaceTable from '@/components/standalone/qos/QoSInterfaceTable.vue'
+import DeleteQoSInterfaceModal from '@/components/standalone/qos/DeleteQoSInterfaceModal.vue'
 
 export type QoSInterface = {
   interface: string
@@ -154,4 +155,10 @@ onMounted(() => {
       />
     </template>
   </div>
+  <DeleteQoSInterfaceModal
+    :visible="showDeleteInterfaceModal"
+    :item-to-delete="selectedInterface"
+    @close="showDeleteInterfaceModal = false"
+    @qos-interface-deleted="refreshInterfaces"
+  />
 </template>

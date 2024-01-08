@@ -1200,7 +1200,7 @@
       "enforce_minimum_tls_version": "Enforce a minimum TLS version",
       "choose_network": "Choose network",
       "add_endpoint": "Add endpoint",
-      "add_remote_address": "Add remote address",
+      "add_remote_address": "Add remote network",
       "subnet": "Subnet",
       "auto": "Auto",
       "server_client_negotiation": "Server/client negotiation",

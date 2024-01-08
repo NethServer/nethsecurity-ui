@@ -195,6 +195,12 @@ async function fetchOptions() {
       id: option,
       label: option
     }))
+    bridgesOptions.value = (await ubusCall('ns.ovpnrw', 'list-bridges')).data.bridges.map(
+      (bridge: string) => ({
+        id: bridge,
+        label: bridge
+      })
+    )
     loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_server_options')
@@ -227,7 +233,7 @@ async function resetForm() {
   digest.value = serverData?.auth ?? 'auto'
   rangeIpStart.value = serverData?.ns_pool_start ?? ''
   rangeIpEnd.value = serverData?.ns_pool_end ?? ''
-  bridge.value = serverData?.ns_bridge ?? ''
+  bridge.value = serverData?.ns_bridge ?? bridgesOptions.value?.[0]?.id ?? ''
   minimumTLSVersion.value = serverData?.tls_version_min ?? 'auto'
   customOptions.value =
     serverData?.ns_dhcp_options.map((option) => ({ key: option.option, value: option.value })) ?? []

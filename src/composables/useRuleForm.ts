@@ -6,7 +6,12 @@ import { type NeComboboxOption } from '@nethesis/vue-components'
 import type { Ref } from 'vue'
 import { computed, ref, watch } from 'vue'
 import type { Policy, Rule } from '@/composables/useMwan'
-import { MessageBag, validateIp4Cidr, validatePortRange, validateRequired } from '@/lib/validation'
+import {
+  MessageBag,
+  validateIp4Cidr,
+  validatePortRangeForMwan,
+  validateRequired
+} from '@/lib/validation'
 
 export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined>) {
   const { t } = useI18n()
@@ -99,13 +104,13 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     }
     if (protocol.value == 'tcp' || protocol.value == 'udp') {
       if (sourcePort.value != '') {
-        validationCheck = validatePortRange(sourcePort.value)
+        validationCheck = validatePortRangeForMwan(sourcePort.value)
         if (!validationCheck.valid) {
           validationErrors.value.set('source_port', t(String(validationCheck.errMessage)))
         }
       }
       if (destinationPort.value != '') {
-        validationCheck = validatePortRange(destinationPort.value)
+        validationCheck = validatePortRangeForMwan(destinationPort.value)
         if (!validationCheck.valid) {
           validationErrors.value.set('destination_port', t(String(validationCheck.errMessage)))
         }

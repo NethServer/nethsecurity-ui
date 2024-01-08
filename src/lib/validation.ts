@@ -73,6 +73,93 @@ export const validateIpAddress = (ipAddr: String): validationOutput => {
   return { valid: false, errMessage: 'error.invalid_ip_address' }
 }
 
+/**
+ * Validate a range of IPv4 or IPv6 addresses
+ *
+ * Examples of valid values:
+ * - 10.20.30.40-10.20.30.50
+ * - 192.168.100.1-192.168.100.255
+ * - 1762::B03:1:AF10-1762::B03:1:AF30
+ * - 2001:db8::2:1-2001:db8::2:9
+ *
+ * @param value string to validate
+ * @returns a validationOutput object
+ */
+export const validateIpAddressRange = (value: String): validationOutput => {
+  if (!validateIp4AddressRange(value).valid && !validateIp6AddressRange(value).valid) {
+    return { valid: false, errMessage: 'error.invalid_ip_address_range' }
+  }
+  return { valid: true }
+}
+
+/**
+ * Validate a range of IPv4 addresses
+ *
+ * Examples of valid values:
+ * - 10.20.30.40-10.20.30.50
+ * - 192.168.100.1-192.168.100.255
+ *
+ * @param value string to validate
+ * @returns a validationOutput object
+ */
+export const validateIp4AddressRange = (value: String): validationOutput => {
+  if (!value.includes('-')) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_address_range' }
+  }
+
+  const range = value.split('-')
+  if (range.length != 2) {
+    return { valid: false, errMessage: 'error.invalid_ip_v4_address_range' }
+  }
+
+  for (const ip_addr of range) {
+    const validation = validateIp4Address(ip_addr)
+    if (!validation.valid) {
+      return { valid: false, errMessage: validation.errMessage }
+    }
+  }
+  return { valid: true }
+}
+
+/**
+ * Validate a range of IPv6 addresses
+ *
+ * Examples of valid values:
+ * - 1762::B03:1:AF10-1762::B03:1:AF30
+ * - 2001:db8::2:1-2001:db8::2:9
+ *
+ * @param value string to validate
+ * @returns a validationOutput object
+ */
+export const validateIp6AddressRange = (value: String): validationOutput => {
+  if (!value.includes('-')) {
+    return { valid: false, errMessage: 'error.invalid_ip_v6_address_range' }
+  }
+
+  const range = value.split('-')
+  if (range.length != 2) {
+    return { valid: false, errMessage: 'error.invalid_ip_v6_address_range' }
+  }
+
+  for (const ip_addr of range) {
+    const validation = validateIp6Address(ip_addr)
+    if (!validation.valid) {
+      return { valid: false, errMessage: validation.errMessage }
+    }
+  }
+  return { valid: true }
+}
+
+/**
+ * Validate an IPv4 address
+ *
+ * Examples of valid values:
+ * - 10.20.30.40
+ * - 192.168.100.1-192.168.100.123
+ *
+ * @param ipAddr string to validate
+ * @returns a validationOutput object
+ */
 export const validateIp4Address = (ipAddr: String): validationOutput => {
   const re = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/
   const match = ipAddr.match(re)
@@ -133,6 +220,17 @@ export const validateIpCidr = (ipCidr: string): validationOutput => {
   return { valid: true }
 }
 
+/**
+ * Validate an IPv6 address
+ *
+ * Examples of valid values:
+ * - 1762::B03:1:AF10
+ * - 2001:db8:0:0:0:0:2:1
+ * - 2001:db8::2:9
+ *
+ * @param ipAddr string to validate
+ * @returns a validationOutput object
+ */
 export const validateIp6Address = (ipAddr: String): validationOutput => {
   const re =
     /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
@@ -227,7 +325,11 @@ export function validatePort(value: string, minPort = 1, maxPort = 65535): valid
   return { valid: true }
 }
 
-export function validatePortRange(value: string, minRange = 1, maxRange = 65535): validationOutput {
+export function validatePortRangeForMwan(
+  value: string,
+  minRange = 1,
+  maxRange = 65535
+): validationOutput {
   let strings: string[]
   if (value.indexOf(',')) {
     strings = value.split(',')
@@ -240,6 +342,85 @@ export function validatePortRange(value: string, minRange = 1, maxRange = 65535)
     const validation = validatePort(port, minRange, maxRange)
     if (!validation.valid) {
       return { valid: false, errMessage: 'error.invalid_port_range' }
+    }
+  }
+  return { valid: true }
+}
+
+/**
+ * Validate a port range
+ *
+ * Examples of valid values:
+ * - 8080-8081
+ * - 5100-5200
+ *
+ * @param value string to validate
+ * @param minPort minimum port number
+ * @param maxPort maximum port number
+ * @returns a validationOutput object
+ */
+export function validatePortRange(value: string, minPort = 1, maxPort = 65535): validationOutput {
+  if (!value.includes('-')) {
+    return { valid: false, errMessage: 'error.invalid_port_range' }
+  }
+
+  const range = value.split('-')
+  if (range.length != 2) {
+    return { valid: false, errMessage: 'error.invalid_port_range' }
+  }
+  const start = Number.parseInt(range[0])
+  const end = Number.parseInt(range[1])
+  if (start > end) {
+    return { valid: false, errMessage: 'error.invalid_port_range' }
+  }
+
+  for (const port of range) {
+    const validation = validatePort(port, minPort, maxPort)
+    if (!validation.valid) {
+      return { valid: false, errMessage: validation.errMessage }
+    }
+  }
+  return { valid: true }
+}
+
+/**
+ * Validate a list of ports and/or port ranges.
+ *
+ * Examples of valid values:
+ * - 8080
+ * - 8080, 8081
+ * - 5100-5200
+ * - 8080, 5100-5200
+ * - 8080, 5100-5200, 9090
+ *
+ * @param value string to validate
+ * @param minPort minimum port number
+ * @param maxPort maximum port number
+ * @returns a validationOutput object
+ */
+export function validatePortListOrRange(
+  value: string,
+  minPort = 1,
+  maxPort = 65535
+): validationOutput {
+  // remove whitespace
+  value = value.replace(/\s/g, '')
+
+  for (const portOrRange of value.split(',')) {
+    if (portOrRange.includes('-')) {
+      // port range
+
+      const validation = validatePortRange(portOrRange, minPort, maxPort)
+      if (!validation.valid) {
+        return { valid: false, errMessage: 'error.invalid_port_range' }
+      }
+    } else {
+      // single port
+
+      const validation = validatePort(portOrRange, minPort, maxPort)
+      if (!validation.valid) {
+        return { valid: false, errMessage: 'error.invalid_port' }
+      }
     }
   }
   return { valid: true }

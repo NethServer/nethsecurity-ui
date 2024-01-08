@@ -125,16 +125,16 @@ const forwardPlaceholder = computed((): string => {
 
 const trafficOptions = [
   {
-    id: TrafficPolicy.ACCEPT,
-    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.ACCEPT)
+    id: TrafficPolicy.DROP,
+    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.DROP)
   },
   {
     id: TrafficPolicy.REJECT,
     label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.REJECT)
   },
   {
-    id: TrafficPolicy.DROP,
-    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.DROP)
+    id: TrafficPolicy.ACCEPT,
+    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.ACCEPT)
   }
 ]
 

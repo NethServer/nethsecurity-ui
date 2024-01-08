@@ -49,6 +49,7 @@ import {
   faLocationDot as fasLocationDot,
   faLock as faLock,
   faMagnifyingGlass as fasMagnifyingGlass,
+  faMagnifyingGlassPlus as fasMagnifyingGlassPlus,
   faMoon as fasMoon,
   faNetworkWired as fasNetworkWired,
   faPenToSquare as fasPenToSquare,
@@ -77,7 +78,8 @@ import {
   faDatabase,
   faRightFromBracket as fasRightFromBracket,
   faTriangleExclamation,
-  faChartSimple
+  faChartSimple,
+  faEraser as fasEraser
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -217,4 +219,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasRightFromBracket)
   library.add(faTriangleExclamation)
   library.add(faChartSimple)
+  library.add(fasMagnifyingGlassPlus)
+  library.add(fasEraser)
 }

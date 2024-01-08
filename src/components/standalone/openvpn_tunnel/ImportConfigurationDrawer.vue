@@ -81,7 +81,7 @@ async function importConfiguration() {
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
         kind="error"
-        v-if="importConfigurationError"
+        v-if="importConfigurationError.notificationDescription"
         :title="t('error.cannot_import_configuration')"
         :description="importConfigurationError.notificationDescription"
         ><template v-if="importConfigurationError.notificationDetails" #details>

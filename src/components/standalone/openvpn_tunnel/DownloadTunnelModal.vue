@@ -114,7 +114,7 @@ function close() {
       </template>
     </NeRadioSelection>
     <NeInlineNotification
-      v-if="error"
+      v-if="error.notificationDescription"
       kind="error"
       :title="t('error.cannot_download_tunnel')"
       :description="error.notificationDescription"

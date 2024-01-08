@@ -68,7 +68,7 @@ function close() {
       })
     }}
     <NeInlineNotification
-      v-if="error"
+      v-if="error.notificationDescription"
       kind="error"
       :title="t('error.cannot_delete_tunnel')"
       :description="error.notificationDescription"

@@ -1099,7 +1099,7 @@
       "create": "Create",
       "add_option": "Add option",
       "delete_roadwarrior_server": "Delete Road Warrior server",
-      "delete_roadwarrior_server_message": "This action will also delete all accounts for this server.",
+      "delete_roadwarrior_server_message": "Executing this action will result in the deletion of all accounts associated with this server. This operation is irreversible.",
       "database": "Database",
       "status": "Status",
       "connected_clients": "Connected clients",

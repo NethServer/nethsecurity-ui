@@ -79,7 +79,7 @@ async function fetchInterfaces() {
 
 async function toggleInterfaceEnable(qosInterface: QoSInterface) {
   try {
-    await ubusCall('ns.qos', 'set-disabled', {
+    await ubusCall('ns.qos', 'set-status', {
       interface: qosInterface.interface,
       disabled: !qosInterface.disabled
     })

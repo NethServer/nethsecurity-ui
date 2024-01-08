@@ -21,6 +21,7 @@ import {
   NeCombobox,
   NeFormItemLabel,
   NeSkeleton,
+  NeTooltip,
   type NeComboboxOption
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
@@ -208,13 +209,29 @@ watch(
         type="number"
         :label="`${t('standalone.qos.download_speed')} (Mbps)`"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('download'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.qos.download_speed_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="uploadSpeed"
         type="number"
         :label="`${t('standalone.qos.upload_speed')} (Mbps)`"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('upload'))"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.qos.upload_speed_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>

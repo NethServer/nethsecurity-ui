@@ -108,15 +108,11 @@ onMounted(() => {
   <div class="flex flex-col gap-y-6">
     <div class="flex flex-row items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.users_database.users_description') }}
+        {{ t('standalone.qos.description') }}
       </p>
       <NeButton
         kind="secondary"
-        @click="
-          () => {
-            openCreateEditInterfaceDrawer()
-          }
-        "
+        @click="openCreateEditInterfaceDrawer()"
         v-if="qosInterfaces.length > 0"
         ><template #prefix>
           <font-awesome-icon
@@ -150,7 +146,7 @@ onMounted(() => {
         v-if="qosInterfaces.length == 0"
         :title="t('standalone.qos.no_interface_found')"
         :icon="['fas', 'chart-simple']"
-        ><NeButton kind="secondary" @click="() => {}"
+        ><NeButton kind="secondary" @click="openCreateEditInterfaceDrawer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"

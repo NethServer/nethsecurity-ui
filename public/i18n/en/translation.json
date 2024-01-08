@@ -32,6 +32,7 @@
     "required": "Required",
     "unique": "Enter a unique value",
     "invalid": "Field has incorrect value",
+    "duplicate": "Field contains a duplicate value",
     "required_option": "Select at least one option",
     "validation_failed": "Validation failed",
     "invalid_hostname": "Invalid hostname",

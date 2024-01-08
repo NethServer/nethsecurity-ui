@@ -93,7 +93,7 @@ function validate() {
   validationErrorBag.value.clear()
 
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(iface.value)], 'interface'],
+    [[validateRequired(iface.value)], 'name'],
     [
       [validateRequired(downloadSpeed.value), validatePositiveInteger(downloadSpeed.value)],
       'download'
@@ -201,7 +201,7 @@ watch(
         :no-results-label="t('ne_combobox.no_results')"
         :placeholder="t('standalone.qos.choose_interface')"
         v-model="iface"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('interface'))"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
       <NeTextInput
         v-model="downloadSpeed"

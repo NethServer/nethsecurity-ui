@@ -1066,7 +1066,7 @@
       "server_name": "Server name",
       "user_database": "User database",
       "create_accounts_for_all_users": "Create an account for each user",
-      "create_accounts_for_all_users_tooltip": "This action is only allowed once during server creation and will no longer be shown afterwards. All accounts created will have a certificate valid for 3650 days.",
+      "create_accounts_for_all_users_tooltip": "This action is available only during server creation and won't be shown afterwards. All accounts created will have a certificate valid for 3650 days.",
       "authentication_mode": "Authentication mode",
       "mode": "Mode",
       "routed": "Routed",

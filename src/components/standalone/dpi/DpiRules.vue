@@ -86,7 +86,7 @@ function showDeleteRuleModal(rule: DpiRule) {
 <template>
   <div>
     <div class="mb-8 flex items-start justify-between">
-      <div class="text-gray-500 dark:text-gray-400">
+      <div class="max-w-2xl text-gray-500 dark:text-gray-400">
         {{ t('standalone.dpi.rules_description') }}
       </div>
       <NeButton

@@ -32,6 +32,7 @@
     "required": "Required",
     "unique": "Enter a unique value",
     "invalid": "Field has incorrect value",
+    "duplicate": "Field contains a duplicate value",
     "required_option": "Select at least one option",
     "validation_failed": "Validation failed",
     "invalid_hostname": "Invalid hostname",
@@ -229,7 +230,13 @@
     "user_db_not_configured": "User database is not configured",
     "db_not_found": "Database not found",
     "user_certificate_already_exists": "User certificate already exists",
-    "cannot_renew_certificate": "Cannot renew certificate"
+    "cannot_renew_certificate": "Cannot renew certificate",
+    "cannot_retrieve_qos_interfaces": "Cannot retrieve QoS interfaces",
+    "cannot_enable_qos_interface": "Cannot enable QoS interface",
+    "cannot_disable_qos_interface": "Cannot disable QoS interface",
+    "cannot_delete_qos_interface": "Cannot delete QoS interface",
+    "cannot_edit_qos_interface": "Cannot edit QoS interface",
+    "cannot_create_qos_interace": "Cannot create QoS interface"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -924,6 +931,24 @@
       "domain_tooltip": "Type website fully qualified domain name to create a “web site name” matching rule",
       "destination_url_tooltip": "This path specifies the location to which incoming requests will be forwarded. Example: 'http://destination-server:port/path'",
       "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks"
+    },
+    "qos": {
+      "title_short": "QoS",
+      "title": "Quality of Service",
+      "description": "The Quality of Service (QoS) ensures fair distribution of bandwidth among network connections, dynamically adjusts rate limits based on network conditions, and addresses bufferbloat issues. Configure each network interface that you want QoS managed (usually only WANs are managed). Make sure to configure the input and output bandwidth accordingly to what is actually available to allow the algorithm to operate at its best.",
+      "no_interface_found": "No interface found",
+      "add_qos_interface": "Add QoS interface",
+      "edit_qos_interface": "Edit QoS interface",
+      "interface": "Interface",
+      "download_speed": "Download speed",
+      "download_speed_tooltip": "Enter the incoming bandwidth in Mbit. It is recommended to slightly reduce the measurement by approximately 5-10%.",
+      "upload_speed": "Upload speed",
+      "upload_speed_tooltip": "Enter the outgoing bandwidth in Mbit. It is recommended to slightly decrease the measurement by approximately 5-10%.",
+      "status": "Status",
+      "delete_qos_interface": "Delete QoS interface",
+      "delete_qos_interface_message": "Are you sure you want to delete '{interface}'?",
+      "choose_interface": "Choose interface",
+      "add_interface": "Add interface"
     },
     "users_and_objects": {
       "title": "Users & objects"

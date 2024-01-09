@@ -94,6 +94,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.reverse_proxy.title'),
         to: 'network/reverse-proxy'
+      },
+      {
+        name: t('standalone.qos.title_short'),
+        to: 'network/qos'
       }
     ]
   },

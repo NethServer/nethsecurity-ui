@@ -186,7 +186,8 @@
     "cannot_retrieve_server_options": "Impossibile recuperare le opzioni del tunnel",
     "cannot_delete_account": "non puoi cancellare l'account",
     "cannot_edit_account": "non puoi cancellare l'account",
-    "cannot_create_account": "non puoi cancellare l'account"
+    "cannot_create_account": "non puoi cancellare l'account",
+    "cannot_retrieve_qos_interfaces": "Impossibile recuperare le interfacce WAN"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1245,6 +1246,12 @@
       "disable_account": "Disabilita account",
       "more_info": "Ulteriori informazioni",
       "sent": "inviati"
+    },
+    "qos": {
+      "interface": "Interfaccia",
+      "upload_speed": "Velocità Upload",
+      "status": "Stato",
+      "choose_interface": "Scegli interfaccia"
     }
   },
   "controller": {

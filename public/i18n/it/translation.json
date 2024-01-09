@@ -846,12 +846,14 @@
       "remove_storage_warning": "Stai per rimuovere lo storage '{storage}'. I log non saranno più scritti sul dispositivo",
       "description": "È possibile mantenere una copia dei log di sistema su un dispositivo di storage esterno, come una chiavetta USB. Questo può essere utile per la risoluzione di problemi o per mantenere lo storico dell'attività del sistema.",
       "remove_storage": "Rimuovi storage",
-      "format_and_configure": "Formatta e configura",
+      "format_and_configure": "Configura",
       "configure_storage_extra_data_description": "Dati supplementari possono essere memorizzati automaticamente sul dispositivo una volta al giorno",
       "configure_storage": "Configura lo storage",
       "configure_storage_logs_description": "Da questo momento i log saranno scritti anche sul dispositivo al punto di mount",
       "storage_configuration": "Configurazione storage",
-      "format_configure_storage": "Formatta e configura lo storage"
+      "format_configure_storage": "Formatta e configura lo storage",
+      "disk": "Disco",
+      "part": "Partizione"
     },
     "change_password": {
       "new_password": "Nuova password",

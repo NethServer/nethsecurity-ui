@@ -518,13 +518,14 @@
     },
     "storage": {
       "title": "Storage",
-      "description": "You can keep a copy of your system logs on an external storage device, such as a USB stick. This can be useful for troubleshooting problems or for keeping a record of your system activity.",
+      "description": "You can keep a copy of your system logs on an persistent storage such as a USB stick or a SATA drive. This can be useful for troubleshooting problems or for keeping a record of your system activity. If you lack an additional drive, you can alternatively choose the operating system disk if it contains available unpartitioned space; the system will automatically generate a partition and utilize it.",
       "format_configure_storage": "Format and configure storage",
       "configure_storage": "Configure storage",
       "format_storage_warning": "All data contained in '{device}' will be erased",
-      "configure_storage_logs_description": "From now on logs will also be written on the device at mount point",
+      "new_partition": "A new partition will be created on device '{device}'",
+      "configure_storage_logs_description": "From now on, logs will also be written on the device at the path",
       "configure_storage_extra_data_description": "Extra data can be automatically stored to the device once a day",
-      "format_and_configure": "Format and configure",
+      "format_and_configure": "Configure",
       "remove_storage": "Remove storage",
       "remove_storage_warning": "You are about to remove storage '{storage}'. Logs won't be written on the device anymore",
       "size": "Size",
@@ -533,7 +534,10 @@
       "unknown": "Unknown",
       "storage_configuration": "Storage configuration",
       "select_device": "Select device",
-      "no_device_found": "No devices found"
+      "no_device_found": "No devices found",
+      "partition": "Partition on",
+      "disk": "Disk",
+      "part": "Partition"
     },
     "factory_reset": {
       "title": "Factory reset",

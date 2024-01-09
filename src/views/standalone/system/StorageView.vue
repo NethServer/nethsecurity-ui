@@ -8,7 +8,8 @@ import {
   NeModal,
   NeButton,
   NeSkeleton,
-  NeEmptyState
+  NeEmptyState,
+  byteFormat1024
 } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted } from 'vue'
 import { ref } from 'vue'
@@ -22,6 +23,7 @@ type Storage = {
   path: string | null
   model: string | null
   vendor: string | null
+  type: string | null
 }
 
 const loading = ref(true)
@@ -40,8 +42,13 @@ const deviceOptions = computed(() =>
   availableDevices.value.map((storage) => ({
     id: storage.path!,
     label: storage.name!,
-    icon: 'hard-drive'
+    icon: storage.type == 'disk' ? 'database' : 'hard-drive',
+    type: storage.type!
   }))
+)
+
+const selectedDeviceType = computed(
+  () => availableDevices.value.find((device) => device.path === selectedDevicePath.value)?.type
 )
 
 async function fetchStorageConfig() {
@@ -64,7 +71,10 @@ function closeModal() {
 async function configureStorage() {
   try {
     isConfiguringOrRemovingStorage.value = true
-    await ubusCall('ns.storage', 'add-storage', { device: selectedDevicePath.value })
+    await ubusCall('ns.storage', 'add-storage', {
+      device: selectedDevicePath.value,
+      type: selectedDeviceType.value
+    })
     closeModal()
     await fetchStorageConfig()
   } catch (err: any) {
@@ -116,12 +126,18 @@ onMounted(() => {
             class="flex flex-col items-center justify-center self-stretch border-r pr-6 md:flex-row"
           >
             <font-awesome-icon
-              :icon="['fas', 'hard-drive']"
+              :icon="
+                currentStorageConfiguration.type == 'disk'
+                  ? ['fas', 'database']
+                  : ['fas', 'hard-drive']
+              "
               aria-hidden="true"
               :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 dark:bg-gray-500 dark:text-gray-50 md:mb-0 md:mr-5`"
             />
             <div class="text-center text-sm md:text-start">
-              <p class="font-semibold">{{ currentStorageConfiguration.name }}</p>
+              <p class="font-semibold">
+                {{ t('standalone.storage.' + currentStorageConfiguration.type) }}
+              </p>
               <p>{{ currentStorageConfiguration.path }}</p>
             </div>
           </div>
@@ -131,13 +147,16 @@ onMounted(() => {
             <div class="text-sm">
               <p>
                 <strong>{{ t('standalone.storage.size') }}:</strong>
-                {{ currentStorageConfiguration.size ?? t('standalone.storage.unknown') }}
+                {{
+                  byteFormat1024(parseInt(currentStorageConfiguration.size ?? '0')) ??
+                  t('standalone.storage.unknown')
+                }}
               </p>
-              <p>
+              <p v-if="currentStorageConfiguration.type == 'disk'">
                 <strong>{{ t('standalone.storage.model') }}:</strong>
                 {{ currentStorageConfiguration.model ?? t('standalone.storage.unknown') }}
               </p>
-              <p>
+              <p v-if="currentStorageConfiguration.type == 'disk'">
                 <strong>{{ t('standalone.storage.vendor') }}:</strong>
                 {{ currentStorageConfiguration.vendor ?? t('standalone.storage.unknown') }}
               </p>
@@ -173,7 +192,7 @@ onMounted(() => {
           <template #option="{ option }">
             <div class="flex flex-col text-left text-sm">
               <div class="mb-1 flex flex-row">
-                <p>{{ option.label }}</p>
+                <p class="font-semibold">{{ t('standalone.storage.' + option.type) }}</p>
                 <p class="ml-2 text-gray-500 dark:text-gray-400">
                   {{ option.id }}
                 </p>
@@ -181,18 +200,21 @@ onMounted(() => {
               <p>
                 <span class="font-semibold">{{ t('standalone.storage.size') }}:</span>
                 {{
-                  availableDevices.find((device) => device.name == option.label)?.size ??
-                  t('standalone.storage.unknown')
+                  byteFormat1024(
+                    parseInt(
+                      availableDevices.find((device) => device.name == option.label)?.size ?? '0'
+                    )
+                  ) ?? t('standalone.storage.unknown')
                 }}
               </p>
-              <p>
+              <p v-if="option.type == 'disk'">
                 <span class="font-semibold">{{ t('standalone.storage.model') }}:</span>
                 {{
                   availableDevices.find((device) => device.name == option.label)?.model ??
                   t('standalone.storage.unknown')
                 }}
               </p>
-              <p>
+              <p v-if="option.type == 'disk'">
                 <span class="font-semibold">{{ t('standalone.storage.vendor') }}:</span>
                 {{
                   availableDevices.find((device) => device.name == option.label)?.vendor ??
@@ -209,15 +231,16 @@ onMounted(() => {
           size="lg"
           :disabled="selectedDevicePath === ''"
           @click="showConfigureModal = true"
-          >{{ t('standalone.storage.format_configure_storage') }}</NeButton
+          >{{
+            selectedDeviceType == 'disk'
+              ? t('standalone.storage.format_configure_storage')
+              : t('standalone.storage.configure_storage')
+          }}</NeButton
         >
       </div>
     </template>
     <template v-else>
-      <NeEmptyState
-        :icon="['fas', 'hard-drive']"
-        :title="t('standalone.storage.no_device_found')"
-      />
+      <NeEmptyState :icon="['fas', 'database']" :title="t('standalone.storage.no_device_found')" />
     </template>
   </div>
   <NeModal
@@ -233,9 +256,16 @@ onMounted(() => {
     @primary-click="configureStorage()"
   >
     <ul class="list-disc">
-      <li>
+      <li v-if="selectedDeviceType === 'disk'">
         {{
           t('standalone.storage.format_storage_warning', {
+            device: availableDevices.find((storage) => storage.path === selectedDevicePath)?.name
+          })
+        }}
+      </li>
+      <li v-if="selectedDeviceType === 'partition'">
+        {{
+          t('standalone.storage.new_partition', {
             device: availableDevices.find((storage) => storage.path === selectedDevicePath)?.name
           })
         }}

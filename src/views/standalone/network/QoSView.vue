@@ -175,6 +175,7 @@ onMounted(() => {
   <CreateOrEditQoSInterfaceDrawer
     :is-shown="showCreateOrEditInterfaceDrawer"
     :item-to-edit="selectedInterface"
+    :configured-interfaces="qosInterfaces.map((x) => x.interface)"
     @close="showCreateOrEditInterfaceDrawer = false"
     @add-edit-qos-interface="refreshInterfaces"
   />

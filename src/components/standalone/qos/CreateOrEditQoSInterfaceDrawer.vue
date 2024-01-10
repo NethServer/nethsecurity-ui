@@ -31,6 +31,7 @@ import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 const props = defineProps<{
   isShown: boolean
   itemToEdit?: QoSInterface
+  configuredInterfaces: string[]
 }>()
 
 const { t } = useI18n()
@@ -58,7 +59,12 @@ async function fetchOptions() {
   try {
     loading.value = true
     ifaceOptions.value = (await ubusCall('ns.devices', 'list-devices')).data.all_devices
-      .filter((x: any) => x.iface && x.iface['.type'] === 'interface')
+      .filter(
+        (x: any) =>
+          x.iface &&
+          x.iface['.type'] === 'interface' &&
+          !props.configuredInterfaces.includes(x.iface['.name'])
+      )
       .map((x: any) => ({
         id: x.iface['.name'],
         label: x.iface['.name'],

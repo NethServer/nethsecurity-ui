@@ -577,7 +577,17 @@
       "resetting_description": "Resetting and rebooting the unit, please wait..."
     },
     "certificates": {
-      "title": "Certificates"
+      "title": "Certificates",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
+      "import_certificate": "Import certificate",
+      "add_lets_encrypt_certificate": "Add Let's Encrypt certificate",
+      "name": "Name",
+      "more_info": "More info",
+      "domains": "Domains",
+      "expire": "Expire",
+      "set_as_default": "Set as default",
+      "default": "Default",
+      "certificate_expired": "Certificate expired"
     },
     "network": {
       "title": "Network"

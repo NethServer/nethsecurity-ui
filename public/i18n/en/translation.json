@@ -576,6 +576,9 @@
       "type_unit_name": "Type '{unit}' to confirm",
       "resetting_description": "Resetting and rebooting the unit, please wait..."
     },
+    "certificates": {
+      "title": "Certificates"
+    },
     "network": {
       "title": "Network"
     },

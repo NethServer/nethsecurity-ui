@@ -15,6 +15,7 @@ import {
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CertificatesTable from '@/components/standalone/certificates/CertificatesTable.vue'
+import DeleteCertificateModal from '@/components/standalone/certificates/DeleteCertificateModal.vue'
 
 export type Certificate = {
   type: string
@@ -47,6 +48,7 @@ const fetchError = ref(false)
 const selectedCertificate = ref<Certificate>()
 const showDeleteCertificateModal = ref(false)
 const showCreateOrEditCertificateDrawer = ref(false)
+const showImportCertificateDrawer = ref(false)
 
 function openCreateEditCertificateDrawer(itemToEdit?: Certificate) {
   selectedCertificate.value = itemToEdit
@@ -98,7 +100,7 @@ async function fetchCertificates() {
           {{ t('standalone.certificates.description') }}
         </p>
         <div class="flex flex-row">
-          <NeButton class="mr-2" kind="tertiary" @click="() => {}"
+          <NeButton class="mr-2" kind="tertiary" @click="showImportCertificateDrawer = true"
             ><template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-arrow-up']"
@@ -107,7 +109,13 @@ async function fetchCertificates() {
               /> </template
             >{{ t('standalone.certificates.import_certificate') }}</NeButton
           >
-          <NeButton kind="secondary" @click="() => {}"
+          <NeButton
+            kind="secondary"
+            @click="
+              () => {
+                openCreateEditCertificateDrawer()
+              }
+            "
             ><template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-plus']"
@@ -118,7 +126,18 @@ async function fetchCertificates() {
           >
         </div>
       </div>
-      <CertificatesTable :certificates="certificates" />
+      <CertificatesTable
+        :certificates="certificates"
+        @delete="openDeleteCertificateModal"
+        @show-certificate="(_) => {}"
+        @edit="openCreateEditCertificateDrawer"
+      />
     </template>
   </div>
+  <DeleteCertificateModal
+    :visible="showDeleteCertificateModal"
+    :item-to-delete="selectedCertificate"
+    @certificate-deleted="() => {}"
+    @close="showDeleteCertificateModal = false"
+  />
 </template>

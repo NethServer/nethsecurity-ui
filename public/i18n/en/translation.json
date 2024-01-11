@@ -251,7 +251,8 @@
     "invalid_ip_address_range": "Invalid IP address range",
     "cannot_save_firewall_rule": "Cannot save firewall rule",
     "cannot_enable_or_disable_firewall_rule": "Cannot enable or disable firewall rule",
-    "cannot_reorder_firewall_rules": "Cannot reorder firewall rules"
+    "cannot_reorder_firewall_rules": "Cannot reorder firewall rules",
+    "cannot_delete_certificate": "Cannot delete certificate"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -587,7 +588,9 @@
       "expire": "Expire",
       "set_as_default": "Set as default",
       "default": "Default",
-      "certificate_expired": "Certificate expired"
+      "certificate_expired": "Certificate expired",
+      "delete_certificate": "Delete certificate",
+      "delete_certificate_message": "Are you sure you want to delete the '{certificate}' certificate?"
     },
     "network": {
       "title": "Network"

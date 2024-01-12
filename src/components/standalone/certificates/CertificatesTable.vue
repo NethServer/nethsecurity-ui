@@ -43,15 +43,19 @@ const tableHeaders = [
 
 function getDropdownItems(item: Certificate) {
   return [
-    {
-      id: 'set_as_default',
-      label: t('standalone.certificates.set_as_default'),
-      iconStyle: 'fas',
-      icon: 'circle-check',
-      action: () => {
-        emit('setAsDefault', item)
-      }
-    },
+    ...(!item.default && !item.expired
+      ? [
+          {
+            id: 'set_as_default',
+            label: t('standalone.certificates.set_as_default'),
+            iconStyle: 'fas',
+            icon: 'circle-check',
+            action: () => {
+              emit('setAsDefault', item)
+            }
+          }
+        ]
+      : []),
     {
       id: 'delete',
       label: t('common.delete'),
@@ -112,16 +116,7 @@ function getDropdownItems(item: Certificate) {
     </template>
     <template #menu="{ item }: { item: Certificate }">
       <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('edit', item)">
-          <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'pen-to-square']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('common.edit') }}
-        </NeButton>
+        <!-- TODO: hide/disable dropdown if item is system certificate and is default -->
         <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
       </div>
     </template>

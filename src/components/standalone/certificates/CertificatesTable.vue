@@ -41,9 +41,19 @@ const tableHeaders = [
   }
 ]
 
+function isCertificateExpired(item: Certificate) {
+  return new Date(Date.parse(item.expiration)).getTime() < Date.now()
+}
+
+function getFormattedExpiration(item: Certificate) {
+  return `${new Date(Date.parse(item.expiration)).toLocaleDateString()} ${new Date(
+    Date.parse(item.expiration)
+  ).toLocaleTimeString()}`
+}
+
 function getDropdownItems(item: Certificate) {
   return [
-    ...(!item.expired
+    ...(!isCertificateExpired(item)
       ? [
           {
             id: 'set_as_default',
@@ -80,12 +90,21 @@ function getDropdownItems(item: Certificate) {
             t('standalone.certificates.more_info')
           }}</NeButton>
         </div>
-        <NeBadge
-          v-if="item.default"
-          kind="success"
-          class="-mt-2"
-          :text="t('standalone.certificates.default')"
-        />
+        <NeTooltip interactive v-if="item.default">
+          <template #trigger>
+            <NeBadge
+              v-if="item.default"
+              kind="success"
+              class="-mt-2"
+              :text="t('standalone.certificates.default')"
+            />
+          </template>
+          <template #content>
+            <p class="text-center">
+              {{ t('standalone.certificates.default_certificate_tooltip') }}
+            </p>
+          </template></NeTooltip
+        >
       </div>
     </template>
     <template #domains="{ item }: { item: Certificate }">
@@ -94,14 +113,10 @@ function getDropdownItems(item: Certificate) {
     <template #expire="{ item }: { item: Certificate }">
       <div class="flex flex-row gap-x-2">
         <p>
-          {{
-            `${new Date(item.expiration * 1000).toLocaleDateString()} ${new Date(
-              item.expiration * 1000
-            ).toLocaleTimeString()}`
-          }}
+          {{ getFormattedExpiration(item) }}
         </p>
         <!-- certificate expired warning -->
-        <NeTooltip interactive v-if="item.expired">
+        <NeTooltip interactive v-if="isCertificateExpired(item)">
           <template #trigger>
             <font-awesome-icon
               :icon="['fas', 'triangle-exclamation']"

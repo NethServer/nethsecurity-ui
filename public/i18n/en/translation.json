@@ -613,7 +613,8 @@
       "dns_api_options": "DNS API options",
       "add_option": "Add option",
       "add_certificate": "Add certificate",
-      "choose_or_type_dns_api": "Choose or type DNS API"
+      "choose_or_type_dns_api": "Choose or type DNS API",
+      "default_certificate_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu."
     },
     "network": {
       "title": "Network"

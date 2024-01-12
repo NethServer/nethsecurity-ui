@@ -10,7 +10,9 @@ import {
   NeButton,
   getAxiosErrorMessage,
   NeSkeleton,
-  NeInlineNotification
+  NeInlineNotification,
+  NeModal,
+  NeTextArea
 } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -20,24 +22,26 @@ import ImportCertificateDrawer from '@/components/standalone/certificates/Import
 import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue'
 
 export type Certificate = {
+  name: string
   type: string
   path: string
+  details: string
   default: boolean
   domains: string[]
-  expired: boolean
-  expiration: number
+  expiration: string
 }
 
 const { t } = useI18n()
 
 const certificates = ref<Certificate[]>([
   {
+    name: 'kool_cert',
     type: 'acme',
     path: '/etc/nginx/conf.d/test.crt',
+    details: 'certificate details',
     default: true,
     domains: ['a.b.c', 'd.e.f'],
-    expired: false,
-    expiration: 1705762469
+    expiration: '2027-04-07 15:13:27Z'
   }
 ])
 const error = ref({
@@ -51,10 +55,16 @@ const selectedCertificate = ref<Certificate>()
 const showDeleteCertificateModal = ref(false)
 const showCreateCertificateDrawer = ref(false)
 const showImportCertificateDrawer = ref(false)
+const showCertificateDetailsModal = ref(false)
 
 function openDeleteCertificateModal(itemToDelete: Certificate) {
   selectedCertificate.value = itemToDelete
   showDeleteCertificateModal.value = true
+}
+
+function openCertificateDetailsModal(item: Certificate) {
+  selectedCertificate.value = item
+  showCertificateDetailsModal.value = true
 }
 
 async function fetchCertificates() {
@@ -120,7 +130,7 @@ async function fetchCertificates() {
       <CertificatesTable
         :certificates="certificates"
         @delete="openDeleteCertificateModal"
-        @show-certificate="(_) => {}"
+        @show-certificate="openCertificateDetailsModal"
       />
     </template>
   </div>
@@ -140,4 +150,24 @@ async function fetchCertificates() {
     @add-certificate="() => {}"
     @close="showCreateCertificateDrawer = false"
   />
+  <NeModal
+    kind="info"
+    :visible="showCertificateDetailsModal"
+    @close="showCertificateDetailsModal = false"
+    :primary-label="t('common.close')"
+    @primary-click="showCertificateDetailsModal = false"
+    :close-aria-label="t('common.close')"
+    :title="selectedCertificate?.name"
+    cancel-label=""
+    size="xl"
+  >
+    <p class="mb-2 font-semibold">{{ t('standalone.certificates.certificate') }}</p>
+    <!-- TODO: use min-w-0 on parent for NeModal to avoid overflow -->
+    <p
+      class="h-80 w-full min-w-0 resize-y overflow-auto whitespace-pre rounded-md border border-gray-700 p-3 font-mono"
+    >
+      {{ selectedCertificate?.details }}
+    </p>
+    <!--<NeTextArea :model-value="selectedCertificate?.details" :rows="15" :disabled="true" />-->
+  </NeModal>
 </template>

@@ -17,6 +17,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import CertificatesTable from '@/components/standalone/certificates/CertificatesTable.vue'
 import DeleteCertificateModal from '@/components/standalone/certificates/DeleteCertificateModal.vue'
 import ImportCertificateDrawer from '@/components/standalone/certificates/ImportCertificateDrawer.vue'
+import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue'
 
 export type Certificate = {
   type: string
@@ -48,13 +49,8 @@ const loading = ref(false)
 const fetchError = ref(false)
 const selectedCertificate = ref<Certificate>()
 const showDeleteCertificateModal = ref(false)
-const showCreateOrEditCertificateDrawer = ref(false)
+const showCreateCertificateDrawer = ref(false)
 const showImportCertificateDrawer = ref(false)
-
-function openCreateEditCertificateDrawer(itemToEdit?: Certificate) {
-  selectedCertificate.value = itemToEdit
-  showCreateOrEditCertificateDrawer.value = true
-}
 
 function openDeleteCertificateModal(itemToDelete: Certificate) {
   selectedCertificate.value = itemToDelete
@@ -110,13 +106,7 @@ async function fetchCertificates() {
               /> </template
             >{{ t('standalone.certificates.import_certificate') }}</NeButton
           >
-          <NeButton
-            kind="secondary"
-            @click="
-              () => {
-                openCreateEditCertificateDrawer()
-              }
-            "
+          <NeButton kind="secondary" @click="showCreateCertificateDrawer = true"
             ><template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-plus']"
@@ -131,7 +121,6 @@ async function fetchCertificates() {
         :certificates="certificates"
         @delete="openDeleteCertificateModal"
         @show-certificate="(_) => {}"
-        @edit="openCreateEditCertificateDrawer"
       />
     </template>
   </div>
@@ -145,5 +134,10 @@ async function fetchCertificates() {
     :is-shown="showImportCertificateDrawer"
     @close="showImportCertificateDrawer = false"
     @certificate-imported="() => {}"
+  />
+  <CreateLetsEncryptCertificateDrawer
+    :is-shown="showCreateCertificateDrawer"
+    @add-certificate="() => {}"
+    @close="showCreateCertificateDrawer = false"
   />
 </template>

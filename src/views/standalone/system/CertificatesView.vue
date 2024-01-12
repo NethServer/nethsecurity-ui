@@ -20,6 +20,8 @@ import CertificatesTable from '@/components/standalone/certificates/Certificates
 import DeleteCertificateModal from '@/components/standalone/certificates/DeleteCertificateModal.vue'
 import ImportCertificateDrawer from '@/components/standalone/certificates/ImportCertificateDrawer.vue'
 import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { onMounted } from 'vue'
 
 export type Certificate = {
   name: string
@@ -32,6 +34,7 @@ export type Certificate = {
 }
 
 const { t } = useI18n()
+const notificationsStore = useNotificationsStore()
 
 const certificates = ref<Certificate[]>([
   {
@@ -74,7 +77,8 @@ async function fetchCertificates() {
 
   try {
     loading.value = true
-    certificates.value = (await ubusCall('ns.reverseproxy', 'list-certificates')).data.rules
+    // TODO: add list endpoint
+    //certificates.value = (await ubusCall('ns.reverseproxy', 'list-certificates')).data.rules
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_certificates')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -84,6 +88,10 @@ async function fetchCertificates() {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  fetchCertificates()
+})
 </script>
 
 <template>
@@ -137,17 +145,44 @@ async function fetchCertificates() {
   <DeleteCertificateModal
     :visible="showDeleteCertificateModal"
     :item-to-delete="selectedCertificate"
-    @certificate-deleted="() => {}"
+    @certificate-deleted="
+      () => {
+        notificationsStore.addNotification({
+          id: 'delete_certificate',
+          kind: 'success',
+          title: t('standalone.certificates.certificate_deleted')
+        })
+        fetchCertificates()
+      }
+    "
     @close="showDeleteCertificateModal = false"
   />
   <ImportCertificateDrawer
     :is-shown="showImportCertificateDrawer"
     @close="showImportCertificateDrawer = false"
-    @certificate-imported="() => {}"
+    @certificate-imported="
+      () => {
+        notificationsStore.addNotification({
+          id: 'import_certificate',
+          kind: 'success',
+          title: t('standalone.certificates.certificate_imported')
+        })
+        fetchCertificates()
+      }
+    "
   />
   <CreateLetsEncryptCertificateDrawer
     :is-shown="showCreateCertificateDrawer"
-    @add-certificate="() => {}"
+    @add-certificate="
+      () => {
+        notificationsStore.addNotification({
+          id: 'add_certificate',
+          kind: 'success',
+          title: t('standalone.certificates.certificate_added')
+        })
+        fetchCertificates()
+      }
+    "
     @close="showCreateCertificateDrawer = false"
   />
   <NeModal

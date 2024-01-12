@@ -32,7 +32,9 @@ async function deleteCertificate() {
     error.value.notificationDetails = ''
     isDeleting.value = true
     try {
-      await ubusCall('ns.reverseproxy', 'delete-certificate', {})
+      await ubusCall('ns.reverseproxy', 'delete-certificate', {
+        name: props.itemToDelete.name
+      })
       emit('certificate-deleted')
       close()
     } catch (err: any) {

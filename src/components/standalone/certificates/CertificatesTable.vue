@@ -66,16 +66,20 @@ function getDropdownItems(item: Certificate) {
           }
         ]
       : []),
-    {
-      id: 'delete',
-      label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
-      danger: true,
-      action: () => {
-        emit('delete', item)
-      }
-    }
+    ...(item.name != '_lan'
+      ? [
+          {
+            id: 'delete',
+            label: t('common.delete'),
+            iconStyle: 'fas',
+            icon: 'trash',
+            danger: true,
+            action: () => {
+              emit('delete', item)
+            }
+          }
+        ]
+      : [])
   ]
 }
 </script>
@@ -85,7 +89,7 @@ function getDropdownItems(item: Certificate) {
     <template #name="{ item }: { item: Certificate }">
       <div class="flex flex-row items-center">
         <div class="mr-6">
-          <p>{{ item.path }}</p>
+          <p>{{ item.name }}</p>
           <NeButton class="-mx-2" kind="tertiary" @click="emit('showCertificate', item)">{{
             t('standalone.certificates.more_info')
           }}</NeButton>

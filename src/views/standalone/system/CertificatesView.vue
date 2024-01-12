@@ -16,6 +16,7 @@ import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CertificatesTable from '@/components/standalone/certificates/CertificatesTable.vue'
 import DeleteCertificateModal from '@/components/standalone/certificates/DeleteCertificateModal.vue'
+import ImportCertificateDrawer from '@/components/standalone/certificates/ImportCertificateDrawer.vue'
 
 export type Certificate = {
   type: string
@@ -139,5 +140,10 @@ async function fetchCertificates() {
     :item-to-delete="selectedCertificate"
     @certificate-deleted="() => {}"
     @close="showDeleteCertificateModal = false"
+  />
+  <ImportCertificateDrawer
+    :is-shown="showImportCertificateDrawer"
+    @close="showImportCertificateDrawer = false"
+    @certificate-imported="() => {}"
   />
 </template>

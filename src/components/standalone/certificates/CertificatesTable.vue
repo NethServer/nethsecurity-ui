@@ -43,7 +43,7 @@ const tableHeaders = [
 
 function getDropdownItems(item: Certificate) {
   return [
-    ...(!item.default && !item.expired
+    ...(!item.expired
       ? [
           {
             id: 'set_as_default',
@@ -116,8 +116,8 @@ function getDropdownItems(item: Certificate) {
     </template>
     <template #menu="{ item }: { item: Certificate }">
       <div class="align-center flex justify-end">
-        <!-- TODO: hide/disable dropdown if item is system certificate and is default -->
-        <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+        <!-- TODO: hide/disable dropdown if item is system certificate -->
+        <NeDropdown v-if="!item.default" :items="getDropdownItems(item)" :align-to-right="true" />
       </div>
     </template>
   </NeTable>

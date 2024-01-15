@@ -22,6 +22,7 @@ import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certific
 import { useNotificationsStore } from '@/stores/standalone/notifications'
 import { onMounted } from 'vue'
 import { map } from 'lodash-es'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type Certificate = {
   name: string
@@ -38,6 +39,7 @@ export type Certificate = {
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const uciChangesStore = useUciPendingChangesStore()
 
 const certificates = ref<Certificate[]>([])
 const error = ref({
@@ -105,6 +107,7 @@ async function setDefaultCertificate(item: Certificate) {
     return
   }
 
+  await uciChangesStore.getChanges()
   await fetchCertificates()
 }
 

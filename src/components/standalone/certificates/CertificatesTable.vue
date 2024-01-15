@@ -46,13 +46,15 @@ const tableHeaders = [
 ]
 
 function isCertificateExpired(item: Certificate) {
-  return new Date(Date.parse(item.expiration)).getTime() < Date.now()
+  return item.expiration ? new Date(Date.parse(item.expiration)).getTime() < Date.now() : false
 }
 
 function getFormattedExpiration(item: Certificate) {
-  return `${new Date(Date.parse(item.expiration)).toLocaleDateString()} ${new Date(
-    Date.parse(item.expiration)
-  ).toLocaleTimeString()}`
+  return item.expiration
+    ? `${new Date(Date.parse(item.expiration)).toLocaleDateString()} ${new Date(
+        Date.parse(item.expiration)
+      ).toLocaleTimeString()}`
+    : '-'
 }
 
 function getCertificateType(item: Certificate) {
@@ -125,7 +127,8 @@ function getDropdownItems(item: Certificate) {
       </div>
     </template>
     <template #domains="{ item }: { item: Certificate }">
-      <p>{{ item.domain ? item.domain : '-' }}</p>
+      <p v-if="item.type != 'acme'">{{ item.domain ? item.domain : '-' }}</p>
+      <p v-else>{{ item.requested_domains?.join(', ') }}</p>
     </template>
     <template #type="{ item }: { item: Certificate }">
       <div class="flex flex-row items-center">

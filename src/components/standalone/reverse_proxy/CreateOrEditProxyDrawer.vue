@@ -193,7 +193,7 @@ async function fetchOptions() {
   try {
     const certificatesData = (await ubusCall('ns.reverseproxy', 'list-certificates')).data.values
     certificateOptions.value = [
-      ...certificatesData.map((x: string) => ({
+      ...Object.keys(certificatesData).map((x: string) => ({
         id: x,
         label: x === '_lan' ? t('standalone.reverse_proxy.default_certificate') : x
       }))

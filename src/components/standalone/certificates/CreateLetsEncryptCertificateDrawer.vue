@@ -4,7 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { MessageBag, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateFQDN,
+  validateRequired,
+  validateUciName,
+  type validationOutput
+} from '@/lib/validation'
 import { getAxiosErrorMessage, type NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -14,10 +20,12 @@ import {
   NeRadioSelection,
   NeCombobox,
   NeTooltip,
-  NeTextInput
+  NeTextInput,
+  NeSkeleton,
+  NeInlineNotification
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
@@ -60,6 +68,7 @@ const validationMethodOptions = ref<NeComboboxOption[]>([
 function close() {
   if (!isSavingChanges.value) {
     validationErrorBag.value.clear()
+    domainValidationErrors.value = []
     error.value.notificationTitle = ''
     error.value.notificationDescription = ''
     error.value.notificationDetails = ''
@@ -67,11 +76,31 @@ function close() {
   }
 }
 
+async function fetchOptions() {
+  try {
+    loading.value = true
+    dnsApiComboboxOptions.value = (
+      await ubusCall('ns.reverseproxy', 'list-dns-providers')
+    ).data.values.map((x: string) => ({
+      id: x,
+      label: x
+    }))
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_retrieve_users')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    loading.value = false
+  }
+}
+
 function resetForm() {
+  showAdvancedSettings.value = false
+
   certificateName.value = ''
   domains.value = ['']
   validationMethod.value = 'standalone'
-  dnsApi.value = ''
+  dnsApi.value = dnsApiComboboxOptions.value?.[0]?.id ?? ''
   dnsApiOptions.value = []
 }
 
@@ -88,8 +117,33 @@ function runValidators(validators: validationOutput[], label: string): boolean {
 function validate() {
   validationErrorBag.value.clear()
   domainValidationErrors.value = []
-  //TODO: handle validation
-  return true
+
+  domains.value.forEach(() => {
+    domainValidationErrors.value.push('')
+  })
+
+  let validDomains = true
+  for (let [index, domain] of domains.value.entries()) {
+    if (domain) {
+      let validator = validateFQDN(domain)
+      if (!validator.valid) {
+        domainValidationErrors.value[index] = t(validator.errMessage as string)
+        validDomains = false
+        break
+      }
+    } else {
+      domainValidationErrors.value[index] = t('error.required')
+      validDomains = false
+    }
+  }
+
+  return (
+    validDomains &&
+    runValidators(
+      [validateRequired(certificateName.value), validateUciName(certificateName.value)],
+      'name'
+    )
+  )
 }
 
 async function createCertificate() {
@@ -99,6 +153,15 @@ async function createCertificate() {
 
   try {
     isSavingChanges.value = true
+    // TODO: add dns validation method & options
+    await ubusCall('ns.reverseproxy', 'request-certificate', {
+      name: certificateName.value,
+      domains: domains.value,
+      validation_method: validationMethod.value
+    })
+    isSavingChanges.value = false
+    emit('add-certificate')
+    close()
   } catch (err: any) {
     if (err instanceof ValidationError) {
       validationErrorBag.value = err.errorBag
@@ -106,7 +169,6 @@ async function createCertificate() {
       error.value.notificationTitle = t('error.cannot_create_certificate')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
     }
-  } finally {
     isSavingChanges.value = false
   }
 }
@@ -115,7 +177,9 @@ watch(
   () => props.isShown,
   () => {
     if (props.isShown) {
-      resetForm()
+      fetchOptions().then(() => {
+        resetForm()
+      })
     }
   }
 )
@@ -150,7 +214,7 @@ watch(
         :add-item-label="t('standalone.certificates.add_domain')"
         :title="t('standalone.certificates.domain')"
         :invalid-messages="domainValidationErrors"
-        :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('domains'))"
+        :required="true"
       />
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">

@@ -31,7 +31,7 @@ export type Certificate = {
   details: string
   default: boolean
   domain: string
-  expiration: string
+  expiration?: string
   requested_domains?: string[]
   pending?: boolean
   servers: string[]

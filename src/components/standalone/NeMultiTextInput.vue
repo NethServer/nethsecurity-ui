@@ -22,6 +22,7 @@ const { t } = useI18n()
 const props = withDefaults(
   defineProps<{
     useKeyCombobox?: boolean
+    required?: boolean
     modelValue: string[] | KeyValueItem[]
     addItemLabel: string
     invalidMessages?: string[]
@@ -36,7 +37,7 @@ const props = withDefaults(
     comboboxPlaceholder?: string
     textInputPlaceholder?: string
   }>(),
-  { useKeyCombobox: false }
+  { useKeyCombobox: false, required: false }
 )
 
 const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
@@ -149,16 +150,21 @@ onMounted(() => {
             :disabled="disableInputs"
             :placeholder="textInputPlaceholder"
           />
-          <NeButton kind="tertiary" size="md" @click="deleteItem(i)">
+          <NeButton
+            kind="tertiary"
+            size="md"
+            @click="deleteItem(i)"
+            :disabled="i === 0 && required"
+          >
             <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
           </NeButton>
         </div>
         <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
           {{ generalInvalidMessage }}
         </p>
-        <NeButton size="md" @click="addItem" :disabled="disableAddButton">
+        <NeButton size="md" @click="addItem" :disabled="disableAddButton" kind="tertiary">
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
+            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ addItemLabel }}
         </NeButton>

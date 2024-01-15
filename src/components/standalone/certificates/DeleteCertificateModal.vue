@@ -67,7 +67,7 @@ function close() {
   >
     {{
       t('standalone.certificates.delete_certificate_message', {
-        certificate: itemToDelete?.path ?? ''
+        certificate: itemToDelete?.name ?? ''
       })
     }}
     <NeInlineNotification

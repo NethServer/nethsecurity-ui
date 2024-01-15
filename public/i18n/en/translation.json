@@ -255,7 +255,8 @@
     "cannot_delete_certificate": "Cannot delete certificate",
     "cannot_import_certificate": "Cannot import certificate",
     "cannot_create_certificate": "Cannot create certificate",
-    "cannot_upload_certificate_files": "Cannot upload certificate files"
+    "cannot_upload_certificate_files": "Cannot upload certificate files",
+    "cannot_set_default_certificate": "Cannot set default certificate"
   },
   "ne_text_input": {
     "show_password": "Show password",

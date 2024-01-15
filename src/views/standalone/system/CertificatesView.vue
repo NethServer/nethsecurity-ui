@@ -53,6 +53,12 @@ const showCreateCertificateDrawer = ref(false)
 const showImportCertificateDrawer = ref(false)
 const showCertificateDetailsModal = ref(false)
 
+function clearError() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+}
+
 function openDeleteCertificateModal(itemToDelete: Certificate) {
   selectedCertificate.value = itemToDelete
   showDeleteCertificateModal.value = true
@@ -64,9 +70,7 @@ function openCertificateDetailsModal(item: Certificate) {
 }
 
 async function fetchCertificates() {
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
+  clearError()
 
   try {
     loading.value = true
@@ -85,6 +89,23 @@ async function fetchCertificates() {
   } finally {
     loading.value = false
   }
+}
+
+async function setDefaultCertificate(item: Certificate) {
+  clearError()
+
+  try {
+    await ubusCall('ns.reverseproxy', 'set-default-certificate', {
+      name: item.name
+    })
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_set_default_certificate')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+    return
+  }
+
+  await fetchCertificates()
 }
 
 onMounted(() => {
@@ -136,6 +157,7 @@ onMounted(() => {
       <CertificatesTable
         :certificates="certificates"
         @delete="openDeleteCertificateModal"
+        @set-as-default="setDefaultCertificate"
         @show-certificate="openCertificateDetailsModal"
       />
     </template>

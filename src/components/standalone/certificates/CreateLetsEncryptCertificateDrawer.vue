@@ -51,7 +51,7 @@ const certificateName = ref('')
 const domains = ref<string[]>([''])
 const validationMethod = ref<'standalone' | 'dns'>('standalone')
 const dnsApi = ref('')
-const dnsApiOptions = ref<{ key: string; value: string }[]>([])
+const dnsApiOptions = ref([{ key: '', value: '' }])
 
 const dnsApiComboboxOptions = ref<NeComboboxOption[]>([])
 const validationMethodOptions = ref<NeComboboxOption[]>([
@@ -101,7 +101,7 @@ function resetForm() {
   domains.value = ['']
   validationMethod.value = 'standalone'
   dnsApi.value = dnsApiComboboxOptions.value?.[0]?.id ?? ''
-  dnsApiOptions.value = []
+  dnsApiOptions.value = [{ key: '', value: '' }]
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -248,10 +248,20 @@ watch(
             :no-options-label="t('ne_combobox.no_options_label')"
             :no-results-label="t('ne_combobox.no_results')"
             v-model="dnsApi"
-            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dnsApi'))"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dns_provider'))"
             :placeholder="t('standalone.certificates.choose_or_type_dns_api')"
           />
-          <!-- TODO: add DNS API options field -->
+          <NeMultiTextInput
+            v-if="dnsApi"
+            v-model="dnsApiOptions"
+            key-input-type="text"
+            :title="t('standalone.certificates.dns_api_options')"
+            :key-subtitle="t('standalone.certificates.key')"
+            :subtitle="t('standalone.certificates.value')"
+            :use-key-input="true"
+            :add-item-label="t('standalone.certificates.add_option')"
+            :required="true"
+          />
         </template>
       </template>
       <hr />

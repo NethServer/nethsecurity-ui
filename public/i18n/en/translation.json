@@ -621,7 +621,9 @@
       "custom": "Custom",
       "lets_encrypt": "Let's encrypt",
       "type": "Type",
-      "pending": "Pending"
+      "pending": "Pending",
+      "key": "Key",
+      "value": "Value"
     },
     "network": {
       "title": "Network"

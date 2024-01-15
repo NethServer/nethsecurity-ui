@@ -8,13 +8,12 @@ import {
   NeInlineNotification,
   NeFormItemLabel,
   NeTextInput,
-  NeToggle,
-  NeTooltip,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateFile, validateRequired, type validationOutput } from '@/lib/validation'
 import { watch } from 'vue'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { getUploadedFilePath, uploadFile } from '@/lib/standalone/fileUpload'
 
 const props = defineProps<{
   isShown: boolean
@@ -23,6 +22,7 @@ const emit = defineEmits(['close', 'certificate-imported'])
 
 const { t } = useI18n()
 const importCertificateError = ref({
+  notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
@@ -33,14 +33,12 @@ const certificateName = ref('')
 const certificateFile = ref<File | null>(null)
 const privateKeyFile = ref<File | null>(null)
 const chainFile = ref<File | null>(null)
-const defaultCertificate = ref(false)
 
 function resetForm() {
   certificateName.value = ''
   certificateFile.value = null
   privateKeyFile.value = null
   chainFile.value = null
-  defaultCertificate.value = false
 }
 
 function close() {
@@ -66,8 +64,8 @@ function validate() {
 
   const validators: [validationOutput[], string][] = [
     [[validateRequired(certificateName.value)], 'name'],
-    [[validateFile(certificateFile.value)], 'certificateFile'],
-    [[validateFile(privateKeyFile.value)], 'privateKeyFile']
+    [[validateFile(certificateFile.value)], 'certificate_path'],
+    [[validateFile(privateKeyFile.value)], 'key_path']
   ]
 
   return validators
@@ -83,17 +81,46 @@ async function importCertificate() {
     return
   }
 
+  isImporting.value = true
+  let certFileUploadFilename = ''
+  let pKeyFileUploadFilename = ''
+  let chainFileUploadFilename = ''
+
   try {
-    isImporting.value = true
-    //TODO: logic for importing the certificate
+    // upload certificate files
+    certFileUploadFilename = (await uploadFile(certificateFile.value as File)).data.data
+    pKeyFileUploadFilename = (await uploadFile(privateKeyFile.value as File)).data.data
+    if (chainFile.value) {
+      chainFileUploadFilename = (await uploadFile(chainFile.value as File)).data.data
+    }
+  } catch (err: any) {
+    importCertificateError.value.notificationTitle = t('error.cannot_upload_certificate_files')
+    importCertificateError.value.notificationDescription = t(getAxiosErrorMessage(err))
+    importCertificateError.value.notificationDetails = err.toString()
+    isImporting.value = false
+    return
+  }
+
+  try {
+    await ubusCall('ns.reverseproxy', 'add-certificate', {
+      name: certificateName.value,
+      certificate_path: getUploadedFilePath(certFileUploadFilename),
+      key_path: getUploadedFilePath(pKeyFileUploadFilename),
+      ...(chainFileUploadFilename
+        ? { chain_path: getUploadedFilePath(chainFileUploadFilename) }
+        : {})
+    })
+    isImporting.value = false
+    emit('certificate-imported')
+    close()
   } catch (err: any) {
     if (err instanceof ValidationError) {
       validationErrorBag.value = err.errorBag
     } else {
+      importCertificateError.value.notificationTitle = t('error.cannot_import_certificate')
       importCertificateError.value.notificationDescription = t(getAxiosErrorMessage(err))
       importCertificateError.value.notificationDetails = err.toString()
     }
-  } finally {
     isImporting.value = false
   }
 }
@@ -133,35 +160,22 @@ watch(
       />
       <NeFileInput
         :label="t('standalone.certificates.certificate')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('certificateFile'))"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('certificate_path'))"
         :dropzoneLabel="t('ne_file_input.dropzone_label')"
         v-model="certificateFile"
       />
       <NeFileInput
         :label="t('standalone.certificates.private_key')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('privateKeyFile'))"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('key_path'))"
         :dropzoneLabel="t('ne_file_input.dropzone_label')"
         v-model="privateKeyFile"
       />
-      <!-- TODO: add "optional" label -->
-      <NeFileInput
-        :label="t('standalone.certificates.chain_file')"
-        :dropzoneLabel="t('ne_file_input.dropzone_label')"
-        v-model="chainFile"
-      />
       <div>
-        <NeFormItemLabel
-          >{{ t('standalone.certificates.set_as_default_certificate') }}
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.certificates.set_as_default_certificate_tooltip') }}
-            </template>
-          </NeTooltip>
-        </NeFormItemLabel>
-        <NeToggle
-          :label="defaultCertificate ? t('common.enabled') : t('common.disabled')"
-          v-model="defaultCertificate"
-        />
+        <div class="flex flex-row justify-between">
+          <NeFormItemLabel>{{ t('standalone.certificates.chain_file') }}</NeFormItemLabel>
+          <NeFormItemLabel>{{ t('common.optional') }}</NeFormItemLabel>
+        </div>
+        <NeFileInput :dropzoneLabel="t('ne_file_input.dropzone_label')" v-model="chainFile" />
       </div>
       <hr />
       <div class="flex justify-end">

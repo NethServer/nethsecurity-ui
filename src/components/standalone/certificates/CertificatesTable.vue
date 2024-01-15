@@ -125,7 +125,7 @@ function getDropdownItems(item: Certificate) {
       </div>
     </template>
     <template #domains="{ item }: { item: Certificate }">
-      <p>{{ item.domains.join(', ') }}</p>
+      <p>{{ item.domain ? item.domain : '-' }}</p>
     </template>
     <template #type="{ item }: { item: Certificate }">
       <div class="flex flex-row items-center">

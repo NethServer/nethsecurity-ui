@@ -11,8 +11,7 @@ import {
   getAxiosErrorMessage,
   NeSkeleton,
   NeInlineNotification,
-  NeModal,
-  NeTextArea
+  NeModal
 } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -22,6 +21,7 @@ import ImportCertificateDrawer from '@/components/standalone/certificates/Import
 import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
 import { onMounted } from 'vue'
+import { map } from 'lodash-es'
 
 export type Certificate = {
   name: string
@@ -29,7 +29,7 @@ export type Certificate = {
   path: string
   details: string
   default: boolean
-  domains: string[]
+  domain: string
   expiration: string
   requested_domains?: string[]
   pending?: boolean
@@ -39,24 +39,13 @@ export type Certificate = {
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
 
-const certificates = ref<Certificate[]>([
-  {
-    name: 'kool_cert',
-    type: 'acme',
-    path: '/etc/nginx/conf.d/test.crt',
-    details: 'certificate details',
-    default: true,
-    domains: ['a.b.c', 'd.e.f'],
-    expiration: '2027-04-07 15:13:27Z',
-    servers: []
-  }
-])
+const certificates = ref<Certificate[]>([])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-const loading = ref(false)
+const loading = ref(true)
 const fetchError = ref(false)
 const selectedCertificate = ref<Certificate>()
 const showDeleteCertificateModal = ref(false)
@@ -81,8 +70,13 @@ async function fetchCertificates() {
 
   try {
     loading.value = true
-    // TODO: add list endpoint
-    //certificates.value = (await ubusCall('ns.reverseproxy', 'list-certificates')).data.rules
+    const certificatesData: Record<string, any> = (
+      await ubusCall('ns.reverseproxy', 'list-certificates')
+    ).data.values
+    certificates.value = map(certificatesData, (payload: any, certificateName: string) => ({
+      ...payload,
+      name: certificateName
+    }))
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_certificates')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

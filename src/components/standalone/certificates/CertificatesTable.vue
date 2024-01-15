@@ -32,6 +32,10 @@ const tableHeaders = [
     key: 'domains'
   },
   {
+    label: t('standalone.certificates.type'),
+    key: 'type'
+  },
+  {
     label: t('standalone.certificates.expire'),
     key: 'expire'
   },
@@ -51,9 +55,22 @@ function getFormattedExpiration(item: Certificate) {
   ).toLocaleTimeString()}`
 }
 
+function getCertificateType(item: Certificate) {
+  switch (item.type) {
+    case 'self-signed':
+      return t('standalone.certificates.self_signed')
+    case 'custom':
+      return t('standalone.certificates.custom')
+    case 'acme':
+      return t('standalone.certificates.lets_encrypt')
+  }
+}
+
 function getDropdownItems(item: Certificate) {
   return [
-    ...(!isCertificateExpired(item)
+    // "Set as default" option is enabled only if certificate isn't expired and, in the case of an
+    // ACME certificate, it isn't pending
+    ...(!isCertificateExpired(item) && !item.pending
       ? [
           {
             id: 'set_as_default',
@@ -66,6 +83,7 @@ function getDropdownItems(item: Certificate) {
           }
         ]
       : []),
+    // The self-signed system certificate cannot be deleted
     ...(item.name != '_lan'
       ? [
           {
@@ -96,12 +114,7 @@ function getDropdownItems(item: Certificate) {
         </div>
         <NeTooltip interactive v-if="item.default">
           <template #trigger>
-            <NeBadge
-              v-if="item.default"
-              kind="success"
-              class="-mt-2"
-              :text="t('standalone.certificates.default')"
-            />
+            <NeBadge kind="success" class="-mt-2" :text="t('standalone.certificates.default')" />
           </template>
           <template #content>
             <p class="text-center">
@@ -113,6 +126,12 @@ function getDropdownItems(item: Certificate) {
     </template>
     <template #domains="{ item }: { item: Certificate }">
       <p>{{ item.domains.join(', ') }}</p>
+    </template>
+    <template #type="{ item }: { item: Certificate }">
+      <div class="flex flex-row items-center">
+        <p class="mr-6">{{ getCertificateType(item) }}</p>
+        <NeBadge v-if="item.pending" kind="warning" :text="t('standalone.certificates.pending')" />
+      </div>
     </template>
     <template #expire="{ item }: { item: Certificate }">
       <div class="flex flex-row gap-x-2">
@@ -135,7 +154,6 @@ function getDropdownItems(item: Certificate) {
     </template>
     <template #menu="{ item }: { item: Certificate }">
       <div class="align-center flex justify-end">
-        <!-- TODO: hide/disable dropdown if item is system certificate -->
         <NeDropdown v-if="!item.default" :items="getDropdownItems(item)" :align-to-right="true" />
       </div>
     </template>

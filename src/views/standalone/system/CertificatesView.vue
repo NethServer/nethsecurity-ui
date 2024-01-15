@@ -25,12 +25,15 @@ import { onMounted } from 'vue'
 
 export type Certificate = {
   name: string
-  type: string
+  type: 'self-signed' | 'custom' | 'acme'
   path: string
   details: string
   default: boolean
   domains: string[]
   expiration: string
+  requested_domains?: string[]
+  pending?: boolean
+  servers: string[]
 }
 
 const { t } = useI18n()
@@ -44,7 +47,8 @@ const certificates = ref<Certificate[]>([
     details: 'certificate details',
     default: true,
     domains: ['a.b.c', 'd.e.f'],
-    expiration: '2027-04-07 15:13:27Z'
+    expiration: '2027-04-07 15:13:27Z',
+    servers: []
   }
 ])
 const error = ref({

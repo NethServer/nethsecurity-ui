@@ -602,7 +602,6 @@
       "import": "Import",
       "domain": "Domain",
       "add_domain": "Add domain",
-      "notification_email": "Notification email",
       "advanced_settings": "Advanced settings",
       "validation_method": "Validation method",
       "validation_method_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",

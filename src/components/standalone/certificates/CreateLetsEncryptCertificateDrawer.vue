@@ -14,9 +14,7 @@ import {
   NeRadioSelection,
   NeCombobox,
   NeTooltip,
-  NeTextInput,
-  NeFormItemLabel,
-  NeToggle
+  NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError } from '@/lib/standalone/ubus'
@@ -43,8 +41,6 @@ const showAdvancedSettings = ref(false)
 // form fields
 const certificateName = ref('')
 const domains = ref<string[]>([''])
-const notificationEmail = ref('')
-const defaultCertificate = ref(false)
 const validationMethod = ref<'standalone' | 'dns'>('standalone')
 const dnsApi = ref('')
 const dnsApiOptions = ref<{ key: string; value: string }[]>([])
@@ -74,8 +70,6 @@ function close() {
 function resetForm() {
   certificateName.value = ''
   domains.value = ['']
-  notificationEmail.value = ''
-  defaultCertificate.value = false
   validationMethod.value = 'standalone'
   dnsApi.value = ''
   dnsApiOptions.value = []
@@ -158,35 +152,6 @@ watch(
         :invalid-messages="domainValidationErrors"
         :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('domains'))"
       />
-      <NeTextInput
-        v-model="notificationEmail"
-        :label="t('standalone.certificates.notification_email')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('notificationEmail'))"
-        :optional="true"
-        :optional-label="t('common.optional')"
-      >
-        <template #tooltip>
-          <NeTooltip
-            ><template #content>{{
-              t('standalone.certificates.notification_email_tooltip')
-            }}</template></NeTooltip
-          >
-        </template>
-      </NeTextInput>
-      <div>
-        <NeFormItemLabel
-          >{{ t('standalone.certificates.set_as_default_certificate') }}
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.certificates.set_as_default_certificate_tooltip') }}
-            </template>
-          </NeTooltip>
-        </NeFormItemLabel>
-        <NeToggle
-          :label="defaultCertificate ? t('common.enabled') : t('common.disabled')"
-          v-model="defaultCertificate"
-        />
-      </div>
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('standalone.certificates.advanced_settings') }}

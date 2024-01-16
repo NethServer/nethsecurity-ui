@@ -170,11 +170,15 @@ onMounted(() => {
     :item-to-delete="selectedCertificate"
     @certificate-deleted="
       () => {
-        notificationsStore.addNotification({
-          id: 'delete_certificate',
-          kind: 'success',
-          title: t('standalone.certificates.certificate_deleted')
-        })
+        if (selectedCertificate?.type === 'acme') {
+          uciChangesStore.getChanges()
+        } else {
+          notificationsStore.addNotification({
+            id: 'delete_certificate',
+            kind: 'success',
+            title: t('standalone.certificates.certificate_deleted')
+          })
+        }
         fetchCertificates()
       }
     "
@@ -198,11 +202,7 @@ onMounted(() => {
     :is-shown="showCreateCertificateDrawer"
     @add-certificate="
       () => {
-        notificationsStore.addNotification({
-          id: 'add_certificate',
-          kind: 'success',
-          title: t('standalone.certificates.certificate_added')
-        })
+        uciChangesStore.getChanges()
         fetchCertificates()
       }
     "

@@ -31,8 +31,6 @@ const props = withDefaults(
     invalidKeyMessages?: string[]
     keyOptions?: NeComboboxOption[]
     title?: string
-    subtitle?: string
-    keySubtitle?: string
     optional?: boolean
     disableInputs?: boolean
     disableAddButton?: boolean
@@ -128,64 +126,39 @@ onMounted(() => {
       <span v-if="optional" class="ml-2 text-sm font-normal">{{ optionalLabel }}</span>
     </div>
 
-    <div>
-      <div class="flex items-start gap-2">
-        <!-- key column -->
-        <div v-if="useKeyInput">
-          <p class="mb-2 text-sm" v-if="keySubtitle">{{ keySubtitle }}</p>
-          <div class="flex flex-col space-y-4">
-            <template v-for="(item, i) in items" :key="i"
-              ><NeCombobox
-                v-if="keyInputType === 'combobox'"
-                :options="keyOptions"
-                :model-value="keys[i]"
-                @update:model-value="(e: any) => updateModelKey(i, e)"
-                :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
-                :placeholder="keyInputPlaceholder"
-                :noResultsLabel="t('ne_combobox.no_results')"
-                :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                :noOptionsLabel="t('ne_combobox.no_options_label')"
-                :selected-label="t('ne_combobox.selected')"
-                :user-input-label="t('ne_combobox.user_input_label')"
-              />
-              <NeTextInput
-                v-else
-                :model-value="keys[i]"
-                @update:model-value="(e: any) => updateModelKey(i, e)"
-                :placeholder="keyInputPlaceholder"
-                :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
-              />
-            </template>
-          </div>
-        </div>
-        <!-- item column -->
-        <div class="grow">
-          <p class="mb-2 text-sm" v-if="subtitle">{{ subtitle }}</p>
-          <div class="flex flex-col space-y-4">
-            <div v-for="(item, i) in items" :key="i" class="flex flex-row gap-2">
-              <NeTextInput
-                :value="items[i]"
-                @input="updateModelValue(i, $event.target.value)"
-                class="grow"
-                :invalid-message="invalidMessages ? invalidMessages[i] : ''"
-                :disabled="disableInputs"
-                :placeholder="placeholder"
-              />
-              <NeButton
-                kind="tertiary"
-                size="md"
-                @click="deleteItem(i)"
-                :disabled="i === 0 && required"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'trash']"
-                  class="h-4 w-4 py-1"
-                  aria-hidden="true"
-                />
-              </NeButton>
-            </div>
-          </div>
-        </div>
+    <div class="space-y-4">
+      <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
+        <NeCombobox
+          :options="keyOptions"
+          :model-value="keys[i]"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
+          :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+          :placeholder="keyInputPlaceholder"
+          v-if="useKeyInput && keyInputType === 'combobox'"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+        />
+        <NeTextInput
+          v-else-if="useKeyInput && keyInputType === 'text'"
+          :model-value="keys[i]"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
+          :placeholder="keyInputPlaceholder"
+          :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+        />
+        <NeTextInput
+          :value="items[i]"
+          @input="updateModelValue(i, $event.target.value)"
+          class="grow"
+          :invalid-message="invalidMessages ? invalidMessages[i] : ''"
+          :disabled="disableInputs"
+          :placeholder="placeholder"
+        />
+        <NeButton kind="tertiary" size="md" @click="deleteItem(i)" :disabled="i === 0 && required">
+          <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
+        </NeButton>
       </div>
       <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
         {{ generalInvalidMessage }}

@@ -44,6 +44,8 @@ const error = ref({
 })
 const validationErrorBag = ref(new MessageBag())
 const domainValidationErrors = ref<string[]>([])
+const dnsApiOptionsKeyValidationErrors = ref<string[]>([])
+const dnsApiOptionsValueValidationErrors = ref<string[]>([])
 const showAdvancedSettings = ref(false)
 
 // form fields
@@ -69,6 +71,8 @@ function close() {
   if (!isSavingChanges.value) {
     validationErrorBag.value.clear()
     domainValidationErrors.value = []
+    dnsApiOptionsKeyValidationErrors.value = []
+    dnsApiOptionsValueValidationErrors.value = []
     error.value.notificationTitle = ''
     error.value.notificationDescription = ''
     error.value.notificationDetails = ''
@@ -117,9 +121,15 @@ function runValidators(validators: validationOutput[], label: string): boolean {
 function validate() {
   validationErrorBag.value.clear()
   domainValidationErrors.value = []
+  dnsApiOptionsKeyValidationErrors.value = []
+  dnsApiOptionsValueValidationErrors.value = []
 
   domains.value.forEach(() => {
     domainValidationErrors.value.push('')
+  })
+  dnsApiOptions.value.forEach(() => {
+    dnsApiOptionsKeyValidationErrors.value.push('')
+    dnsApiOptionsValueValidationErrors.value.push('')
   })
 
   let validDomains = true
@@ -137,12 +147,30 @@ function validate() {
     }
   }
 
+  let validDnsOptions = true
+
+  if (validationMethod.value === 'dns') {
+    validDnsOptions = runValidators([validateRequired(dnsApi.value)], 'dns_provider')
+
+    for (let [index, dnsApiOption] of dnsApiOptions.value.entries()) {
+      if (!dnsApiOption.key) {
+        dnsApiOptionsKeyValidationErrors.value[index] = t('error.required')
+        validDnsOptions = false
+      }
+      if (!dnsApiOption.value) {
+        dnsApiOptionsValueValidationErrors.value[index] = t('error.required')
+        validDnsOptions = false
+      }
+    }
+  }
+
   return (
     validDomains &&
     runValidators(
       [validateRequired(certificateName.value), validateUciName(certificateName.value)],
       'name'
-    )
+    ) &&
+    validDnsOptions
   )
 }
 
@@ -153,11 +181,16 @@ async function createCertificate() {
 
   try {
     isSavingChanges.value = true
-    // TODO: add dns validation method & options
     await ubusCall('ns.reverseproxy', 'request-certificate', {
       name: certificateName.value,
       domains: domains.value,
-      validation_method: validationMethod.value
+      validation_method: validationMethod.value,
+      ...(validationMethod.value === 'dns'
+        ? {
+            dns_provider: dnsApi.value,
+            dns_provider_options: dnsApiOptions.value.map((x) => `${x.key}=${x.value}`)
+          }
+        : {})
     })
     isSavingChanges.value = false
     emit('add-certificate')
@@ -214,6 +247,7 @@ watch(
         :add-item-label="t('standalone.certificates.add_domain')"
         :title="t('standalone.certificates.domain')"
         :invalid-messages="domainValidationErrors"
+        :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('domains'))"
         :required="true"
       />
       <div>
@@ -260,7 +294,12 @@ watch(
             :subtitle="t('standalone.certificates.value')"
             :use-key-input="true"
             :add-item-label="t('standalone.certificates.add_option')"
+            :invalid-key-messages="dnsApiOptionsKeyValidationErrors"
+            :invalid-messages="dnsApiOptionsValueValidationErrors"
             :required="true"
+            :general-invalid-message="
+              t(validationErrorBag.getFirstI18nKeyFor('dns_provider_options'))
+            "
           />
         </template>
       </template>

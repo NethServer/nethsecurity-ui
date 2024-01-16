@@ -284,7 +284,14 @@ watch(
             v-model="dnsApi"
             :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dns_provider'))"
             :placeholder="t('standalone.certificates.choose_or_type_dns_api')"
-          />
+            ><template #tooltip>
+              <NeTooltip
+                ><template #content>{{
+                  t('standalone.certificates.dns_api_tooltip')
+                }}</template></NeTooltip
+              >
+            </template></NeCombobox
+          >
           <NeMultiTextInput
             v-if="dnsApi"
             v-model="dnsApiOptions"

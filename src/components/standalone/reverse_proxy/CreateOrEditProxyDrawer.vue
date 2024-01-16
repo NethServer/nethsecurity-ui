@@ -320,6 +320,18 @@ watch(
           :user-input-label="t('ne_combobox.user_input_label')"
           :optionalLabel="t('common.optional')"
         />
+        <NeInlineNotification
+          v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
+          :title="t('standalone.reverse_proxy.no_certificate_configured_title')"
+          :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
+          kind="warning"
+          :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
+          @primary-click="
+            () => {
+              $router.push('/standalone/system/certificates')
+            }
+          "
+        />
       </template>
       <NeTextInput
         v-model="destinationURL"

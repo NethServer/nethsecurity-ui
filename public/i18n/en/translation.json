@@ -660,8 +660,7 @@
       "no_devices_available": "No devices available",
       "custom_zone": "Custom",
       "cannot_remove_device_configuration": "Cannot remove device configuration",
-      "hotspot_network": "Network",
-      "advanced_settings": "Advanced settings"
+      "hotspot_network": "Network"
     },
     "multi_wan": {
       "title": "MultiWAN",

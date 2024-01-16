@@ -258,7 +258,7 @@ function validate() {
           :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
-          {{ t('standalone.interfaces_and_devices.advanced_settings') }}
+          {{ t('common.advanced_settings') }}
           <template #suffix>
             <font-awesome-icon
               :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"

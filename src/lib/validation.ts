@@ -438,10 +438,15 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
   }
 
   // validate ip addresses and port formats
-  if (
-    !validateIpAddress(ipAddrMatch[1]).valid ||
-    (ipAddrMatch[3] && !validateIpAddress(ipAddrMatch[3]).valid)
-  ) {
+  if (validateIp4Address(ipAddrMatch[1]).valid) {
+    if (ipAddrMatch[3] && !validateIp4Address(ipAddrMatch[3]).valid) {
+      return invalidResult
+    }
+  } else if (validateIp6Address(ipAddrMatch[1]).valid) {
+    if (ipAddrMatch[3] && !validateIp6Address(ipAddrMatch[3]).valid) {
+      return invalidResult
+    }
+  } else {
     return invalidResult
   }
 

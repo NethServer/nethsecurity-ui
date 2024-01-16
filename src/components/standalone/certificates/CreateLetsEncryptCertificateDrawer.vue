@@ -56,7 +56,8 @@ const dnsApi = ref('')
 const dnsApiOptions = ref([{ key: '', value: '' }])
 
 const dnsApiComboboxOptions = ref<NeComboboxOption[]>([])
-const validationMethodOptions = ref<NeComboboxOption[]>([
+
+const validationMethodOptions = [
   {
     id: 'standalone',
     label: t('standalone.certificates.standalone')
@@ -65,7 +66,7 @@ const validationMethodOptions = ref<NeComboboxOption[]>([
     id: 'dns',
     label: t('standalone.certificates.dns')
   }
-])
+]
 
 function close() {
   if (!isSavingChanges.value) {
@@ -90,7 +91,7 @@ async function fetchOptions() {
       label: x
     }))
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_users')
+    error.value.notificationTitle = t('error.cannot_retrieve_dns_providers')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {

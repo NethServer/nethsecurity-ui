@@ -428,6 +428,7 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
     return validResult
   }
 
+  // ipaddr%scopeid#srvport@source@interface#srcport
   const ipAddrMatch = match[2].match(
     /^([0-9a-f:.]+)(?:%[^#@]+)?(?:#(\d+))?(?:@([0-9a-f:.]+)(?:@[^#]+)?(?:#(\d+))?)?$/
   )
@@ -436,9 +437,18 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
     return invalidResult
   }
 
-  const ipAddress = ipAddrMatch[1]
+  // validate ip addresses and port formats
+  if (
+    !validateIpAddress(ipAddrMatch[1]).valid ||
+    (ipAddrMatch[3] && !validateIpAddress(ipAddrMatch[3]).valid)
+  ) {
+    return invalidResult
+  }
 
-  if (!validateIpAddress(ipAddress).valid) {
+  if (
+    (ipAddrMatch[2] && !validatePort(ipAddrMatch[2]).valid) ||
+    (ipAddrMatch[4] && !validatePort(ipAddrMatch[4]).valid)
+  ) {
     return invalidResult
   }
 

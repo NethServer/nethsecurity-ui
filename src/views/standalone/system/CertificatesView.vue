@@ -217,7 +217,7 @@ onMounted(() => {
     :close-aria-label="t('common.close')"
     :title="selectedCertificate?.name"
     cancel-label=""
-    size="xl"
+    size="xxl"
   >
     <p class="mb-2 font-semibold">{{ t('standalone.certificates.certificate') }}</p>
     <!-- TODO: use min-w-0 on parent for NeModal to avoid overflow -->
@@ -226,6 +226,5 @@ onMounted(() => {
     >
       {{ selectedCertificate?.details }}
     </p>
-    <!--<NeTextArea :model-value="selectedCertificate?.details" :rows="15" :disabled="true" />-->
   </NeModal>
 </template>

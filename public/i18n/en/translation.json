@@ -623,7 +623,8 @@
       "type": "Type",
       "pending": "Pending",
       "key": "Key",
-      "value": "Value"
+      "value": "Value",
+      "plus_n_others": "+{n} others"
     },
     "network": {
       "title": "Network"

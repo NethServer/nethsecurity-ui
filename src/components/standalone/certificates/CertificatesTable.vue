@@ -110,9 +110,13 @@ function getDropdownItems(item: Certificate) {
       <div class="flex flex-row items-center">
         <div class="mr-6">
           <p>{{ item.name }}</p>
-          <NeButton class="-mx-2" kind="tertiary" @click="emit('showCertificate', item)">{{
-            t('standalone.certificates.more_info')
-          }}</NeButton>
+          <NeButton
+            :disabled="!item.details"
+            class="-mx-2"
+            kind="tertiary"
+            @click="emit('showCertificate', item)"
+            >{{ t('standalone.certificates.more_info') }}</NeButton
+          >
         </div>
         <NeTooltip interactive v-if="item.default">
           <template #trigger>
@@ -128,7 +132,19 @@ function getDropdownItems(item: Certificate) {
     </template>
     <template #domains="{ item }: { item: Certificate }">
       <p v-if="item.type != 'acme'">{{ item.domain ? item.domain : '-' }}</p>
-      <p v-else>{{ item.requested_domains?.join(', ') }}</p>
+      <template v-else>
+        <p>{{ item.requested_domains!.slice(0, 2).join(', ') }}</p>
+        <NeTooltip interactive placement="bottom" v-if="item.requested_domains!.length > 2">
+          <template #trigger>
+            <NeButton size="sm" kind="tertiary" class="-mx-2">{{
+              t('standalone.certificates.plus_n_others', { n: item.requested_domains!.length - 2 })
+            }}</NeButton>
+          </template>
+          <template #content>
+            <p>{{ item.requested_domains!.slice(2).join(', ') }}</p>
+          </template>
+        </NeTooltip>
+      </template>
     </template>
     <template #type="{ item }: { item: Certificate }">
       <div class="flex flex-row items-center">

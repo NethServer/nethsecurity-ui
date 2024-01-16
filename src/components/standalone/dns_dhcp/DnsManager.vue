@@ -18,7 +18,12 @@ import {
 } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { MessageBag, validateHostname, validateIpAddress, validateRequired } from '@/lib/validation'
+import {
+  MessageBag,
+  validateDNSForwardingServer,
+  validateHostname,
+  validateRequired
+} from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()
@@ -54,7 +59,7 @@ function validate() {
 
   let validForwardingServers = true
   for (let [index, server] of dnsForwardingServers.value.entries()) {
-    for (let validator of [validateRequired(server), validateIpAddress(server)]) {
+    for (let validator of [validateRequired(server), validateDNSForwardingServer(server)]) {
       if (!validator.valid) {
         dnsForwardingServersErrors.value[index] = t(validator.errMessage as string)
         validForwardingServers = false

@@ -117,6 +117,7 @@
     "password_number_required": "Password must contain at least one number",
     "password_special_character_required": "Password must contain at least one special character",
     "invalid_equal": "Passwords don't match",
+    "invalid_dns_forwarding": "Enter a valid IP address or DNS forwarding item",
     "user_not_found": "User not found",
     "cannot_retrieve_dns_configuration": "Cannot retrieve DNS configuration",
     "cannot_update_dns_configuration": "Cannot update DNS configuration",

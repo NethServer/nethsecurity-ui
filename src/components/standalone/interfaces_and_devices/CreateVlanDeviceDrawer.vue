@@ -47,6 +47,8 @@ let baseDevice = ref('')
 let baseDeviceRef = ref()
 let internalAllDevices = ref<any[]>([])
 
+const showAdvancedSettings = ref(false)
+
 let vlanTypeOptions = [
   {
     id: '8021q',
@@ -104,6 +106,7 @@ watch(
   () => {
     if (props.isShown) {
       clearErrors()
+      showAdvancedSettings.value = false
       // periodic devices reload can cause some glitches to NeCombobox
       internalAllDevices.value = cloneDeep(props.allDevices)
       vlanType.value = '8021q'
@@ -228,13 +231,6 @@ function validate() {
   >
     <form>
       <div class="space-y-6">
-        <!-- vlan type -->
-        <NeRadioSelection
-          v-model="vlanType"
-          :label="t('standalone.interfaces_and_devices.device_type')"
-          :options="vlanTypeOptions"
-          ref="vlanTypeRef"
-        />
         <!-- vlan id -->
         <NeTextInput
           :label="t('standalone.interfaces_and_devices.vlan_id')"
@@ -261,6 +257,25 @@ function validate() {
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
         />
+        <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
+          {{ t('standalone.interfaces_and_devices.advanced_settings') }}
+          <template #suffix>
+            <font-awesome-icon
+              :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </template>
+        </NeButton>
+        <template v-if="showAdvancedSettings">
+          <!-- vlan type -->
+          <NeRadioSelection
+            v-model="vlanType"
+            :label="t('standalone.interfaces_and_devices.device_type')"
+            :options="vlanTypeOptions"
+            ref="vlanTypeRef"
+          />
+        </template>
         <NeInlineNotification
           v-if="error.notificationTitle"
           kind="error"

@@ -15,7 +15,7 @@ import { NeButton, NeDropdown, NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
-import { isEmpty } from 'lodash-es'
+import { isEmpty, isEqual } from 'lodash-es'
 import router from '@/router'
 import ToastNotificationsArea from './ToastNotificationsArea.vue'
 import NotificationDrawer from './NotificationDrawer.vue'
@@ -80,17 +80,20 @@ const accountMenuOptions = computed(() => {
 
 watch(
   () => uciChangesStore.changes,
-  () => {
-    if (!isEmpty(uciChangesStore.changes)) {
-      // briefly flash unsaved changes button
-      setTimeout(() => {
-        isChangesButtonFlashing.value = true
-      }, 500)
-
-      setTimeout(() => {
-        isChangesButtonFlashing.value = false
-      }, 1000)
+  (newChanges, oldChanges) => {
+    // do nothing if there are no changes or they are the same as the previous ones
+    if (isEmpty(newChanges) || isEqual(newChanges, oldChanges)) {
+      return
     }
+
+    // briefly flash unsaved changes button
+    setTimeout(() => {
+      isChangesButtonFlashing.value = true
+    }, 500)
+
+    setTimeout(() => {
+      isChangesButtonFlashing.value = false
+    }, 1000)
   }
 )
 

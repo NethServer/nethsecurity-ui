@@ -7,8 +7,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* //// review */
-
 @layer base {
   html {
     font-family: Poppins, system-ui, sans-serif;
@@ -17,14 +15,7 @@
 }
 
 body {
-  @apply h-full bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-100;
-}
-
-#app {
-  /* max-width: 1280px; //// 
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal; */
+  @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
 }
 
 /* fade transition */

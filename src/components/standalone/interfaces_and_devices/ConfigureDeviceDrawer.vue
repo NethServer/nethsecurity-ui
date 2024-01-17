@@ -849,6 +849,7 @@ async function listZonesForDeviceConfig() {
             ref="selectedDevicesForBridgeOrBondRef"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
           />
           <!-- bonding policy -->
           <NeCombobox
@@ -864,6 +865,7 @@ async function listZonesForDeviceConfig() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
           />
           <!-- bond primary device -->
           <NeCombobox
@@ -882,6 +884,7 @@ async function listZonesForDeviceConfig() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
           />
         </template>
         <!-- name -->

@@ -680,6 +680,7 @@ watch(
           :user-input-label="t('ne_combobox.user_input_label')"
           :accept-user-input="true"
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :optionalLabel="t('common.optional')"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -844,6 +845,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.digest')"
@@ -854,6 +856,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.cipher')"
@@ -864,6 +867,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
@@ -875,6 +879,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
       </template>
       <hr />

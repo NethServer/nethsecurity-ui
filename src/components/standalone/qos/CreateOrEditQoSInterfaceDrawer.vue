@@ -206,6 +206,7 @@ watch(
         :options="ifaceOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
+        :optionalLabel="t('common.optional')"
         :placeholder="t('standalone.qos.choose_interface')"
         v-model="iface"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"

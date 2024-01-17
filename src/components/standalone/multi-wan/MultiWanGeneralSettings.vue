@@ -233,6 +233,7 @@ onMounted(() => {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model.number="data.ping_interval"
@@ -244,6 +245,7 @@ onMounted(() => {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model.number="data.ping_failure_interval"
@@ -255,6 +257,7 @@ onMounted(() => {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
       </div>
     </FormLayout>
@@ -274,6 +277,7 @@ onMounted(() => {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="data.interface_up_threshold"
@@ -285,6 +289,7 @@ onMounted(() => {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
       </div>
     </FormLayout>

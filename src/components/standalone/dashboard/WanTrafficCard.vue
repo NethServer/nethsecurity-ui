@@ -170,6 +170,7 @@ async function getInterfaceTraffic() {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
         class="mb-4"
       />
       <NeSkeleton v-if="loading.getInterfaceTraffic" :lines="6"></NeSkeleton>

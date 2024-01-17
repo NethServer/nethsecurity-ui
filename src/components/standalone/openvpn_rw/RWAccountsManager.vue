@@ -256,11 +256,23 @@ const filteredUsers = computed(() => {
           class="max-w-[12rem]"
           v-model="connectionFilter"
           :options="connectionFilterOptions"
+          :optionalLabel="t('common.optional')"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           class="max-w-[12rem]"
           v-model="expirationFilter"
           :options="expirationFilterOptions"
+          :optionalLabel="t('common.optional')"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
       </div>
       <NeButton kind="secondary" @click="openCreateEditDrawer()" class="ml-2">

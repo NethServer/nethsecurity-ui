@@ -160,6 +160,7 @@ function fetchData() {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
       />
       <div class="col-span-1 flex gap-8 sm:col-span-2">
         <NeToggle v-model="wrapRow" :label="t('standalone.logs.wrap_row')" />

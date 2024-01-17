@@ -125,16 +125,16 @@ const forwardPlaceholder = computed((): string => {
 
 const trafficOptions = [
   {
-    id: TrafficPolicy.ACCEPT,
-    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.ACCEPT)
+    id: TrafficPolicy.DROP,
+    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.DROP)
   },
   {
     id: TrafficPolicy.REJECT,
     label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.REJECT)
   },
   {
-    id: TrafficPolicy.DROP,
-    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.DROP)
+    id: TrafficPolicy.ACCEPT,
+    label: t('standalone.zones_and_policies.traffic_policy.' + TrafficPolicy.ACCEPT)
   }
 ]
 
@@ -265,6 +265,7 @@ function validate(): boolean {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
       />
       <NeCombobox
         v-model="forwardsFrom"
@@ -278,6 +279,7 @@ function validate(): boolean {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
       />
       <NeToggle
         v-model="trafficToWan"

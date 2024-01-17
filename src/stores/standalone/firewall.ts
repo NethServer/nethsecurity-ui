@@ -49,6 +49,40 @@ interface ForwardingResponse {
   ipset?: string
 }
 
+export type FirewallRuleAction = 'DROP' | 'REJECT' | 'ACCEPT'
+
+export interface FirewallRule {
+  id?: string // rule id
+  name: string // rule name
+  src?: string // source zone
+  src_ip?: string[] | RuleHost[] // source addresses
+  dest?: string // destination zone
+  dest_ip?: string[] | RuleHost[] // destination addresses
+  proto: string[] // service protocols
+  dest_port: string[] // service ports
+  target: FirewallRuleAction // 'DROP' | 'REJECT' | 'ACCEPT'
+  ns_service: string // service name or '*' or 'custom'
+  enabled: boolean // rule enabled
+  log: boolean // logging
+  ns_tag: string[] // tags
+  add_to_top: boolean // add rule to top?
+  system_rule: boolean // system rule?
+}
+
+export interface RuleService {
+  id: string
+  proto: string[]
+  port: number | string
+}
+
+export interface RuleHost {
+  value: string
+  label: string
+  type: string
+}
+
+export type RuleType = 'forward' | 'input' | 'output'
+
 /**
  * Different policies for traffic flow, they have additional string values for localization.
  */

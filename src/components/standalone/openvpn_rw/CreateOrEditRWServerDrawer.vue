@@ -471,6 +471,7 @@ watch(
         :options="userDatabaseOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
+        :optionalLabel="t('common.optional')"
         v-model="userDatabase"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_user_db'))"
       />
@@ -493,6 +494,7 @@ watch(
         :options="authModeOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
+        :optionalLabel="t('common.optional')"
         v-model="authMode"
       />
       <NeRadioSelection
@@ -506,6 +508,7 @@ watch(
           :options="bridgesOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
+          :optionalLabel="t('common.optional')"
           v-model="bridge"
         />
         <NeTextInput
@@ -591,6 +594,7 @@ watch(
           :options="compressionOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
+          :optionalLabel="t('common.optional')"
           v-model="compression"
         />
         <NeCombobox
@@ -598,6 +602,7 @@ watch(
           :options="digestOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
+          :optionalLabel="t('common.optional')"
           v-model="digest"
         />
         <NeCombobox
@@ -605,6 +610,7 @@ watch(
           :options="cipherOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
+          :optionalLabel="t('common.optional')"
           v-model="cipher"
         />
         <NeCombobox
@@ -612,6 +618,7 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"
+          :optionalLabel="t('common.optional')"
           v-model="minimumTLSVersion"
         />
         <NeMultiTextInput

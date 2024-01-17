@@ -256,6 +256,7 @@ function validate() {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('common.advanced_settings') }}

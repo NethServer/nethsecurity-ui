@@ -118,6 +118,7 @@ function getDropdownItems(item: Certificate) {
             >{{ t('standalone.certificates.more_info') }}</NeButton
           >
         </div>
+        <!-- default certificate badge and tooltip -->
         <NeTooltip interactive v-if="item.default">
           <template #trigger>
             <NeBadge kind="success" class="-mt-2" :text="t('standalone.certificates.default')" />
@@ -149,7 +150,17 @@ function getDropdownItems(item: Certificate) {
     <template #type="{ item }: { item: Certificate }">
       <div class="flex flex-row items-center">
         <p class="mr-6">{{ getCertificateType(item) }}</p>
-        <NeBadge v-if="item.pending" kind="warning" :text="t('standalone.certificates.pending')" />
+        <!-- pending badge and tooltip -->
+        <NeTooltip interactive v-if="item.pending">
+          <template #trigger>
+            <NeBadge kind="warning" :text="t('standalone.certificates.pending')" />
+          </template>
+          <template #content>
+            <p class="text-center">
+              {{ t('standalone.certificates.pending_tooltip') }}
+            </p>
+          </template></NeTooltip
+        >
       </div>
     </template>
     <template #expire="{ item }: { item: Certificate }">

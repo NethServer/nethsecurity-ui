@@ -622,6 +622,7 @@
       "lets_encrypt": "Let's encrypt",
       "type": "Type",
       "pending": "Pending",
+      "pending_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
       "key": "Key",
       "value": "Value",
       "plus_n_others": "+{n} others"

@@ -603,7 +603,6 @@
       "import": "Import",
       "domain": "Domain",
       "add_domain": "Add domain",
-      "advanced_settings": "Advanced settings",
       "validation_method": "Validation method",
       "validation_method_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
       "standalone": "Standalone",

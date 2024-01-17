@@ -253,7 +253,7 @@ watch(
       />
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
-          {{ t('standalone.certificates.advanced_settings') }}
+          {{ t('common.advanced_settings') }}
           <template #suffix>
             <font-awesome-icon
               :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"

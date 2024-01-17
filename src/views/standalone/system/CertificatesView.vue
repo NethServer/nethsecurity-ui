@@ -220,7 +220,6 @@ onMounted(() => {
     size="xxl"
   >
     <p class="mb-2 font-semibold">{{ t('standalone.certificates.certificate') }}</p>
-    <!-- TODO: use min-w-0 on parent for NeModal to avoid overflow -->
     <p
       class="h-80 w-full min-w-0 resize-y overflow-auto whitespace-pre rounded-md border border-gray-700 p-3 font-mono"
     >

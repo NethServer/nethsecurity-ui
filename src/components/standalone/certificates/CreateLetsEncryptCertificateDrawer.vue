@@ -236,7 +236,7 @@ watch(
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="20" v-if="loading" />
+    <NeSkeleton :lines="10" size="lg" v-if="loading" />
     <div class="flex flex-col gap-y-6" v-else>
       <NeTextInput
         v-model="certificateName"
@@ -280,8 +280,12 @@ watch(
           <NeCombobox
             :label="t('standalone.certificates.dns_api')"
             :options="dnsApiComboboxOptions"
-            :no-options-label="t('ne_combobox.no_options_label')"
-            :no-results-label="t('ne_combobox.no_results')"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
             v-model="dnsApi"
             :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dns_provider'))"
             :placeholder="t('standalone.certificates.choose_or_type_dns_api')"

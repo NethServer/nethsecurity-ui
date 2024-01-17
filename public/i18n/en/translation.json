@@ -751,7 +751,7 @@
       "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers. Enter the IP address of the remote DNS server. Use '/{'<'}domain{'>'}/{'<'}server{'>'}' syntax to route only requests for a specific domain to the given server. Use the '/{'<'}server{'>'}#{'<'}port{'>'}` syntax if the upstream server does not listen on a standard port.",
       "add_dns_server": "Add DNS server",
       "dns_domain": "DNS domain",
-      "dns_domain_tooltip": "Insert the the local DNS domain, ensuring that queries for this domain are always resolved locally.",
+      "dns_domain_tooltip": "Local domain suffix added to DHCP names and hosts file entries. Can be useful if there is a local domain, otherwise it is safer to leave the default value (lan).",
       "rebind_protection": "Rebind protection",
       "rebind_protection_tooltip": "Filter out addresses from private ranges sent by upstream nameservers. This option can prevent an attack where a browser behind a firewall is  used  to  probe machines on the local network.",
       "exclude_localhost_rebinding_checks": "Exclude localhost from rebinding checks",

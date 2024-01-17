@@ -780,6 +780,7 @@ async function saveRule() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
             ref="sourceZoneRef"
           >
             <template #tooltip>
@@ -844,6 +845,7 @@ async function saveRule() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
             ref="destinationZoneRef"
           >
             <template #tooltip>
@@ -879,6 +881,7 @@ async function saveRule() {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
           ref="serviceRef"
         />
         <template v-if="service === 'custom'">
@@ -907,6 +910,7 @@ async function saveRule() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
             ref="protocolsRef"
           />
           <!-- ports -->

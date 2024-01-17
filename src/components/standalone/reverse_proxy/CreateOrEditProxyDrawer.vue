@@ -318,6 +318,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
       </template>
       <NeTextInput

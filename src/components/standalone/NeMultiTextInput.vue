@@ -139,6 +139,7 @@ onMounted(() => {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
           />
           <NeTextInput
             :value="useKeyCombobox ? items[i] : items[i]"

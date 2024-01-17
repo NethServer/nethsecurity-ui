@@ -516,6 +516,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeTextInput
           v-model="remoteIpAddress"
@@ -543,6 +544,7 @@ watch(
           :user-input-label="t('ne_combobox.user_input_label')"
           :accept-user-input="true"
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeMultiTextInput
           v-model="remoteNetworks"
@@ -623,6 +625,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="ikeEncryptionAlgorithm"
@@ -634,6 +637,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="ikeIntegrityAlgorithm"
@@ -645,6 +649,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="ikeDiffieHellmanGroup"
@@ -656,6 +661,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeTextInput
           v-model="ikeKeyLifetime"
@@ -674,6 +680,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="espIntegrityAlgorithm"
@@ -685,6 +692,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           v-model="espDiffieHellmanGroup"
@@ -696,6 +704,7 @@ watch(
           :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeTextInput
           v-model="espKeyLifetime"

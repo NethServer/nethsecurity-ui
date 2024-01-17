@@ -228,6 +228,7 @@ watch(
         :options="usernameOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
+        :optionalLabel="t('common.optional')"
         :placeholder="t('standalone.openvpn_rw.choose_user_from_database')"
         v-model="username"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"

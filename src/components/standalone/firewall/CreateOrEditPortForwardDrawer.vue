@@ -362,6 +362,7 @@ async function createOrEditPortForward() {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
       />
       <NeTextInput
         :label="t('standalone.port_forward.source_port')"
@@ -411,6 +412,7 @@ async function createOrEditPortForward() {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeCombobox
           :label="t('standalone.port_forward.wan_ip')"
@@ -421,6 +423,7 @@ async function createOrEditPortForward() {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
         <NeMultiTextInput
           :title="t('standalone.port_forward.restrict_access_to')"
@@ -472,6 +475,7 @@ async function createOrEditPortForward() {
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
         />
       </template>
       <hr />

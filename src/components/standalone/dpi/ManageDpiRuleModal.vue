@@ -482,6 +482,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         :noOptionsLabel="t('standalone.dpi.no_interfaces_available')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        :optionalLabel="t('common.optional')"
         class="max-w-xs"
         ref="interfaceRef"
       >

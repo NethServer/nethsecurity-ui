@@ -51,9 +51,13 @@ function isCertificateExpired(item: Certificate) {
 
 function getFormattedExpiration(item: Certificate) {
   return item.expiration
-    ? `${new Date(Date.parse(item.expiration)).toLocaleDateString()} ${new Date(
-        Date.parse(item.expiration)
-      ).toLocaleTimeString()}`
+    ? new Date(Date.parse(item.expiration)).toLocaleString([], {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     : '-'
 }
 
@@ -72,19 +76,16 @@ function getDropdownItems(item: Certificate) {
   return [
     // "Set as default" option is enabled only if certificate isn't expired and, in the case of an
     // ACME certificate, it isn't pending
-    ...(!isCertificateExpired(item) && !item.pending
-      ? [
-          {
-            id: 'set_as_default',
-            label: t('standalone.certificates.set_as_default'),
-            iconStyle: 'fas',
-            icon: 'circle-check',
-            action: () => {
-              emit('setAsDefault', item)
-            }
-          }
-        ]
-      : []),
+    {
+      id: 'set_as_default',
+      label: t('standalone.certificates.set_as_default'),
+      iconStyle: 'fas',
+      disabled: isCertificateExpired(item) || item.pending,
+      icon: 'circle-check',
+      action: () => {
+        emit('setAsDefault', item)
+      }
+    },
     // The self-signed system certificate cannot be deleted
     ...(item.name != '_lan'
       ? [

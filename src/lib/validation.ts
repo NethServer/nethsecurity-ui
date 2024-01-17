@@ -391,6 +391,75 @@ export const validateLDAPUri = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateDNSForwardingServer = (value: string): validationOutput => {
+  const validResult = { valid: true }
+  const invalidResult = { valid: false, errMessage: 'error.invalid_dns_forwarding' }
+
+  const match = value.match(/^(\/.*\/)?(.*)$/)
+
+  if (!match) {
+    return invalidResult
+  }
+
+  // if the input is divided by slashes (i.e. /example.com/10.1.2.3),
+  // we check if the first item between the slashes is a valid hostname
+  // or hostname list (divided by slashes)
+  if (match[1] && match[1] != '//' && match[1] != '/#/') {
+    const addressList = match[1]
+
+    const addressListMatch = addressList.match(/^\/(.+)\/$/)
+    const names = addressListMatch ? match[1].split(/\//) : [addressList]
+
+    for (let i = 0; i < names.length; i++) {
+      if (!names[i]) {
+        // skip empty strings caused by the split operation
+        continue
+      }
+
+      const res = validateHostname(names[i])
+
+      if (!res.valid) {
+        return invalidResult
+      }
+    }
+  }
+
+  if (match[2] == '' || match[2] == '#') {
+    return validResult
+  }
+
+  // ipaddr%scopeid#srvport@source@interface#srcport
+  const ipAddrMatch = match[2].match(
+    /^([0-9a-f:.]+)(?:%[^#@]+)?(?:#(\d+))?(?:@([0-9a-f:.]+)(?:@[^#]+)?(?:#(\d+))?)?$/
+  )
+
+  if (!ipAddrMatch) {
+    return invalidResult
+  }
+
+  // validate ip addresses and port formats
+  if (validateIp4Address(ipAddrMatch[1]).valid) {
+    if (ipAddrMatch[3] && !validateIp4Address(ipAddrMatch[3]).valid) {
+      return invalidResult
+    }
+  } else if (validateIp6Address(ipAddrMatch[1]).valid) {
+    if (ipAddrMatch[3] && !validateIp6Address(ipAddrMatch[3]).valid) {
+      return invalidResult
+    }
+  } else {
+    return invalidResult
+  }
+
+  if (
+    (ipAddrMatch[2] && !validatePort(ipAddrMatch[2]).valid) ||
+    (ipAddrMatch[4] && !validatePort(ipAddrMatch[4]).valid)
+  ) {
+    return invalidResult
+  }
+
+  return validResult
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

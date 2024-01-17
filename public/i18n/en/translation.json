@@ -117,6 +117,7 @@
     "password_number_required": "Password must contain at least one number",
     "password_special_character_required": "Password must contain at least one special character",
     "invalid_equal": "Passwords don't match",
+    "invalid_dns_forwarding": "Enter a valid IP address or DNS forwarding item",
     "user_not_found": "User not found",
     "cannot_retrieve_dns_configuration": "Cannot retrieve DNS configuration",
     "cannot_update_dns_configuration": "Cannot update DNS configuration",
@@ -747,7 +748,7 @@
         "dns_records": "DNS records"
       },
       "dns_forwarding_servers": "DNS forwarding servers",
-      "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers.",
+      "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers. Enter the IP address of the remote DNS server. Use '/{'<'}domain{'>'}/{'<'}server{'>'}' syntax to route only requests for a specific domain to the given server. Use the '/{'<'}server{'>'}#{'<'}port{'>'}` syntax if the upstream server does not listen on a standard port.",
       "add_dns_server": "Add DNS server",
       "dns_domain": "DNS domain",
       "dns_domain_tooltip": "Insert the the local DNS domain, ensuring that queries for this domain are always resolved locally.",

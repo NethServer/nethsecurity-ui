@@ -1254,6 +1254,33 @@
       "upload_speed": "Velocità Upload",
       "status": "Stato",
       "choose_interface": "Scegli interfaccia"
+    },
+    "firewall_rules": {
+      "short_title": "Regole",
+      "action": "Azione",
+      "ports": "Porte",
+      "source": "Sorgente",
+      "destination": "Destinazione",
+      "name": "Nome",
+      "rule_name": "Nome regola",
+      "service": "Servizio",
+      "edit_rule": "Modifica regola",
+      "add_rule": "Aggiungi regola",
+      "save_rule": "Salva la regola",
+      "choose_action": "Scegli l'azione.",
+      "drop": "Rilascia",
+      "accept": "Accetta",
+      "reject": "Rifiuta",
+      "protocols": "Protocolli",
+      "tags": "Etichette",
+      "logging": "Logging",
+      "firewall": "Firewall",
+      "delete_rule": "Elimina regola",
+      "confirm_delete_rule": "Eliminare la regola '{name}'?",
+      "duplicate": "Duplica",
+      "clear_filter": "Resetta il filtro",
+      "no_rule_found": "Nessuna regola trovata",
+      "try_changing_search_filter": "Prova a cambiare il filtro di ricerca"
     }
   },
   "controller": {
@@ -1280,7 +1307,8 @@
     "limited_options_label": "Continuare a digitare per altre opzioni",
     "no_options_label": "Nessuna opzione disponibile",
     "selected": "Selezionato",
-    "user_input_label": "Input utente"
+    "user_input_label": "Input utente",
+    "choose": "Scegli"
   },
   "ne_dropdown": {
     "open_menu": "Apri menu"

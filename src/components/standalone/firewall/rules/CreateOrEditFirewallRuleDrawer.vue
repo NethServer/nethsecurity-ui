@@ -385,7 +385,7 @@ async function listServiceSuggestions() {
     if (props.currentRule) {
       // editing or duplicating rule
 
-      if (props.currentRule.dest_port.length) {
+      if (props.currentRule.ns_service === 'custom') {
         // custom service
         service.value = 'custom'
         // protocols are set inside listProtocols
@@ -394,6 +394,7 @@ async function listServiceSuggestions() {
         // standard service
         service.value = props.currentRule.ns_service || '*'
         ports.value = ''
+        protocols.value = []
       }
     }
   } catch (err: any) {
@@ -424,7 +425,7 @@ async function listProtocols() {
     if (props.currentRule) {
       // editing or duplicating rule
 
-      if (props.currentRule.proto.length) {
+      if (props.currentRule.proto.length && props.currentRule.ns_service === 'custom') {
         protocols.value = props.currentRule.proto.map((proto) => {
           return {
             id: proto,

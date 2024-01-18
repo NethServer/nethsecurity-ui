@@ -270,20 +270,20 @@ function hideCreateOrEditRuleDrawer() {
 }
 
 function getServiceText(rule: FirewallRule) {
-  if (rule.ns_service !== 'custom') {
-    return rule.ns_service
-  } else {
-    let portsText = ''
-    portsText = rule.dest_port.join(', ')
-
-    return t(
-      'standalone.firewall_rules.service_ports',
-      {
-        protocols: rule.proto.join('/').toUpperCase(),
-        ports: portsText
-      },
-      rule.dest_port.length
-    )
+  switch (rule.ns_service) {
+    case '':
+      return t('common.any')
+    case 'custom':
+      return t(
+        'standalone.firewall_rules.service_ports',
+        {
+          protocols: rule.proto.join('/').toUpperCase(),
+          ports: rule.dest_port.join(', ')
+        },
+        rule.dest_port.length
+      )
+    default:
+      return rule.ns_service
   }
 }
 
@@ -453,7 +453,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
     <template v-else>
       <!-- no error -->
       <!-- text filter -->
-      <div class="mb-2 flex items-center gap-4">
+      <div class="mb-5 flex items-center gap-4">
         <NeTextInput
           :placeholder="t('standalone.firewall_rules.filter_rules')"
           v-model.trim="textFilter"

@@ -270,7 +270,7 @@ function hideCreateOrEditRuleDrawer() {
 }
 
 function getServiceText(rule: FirewallRule) {
-  if (rule.ns_service) {
+  if (rule.ns_service !== 'custom') {
     return rule.ns_service
   } else {
     let portsText = ''
@@ -521,6 +521,11 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 >
                   <td :colspan="headers.length + 1"></td>
                 </tr>
+                <!-- drop target disabled beacause of filter -->
+                <tr v-else class="drop-target">
+                  <td :colspan="headers.length + 1"></td>
+                </tr>
+                <!-- rule -->
                 <tr
                   :class="{ 'opacity-30': ruleDragged == index }"
                   :draggable="!textFilter"

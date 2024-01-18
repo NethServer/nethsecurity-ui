@@ -938,7 +938,7 @@ async function saveRule() {
         />
         <!-- rule position -->
         <NeRadioSelection
-          v-if="isCreatingRule"
+          v-if="isCreatingRule || isDuplicatingRule"
           v-model="position"
           :disabled="loading.saveRule"
           :label="t('standalone.firewall_rules.rule_position')"

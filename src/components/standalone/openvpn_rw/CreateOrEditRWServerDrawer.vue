@@ -624,12 +624,13 @@ watch(
         <NeMultiTextInput
           v-model="customOptions"
           :title="t('standalone.openvpn_rw.custom_dhcp_options')"
-          :use-key-combobox="true"
+          :use-key-input="true"
+          key-input-type="combobox"
           :add-item-label="t('standalone.openvpn_rw.add_option')"
           :optional="true"
           :optional-label="t('common.optional')"
           :key-options="availableCustomOptions"
-          :combobox-placeholder="t('standalone.openvpn_rw.custom_option_combobox_placeholder')"
+          :key-input-placeholder="t('standalone.openvpn_rw.custom_option_combobox_placeholder')"
           ><template #tooltip>
             <NeTooltip>
               <template #content>

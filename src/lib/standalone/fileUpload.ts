@@ -5,6 +5,12 @@ import axios, { type AxiosProgressEvent } from 'axios'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
+export const UPLOAD_FOLDER = '/var/run/ns-api-server/uploads/'
+
+export function getUploadedFilePath(filename: string) {
+  return `${UPLOAD_FOLDER}${filename}`
+}
+
 export async function uploadFile(
   file: File,
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void

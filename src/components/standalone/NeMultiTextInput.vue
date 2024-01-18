@@ -21,7 +21,9 @@ const { t } = useI18n()
 
 const props = withDefaults(
   defineProps<{
-    useKeyCombobox?: boolean
+    useKeyInput?: boolean
+    keyInputType?: 'combobox' | 'text'
+    required?: boolean
     modelValue: string[] | KeyValueItem[]
     addItemLabel: string
     invalidMessages?: string[]
@@ -33,10 +35,10 @@ const props = withDefaults(
     disableInputs?: boolean
     disableAddButton?: boolean
     optionalLabel?: string
-    comboboxPlaceholder?: string
-    textInputPlaceholder?: string
+    keyInputPlaceholder?: string
+    placeholder?: string
   }>(),
-  { useKeyCombobox: false }
+  { useKeyInput: false, required: false }
 )
 
 const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
@@ -46,17 +48,17 @@ const items = ref<string[]>([])
 
 function refreshKeysAndItems() {
   items.value = [
-    ...(!props.useKeyCombobox
+    ...(!props.useKeyInput
       ? (props.modelValue as string[])
       : (props.modelValue as KeyValueItem[]).map((x) => x.value))
   ]
-  if (props.useKeyCombobox) {
+  if (props.useKeyInput) {
     keys.value = [...(props.modelValue as KeyValueItem[]).map((x) => x.key)]
   }
 }
 
 function emitUpdate() {
-  if (props.useKeyCombobox) {
+  if (props.useKeyInput) {
     emit(
       'update:modelValue',
       zip(keys.value, items.value).map(([k, v]) => ({ key: k, value: v }))
@@ -68,7 +70,7 @@ function emitUpdate() {
 
 function deleteItem(idx: number) {
   items.value.splice(idx, 1)
-  if (props.useKeyCombobox) {
+  if (props.useKeyInput) {
     keys.value.splice(idx, 1)
   }
   emitUpdate()
@@ -77,7 +79,7 @@ function deleteItem(idx: number) {
 
 function addItem() {
   items.value.push('')
-  if (props.useKeyCombobox) {
+  if (props.useKeyInput) {
     keys.value.push('')
   }
   emitUpdate()
@@ -112,7 +114,7 @@ onMounted(() => {
     <div
       v-if="title"
       :class="`${
-        items.length > 0 || generalInvalidMessage ? 'mb-2' : 'mb-4'
+        items.length > 0 || generalInvalidMessage ? 'mb-2' : ''
       } flex items-center justify-between`"
     >
       <div>
@@ -124,45 +126,56 @@ onMounted(() => {
       <span v-if="optional" class="ml-2 text-sm font-normal">{{ optionalLabel }}</span>
     </div>
 
-    <div class="space-y-6">
-      <div class="space-y-4">
-        <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
-          <NeCombobox
-            :options="keyOptions"
-            :model-value="keys[i]"
-            @update:model-value="(e: any) => updateModelKey(i, e)"
-            :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
-            :placeholder="comboboxPlaceholder"
-            v-if="useKeyCombobox"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
-            :selected-label="t('ne_combobox.selected')"
-            :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-          />
-          <NeTextInput
-            :value="useKeyCombobox ? items[i] : items[i]"
-            @input="updateModelValue(i, $event.target.value)"
-            class="grow"
-            :invalid-message="invalidMessages ? invalidMessages[i] : ''"
-            :disabled="disableInputs"
-            :placeholder="textInputPlaceholder"
-          />
-          <NeButton kind="tertiary" size="md" @click="deleteItem(i)">
-            <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
-          </NeButton>
-        </div>
-        <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
-          {{ generalInvalidMessage }}
-        </p>
-        <NeButton size="md" @click="addItem" :disabled="disableAddButton">
-          <template #prefix>
-            <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-          </template>
-          {{ addItemLabel }}
+    <div class="space-y-4">
+      <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
+        <NeCombobox
+          :options="keyOptions"
+          :model-value="keys[i]"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
+          :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+          :placeholder="keyInputPlaceholder"
+          v-if="useKeyInput && keyInputType === 'combobox'"
+          :noResultsLabel="t('ne_combobox.no_results')"
+          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :optionalLabel="t('common.optional')"
+        />
+        <NeTextInput
+          v-else-if="useKeyInput && keyInputType === 'text'"
+          :model-value="keys[i]"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
+          :placeholder="keyInputPlaceholder"
+          :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+        />
+        <NeTextInput
+          :value="items[i]"
+          @input="updateModelValue(i, $event.target.value)"
+          class="grow"
+          :invalid-message="invalidMessages ? invalidMessages[i] : ''"
+          :disabled="disableInputs"
+          :placeholder="placeholder"
+        />
+        <NeButton kind="tertiary" size="md" @click="deleteItem(i)" :disabled="i === 0 && required">
+          <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
         </NeButton>
       </div>
+      <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
+        {{ generalInvalidMessage }}
+      </p>
+      <NeButton
+        class="mt-4"
+        size="md"
+        @click="addItem"
+        :disabled="disableAddButton"
+        kind="secondary"
+      >
+        <template #prefix>
+          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ addItemLabel }}
+      </NeButton>
     </div>
   </div>
 </template>

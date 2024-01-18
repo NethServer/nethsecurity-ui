@@ -193,7 +193,7 @@ async function fetchOptions() {
   try {
     const certificatesData = (await ubusCall('ns.reverseproxy', 'list-certificates')).data.values
     certificateOptions.value = [
-      ...certificatesData.map((x: string) => ({
+      ...Object.keys(certificatesData).map((x: string) => ({
         id: x,
         label: x === '_lan' ? t('standalone.reverse_proxy.default_certificate') : x
       }))
@@ -319,6 +319,18 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :optionalLabel="t('common.optional')"
+        />
+        <NeInlineNotification
+          v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
+          :title="t('standalone.reverse_proxy.no_certificate_configured_title')"
+          :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
+          kind="warning"
+          :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
+          @primary-click="
+            () => {
+              $router.push('/standalone/system/certificates')
+            }
+          "
         />
       </template>
       <NeTextInput

@@ -63,6 +63,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.factory_reset.title'),
         to: 'system/factory_reset'
+      },
+      {
+        name: t('standalone.certificates.title'),
+        to: 'system/certificates'
       }
     ]
   },

@@ -289,14 +289,15 @@ watch(
         <NeMultiTextInput
           v-model="dhcpOptions"
           :title="t('standalone.dns_dhcp.dhcp_option')"
-          :use-key-combobox="true"
+          :use-key-input="true"
+          key-input-type="combobox"
           :add-item-label="t('standalone.dns_dhcp.add_dhcp_option')"
           :optional="true"
           :optional-label="t('common.optional')"
           :key-options="availableDhcpOptions"
           :invalid-messages="dhcpOptionValueErrors"
           :invalid-key-messages="dhcpOptionKeyErrors"
-          :combobox-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
+          :key-input-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
           ><template #tooltip>
             <NeTooltip>
               <template #content>

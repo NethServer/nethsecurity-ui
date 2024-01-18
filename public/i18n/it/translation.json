@@ -1284,6 +1284,28 @@
       "clear_filter": "Resetta il filtro",
       "no_rule_found": "Nessuna regola trovata",
       "try_changing_search_filter": "Prova a cambiare il filtro di ricerca"
+    },
+    "certificates": {
+      "title": "Certificati",
+      "import_certificate": "Importa certificato",
+      "name": "Nome",
+      "more_info": "Più info",
+      "domains": "Domini",
+      "set_as_default": "Imposta come predefinito",
+      "default": "Predefinito",
+      "certificate": "Certificato",
+      "private_key": "Chiave Privata",
+      "import": "Importazione",
+      "domain": "Dominio",
+      "add_domain": "Aggiungi dominio",
+      "add_option": "Add option",
+      "self_signed": "Autofirmato",
+      "custom": "Personalizzato",
+      "lets_encrypt": "Let's Encrypt",
+      "type": "Tipo",
+      "pending": "In attesa",
+      "key": "Chiave",
+      "value": "Valore"
     }
   },
   "controller": {

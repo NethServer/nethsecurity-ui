@@ -1095,7 +1095,7 @@
       "forward_rules": "Forward rules",
       "input_rules": "Input rules",
       "output_rules": "Output rules",
-      "forward_rules_description": "Establish rules for data packets moving between zones. Priority is based on rule order, with the first match taking precedence.",
+      "forward_rules_description": "Configure rules for data packets moving between zones. Priority is based on rule order, with the first match taking precedence.",
       "input_rules_description": "Configure rules for incoming traffic addressed to the firewall. Priority is based on rule order, with the first match taking precedence.",
       "output_rules_description": "Configure rules for outgoing traffic originating from the firewall. Priority is based on rule order, with the first match taking precedence.",
       "add_forward_rule": "Add forward rule",

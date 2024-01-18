@@ -9,25 +9,17 @@ import {
   NeButton,
   NeEmptyState,
   getAxiosErrorMessage,
-  NeDropdown,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
-import {
-  NeInlineNotification,
-  NeSkeleton,
-  NeTooltip,
-  NeComboboxOption
-} from '@nethesis/vue-components'
+import { NeInlineNotification, NeComboboxOption } from '@nethesis/vue-components'
 import { onMounted, ref, type PropType, watch, computed } from 'vue'
-import NeTable from '@/components/standalone/NeTable.vue'
 import CreateOrEditFirewallRuleDrawer from './CreateOrEditFirewallRuleDrawer.vue'
 import { isEmpty, uniq } from 'lodash-es'
 import { useFirewallStore, type FirewallRule, type RuleType } from '@/stores/standalone/firewall'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
-import SourceOrDestinationRuleColumn from './SourceOrDestinationRuleColumn.vue'
-import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import DeleteFirewallRuleModal from './DeleteFirewallRuleModal.vue'
+import FirewallRulesTable from './FirewallRulesTable.vue'
 
 const props = defineProps({
   rulesType: {
@@ -46,35 +38,6 @@ const isShownCreateOrEditRuleDrawer = ref(false)
 const isShownDeleteRuleModal = ref(false)
 const knownTags = ref<NeComboboxOption[]>([])
 const textFilter = ref('')
-
-const headers = [
-  {
-    key: 'vertical-grip'
-  },
-  {
-    label: t('standalone.firewall_rules.name'),
-    key: 'name'
-  },
-  {
-    label: t('standalone.firewall_rules.source'),
-    key: 'source'
-  },
-  {
-    label: t('standalone.firewall_rules.destination'),
-    key: 'destination'
-  },
-  {
-    label: t('standalone.firewall_rules.service'),
-    key: 'service'
-  },
-  {
-    label: t('standalone.firewall_rules.action'),
-    key: 'action'
-  }
-]
-
-const ruleDragged = ref<number>()
-const indexOver = ref<number>()
 
 const loading = ref({
   listRules: false,
@@ -188,26 +151,14 @@ async function listRules() {
   }
 }
 
-function drop(index: number): void {
-  indexOver.value = undefined
-  if (ruleDragged.value != undefined && ruleDragged.value != index) {
-    if (ruleDragged.value - index < 0) {
-      rules.value.splice(index - 1, 0, ...rules.value.splice(ruleDragged.value, 1))
-    } else {
-      rules.value.splice(index, 0, ...rules.value.splice(ruleDragged.value, 1))
-    }
-    orderRules()
-  }
-}
-
-async function orderRules() {
+async function orderRules(rules: FirewallRule[]) {
   loading.value.orderRules = true
   error.value.orderRules = ''
   error.value.orderRulesDetails = ''
 
   try {
     await ubusCall('ns.firewall', 'order-rules', {
-      order: rules.value.map((rule) => rule.id),
+      order: rules.map((rule) => rule.id),
       type: props.rulesType
     })
 
@@ -267,79 +218,6 @@ function showDeleteRuleModal(rule: FirewallRule) {
 
 function hideCreateOrEditRuleDrawer() {
   isShownCreateOrEditRuleDrawer.value = false
-}
-
-function getServiceText(rule: FirewallRule) {
-  if (rule.ns_service) {
-    return rule.ns_service
-  } else {
-    let portsText = ''
-    portsText = rule.dest_port.join(', ')
-
-    return t(
-      'standalone.firewall_rules.service_ports',
-      {
-        protocols: rule.proto.join('/').toUpperCase(),
-        ports: portsText
-      },
-      rule.dest_port.length
-    )
-  }
-}
-
-function getRuleKebabMenuItems(rule: FirewallRule) {
-  return [
-    {
-      id: 'enableOrDisable',
-      label: rule.enabled ? t('common.disable') : t('common.enable'),
-      iconStyle: 'fas',
-      icon: rule.enabled ? 'circle-xmark' : 'circle-check',
-      action: () => toggleRule(rule)
-    },
-    {
-      id: 'duplicate',
-      label: t('standalone.firewall_rules.duplicate'),
-      icon: 'copy',
-      iconStyle: 'fas',
-      action: () => showDuplicateRuleDrawer(rule)
-    },
-    {
-      id: 'delete',
-      label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
-      action: () => showDeleteRuleModal(rule),
-      danger: true
-    }
-  ]
-}
-
-function getRuleActionIcon(ruleTarget: string) {
-  switch (ruleTarget) {
-    case 'ACCEPT':
-      return 'arrow-right'
-    case 'DROP':
-    case 'REJECT':
-      return 'ban'
-    default:
-      return 'circle-question'
-  }
-}
-
-function getRuleActionColor(rule: FirewallRule) {
-  if (!rule.enabled) {
-    return 'text-gray-500 dark:text-gray-400'
-  }
-
-  switch (rule.target) {
-    case 'ACCEPT':
-      return 'text-green-700 dark:text-green-500'
-    case 'DROP':
-    case 'REJECT':
-      return 'text-rose-700 dark:text-rose-500'
-    default:
-      return ''
-  }
 }
 
 function searchStringInRule(rule: FirewallRule, queryText: string) {
@@ -414,6 +292,18 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
         {{ addRuleLabel }}</NeButton
       >
     </div>
+    <!-- listRules error notification -->
+    <NeInlineNotification
+      v-if="error.listRules"
+      kind="error"
+      :title="t('error.cannot_retrieve_firewall_rules')"
+      :description="error.listRules"
+      class="mb-5"
+    >
+      <template #details v-if="error.listRulesDetails">
+        {{ error.listRulesDetails }}
+      </template>
+    </NeInlineNotification>
     <!-- enableOrDisableRule error notification -->
     <NeInlineNotification
       v-if="error.enableOrDisableRule"
@@ -438,29 +328,21 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
         {{ error.orderRulesDetails }}
       </template>
     </NeInlineNotification>
-    <!-- listRules error notification -->
-    <NeInlineNotification
-      v-if="error.listRules"
-      kind="error"
-      :title="t('error.cannot_retrieve_firewall_rules')"
-      :description="error.listRules"
-      class="mb-5"
-    >
-      <template #details v-if="error.listRulesDetails">
-        {{ error.listRulesDetails }}
-      </template>
-    </NeInlineNotification>
     <template v-else>
       <!-- no error -->
       <!-- text filter -->
-      <div class="mb-2 flex items-center gap-4">
+      <div class="mb-5 flex items-center gap-4">
         <NeTextInput
           :placeholder="t('standalone.firewall_rules.filter_rules')"
           v-model.trim="textFilter"
           :disabled="loading.listRules"
           class="max-w-xs"
         />
-        <NeButton kind="tertiary" @click="textFilter = ''" :disabled="loading.listRules">
+        <NeButton
+          kind="tertiary"
+          @click="textFilter = ''"
+          :disabled="loading.listRules || !textFilter"
+        >
           {{ t('standalone.firewall_rules.clear_filter') }}
         </NeButton>
       </div>
@@ -489,173 +371,18 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
         </NeEmptyState>
       </template>
       <!-- rules -->
-      <NeTable
-        v-if="loading.listRules || !isEmpty(filteredRules)"
-        :data="filteredRules"
-        :headers="headers"
-        :style="'card'"
-      >
-        <template #tbody>
-          <tbody>
-            <template v-if="loading.listRules">
-              <tr>
-                <td :colspan="headers.length">
-                  <NeSkeleton :lines="8" size="lg" />
-                </td>
-              </tr>
-            </template>
-            <template v-else>
-              <template v-for="(rule, index) in filteredRules" :key="rule.key">
-                <!-- drop target -->
-                <tr
-                  v-if="!textFilter"
-                  :class="[
-                    indexOver == index ? 'drop-over drop-target' : '',
-                    ruleDragged != undefined ? 'drop-active' : ''
-                  ]"
-                  class="drop-target"
-                  @dragenter="indexOver = index"
-                  @dragleave="indexOver = undefined"
-                  @drop.prevent="drop(index)"
-                  @dragover.prevent
-                >
-                  <td :colspan="headers.length + 1"></td>
-                </tr>
-                <tr
-                  :class="{ 'opacity-30': ruleDragged == index }"
-                  :draggable="!textFilter"
-                  @dragend="ruleDragged = undefined"
-                  @dragstart="ruleDragged = index"
-                >
-                  <!-- vertical grip -->
-                  <td
-                    v-if="!textFilter"
-                    class="cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70"
-                  >
-                    <FontAwesomeIcon :icon="faGripVertical" />
-                  </td>
-                  <!-- cannot drag & drop rules with active text filter -->
-                  <td v-else>
-                    <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
-                      <template #trigger>
-                        <FontAwesomeIcon
-                          :icon="faGripVertical"
-                          class="cursor-not-allowed opacity-50"
-                        />
-                      </template>
-                      <template #content>
-                        {{ t('standalone.firewall_rules.clear_filter_to_sort_rules') }}
-                      </template>
-                    </NeTooltip>
-                  </td>
-                  <!-- name -->
-                  <td>
-                    <div
-                      class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
-                    >
-                      <div>
-                        <div :class="{ 'opacity-50': !rule.enabled }">
-                          {{ rule.name }}
-                        </div>
-                        <div v-if="!rule.enabled" class="mt-2 opacity-50">
-                          <font-awesome-icon
-                            :icon="['fas', 'circle-xmark']"
-                            class="mr-2 h-4 w-4"
-                            aria-hidden="true"
-                          />
-                          <span>{{ t('common.disabled') }}</span>
-                        </div>
-                      </div>
-                      <!-- show details icon -->
-                      <NeTooltip>
-                        <template #trigger>
-                          <FontAwesomeIcon
-                            :icon="['fas', 'magnifying-glass-plus']"
-                            class="text-primary-700 dark:text-primary-500"
-                          />
-                        </template>
-                        <template #content>
-                          <div>
-                            <span> {{ t('standalone.firewall_rules.tags') }}: </span>
-                            <span>{{ rule.ns_tag?.join(', ') || '-' }}</span>
-                          </div>
-                          <div>
-                            <span> {{ t('standalone.firewall_rules.logging') }}: </span>
-                            <span>{{ rule.log ? t('common.enabled') : t('common.disabled') }}</span>
-                          </div>
-                        </template>
-                      </NeTooltip>
-                    </div>
-                  </td>
-                  <!-- source -->
-                  <td>
-                    <SourceOrDestinationRuleColumn
-                      :rule="rule"
-                      columnType="source"
-                      :rulesType="rulesType"
-                      :enabled="rule.enabled"
-                    />
-                  </td>
-                  <!-- destination -->
-                  <td>
-                    <SourceOrDestinationRuleColumn
-                      :rule="rule"
-                      columnType="destination"
-                      :rulesType="rulesType"
-                      :enabled="rule.enabled"
-                    />
-                  </td>
-                  <!-- service -->
-                  <td>
-                    <span :class="{ 'opacity-50': !rule.enabled }">
-                      {{ getServiceText(rule) }}
-                    </span>
-                  </td>
-                  <!-- action -->
-                  <td>
-                    <span :class="['flex items-center gap-x-2', { 'opacity-50': !rule.enabled }]">
-                      <font-awesome-icon
-                        :icon="['fas', getRuleActionIcon(rule.target)]"
-                        :class="getRuleActionColor(rule)"
-                      />
-                      {{ t(`standalone.firewall_rules.${rule.target.toLowerCase()}`) }}
-                    </span>
-                  </td>
-                  <td>
-                    <!-- edit and kebab menu -->
-                    <div class="flex">
-                      <NeButton kind="tertiary" @click="showEditRuleDrawer(rule)">
-                        <template #prefix>
-                          <font-awesome-icon
-                            :icon="['fas', 'pen-to-square']"
-                            class="h-4 w-4"
-                            aria-hidden="true"
-                          />
-                        </template>
-                        {{ t('common.edit') }}
-                      </NeButton>
-                      <NeDropdown :items="getRuleKebabMenuItems(rule)" :alignToRight="true" />
-                    </div>
-                  </td>
-                </tr>
-              </template>
-            </template>
-            <tr
-              :class="[
-                indexOver == rules.length ? 'drop-over' : '',
-                ruleDragged != undefined ? 'drop-active' : ''
-              ]"
-              class="drop-target"
-              @dragenter="indexOver = rules.length"
-              @dragleave="indexOver = undefined"
-              @drop.prevent="drop(rules.length)"
-              @dragover.prevent
-            >
-              <td :colspan="headers.length"></td>
-            </tr>
-          </tbody>
-        </template>
-      </NeTable>
+      <FirewallRulesTable
+        :rulesType="rulesType"
+        :rules="rules"
+        :textFilter="textFilter"
+        :loadingRules="loading.listRules"
+        @reloadRules="loadData"
+        @editRule="showEditRuleDrawer"
+        @duplicateRule="showDuplicateRuleDrawer"
+        @deleteRule="showDeleteRuleModal"
+        @orderRules="orderRules"
+        @toggleRule="toggleRule"
+      />
     </template>
     <!-- create/edit rule drawer -->
     <CreateOrEditFirewallRuleDrawer
@@ -676,13 +403,3 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
     />
   </div>
 </template>
-
-<style scoped>
-tr.drop-target > td {
-  @apply bg-transparent py-1;
-}
-
-tr.drop-over > td {
-  @apply bg-primary-900 py-7;
-}
-</style>

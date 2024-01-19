@@ -290,11 +290,21 @@ watch(
             :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dns_provider'))"
             :placeholder="t('standalone.certificates.choose_or_type_dns_api')"
             ><template #tooltip>
-              <NeTooltip
-                ><template #content>{{
-                  t('standalone.certificates.dns_api_tooltip')
-                }}</template></NeTooltip
-              >
+              <NeTooltip>
+                <template #content>
+                  <i18n-t keypath="standalone.certificates.dns_api_tooltip" tag="span">
+                    <template #dnsapiurl>
+                      <a
+                        href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="text-primary-500 hover:text-primary-300 dark:text-primary-700 dark:hover:text-primary-800"
+                        >https://github.com/acmesh-official/acme.sh/wiki/dnsapi</a
+                      >
+                    </template>
+                  </i18n-t>
+                </template>
+              </NeTooltip>
             </template></NeCombobox
           >
           <NeMultiTextInput

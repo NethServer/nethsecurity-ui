@@ -608,7 +608,7 @@
       "standalone": "Standalone",
       "dns": "DNS",
       "dns_api": "DNS API",
-      "dns_api_tooltip": "Choose a DNS provider from the list detailed at https://github.com/acmesh-official/acme.sh/wiki/dnsapi. Add key-value entries as outlined in the provided link to configure access to the selected DNS provider.",
+      "dns_api_tooltip": "Choose a DNS provider from the list detailed at {dnsapiurl}. Add key-value entries as outlined in the provided link to configure access to the selected DNS provider.",
       "dns_api_options": "DNS API options",
       "add_option": "Add option",
       "add_certificate": "Add certificate",

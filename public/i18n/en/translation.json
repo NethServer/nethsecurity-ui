@@ -730,7 +730,8 @@
       "no_devices_available": "No devices available",
       "custom_zone": "Custom",
       "cannot_remove_device_configuration": "Cannot remove device configuration",
-      "hotspot_network": "Network"
+      "hotspot_network": "Network",
+      "add_ip_address": "Add IP address"
     },
     "multi_wan": {
       "title": "MultiWAN",

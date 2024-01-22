@@ -103,7 +103,6 @@ function updateModelKey(idx: number, newValue: string) {
 }
 
 function focus() {
-  console.log(inputRef.value)
   inputRef.value?.focus()
 }
 

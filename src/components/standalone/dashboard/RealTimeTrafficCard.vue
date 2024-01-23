@@ -5,7 +5,8 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, getAxiosErrorMessage, kbpsFormat } from '@nethserver/vue-tailwind-lib'
+import { NeCard } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, kbpsFormat } from '@nethserver/vue-tailwind-lib'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'

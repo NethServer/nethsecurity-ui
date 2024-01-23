@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeCard } from '@nethserver/vue-tailwind-lib'
+import { NeCard } from '@nethesis/vue-components'
+import { NeTitle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'

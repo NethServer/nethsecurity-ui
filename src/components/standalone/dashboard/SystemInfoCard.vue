@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeCard } from '@nethesis/vue-components'
 import {
-  NeCard,
   NeProgressBar,
   getAxiosErrorMessage,
   formatDurationLoc,

@@ -9,10 +9,9 @@ import { CYAN_500, CYAN_600, INDIGO_400, INDIGO_600 } from '@/lib/color'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useThemeStore } from '@/stores/theme'
-import { NeCombobox } from '@nethesis/vue-components'
+import { NeCombobox, NeCard } from '@nethesis/vue-components'
 import {
   NeSkeleton,
-  NeCard,
   getAxiosErrorMessage,
   getPreference,
   savePreference

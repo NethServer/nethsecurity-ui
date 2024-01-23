@@ -6,8 +6,8 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
+import { NeDropdown } from '@nethesis/vue-components'
 import {
-  NeDropdown,
   NeTitle,
   NeButton,
   NeEmptyState,

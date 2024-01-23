@@ -5,7 +5,8 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeButton, NeDropdown } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown } from '@nethesis/vue-components'
+import { NeButton } from '@nethserver/vue-tailwind-lib'
 import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 
 const { t } = useI18n()

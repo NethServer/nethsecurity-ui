@@ -302,7 +302,7 @@
   },
   "standalone": {
     "shell": {
-      "account": "Account",
+      "account_settings": "Account settings",
       "sign_out": "Sign out",
       "open_sidebar": "Open sidebar",
       "close_sidebar": "Close sidebar",
@@ -1538,10 +1538,11 @@
       }
     },
     "account_management": {
-      "title": "Account management for '{name}'",
+      "title": "Account settings for '{name}'",
       "change_password": "Change password",
       "change_password_description": "Note: if you change the password for 'root' user, you will change the password for shell access too.",
-      "language": "Language"
+      "language": "Language",
+      "ui_language": "User interface language"
     },
     "change_password": {
       "password_rules": "Must be 8 characters or longer, contain at least one lowercase letter, one uppercase letter, a number and a symbol",

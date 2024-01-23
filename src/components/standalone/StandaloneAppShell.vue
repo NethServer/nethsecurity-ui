@@ -54,7 +54,7 @@ const accountMenuOptions = computed(() => {
   return [
     {
       id: 'account',
-      label: t('standalone.shell.account'),
+      label: t('standalone.shell.account_settings'),
       icon: 'circle-user',
       iconStyle: 'fas',
       action: () => router.push('/standalone/user'),

@@ -13,12 +13,19 @@ defineProps({
 <template>
   <div class="flex flex-col md:flex-row">
     <div class="sm:mr-6 md:w-5/12">
-      <slot name="title">
-        <h2 class="mb-2 text-xl font-medium">{{ title }}</h2>
-      </slot>
-      <slot name="description">
-        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">{{ description }}</p>
-      </slot>
+      <h2 v-if="title || $slots.title" class="mb-2 text-lg font-medium">
+        <slot name="title">
+          {{ title }}
+        </slot>
+      </h2>
+      <p
+        v-if="description || $slots.description"
+        class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400"
+      >
+        <slot name="description">
+          {{ description }}
+        </slot>
+      </p>
     </div>
     <div class="md:w-7/12">
       <slot></slot>

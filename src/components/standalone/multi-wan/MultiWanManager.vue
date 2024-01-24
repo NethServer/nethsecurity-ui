@@ -6,13 +6,8 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { NeBadge } from '@nethesis/vue-components'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeDropdown,
-  NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+import { NeBadge, NeDropdown } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,

@@ -25,7 +25,7 @@ import {
   validateIp4Cidr
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, NeCard, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeFormItemLabel,
   NeSideDrawer,
@@ -34,7 +34,6 @@ import {
   NeInlineNotification,
   NeRadioSelection,
   NeCheckbox,
-  NeCard,
   NeSkeleton,
   focusElement,
   getAxiosErrorMessage

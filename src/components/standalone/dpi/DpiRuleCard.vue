@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeCard, NeButton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeCard } from '@nethesis/vue-components'
+import { NeButton, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { getHumanizedAppName, getAppIcon, type DpiRule } from '@/lib/standalone/dpi'
 import { getZoneBorderColorClasses } from '@/lib/standalone/network'

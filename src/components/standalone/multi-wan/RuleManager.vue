@@ -10,10 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { useI18n } from 'vue-i18n'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { NeDropdown } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeDropdown,
   NeInlineNotification,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'

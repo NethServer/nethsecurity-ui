@@ -6,7 +6,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
-import { NeDropdown, NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown } from '@nethesis/vue-components'
+import { NeButton } from '@nethserver/vue-tailwind-lib'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 
 const { t } = useI18n()

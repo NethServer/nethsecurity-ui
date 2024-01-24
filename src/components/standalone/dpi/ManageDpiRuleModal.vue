@@ -12,14 +12,13 @@ import {
   getAppIcon
 } from '@/lib/standalone/dpi'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, NeCard, type NeComboboxOption } from '@nethesis/vue-components'
 import {
   NeModal,
   NeInlineNotification,
   NeToggle,
   NeTextInput,
   NeTooltip,
-  NeCard,
   NeButton,
   getAxiosErrorMessage,
   focusElement,

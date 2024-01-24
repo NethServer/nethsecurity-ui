@@ -6,12 +6,11 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
-
+import { NeDropdown } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
   NeSkeleton,
-  NeDropdown,
   NeTitle,
   NeModal,
   NeEmptyState,

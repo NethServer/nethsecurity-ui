@@ -124,9 +124,16 @@ function configureAxios() {
       } else {
         // show error notification only if error is not caused from cancellation
         // and if it isn't a validation error
+        // and if it isn't caused by one of the update endpoints because of the system rebooting (causing a net::ERR_CONNECTION_REFUSED)
         if (
           !(error instanceof CanceledError) &&
-          !error.response?.data?.data?.validation?.errors?.length
+          !error.response?.data?.data?.validation?.errors?.length &&
+          !(
+            error.config.url.includes('/ubus/call') &&
+            (JSON.parse(error.config.data)?.method === 'install-uploaded-image' ||
+              JSON.parse(error.config.data)?.method === 'update-system') &&
+            (!error.response || !error.response.data)
+          )
         ) {
           notificationsStore.createNotificationFromAxiosError(error)
         }

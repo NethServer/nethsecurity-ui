@@ -584,7 +584,8 @@
       "bond_balance_rr": "Round-robin",
       "no_devices_available": "Nessun dispositivo disponibile",
       "custom_zone": "Personalizzata",
-      "hotspot_network": "Rete di rete"
+      "hotspot_network": "Rete di rete",
+      "add_ip_address": "Aggiungi indirizzo IP"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -1180,7 +1181,7 @@
       "add_user": "Aggiungi utente",
       "user_password": "Password utente",
       "local_database": "Database locale",
-      "display_name": "Nome visualizzato",
+      "display_name": "Mostra nome",
       "remote_database_added_description": "{name} aggiunto con successo",
       "base_dn_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
       "no_users_found": "Nessun utente trovato",

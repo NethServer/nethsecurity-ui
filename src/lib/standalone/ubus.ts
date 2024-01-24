@@ -4,8 +4,9 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import { getStandaloneApiEndpoint } from '../config'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { MessageBag } from '../validation'
+import { MessageBag, getValidationErrorsFromAxiosError } from '../validation'
 
+//// TODO move to validation.ts and rename
 export class ValidationError extends Error {
   errorBag: MessageBag
 
@@ -37,16 +38,9 @@ export const ubusCall = async (
     )
     return res.data
   } catch (err: any) {
-    const validationErrors = err.response?.data?.data?.validation?.errors
+    const errorBag = getValidationErrorsFromAxiosError(err)
 
-    if (validationErrors?.length) {
-      // it's an error validation
-      const errorBag = new MessageBag()
-      validationErrors.forEach((validationError: any) => {
-        const errorMessages = errorBag.get(validationError.parameter) || []
-        errorMessages.push(validationError.message)
-        errorBag.set(validationError.parameter, errorMessages)
-      })
+    if (errorBag.size) {
       throw new ValidationError(err.response.data.message, errorBag)
     } else {
       // rethrow the error as-is

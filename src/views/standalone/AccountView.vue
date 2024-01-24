@@ -11,6 +11,7 @@ import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, ref, watch } from 'vue'
+import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
 
 const { t, locale } = useI18n()
 const loginStore = useLoginStore()
@@ -53,7 +54,6 @@ async function changeLocale(lang: string) {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optionalLabel="t('common.optional')"
-        class="max-w-xs"
       />
     </FormLayout>
     <!-- divider -->
@@ -63,6 +63,14 @@ async function changeLocale(lang: string) {
       :description="t('standalone.account_management.change_password_description')"
     >
       <ChangePassword />
+    </FormLayout>
+    <!-- divider -->
+    <div class="border-b border-gray-200 dark:border-gray-700"></div>
+    <FormLayout
+      :title="t('standalone.two_fa.title')"
+      :description="t('standalone.two_fa.description')"
+    >
+      <TwoFactorAuth />
     </FormLayout>
   </div>
 </template>

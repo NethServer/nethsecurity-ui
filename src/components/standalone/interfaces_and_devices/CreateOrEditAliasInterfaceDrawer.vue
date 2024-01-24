@@ -13,7 +13,6 @@ import {
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
-  NeFormItemLabel,
   NeSideDrawer,
   NeTextInput,
   NeButton,
@@ -21,9 +20,10 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
-import { isEmpty, uniq } from 'lodash-es'
+import { uniq } from 'lodash-es'
 import { ref, watch, type Ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import NeMultiTextInput from '../NeMultiTextInput.vue'
 
 const props = defineProps({
   iface: {
@@ -52,12 +52,12 @@ const uciChangesStore = useUciPendingChangesStore()
 
 let interfaceName = ref('')
 let nameRef = ref()
-let ipv4Addresses: Ref<string[]> = ref([])
-let ipv6Addresses: Ref<string[]> = ref([])
-let newIpv4Address = ref('')
-let newIpv4AddressRef = ref()
-let newIpv6Address = ref('')
-let newIpv6AddressRef = ref()
+let ipv4AddressRef = ref()
+let ipv4Addresses: Ref<string[]> = ref([''])
+let ipv6Addresses: Ref<string[]> = ref([''])
+
+const ipv4AddressesNotEmpty = computed(() => ipv4Addresses.value.some((x) => x != ''))
+const ipv6AddressesNotEmpty = computed(() => ipv6Addresses.value.some((x) => x != ''))
 
 let loading = ref({
   create: false
@@ -69,8 +69,8 @@ let error = ref({
   interfaceName: '',
   ipv4Addresses: [] as string[],
   ipv6Addresses: [] as string[],
-  newIpv4Address: '',
-  newIpv6Address: ''
+  ipv4AddressList: '',
+  ipv6AddressList: ''
 })
 
 const isCreating = computed(() => {
@@ -86,21 +86,19 @@ watch(
   () => {
     if (props.isShown) {
       clearErrors()
-      newIpv4Address.value = ''
-      newIpv6Address.value = ''
 
       if (isCreating.value) {
         // creating alias
         interfaceName.value = 'al_' + props.iface['.name']
-        ipv4Addresses.value = []
-        ipv6Addresses.value = []
+        ipv4Addresses.value = ['']
+        ipv6Addresses.value = ['']
         focusElement(nameRef)
       } else {
         // editing alias
         interfaceName.value = props.aliasToEdit['.name']
-        ipv4Addresses.value = props.aliasToEdit.ipaddr || []
-        ipv6Addresses.value = props.aliasToEdit.ip6addr || []
-        focusElement(newIpv4AddressRef)
+        ipv4Addresses.value = props.aliasToEdit.ipaddr || ['']
+        ipv6Addresses.value = props.aliasToEdit.ip6addr || ['']
+        focusElement(ipv4AddressRef)
       }
     }
   }
@@ -108,100 +106,6 @@ watch(
 
 function closeDrawer() {
   emit('close')
-}
-
-function deleteIpv4Address(ipv4Address: string) {
-  // reset errors to prevent validation errors mismatch
-  error.value.ipv4Addresses = []
-  error.value.newIpv4Address = ''
-  error.value.newIpv6Address = ''
-
-  ipv4Addresses.value = ipv4Addresses.value.filter((elem) => elem !== ipv4Address)
-}
-
-function validateNewIpv4Address(ipv4Address: string) {
-  error.value.newIpv4Address = ''
-  let isValidationOk = true
-
-  // check required
-  let { valid, errMessage } = validateRequired(ipv4Address)
-
-  if (!valid) {
-    error.value.newIpv4Address = t(errMessage as string)
-    isValidationOk = false
-  } else {
-    {
-      // check sintax
-      let { valid, errMessage } = validateIp4Cidr(ipv4Address)
-      if (!valid) {
-        error.value.newIpv4Address = t(errMessage as string)
-        isValidationOk = false
-      }
-    }
-  }
-  return isValidationOk
-}
-
-function validateNewIpv6Address(ipv6Address: string) {
-  error.value.newIpv6Address = ''
-  let isValidationOk = true
-
-  // check required
-  let { valid, errMessage } = validateRequired(ipv6Address)
-
-  if (!valid) {
-    error.value.newIpv6Address = t(errMessage as string)
-    isValidationOk = false
-  } else {
-    {
-      // check sintax
-      let { valid, errMessage } = validateIp6Cidr(ipv6Address)
-      if (!valid) {
-        error.value.newIpv6Address = t(errMessage as string)
-        isValidationOk = false
-      }
-    }
-  }
-  return isValidationOk
-}
-
-function validateAndAddIpv4Address() {
-  const isValidationOk = validateNewIpv4Address(newIpv4Address.value)
-
-  if (!isValidationOk) {
-    return false
-  }
-
-  if (newIpv4Address.value) {
-    ipv4Addresses.value.push(newIpv4Address.value)
-    newIpv4Address.value = ''
-    focusElement(newIpv4AddressRef)
-  }
-  return true
-}
-
-function validateAndAddIpv6Address() {
-  const isValidationOk = validateNewIpv6Address(newIpv6Address.value)
-
-  if (!isValidationOk) {
-    return false
-  }
-
-  if (newIpv6Address.value) {
-    ipv6Addresses.value.push(newIpv6Address.value)
-    newIpv6Address.value = ''
-    focusElement(newIpv6AddressRef)
-  }
-  return true
-}
-
-function deleteIpv6Address(ipv6Address: string) {
-  // reset errors to prevent validation errors mismatch
-  error.value.ipv6Addresses = []
-  error.value.newIpv4Address = ''
-  error.value.newIpv6Address = ''
-
-  ipv6Addresses.value = ipv6Addresses.value.filter((elem) => elem !== ipv6Address)
 }
 
 // move to local library util?
@@ -221,26 +125,6 @@ function validate() {
   clearErrors()
 
   let isValidationOk = true
-
-  // add new IP address to list if user has not clicked plus button
-  if (newIpv4Address.value) {
-    let valid = validateAndAddIpv4Address()
-    if (!valid) {
-      isValidationOk = false
-    }
-  }
-
-  // add new IP address to list if user has not clicked plus button
-  if (newIpv6Address.value) {
-    let valid = validateAndAddIpv6Address()
-    if (!valid) {
-      isValidationOk = false
-    }
-  }
-
-  // remove duplicates
-  ipv4Addresses.value = uniq(ipv4Addresses.value)
-  ipv6Addresses.value = uniq(ipv6Addresses.value)
 
   // name
 
@@ -287,14 +171,14 @@ function validate() {
 
   if (ipv6Enabled.value) {
     // at least an ipv4 or a ipv6 address is needed
-    if (isEmpty(ipv4Addresses.value) && isEmpty(ipv6Addresses.value)) {
+    if (!ipv4AddressesNotEmpty.value && !ipv6AddressesNotEmpty.value) {
       isValidationOk = false
 
-      if (!error.value.newIpv4Address && !error.value.newIpv6Address) {
-        error.value.newIpv4Address = t(
+      if (!error.value.ipv4AddressList && !error.value.ipv6AddressList) {
+        error.value.ipv4AddressList = t(
           'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
         )
-        error.value.newIpv6Address = t(
+        error.value.ipv6AddressList = t(
           'standalone.interfaces_and_devices.enter_one_ipv4_or_ipv6_address'
         )
       }
@@ -302,35 +186,39 @@ function validate() {
   } else {
     // ipv6 disabled: at least an ipv4 is required
 
-    if (isEmpty(ipv4Addresses.value)) {
-      error.value.newIpv4Address = t('standalone.interfaces_and_devices.enter_ipv4_address')
+    if (!ipv4AddressesNotEmpty.value) {
+      error.value.ipv4AddressList = t('standalone.interfaces_and_devices.enter_ipv4_address')
 
       if (isValidationOk) {
         isValidationOk = false
-        focusElement(newIpv4AddressRef)
+        focusElement(ipv4AddressRef)
       }
     }
   }
 
   // ipv4 addresses
 
-  for (let index = 0; index < ipv4Addresses.value.length; index++) {
-    const ipv4Address = ipv4Addresses.value[index]
+  // if ipv6 is enabled and ipv4 fields are empty whereas the ipv6 ones are filled,
+  // these validators aren't applied
+  if (!ipv6Enabled.value || ipv4AddressesNotEmpty.value || !ipv6AddressesNotEmpty.value) {
+    for (let index = 0; index < ipv4Addresses.value.length; index++) {
+      const ipv4Address = ipv4Addresses.value[index]
 
-    {
-      // check required
-      let { valid, errMessage } = validateRequired(ipv4Address)
+      {
+        // check required
+        let { valid, errMessage } = validateRequired(ipv4Address)
 
-      if (!valid) {
-        error.value.ipv4Addresses[index] = t(errMessage as string)
-        isValidationOk = false
-      } else {
-        {
-          // check sintax
-          let { valid, errMessage } = validateIp4Cidr(ipv4Address)
-          if (!valid) {
-            error.value.ipv4Addresses[index] = t(errMessage as string)
-            isValidationOk = false
+        if (!valid) {
+          error.value.ipv4Addresses[index] = t(errMessage as string)
+          isValidationOk = false
+        } else {
+          {
+            // check sintax
+            let { valid, errMessage } = validateIp4Cidr(ipv4Address)
+            if (!valid) {
+              error.value.ipv4Addresses[index] = t(errMessage as string)
+              isValidationOk = false
+            }
           }
         }
       }
@@ -339,7 +227,8 @@ function validate() {
 
   // ipv6 addresses
 
-  if (ipv6Enabled.value) {
+  // if ipv6 fields are empty whereas the ipv4 ones are filled, these validators aren't applied
+  if (ipv6Enabled.value && (ipv6AddressesNotEmpty.value || !ipv4AddressesNotEmpty.value)) {
     for (let index = 0; index < ipv6Addresses.value.length; index++) {
       const ipv6Address = ipv6Addresses.value[index]
 
@@ -380,8 +269,8 @@ async function saveAliasInterface() {
     await ubusCall('ns.devices', action, {
       alias_iface_name: interfaceName.value,
       parent_iface_name: props.iface['.name'],
-      ip4_addresses: ipv4Addresses.value,
-      ip6_addresses: ipv6Addresses.value
+      ip4_addresses: uniq(ipv4Addresses.value).filter((x) => x != ''),
+      ip6_addresses: uniq(ipv6Addresses.value).filter((x) => x != '')
     })
     emit('reloadData')
     closeDrawer()
@@ -421,107 +310,25 @@ async function saveAliasInterface() {
           ref="nameRef"
         />
         <!-- ip v4 address list -->
-        <div>
-          <NeFormItemLabel>{{
-            t('standalone.interfaces_and_devices.ipv4_address_cidr')
-          }}</NeFormItemLabel>
-          <div class="space-y-4">
-            <TransitionGroup name="fade">
-              <div
-                v-for="(ipv4Address, i) in ipv4Addresses"
-                :key="i"
-                class="flex items-start gap-2"
-              >
-                <NeTextInput
-                  v-model.trim="ipv4Addresses[i]"
-                  :invalid-message="error.ipv4Addresses[i]"
-                  class="grow"
-                />
-                <NeButton
-                  kind="tertiary"
-                  size="lg"
-                  @click.prevent="deleteIpv4Address(ipv4Address)"
-                  :disabled="loading.create"
-                  class="py-2.5"
-                >
-                  <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />
-                </NeButton>
-              </div>
-            </TransitionGroup>
-            <!-- add ipv4 address -->
-            <div class="flex items-start gap-2">
-              <NeTextInput
-                v-model.trim="newIpv4Address"
-                :invalid-message="error.newIpv4Address"
-                :placeholder="t('standalone.interfaces_and_devices.add_ipv4_address')"
-                :disabled="loading.create"
-                @keyup.enter="validateAndAddIpv4Address()"
-                class="grow"
-                ref="newIpv4AddressRef"
-              />
-              <NeButton
-                kind="tertiary"
-                size="lg"
-                @click.prevent="validateAndAddIpv4Address()"
-                :disabled="loading.create"
-                class="py-2.5"
-              >
-                <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-              </NeButton>
-            </div>
-          </div>
-        </div>
+        <NeMultiTextInput
+          :title="t('standalone.interfaces_and_devices.ipv4_address_cidr')"
+          :add-item-label="t('standalone.interfaces_and_devices.add_ip_address')"
+          v-model="ipv4Addresses"
+          :invalid-messages="error.ipv4Addresses"
+          :general-invalid-message="error.ipv4AddressList"
+          ref="ipv4AddressRef"
+          :required="true"
+        />
         <!-- ip v6 address list (only if ipv6 is enabled) -->
-        <div v-if="ipv6Enabled">
-          <NeFormItemLabel>{{
-            t('standalone.interfaces_and_devices.ipv6_address_cidr')
-          }}</NeFormItemLabel>
-          <div class="space-y-4">
-            <TransitionGroup name="fade">
-              <div
-                v-for="(ipv6Address, i) in ipv6Addresses"
-                :key="i"
-                class="flex items-start gap-2"
-              >
-                <NeTextInput
-                  v-model.trim="ipv6Addresses[i]"
-                  :invalid-message="error.ipv6Addresses[i]"
-                  class="grow"
-                />
-                <NeButton
-                  kind="tertiary"
-                  size="lg"
-                  @click.prevent="deleteIpv6Address(ipv6Address)"
-                  :disabled="loading.create"
-                  class="py-2.5"
-                >
-                  <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />
-                </NeButton>
-              </div>
-            </TransitionGroup>
-            <!-- add ipv6 address -->
-            <div class="flex items-start gap-2">
-              <NeTextInput
-                v-model.trim="newIpv6Address"
-                :invalid-message="error.newIpv6Address"
-                :placeholder="t('standalone.interfaces_and_devices.add_ipv6_address')"
-                :disabled="loading.create"
-                @keyup.enter="validateAndAddIpv6Address()"
-                class="grow"
-                ref="newIpv6AddressRef"
-              />
-              <NeButton
-                kind="tertiary"
-                size="lg"
-                @click.prevent="validateAndAddIpv6Address()"
-                :disabled="loading.create"
-                class="py-2.5"
-              >
-                <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
-              </NeButton>
-            </div>
-          </div>
-        </div>
+        <NeMultiTextInput
+          v-if="ipv6Enabled"
+          :title="t('standalone.interfaces_and_devices.ipv6_address_cidr')"
+          :add-item-label="t('standalone.interfaces_and_devices.add_ip_address')"
+          v-model="ipv6Addresses"
+          :invalid-messages="error.ipv6Addresses"
+          :general-invalid-message="error.ipv6AddressList"
+          :required="true"
+        />
         <NeInlineNotification
           v-if="error.notificationTitle"
           kind="error"

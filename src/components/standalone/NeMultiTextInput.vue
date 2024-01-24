@@ -41,10 +41,16 @@ const props = withDefaults(
   { useKeyInput: false, required: false }
 )
 
+defineExpose({
+  focus
+})
+
 const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
 
 const keys = ref<string[]>([])
 const items = ref<string[]>([])
+
+const inputRef = ref()
 
 function refreshKeysAndItems() {
   items.value = [
@@ -94,6 +100,10 @@ function updateModelValue(idx: number, newValue: string) {
 function updateModelKey(idx: number, newValue: string) {
   keys.value[idx] = newValue
   emitUpdate()
+}
+
+function focus() {
+  inputRef.value?.focus()
 }
 
 watch(
@@ -156,6 +166,13 @@ onMounted(() => {
           :invalid-message="invalidMessages ? invalidMessages[i] : ''"
           :disabled="disableInputs"
           :placeholder="placeholder"
+          :ref="
+            (r) => {
+              if (i == 0) {
+                inputRef = r
+              }
+            }
+          "
         />
         <NeButton kind="tertiary" size="md" @click="deleteItem(i)" :disabled="i === 0 && required">
           <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />

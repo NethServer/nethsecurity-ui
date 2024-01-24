@@ -72,10 +72,10 @@ async function updatePackages() {
     kind="info"
     :title="t('standalone.update.bug_security_fixes_to_update')"
     :primary-label="t('standalone.update.update')"
-    :primary-button-disabled="isUpdatingPackages"
-    :primary-button-loading="isUpdatingPackages"
+    :primary-button-disabled="isSubmittingUpdateRequest || isUpdatingPackages"
+    :primary-button-loading="isSubmittingUpdateRequest || isUpdatingPackages"
     :cancel-label="!isUpdatingPackages ? t('common.cancel') : ''"
-    @close="!isUpdatingPackages ? close() : undefined"
+    @close="!isUpdatingPackages && !isSubmittingUpdateRequest ? close() : undefined"
     @primary-click="updatePackages"
   >
     <div class="max-h-96 overflow-y-scroll">

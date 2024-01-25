@@ -72,38 +72,40 @@ async function updatePackages() {
     kind="info"
     :title="t('standalone.update.bug_security_fixes_to_update')"
     :primary-label="t('standalone.update.update')"
-    :primary-button-disabled="isUpdatingPackages"
-    :primary-button-loading="isUpdatingPackages"
+    :primary-button-disabled="isSubmittingUpdateRequest || isUpdatingPackages"
+    :primary-button-loading="isSubmittingUpdateRequest || isUpdatingPackages"
     :cancel-label="!isUpdatingPackages ? t('common.cancel') : ''"
-    @close="!isUpdatingPackages ? close() : undefined"
+    @close="!isUpdatingPackages && !isSubmittingUpdateRequest ? close() : undefined"
     @primary-click="updatePackages"
   >
-    <template v-if="!isUpdatingPackages"
-      ><p v-for="item in packageUpdates" :key="item.package">
-        {{ item.package }}
-        <span class="text-gray-500 dark:text-gray-400">{{
-          t('standalone.update.component_update_details', {
-            versionFrom: item.currentVersion,
-            versionTo: item.lastVersion
-          })
-        }}</span>
-      </p>
-      <NeInlineNotification
-        v-if="error.notificationDescription"
-        :title="t('error.cannot_update_packages')"
-        :description="error.notificationDescription"
-        class="my-6"
-        kind="error"
-        ><template #details v-if="error.notificationDetails">
-          {{ error.notificationDetails }}
-        </template></NeInlineNotification
-      ></template
-    >
-    <template v-else>
-      <p>
-        {{ t('standalone.update.update_in_progress_message') }}
-      </p>
-      <NeProgressBar class="mt-4" :progress="currentProgress" />
-    </template>
+    <div class="max-h-96 overflow-y-auto">
+      <template v-if="!isUpdatingPackages"
+        ><p v-for="item in packageUpdates" :key="item.package">
+          {{ item.package }}
+          <span class="text-gray-500 dark:text-gray-400">{{
+            t('standalone.update.component_update_details', {
+              versionFrom: item.currentVersion,
+              versionTo: item.latestVersion
+            })
+          }}</span>
+        </p>
+        <NeInlineNotification
+          v-if="error.notificationDescription"
+          :title="t('error.cannot_update_packages')"
+          :description="error.notificationDescription"
+          class="my-6"
+          kind="error"
+          ><template #details v-if="error.notificationDetails">
+            {{ error.notificationDetails }}
+          </template></NeInlineNotification
+        ></template
+      >
+      <template v-else>
+        <p>
+          {{ t('standalone.update.update_in_progress_message') }}
+        </p>
+        <NeProgressBar class="mt-4" :progress="currentProgress" />
+      </template>
+    </div>
   </NeModal>
 </template>

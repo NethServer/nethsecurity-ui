@@ -22,7 +22,7 @@ import { getProductName } from '@/lib/config'
 export type PackageUpdate = {
   package: string
   currentVersion: string
-  lastVersion: string
+  latestVersion: string
 }
 
 export type SystemUpdate = {

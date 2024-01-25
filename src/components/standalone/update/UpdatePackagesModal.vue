@@ -78,7 +78,7 @@ async function updatePackages() {
     @close="!isUpdatingPackages && !isSubmittingUpdateRequest ? close() : undefined"
     @primary-click="updatePackages"
   >
-    <div class="max-h-96 overflow-y-scroll">
+    <div class="max-h-96 overflow-y-auto">
       <template v-if="!isUpdatingPackages"
         ><p v-for="item in packageUpdates" :key="item.package">
           {{ item.package }}

@@ -22,14 +22,7 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
   }
 
   const commitChanges = async () => {
-    const configsToCommit = Object.keys(changes.value)
-    const commitPromises = []
-
-    for (const config of configsToCommit) {
-      commitPromises.push(ubusCall('uci', 'commit', { config: config }))
-    }
-    await Promise.all(commitPromises)
-
+    await ubusCall('ns.commit', 'commit', { changes: changes.value })
     // reload page
     location.reload()
   }

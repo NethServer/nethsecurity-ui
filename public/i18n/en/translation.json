@@ -1296,7 +1296,7 @@
       "add_vpn_account": "Add VPN account",
       "password_not_configured": "Password not configured",
       "edit_user_database": "Edit user database",
-      "no_users_found": "No users found",
+      "no_users_found": "No accounts found",
       "all_connections": "All connections",
       "any_expiration": "Any expiration",
       "expired": "Expired",

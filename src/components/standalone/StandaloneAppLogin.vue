@@ -40,6 +40,7 @@ const loading = ref({
 let error = ref({
   username: '',
   password: '',
+  otp: '',
   login: '',
   verifyOtp: '',
   verifyOtpDetails: ''
@@ -116,7 +117,9 @@ async function login() {
 }
 
 function validate() {
-  clearErrors()
+  error.value.username = ''
+  error.value.password = ''
+  error.value.login = ''
   errorBag.value.clear()
   let isValidationOk = true
 
@@ -153,7 +156,9 @@ function validate() {
 }
 
 function validateOtp() {
-  clearErrors()
+  error.value.otp = ''
+  error.value.verifyOtp = ''
+  error.value.verifyOtpDetails = ''
   errorBag.value.clear()
   let isValidationOk = true
 
@@ -188,18 +193,6 @@ async function verifyOtp() {
     }
   } finally {
     loading.value.verifyOtp = false
-  }
-}
-
-function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
   }
 }
 </script>

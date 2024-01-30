@@ -7,6 +7,7 @@
 import { ref, toRefs, watch } from 'vue'
 import {
   MessageBag,
+  validateHost,
   validateIp4Cidr,
   validateIpAddress,
   validateIpAddressOrFQDN,
@@ -439,7 +440,7 @@ function validate() {
     // remote hosts validation
     let validRemoteHosts = true
     for (let [index, remoteHost] of remoteHosts.value.entries()) {
-      let validators = [validateRequired(remoteHost), validateIpAddress(remoteHost)]
+      let validators = [validateRequired(remoteHost), validateHost(remoteHost)]
       for (let validator of validators) {
         if (!validator.valid) {
           remoteHostsValidationErrors.value[index] = t(validator.errMessage as string)

@@ -136,7 +136,7 @@ function validate() {
   let validDomains = true
   for (let [index, domain] of domains.value.entries()) {
     if (domain) {
-      let validator = validateFQDN(domain, true)
+      let validator = validateFQDN(domain, validationMethod.value === 'dns')
       if (!validator.valid) {
         domainValidationErrors.value[index] = t(validator.errMessage as string)
         validDomains = false

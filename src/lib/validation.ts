@@ -534,8 +534,10 @@ export const validatePath = (value: string): validationOutput => {
   return { valid: true }
 }
 
-export const validateFQDN = (value: string): validationOutput => {
-  const re = /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
+export const validateFQDN = (value: string, acceptWildcard: boolean): validationOutput => {
+  const re = acceptWildcard
+    ? /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-*]{1,63}(?<!-)\.)+[a-zA-Z*]{1,63}$)/
+    : /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
 
   if (!value.match(re)) {
     return { valid: false, errMessage: 'error.invalid_fqdn' }
@@ -545,7 +547,7 @@ export const validateFQDN = (value: string): validationOutput => {
 
 export const validateIpAddressOrFQDN = (value: string) => {
   const ipValidator = validateIpAddress(value)
-  const fqdnValidator = validateFQDN(value)
+  const fqdnValidator = validateFQDN(value, false)
 
   if (!ipValidator.valid && !fqdnValidator.valid) {
     return { valid: false, errMessage: 'error.invalid_ip_address_or_fqdn' }

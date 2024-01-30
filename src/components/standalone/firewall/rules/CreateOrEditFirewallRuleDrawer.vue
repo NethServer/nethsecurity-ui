@@ -600,7 +600,7 @@ function validate() {
           focusElement(portsRef)
         }
       } else {
-        // check ports sintax
+        // check ports syntax
         portsValidation = validatePortListOrRange(ports.value)
         if (!portsValidation.valid) {
           errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])

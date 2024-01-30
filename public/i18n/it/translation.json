@@ -995,7 +995,7 @@
       "enabled": "Abilitato",
       "local_networks": "Rete locale",
       "tunnel_name": "Nome del tunnel",
-      "import": "Importazione",
+      "import": "Importa",
       "delete_tunnel_message": "Stai per eliminare il tunnel '{name}'",
       "tabs": {
         "client_tunnel": "Tunnel cliente",
@@ -1241,7 +1241,7 @@
       "username": "Nome utente",
       "all_connections": "Tutte le raccolte",
       "expired": "Scaduto",
-      "connected": "Collegato",
+      "connected": "Connesso",
       "renew_certificate": "Nuovo certificato",
       "expiration": "Scadenza",
       "add_vpn_account": "Aggiungi un account",

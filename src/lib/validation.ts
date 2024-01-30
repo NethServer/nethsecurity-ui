@@ -536,7 +536,7 @@ export const validatePath = (value: string): validationOutput => {
 
 export const validateFQDN = (value: string, acceptWildcard: boolean): validationOutput => {
   const re = acceptWildcard
-    ? /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-*]{1,63}(?<!-)\.)+[a-zA-Z*]{1,63}$)/
+    ? /(?=^.{4,253}$)(^(\*\.)?((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
     : /(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
 
   if (!value.match(re)) {

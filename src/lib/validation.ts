@@ -555,12 +555,12 @@ export const validateIpAddressOrFQDN = (value: string) => {
 }
 
 export const validateURL = (value: string): validationOutput => {
-  const re = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi
-
-  if (!value.match(re)) {
+  try {
+    new URL(value)
+    return { valid: true }
+  } catch {
     return { valid: false, errMessage: 'error.invalid_url' }
   }
-  return { valid: true }
 }
 
 export const validateLDAPUri = (value: string): validationOutput => {

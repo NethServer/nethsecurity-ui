@@ -138,7 +138,7 @@ function validate() {
         focusElement(nameRef)
       }
     } else {
-      // check sintax
+      // check syntax
       {
         let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
         if (!valid) {
@@ -213,7 +213,7 @@ function validate() {
           isValidationOk = false
         } else {
           {
-            // check sintax
+            // check syntax
             let { valid, errMessage } = validateIp4Cidr(ipv4Address)
             if (!valid) {
               error.value.ipv4Addresses[index] = t(errMessage as string)
@@ -241,7 +241,7 @@ function validate() {
           isValidationOk = false
         } else {
           {
-            // check sintax
+            // check syntax
             let { valid, errMessage } = validateIp6Cidr(ipv6Address)
             if (!valid) {
               error.value.ipv6Addresses[index] = t(errMessage as string)

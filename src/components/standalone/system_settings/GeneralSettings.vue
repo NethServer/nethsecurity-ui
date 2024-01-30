@@ -155,7 +155,7 @@ function validate() {
       focusElement(hostnameRef)
     } else {
       {
-        // check sintax
+        // check syntax
         let { valid, errMessage } = validateHostname(hostname.value)
         if (!valid) {
           error.value.hostname = t(errMessage as string)

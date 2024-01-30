@@ -217,7 +217,7 @@ function validate() {
         isValidationOk = false
       } else {
         {
-          // check sintax
+          // check syntax
           let { valid, errMessage } = validateHost(ntpServer)
           if (!valid) {
             error.value.ntpServerCandidate[index] = t(errMessage as string)

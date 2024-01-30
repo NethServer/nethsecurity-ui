@@ -578,7 +578,7 @@ function validate() {
         focusElement(interfaceNameRef)
       }
     } else {
-      // check sintax
+      // check syntax
       {
         let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
         if (!valid) {
@@ -634,7 +634,7 @@ function validate() {
     // ipv4 address
 
     if (ipv4Address.value) {
-      // check sintax
+      // check syntax
       let { valid, errMessage } = validateIp4Cidr(ipv4Address.value)
       if (!valid) {
         error.value.ipv4Address = t(errMessage as string)
@@ -657,7 +657,7 @@ function validate() {
           focusElement(ipv4GatewayRef)
         }
       } else {
-        // check sintax
+        // check syntax
         {
           let { valid, errMessage } = validateIp4Address(ipv4Gateway.value)
           if (!valid) {
@@ -675,7 +675,7 @@ function validate() {
       // ipv6 address
 
       if (ipv6Address.value) {
-        // check sintax
+        // check syntax
         let { valid, errMessage } = validateIp6Address(ipv6Address.value)
         if (!valid) {
           error.value.ipv6Address = t(errMessage as string)
@@ -698,7 +698,7 @@ function validate() {
             focusElement(ipv6GatewayRef)
           }
         } else {
-          // check sintax
+          // check syntax
           {
             let { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
             if (!valid) {
@@ -754,7 +754,7 @@ function validate() {
             focusElement(dhcpCustomHostnameRef)
           }
         } else {
-          // check sintax
+          // check syntax
           {
             let { valid, errMessage, i18Params } = validateHostname(dhcpCustomHostname.value)
             if (!valid) {

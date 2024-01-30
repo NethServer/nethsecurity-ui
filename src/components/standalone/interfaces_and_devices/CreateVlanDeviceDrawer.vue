@@ -179,7 +179,7 @@ function validate() {
         focusElement(vlanIdRef)
       }
     } else {
-      // check sintax
+      // check syntax
       {
         let { valid, errMessage, i18Params } = validateVlanId(vlanId.value)
         if (!valid) {

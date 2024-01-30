@@ -117,7 +117,7 @@ function validate() {
     [[validateRequired(path.value), validatePath(path.value)], 'path']
   ]
   const domainValidators: [validationOutput[], string][] = [
-    [[validateRequired(domain.value), validateFQDN(domain.value)], 'domain']
+    [[validateRequired(domain.value), validateFQDN(domain.value, false)], 'domain']
   ]
   const validators: [validationOutput[], string][] = [
     [[validateRequired(destinationURL.value), validateURL(destinationURL.value)], 'destination'],

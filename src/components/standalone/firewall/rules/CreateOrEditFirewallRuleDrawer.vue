@@ -186,6 +186,12 @@ const zoneOptions = computed(() => {
   return [anyAddress, ...zones]
 })
 
+const isTcpOrUdpProtocolSelected = computed(() => {
+  return protocols.value.some((protocol) => {
+    return protocol.id === 'tcp' || protocol.id === 'udp'
+  })
+})
+
 watch(
   () => props.isShown,
   () => {
@@ -221,6 +227,8 @@ watch(
         // source/destination addresses will be set inside listHostSuggestions
         sourceZone.value = props.currentRule.src || '*'
         destinationZone.value = props.currentRule.dest || '*'
+        service.value = '*'
+        protocols.value = []
         // service, protocols and ports will be set inside listServiceSuggestions
         action.value = props.currentRule.target || 'DROP'
         position.value = 'bottom'
@@ -583,21 +591,23 @@ function validate() {
 
     // ports
 
-    let portsValidation = validateRequired(ports.value)
-    if (!portsValidation.valid) {
-      errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(portsRef)
-      }
-    } else {
-      // check ports sintax
-      portsValidation = validatePortListOrRange(ports.value)
+    if (isTcpOrUdpProtocolSelected.value) {
+      let portsValidation = validateRequired(ports.value)
       if (!portsValidation.valid) {
         errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])
         if (isValidationOk) {
           isValidationOk = false
           focusElement(portsRef)
+        }
+      } else {
+        // check ports syntax
+        portsValidation = validatePortListOrRange(ports.value)
+        if (!portsValidation.valid) {
+          errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(portsRef)
+          }
         }
       }
     }
@@ -663,8 +673,10 @@ async function saveRule() {
       return protocol.id
     })
 
-    // remove whitespace from ports
-    ruleData.dest_port = ports.value.replace(/\s/g, '').split(',')
+    if (isTcpOrUdpProtocolSelected.value) {
+      // remove whitespace from ports
+      ruleData.dest_port = ports.value.replace(/\s/g, '').split(',')
+    }
   }
   const apiMethod = isEditingRule.value ? 'edit-rule' : 'add-rule'
 
@@ -916,6 +928,7 @@ async function saveRule() {
           />
           <!-- ports -->
           <NeTextInput
+            v-if="isTcpOrUdpProtocolSelected"
             :label="t('standalone.firewall_rules.ports')"
             :placeholder="t('standalone.firewall_rules.ports_placeholder')"
             v-model.trim="ports"

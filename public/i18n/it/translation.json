@@ -184,13 +184,13 @@
     "user_already_exists": "L'utente esiste già",
     "cannot_delete_user": "Impossibile eliminare l'utente",
     "cannot_retrieve_ldap_defaults": "Impossibile recuperare i valori di default di LDAP",
-    "cannot_delete_server": "Impossibile eliminare l'utente",
-    "cannot_create_server": "Impossibile creare l'utente",
-    "cannot_retrieve_server_options": "Impossibile recuperare le opzioni del tunnel",
-    "cannot_delete_account": "non puoi cancellare l'account",
-    "cannot_edit_account": "non puoi cancellare l'account",
-    "cannot_create_account": "non puoi cancellare l'account",
-    "cannot_retrieve_qos_interfaces": "Impossibile recuperare le interfacce WAN"
+    "cannot_delete_server": "Impossibile eliminare il server",
+    "cannot_create_server": "Impossibile creare il server",
+    "cannot_retrieve_server_options": "Impossibile recuperare le opzioni del server",
+    "cannot_delete_account": "Impossibile eliminare l'account",
+    "cannot_edit_account": "Impossibile modificare l'account",
+    "cannot_create_account": "Impossibile creare l'account",
+    "cannot_retrieve_qos_interfaces": "Impossibile recuperare le interfacce QoS"
   },
   "login": {
     "sign_in": "Accedi",
@@ -584,7 +584,7 @@
       "bond_balance_rr": "Round-robin",
       "no_devices_available": "Nessun dispositivo disponibile",
       "custom_zone": "Personalizzata",
-      "hotspot_network": "Rete di rete",
+      "hotspot_network": "Rete",
       "add_ip_address": "Aggiungi indirizzo IP"
     },
     "multi_wan": {
@@ -988,7 +988,7 @@
     "openvpn_tunnel": {
       "auto": "Automatico",
       "edit_server_tunnel": "Modifica del tunnel del server",
-      "download": "Scaricare",
+      "download": "Scarica",
       "username_password_certificate": "Nome utente, password e certificato",
       "remote_p2p_ip": "IP P2P remoto",
       "extra_remote_networks": "Reti remote",

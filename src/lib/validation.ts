@@ -644,6 +644,29 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
 }
 
 /**
+ * Validate a 6-digit code
+ *
+ * * Examples of valid values:
+ * - 123456
+ * - 000000
+ * - 357924
+ *
+ * @param value string to validate
+ * @returns a validationOutput object
+ */
+export const validateSixDigitCode = (value: String): validationOutput => {
+  if (value.length !== 6) {
+    return { valid: false, errMessage: 'error.enter_six_digit_code' }
+  }
+  const re = /^\d{6}$/
+
+  if (!value.match(re)) {
+    return { valid: false, errMessage: 'error.enter_six_digit_code' }
+  }
+  return { valid: true }
+}
+
+/**
  * Extends Map class to provide a name-array for errors
  */
 export class MessageBag extends Map<string, Array<string>> {
@@ -685,6 +708,23 @@ export class MessageBag extends Map<string, Array<string>> {
     }
     return ''
   }
+}
+
+/**
+ * Returns a MessageBag object from an Axios error.
+ */
+export const getValidationErrorsFromAxiosError = (err: any): MessageBag => {
+  const errorBag = new MessageBag()
+  const validationErrors = err.response?.data?.data?.validation?.errors
+
+  if (validationErrors) {
+    validationErrors.forEach((validationError: any) => {
+      const errorMessages = errorBag.get(validationError.parameter) || []
+      errorMessages.push(validationError.message)
+      errorBag.set(validationError.parameter, errorMessages)
+    })
+  }
+  return errorBag
 }
 
 /**

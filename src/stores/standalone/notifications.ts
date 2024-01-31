@@ -43,6 +43,22 @@ export const useNotificationsStore = defineStore('notifications', () => {
     }
   }
 
+  const createNotification = (notificationData: any) => {
+    const notification: NeNotification = {
+      id: notificationData.id || uid(),
+      kind: notificationData.kind || 'info',
+      title: notificationData.title || '',
+      description: notificationData.description || '',
+      timestamp: notificationData.timestamp || new Date(),
+      payload: notificationData.payload || undefined,
+      primaryLabel: notificationData.primaryLabel || '',
+      secondaryLabel: notificationData.secondaryLabel || ''
+    }
+    notification.primaryAction = notificationData.primaryAction || undefined
+    notification.secondaryAction = notificationData.secondaryAction || undefined
+    addNotification(notification)
+  }
+
   const createNotificationFromAxiosError = (axiosError: any) => {
     const isUbusCall = axiosError.config.url.includes('/ubus/call')
     const notificationTitle = isUbusCall
@@ -142,6 +158,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     isNotificationDrawerOpen,
     addNotification,
     setNotificationShown,
+    createNotification,
     createNotificationFromAxiosError,
     setAxiosErrorModalOpen,
     setAxiosErrorNotificationToShow,

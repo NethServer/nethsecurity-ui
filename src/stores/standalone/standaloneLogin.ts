@@ -41,18 +41,20 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       password
     })
     const jwtToken = res.data.token
-    const refreshedTime = new Date().getTime()
+    tokenRefreshedTime.value = new Date().getTime()
+    return jwtToken
+  }
 
+  const loginSuccessful = (user: string, jwtToken: string) => {
     const loginInfo = {
       username: user,
       token: jwtToken,
-      tokenRefreshedTime: refreshedTime
+      tokenRefreshedTime: tokenRefreshedTime.value
     }
     saveToStorage('standaloneLoginInfo', loginInfo)
 
     username.value = user
     token.value = jwtToken
-    tokenRefreshedTime.value = refreshedTime
 
     const themeStore = useThemeStore()
     themeStore.loadTheme()
@@ -81,7 +83,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
   const refreshToken = async () => {
     if (isRefreshingToken.value) {
-      console.warn('refreshToken is already executing')
       return
     }
     isRefreshingToken.value = true
@@ -131,6 +132,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     logout,
     setUsername,
     setToken,
-    refreshToken
+    refreshToken,
+    loginSuccessful
   }
 })

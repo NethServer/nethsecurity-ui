@@ -152,8 +152,8 @@ const standaloneRoutes = [
   },
   {
     path: 'user',
-    name: 'UserManagement',
-    component: () => import('../views/standalone/UserManagement.vue')
+    name: 'Account',
+    component: () => import('../views/standalone/AccountView.vue')
   },
   {
     path: 'report',

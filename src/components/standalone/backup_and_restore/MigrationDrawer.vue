@@ -25,7 +25,7 @@ import { validateRequired } from '@/lib/validation'
 import { useTimer } from '@/composables/useTimer'
 const { t } = useI18n()
 
-defineProps({
+const props = defineProps({
   showMigrationDrawer: {
     type: Boolean,
     required: true
@@ -234,6 +234,19 @@ async function startMigration() {
     }
   }
 }
+
+watch(
+  () => props.showMigrationDrawer,
+  () => {
+    if (props.showMigrationDrawer) {
+      clearErrors()
+      formMigration.value = {
+        file: undefined,
+        devices: []
+      }
+    }
+  }
+)
 </script>
 
 <template>

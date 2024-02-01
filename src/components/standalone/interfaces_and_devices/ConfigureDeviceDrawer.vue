@@ -341,8 +341,8 @@ watch(
         ipv6Mtu.value = props.device?.mtu6 || ''
         dhcpClientId.value = props.interfaceToEdit.clientid || ''
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
-        pppoeUsername.value = props.interfaceToEdit.username
-        pppoePassword.value = props.interfaceToEdit.password
+        pppoeUsername.value = props.interfaceToEdit.username || ''
+        pppoePassword.value = props.interfaceToEdit.password || ''
 
         if (props.deviceType === 'logical') {
           if (isBridge(props.device)) {
@@ -472,11 +472,8 @@ function prepareConfigureDeviceData() {
     data.bond_primary_device = bondPrimaryDevice.value
   }
 
-  if (pppoeUsername.value) {
+  if (protocol.value === 'pppoe') {
     data.pppoe_username = pppoeUsername.value
-  }
-
-  if (pppoePassword.value) {
     data.pppoe_password = pppoePassword.value
   }
 

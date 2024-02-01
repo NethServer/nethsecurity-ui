@@ -312,12 +312,12 @@ async function verifyOtp() {
       </div>
     </div>
     <div
-      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-700 lg:flex"
+      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-800 lg:flex"
     >
       <img
         src="/login_logo.svg"
         :alt="`${getCompanyName()} logo`"
-        class="w-2/3 xl:w-1/2 3xl:w-1/3 5xl:w-1/4"
+        class="w-2/3 xl:w-2/5 3xl:w-1/3 5xl:w-1/4"
       />
     </div>
   </div>

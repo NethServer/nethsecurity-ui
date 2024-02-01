@@ -130,14 +130,14 @@ onMounted(() => {
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton v-if="loading" :lines="15" />
+    <NeSkeleton v-if="loading" size="lg" :lines="8" />
     <template v-else-if="!fetchError">
-      <div class="flex flex-row items-center justify-between">
+      <div class="flex flex-col items-start justify-between gap-4 xl:flex-row">
         <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
           {{ t('standalone.certificates.description') }}
         </p>
-        <div class="flex flex-row">
-          <NeButton class="mr-2" kind="tertiary" @click="showImportCertificateDrawer = true"
+        <div class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
+          <NeButton kind="tertiary" @click="showImportCertificateDrawer = true"
             ><template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-arrow-up']"

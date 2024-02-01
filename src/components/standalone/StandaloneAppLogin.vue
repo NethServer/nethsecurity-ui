@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { NeLink } from '@nethesis/vue-components'
 import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
@@ -254,13 +255,13 @@ async function verifyOtp() {
                   >
                 </div>
                 <div class="text-sm leading-6">
-                  <a
+                  <NeLink
                     href="https://docs.nethsecurity.org/en/latest/remote_access.html#default-credentials"
                     target="_blank"
-                    rel="noreferrer"
-                    class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"
-                    >{{ t('login.need_help') }}</a
+                    class="font-medium"
                   >
+                    {{ t('login.need_help') }}
+                  </NeLink>
                 </div>
               </div>
               <div>

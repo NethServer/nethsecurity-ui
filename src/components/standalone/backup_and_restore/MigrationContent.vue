@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeLink } from '@nethesis/vue-components'
 import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MigrationDrawer from '@/components/standalone/backup_and_restore/MigrationDrawer.vue'
@@ -34,20 +35,15 @@ function successMigration() {
     />
     <FormLayout class="max-w-6xl">
       <template #description>
-        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
           {{ t('standalone.backup_and_restore.migration.description') }}
-          <br />
-          <br />
-          <a
-            href="https://docs.nethsecurity.org/en/latest/migration.html"
-            target="_blank"
-            rel="noreferrer"
-            class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-300"
-          >
-            <FontAwesomeIcon class="mr-2" :icon="['fa', 'arrow-up-right-from-square']" />
-            {{ t('standalone.backup_and_restore.migration.description_link') }}
-          </a>
-        </p>
+          <div class="mt-4">
+            <NeLink href="https://docs.nethsecurity.org/en/latest/migration.html" target="_blank">
+              <FontAwesomeIcon class="mr-2" :icon="['fa', 'arrow-up-right-from-square']" />
+              {{ t('standalone.backup_and_restore.migration.description_link') }}
+            </NeLink>
+          </div>
+        </div>
       </template>
       <div class="flex">
         <div class="mr-auto self-start">

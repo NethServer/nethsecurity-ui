@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
@@ -16,7 +16,6 @@ import {
   getStringFromStorage,
   saveToStorage
 } from '@nethserver/vue-tailwind-lib'
-import { useThemeStore } from '@/stores/theme'
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import {
   MessageBag,
   validateHostname,
@@ -29,10 +29,9 @@ import type { DynamicLease } from './DynamicLeases.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit: StaticLease | null
+  itemToEdit?: StaticLease
   importDynamicLease?: DynamicLease
 }>()
-const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 

@@ -14,7 +14,7 @@ const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: StaticLease | null
+  itemToDelete?: StaticLease
 }>()
 
 const emit = defineEmits(['close', 'lease-deleted'])

@@ -73,7 +73,6 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
   <CreateOrEditStaticLeaseDrawer
     :is-shown="showCreateStaticLeaseDrawer"
     :import-dynamic-lease="selectedLease"
-    :item-to-edit="null"
     @close="showCreateStaticLeaseDrawer = false"
     @add-edit-lease="
       () => {

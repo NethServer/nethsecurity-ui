@@ -5,7 +5,6 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { toRefs } from 'vue'
 import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
@@ -13,11 +12,9 @@ import type { DnsRecord } from './DnsRecords.vue'
 
 const { t } = useI18n()
 
-const props = defineProps<{
+defineProps<{
   dnsRecords: DnsRecord[]
 }>()
-
-const { dnsRecords } = toRefs(props)
 
 const emit = defineEmits(['record-delete', 'record-edit'])
 

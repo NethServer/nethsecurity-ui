@@ -14,7 +14,7 @@ const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: DnsRecord | null
+  itemToDelete?: DnsRecord
 }>()
 
 const emit = defineEmits(['close', 'record-deleted'])

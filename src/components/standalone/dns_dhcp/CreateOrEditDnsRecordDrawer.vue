@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import type { DnsRecord } from './DnsRecords.vue'
 import {
   MessageBag,
@@ -29,9 +29,8 @@ import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit: DnsRecord | null
+  itemToEdit?: DnsRecord
 }>()
-const { isShown } = toRefs(props)
 
 const { t } = useI18n()
 

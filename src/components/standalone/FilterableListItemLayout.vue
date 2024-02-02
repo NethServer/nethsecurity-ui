@@ -42,7 +42,7 @@ const items = ref<T[]>([]) as Ref<T[]>
 const filter = ref('')
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
-const selectedItem = ref<T | null>(null) as Ref<T | null>
+const selectedItem = ref<T>() as Ref<T | undefined>
 
 const filteredItems = computed<T[]>(() => {
   return filter.value === ''
@@ -62,13 +62,12 @@ async function fetchItems() {
   }
 }
 
-function openCreateEditDrawer(itemToEdit: T | null) {
+function openCreateEditDrawer(itemToEdit?: T) {
   selectedItem.value = itemToEdit
   showCreateEditDrawer.value = true
 }
 
 function closeCreateEditDrawer() {
-  selectedItem.value = null
   showCreateEditDrawer.value = false
 }
 
@@ -78,7 +77,6 @@ function openDeleteModal(itemToDelete: T) {
 }
 
 function closeDeleteModal() {
-  selectedItem.value = null
   showDeleteModal.value = false
 }
 
@@ -101,7 +99,7 @@ onMounted(() => {
       <div class="ml-2 shrink-0">
         <NeButton
           kind="secondary"
-          @click="openCreateEditDrawer(null)"
+          @click="openCreateEditDrawer()"
           v-if="!readonly && items.length > 0"
         >
           <template #prefix>
@@ -129,7 +127,7 @@ onMounted(() => {
         :title="noItemsFoundMessage"
         :icon="['fas', 'circle-info']"
         :class="[readonly ? 'pb-2' : '']"
-        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)"
+        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"

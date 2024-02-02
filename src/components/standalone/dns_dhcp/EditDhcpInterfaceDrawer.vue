@@ -98,7 +98,7 @@ async function resetForm() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      validationErrorBag.value.set(label, [validator.errMessage as string])
     }
   }
 
@@ -157,9 +157,9 @@ function validate() {
   }
 
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'rangeIpStart'],
-    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'rangeIpEnd'],
-    [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leaseTime']
+    [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'first'],
+    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'last'],
+    [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leasetime']
   ]
 
   return (
@@ -217,15 +217,6 @@ function close() {
   emit('close')
 }
 
-function rangeEndValidationError() {
-  let server_error = validationErrorBag.value.getFirstFor('last')
-  if (server_error) {
-    return t('error.' + server_error)
-  } else {
-    return validationErrorBag.value.getFirstFor('rangeIpEnd')
-  }
-}
-
 watchEffect(() => {
   resetForm()
 })
@@ -264,17 +255,17 @@ watch(
       <NeTextInput
         v-model="rangeIpStart"
         :label="t('standalone.dns_dhcp.range_ip_start')"
-        :invalid-message="validationErrorBag.getFirstFor('rangeIpStart')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('first'))"
       />
       <NeTextInput
         v-model="rangeIpEnd"
         :label="t('standalone.dns_dhcp.range_ip_end')"
-        :invalid-message="rangeEndValidationError()"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('last'))"
       />
       <NeTextInput
         v-model="leaseTime"
         :label="t('standalone.dns_dhcp.lease_time')"
-        :invalid-message="validationErrorBag.getFirstFor('leaseTime')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('leasetime'))"
         ><template #tooltip>
           <NeTooltip>
             <template #content>

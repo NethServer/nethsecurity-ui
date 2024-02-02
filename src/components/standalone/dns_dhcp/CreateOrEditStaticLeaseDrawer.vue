@@ -23,7 +23,7 @@ import {
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
 
@@ -72,7 +72,7 @@ function resetForm() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      validationErrorBag.value.set(label, [validator.errMessage as string])
     }
   }
 
@@ -84,8 +84,8 @@ function validate() {
 
   const validators: [validationOutput[], string][] = [
     [[validateRequired(hostname.value), validateHostname(hostname.value)], 'hostname'],
-    [[validateRequired(ipAddress.value), validateIpAddress(ipAddress.value)], 'ipAddress'],
-    [[validateRequired(macAddress.value), validateMacAddress(macAddress.value)], 'macAddress']
+    [[validateRequired(ipAddress.value), validateIpAddress(ipAddress.value)], 'ipaddr'],
+    [[validateRequired(macAddress.value), validateMacAddress(macAddress.value)], 'mac']
   ]
 
   return validators
@@ -126,16 +126,20 @@ async function createOrEditStaticLease() {
       close()
     }
   } catch (err: any) {
-    error.value.notificationTitle = isEditing
-      ? t('error.cannot_edit_reservation')
-      : t('error.cannot_create_reservation')
+    if (err instanceof ValidationError) {
+      validationErrorBag.value = err.errorBag
+    } else {
+      error.value.notificationTitle = isEditing
+        ? t('error.cannot_edit_reservation')
+        : t('error.cannot_create_reservation')
 
-    error.value.notificationDescription =
-      err.response.data.message == 'lease_not_found'
-        ? t('standalone.dns_dhcp.lease_not_found')
-        : t(getAxiosErrorMessage(err))
+      error.value.notificationDescription =
+        err.response.data.message == 'lease_not_found'
+          ? t('standalone.dns_dhcp.lease_not_found')
+          : t(getAxiosErrorMessage(err))
 
-    error.value.notificationDetails = err.toString()
+      error.value.notificationDetails = err.toString()
+    }
   } finally {
     isSavingChanges.value = false
   }
@@ -183,17 +187,17 @@ onMounted(() => {
       <NeTextInput
         v-model="hostname"
         :label="t('standalone.dns_dhcp.hostname')"
-        :invalid-message="validationErrorBag.getFirstFor('hostname')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('hostname'))"
       />
       <NeTextInput
         v-model="ipAddress"
         :label="t('standalone.dns_dhcp.ip_address')"
-        :invalid-message="validationErrorBag.getFirstFor('ipAddress')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ipaddr'))"
       />
       <NeTextInput
         v-model="macAddress"
         :label="t('standalone.dns_dhcp.mac_address')"
-        :invalid-message="validationErrorBag.getFirstFor('macAddress')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('mac'))"
       />
       <NeTextInput
         v-model="reservationName"

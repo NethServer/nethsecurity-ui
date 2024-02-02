@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
@@ -16,7 +16,6 @@ import {
   getStringFromStorage,
   saveToStorage
 } from '@nethserver/vue-tailwind-lib'
-import { useThemeStore } from '@/stores/theme'
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
@@ -48,15 +47,6 @@ let error = ref({
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
-const themeStore = useThemeStore()
-
-const logoFilename = computed(() => {
-  if (themeStore.isLight) {
-    return 'logo_light.svg'
-  } else {
-    return 'logo_dark.svg'
-  }
-})
 
 watch(step, () => {
   if (step.value === '2fa') {
@@ -198,18 +188,13 @@ async function verifyOtp() {
 </script>
 
 <template>
-  <div class="flex h-screen min-h-full flex-1 bg-gray-950">
+  <div class="flex h-screen min-h-full flex-1 bg-gray-200 dark:bg-gray-950">
     <div
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
-          <img
-            class="mb-6 h-8 w-auto"
-            :src="`/${logoFilename}`"
-            :alt="`${getCompanyName()} logo`"
-          />
-          <NeTitle level="h3">
+          <NeTitle level="h2">
             <template v-if="step === 'login'">
               {{ t('login.welcome_title_standalone', { product: getProductName() }) }}
             </template>
@@ -325,11 +310,13 @@ async function verifyOtp() {
         </div>
       </div>
     </div>
-    <div class="relative hidden w-0 flex-1 lg:block">
+    <div
+      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-800 lg:flex"
+    >
       <img
-        class="absolute inset-0 h-full w-full object-cover"
-        src="/login_bg.png"
-        alt="login background"
+        src="/login_logo.svg"
+        :alt="`${getCompanyName()} logo`"
+        class="w-2/3 xl:w-2/5 3xl:w-1/3 5xl:w-1/4"
       />
     </div>
   </div>

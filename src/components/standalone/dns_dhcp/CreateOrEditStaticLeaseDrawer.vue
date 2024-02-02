@@ -25,10 +25,12 @@ import {
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { StaticLease } from './StaticLeases.vue'
+import type { DynamicLease } from './DynamicLeases.vue'
 
 const props = defineProps<{
   isShown: boolean
   itemToEdit: StaticLease | null
+  importDynamicLease?: DynamicLease
 }>()
 const { isShown } = toRefs(props)
 
@@ -51,11 +53,19 @@ const macAddress = ref('')
 const reservationName = ref('')
 
 function resetForm() {
-  id.value = props.itemToEdit?.lease ?? ''
-  hostname.value = props.itemToEdit?.hostname ?? ''
-  ipAddress.value = props.itemToEdit?.ipaddr ?? ''
-  macAddress.value = props.itemToEdit?.macaddr ?? ''
-  reservationName.value = props.itemToEdit?.description ?? ''
+  if (props.importDynamicLease) {
+    id.value = ''
+    hostname.value = props.importDynamicLease.hostname
+    ipAddress.value = props.importDynamicLease.ipaddr
+    macAddress.value = props.importDynamicLease.macaddr
+    reservationName.value = ''
+  } else {
+    id.value = props.itemToEdit?.lease ?? ''
+    hostname.value = props.itemToEdit?.hostname ?? ''
+    ipAddress.value = props.itemToEdit?.ipaddr ?? ''
+    macAddress.value = props.itemToEdit?.macaddr ?? ''
+    reservationName.value = props.itemToEdit?.description ?? ''
+  }
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {

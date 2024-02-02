@@ -333,7 +333,15 @@ watch(
         protocol.value = props.interfaceToEdit.proto
         ipv4Address.value = props.interfaceToEdit.ipaddr || ''
         ipv4Gateway.value = props.interfaceToEdit.gateway || ''
-        isIpv6Enabled.value = props.device?.ipv6 === '1' || false
+
+        if (
+          props.device?.ipv6 === '1' ||
+          (props.interfaceToEdit.proto === 'pppoe' && props.device?.ipv6 === 'auto')
+        ) {
+          isIpv6Enabled.value = true
+        } else {
+          isIpv6Enabled.value = false
+        }
         ipv6Address.value = props.interfaceToEdit.ip6addr ? props.interfaceToEdit.ip6addr : ''
         ipv6Gateway.value = props.interfaceToEdit.ip6gw || ''
         isExpandedAdvancedSettings.value = false
@@ -341,8 +349,8 @@ watch(
         ipv6Mtu.value = props.device?.mtu6 || ''
         dhcpClientId.value = props.interfaceToEdit.clientid || ''
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
-        pppoeUsername.value = props.interfaceToEdit.username
-        pppoePassword.value = props.interfaceToEdit.password
+        pppoeUsername.value = props.interfaceToEdit.username || ''
+        pppoePassword.value = props.interfaceToEdit.password || ''
 
         if (props.deviceType === 'logical') {
           if (isBridge(props.device)) {
@@ -472,11 +480,8 @@ function prepareConfigureDeviceData() {
     data.bond_primary_device = bondPrimaryDevice.value
   }
 
-  if (pppoeUsername.value) {
+  if (protocol.value === 'pppoe') {
     data.pppoe_username = pppoeUsername.value
-  }
-
-  if (pppoePassword.value) {
     data.pppoe_password = pppoePassword.value
   }
 
@@ -972,6 +977,15 @@ async function listZonesForDeviceConfig() {
         </div>
         <!-- fields for pppoe protocol -->
         <div v-show="protocol === 'pppoe'" class="space-y-6">
+          <!-- enable ipv6 -->
+          <div>
+            <NeFormItemLabel>{{ t('standalone.interfaces_and_devices.ipv6') }}</NeFormItemLabel>
+            <NeCheckbox
+              v-model="isIpv6Enabled"
+              :label="t('standalone.interfaces_and_devices.enable_ipv6')"
+              :disabled="loading.configure"
+            />
+          </div>
           <!-- pppoe username -->
           <NeTextInput
             :label="t('standalone.interfaces_and_devices.pppoe_username')"

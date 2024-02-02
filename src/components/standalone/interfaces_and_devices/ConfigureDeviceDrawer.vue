@@ -35,6 +35,7 @@ import {
   NeRadioSelection,
   NeCheckbox,
   NeSkeleton,
+  NeTooltip,
   focusElement,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
@@ -625,15 +626,6 @@ function validate() {
           focusElement(ipv4AddressRef)
         }
       }
-    } else if (isEmpty(ipv6Address.value)) {
-      // ipv6 enabled but no ipv6 address
-      error.value.ipv6Address = t(
-        'standalone.interfaces_and_devices.ipv6_address_required_if_ipv6_enabled'
-      )
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(ipv6AddressRef)
-      }
     }
 
     // ipv4 address
@@ -963,7 +955,15 @@ async function listZonesForDeviceConfig() {
               :invalidMessage="t(error.ipv6Address)"
               :disabled="loading.configure"
               ref="ipv6AddressRef"
-            />
+            >
+              <template #tooltip>
+                <NeTooltip>
+                  <template #content>
+                    {{ t('standalone.interfaces_and_devices.ipv6_address_tooltip') }}
+                  </template>
+                </NeTooltip>
+              </template>
+            </NeTextInput>
             <!-- ipv6 gateway -->
             <NeTextInput
               v-if="zone === 'wan'"

@@ -43,14 +43,13 @@ const loading = ref(false)
 const loadingFile = ref(false)
 const loadingMigration = ref(false)
 const isMigrating = ref(false)
-const listDevices = ref<
-  { id: string; label: string; role: string; hwaddr: string; ipaddr: string }[]
->([])
+const listDevices = ref<{ id: string; label: string; role: string; hwaddr: string }[]>([])
 const listDevicesMigration = ref([
   {
     id: '',
     label: '',
-    selected: ''
+    selected: '',
+    ipaddr: ''
   }
 ])
 const migrationIntervalRef = ref<number | undefined>()
@@ -112,6 +111,7 @@ watch(
                 listDevicesMigration.value = res.data.devices.map((item: any) => ({
                   id: item.hwaddr,
                   selected: undefined,
+                  ipaddr: item.ipaddr,
                   label:
                     item.name +
                     (item.ipaddr ? ' - ' + item.ipaddr : '') +
@@ -148,8 +148,7 @@ async function getListDevices() {
           (item.ipaddr ? ' - ' + item.ipaddr : '') +
           (item.role ? ' - ' + item.role : ''),
         role: item.role,
-        hwaddr: item.hwaddr,
-        ipaddr: item.ipaddr
+        hwaddr: item.hwaddr
       }))
     }
   } catch (exception: any) {
@@ -362,14 +361,7 @@ watch(
       {{ t('standalone.backup_and_restore.migration.migration_in_progress') }}
       {{
         // this list contains all the ip addresses chosen by the user, without duplicates
-        [
-          ...new Set(
-            listDevicesMigration
-              .map((device) => device.selected)
-              .map((device) => listDevices.find((x) => x.id === device)?.ipaddr)
-              .filter(Boolean)
-          )
-        ].join(', ')
+        [...new Set(listDevicesMigration.map((device) => device.ipaddr).filter(Boolean))].join(', ')
       }}
       <NeProgressBar class="my-4" :progress="currentProgress" />
     </NeModal>

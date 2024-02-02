@@ -83,9 +83,12 @@ function closeEditInterfaceDrawer() {
 }
 
 function toggleExpandAllCards() {
+  let newInterfaceCardExpandedValues: Record<string, boolean> = {}
   for (let key of Object.keys(isInterfaceCardExpanded.value)) {
-    isInterfaceCardExpanded.value[key] = areAllCardsExpanded.value ? false : true
+    newInterfaceCardExpandedValues[key] = areAllCardsExpanded.value ? false : true
   }
+
+  isInterfaceCardExpanded.value = newInterfaceCardExpandedValues
 }
 
 function toggleExpandSingleCard(interfaceName: string) {

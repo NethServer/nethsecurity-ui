@@ -118,7 +118,7 @@ onMounted(() => {
         ? t(getAxiosErrorMessage(firewallConfig.error))
         : error.notificationDescription
     "
-    v-if="error || firewallConfig.error"
+    v-if="error.notificationDescription || firewallConfig.error"
   >
     <template #details v-if="error.notificationDetails || firewallConfig.error">
       {{ firewallConfig.error ? firewallConfig.error.toString() : error.notificationDetails }}

@@ -42,7 +42,8 @@ const isSavingChanges = ref(false)
 const loading = ref(true)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 const dhcpOptionValueErrors = ref<string[]>([])
@@ -82,6 +83,7 @@ async function resetForm() {
         err.response.data.message == 'interface_not_found'
           ? t('standalone.dns_dhcp.interface_not_found')
           : t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
   } else {
     iface.value = ''
@@ -117,6 +119,7 @@ async function loadDhcpOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_dhcp_options')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -171,6 +174,7 @@ function validate() {
 async function saveChanges() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
 
   try {
     isSavingChanges.value = true
@@ -196,6 +200,7 @@ async function saveChanges() {
         err.response.data.message == 'interface_not_found'
           ? t('standalone.dns_dhcp.interface_not_found')
           : t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
   } finally {
     isSavingChanges.value = false
@@ -206,6 +211,7 @@ function close() {
   validationErrorBag.value.clear()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   dhcpOptionValueErrors.value = []
   dhcpOptionKeyErrors.value = []
   emit('close')
@@ -247,7 +253,11 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton :lines="10" v-if="loading" />
     <div v-else class="flex flex-col gap-y-6">
       <NeToggle v-model="enableDhcp" :label="t('standalone.dns_dhcp.enable_dhcp')" />

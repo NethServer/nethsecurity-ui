@@ -34,7 +34,8 @@ const { t } = useI18n()
 const loading = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const items = ref<T[]>([]) as Ref<T[]>
 
@@ -57,6 +58,7 @@ async function fetchItems() {
   } catch (err: any) {
     error.value.notificationTitle = props.fetchErrorNotificationTitle
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -115,7 +117,11 @@ onMounted(() => {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       v-if="error.notificationDescription"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState

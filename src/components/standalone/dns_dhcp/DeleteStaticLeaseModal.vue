@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StaticLease } from './StaticLeases.vue'
 
@@ -19,25 +19,31 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'lease-deleted'])
 
-const { visible, itemToDelete } = toRefs(props)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const isDeleting = ref(false)
 
 async function deleteStaticLease() {
-  if (itemToDelete.value) {
+  if (props.itemToDelete) {
+    error.value = {
+      notificationDescription: '',
+      notificationDetails: ''
+    }
+    isDeleting.value = true
     try {
-      error.value = ''
-      isDeleting.value = true
       await ubusCall('ns.dhcp', 'delete-static-lease', {
-        lease: itemToDelete.value.lease
+        lease: props.itemToDelete.lease
       })
       emit('lease-deleted')
       emit('close')
     } catch (err: any) {
-      error.value =
+      error.value.notificationDescription =
         err.response.data.message == 'lease_not_found'
           ? t('standalone.dns_dhcp.lease_not_found')
           : t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     } finally {
       isDeleting.value = false
     }
@@ -45,7 +51,10 @@ async function deleteStaticLease() {
 }
 
 function close() {
-  error.value = ''
+  error.value = {
+    notificationDescription: '',
+    notificationDetails: ''
+  }
   emit('close')
 }
 </script>
@@ -67,10 +76,14 @@ function close() {
       })
     }}
     <NeInlineNotification
-      v-if="error"
+      v-if="error.notificationDescription"
       kind="error"
       :title="t('error.cannot_delete_reservation')"
-      :description="error"
-    />
+      :description="error.notificationDescription"
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
   </NeModal>
 </template>

@@ -40,7 +40,8 @@ const emit = defineEmits(['close', 'add-edit-record'])
 const isSavingChanges = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 
@@ -85,6 +86,8 @@ function validate() {
 async function createOrEditDnsRecord() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+
   const isEditing = id.value != ''
 
   try {
@@ -122,6 +125,8 @@ async function createOrEditDnsRecord() {
       err.response.data.message == 'record_not_found'
         ? t('standalone.dns_dhcp.record_not_found')
         : t(getAxiosErrorMessage(err))
+
+    error.value.notificationDetails = err.toString()
   } finally {
     isSavingChanges.value = false
   }
@@ -131,6 +136,7 @@ function close() {
   validationErrorBag.value.clear()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   resetForm()
   emit('close')
 }
@@ -157,7 +163,11 @@ onMounted(() => {
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="hostname"

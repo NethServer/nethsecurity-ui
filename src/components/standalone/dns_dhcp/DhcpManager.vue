@@ -39,7 +39,10 @@ const uciChangesStore = useUciPendingChangesStore()
 const firewallConfig = useFirewallStore()
 
 const loading = ref(true)
-const error = ref('')
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
 const selectedInterface = ref<string>('')
 const showEditInterfaceDrawer = ref(false)
 const interfaces = ref<Record<string, DhcpInterface>>({})
@@ -58,7 +61,8 @@ async function fetchDhcpInterfaces() {
     )
     loading.value = false
   } catch (err: any) {
-    error.value = t(getAxiosErrorMessage(err))
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -109,9 +113,17 @@ onMounted(() => {
         ? t('error.cannot_retrieve_zones')
         : t('error.cannot_retrieve_dhcp_interfaces')
     "
-    :description="firewallConfig.error ? t(getAxiosErrorMessage(firewallConfig.error)) : error"
+    :description="
+      firewallConfig.error
+        ? t(getAxiosErrorMessage(firewallConfig.error))
+        : error.notificationDescription
+    "
     v-if="error || firewallConfig.error"
-  />
+  >
+    <template #details v-if="error.notificationDetails || firewallConfig.error">
+      {{ firewallConfig.error ? firewallConfig.error.toString() : error.notificationDetails }}
+    </template>
+  </NeInlineNotification>
   <NeSkeleton :lines="10" v-if="loading || firewallConfig.loading" />
   <template v-else-if="!firewallConfig.error">
     <div class="mb-4 flex flex-row items-center justify-between">

@@ -220,6 +220,14 @@ export const validateIpCidr = (ipCidr: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateIpOrCidr = (value: string): validationOutput => {
+  if (!validateIpAddress(value).valid && !validateIpCidr(value).valid) {
+    return { valid: false, errMessage: 'error.invalid_ip_cidr_address' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Validate an IPv6 address
  *

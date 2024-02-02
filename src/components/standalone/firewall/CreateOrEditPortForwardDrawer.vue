@@ -33,7 +33,8 @@ import {
   validateRequired,
   validatePort,
   validateRequiredOption,
-  type validationOutput
+  type validationOutput,
+  validateIpOrCidr
 } from '@/lib/validation'
 
 const props = defineProps<{
@@ -226,7 +227,7 @@ function validate(): boolean {
   let validRestrict = true
   for (let [index, restrictValue] of restrict.value.entries()) {
     if (restrictValue) {
-      let validator = validateIpAddress(restrictValue)
+      let validator = validateIpOrCidr(restrictValue)
       if (!validator.valid) {
         restrictIPValidationErrors.value[index] = t(validator.errMessage as string)
         validRestrict = false
@@ -426,7 +427,7 @@ async function createOrEditPortForward() {
           :optionalLabel="t('common.optional')"
         />
         <NeMultiTextInput
-          :title="t('standalone.port_forward.restrict_access_to')"
+          :title="t('standalone.port_forward.restrict_access_from')"
           :optional="true"
           :optional-label="t('common.optional')"
           :add-item-label="t('standalone.port_forward.add_ip_address')"
@@ -437,7 +438,7 @@ async function createOrEditPortForward() {
           <template #tooltip>
             <NeTooltip
               ><template #content>{{
-                t('standalone.port_forward.restrict_access_to_tooltip')
+                t('standalone.port_forward.restrict_access_from_tooltip')
               }}</template></NeTooltip
             >
           </template>

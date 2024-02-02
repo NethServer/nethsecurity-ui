@@ -693,7 +693,7 @@
     },
     "port_forward": {
       "disable": "Disabilita",
-      "restrict_access_to": "Limitare l'accesso a",
+      "restrict_access_from": "Limitare l'accesso a",
       "advanced_settings": "Impostazioni avanzate",
       "edit_port_forward": "Modifica port forward",
       "protocols": "Protocolli",
@@ -724,7 +724,7 @@
       "destination_port": "Porta di destinazione",
       "add_port_forward": "Aggiungi port forward",
       "destination_zone": "Zona di destinazione",
-      "restrict_access_to_tooltip": "Di default, l'accesso al port forward è consentito a chiunque. Aggiungi indirizzi IP o CIDR per limitare l'accesso solo alle reti indicate",
+      "restrict_access_from_tooltip": "Di default, l'accesso al port forward è consentito a chiunque. Aggiungi indirizzi IP o CIDR per limitare l'accesso solo alle reti indicate",
       "disabled": "Disabilitato",
       "choose_protocol": "Scegli protocollo",
       "filter": "Filtra"

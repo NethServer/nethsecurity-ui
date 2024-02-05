@@ -535,7 +535,6 @@
       "pppoe_username": "Nome utente",
       "pppoe_password": "Password",
       "remove_configuration_explanation": "Rimuovere la configurazione di '{name}'? Il dispositivo '{device}' diventerà non assegnato",
-      "ipv6_address_required_if_ipv6_enabled": "L'indirizzo IPv6 è richiesto se IPv6 è abilitato",
       "vlan_id_helper": "Un numero intero compreso tra 1 e 4094",
       "delete_device_name": "Eliminare il dispositivo '{name}'?",
       "zone_label_guests": "GUESTS (Blue)",

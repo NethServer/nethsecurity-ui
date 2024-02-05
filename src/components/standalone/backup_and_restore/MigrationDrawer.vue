@@ -22,9 +22,10 @@ import {
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'
+import { useTimer } from '@/composables/useTimer'
 const { t } = useI18n()
 
-defineProps({
+const props = defineProps({
   showMigrationDrawer: {
     type: Boolean,
     required: true
@@ -42,17 +43,25 @@ const loading = ref(false)
 const loadingFile = ref(false)
 const loadingMigration = ref(false)
 const isMigrating = ref(false)
-const migrationProgress = ref(0)
-const listDevices = ref([])
+const listDevices = ref<{ id: string; label: string; role: string; hwaddr: string }[]>([])
 const listDevicesMigration = ref([
   {
     id: '',
     label: '',
-    selected: ''
+    selected: '',
+    ipaddr: ''
   }
 ])
 const migrationIntervalRef = ref<number | undefined>()
 const fileRef = ref()
+
+const { startTimer, currentProgress, clearTimer } = useTimer({
+  duration: MIGRATION_WAIT_TIME,
+  progressStep: 0.5,
+  onTimerFinish: () => {
+    isMigrating.value = false
+  }
+})
 
 let errorMigration = ref({
   file: '',
@@ -102,6 +111,7 @@ watch(
                 listDevicesMigration.value = res.data.devices.map((item: any) => ({
                   id: item.hwaddr,
                   selected: undefined,
+                  ipaddr: item.ipaddr,
                   label:
                     item.name +
                     (item.ipaddr ? ' - ' + item.ipaddr : '') +
@@ -178,7 +188,7 @@ function validateMigration(): boolean {
 
 function clearErrors() {
   migrationIntervalRef.value = undefined
-  migrationProgress.value = 0
+  currentProgress.value = 0
   errorMigration.value = {
     file: '',
     devices: ['']
@@ -206,11 +216,12 @@ async function startMigration() {
 
       emit('close')
       isMigrating.value = true
-      setMigrationTimer()
+      startTimer()
 
       let res = await ubusCall('ns.migration', 'migrate', payload)
       if (res?.data?.result && res?.data?.result === 'success') {
         isMigrating.value = false
+        clearTimer()
         emit('success')
       }
     } catch (exception: any) {
@@ -223,11 +234,18 @@ async function startMigration() {
   }
 }
 
-function setMigrationTimer() {
-  migrationIntervalRef.value = setInterval(() => {
-    migrationProgress.value += 0.5
-  }, MIGRATION_WAIT_TIME / 200)
-}
+watch(
+  () => props.showMigrationDrawer,
+  () => {
+    if (props.showMigrationDrawer) {
+      clearErrors()
+      formMigration.value = {
+        file: undefined,
+        devices: []
+      }
+    }
+  }
+)
 </script>
 
 <template>
@@ -339,10 +357,13 @@ function setMigrationTimer() {
       cancel-label=""
       kind="warning"
       primary-button-kind="danger"
-      @close="isMigrating = false"
     >
       {{ t('standalone.backup_and_restore.migration.migration_in_progress') }}
-      <NeProgressBar class="my-4" :progress="migrationProgress" />
+      {{
+        // this list contains all the ip addresses chosen by the user, without duplicates
+        [...new Set(listDevicesMigration.map((device) => device.ipaddr).filter(Boolean))].join(', ')
+      }}
+      <NeProgressBar class="my-4" :progress="currentProgress" />
     </NeModal>
   </div>
 </template>

@@ -125,6 +125,7 @@ function configureAxios() {
         // show error notification only if error is not caused from cancellation
         // and if it isn't a validation error
         // and if it isn't caused by one of the update endpoints because of the system rebooting
+        // and if it isn't caused by a net::ERR_CONNECTION_REFUSED when applying a migration (probably because of nginx restarting or the machine's ip addresses changing)
         if (
           !(error instanceof CanceledError) &&
           !error.response?.data?.data?.validation?.errors?.length &&
@@ -133,6 +134,12 @@ function configureAxios() {
             (JSON.parse(error.config.data)?.method === 'install-uploaded-image' ||
               JSON.parse(error.config.data)?.method === 'update-system') &&
             // if the error is caused by a system reboot, the response will not have a payload (since it's caused by a net::ERR_CONNECTION_REFUSED)
+            (!error.response || !error.response.data)
+          ) &&
+          !(
+            error.config.url.includes('/ubus/call') &&
+            (JSON.parse(error.config.data)?.path === 'ns.migration' ||
+              JSON.parse(error.config.data)?.method === 'upload') &&
             (!error.response || !error.response.data)
           )
         ) {

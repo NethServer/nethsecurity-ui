@@ -502,7 +502,7 @@
         "migrate": "Migrate",
         "remap_interfaces": "Remap interfaces",
         "remap_interfaces_description": "During interface remapping, if one or more interfaces change their IP address, you have to login again on the new IP address.",
-        "migration_in_progress": "Migrating and rebooting, please wait...",
+        "migration_in_progress": "Migrating, please wait... At the end, the machine will be reachable from the following IPs:",
         "success_migration": "Migration performed successfully",
         "to": "to"
       }

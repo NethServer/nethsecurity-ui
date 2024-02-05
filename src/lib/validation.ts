@@ -222,7 +222,7 @@ export const validateIpCidr = (ipCidr: string): validationOutput => {
 
 export const validateIpOrCidr = (value: string): validationOutput => {
   if (!validateIpAddress(value).valid && !validateIpCidr(value).valid) {
-    return { valid: false, errMessage: 'error.invalid_ip_cidr_address' }
+    return { valid: false, errMessage: 'error.invalid_ip_address_or_cidr' }
   }
 
   return { valid: true }

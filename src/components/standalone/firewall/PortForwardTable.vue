@@ -49,7 +49,7 @@ const tableHeaders = [
     key: 'wan'
   },
   {
-    label: t('standalone.port_forward.restrict_access_to'),
+    label: t('standalone.port_forward.restrict_access_from'),
     key: 'restrict'
   },
   {

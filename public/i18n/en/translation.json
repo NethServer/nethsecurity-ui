@@ -50,6 +50,7 @@
     "cannot_load_network_interfaces": "Cannot load network interfaces",
     "invalid_host": "Invalid host: must be a hostname or an IP address",
     "invalid_mac_address": "Invalid MAC address",
+    "mac_already_reserved": "MAC address has already been reserved",
     "invalid_ip_address": "Invalid IP address",
     "invalid_ip_v4_address": "Invalid IPv4 address",
     "invalid_ip_v6_address": "Invalid IPv6 address",

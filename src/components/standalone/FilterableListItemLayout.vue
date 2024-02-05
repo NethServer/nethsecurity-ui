@@ -34,14 +34,15 @@ const { t } = useI18n()
 const loading = ref(false)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const items = ref<T[]>([]) as Ref<T[]>
 
 const filter = ref('')
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
-const selectedItem = ref<T | null>(null) as Ref<T | null>
+const selectedItem = ref<T>() as Ref<T | undefined>
 
 const filteredItems = computed<T[]>(() => {
   return filter.value === ''
@@ -57,16 +58,16 @@ async function fetchItems() {
   } catch (err: any) {
     error.value.notificationTitle = props.fetchErrorNotificationTitle
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
-function openCreateEditDrawer(itemToEdit: T | null) {
+function openCreateEditDrawer(itemToEdit?: T) {
   selectedItem.value = itemToEdit
   showCreateEditDrawer.value = true
 }
 
 function closeCreateEditDrawer() {
-  selectedItem.value = null
   showCreateEditDrawer.value = false
 }
 
@@ -76,7 +77,6 @@ function openDeleteModal(itemToDelete: T) {
 }
 
 function closeDeleteModal() {
-  selectedItem.value = null
   showDeleteModal.value = false
 }
 
@@ -99,7 +99,7 @@ onMounted(() => {
       <div class="ml-2 shrink-0">
         <NeButton
           kind="secondary"
-          @click="openCreateEditDrawer(null)"
+          @click="openCreateEditDrawer()"
           v-if="!readonly && items.length > 0"
         >
           <template #prefix>
@@ -115,7 +115,11 @@ onMounted(() => {
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       v-if="error.notificationDescription"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else>
       <NeEmptyState
@@ -123,7 +127,7 @@ onMounted(() => {
         :title="noItemsFoundMessage"
         :icon="['fas', 'circle-info']"
         :class="[readonly ? 'pb-2' : '']"
-        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer(null)"
+        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"

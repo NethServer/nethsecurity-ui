@@ -42,7 +42,8 @@ const isSavingChanges = ref(false)
 const loading = ref(true)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 const dhcpOptionValueErrors = ref<string[]>([])
@@ -82,6 +83,7 @@ async function resetForm() {
         err.response.data.message == 'interface_not_found'
           ? t('standalone.dns_dhcp.interface_not_found')
           : t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
   } else {
     iface.value = ''
@@ -96,7 +98,7 @@ async function resetForm() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      validationErrorBag.value.set(label, [validator.errMessage as string])
     }
   }
 
@@ -117,6 +119,7 @@ async function loadDhcpOptions() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_dhcp_options')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
@@ -154,9 +157,9 @@ function validate() {
   }
 
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'rangeIpStart'],
-    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'rangeIpEnd'],
-    [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leaseTime']
+    [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'first'],
+    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'last'],
+    [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leasetime']
   ]
 
   return (
@@ -171,6 +174,7 @@ function validate() {
 async function saveChanges() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
 
   try {
     isSavingChanges.value = true
@@ -196,6 +200,7 @@ async function saveChanges() {
         err.response.data.message == 'interface_not_found'
           ? t('standalone.dns_dhcp.interface_not_found')
           : t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
     }
   } finally {
     isSavingChanges.value = false
@@ -206,18 +211,10 @@ function close() {
   validationErrorBag.value.clear()
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
   dhcpOptionValueErrors.value = []
   dhcpOptionKeyErrors.value = []
   emit('close')
-}
-
-function rangeEndValidationError() {
-  let server_error = validationErrorBag.value.getFirstFor('last')
-  if (server_error) {
-    return t('error.' + server_error)
-  } else {
-    return validationErrorBag.value.getFirstFor('rangeIpEnd')
-  }
 }
 
 watchEffect(() => {
@@ -247,24 +244,28 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
+    >
     <NeSkeleton :lines="10" v-if="loading" />
     <div v-else class="flex flex-col gap-y-6">
       <NeToggle v-model="enableDhcp" :label="t('standalone.dns_dhcp.enable_dhcp')" />
       <NeTextInput
         v-model="rangeIpStart"
         :label="t('standalone.dns_dhcp.range_ip_start')"
-        :invalid-message="validationErrorBag.getFirstFor('rangeIpStart')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('first'))"
       />
       <NeTextInput
         v-model="rangeIpEnd"
         :label="t('standalone.dns_dhcp.range_ip_end')"
-        :invalid-message="rangeEndValidationError()"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('last'))"
       />
       <NeTextInput
         v-model="leaseTime"
         :label="t('standalone.dns_dhcp.lease_time')"
-        :invalid-message="validationErrorBag.getFirstFor('leaseTime')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('leasetime'))"
         ><template #tooltip>
           <NeTooltip>
             <template #content>

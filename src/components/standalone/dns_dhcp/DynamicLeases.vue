@@ -8,8 +8,15 @@ import { useI18n } from 'vue-i18n'
 import FilterableListItemLayout from '../FilterableListItemLayout.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import LeasesTable from './LeasesTable.vue'
+import { ref } from 'vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { getStandaloneRoutePrefix } from '@/lib/router'
+import { useRouter } from 'vue-router'
+import CreateOrEditStaticLeaseDrawer from './CreateOrEditStaticLeaseDrawer.vue'
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
+const router = useRouter()
 
 export type DynamicLease = {
   macaddr: string
@@ -18,6 +25,14 @@ export type DynamicLease = {
   interface: string
   device: string
   timestamp: string
+}
+
+const selectedLease = ref<DynamicLease>()
+const showCreateStaticLeaseDrawer = ref(false)
+
+function openCreateStaticLeaseDrawer(item: DynamicLease) {
+  selectedLease.value = item
+  showCreateStaticLeaseDrawer.value = true
 }
 
 async function fetchDynamicLeases(): Promise<DynamicLease[]> {
@@ -48,7 +63,23 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
     :description="t('standalone.dns_dhcp.dynamic_leases_description')"
   >
     <template #item-list-view="{ items }">
-      <LeasesTable :leases="items" :show-dynamic-leases="true" />
+      <LeasesTable
+        :leases="items"
+        :show-dynamic-leases="true"
+        @create-static-lease-from-dynamic="openCreateStaticLeaseDrawer"
+      />
     </template>
   </FilterableListItemLayout>
+  <CreateOrEditStaticLeaseDrawer
+    :is-shown="showCreateStaticLeaseDrawer"
+    :import-dynamic-lease="selectedLease"
+    @close="showCreateStaticLeaseDrawer = false"
+    @add-edit-lease="
+      () => {
+        showCreateStaticLeaseDrawer = false
+        uciChangesStore.getChanges()
+        router.push(`${getStandaloneRoutePrefix()}/network/dns-dhcp?tab=static-leases`)
+      }
+    "
+  />
 </template>

@@ -18,7 +18,7 @@ const props = defineProps<{
   showDynamicLeases: boolean
 }>()
 
-const emit = defineEmits(['lease-delete', 'lease-edit'])
+const emit = defineEmits(['lease-delete', 'lease-edit', 'create-static-lease-from-dynamic'])
 
 const tableHeaders = [
   {
@@ -46,33 +46,44 @@ const tableHeaders = [
     key: 'macaddr'
   },
   ...(!props.showDynamicLeases
-    ? [
-        {
-          label: '',
-          key: 'menu'
-        }
-      ]
+    ? []
     : [
         {
           label: t('standalone.dns_dhcp.lease_expiration'),
           key: 'timestamp'
         }
-      ])
+      ]),
+  {
+    label: '',
+    key: 'menu'
+  }
 ]
 
 function getDropdownItems(item: StaticLease) {
-  return [
-    {
-      id: 'delete',
-      label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
-      danger: true,
-      action: () => {
-        emit('lease-delete', item)
-      }
-    }
-  ]
+  return !props.showDynamicLeases
+    ? [
+        {
+          id: 'delete',
+          label: t('common.delete'),
+          iconStyle: 'fas',
+          icon: 'trash',
+          danger: true,
+          action: () => {
+            emit('lease-delete', item)
+          }
+        }
+      ]
+    : [
+        {
+          id: 'create-static-lease',
+          label: t('standalone.dns_dhcp.add_reservation'),
+          iconStyle: 'fas',
+          icon: 'circle-plus',
+          action: () => {
+            emit('create-static-lease-from-dynamic', item)
+          }
+        }
+      ]
 }
 </script>
 
@@ -89,9 +100,9 @@ function getDropdownItems(item: StaticLease) {
       {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
       {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
     </template>
-    <template v-if="!showDynamicLeases" #menu="{ item }: { item: StaticLease }">
+    <template #menu="{ item }: { item: StaticLease }">
       <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('lease-edit', item)">
+        <NeButton v-if="!showDynamicLeases" kind="tertiary" @click="emit('lease-edit', item)">
           <template #prefix>
             <font-awesome-icon
               :icon="['fas', 'pen-to-square']"

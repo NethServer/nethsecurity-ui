@@ -32,7 +32,8 @@ const uciChangesStore = useUciPendingChangesStore()
 const loading = ref(true)
 const error = ref({
   notificationTitle: '',
-  notificationDescription: ''
+  notificationDescription: '',
+  notificationDetails: ''
 })
 const isUpdatingDnsConfig = ref(false)
 
@@ -89,12 +90,14 @@ async function fetchDnsConfig() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_dns_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   }
 }
 
 async function updateDnsConfig() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
 
   if (!validate()) {
     return
@@ -111,6 +114,7 @@ async function updateDnsConfig() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_update_dns_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isUpdatingDnsConfig.value = false
   }
@@ -128,7 +132,11 @@ onMounted(() => {
       v-if="error.notificationTitle"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-    />
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="15" />
     <template v-else>
       <NeMultiTextInput

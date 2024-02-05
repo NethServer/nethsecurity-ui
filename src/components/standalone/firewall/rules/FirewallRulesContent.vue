@@ -11,7 +11,7 @@ import {
   getAxiosErrorMessage,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
-import { NeInlineNotification, NeComboboxOption } from '@nethesis/vue-components'
+import { NeInlineNotification, type NeComboboxOption } from '@nethesis/vue-components'
 import { onMounted, ref, type PropType, watch, computed } from 'vue'
 import CreateOrEditFirewallRuleDrawer from './CreateOrEditFirewallRuleDrawer.vue'
 import { isEmpty, uniq } from 'lodash-es'

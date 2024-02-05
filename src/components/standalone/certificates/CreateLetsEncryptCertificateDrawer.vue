@@ -11,6 +11,7 @@ import {
   validateUciName,
   type validationOutput
 } from '@/lib/validation'
+import { NeLink } from '@nethesis/vue-components'
 import { getAxiosErrorMessage, type NeComboboxOption } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -294,12 +295,10 @@ watch(
                 <template #content>
                   <i18n-t keypath="standalone.certificates.dns_api_tooltip" tag="span">
                     <template #dnsapiurl>
-                      <a
+                      <NeLink
                         href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi"
                         target="_blank"
-                        rel="noreferrer"
-                        class="text-primary-500 hover:text-primary-300 dark:text-primary-700 dark:hover:text-primary-800"
-                        >https://github.com/acmesh-official/acme.sh/wiki/dnsapi</a
+                        >https://github.com/acmesh-official/acme.sh/wiki/dnsapi</NeLink
                       >
                     </template>
                   </i18n-t>

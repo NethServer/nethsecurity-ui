@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { NeLink } from '@nethesis/vue-components'
 import {
   NeTitle,
   NeButton,
@@ -186,13 +187,9 @@ function validate() {
               </div>
 
               <div class="text-sm leading-6">
-                <a
-                  href="https://docs.nethsecurity.org/"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 dark:hover:text-primary-200"
-                  >{{ t('login.need_help') }}</a
-                >
+                <NeLink href="https://docs.nethsecurity.org/" target="_blank" class="font-medium">
+                  {{ t('login.need_help') }}
+                </NeLink>
               </div>
             </div>
 

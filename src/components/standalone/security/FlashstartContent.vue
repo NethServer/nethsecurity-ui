@@ -7,7 +7,7 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, type NeComboboxOption, NeLink } from '@nethesis/vue-components'
 import {
   NeSkeleton,
   NeTextInput,
@@ -223,17 +223,13 @@ function save() {
   <div>
     <FormLayout :title="t('standalone.flashstart.content_title')" class="max-w-3xl">
       <template #description>
-        <p class="mb-8 text-sm font-normal text-gray-500 dark:text-gray-400">
-          {{ t('standalone.flashstart.content_description') }}
-          <a
-            href="https://flashstart.nethesis.it/"
-            target="_blank"
-            rel="noreferrer"
-            class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-300"
-          >
-            {{ t('standalone.flashstart.content_link') }}
-          </a>
-        </p>
+        <i18n-t keypath="standalone.flashstart.content_description" tag="p">
+          <template #createAccount>
+            <NeLink href="https://flashstart.nethesis.it/" target="_blank">
+              {{ t('standalone.flashstart.content_link') }}
+            </NeLink>
+          </template>
+        </i18n-t>
       </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
@@ -272,15 +268,13 @@ function save() {
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.flashstart.username_helper') }}
-                  <a
-                    href="https://flashstart.nethesis.it/"
-                    target="_blank"
-                    rel="noreferrer"
-                    class="text-primary-500 hover:text-primary-300 dark:text-primary-700 dark:hover:text-primary-800"
-                  >
-                    https://flashstart.nethesis.it/ </a
-                  >.
+                  <i18n-t keypath="standalone.flashstart.username_helper" tag="span">
+                    <template #flashstartUrl>
+                      <NeLink href="https://flashstart.nethesis.it/" target="_blank">
+                        https://flashstart.nethesis.it/
+                      </NeLink>
+                    </template>
+                  </i18n-t>
                 </template>
               </NeTooltip>
             </template>

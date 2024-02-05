@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeCard } from '@nethesis/vue-components'
+import { NeCard, NeLink } from '@nethesis/vue-components'
 import { NeTitle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
@@ -55,9 +55,9 @@ function goToMultiwan() {
     <!-- multiwan -->
     <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
       <template #title>
-        <a @click="goToMultiwan" class="cursor-pointer text-primary-700 dark:text-primary-500">
+        <NeLink @click="goToMultiwan">
           {{ t('standalone.dashboard.multiwan') }}
-        </a>
+        </NeLink>
       </template>
     </ServiceCard>
     <!-- dpi-core -->

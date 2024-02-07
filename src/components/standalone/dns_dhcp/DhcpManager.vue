@@ -5,12 +5,11 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeBadge } from '@nethesis/vue-components'
+import { NeBadge, NeTitle } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeInlineNotification,
   NeSkeleton,
-  NeTitle,
   NeButton,
   NeEmptyState
 } from '@nethserver/vue-tailwind-lib'

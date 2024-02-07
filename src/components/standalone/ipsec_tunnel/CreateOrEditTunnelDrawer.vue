@@ -17,7 +17,7 @@ import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeStepper from '../NeStepper.vue'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, type NeComboboxOption, NeTitle } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeSkeleton,
@@ -27,7 +27,6 @@ import {
   NeTooltip,
   NeRadioSelection,
   NeFormItemLabel,
-  NeTitle,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'

@@ -6,11 +6,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { NeBadge } from '@nethesis/vue-components'
+import { NeBadge, NeTitle } from '@nethesis/vue-components'
 import {
   NeButton,
   NeTextInput,
-  NeTitle,
   NeInlineNotification,
   NeSkeleton,
   focusElement,

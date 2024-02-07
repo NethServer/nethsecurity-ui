@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { NeTitle } from '@nethesis/vue-components'
 import {
-  NeTitle,
   NeButton,
   NeInlineNotification,
   NeModal,

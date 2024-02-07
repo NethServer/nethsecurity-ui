@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useTabs } from '@/composables/useTabs'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeTitle } from '@nethesis/vue-components'
 import {
-  NeTitle,
   NeTabs,
   NeButton,
   getAxiosErrorMessage,

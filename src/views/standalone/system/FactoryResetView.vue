@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethserver/vue-tailwind-lib'
+import { NeTitle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FactoryResetContent from '@/components/standalone/factory_reset/FactoryResetContent.vue'
 

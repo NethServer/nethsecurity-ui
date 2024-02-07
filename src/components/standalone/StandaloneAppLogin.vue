@@ -4,8 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeLink } from '@nethesis/vue-components'
-import { NeTitle, NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import { NeLink, NeTitle } from '@nethesis/vue-components'
+import { NeButton, NeTextInput, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
 import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'

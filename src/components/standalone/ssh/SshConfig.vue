@@ -6,10 +6,10 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { onMounted, ref } from 'vue'
+import { NeCheckbox } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
-  NeCheckbox,
   NeInlineNotification,
   NeSkeleton,
   NeTextInput

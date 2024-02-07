@@ -7,10 +7,9 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHost, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, type NeComboboxOption, NeCheckbox } from '@nethesis/vue-components'
 import {
   NeButton,
-  NeCheckbox,
   NeToggle,
   NeSkeleton,
   NeInlineNotification,

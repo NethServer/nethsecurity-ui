@@ -714,6 +714,7 @@
       "zone_label_wan": "WAN (Red)",
       "zone_label_guests": "GUESTS (Blue)",
       "zone_label_dmz": "DMZ (Orange)",
+      "zone_label_unknown": "Unknown",
       "zone_label_unassigned": "Unassigned",
       "create_logical_interface": "Configure logical interface",
       "bridge": "Bridge",

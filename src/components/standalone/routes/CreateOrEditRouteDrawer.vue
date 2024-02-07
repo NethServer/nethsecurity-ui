@@ -4,17 +4,19 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  NeInlineNotification,
+  NeButton,
+  NeSideDrawer,
+  NeSkeleton,
+  NeTooltip
+} from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   focusElement,
-  NeButton,
-  NeInlineNotification,
-  NeSideDrawer,
-  NeSkeleton,
   NeTextInput,
-  NeToggle,
-  NeTooltip
+  NeToggle
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'

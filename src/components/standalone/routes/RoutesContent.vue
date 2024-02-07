@@ -6,15 +6,14 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
-import { NeDropdown, NeTitle } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
+  NeDropdown,
+  NeTitle,
+  NeInlineNotification,
   NeButton,
-  NeSkeleton,
-  NeModal,
-  NeEmptyState,
-  NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {

@@ -7,14 +7,14 @@
 import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { NeProgressBar, NeTitle } from '@nethesis/vue-components'
 import {
+  NeProgressBar,
+  NeTitle,
   NeButton,
-  NeModal,
   NeInlineNotification,
-  getAxiosErrorMessage,
   NeSkeleton
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

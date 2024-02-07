@@ -7,15 +7,14 @@
 import { onMounted, ref } from 'vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeFormItemLabel,
+  NeCombobox,
+  type NeComboboxOption,
   NeInlineNotification,
-  NeSkeleton,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+  NeButton,
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeFormItemLabel, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'

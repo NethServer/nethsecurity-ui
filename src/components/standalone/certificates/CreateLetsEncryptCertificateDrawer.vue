@@ -11,20 +11,20 @@ import {
   validateUciName,
   type validationOutput
 } from '@/lib/validation'
-import { NeLink } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, type NeComboboxOption } from '@nethserver/vue-tailwind-lib'
-import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import {
+  NeLink,
+  NeInlineNotification,
+  type NeComboboxOption,
   NeSideDrawer,
   NeButton,
-  NeRadioSelection,
   NeCombobox,
   NeTooltip,
-  NeTextInput,
-  NeSkeleton,
-  NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { NeRadioSelection, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 

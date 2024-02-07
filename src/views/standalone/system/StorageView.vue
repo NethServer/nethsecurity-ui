@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeTitle } from '@nethesis/vue-components'
+import { NeTitle, NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
-  NeInlineNotification,
   NeRadioSelection,
   NeModal,
-  NeButton,
-  NeSkeleton,
   NeEmptyState,
   byteFormat1024
 } from '@nethserver/vue-tailwind-lib'

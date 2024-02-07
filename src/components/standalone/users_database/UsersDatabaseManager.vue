@@ -6,14 +6,14 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
-import { NeDropdown, NeTitle } from '@nethesis/vue-components'
 import {
+  NeDropdown,
+  NeTitle,
   NeButton,
-  NeEmptyState,
   NeSkeleton,
-  getAxiosErrorMessage,
   NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

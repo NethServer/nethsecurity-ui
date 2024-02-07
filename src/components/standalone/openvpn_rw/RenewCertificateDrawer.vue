@@ -10,14 +10,8 @@ import {
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
-import {
-  NeSideDrawer,
-  NeModal,
-  NeInlineNotification,
-  NeButton,
-  NeTextInput,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
+import { NeModal, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

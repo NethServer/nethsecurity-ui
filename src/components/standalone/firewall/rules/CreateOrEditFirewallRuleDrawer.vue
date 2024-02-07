@@ -5,13 +5,10 @@
 
 <script setup lang="ts">
 import {
-  NeSideDrawer,
-  NeTextInput,
-  NeButton,
-  NeInlineNotification,
   NeToggle,
   NeRadioSelection,
   getAxiosErrorMessage,
+  NeTextInput,
   focusElement
 } from '@nethserver/vue-tailwind-lib'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
@@ -23,7 +20,14 @@ import {
   type FirewallRuleAction,
   type FirewallRule
 } from '@/stores/standalone/firewall'
-import { NeCombobox, type NeComboboxOption, NeTooltip } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeTooltip,
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton
+} from '@nethesis/vue-components'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import {
   MessageBag,

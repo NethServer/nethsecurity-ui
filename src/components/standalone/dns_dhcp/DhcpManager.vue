@@ -5,14 +5,14 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeBadge, NeTitle } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
+  NeBadge,
+  NeTitle,
   NeInlineNotification,
-  NeSkeleton,
   NeButton,
-  NeEmptyState
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

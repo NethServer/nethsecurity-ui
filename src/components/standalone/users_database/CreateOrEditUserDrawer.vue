@@ -12,13 +12,8 @@ import {
 } from '@/lib/validation'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeTextInput,
-  NeSideDrawer,
-  NeInlineNotification,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeButton, NeSideDrawer } from '@nethesis/vue-components'
+import { NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { User } from './UsersDatabaseManager.vue'
 

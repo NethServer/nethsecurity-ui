@@ -5,7 +5,8 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DnsRecord } from './DnsRecords.vue'

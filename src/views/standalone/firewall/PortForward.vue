@@ -5,15 +5,8 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle } from '@nethesis/vue-components'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeTextInput,
-  NeSkeleton,
-  NeInlineNotification,
-  NeEmptyState
-} from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeTextInput, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import PortForwardTable from '@/components/standalone/firewall/PortForwardTable.vue'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

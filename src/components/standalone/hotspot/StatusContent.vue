@@ -6,11 +6,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
 import {
-  NeButton,
-  NeSkeleton,
   NeEmptyState,
-  NeInlineNotification,
   byteFormat1024,
   formatDurationLoc,
   getAxiosErrorMessage

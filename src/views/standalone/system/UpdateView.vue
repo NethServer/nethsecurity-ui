@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
-import {
-  NeButton,
-  NeInlineNotification,
-  NeModal,
-  NeSkeleton,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeInlineNotification, NeSkeleton } from '@nethesis/vue-components'
+import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'

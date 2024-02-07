@@ -15,15 +15,8 @@ import {
 } from '@/lib/validation'
 import { onMounted } from 'vue'
 import { watchEffect } from 'vue'
-import {
-  NeSideDrawer,
-  NeInlineNotification,
-  NeToggle,
-  NeTextInput,
-  NeButton,
-  getAxiosErrorMessage,
-  NeTooltip
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeSideDrawer, NeButton, NeTooltip } from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 

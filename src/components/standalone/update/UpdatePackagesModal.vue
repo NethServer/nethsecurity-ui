@@ -7,8 +7,8 @@
 import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { PackageUpdate } from '@/views/standalone/system/UpdateView.vue'
-import { NeProgressBar } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import { NeProgressBar, NeInlineNotification } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

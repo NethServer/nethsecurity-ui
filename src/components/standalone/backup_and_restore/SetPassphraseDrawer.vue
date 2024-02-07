@@ -7,15 +7,14 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeTitle } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
-  NeButton,
+  NeTitle,
   NeInlineNotification,
+  NeButton,
   NeSideDrawer,
-  NeTextInput,
   NeTooltip
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { AxiosError } from 'axios'
 
 const { t } = useI18n()

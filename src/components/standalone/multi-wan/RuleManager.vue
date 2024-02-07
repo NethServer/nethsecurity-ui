@@ -10,13 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { useI18n } from 'vue-i18n'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeDropdown } from '@nethesis/vue-components'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
-  NeSkeleton
-} from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import type { Rule } from '@/composables/useMwan'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'

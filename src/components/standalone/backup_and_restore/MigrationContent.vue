@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeLink } from '@nethesis/vue-components'
-import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import { NeLink, NeInlineNotification, NeButton } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MigrationDrawer from '@/components/standalone/backup_and_restore/MigrationDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'

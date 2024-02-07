@@ -5,14 +5,8 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle } from '@nethesis/vue-components'
-import {
-  NeButton,
-  NeInlineNotification,
-  NeSkeleton,
-  NeEmptyState,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeInlineNotification, NeSkeleton } from '@nethesis/vue-components'
+import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { onMounted } from 'vue'

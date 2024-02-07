@@ -7,14 +7,11 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeCombobox } from '@nethesis/vue-components'
+import { NeCombobox, NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
 import {
-  NeButton,
   NeTextInput,
   NeTextArea,
   NeFormItemLabel,
-  NeSkeleton,
-  NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { focusElement, formatInTimeZoneLoc } from '@nethserver/vue-tailwind-lib'

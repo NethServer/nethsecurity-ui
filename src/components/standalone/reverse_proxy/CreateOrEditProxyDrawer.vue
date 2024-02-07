@@ -16,17 +16,16 @@ import {
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeInlineNotification,
   NeSideDrawer,
   NeSkeleton,
-  NeInlineNotification,
-  NeTextInput,
   NeButton,
-  NeRadioSelection,
-  NeTooltip,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeTooltip
+} from '@nethesis/vue-components'
+import { NeTextInput, NeRadioSelection, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 

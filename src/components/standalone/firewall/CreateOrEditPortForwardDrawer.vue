@@ -241,14 +241,21 @@ function validate(): boolean {
 
   let validators: [validationOutput[], string][] = [
     [[validateRequired(name.value)], 'name'],
-    [[validateRequired(sourcePort.value), validatePort(sourcePort.value)], 'sourcePort'],
+    [
+      [
+        // if destination port is present, source port is required
+        destinationPort.value ? validateRequired(sourcePort.value) : { valid: true },
+        sourcePort.value ? validatePort(sourcePort.value) : { valid: true }
+      ],
+      'sourcePort'
+    ],
     [[validateRequiredOption(protocols.value)], 'protocols'],
     [
       [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
       'destinationIP'
     ],
     [
-      [validateRequired(destinationPort.value), validatePort(destinationPort.value)],
+      [destinationPort.value ? validatePort(destinationPort.value) : { valid: true }],
       'destinationPort'
     ],
     [reflection.value ? [validateRequiredOption(reflectionZones.value)] : [], 'reflectionZones']
@@ -274,6 +281,7 @@ async function createOrEditPortForward() {
     if (validate()) {
       const payload: CreateEditPortForwardPayload = {
         dest_ip: destinationIP.value,
+        // TODO: handle case where no protocols are selected
         proto: protocols.value.map((protoObj) => protoObj.id),
         src_dport: sourcePort.value,
         dest_port: destinationPort.value,
@@ -352,7 +360,7 @@ async function createOrEditPortForward() {
       />
       <NeCombobox
         :label="t('standalone.port_forward.protocols')"
-        :placeholder="t('standalone.port_forward.choose_protocol')"
+        :placeholder="t('standalone.port_forward.protocol_placeholder')"
         :multiple="true"
         :options="supportedProtocols"
         v-model="protocols"
@@ -368,6 +376,9 @@ async function createOrEditPortForward() {
         :label="t('standalone.port_forward.source_port')"
         v-model="sourcePort"
         :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
+        :optional="true"
+        :optionalLabel="t('common.optional')"
+        :placeholder="t('standalone.port_forward.source_destination_port_placeholder')"
         type="number"
       />
       <NeTextInput
@@ -387,8 +398,19 @@ async function createOrEditPortForward() {
         :label="t('standalone.port_forward.destination_port')"
         v-model="destinationPort"
         :invalid-message="validationErrorBag.getFirstFor('destinationPort')"
+        :optional="true"
+        :optionalLabel="t('common.optional')"
+        :placeholder="t('standalone.port_forward.source_destination_port_placeholder')"
         type="number"
-      />
+      >
+        <template #tooltip
+          ><NeTooltip
+            ><template #content>{{
+              t('standalone.port_forward.destination_port_tooltip')
+            }}</template></NeTooltip
+          ></template
+        >
+      </NeTextInput>
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('standalone.port_forward.advanced_settings') }}

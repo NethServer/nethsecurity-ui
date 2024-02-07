@@ -254,7 +254,7 @@ function getConfiguredDeviceKebabMenuItems(device: any) {
       iconStyle: 'fas',
       action: () => showUnconfigureDeviceModal(device),
       danger: true,
-      disabled: !iface || !getFirewallZone(iface, firewallConfig.value)
+      disabled: !iface
     }
   ]
 }
@@ -285,6 +285,8 @@ function showDeleteAliasModal(alias: any, device: any) {
 }
 
 function getAliasKebabMenuItems(alias: any, device: any) {
+  const iface = getInterface(device)
+
   return [
     {
       id: 'deleteAlias',
@@ -292,7 +294,8 @@ function getAliasKebabMenuItems(alias: any, device: any) {
       icon: 'trash',
       iconStyle: 'fas',
       action: () => showDeleteAliasModal(alias, device),
-      danger: true
+      danger: true,
+      disabled: !getFirewallZone(iface, firewallConfig.value)
     }
   ]
 }
@@ -924,6 +927,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                               kind="tertiary"
                               size="lg"
                               @click="showEditAliasInterfaceDrawer(alias, device)"
+                              :disabled="!getFirewallZone(getInterface(device), firewallConfig)"
                             >
                               <template #prefix>
                                 <font-awesome-icon
@@ -971,6 +975,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                                 kind="tertiary"
                                 size="lg"
                                 @click="showEditAliasInterfaceDrawer(alias, device)"
+                                :disabled="!getFirewallZone(getInterface(device), firewallConfig)"
                               >
                                 <template #prefix>
                                   <font-awesome-icon

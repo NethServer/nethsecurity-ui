@@ -141,6 +141,7 @@ export function getZoneColor(zoneName: string) {
       return 'Orange'
     case 'hotspot':
     case 'vpn':
+    case 'unknown':
     case 'unassigned':
       return ''
     default:
@@ -158,6 +159,7 @@ export function getZoneColorClasses(zoneName: string) {
     case 'guests':
       return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
     case 'dmz':
+    case 'unknown':
       return 'bg-amber-100 text-amber-700 dark:bg-amber-700 dark:text-amber-50'
     case 'hotspot':
       return 'bg-sky-100 text-sky-700 dark:bg-sky-700 dark:text-sky-50'
@@ -182,6 +184,7 @@ export function getZoneBorderColorClasses(zoneName: string) {
     case 'guests':
       return 'border-blue-700 dark:border-blue-700'
     case 'dmz':
+    case 'unknown':
       return 'border-amber-700 dark:border-amber-700'
     case 'hotspot':
       return 'border-sky-700 dark:border-sky-700'
@@ -214,6 +217,8 @@ export function getZoneIcon(zoneName: string) {
       return 'globe'
     case 'unassigned':
       return 'unlock'
+    case 'unknown':
+      return 'warning'
     default:
       return 'star'
   }
@@ -232,6 +237,7 @@ export function getZoneIconBackgroundStyle(zoneName: string | undefined) {
     case 'guests':
       return 'bg-blue-100 dark:bg-blue-700'
     case 'dmz':
+    case 'unknown':
       return 'bg-amber-100 dark:bg-amber-700'
     case 'hotspot':
       return 'bg-sky-100 dark:bg-sky-700'

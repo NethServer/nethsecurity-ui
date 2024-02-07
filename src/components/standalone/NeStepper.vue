@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeProgressBar } from '@nethserver/vue-tailwind-lib'
+import { NeProgressBar } from '@nethesis/vue-components'
 import { range } from 'lodash-es'
 
 defineProps<{

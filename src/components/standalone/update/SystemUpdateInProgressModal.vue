@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeProgressBar, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeProgressBar } from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { watch } from 'vue'
 import { useTimer } from '@/composables/useTimer'

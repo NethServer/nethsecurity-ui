@@ -6,9 +6,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeFileInput } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
-  NeFileInput,
   NeButton,
   NeInlineNotification,
   NeFormItemLabel,

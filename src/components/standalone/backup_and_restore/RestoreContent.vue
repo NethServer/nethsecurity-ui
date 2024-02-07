@@ -7,7 +7,7 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCombobox } from '@nethesis/vue-components'
+import { NeCombobox, NeFileInput, NeProgressBar } from '@nethesis/vue-components'
 import {
   NeModal,
   NeTitle,
@@ -15,9 +15,7 @@ import {
   NeTooltip,
   NeSkeleton,
   NeTextInput,
-  NeFileInput,
   NeSideDrawer,
-  NeProgressBar,
   NeRadioSelection,
   NeInlineNotification,
   getAxiosErrorMessage,

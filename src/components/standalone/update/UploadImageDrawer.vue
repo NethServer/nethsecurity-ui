@@ -5,14 +5,14 @@
 
 <script setup lang="ts">
 import { validateFile } from '@/lib/validation'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeFileInput } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeInlineNotification,
-  NeFileInput,
-  NeButton
+  NeButton,
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { uploadFile } from '@/lib/standalone/fileUpload'

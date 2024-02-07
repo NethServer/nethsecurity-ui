@@ -5,12 +5,8 @@
 
 <script setup lang="ts">
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import {
-  NeModal,
-  NeInlineNotification,
-  NeExpandable,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeExpandable } from '@nethesis/vue-components'
+import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -177,7 +173,7 @@ async function revertChanges() {
         :key="config"
         :title="`/etc/config/${config} (${uciChangesStore.changes[config].length})`"
         :expanded="expandedChanges[config]"
-        @setExpanded="(ev) => toggleExpand(config, ev)"
+        @setExpanded="(ev: boolean) => toggleExpand(config, ev)"
       >
         <div
           v-for="(change, index) of uciChangesStore.changes[config]"

@@ -5,9 +5,9 @@
 
 <script setup lang="ts">
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import { NeTitle } from '@nethesis/vue-components'
 import {
   NeEmptyState,
-  NeTitle,
   NeTextInput,
   NeCombobox,
   NeButton,

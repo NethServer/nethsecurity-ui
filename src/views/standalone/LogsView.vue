@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { NeCombobox, type NeComboboxOption, NeTitle } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeInlineNotification,
   NeTextInput,
-  NeTitle,
   NeToggle,
   NeTooltip
 } from '@nethserver/vue-tailwind-lib'

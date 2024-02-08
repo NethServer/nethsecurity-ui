@@ -7,12 +7,11 @@
 import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { NeProgressBar, NeTitle } from '@nethesis/vue-components'
 import {
   NeButton,
-  NeTitle,
   NeModal,
   NeInlineNotification,
-  NeProgressBar,
   getAxiosErrorMessage,
   NeSkeleton
 } from '@nethserver/vue-tailwind-lib'

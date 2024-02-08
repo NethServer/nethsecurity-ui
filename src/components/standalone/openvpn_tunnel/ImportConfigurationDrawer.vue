@@ -6,10 +6,10 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateFile } from '@/lib/validation'
+import { NeFileInput } from '@nethesis/vue-components'
 import {
   NeSideDrawer,
   NeButton,
-  NeFileInput,
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'

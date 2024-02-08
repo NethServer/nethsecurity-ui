@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeTitle } from '@nethesis/vue-components'
 import {
-  NeTitle,
   getAxiosErrorMessage,
   NeInlineNotification,
   NeRadioSelection,

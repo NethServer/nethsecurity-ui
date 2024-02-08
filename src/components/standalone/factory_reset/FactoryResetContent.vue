@@ -7,12 +7,12 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { NeProgressBar } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
   NeModal,
-  NeProgressBar,
   NeSkeleton,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'

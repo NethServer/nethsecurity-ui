@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle } from '@nethesis/vue-components'
+import { NeTabs } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import GeneralSettings from '@/components/standalone/system_settings/GeneralSettings.vue'
 import TimeSynchronization from '@/components/standalone/system_settings/TimeSynchronization.vue'

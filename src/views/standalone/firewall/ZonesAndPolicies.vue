@@ -4,8 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import { NeBadge, NeDropdown } from '@nethesis/vue-components'
-import { NeButton, NeInlineNotification, NeTitle } from '@nethserver/vue-tailwind-lib'
+import { NeBadge, NeDropdown, NeTitle } from '@nethesis/vue-components'
+import { NeButton, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

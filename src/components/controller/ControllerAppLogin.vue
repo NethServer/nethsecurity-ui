@@ -4,9 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeLink } from '@nethesis/vue-components'
+import { NeLink, NeTitle } from '@nethesis/vue-components'
 import {
-  NeTitle,
   NeButton,
   NeTextInput,
   NeInlineNotification,

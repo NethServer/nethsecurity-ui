@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle } from '@nethesis/vue-components'
+import { NeTabs } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { NeTitle } from '@nethesis/vue-components'
 import {
-  NeTitle,
   NeButton,
   NeEmptyState,
   NeInlineNotification,

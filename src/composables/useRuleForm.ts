@@ -8,7 +8,7 @@ import { computed, ref, watch } from 'vue'
 import type { Policy, Rule } from '@/composables/useMwan'
 import {
   MessageBag,
-  validateIp4Cidr,
+  validateIp4OrCidr,
   validatePortRangeForMwan,
   validateRequired
 } from '@/lib/validation'
@@ -91,13 +91,13 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
       validationErrors.value.set('policy', t(String(validationCheck.errMessage)))
     }
     if (sourceAddress.value != '') {
-      validationCheck = validateIp4Cidr(sourceAddress.value)
+      validationCheck = validateIp4OrCidr(sourceAddress.value)
       if (!validationCheck.valid) {
         validationErrors.value.set('source_address', t(String(validationCheck.errMessage)))
       }
     }
     if (destinationAddress.value != '') {
-      validationCheck = validateIp4Cidr(destinationAddress.value)
+      validationCheck = validateIp4OrCidr(destinationAddress.value)
       if (!validationCheck.valid) {
         validationErrors.value.set('destination_address', t(String(validationCheck.errMessage)))
       }

@@ -5,10 +5,10 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeModal, NeInlineNotification } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import type { User } from './UsersDatabaseManager.vue'
 
 const props = defineProps<{

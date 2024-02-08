@@ -5,17 +5,19 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { NeCombobox } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  NeTooltip
+} from '@nethesis/vue-components'
 import {
   focusElement,
   getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
-  NeModal,
-  NeSkeleton,
+  type NeNotification,
   NeTextInput,
-  NeTooltip,
-  type NeNotification
+  NeModal
 } from '@nethserver/vue-tailwind-lib'
 import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

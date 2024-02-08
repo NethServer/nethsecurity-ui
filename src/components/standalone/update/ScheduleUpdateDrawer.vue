@@ -4,14 +4,11 @@
 -->
 
 <script setup lang="ts">
+import { NeSideDrawer, NeButton, NeTooltip, NeInlineNotification } from '@nethesis/vue-components'
 import {
-  NeSideDrawer,
   NeRadioSelection,
   NeFormItemLabel,
   NeTextInput,
-  NeButton,
-  NeTooltip,
-  NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'

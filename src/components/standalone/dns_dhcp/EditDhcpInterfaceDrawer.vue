@@ -13,17 +13,15 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import { watchEffect } from 'vue'
-import { type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeSideDrawer,
+  type NeComboboxOption,
   NeInlineNotification,
-  NeToggle,
-  NeTextInput,
+  NeSideDrawer,
   NeButton,
   NeSkeleton,
-  NeTooltip,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeTooltip
+} from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

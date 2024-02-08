@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { NeCombobox, type NeComboboxOption, NeTitle } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
+  NeCombobox,
+  type NeComboboxOption,
+  NeTitle,
   NeInlineNotification,
-  NeTextInput,
-  NeToggle,
   NeTooltip
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

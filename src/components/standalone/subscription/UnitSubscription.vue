@@ -6,15 +6,14 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { NeBadge, NeTitle } from '@nethesis/vue-components'
 import {
+  NeBadge,
+  NeTitle,
   NeButton,
-  NeTextInput,
   NeInlineNotification,
-  NeSkeleton,
-  focusElement,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { NeTextInput, focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import type { SubscriptionDataType } from '@/views/standalone/system/SubscriptionView.vue'
 import type { PropType } from 'vue'
 import { ref, toRefs } from 'vue'

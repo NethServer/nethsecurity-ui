@@ -8,12 +8,8 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  NeSkeleton,
-  NeButton,
-  NeInlineNotification,
-  NeEmptyState
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { NeSkeleton, NeButton, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import DeleteDpiExceptionModal from './DeleteDpiExceptionModal.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DpiExceptionCard from './DpiExceptionCard.vue'

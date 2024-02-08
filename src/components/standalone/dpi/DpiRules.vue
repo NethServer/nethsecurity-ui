@@ -4,14 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeCard } from '@nethesis/vue-components'
-import {
-  NeSkeleton,
-  NeEmptyState,
-  NeButton,
-  NeInlineNotification,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeCard, NeInlineNotification, NeSkeleton, NeButton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isEmpty } from 'lodash-es'

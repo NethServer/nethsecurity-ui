@@ -7,12 +7,8 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
-  NeSkeleton
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { validateHost } from '@/lib/validation'

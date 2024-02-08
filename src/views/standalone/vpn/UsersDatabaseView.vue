@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { useTabs } from '@/composables/useTabs'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeTitle } from '@nethesis/vue-components'
-import {
-  NeTabs,
-  NeButton,
-  getAxiosErrorMessage,
-  NeSkeleton,
-  NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
+import { NeTabs, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

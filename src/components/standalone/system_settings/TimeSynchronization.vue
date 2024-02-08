@@ -7,14 +7,15 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHost, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeCombobox, type NeComboboxOption, NeCheckbox } from '@nethesis/vue-components'
 import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeCheckbox,
   NeButton,
-  NeToggle,
   NeSkeleton,
-  NeInlineNotification,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeInlineNotification
+} from '@nethesis/vue-components'
+import { NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { isEmpty, uniq } from 'lodash-es'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

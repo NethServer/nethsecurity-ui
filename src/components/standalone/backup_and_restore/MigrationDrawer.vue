@@ -7,15 +7,20 @@
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCombobox, NeFileInput, NeProgressBar, NeTitle } from '@nethesis/vue-components'
 import {
-  NeModal,
+  NeCombobox,
+  NeFileInput,
+  NeProgressBar,
+  NeTitle,
+  NeInlineNotification,
   NeButton,
   NeSideDrawer,
-  NeInlineNotification,
+  NeSkeleton
+} from '@nethesis/vue-components'
+import {
+  NeModal,
   getAxiosErrorMessage,
   NeFormItemLabel,
-  NeSkeleton,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'

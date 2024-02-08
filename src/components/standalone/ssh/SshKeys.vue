@@ -8,13 +8,11 @@ import type { Ref } from 'vue'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
 import {
   focusElement,
   getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
   NeModal,
-  NeSkeleton,
   NeTextInput
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'

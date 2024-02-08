@@ -6,8 +6,8 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { ref, toRef } from 'vue'
-import { NeCombobox } from '@nethesis/vue-components'
-import { NeButton, NeSideDrawer, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, NeButton, NeSideDrawer } from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { MessageBag } from '@/lib/validation'
 import type { Policy, Rule } from '@/composables/useMwan'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

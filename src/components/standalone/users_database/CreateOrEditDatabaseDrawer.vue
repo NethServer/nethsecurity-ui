@@ -14,15 +14,12 @@ import {
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { NeInlineNotification, NeButton, NeSideDrawer, NeTooltip } from '@nethesis/vue-components'
 import {
-  NeButton,
   NeTextInput,
-  NeSideDrawer,
-  NeInlineNotification,
   NeToggle,
   NeFormItemLabel,
   NeRadioSelection,
-  NeTooltip,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'

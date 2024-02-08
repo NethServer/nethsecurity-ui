@@ -5,13 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeBadge, NeDropdown, NeTitle } from '@nethesis/vue-components'
 import {
+  NeBadge,
+  NeDropdown,
+  NeTitle,
   NeButton,
-  NeInlineNotification,
-  getAxiosErrorMessage,
-  byteFormat1000
-} from '@nethserver/vue-tailwind-lib'
+  NeInlineNotification
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, byteFormat1000 } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

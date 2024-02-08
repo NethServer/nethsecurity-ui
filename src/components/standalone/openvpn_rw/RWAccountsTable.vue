@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
-import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton, NeTooltip } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeTooltip } from '@nethesis/vue-components'
 import type {
   RWAuthenticationMode,
   RWAccount

@@ -4,16 +4,15 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeButton,
-  NeFormItemLabel,
+  NeCombobox,
+  type NeComboboxOption,
   NeInlineNotification,
-  NeRadioSelection,
+  NeButton,
   NeSideDrawer,
-  NeSkeleton,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { NeFormItemLabel, NeRadioSelection, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

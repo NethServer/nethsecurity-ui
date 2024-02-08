@@ -7,12 +7,8 @@
 import { ref } from 'vue'
 import FormLayout from '../FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeSkeleton,
-  getAxiosErrorMessage,
-  NeInlineNotification
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { toRefs } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'

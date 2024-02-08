@@ -12,17 +12,19 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import {
-  NeSideDrawer,
   NeInlineNotification,
-  NeToggle,
-  NeTextInput,
+  NeSideDrawer,
   NeButton,
-  getAxiosErrorMessage,
   NeCombobox,
-  NeFormItemLabel,
   NeSkeleton,
   NeTooltip,
   type NeComboboxOption
+} from '@nethesis/vue-components'
+import {
+  NeToggle,
+  NeTextInput,
+  getAxiosErrorMessage,
+  NeFormItemLabel
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'

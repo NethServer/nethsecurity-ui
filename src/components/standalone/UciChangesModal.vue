@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeExpandable } from '@nethesis/vue-components'
-import { NeModal, NeInlineNotification, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeExpandable, NeInlineNotification } from '@nethesis/vue-components'
+import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

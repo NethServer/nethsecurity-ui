@@ -7,13 +7,8 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeEmptyState,
-  NeInlineNotification,
-  NeSkeleton
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'

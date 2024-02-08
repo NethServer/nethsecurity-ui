@@ -9,8 +9,8 @@ import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { NeInlineNotification } from '@nethesis/vue-components'
 import {
-  NeInlineNotification,
   NeModal,
   NeTextInput,
   focusElement,

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
-import { NeTitle } from '@nethesis/vue-components'
+import { NeTitle, NeInlineNotification } from '@nethesis/vue-components'
 import {
   NeEmptyState,
   NeTextInput,
@@ -13,7 +13,6 @@ import {
   NeButton,
   NeSkeleton,
   NeModal,
-  NeInlineNotification,
   type NeComboboxOption,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'

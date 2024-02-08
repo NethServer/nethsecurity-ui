@@ -4,7 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
 import type { PropType } from 'vue'
 import { ref } from 'vue'
 import type { Zone } from '@/stores/standalone/firewall'

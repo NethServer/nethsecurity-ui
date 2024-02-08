@@ -6,14 +6,8 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { onMounted, ref } from 'vue'
-import { NeCheckbox } from '@nethesis/vue-components'
-import {
-  getAxiosErrorMessage,
-  NeButton,
-  NeInlineNotification,
-  NeSkeleton,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+import { NeCheckbox, NeInlineNotification, NeSkeleton } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeButton, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'

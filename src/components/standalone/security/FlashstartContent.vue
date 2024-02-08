@@ -7,14 +7,18 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { NeCombobox, type NeComboboxOption, NeLink } from '@nethesis/vue-components'
 import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeLink,
+  NeInlineNotification,
   NeSkeleton,
+  NeTooltip,
+  NeButton
+} from '@nethesis/vue-components'
+import {
   NeTextInput,
   NeToggle,
-  NeTooltip,
-  NeButton,
-  NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
   NeFormItemLabel

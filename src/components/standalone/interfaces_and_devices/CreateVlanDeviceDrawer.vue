@@ -8,12 +8,15 @@ import { getName, isBond, isVlan } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired, validateVlanId } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeSideDrawer,
-  NeTextInput,
-  NeButton,
+  NeCombobox,
+  type NeComboboxOption,
   NeInlineNotification,
+  NeSideDrawer,
+  NeButton
+} from '@nethesis/vue-components'
+import {
+  NeTextInput,
   NeRadioSelection,
   focusElement,
   getAxiosErrorMessage

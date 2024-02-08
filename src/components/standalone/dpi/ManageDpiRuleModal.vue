@@ -12,17 +12,21 @@ import {
   getAppIcon
 } from '@/lib/standalone/dpi'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCombobox, NeCard, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeModal,
+  NeCombobox,
+  NeCard,
+  type NeComboboxOption,
   NeInlineNotification,
-  NeToggle,
-  NeTextInput,
   NeTooltip,
   NeButton,
+  NeSkeleton
+} from '@nethesis/vue-components'
+import {
+  NeModal,
+  NeToggle,
+  NeTextInput,
   getAxiosErrorMessage,
   focusElement,
-  NeSkeleton,
   NeEmptyState
 } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, computed } from 'vue'

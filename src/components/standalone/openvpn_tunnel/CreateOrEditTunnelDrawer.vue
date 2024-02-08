@@ -17,18 +17,21 @@ import {
   validateUciName,
   type validationOutput
 } from '@/lib/validation'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeSideDrawer,
+  NeCombobox,
+  type NeComboboxOption,
   NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
+  NeTooltip,
+  NeSkeleton
+} from '@nethesis/vue-components'
+import {
   NeToggle,
   NeTextInput,
-  NeButton,
   getAxiosErrorMessage,
-  NeTooltip,
   NeFormItemLabel,
   NeTextArea,
-  NeSkeleton,
   NeRadioSelection
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'

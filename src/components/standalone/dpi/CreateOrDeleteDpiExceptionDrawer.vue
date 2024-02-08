@@ -15,11 +15,9 @@ import {
 } from '@/lib/validation'
 import { watch } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
-  NeSideDrawer,
-  NeButton,
-  NeInlineNotification,
   NeToggle,
   NeFormItemLabel,
   NeTextInput

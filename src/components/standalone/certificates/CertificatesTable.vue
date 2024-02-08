@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
-import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton, NeBadge, NeTooltip } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeButton, NeBadge, NeTooltip } from '@nethesis/vue-components'
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 
 const { t } = useI18n()

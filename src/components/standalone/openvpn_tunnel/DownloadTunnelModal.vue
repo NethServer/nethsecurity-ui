@@ -4,12 +4,8 @@
 -->
 
 <script setup lang="ts">
-import {
-  NeModal,
-  NeInlineNotification,
-  NeRadioSelection,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { NeModal, NeRadioSelection, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'

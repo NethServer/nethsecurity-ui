@@ -7,16 +7,15 @@
 import type { PropType } from 'vue'
 import { computed, onMounted, reactive, ref, toRef } from 'vue'
 import type { Policy } from '@/composables/useMwan'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
-  NeButton,
-  NeFormItemLabel,
+  NeCombobox,
+  type NeComboboxOption,
   NeInlineNotification,
-  NeRadioSelection,
+  NeButton,
   NeSideDrawer,
-  NeSkeleton,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+  NeSkeleton
+} from '@nethesis/vue-components'
+import { NeFormItemLabel, NeRadioSelection, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { usePolicyForm } from '@/composables/usePolicyForm'
 import { MessageBag } from '@/lib/validation'

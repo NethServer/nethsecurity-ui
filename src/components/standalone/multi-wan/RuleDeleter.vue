@@ -4,7 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
 import type { Rule } from '@/composables/useMwan'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

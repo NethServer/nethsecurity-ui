@@ -4,11 +4,9 @@
 -->
 
 <script setup lang="ts">
+import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
 import {
-  NeSideDrawer,
   NeTextInput,
-  NeButton,
-  NeInlineNotification,
   getAxiosErrorMessage,
   focusElement,
   savePreference

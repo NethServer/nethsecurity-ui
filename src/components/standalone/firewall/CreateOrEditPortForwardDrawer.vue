@@ -5,15 +5,18 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
 import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeInlineNotification,
   NeSideDrawer,
-  NeToggle,
-  NeTextInput,
   NeButton,
   NeSkeleton,
-  NeInlineNotification,
-  NeTooltip,
+  NeTooltip
+} from '@nethesis/vue-components'
+import {
+  NeToggle,
+  NeTextInput,
   NeFormItemLabel,
   getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'

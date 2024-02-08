@@ -4,17 +4,11 @@
 -->
 
 <script setup lang="ts" generic="T">
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeTextInput,
-  NeInlineNotification,
-  NeSkeleton,
-  NeEmptyState
-} from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { NeTextInput, NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
   fetchItemsFunction: () => Promise<T[]>

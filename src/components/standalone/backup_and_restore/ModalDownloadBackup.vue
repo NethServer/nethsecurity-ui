@@ -7,7 +7,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
 
 const { t } = useI18n()
 const props = defineProps({

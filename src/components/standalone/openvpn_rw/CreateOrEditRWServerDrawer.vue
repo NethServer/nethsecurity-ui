@@ -15,17 +15,19 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import {
-  NeSideDrawer,
   NeInlineNotification,
-  NeToggle,
-  NeTextInput,
+  NeSideDrawer,
   NeButton,
-  getAxiosErrorMessage,
   NeTooltip,
   NeCombobox,
-  NeFormItemLabel,
   NeSkeleton,
-  type NeComboboxOption,
+  type NeComboboxOption
+} from '@nethesis/vue-components'
+import {
+  NeToggle,
+  NeTextInput,
+  getAxiosErrorMessage,
+  NeFormItemLabel,
   NeRadioSelection
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'

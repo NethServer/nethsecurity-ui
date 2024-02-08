@@ -10,9 +10,11 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
-  NeSkeleton
+  NeSkeleton,
+  NeFormItemLabel,
+  NeRadioSelection
 } from '@nethesis/vue-components'
-import { NeFormItemLabel, NeRadioSelection, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

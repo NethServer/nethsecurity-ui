@@ -7,9 +7,14 @@
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
 import { getTwoFaStatus } from '@/lib/standalone/twoFa'
-import { NeInlineNotification, NeSkeleton, NeTooltip, NeButton } from '@nethesis/vue-components'
 import {
-  NeFormItemLabel,
+  NeInlineNotification,
+  NeSkeleton,
+  NeTooltip,
+  NeButton,
+  NeFormItemLabel
+} from '@nethesis/vue-components'
+import {
   NeTextArea,
   getAxiosErrorMessage,
   getPreference,

@@ -15,13 +15,13 @@ import {
 } from '@/lib/validation'
 import { watch } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
 import {
-  getAxiosErrorMessage,
-  NeToggle,
-  NeFormItemLabel,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
+  NeFormItemLabel
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
   isShown: boolean

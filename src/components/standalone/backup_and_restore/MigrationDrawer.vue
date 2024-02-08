@@ -15,14 +15,10 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
-  NeSkeleton
+  NeSkeleton,
+  NeFormItemLabel
 } from '@nethesis/vue-components'
-import {
-  NeModal,
-  getAxiosErrorMessage,
-  NeFormItemLabel,
-  NeTextInput
-} from '@nethserver/vue-tailwind-lib'
+import { NeModal, getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { validateRequired } from '@/lib/validation'
 import { useTimer } from '@/composables/useTimer'
 const { t } = useI18n()

@@ -25,15 +25,11 @@ import {
   NeButton,
   NeSideDrawer,
   NeSkeleton,
-  NeTooltip
-} from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
+  NeTooltip,
   NeRadioSelection,
-  NeFormItemLabel,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeFormItemLabel
+} from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ubusCall } from '@/lib/standalone/ubus'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import NeCopyField from '../NeCopyField.vue'

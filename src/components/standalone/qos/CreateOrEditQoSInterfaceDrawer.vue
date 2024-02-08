@@ -18,14 +18,10 @@ import {
   NeCombobox,
   NeSkeleton,
   NeTooltip,
-  type NeComboboxOption
-} from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
-  getAxiosErrorMessage,
+  type NeComboboxOption,
   NeFormItemLabel
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'

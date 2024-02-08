@@ -18,14 +18,10 @@ import {
   NeButton,
   NeCombobox,
   NeSkeleton,
-  type NeComboboxOption
-} from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
-  getAxiosErrorMessage,
+  type NeComboboxOption,
   NeFormItemLabel
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'

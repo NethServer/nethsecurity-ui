@@ -4,7 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import { NeButton, NeFormItemLabel, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeFormItemLabel, NeButton } from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/standalone/notifications'

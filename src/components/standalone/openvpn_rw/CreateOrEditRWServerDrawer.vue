@@ -21,15 +21,11 @@ import {
   NeTooltip,
   NeCombobox,
   NeSkeleton,
-  type NeComboboxOption
-} from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
-  getAxiosErrorMessage,
+  type NeComboboxOption,
   NeFormItemLabel,
   NeRadioSelection
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'

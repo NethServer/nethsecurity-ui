@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeTitle, NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import {
+  NeTitle,
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  NeRadioSelection
+} from '@nethesis/vue-components'
 import {
   getAxiosErrorMessage,
-  NeRadioSelection,
   NeModal,
   NeEmptyState,
   byteFormat1024

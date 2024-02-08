@@ -14,14 +14,14 @@ import {
   NeInlineNotification,
   NeSkeleton,
   NeTooltip,
-  NeButton
+  NeButton,
+  NeFormItemLabel
 } from '@nethesis/vue-components'
 import {
   NeTextInput,
   NeToggle,
   focusElement,
-  getAxiosErrorMessage,
-  NeFormItemLabel
+  getAxiosErrorMessage
 } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

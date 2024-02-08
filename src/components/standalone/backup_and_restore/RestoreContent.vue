@@ -16,12 +16,12 @@ import {
   NeButton,
   NeTooltip,
   NeSkeleton,
-  NeSideDrawer
+  NeSideDrawer,
+  NeRadioSelection
 } from '@nethesis/vue-components'
 import {
   NeModal,
   NeTextInput,
-  NeRadioSelection,
   getAxiosErrorMessage,
   focusElement
 } from '@nethserver/vue-tailwind-lib'

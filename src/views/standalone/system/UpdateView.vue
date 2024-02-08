@@ -113,7 +113,11 @@ async function handleAutomaticUpdatesToggle(value: boolean) {
     notificationsStore.addNotification({
       id: value ? 'enable-automatic-updates' : 'disable-automatic-updates',
       kind: 'success',
-      title: t(value ? 'automatic_update_enabled_message' : 'automatic_update_disabled_message')
+      title: t(
+        value
+          ? 'standalone.update.automatic_update_enabled_message'
+          : 'standalone.update.automatic_update_disabled_message'
+      )
     })
   } catch (err: any) {
     error.value.notificationTitle = value

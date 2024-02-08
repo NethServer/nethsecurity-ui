@@ -251,7 +251,9 @@ function policyIcon(policy: Policy) {
                   {
                     id: 'delete',
                     label: t('common.delete'),
-                    disabled: item.name == 'ns_default',
+                    disabled:
+                      item.name == 'ns_default' ||
+                      mwan.rules.some((rule) => rule.policy.name === item.name),
                     action: () => (toDeletePolicy = item),
                     danger: true
                   }

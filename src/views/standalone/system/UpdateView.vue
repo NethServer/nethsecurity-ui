@@ -115,14 +115,14 @@ async function handleAutomaticUpdatesToggle(value: boolean) {
       kind: 'success',
       title: t(
         value
-          ? 'standalone.update.automatic_update_enabled_message'
-          : 'standalone.update.automatic_update_disabled_message'
+          ? 'standalone.update.automatic_updates_enabled_message'
+          : 'standalone.update.automatic_updates_disabled_message'
       )
     })
   } catch (err: any) {
     error.value.notificationTitle = value
-      ? t('error.cannot_enable_automatic_update')
-      : t('error.cannot_disable_automatic_update')
+      ? t('error.cannot_enable_automatic_updates')
+      : t('error.cannot_disable_automatic_updates')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
     automaticUpdatesEnabled.value = !value
@@ -231,12 +231,19 @@ onMounted(() => {
         :description="t('standalone.update.all_updates_installed_notification')"
       />
       <div class="mt-6">
-        <div class="mb-2 flex flex-row">
-          <NeFormItemLabel>{{ t('standalone.update.automatic_update') }}</NeFormItemLabel>
-          <NeTooltip class="ml-2">
-            <template #content>
-              <div class="flex flex-col items-center justify-center">
-                <p class="text-center">{{ t('standalone.update.automatic_update_tooltip') }}</p>
+        <NeToggle
+          v-model="automaticUpdatesEnabled"
+          :disabled="!isSubscriptionPresent || isChangingAutomaticUpdatesSetting"
+          @update:model-value="handleAutomaticUpdatesToggle"
+          :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
+          :top-label="t('standalone.update.automatic_updates')"
+        >
+          <template #topTooltip>
+            <NeTooltip>
+              <template #content>
+                <p>
+                  {{ t('standalone.update.automatic_updates_tooltip') }}
+                </p>
                 <NeLink
                   @click="
                     () => {
@@ -245,16 +252,10 @@ onMounted(() => {
                   "
                   >{{ t('standalone.update.go_to_subscription') }}</NeLink
                 >
-              </div>
-            </template>
-          </NeTooltip>
-        </div>
-        <NeToggle
-          v-model="automaticUpdatesEnabled"
-          :disabled="!isSubscriptionPresent || isChangingAutomaticUpdatesSetting"
-          @update:model-value="handleAutomaticUpdatesToggle"
-          :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
-        />
+              </template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
       </div>
     </template>
   </FormLayout>

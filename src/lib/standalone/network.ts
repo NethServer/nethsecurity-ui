@@ -24,6 +24,7 @@ export interface DeviceOrIface {
   ipaddr?: string
   packets_per_slave?: string
   slaves?: string[]
+  bond_interface?: string
   speed?: number
   zone?: string
   hotspot?: HotspotConfig
@@ -290,7 +291,7 @@ export function isBridge(device: DeviceOrIface) {
 }
 
 export function isBond(iface: DeviceOrIface) {
-  return iface?.proto === 'bonding'
+  return iface?.proto === 'bonding' || iface.name?.startsWith('bond-')
 }
 
 export function isIpsec(device: DeviceOrIface) {

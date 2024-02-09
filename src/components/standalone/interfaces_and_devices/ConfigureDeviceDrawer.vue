@@ -479,6 +479,7 @@ function prepareConfigureDeviceData() {
   if (props.deviceType === 'logical' && logicalIfaceType.value === 'bond') {
     data.bonding_policy = bondingPolicy.value
     data.bond_primary_device = bondPrimaryDevice.value
+    delete data.zone
   }
 
   if (protocol.value === 'pppoe') {
@@ -586,7 +587,11 @@ function validate() {
     } else {
       // check syntax
       {
-        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
+        let maxLen = 15
+        if (logicalIfaceType.value == 'bond') {
+          maxLen = 10
+        }
+        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, maxLen)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
           if (isValidationOk) {
@@ -904,7 +909,7 @@ async function listZonesForDeviceConfig() {
         </div>
         <!-- zone -->
         <NeRadioSelection
-          v-else
+          v-else-if="logicalIfaceType != 'bond'"
           v-model="zone"
           card
           :label="t('standalone.interfaces_and_devices.zone')"

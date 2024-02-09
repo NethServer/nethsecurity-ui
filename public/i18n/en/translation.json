@@ -265,7 +265,9 @@
     "cannot_revoke_two_fa": "Cannot revoke 2FA",
     "enter_six_digit_code": "Enter a 6-digit code",
     "invalid_otp": "Invalid OTP",
-    "cannot_retrieve_qr_code": "Cannot retrieve QR code"
+    "cannot_retrieve_qr_code": "Cannot retrieve QR code",
+    "cannot_enable_automatic_updates": "Cannot enable automatic updates",
+    "cannot_disable_automatic_updates": "Cannot disable automatic updates"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -554,7 +556,12 @@
       "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
       "update_system": "Update system",
       "edit_scheduled_date": "Edit scheduled date",
-      "update": "Update"
+      "update": "Update",
+      "automatic_updates": "Automatic updates",
+      "automatic_updates_tooltip": "Enable to activate automatic updates. Available only with subscription.",
+      "go_to_subscription": "Go to subscription",
+      "automatic_updates_enabled_message": "Automatic updates successfully enabled",
+      "automatic_updates_disabled_message": "Automatic updates successfully disabled"
     },
     "storage": {
       "title": "Storage",

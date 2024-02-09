@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { NeTitle, NeButton, NeInlineNotification, NeSkeleton } from '@nethesis/vue-components'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeInlineNotification,
+  NeSkeleton,
+  NeLink,
+  NeTooltip
+} from '@nethesis/vue-components'
+import { NeModal, NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'
@@ -12,6 +20,8 @@ import { onMounted } from 'vue'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 import { getProductName } from '@/lib/config'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useRouter } from 'vue-router'
 
 export type PackageUpdate = {
   package: string
@@ -26,6 +36,8 @@ export type SystemUpdate = {
 }
 
 const { t } = useI18n()
+const notificationsStore = useNotificationsStore()
+const router = useRouter()
 
 const loading = ref(true)
 const error = ref({
@@ -45,6 +57,10 @@ const isCheckingPackageUpdates = ref(false)
 const isCancellingSchedule = ref(false)
 const isApplyingSystemUpdate = ref(false)
 const noPackageUpdatesAvailable = ref(false)
+
+const automaticUpdatesEnabled = ref(false)
+const isSubscriptionPresent = ref(false)
+const isChangingAutomaticUpdatesSetting = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
 const showUploadImageDrawer = ref(false)
@@ -67,17 +83,51 @@ async function fetchUpdatesStatus() {
   loading.value = true
   try {
     systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
+
     const lastPackageUpdateCheckResponse = (
       await ubusCall('ns.update', 'get-package-updates-last-check')
     ).data
     if (lastPackageUpdateCheckResponse.lastCheck > 0) {
       lastPackageUpdateCheck.value = new Date(lastPackageUpdateCheckResponse.lastCheck * 1000)
     }
+
+    const subscriptionResponse = await ubusCall('ns.subscription', 'info')
+    isSubscriptionPresent.value = subscriptionResponse.data.systemd_id != ''
+
+    automaticUpdatesEnabled.value = (
+      await ubusCall('ns.update', 'get-automatic-updates-status')
+    ).data.enabled
     loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_updates_status')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  }
+}
+
+async function handleAutomaticUpdatesToggle(value: boolean) {
+  cleanError()
+  try {
+    isChangingAutomaticUpdatesSetting.value = true
+    await ubusCall('ns.update', 'set-automatic-updates', { enable: value })
+    notificationsStore.addNotification({
+      id: value ? 'enable-automatic-updates' : 'disable-automatic-updates',
+      kind: 'success',
+      title: t(
+        value
+          ? 'standalone.update.automatic_updates_enabled_message'
+          : 'standalone.update.automatic_updates_disabled_message'
+      )
+    })
+  } catch (err: any) {
+    error.value.notificationTitle = value
+      ? t('error.cannot_enable_automatic_updates')
+      : t('error.cannot_disable_automatic_updates')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+    automaticUpdatesEnabled.value = !value
+  } finally {
+    isChangingAutomaticUpdatesSetting.value = false
   }
 }
 
@@ -179,7 +229,35 @@ onMounted(() => {
         class="my-6"
         v-if="noPackageUpdatesAvailable"
         :description="t('standalone.update.all_updates_installed_notification')"
-    /></template>
+      />
+      <div class="mt-6">
+        <NeToggle
+          v-model="automaticUpdatesEnabled"
+          :disabled="!isSubscriptionPresent || isChangingAutomaticUpdatesSetting"
+          @update:model-value="handleAutomaticUpdatesToggle"
+          :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
+          :top-label="t('standalone.update.automatic_updates')"
+        >
+          <template #topTooltip>
+            <NeTooltip>
+              <template #content>
+                <p>
+                  {{ t('standalone.update.automatic_updates_tooltip') }}
+                </p>
+                <NeLink
+                  @click="
+                    () => {
+                      router.push(`${getStandaloneRoutePrefix()}/system/subscription`)
+                    }
+                  "
+                  >{{ t('standalone.update.go_to_subscription') }}</NeLink
+                >
+              </template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
+      </div>
+    </template>
   </FormLayout>
   <hr class="my-6" />
   <FormLayout class="max-w-4xl" :title="t('standalone.update.system_update')">

@@ -5,8 +5,16 @@
 
 <script setup lang="ts">
 import {
+  NeCombobox,
+  type NeComboboxOption,
+  NeTooltip,
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
+  NeRadioSelection
+} from '@nethesis/vue-components'
+import {
   NeToggle,
-  NeRadioSelection,
   getAxiosErrorMessage,
   NeTextInput,
   focusElement
@@ -20,14 +28,6 @@ import {
   type FirewallRuleAction,
   type FirewallRule
 } from '@/stores/standalone/firewall'
-import {
-  NeCombobox,
-  type NeComboboxOption,
-  NeTooltip,
-  NeInlineNotification,
-  NeSideDrawer,
-  NeButton
-} from '@nethesis/vue-components'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import {
   MessageBag,

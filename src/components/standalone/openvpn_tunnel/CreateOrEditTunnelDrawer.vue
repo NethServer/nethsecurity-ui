@@ -24,15 +24,15 @@ import {
   NeSideDrawer,
   NeButton,
   NeTooltip,
-  NeSkeleton
+  NeSkeleton,
+  NeFormItemLabel,
+  NeRadioSelection
 } from '@nethesis/vue-components'
 import {
   NeToggle,
   NeTextInput,
   getAxiosErrorMessage,
-  NeFormItemLabel,
-  NeTextArea,
-  NeRadioSelection
+  NeTextArea
 } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'

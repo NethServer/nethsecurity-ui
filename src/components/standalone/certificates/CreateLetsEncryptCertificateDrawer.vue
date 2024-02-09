@@ -19,12 +19,13 @@ import {
   NeButton,
   NeCombobox,
   NeTooltip,
-  NeSkeleton
+  NeSkeleton,
+  NeRadioSelection
 } from '@nethesis/vue-components'
 import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeRadioSelection, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 

@@ -12,14 +12,10 @@ import {
   NeSideDrawer,
   NeButton,
   NeSkeleton,
-  NeTooltip
+  NeTooltip,
+  NeFormItemLabel
 } from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
-  NeFormItemLabel,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { toRefs, ref, watch } from 'vue'
 import type {
   CreateEditPortForwardPayload,

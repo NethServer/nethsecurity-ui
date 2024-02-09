@@ -34,15 +34,11 @@ import {
   NeButton,
   NeSideDrawer,
   NeSkeleton,
-  NeTooltip
-} from '@nethesis/vue-components'
-import {
+  NeTooltip,
   NeFormItemLabel,
-  NeTextInput,
-  NeRadioSelection,
-  focusElement,
-  getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+  NeRadioSelection
+} from '@nethesis/vue-components'
+import { NeTextInput, focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { cloneDeep, isEmpty, toUpper } from 'lodash-es'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'

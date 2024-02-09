@@ -6,8 +6,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeFileInput, NeInlineNotification, NeButton, NeSideDrawer } from '@nethesis/vue-components'
-import { NeFormItemLabel, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeFileInput,
+  NeInlineNotification,
+  NeButton,
+  NeSideDrawer,
+  NeFormItemLabel
+} from '@nethesis/vue-components'
+import { NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateFile, validateRequired, type validationOutput } from '@/lib/validation'
 import { watch } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'

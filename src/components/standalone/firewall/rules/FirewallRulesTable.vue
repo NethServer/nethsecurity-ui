@@ -105,7 +105,7 @@ function drop(index: number): void {
 
 function getServiceText(rule: FirewallRule) {
   switch (rule.ns_service) {
-    case '':
+    case '*':
       return t('common.any')
     case 'custom':
       return t(

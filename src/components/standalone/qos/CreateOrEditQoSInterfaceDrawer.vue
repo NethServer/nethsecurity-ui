@@ -61,7 +61,7 @@ async function fetchOptions() {
         (x: any) =>
           x.iface &&
           x.iface['.type'] === 'interface' &&
-          !props.configuredInterfaces.includes(x.iface['.name'])
+          (props.itemToEdit || !props.configuredInterfaces.includes(x.iface['.name']))
       )
       .map((x: any) => ({
         id: x.iface['.name'],

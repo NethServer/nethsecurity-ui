@@ -1244,6 +1244,9 @@
       "exception_name": "Exception name",
       "no_exception_found": "No exception found"
     },
+    "threat_shield": {
+      "title": "Threat shield"
+    },
     "vpn": {
       "title": "VPN"
     },

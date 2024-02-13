@@ -111,6 +111,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/security/DpiFilterView.vue')
   },
   {
+    path: 'security/threat-shield',
+    name: 'ThreatShield',
+    component: () => import('../views/standalone/security/ThreatShieldView.vue')
+  },
+  {
     path: 'system/storage',
     name: 'Storage',
     component: () => import('../views/standalone/system/StorageView.vue')

@@ -135,6 +135,10 @@ const navigation: Ref<MenuItem[]> = ref([
     icon: 'shield-halved',
     children: [
       {
+        name: t('standalone.threat_shield.title'),
+        to: 'security/threat-shield'
+      },
+      {
         name: t('standalone.flashstart.title'),
         to: 'security/flashstart'
       },

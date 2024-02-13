@@ -268,7 +268,9 @@
     "invalid_otp": "Invalid OTP",
     "cannot_retrieve_qr_code": "Cannot retrieve QR code",
     "cannot_enable_automatic_updates": "Cannot enable automatic updates",
-    "cannot_disable_automatic_updates": "Cannot disable automatic updates"
+    "cannot_disable_automatic_updates": "Cannot disable automatic updates",
+    "cannot_retrieve_threat_shield_settings": "Cannot retrieve threat shield settings",
+    "cannot_save_threat_shield_settings": "Cannot save threat shield settings"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1245,7 +1247,14 @@
       "no_exception_found": "No exception found"
     },
     "threat_shield": {
-      "title": "Threat shield"
+      "title": "Threat shield",
+      "blocklist": "Blocklist",
+      "allowlist": "Allowlist",
+      "settings": "Settings",
+      "threat_shield_status": "Threat shield status",
+      "threat_shield_status_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies lacinia ante at luctus. Suspendisse tristique neque.",
+      "status_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies lacinia ante at luctus. Suspendisse tristique neque.",
+      "status": "Status"
     },
     "vpn": {
       "title": "VPN"

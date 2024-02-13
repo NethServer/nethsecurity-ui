@@ -700,7 +700,7 @@
       "pppoe_password": "Password",
       "remove_configuration_explanation": "Remove '{iface}' configuration? Device '{device}' will become unassigned",
       "delete_bridge_explanation": "Delete bridge '{iface}' and its device '{device}'?",
-      "delete_bond_explanation": "Delete bond '{iface}'?",
+      "delete_bond_explanation": "Remove configuration for bond '{iface}'?",
       "dhcp_hostname_to_send_label": "Hostname to send when requesting DHCP",
       "dhcp_hostname_device": "Send the hostname of this device",
       "dhcp_hostname_do_not_send": "Do not send a hostname",
@@ -748,11 +748,16 @@
       "cannot_remove_device_configuration": "Cannot remove device configuration",
       "hotspot_network": "Network",
       "add_ip_address": "Add IP address",
-      "delete_bond_title": "Delete bond \"{name}\"?",
-      "delete_bond_description": "Delete bond \"{name}\"? The devices bonded will be detached and made available for other configurations.",
+      "delete_bond_title": "Delete bond '{name}'?",
+      "delete_bond_description": "Delete bond '{name}'? The devices bonded will be detached and available for other configurations.",
       "cannot_delete_bond": "Cannot delete bond.",
       "delete_bond": "Delete bond",
-      "edit_bond": "Edit bond"
+      "bond_name": "Bond name",
+      "management_ipv4_address_cidr": "Management IPv4 address (CIDR notation)",
+      "management_ipv4_address_cidr_tooltip": "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua.",
+      "create_bond": "Create bond",
+      "configure_bond": "Configure bond",
+      "configure_bond_name": "Configure bond {name}"
     },
     "multi_wan": {
       "title": "MultiWAN",

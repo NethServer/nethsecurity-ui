@@ -50,6 +50,7 @@ import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/De
 import { isEmpty, isEqual, uniqWith, toUpper, clone } from 'lodash-es'
 import { zonesSorting } from '@/stores/standalone/firewall'
 import DeleteBondModal from '@/components/standalone/interfaces_and_devices/DeleteBondModal.vue'
+import DeviceButtons from '@/components/standalone/interfaces_and_devices/DeviceButtons.vue'
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -76,6 +77,7 @@ let isShownUnconfigureDeviceModal = ref(false)
 let isShownCreateVlanDeviceDrawer = ref(false)
 let isShownDeleteDeviceModal = ref(false)
 let deviceToConfigureType = ref('physical' as DeviceType)
+let isShownDeleteBondModal = ref(false)
 
 let loading = ref({
   networkDevices: true,
@@ -93,6 +95,7 @@ const bondToDelete = ref<string>()
 
 function handleBondDeleted() {
   bondToDelete.value = undefined
+  isShownDeleteBondModal.value = false
   loadData()
 }
 
@@ -243,52 +246,14 @@ function getIconForegroundStyle(device: any) {
   return getZoneIconForegroundStyle(zoneName)
 }
 
-function getConfiguredDeviceKebabMenuItems(device: any) {
-  const iface = getInterface(device)
-
-  return [
-    {
-      id: 'createAliasInterface',
-      label: t('standalone.interfaces_and_devices.create_alias_interface'),
-      icon: 'copy',
-      iconStyle: 'fas',
-      action: () => showCreateAliasInterfaceDrawer(device),
-      disabled:
-        !iface ||
-        !!getAliasInterface(device, networkConfig.value) ||
-        !getFirewallZone(iface, firewallConfig.value)
-    },
-    {
-      id: 'removeConfiguration',
-      label:
-        isBridge(device) || isBond(device)
-          ? t('standalone.interfaces_and_devices.delete_interface')
-          : t('standalone.interfaces_and_devices.remove_configuration'),
-      icon: 'circle-minus',
-      iconStyle: 'fas',
-      action: () => showUnconfigureDeviceModal(device),
-      danger: true,
-      disabled: !iface
-    }
-  ]
-}
-
-function getUnconfiguredVlanKebabMenuItems(device: any) {
-  return [
-    {
-      id: 'deleteDevice',
-      label: t('standalone.interfaces_and_devices.delete_device'),
-      icon: 'trash',
-      iconStyle: 'fas',
-      action: () => showDeleteDeviceModal(device),
-      danger: true
-    }
-  ]
-}
-
 function showDeleteDeviceModal(device: any) {
   currentDevice.value = device
   isShownDeleteDeviceModal.value = true
+}
+
+function showDeleteBondModal(device: any) {
+  bondToDelete.value = device['.name'] ?? device.bond_interface
+  isShownDeleteBondModal.value = true
 }
 
 function showDeleteAliasModal(alias: any, device: any) {
@@ -345,7 +310,8 @@ function configureBond(deviceOrIface: DeviceOrIface) {
   } else {
     currentDevice.value.name = 'bond-' + deviceOrIface['.name']
   }
-  deviceToConfigureType.value = 'physical'
+  deviceToConfigureType.value = 'physical' // important
+  interfaceToEdit.value = null // important
   isShownConfigureDeviceDrawer.value = true
 }
 
@@ -619,84 +585,16 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       v-if="isDeviceConfigurable(device)"
                       class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
                     >
-                      <template v-if="getInterface(device)">
-                        <!-- actions for configured devices -->
-                        <NeButton
-                          kind="tertiary"
-                          size="lg"
-                          @click="showConfigureDeviceDrawer(device)"
-                        >
-                          <template #prefix>
-                            <font-awesome-icon
-                              :icon="['fas', 'pen-to-square']"
-                              class="h-4 w-4"
-                              aria-hidden="true"
-                            />
-                          </template>
-                          {{ t('common.edit') }}
-                        </NeButton>
-                        <NeDropdown
-                          :items="getConfiguredDeviceKebabMenuItems(device)"
-                          :alignToRight="true"
-                        />
-                      </template>
-                      <!-- configure button for unconfigured devices -->
-                      <NeButton
-                        v-else-if="isBond(device)"
-                        kind="secondary"
-                        size="lg"
-                        @click="configureBond(device)"
-                      >
-                        <template #prefix>
-                          <font-awesome-icon
-                            :icon="['fas', 'wrench']"
-                            class="h-4 w-4"
-                            aria-hidden="true"
-                          />
-                        </template>
-                        {{ t('standalone.interfaces_and_devices.configure') }}
-                      </NeButton>
-                      <NeButton
-                        v-else
-                        kind="secondary"
-                        size="lg"
-                        @click="showConfigureDeviceDrawer(device)"
-                      >
-                        <template #prefix>
-                          <font-awesome-icon
-                            :icon="['fas', 'wrench']"
-                            class="h-4 w-4"
-                            aria-hidden="true"
-                          />
-                        </template>
-                        {{ t('standalone.interfaces_and_devices.configure') }}
-                      </NeButton>
-                      <NeDropdown
-                        v-if="isBond(device)"
-                        :items="[
-                          {
-                            id: 'editBond',
-                            label: t('standalone.interfaces_and_devices.edit_bond'),
-                            icon: 'pen-to-square',
-                            iconStyle: 'fas',
-                            action: () => showConfigureDeviceDrawer(device)
-                          },
-                          {
-                            id: 'deleteBond',
-                            label: t('standalone.interfaces_and_devices.delete_bond'),
-                            icon: 'trash',
-                            iconStyle: 'fas',
-                            action: () => (bondToDelete = device['.name'] ?? device.bond_interface),
-                            danger: true
-                          }
-                        ]"
-                        :alignToRight="true"
-                      />
-                      <!-- actions for unconfigured vlan devices -->
-                      <NeDropdown
-                        v-else-if="isVlan(device) && !getInterface(device)"
-                        :items="getUnconfiguredVlanKebabMenuItems(device)"
-                        :alignToRight="true"
+                      <DeviceButtons
+                        :deviceOrIface="device"
+                        :networkConfig="networkConfig"
+                        :firewallConfig="firewallConfig"
+                        @showConfigureDeviceDrawer="showConfigureDeviceDrawer"
+                        @configureBond="configureBond"
+                        @showCreateAliasInterfaceDrawer="showCreateAliasInterfaceDrawer"
+                        @showUnconfigureDeviceModal="showUnconfigureDeviceModal"
+                        @showDeleteBondModal="showDeleteBondModal"
+                        @showDeleteDeviceModal="showDeleteDeviceModal"
                       />
                     </div>
                     <div
@@ -888,17 +786,13 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                       <!-- fourth column -->
                       <div>
                         <div v-if="!isVpn(device)">
-                          <div class="mb-2 flex items-center gap-2">
+                          <div v-if="isDeviceUp(device)" class="mb-2 flex items-center gap-2">
                             <font-awesome-icon
-                              :icon="['fas', isDeviceUp(device) ? 'circle-check' : 'circle-xmark']"
+                              :icon="['fas', 'circle-check']"
                               class="h-4 w-4"
                               aria-hidden="true"
                             />
-                            <span>{{
-                              isDeviceUp(device)
-                                ? t('standalone.interfaces_and_devices.up')
-                                : t('standalone.interfaces_and_devices.down')
-                            }}</span>
+                            <span>{{ t('standalone.interfaces_and_devices.up') }}</span>
                           </div>
                           <div v-if="device.speed && device.speed !== -1">
                             <span class="font-medium"
@@ -915,85 +809,16 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                         v-if="isDeviceConfigurable(device)"
                         class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
-                        <template v-if="getInterface(device)">
-                          <!-- actions for configured devices -->
-                          <NeButton
-                            kind="tertiary"
-                            size="lg"
-                            @click="showConfigureDeviceDrawer(device)"
-                          >
-                            <template #prefix>
-                              <font-awesome-icon
-                                :icon="['fas', 'pen-to-square']"
-                                class="h-4 w-4"
-                                aria-hidden="true"
-                              />
-                            </template>
-                            {{ t('common.edit') }}
-                          </NeButton>
-                          <NeDropdown
-                            :items="getConfiguredDeviceKebabMenuItems(device)"
-                            :alignToRight="true"
-                          />
-                        </template>
-                        <!-- configure button for unconfigured devices -->
-                        <NeButton
-                          v-else-if="isBond(device)"
-                          kind="secondary"
-                          size="lg"
-                          @click="configureBond(device)"
-                        >
-                          <template #prefix>
-                            <font-awesome-icon
-                              :icon="['fas', 'wrench']"
-                              class="h-4 w-4"
-                              aria-hidden="true"
-                            />
-                          </template>
-                          {{ t('standalone.interfaces_and_devices.configure') }}
-                        </NeButton>
-                        <NeButton
-                          v-else
-                          kind="secondary"
-                          size="lg"
-                          @click="showConfigureDeviceDrawer(device)"
-                        >
-                          <template #prefix>
-                            <font-awesome-icon
-                              :icon="['fas', 'wrench']"
-                              class="h-4 w-4"
-                              aria-hidden="true"
-                            />
-                          </template>
-                          {{ t('standalone.interfaces_and_devices.configure') }}
-                        </NeButton>
-                        <NeDropdown
-                          v-if="device.zone != undefined && isBond(device)"
-                          :items="[
-                            {
-                              id: 'editBond',
-                              label: t('standalone.interfaces_and_devices.edit_bond'),
-                              icon: 'pen-to-square',
-                              iconStyle: 'fas',
-                              action: () => showConfigureDeviceDrawer(device)
-                            },
-                            {
-                              id: 'deleteBond',
-                              label: t('standalone.interfaces_and_devices.delete_bond'),
-                              icon: 'trash',
-                              iconStyle: 'fas',
-                              action: () =>
-                                (bondToDelete = device['.name'] ?? device.bond_interface),
-                              danger: true
-                            }
-                          ]"
-                          :alignToRight="true"
-                        />
-                        <!-- actions for unconfigured vlan devices -->
-                        <NeDropdown
-                          v-else-if="isVlan(device) && !getInterface(device)"
-                          :items="getUnconfiguredVlanKebabMenuItems(device)"
-                          :alignToRight="true"
+                        <DeviceButtons
+                          :deviceOrIface="device"
+                          :networkConfig="networkConfig"
+                          :firewallConfig="firewallConfig"
+                          @showConfigureDeviceDrawer="showConfigureDeviceDrawer"
+                          @configureBond="configureBond"
+                          @showCreateAliasInterfaceDrawer="showCreateAliasInterfaceDrawer"
+                          @showUnconfigureDeviceModal="showUnconfigureDeviceModal"
+                          @showDeleteBondModal="showDeleteBondModal"
+                          @showDeleteDeviceModal="showDeleteDeviceModal"
                         />
                       </div>
                     </div>
@@ -1248,8 +1073,9 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
     />
     <!-- delete bond -->
     <DeleteBondModal
+      :visible="isShownDeleteBondModal"
       :bond="bondToDelete"
-      @close="bondToDelete = undefined"
+      @close="isShownDeleteBondModal = false"
       @success="handleBondDeleted()"
     />
   </div>

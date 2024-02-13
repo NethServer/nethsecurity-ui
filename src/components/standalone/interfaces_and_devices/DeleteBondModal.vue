@@ -9,9 +9,10 @@ const { t } = useI18n()
 // using changes store there because all view does so
 const changeStore = useUciPendingChangesStore()
 
-const props = defineProps<{
-  bond?: string
-}>()
+const props = defineProps({
+  visible: { type: Boolean, default: false },
+  bond: { type: String, default: '' }
+})
 
 const emit = defineEmits(['close', 'success'])
 
@@ -65,7 +66,7 @@ function handleClose() {
     :secondary-button-disabled="loading"
     :secondary-button-loading="loading"
     :title="t('standalone.interfaces_and_devices.delete_bond_title', { name: computedBond })"
-    :visible="bond != undefined"
+    :visible="visible"
     kind="warning"
     @close="handleClose"
     @primaryClick="submit"

@@ -71,13 +71,13 @@ async function unconfigureDevice() {
   <NeModal
     :visible="visible"
     :title="
-      isBridge(device) || isBond(device)
+      isBridge(device)
         ? t('standalone.interfaces_and_devices.delete_interface')
         : t('standalone.interfaces_and_devices.remove_configuration')
     "
     kind="warning"
     :primaryLabel="
-      isBridge(device) || isBond(device)
+      isBridge(device)
         ? t('standalone.interfaces_and_devices.delete_interface')
         : t('standalone.interfaces_and_devices.remove_configuration')
     "

@@ -290,8 +290,16 @@ export function isBridge(device: DeviceOrIface) {
   }
 }
 
-export function isBond(iface: DeviceOrIface) {
-  return iface?.proto === 'bonding' || iface.name?.startsWith('bond-')
+export function isBond(deviceOrIface: DeviceOrIface) {
+  return deviceOrIface?.proto === 'bonding' || deviceOrIface.name?.startsWith('bond-')
+}
+
+export function isUnconfiguredBond(deviceOrIface: DeviceOrIface) {
+  return isBond(deviceOrIface) && !deviceOrIface.iface
+}
+
+export function isConfiguredBond(deviceOrIface: DeviceOrIface) {
+  return isBond(deviceOrIface) && deviceOrIface.iface
 }
 
 export function isIpsec(device: DeviceOrIface) {

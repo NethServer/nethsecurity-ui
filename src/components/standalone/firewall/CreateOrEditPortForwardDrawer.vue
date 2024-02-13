@@ -86,11 +86,16 @@ const destinationPort = ref('')
 const wan = ref('')
 const enabled = ref(true)
 const restrict = ref<string[]>([''])
-const protocols = ref<NeComboboxOption[]>([])
+const protocols = ref<NeComboboxOption[]>([
+  { id: 'tcp', label: 'TCP' },
+  { id: 'udp', label: 'UDP' }
+])
 const log = ref(false)
 const reflection = ref(false)
 const reflectionZones = ref<NeComboboxOption[]>([])
 const destinationZone = ref('')
+
+const anyProtocolSelected = computed(() => protocols.value.length == 0)
 
 function resetForm() {
   validationErrorBag.value.clear()
@@ -106,11 +111,16 @@ function resetForm() {
     props.initialItem?.restrict && props.initialItem.restrict.length > 0
       ? props.initialItem?.restrict.map((x) => x)
       : ['']
-  protocols.value =
-    props.initialItem?.protocol.map((proto: string) => ({
+
+  if (props.initialItem && props.initialItem?.protocol.some((proto) => proto === 'all')) {
+    protocols.value = []
+  } else {
+    protocols.value = (props.initialItem?.protocol ?? ['tcp', 'udp']).map((proto: string) => ({
       id: proto,
       label: proto.toUpperCase()
-    })) ?? []
+    }))
+  }
+
   log.value = props.initialItem?.log ?? false
   reflection.value = props.initialItem?.reflection ?? false
   reflectionZones.value =
@@ -155,7 +165,7 @@ async function fetchOptions() {
 
   try {
     wanInterfaces.value = [
-      { id: 'any', label: t('standalone.port_forward.any') },
+      { id: 'any', label: t('common.any') },
       ...(await ubusCall('ns.redirects', 'list-wans')).data.wans.map(
         (iface: { device: string; ipaddr: string }) => ({
           id: iface.ipaddr,
@@ -239,17 +249,27 @@ function validate(): boolean {
     showAdvancedSettings.value = true
   }
 
+  const sourceDestinationPortValidators: [validationOutput[], string][] = [
+    [
+      [
+        // if destination port is present, source port is required
+        destinationPort.value ? validateRequired(sourcePort.value) : { valid: true },
+        sourcePort.value ? validatePort(sourcePort.value) : { valid: true }
+      ],
+      'sourcePort'
+    ],
+    [
+      [destinationPort.value ? validatePort(destinationPort.value) : { valid: true }],
+      'destinationPort'
+    ]
+  ]
+
   let validators: [validationOutput[], string][] = [
     [[validateRequired(name.value)], 'name'],
-    [[validateRequired(sourcePort.value), validatePort(sourcePort.value)], 'sourcePort'],
-    [[validateRequiredOption(protocols.value)], 'protocols'],
+    ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
     [
       [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
       'destinationIP'
-    ],
-    [
-      [validateRequired(destinationPort.value), validatePort(destinationPort.value)],
-      'destinationPort'
     ],
     [reflection.value ? [validateRequiredOption(reflectionZones.value)] : [], 'reflectionZones']
   ]
@@ -274,9 +294,9 @@ async function createOrEditPortForward() {
     if (validate()) {
       const payload: CreateEditPortForwardPayload = {
         dest_ip: destinationIP.value,
-        proto: protocols.value.map((protoObj) => protoObj.id),
-        src_dport: sourcePort.value,
-        dest_port: destinationPort.value,
+        proto: anyProtocolSelected.value ? ['all'] : protocols.value.map((protoObj) => protoObj.id),
+        src_dport: anyProtocolSelected.value ? '' : sourcePort.value,
+        dest_port: anyProtocolSelected.value ? '' : destinationPort.value,
         name: name.value,
         src_dip: wan.value === 'any' ? '' : wan.value,
         enabled: enabled.value ? '1' : '0',
@@ -352,10 +372,11 @@ async function createOrEditPortForward() {
       />
       <NeCombobox
         :label="t('standalone.port_forward.protocols')"
-        :placeholder="t('standalone.port_forward.choose_protocol')"
+        :helper-text="t('standalone.port_forward.protocol_helper')"
         :multiple="true"
         :options="supportedProtocols"
         v-model="protocols"
+        :placeholder="t('standalone.port_forward.choose_protocol')"
         :invalid-message="validationErrorBag.getFirstFor('protocols')"
         :noResultsLabel="t('ne_combobox.no_results')"
         :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
@@ -364,10 +385,20 @@ async function createOrEditPortForward() {
         :user-input-label="t('ne_combobox.user_input_label')"
         :optionalLabel="t('common.optional')"
       />
+      <NeInlineNotification
+        kind="info"
+        :title="t('standalone.port_forward.any_protocol')"
+        :description="t('standalone.port_forward.any_protocol_message')"
+        v-if="anyProtocolSelected"
+      />
       <NeTextInput
+        v-if="!anyProtocolSelected"
         :label="t('standalone.port_forward.source_port')"
         v-model="sourcePort"
         :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
+        :optional="true"
+        :optionalLabel="t('common.optional')"
+        :helper-text="t('standalone.port_forward.source_destination_port_helper')"
         type="number"
       />
       <NeTextInput
@@ -384,11 +415,23 @@ async function createOrEditPortForward() {
         >
       </NeTextInput>
       <NeTextInput
+        v-if="!anyProtocolSelected"
         :label="t('standalone.port_forward.destination_port')"
         v-model="destinationPort"
         :invalid-message="validationErrorBag.getFirstFor('destinationPort')"
+        :optional="true"
+        :optionalLabel="t('common.optional')"
+        :helper-text="t('standalone.port_forward.source_destination_port_helper')"
         type="number"
-      />
+      >
+        <template #tooltip
+          ><NeTooltip
+            ><template #content>{{
+              t('standalone.port_forward.destination_port_tooltip')
+            }}</template></NeTooltip
+          ></template
+        >
+      </NeTextInput>
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('standalone.port_forward.advanced_settings') }}

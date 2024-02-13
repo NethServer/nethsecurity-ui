@@ -115,12 +115,13 @@ function getCellClasses(item: PortForward) {
       </template>
       <template #source_port="{ item }: { item: PortForward }">
         <p :class="[...getCellClasses(item)]">
-          {{ item.source_port }} {{ item.source_port_name ? `(${item.source_port_name})` : '' }}
+          {{ item.source_port ? item.source_port : t('common.any') }}
+          {{ item.source_port_name ? `(${item.source_port_name})` : '' }}
         </p>
       </template>
       <template #destination_port="{ item }: { item: PortForward }">
         <p :class="[...getCellClasses(item)]">
-          {{ item.destination_port }}
+          {{ item.destination_port ? item.destination_port : t('common.any') }}
         </p>
       </template>
       <template #protocols="{ item }: { item: PortForward }">
@@ -134,7 +135,7 @@ function getCellClasses(item: PortForward) {
       </template>
       <template #wan="{ item }: { item: PortForward }">
         <p :class="[...getCellClasses(item)]">
-          {{ item.wan === 'any' ? t('standalone.port_forward.any') : item.wan }}
+          {{ item.wan === 'any' ? t('common.any') : item.wan }}
         </p>
       </template>
       <template #restrict="{ item }: { item: PortForward }">

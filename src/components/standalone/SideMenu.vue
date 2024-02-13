@@ -120,6 +120,10 @@ const navigation: Ref<MenuItem[]> = ref([
         to: 'firewall/port-forward'
       },
       {
+        name: t('standalone.nat.title'),
+        to: 'firewall/nat'
+      },
+      {
         name: t('standalone.firewall_rules.short_title'),
         to: 'firewall/rules'
       },

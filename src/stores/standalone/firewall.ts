@@ -50,6 +50,7 @@ interface ForwardingResponse {
 }
 
 export type FirewallRuleAction = 'DROP' | 'REJECT' | 'ACCEPT'
+export type NatRuleAction = 'SNAT' | 'MASQUERADE' | 'ACCEPT'
 
 export interface FirewallRule {
   id?: string // rule id
@@ -67,6 +68,16 @@ export interface FirewallRule {
   ns_tag: string[] // tags
   add_to_top: boolean // add rule to top?
   system_rule: boolean // system rule?
+}
+
+export interface NatRule {
+  id?: string
+  name: string
+  src: string
+  src_ip: string
+  dest_ip: string
+  target: NatRuleAction
+  snat_ip?: string
 }
 
 export interface RuleService {

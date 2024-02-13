@@ -11,7 +11,6 @@ import {
   getZoneIcon,
   isBond,
   isBridge,
-  isConfiguredBond,
   isUnconfiguredBond
 } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'

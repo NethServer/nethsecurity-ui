@@ -96,6 +96,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/firewall/PortForward.vue')
   },
   {
+    path: 'firewall/nat',
+    name: 'Nat',
+    component: () => import('../views/standalone/firewall/NatView.vue')
+  },
+  {
     path: 'firewall/rules',
     name: 'FirewallRules',
     component: () => import('../views/standalone/firewall/FirewallRulesView.vue')

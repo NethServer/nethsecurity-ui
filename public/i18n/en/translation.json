@@ -54,8 +54,8 @@
     "invalid_ip_address": "Invalid IP address",
     "invalid_ip_v4_address": "Invalid IPv4 address",
     "invalid_ip_v6_address": "Invalid IPv6 address",
+    "invalid_ip_v4_address_or_cidr": "Enter a valid IPv4 address with optional CIDR notation",
     "invalid_ip_address_or_cidr": "Enter a valid IPv4 or IPv6 address, with optional CIDR notation",
-    "invalid_ip_v4_address_or_cidr": "Enter a valid IPv4 address, with optional CIDR notation",
     "invalid_address": "Enter a valid IP address with optional CIDR notation, MAC address, hostname, or fully qualified domain name",
     "invalid_cidr_v4_address": "Enter a valid IPv4 address with CIDR notation",
     "invalid_cidr_v6_address": "Enter a valid IPv6 address with CIDR notation",
@@ -278,7 +278,10 @@
     "cannot_retrieve_allowlist": "Cannot retrieve allowlist",
     "cannot_create_address": "Cannot create address",
     "cannot_edit_address": "Cannot edit address",
-    "cannot_delete_address": "Cannot delete address"
+    "cannot_delete_address": "Cannot delete address",
+    "cannot_retrieve_nat_rules": "Cannot retrieve NAT rules",
+    "cannot_save_nat_rule": "Cannot save NAT rule",
+    "name_too_long": "Too many characters"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1126,7 +1129,7 @@
       "any_protocol_message": "You selected 'any' protocol, this means that ALL traffic will be forwarded. Make sure you know what you are doing",
       "any_zone": "Any zone",
       "destination_address_tooltip": "Redirect matched incoming traffic to the specified internal host.",
-      "restrict_access_from_tooltip": "By default, the port forward access is granted to anyone. Add IPs or CIDRs to restric the access only from the given networks.",
+      "restrict_access_from_tooltip": "By default, the port forward access is granted to anyone. Add IPs or CIDRs to restrict the access only from the given networks.",
       "no_port_forward_found": "No port forward found",
       "filter_change_suggestion": "Try changing filter value",
       "copy": "Copy"
@@ -1653,6 +1656,34 @@
       "i_have_stored_recovery_codes": "I have stored recovery codes",
       "two_fa_configured": "Two-factor authentication configured",
       "two_fa_revoked": "Two-factor authentication revoked"
+    },
+    "nat": {
+      "title": "NAT",
+      "nat_rules": "NAT rules",
+      "nat_rules_description": "Network Address Translation (NAT) is used to modify network address information in packet headers while in transit. Here you can create Masquerade, Source NAT (SNAT) rules, and disable NAT for specific traffic. Masquerade is enabled by default for traffic going from local networks to the WAN.",
+      "no_rules_found": "No rules found",
+      "add_nat_rule": "Add NAT rule",
+      "edit_nat_rule": "Edit NAT rule",
+      "save_nat_rule": "Save NAT rule",
+      "rule_name": "Rule name",
+      "name": "Name",
+      "source_address": "Source address",
+      "address_helper": "IPv4 address with optional CIDR notation",
+      "source_address_tooltip": "Match forwarded traffic from this IPv4 address or CIDR",
+      "outbound_zone": "Outbound zone",
+      "destination_address": "Destination address",
+      "destination_address_tooltip": "Match forwarded traffic directed at this IPv4 address or CIDR",
+      "action": "Action",
+      "action_snat": "SNAT",
+      "action_snat_description": "Rewrite to specific source IP or port",
+      "action_masquerade": "Masquerade",
+      "action_masquerade_description": "Automatically rewrite to outbound interface IP",
+      "action_accept": "Accept (no NAT)",
+      "action_accept_description": "Disable address rewriting",
+      "rewrite_ip_address": "Rewrite IP address",
+      "rewrite_ip": "Rewrite IP",
+      "delete_nat_rule": "Delete NAT rule",
+      "confirm_delete_rule": "You are about to delete NAT rule '{name}'"
     }
   },
   "controller": {

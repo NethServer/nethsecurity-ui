@@ -165,7 +165,7 @@ async function fetchOptions() {
 
   try {
     wanInterfaces.value = [
-      { id: 'any', label: t('standalone.port_forward.any') },
+      { id: 'any', label: t('common.any') },
       ...(await ubusCall('ns.redirects', 'list-wans')).data.wans.map(
         (iface: { device: string; ipaddr: string }) => ({
           id: iface.ipaddr,

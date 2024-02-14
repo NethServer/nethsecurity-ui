@@ -270,7 +270,10 @@
     "cannot_enable_automatic_updates": "Cannot enable automatic updates",
     "cannot_disable_automatic_updates": "Cannot disable automatic updates",
     "cannot_retrieve_threat_shield_settings": "Cannot retrieve threat shield settings",
-    "cannot_save_threat_shield_settings": "Cannot save threat shield settings"
+    "cannot_save_threat_shield_settings": "Cannot save threat shield settings",
+    "cannot_retrieve_blocklists": "Cannot retrieve blocklists",
+    "cannot_disable_blocklist": "Cannot disable blocklist",
+    "cannot_enable_blocklist": "cannot enable blocklist"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1254,7 +1257,18 @@
       "threat_shield_status": "Threat shield status",
       "threat_shield_status_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies lacinia ante at luctus. Suspendisse tristique neque.",
       "status_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies lacinia ante at luctus. Suspendisse tristique neque.",
-      "status": "Status"
+      "status": "Status",
+      "blocklist_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vitae velit arcu.",
+      "blocklist_subscription_description": "Verify if your Enterprise subscription plan includes Threat shield to use this service.",
+      "threat_shield_enabled": "Threat shield enabled",
+      "threat_shield_disabled": "Threat shield disabled",
+      "name": "Name",
+      "type": "Type",
+      "confidence": "Confidence",
+      "no_blacklists_found": "No blacklists found",
+      "go_to_settings": "Go to settings",
+      "community": "Community",
+      "nethesis": "Nethesis"
     },
     "vpn": {
       "title": "VPN"

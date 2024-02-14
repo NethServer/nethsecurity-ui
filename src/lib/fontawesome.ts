@@ -79,7 +79,8 @@ import {
   faRightFromBracket as fasRightFromBracket,
   faTriangleExclamation,
   faChartSimple,
-  faEraser as fasEraser
+  faEraser as fasEraser,
+  faAward
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -221,4 +222,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faChartSimple)
   library.add(fasMagnifyingGlassPlus)
   library.add(fasEraser)
+  library.add(faAward)
 }

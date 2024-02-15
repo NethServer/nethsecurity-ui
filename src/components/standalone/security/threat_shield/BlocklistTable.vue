@@ -40,35 +40,49 @@ const tableHeaders = [
     key: 'status'
   }
 ]
+
+function getTypeLabel(item: Blocklist) {
+  switch (item.type) {
+    case 'community':
+      return t('standalone.threat_shield.community')
+    case 'enterprise':
+      return t('standalone.threat_shield.enterprise')
+    default:
+      return t('standalone.threat_shield.unknown')
+  }
+}
+
+function getTypeIcon(item: Blocklist) {
+  switch (item.type) {
+    case 'community':
+      return 'users'
+    case 'enterprise':
+      return 'award'
+    default:
+      return 'warning'
+  }
+}
 </script>
 
 <template>
   <NeTable :data="blocklists" :headers="tableHeaders" class="z-10">
     <template #name="{ item }: { item: Blocklist }">
-      <p>{{ item.name }}</p>
+      <p>{{ item.description }}</p>
     </template>
     <template #type="{ item }: { item: Blocklist }">
       <div class="flex flex-row items-center gap-x-2">
-        <FontAwesomeIcon
-          :icon="['fas', item.type === 'enterprise' ? 'award' : 'users']"
-          class="h-5 w-5"
-        />
+        <FontAwesomeIcon :icon="['fas', getTypeIcon(item)]" class="h-5 w-5" />
         <p>
-          {{
-            item.type === 'enterprise'
-              ? t('standalone.threat_shield.nethesis')
-              : t('standalone.threat_shield.community')
-          }}
+          {{ getTypeLabel(item) }}
         </p>
       </div>
     </template>
     <template #confidence="{ item }: { item: Blocklist }">
       <p v-if="item.confidence === -1">-</p>
       <div class="max-w-[10rem]" v-else>
-        <!-- TODO: adjust and use NeStepper? -->
         <div class="mb-2 flex flex-row">
-          <div v-for="i in range(1, 10 + 1)" :key="i" class="flex grow basis-0 justify-center">
-            <p class="text-xs font-semibold" v-if="i == item.confidence">
+          <div v-for="i in range(0, 10)" :key="i" class="flex grow basis-0 justify-center">
+            <p class="text-xs font-semibold" v-if="i + 1 == item.confidence">
               {{ item.confidence }}/10
             </p>
           </div>
@@ -89,7 +103,7 @@ const tableHeaders = [
             $emit('enableDisable', item)
           }
         "
-        :disabled="disableToggle || item.type === 'warning'"
+        :disabled="disableToggle || item.type === 'unknown'"
         :label="item.enabled ? t('common.enabled') : t('common.disabled')"
       />
     </template>

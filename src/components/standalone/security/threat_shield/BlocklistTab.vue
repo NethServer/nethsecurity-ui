@@ -18,9 +18,10 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 
 export type Blocklist = {
   name: string
-  type: 'community' | 'enterprise' | 'warning'
+  type: 'community' | 'enterprise' | 'unknown'
   enabled: boolean
   confidence: number
+  description: string
 }
 
 const { t } = useI18n()

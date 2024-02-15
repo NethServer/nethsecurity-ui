@@ -9,6 +9,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import AllowlistTable from './AllowlistTable.vue'
 import DeleteAddressModal from './DeleteAddressModal.vue'
 import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
+import { useNotificationsStore } from '@/stores/standalone/notifications'
 
 export type AllowlistAddress = {
   address: string
@@ -17,6 +18,7 @@ export type AllowlistAddress = {
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const notificationsStore = useNotificationsStore()
 
 const error = ref({
   notificationDescription: '',
@@ -119,13 +121,41 @@ onMounted(() => {
   <DeleteAddressModal
     :visible="showDeleteAddressModal"
     :item-to-delete="selectedAddress"
-    @address-deleted="refreshAllowlist()"
+    @address-deleted="
+      () => {
+        notificationsStore.addNotification({
+          id: 'delete_address',
+          kind: 'success',
+          title: t('standalone.threat_shield.address_deleted')
+        })
+        refreshAllowlist()
+      }
+    "
     @close="showDeleteAddressModal = false"
   />
   <CreateOrEditAddressDrawer
     :is-shown="showCreateOrEditAddressDrawer"
     :item-to-edit="selectedAddress"
     @close="showCreateOrEditAddressDrawer = false"
-    @add-edit-address="refreshAllowlist()"
+    @add-address="
+      () => {
+        notificationsStore.addNotification({
+          id: 'add_address',
+          kind: 'success',
+          title: t('standalone.threat_shield.address_added')
+        })
+        refreshAllowlist()
+      }
+    "
+    @edit-address="
+      () => {
+        notificationsStore.addNotification({
+          id: 'edit_address',
+          kind: 'success',
+          title: t('standalone.threat_shield.address_edited')
+        })
+        refreshAllowlist()
+      }
+    "
   />
 </template>

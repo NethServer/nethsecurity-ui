@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const emit = defineEmits(['close', 'add-edit-address'])
+const emit = defineEmits(['close', 'add-address', 'edit-address'])
 
 const isSavingChanges = ref(false)
 const error = ref({
@@ -74,7 +74,12 @@ async function createOrEditQosInterface() {
     })
     isSavingChanges.value = false
 
-    emit('add-edit-address')
+    if (isEditing) {
+      emit('edit-address')
+    } else {
+      emit('add-address')
+    }
+
     close()
   } catch (err: any) {
     if (err instanceof ValidationError) {

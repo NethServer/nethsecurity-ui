@@ -88,15 +88,7 @@ onMounted(() => {
         :top-label="t('standalone.threat_shield.status')"
         :label="isThreatShieldEnabled ? t('common.enabled') : t('common.disabled')"
         v-model="isThreatShieldEnabled"
-      >
-        <template #topTooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.threat_shield.status_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeToggle>
+      />
     </FormLayout>
     <hr />
     <div class="mt-6 flex flex-row justify-end">

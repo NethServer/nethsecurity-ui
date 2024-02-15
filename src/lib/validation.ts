@@ -78,6 +78,7 @@ export const validateAddress = (value: string): validationOutput => {
   if (
     !validateIpOrCidr(value).valid &&
     !validateFQDN(value, false).valid &&
+    !validateMacAddress(value).valid &&
     !validateHostname(value).valid
   ) {
     return { valid: false, errMessage: 'error.invalid_address' }

@@ -78,7 +78,7 @@ function getTypeIcon(item: Blocklist) {
       </div>
     </template>
     <template #confidence="{ item }: { item: Blocklist }">
-      <p v-if="item.confidence === -1">-</p>
+      <p v-if="item.confidence === -1">{{ t('standalone.threat_shield.unknown') }}</p>
       <div class="max-w-[10rem]" v-else>
         <div class="mb-2 flex flex-row">
           <div v-for="i in range(0, 10)" :key="i" class="flex grow basis-0 justify-center">

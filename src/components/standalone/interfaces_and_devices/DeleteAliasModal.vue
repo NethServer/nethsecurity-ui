@@ -89,7 +89,7 @@ async function deleteAlias() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.deleteAlias"
     :primaryButtonLoading="loading.deleteAlias"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="closeModal"
     @primaryClick="deleteAlias"
   >

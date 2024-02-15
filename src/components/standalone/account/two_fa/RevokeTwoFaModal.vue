@@ -148,7 +148,7 @@ async function revoke() {
     :cancelLabel="t('common.cancel')"
     primaryButtonKind="danger"
     :primaryButtonLoading="loading.verifyOtp || loading.revokeTwoFa"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="emit('close')"
     @primaryClick="verifyOtp"
   >

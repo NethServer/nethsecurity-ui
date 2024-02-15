@@ -85,7 +85,7 @@ async function unconfigureDevice() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.unconfigureDevice"
     :primaryButtonLoading="loading.unconfigureDevice"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="closeModal"
     @primaryClick="unconfigureDevice"
   >

@@ -45,6 +45,9 @@ const filteredBlocklists = computed(() => {
     ? blocklists.value.filter((x) => x.name.includes(filter.value))
     : blocklists.value
 })
+const isEnterprise = computed(() => {
+  return blocklists.value.some((x) => x.type === 'enterprise')
+})
 
 function cleanError() {
   error.value = {
@@ -121,7 +124,7 @@ onMounted(() => {
           <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
             {{ t('standalone.threat_shield.blocklist_description') }}
           </p>
-          <div class="mt-2 flex flex-row gap-x-4">
+          <div class="mt-2 flex flex-row gap-x-2" v-if="isEnterprise">
             <FontAwesomeIcon
               :icon="['fas', 'circle-info']"
               class="h-4 w-4 text-indigo-500 dark:text-indigo-300"

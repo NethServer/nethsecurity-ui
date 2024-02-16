@@ -110,7 +110,7 @@ async function loadDhcpOptions() {
     availableDhcpOptions.value = Object.keys(dhcpOptionsResponse).map((dhcpOptionKey) => {
       return {
         id: dhcpOptionKey,
-        label: dhcpOptionKey
+        label: `${dhcpOptionsResponse[dhcpOptionKey]}: ${dhcpOptionKey}`
       }
     })
     loading.value = false

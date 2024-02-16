@@ -10,7 +10,9 @@ import {
   getZoneColor,
   getZoneIcon,
   isBond,
-  isBridge
+  isBridge,
+  isConfiguredBond,
+  isUnconfiguredBond
 } from '@/lib/standalone/network'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
@@ -218,9 +220,7 @@ const zoneOptions = computed(() => {
       id: zone.name,
       label: toUpper(zone.name),
       description: getZoneColor(zone.name),
-      icon: getZoneIcon(zone.name),
-      disabled:
-        zone.name === 'wan' && props.deviceType === 'logical' && logicalIfaceType.value === 'bond' // disable red zone when configuring bond
+      icon: getZoneIcon(zone.name)
     }
   })
 })
@@ -236,6 +236,11 @@ const protocolOptions = computed(() => {
 // returns true when configuring an unassigned device, false when editing an already configured interface
 const isConfiguringFromScratch = computed(() => {
   return !props.interfaceToEdit
+})
+
+// returns true only when creating a new bond (not when configuring it)
+const isCreatingBond = computed(() => {
+  return props.deviceType === 'logical' && logicalIfaceType.value === 'bond'
 })
 
 const bridgeOrBondDevicesOptions: Ref<NeComboboxOption[]> = computed(() => {
@@ -288,6 +293,53 @@ const devicesUsedByOhterBridgesOrBonds = computed(() => {
   return usedDevices
 })
 
+const primaryButtonLabel = computed(() => {
+  if (isConfiguringFromScratch.value) {
+    if (logicalIfaceType.value === 'bond') {
+      return t('standalone.interfaces_and_devices.create_bond')
+    } else if (props.device.proto === 'bonding') {
+      return t('standalone.interfaces_and_devices.configure_bond')
+    } else {
+      return t('standalone.interfaces_and_devices.configure_interface')
+    }
+  } else {
+    return t('standalone.interfaces_and_devices.reconfigure_interface')
+  }
+})
+
+const drawerTitle = computed(() => {
+  if (props.deviceType === 'physical') {
+    if (props.device.proto === 'bonding') {
+      const bondName = props.device.name.split('bond-')[1]
+      return t('standalone.interfaces_and_devices.configure_bond_name', {
+        name: bondName
+      })
+    } else {
+      return t('standalone.interfaces_and_devices.configure_interface_for_name', {
+        name: props.device.name
+      })
+    }
+  } else {
+    return t('standalone.interfaces_and_devices.create_logical_interface')
+  }
+})
+
+watch(
+  logicalIfaceType,
+  () => {
+    if (logicalIfaceType.value == 'bond') {
+      const minCeiled = Math.ceil(1)
+      const maxFloored = Math.floor(255)
+      const firstRandom = Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
+      const secondRandom = Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
+      ipv4Address.value = `127.${firstRandom}.${secondRandom}.1/32`
+    } else {
+      ipv4Address.value = ''
+    }
+  },
+  { immediate: true }
+)
+
 watch(
   () => props.isShown,
   () => {
@@ -329,10 +381,23 @@ watch(
         }
       } else {
         // editing configuration
-        interfaceName.value = props.interfaceToEdit['.name']
+
+        if (isUnconfiguredBond(props.interfaceToEdit)) {
+          interfaceName.value = ''
+          focusElement(interfaceNameRef)
+        } else {
+          interfaceName.value = props.interfaceToEdit['.name']
+        }
+
         // (zone is set inside listZonesForDeviceConfig function)
-        protocol.value = props.interfaceToEdit.proto
-        ipv4Address.value = props.interfaceToEdit.ipaddr || ''
+
+        if (isUnconfiguredBond(props.interfaceToEdit)) {
+          protocol.value = 'static'
+          ipv4Address.value = ''
+        } else {
+          protocol.value = props.interfaceToEdit.proto
+          ipv4Address.value = props.interfaceToEdit.ipaddr || ''
+        }
         ipv4Gateway.value = props.interfaceToEdit.gateway || ''
 
         if (
@@ -479,6 +544,7 @@ function prepareConfigureDeviceData() {
   if (props.deviceType === 'logical' && logicalIfaceType.value === 'bond') {
     data.bonding_policy = bondingPolicy.value
     data.bond_primary_device = bondPrimaryDevice.value
+    delete data.zone
   }
 
   if (protocol.value === 'pppoe') {
@@ -586,7 +652,11 @@ function validate() {
     } else {
       // check syntax
       {
-        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
+        let maxLen = 15
+        if (logicalIfaceType.value == 'bond') {
+          maxLen = 10
+        }
+        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, maxLen)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
           if (isValidationOk) {
@@ -807,11 +877,7 @@ async function listZonesForDeviceConfig() {
 <template>
   <NeSideDrawer
     :isShown="isShown"
-    :title="
-      deviceType === 'physical'
-        ? t('standalone.interfaces_and_devices.configure_interface_for_name', { name: device.name })
-        : t('standalone.interfaces_and_devices.create_logical_interface')
-    "
+    :title="drawerTitle"
     :closeAriaLabel="t('standalone.shell.close_side_drawer')"
     @close="closeDrawer"
   >
@@ -885,7 +951,11 @@ async function listZonesForDeviceConfig() {
         </template>
         <!-- name -->
         <NeTextInput
-          :label="t('standalone.interfaces_and_devices.interface_name')"
+          :label="
+            isCreatingBond
+              ? t('standalone.interfaces_and_devices.bond_name')
+              : t('standalone.interfaces_and_devices.interface_name')
+          "
           v-model.trim="interfaceName"
           :invalidMessage="t(error.interfaceName)"
           :disabled="!isConfiguringFromScratch || loading.configure"
@@ -902,9 +972,9 @@ async function listZonesForDeviceConfig() {
             </NeCard>
           </div>
         </div>
-        <!-- zone -->
+        <!-- zone, always show except when creating bond -->
         <NeRadioSelection
-          v-else
+          v-else-if="!isCreatingBond"
           v-model="zone"
           card
           :label="t('standalone.interfaces_and_devices.zone')"
@@ -922,12 +992,24 @@ async function listZonesForDeviceConfig() {
         <div v-show="['static', 'bonding'].includes(protocol)" class="space-y-6">
           <!-- ipv4 address -->
           <NeTextInput
-            :label="t('standalone.interfaces_and_devices.ipv4_address_cidr')"
+            :label="
+              logicalIfaceType === 'bond'
+                ? t('standalone.interfaces_and_devices.management_ipv4_address_cidr')
+                : t('standalone.interfaces_and_devices.ipv4_address_cidr')
+            "
             v-model.trim="ipv4Address"
             :invalidMessage="t(error.ipv4Address)"
-            :disabled="loading.configure"
+            :disabled="loading.configure || logicalIfaceType == 'bond'"
             ref="ipv4AddressRef"
-          />
+          >
+            <template v-if="logicalIfaceType === 'bond'" #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.interfaces_and_devices.management_ipv4_address_cidr_tooltip') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeTextInput>
           <!-- gateway -->
           <NeTextInput
             v-if="zone === 'wan'"
@@ -1119,11 +1201,7 @@ async function listZonesForDeviceConfig() {
           :disabled="loading.configure"
           :loading="loading.configure"
         >
-          {{
-            isConfiguringFromScratch
-              ? t('standalone.interfaces_and_devices.configure_interface')
-              : t('standalone.interfaces_and_devices.reconfigure_interface')
-          }}
+          {{ primaryButtonLabel }}
         </NeButton>
       </div>
     </form>

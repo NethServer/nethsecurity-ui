@@ -82,7 +82,7 @@ async function deleteDevice() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.deleteDevice"
     :primaryButtonLoading="loading.deleteDevice"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="closeModal"
     @primaryClick="deleteDevice"
   >

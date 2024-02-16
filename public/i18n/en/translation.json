@@ -754,7 +754,7 @@
       "delete_bond": "Delete bond",
       "bond_name": "Bond name",
       "management_ipv4_address_cidr": "Management IPv4 address (CIDR notation)",
-      "management_ipv4_address_cidr_tooltip": "Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua.",
+      "management_ipv4_address_cidr_tooltip": "This IP address is for internal use only and won't be the primary address of the bond. Make sure it's not already used in your network",
       "create_bond": "Create bond",
       "configure_bond": "Configure bond",
       "configure_bond_name": "Configure bond {name}"

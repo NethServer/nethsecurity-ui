@@ -328,9 +328,11 @@ watch(
   logicalIfaceType,
   () => {
     if (logicalIfaceType.value == 'bond') {
-      const firstRandom = Math.floor(Math.random() * 255)
-      const secondRandom = Math.floor(Math.random() * 255)
-      ipv4Address.value = `127.${firstRandom}.${secondRandom}.1/30`
+      const minCeiled = Math.ceil(1)
+      const maxFloored = Math.floor(255)
+      const firstRandom = Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
+      const secondRandom = Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled)
+      ipv4Address.value = `127.${firstRandom}.${secondRandom}.1/32`
     } else {
       ipv4Address.value = ''
     }
@@ -997,7 +999,7 @@ async function listZonesForDeviceConfig() {
             "
             v-model.trim="ipv4Address"
             :invalidMessage="t(error.ipv4Address)"
-            :disabled="loading.configure"
+            :disabled="loading.configure || logicalIfaceType == 'bond'"
             ref="ipv4AddressRef"
           >
             <template v-if="logicalIfaceType === 'bond'" #tooltip>

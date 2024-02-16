@@ -15,6 +15,8 @@ import { useI18n } from 'vue-i18n'
 import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import NePaginator from '../../NePaginator.vue'
+import { usePagination } from '@/composables/usePagination'
 
 export type Blocklist = {
   name: string
@@ -45,6 +47,9 @@ const filteredBlocklists = computed(() => {
     ? blocklists.value.filter((x) => x.name.includes(filter.value))
     : blocklists.value
 })
+
+const { currentPage, lastPage, paginatedItems } = usePagination(filteredBlocklists, 10)
+
 const isEnterprise = computed(() => {
   return blocklists.value.some((x) => x.type === 'enterprise')
 })
@@ -166,8 +171,12 @@ onMounted(() => {
       >
       <template v-else
         ><NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+        <NePaginator
+          :current-page="currentPage"
+          :total-pages="lastPage"
+          @select-page="(i) => (currentPage = i)" />
         <BlocklistTable
-          :blocklists="filteredBlocklists"
+          :blocklists="paginatedItems"
           v-if="filteredBlocklists.length > 0"
           :disable-toggle="isTogglingBlocklistEnabled"
           @enable-disable="toggleBlocklistEnable" />

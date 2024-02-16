@@ -325,6 +325,20 @@ const drawerTitle = computed(() => {
 })
 
 watch(
+  logicalIfaceType,
+  () => {
+    if (logicalIfaceType.value == 'bond') {
+      const firstRandom = Math.floor(Math.random() * 255)
+      const secondRandom = Math.floor(Math.random() * 255)
+      ipv4Address.value = `127.${firstRandom}.${secondRandom}.1/30`
+    } else {
+      ipv4Address.value = ''
+    }
+  },
+  { immediate: true }
+)
+
+watch(
   () => props.isShown,
   () => {
     if (props.isShown) {

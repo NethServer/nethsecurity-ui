@@ -73,6 +73,20 @@ export const validateIpAddress = (ipAddr: String): validationOutput => {
   return { valid: false, errMessage: 'error.invalid_ip_address' }
 }
 
+// validate ip address, cidr network, hostnames or domains
+export const validateAddress = (value: string): validationOutput => {
+  if (
+    !validateIpOrCidr(value).valid &&
+    !validateFQDN(value, false).valid &&
+    !validateMacAddress(value).valid &&
+    !validateHostname(value).valid
+  ) {
+    return { valid: false, errMessage: 'error.invalid_address' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Validate a range of IPv4 or IPv6 addresses
  *

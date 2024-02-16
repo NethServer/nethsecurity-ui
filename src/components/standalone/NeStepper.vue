@@ -20,7 +20,7 @@ defineProps<{
     <div class="mt-2 flex flex-row">
       <div v-for="i in range(1, totalSteps + 1)" :key="i" class="flex grow basis-0 justify-center">
         <p class="text-xs font-semibold text-primary-400" v-if="i == currentStep">
-          Step {{ currentStep }}/{{ totalSteps }}
+          {{ stepLabel }} {{ currentStep }}/{{ totalSteps }}
         </p>
       </div>
     </div>

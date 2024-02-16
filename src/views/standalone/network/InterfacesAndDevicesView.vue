@@ -388,6 +388,9 @@ function getIpv4Addresses(device: any) {
       ipv4Addresses.push({ address: iface.ipaddr })
     }
   }
+  if (isBond(device) && ipv4Addresses.length > 0) {
+    ipv4Addresses.splice(0, 1)
+  }
   return uniqWith(ipv4Addresses, isEqual)
 }
 
@@ -733,7 +736,7 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           </span>
                           <span>{{ device.hotspot?.network }}</span>
                         </div>
-                        <div v-if="!isBond(device)">
+                        <div>
                           <div v-if="getIpv4Addresses(device)?.length">
                             <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
                               <div>

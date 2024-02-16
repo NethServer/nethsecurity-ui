@@ -59,6 +59,7 @@ function cleanError() {
 
 async function fetchBlocklists() {
   cleanError()
+  fetchError.value = false
 
   try {
     loading.value = true
@@ -106,7 +107,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="15" />
+  <NeSkeleton v-if="loading" :lines="8" size="lg" />
   <div class="flex flex-col gap-y-6" v-else>
     <NeInlineNotification
       v-if="error.notificationTitle"

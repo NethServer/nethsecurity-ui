@@ -54,7 +54,7 @@ function validate() {
   return true
 }
 
-async function createOrEditQosInterface() {
+async function createOrEditAddress() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
@@ -163,7 +163,7 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditQosInterface()"
+          @click="createOrEditAddress()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
           >{{

@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeSkeleton :lines="10" v-if="loading" />
+  <NeSkeleton :lines="6" v-if="loading" size="lg" />
   <div class="max-w-4xl" v-else>
     <NeInlineNotification
       kind="error"

@@ -44,6 +44,7 @@ function openDeleteAddressModal(itemToDelete: AllowlistAddress) {
 async function fetchAllowlist() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
+  fetchError.value = false
 
   try {
     loading.value = true
@@ -94,7 +95,7 @@ onMounted(() => {
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton v-if="loading" :lines="10" />
+    <NeSkeleton v-if="loading" :lines="6" size="lg" />
     <template v-else-if="!fetchError">
       <NeEmptyState
         v-if="allowlist.length == 0"

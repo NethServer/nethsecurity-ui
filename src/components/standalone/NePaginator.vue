@@ -7,12 +7,16 @@
 import { computed } from 'vue'
 import { range } from 'lodash-es'
 
-const props = defineProps<{
+export type PaginatorProps = {
   currentPage: number
   totalPages: number
-}>()
+}
 
-const emit = defineEmits(['select-page'])
+const props = defineProps<PaginatorProps>()
+
+const emit = defineEmits<{
+  selectPage: [page: number]
+}>()
 
 const firstPages = computed(() => props.currentPage <= 4)
 const lastPages = computed(() => props.currentPage >= props.totalPages - 4)
@@ -27,7 +31,7 @@ function getCellClass(page: number) {
 }
 
 function navigateToPage(page: number) {
-  emit('select-page', page)
+  emit('selectPage', page)
 }
 </script>
 

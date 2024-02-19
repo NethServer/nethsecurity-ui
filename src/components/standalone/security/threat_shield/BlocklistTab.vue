@@ -48,10 +48,6 @@ const filteredBlocklists = computed(() => {
     : blocklists.value
 })
 
-const { currentPage, pageCount, paginatedItems } = useItemPagination(filteredBlocklists, {
-  itemsPerPage: 10
-})
-
 const isEnterprise = computed(() => {
   return blocklists.value.some((x) => x.type === 'enterprise')
 })
@@ -173,12 +169,8 @@ onMounted(() => {
       >
       <template v-else
         ><NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
-        <NePaginator
-          :current-page="currentPage"
-          :total-pages="pageCount"
-          @select-page="(i) => (currentPage = i)" />
         <BlocklistTable
-          :blocklists="paginatedItems"
+          :blocklists="filteredBlocklists"
           v-if="filteredBlocklists.length > 0"
           :disable-toggle="isTogglingBlocklistEnabled"
           @enable-disable="toggleBlocklistEnable" />

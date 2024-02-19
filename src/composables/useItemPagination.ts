@@ -6,6 +6,16 @@ export type ItemPaginationSettings = {
   onPageChange?: () => void
 }
 
+/**
+ * Composable that provides pagination functionality for an array of items,
+ * returning the paginated items based on the current page.
+ * @param {T[] | Ref<T[]>} items - The array of items to paginate.
+ * @param {ItemPaginationSettings} settings - The pagination settings, including the number of items per
+ * page and an optional onPageChange callback.
+ *
+ * @example
+ * const { currentPage, pageCount, paginatedItems, prev, next } = useItemPagination(items, { itemsPerPage: 10 });
+ */
 export function useItemPagination<T>(items: T[] | Ref<T[]>, settings: ItemPaginationSettings) {
   const { currentPage, pageCount, prev, next } = useOffsetPagination({
     page: 1,

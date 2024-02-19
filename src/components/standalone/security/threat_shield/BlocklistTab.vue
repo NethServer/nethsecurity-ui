@@ -16,7 +16,7 @@ import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import NePaginator from '../../NePaginator.vue'
-import { usePagination } from '@/composables/usePagination'
+import { useItemPagination } from '@/composables/useItemPagination'
 
 export type Blocklist = {
   name: string
@@ -48,7 +48,9 @@ const filteredBlocklists = computed(() => {
     : blocklists.value
 })
 
-const { currentPage, lastPage, paginatedItems } = usePagination(filteredBlocklists, 10)
+const { currentPage, pageCount, paginatedItems } = useItemPagination(filteredBlocklists, {
+  itemsPerPage: 10
+})
 
 const isEnterprise = computed(() => {
   return blocklists.value.some((x) => x.type === 'enterprise')
@@ -173,7 +175,7 @@ onMounted(() => {
         ><NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
         <NePaginator
           :current-page="currentPage"
-          :total-pages="lastPage"
+          :total-pages="pageCount"
           @select-page="(i) => (currentPage = i)" />
         <BlocklistTable
           :blocklists="paginatedItems"

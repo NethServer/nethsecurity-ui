@@ -19,11 +19,11 @@ const lastPages = computed(() => props.currentPage >= props.totalPages - 4)
 
 const cellClass =
   'flex h-10 items-center justify-center border border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-const currentCellClass =
+const currentPageCellClass =
   'z-10 flex items-center justify-center px-4 h-10 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
 
 function getCellClass(page: number) {
-  return props.currentPage === page ? currentCellClass : cellClass
+  return props.currentPage === page ? currentPageCellClass : cellClass
 }
 
 function navigateToPage(page: number) {
@@ -58,6 +58,7 @@ function navigateToPage(page: number) {
           </svg>
         </button>
       </li>
+      <!-- show all page numbers if there are no more than 8 pages in total -->
       <template v-if="totalPages <= 8">
         <li v-for="i in range(1, totalPages + 1)" :key="i">
           <button
@@ -69,6 +70,7 @@ function navigateToPage(page: number) {
           </button>
         </li>
       </template>
+      <!-- show a collapsed view of the pages, with start, ending, previous and next page -->
       <template v-else>
         <li>
           <button
@@ -113,7 +115,6 @@ function navigateToPage(page: number) {
           </button>
         </li>
       </template>
-
       <li>
         <button
           @click="navigateToPage(currentPage + 1)"

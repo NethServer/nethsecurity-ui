@@ -14,8 +14,10 @@ import CreateOrEditNatRuleDrawer from './CreateOrEditNatRuleDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import NatRulesTable from './NatRulesTable.vue'
 import DeleteNatRuleModal from './DeleteNatRuleModal.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 const natRules = ref<NatRule[]>([])
 const currentRule = ref<NatRule | undefined>(undefined)
 const isShownCreateOrEditRuleDrawer = ref(false)
@@ -36,6 +38,7 @@ onMounted(() => {
 
 async function loadData() {
   listRules()
+  uciChangesStore.getChanges()
 }
 
 async function listRules() {

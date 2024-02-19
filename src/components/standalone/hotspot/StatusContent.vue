@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
+import { NeInlineNotification, NeButton, NeSkeleton, NeBadge } from '@nethesis/vue-components'
 import {
   NeEmptyState,
   byteFormat1024,
@@ -84,102 +84,111 @@ async function loadListSessions() {
         </NeButton>
       </NeEmptyState>
       <!-- IF CONFIGURATION CONNECTED && EMPTY SESSIIONS -->
-      <NeEmptyState
-        v-if="activeConfiguration && !hotspotSession.length"
-        :title="t('standalone.hotspot.status.empty_sessions')"
-        :description="t('standalone.hotspot.status.empty_sessions_description')"
-        :icon="['fas', 'circle-info']"
-      />
-      <div v-if="activeConfiguration && hotspotSession.length > 0">
-        <NeTable
-          :data="hotspotSession"
-          :headers="[
-            {
-              key: 'mac_address',
-              label: t('standalone.hotspot.status.mac_address')
-            },
-            {
-              key: 'ip_address',
-              label: t('standalone.hotspot.status.ip_address')
-            },
-            {
-              key: 'login_status',
-              label: t('standalone.hotspot.status.login_status')
-            },
-            {
-              key: 'session_key',
-              label: t('standalone.hotspot.status.session_key')
-            },
-            {
-              key: 'session_time',
-              label: t('standalone.hotspot.status.session_time')
-            },
-            {
-              key: 'idle_time',
-              label: t('standalone.hotspot.status.idle_time')
-            },
-            {
-              key: 'downloaded',
-              label: t('standalone.hotspot.status.downloaded')
-            },
-            {
-              key: 'uploaded',
-              label: t('standalone.hotspot.status.uploaded')
-            }
-          ]"
-        >
-          <template #mac_address="{ item }">
-            <div class="flex items-center gap-x-4">
-              {{ item.macAddress }}
-            </div>
-          </template>
-          <template #ip_address="{ item }">
-            <div class="flex flex-wrap gap-2">
-              {{ item.ipAddress }}
-            </div>
-          </template>
-          <template #login_status="{ item }">
-            <div class="flex items-center gap-x-2">
-              <template v-if="item.status && item.status === 'pass'">
-                <FontAwesomeIcon :icon="faCircleCheck" />
-              </template>
-              <template v-else>
-                <FontAwesomeIcon :icon="faCircleXmark" />
-              </template>
-              <span v-if="item.status === 'pass'">
-                {{ t('standalone.hotspot.status.authenticated') }}
-                <span v-if="item.temporary">
-                  ({{ t('standalone.hotspot.status.temporary') }})
+      <template v-else>
+        <div class="mb-6 flex flex-row justify-end">
+          <NeBadge
+            :icon="['fas', 'check']"
+            :text="t('standalone.hotspot.status.hotspot_configured')"
+            kind="success"
+          />
+        </div>
+        <NeEmptyState
+          v-if="!hotspotSession.length"
+          :title="t('standalone.hotspot.status.empty_sessions')"
+          :description="t('standalone.hotspot.status.empty_sessions_description')"
+          :icon="['fas', 'circle-info']"
+        />
+        <div v-if="hotspotSession.length > 0">
+          <NeTable
+            :data="hotspotSession"
+            :headers="[
+              {
+                key: 'mac_address',
+                label: t('standalone.hotspot.status.mac_address')
+              },
+              {
+                key: 'ip_address',
+                label: t('standalone.hotspot.status.ip_address')
+              },
+              {
+                key: 'login_status',
+                label: t('standalone.hotspot.status.login_status')
+              },
+              {
+                key: 'session_key',
+                label: t('standalone.hotspot.status.session_key')
+              },
+              {
+                key: 'session_time',
+                label: t('standalone.hotspot.status.session_time')
+              },
+              {
+                key: 'idle_time',
+                label: t('standalone.hotspot.status.idle_time')
+              },
+              {
+                key: 'downloaded',
+                label: t('standalone.hotspot.status.downloaded')
+              },
+              {
+                key: 'uploaded',
+                label: t('standalone.hotspot.status.uploaded')
+              }
+            ]"
+          >
+            <template #mac_address="{ item }">
+              <div class="flex items-center gap-x-4">
+                {{ item.macAddress }}
+              </div>
+            </template>
+            <template #ip_address="{ item }">
+              <div class="flex flex-wrap gap-2">
+                {{ item.ipAddress }}
+              </div>
+            </template>
+            <template #login_status="{ item }">
+              <div class="flex items-center gap-x-2">
+                <template v-if="item.status && item.status === 'pass'">
+                  <FontAwesomeIcon :icon="faCircleCheck" />
+                </template>
+                <template v-else>
+                  <FontAwesomeIcon :icon="faCircleXmark" />
+                </template>
+                <span v-if="item.status === 'pass'">
+                  {{ t('standalone.hotspot.status.authenticated') }}
+                  <span v-if="item.temporary">
+                    ({{ t('standalone.hotspot.status.temporary') }})
+                  </span>
                 </span>
-              </span>
-              <span v-else>
-                {{ t('standalone.hotspot.status.not_authenticated') }}
-              </span>
-            </div>
-          </template>
-          <template #session_key="{ item }">
-            <div class="flex items-center gap-x-2">
-              {{ item.sessionKey }}
-            </div>
-          </template>
-          <template #session_time="{ item }">
-            <div class="flex items-center gap-x-2">
-              {{ item.sessionTimeElapsed ? formatDurationLoc(item.sessionTimeElapsed) : '-' }}
-            </div>
-          </template>
-          <template #idle_time="{ item }">
-            <div class="flex items-center gap-x-2">
-              {{ item.idleTimeElapsed ? formatDurationLoc(item.idleTimeElapsed) : '-' }}
-            </div>
-          </template>
-          <template #downloaded="{ item }">
-            {{ item.inputOctetsDownloaded ? byteFormat1024(item.inputOctetsDownloaded) : '-' }}
-          </template>
-          <template #uploaded="{ item }">
-            {{ item.outputOctetsUploaded ? byteFormat1024(item.outputOctetsUploaded) : '-' }}
-          </template>
-        </NeTable>
-      </div>
+                <span v-else>
+                  {{ t('standalone.hotspot.status.not_authenticated') }}
+                </span>
+              </div>
+            </template>
+            <template #session_key="{ item }">
+              <div class="flex items-center gap-x-2">
+                {{ item.sessionKey }}
+              </div>
+            </template>
+            <template #session_time="{ item }">
+              <div class="flex items-center gap-x-2">
+                {{ item.sessionTimeElapsed ? formatDurationLoc(item.sessionTimeElapsed) : '-' }}
+              </div>
+            </template>
+            <template #idle_time="{ item }">
+              <div class="flex items-center gap-x-2">
+                {{ item.idleTimeElapsed ? formatDurationLoc(item.idleTimeElapsed) : '-' }}
+              </div>
+            </template>
+            <template #downloaded="{ item }">
+              {{ item.inputOctetsDownloaded ? byteFormat1024(item.inputOctetsDownloaded) : '-' }}
+            </template>
+            <template #uploaded="{ item }">
+              {{ item.outputOctetsUploaded ? byteFormat1024(item.outputOctetsUploaded) : '-' }}
+            </template>
+          </NeTable>
+        </div>
+      </template>
     </template>
   </div>
 </template>

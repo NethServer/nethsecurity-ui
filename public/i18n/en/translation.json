@@ -981,6 +981,7 @@
         "uploaded": "Uploaded",
         "authenticated": "Authenticated",
         "not_authenticated": "Not authenticated",
+        "hotspot_configured": "Hotspot configured",
         "temporary": "Temporary"
       },
       "settings": {

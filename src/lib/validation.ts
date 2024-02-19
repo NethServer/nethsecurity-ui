@@ -11,6 +11,30 @@ export interface validationOutput {
 
 //// move general purpose functions to vue-tailwind library?
 
+/**
+ * Validate a string against a list of validation functions.
+ * Input value is considered valid if it satisfies at least one of the validators.
+ *
+ * @param validators list of validation functions
+ * @param value string to validate
+ * @param errMessage the error message to return if the value is invalid
+ * @returns a validationOutput object
+ */
+export const validateAnyOf = (
+  validators: Function[],
+  value: String,
+  errMessage: String
+): validationOutput => {
+  for (const validator of validators) {
+    const validation = validator(value)
+
+    if (validation.valid) {
+      return { valid: true }
+    }
+  }
+  return { valid: false, errMessage }
+}
+
 export const validateRequired = (value: String): validationOutput => {
   if (value) {
     return { valid: true }

@@ -58,53 +58,56 @@ const zone = computed(() => {
     </template>
     <template v-else-if="addresses.length">
       <!-- show addresses -->
-      <template v-if="addresses[0].label">
-        <NeTooltip>
-          <template #trigger>
-            <span class="text-primary-700 dark:text-primary-500">
-              {{ addresses[0].label }}
+      <template v-for="(addr, i) in addresses.slice(0, 2)" :key="addr.value">
+        <p>
+          <template v-if="addr.label">
+            <NeTooltip>
+              <template #trigger>
+                <span class="text-primary-700 dark:text-primary-500">
+                  {{ addr.label }}
+                </span>
+              </template>
+              <template #content>
+                {{ addr.value }}
+              </template>
+            </NeTooltip>
+          </template>
+          <template v-else>
+            <span :class="{ 'opacity-50': !enabled }">
+              {{ addr.value }}
             </span>
           </template>
-          <template #content>
-            {{ addresses[0].value }}
+          <template v-if="i == 1 && addresses.length > 2">
+            <!-- show +n others -->
+            <NeTooltip>
+              <template #trigger>
+                <span class="ml-2 text-primary-700 dark:text-primary-500">
+                  {{
+                    t(
+                      'common.plus_num_others',
+                      {
+                        num: addresses.length - 2
+                      },
+                      addresses.length - 2
+                    )
+                  }}
+                </span>
+              </template>
+              <template #content>
+                <ul class="list-inside list-disc">
+                  <li v-for="(addr, i) in addresses.slice(2)" :key="i">
+                    <template v-if="addr.label">
+                      {{ `${addr.label} (${addr.value})` }}
+                    </template>
+                    <template v-else>
+                      {{ addr.value }}
+                    </template>
+                  </li>
+                </ul>
+              </template>
+            </NeTooltip>
           </template>
-        </NeTooltip>
-      </template>
-      <template v-else>
-        <span :class="{ 'opacity-50': !enabled }">
-          {{ addresses[0].value }}
-        </span>
-      </template>
-
-      <template v-if="addresses.length > 1">
-        <!-- show +n others -->
-        <NeTooltip>
-          <template #trigger>
-            <span class="ml-2 text-primary-700 dark:text-primary-500">
-              {{
-                t(
-                  'common.plus_num_others',
-                  {
-                    num: addresses.length - 1
-                  },
-                  addresses.length - 1
-                )
-              }}
-            </span>
-          </template>
-          <template #content>
-            <ul class="list-inside list-disc">
-              <li v-for="(addr, i) in addresses.slice(1)" :key="i">
-                <template v-if="addr.label">
-                  {{ `${addr.label} (${addr.value})` }}
-                </template>
-                <template v-else>
-                  {{ addr.value }}
-                </template>
-              </li>
-            </ul>
-          </template>
-        </NeTooltip>
+        </p>
       </template>
     </template>
     <template v-else>

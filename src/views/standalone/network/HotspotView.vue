@@ -40,19 +40,15 @@ watch(selectedTab, () => {
 
 <template>
   <NeTitle>{{ t('standalone.hotspot.title') }}</NeTitle>
-  <div class="flex flex-col gap-y-6">
-    <NeTabs
-      :selected="selectedTab"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      :srTabsLabel="t('ne_tabs.tabs')"
-      :tabs="tabs"
-      class="mb-8"
-      @selectTab="selectedTab = $event"
-    />
-    <StatusContent
-      v-if="selectedTab == 'tab-status'"
-      @go-to-setting="selectedTab = 'tab-settings'"
-    />
-    <SettingsContent v-if="selectedTab == 'tab-settings'" />
-  </div>
+
+  <NeTabs
+    :selected="selectedTab"
+    :srSelectTabLabel="t('ne_tabs.select_a_tab')"
+    :srTabsLabel="t('ne_tabs.tabs')"
+    :tabs="tabs"
+    class="mb-8"
+    @selectTab="selectedTab = $event"
+  />
+  <StatusContent v-if="selectedTab == 'tab-status'" @go-to-setting="selectedTab = 'tab-settings'" />
+  <SettingsContent v-if="selectedTab == 'tab-settings'" />
 </template>

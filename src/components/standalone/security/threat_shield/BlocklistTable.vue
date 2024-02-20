@@ -83,7 +83,7 @@ function getTypeIcon(item: Blocklist) {
     class="z-10"
   >
     <template #name="{ item }: { item: Blocklist }">
-      <p class="w-12">{{ item.description }}</p>
+      <p class="w-60 xl:w-40">{{ item.description }}</p>
     </template>
     <template #type="{ item }: { item: Blocklist }">
       <div class="flex flex-row items-center gap-x-2">

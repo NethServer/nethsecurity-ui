@@ -10,6 +10,8 @@ import { range } from 'lodash-es'
 export type PaginatorProps = {
   currentPage: number
   totalPages: number
+  previousLabel: string
+  nextLabel: string
 }
 
 const props = defineProps<PaginatorProps>()
@@ -30,6 +32,10 @@ function getCellClass(page: number) {
   return props.currentPage === page ? currentPageCellClass : cellClass
 }
 
+function getAriaCurrent(page: number) {
+  return props.currentPage === page ? 'page' : 'false'
+}
+
 function navigateToPage(page: number) {
   emit('selectPage', page)
 }
@@ -44,7 +50,7 @@ function navigateToPage(page: number) {
           :disabled="currentPage === 1"
           class="ms-0 flex h-10 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         >
-          <span class="sr-only">Previous</span>
+          <span class="sr-only">{{ previousLabel }}</span>
           <svg
             class="h-3 w-3 rtl:rotate-180"
             aria-hidden="true"
@@ -66,7 +72,7 @@ function navigateToPage(page: number) {
       <template v-if="totalPages <= 8">
         <li v-for="i in range(1, totalPages + 1)" :key="i">
           <button
-            :aria-current="i == currentPage ? 'page' : 'false'"
+            :aria-current="getAriaCurrent(i)"
             :class="getCellClass(i)"
             @click="navigateToPage(i)"
           >
@@ -78,7 +84,7 @@ function navigateToPage(page: number) {
       <template v-else>
         <li>
           <button
-            :aria-current="currentPage === 1 ? 'page' : 'false'"
+            :aria-current="getAriaCurrent(1)"
             :class="getCellClass(1)"
             @click="navigateToPage(1)"
           >
@@ -87,6 +93,7 @@ function navigateToPage(page: number) {
         </li>
         <li>
           <button
+            :aria-current="getAriaCurrent(firstPages ? 2 : -1)"
             :class="getCellClass(firstPages ? 2 : -1)"
             @click="firstPages ? navigateToPage(2) : undefined"
           >
@@ -95,6 +102,9 @@ function navigateToPage(page: number) {
         </li>
         <li v-for="i in range(-1, 2)" :key="i">
           <button
+            :aria-current="
+              getAriaCurrent(firstPages ? 4 + i : lastPages ? totalPages - 3 + i : currentPage + i)
+            "
             :class="
               getCellClass(firstPages ? 4 + i : lastPages ? totalPages - 3 + i : currentPage + i)
             "
@@ -107,6 +117,7 @@ function navigateToPage(page: number) {
         </li>
         <li>
           <button
+            :aria-current="getAriaCurrent(lastPages ? totalPages - 1 : -1)"
             :class="getCellClass(lastPages ? totalPages - 1 : -1)"
             @click="lastPages ? navigateToPage(totalPages - 1) : undefined"
           >
@@ -114,7 +125,11 @@ function navigateToPage(page: number) {
           </button>
         </li>
         <li>
-          <button :class="getCellClass(totalPages)">
+          <button
+            :aria-current="getAriaCurrent(totalPages)"
+            :class="getCellClass(totalPages)"
+            @click="navigateToPage(totalPages)"
+          >
             {{ totalPages }}
           </button>
         </li>
@@ -125,7 +140,7 @@ function navigateToPage(page: number) {
           :disabled="currentPage === totalPages"
           class="flex h-10 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         >
-          <span class="sr-only">Next</span>
+          <span class="sr-only">{{ nextLabel }}</span>
           <svg
             class="h-3 w-3 rtl:rotate-180"
             aria-hidden="true"

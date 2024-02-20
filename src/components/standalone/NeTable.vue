@@ -156,6 +156,8 @@ function onSelectPage(page: number) {
       <NePaginator
         :current-page="paginatorProps?.currentPage ?? 1"
         :total-pages="paginatorProps?.totalPages ?? 1"
+        :next-label="paginatorProps?.nextLabel ?? ''"
+        :previous-label="paginatorProps?.previousLabel ?? ''"
         @select-page="onSelectPage"
       />
     </div>

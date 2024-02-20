@@ -15,8 +15,6 @@ import { useI18n } from 'vue-i18n'
 import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
-import NePaginator from '../../NePaginator.vue'
-import { useItemPagination } from '@/composables/useItemPagination'
 
 export type Blocklist = {
   name: string

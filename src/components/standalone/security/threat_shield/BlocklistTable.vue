@@ -72,7 +72,12 @@ function getTypeIcon(item: Blocklist) {
 <template>
   <NeTable
     :with-paginator="true"
-    :paginator-props="{ totalPages: pageCount, currentPage }"
+    :paginator-props="{
+      totalPages: pageCount,
+      currentPage,
+      previousLabel: t('common.previous'),
+      nextLabel: t('common.next')
+    }"
     @select-page="
       (page) => {
         currentPage = page

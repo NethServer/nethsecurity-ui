@@ -790,10 +790,7 @@ function formatPackets(packets: number) {
                           <span class="font-medium">TX: </span>
                           <span>{{ getTxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.tx_packets">
-                            ({{
-                              device.stats.tx_packets ? formatPackets(device.stats.tx_packets) : '-'
-                            }}
-                            pkts)</span
+                            ({{ formatPackets(device.stats.tx_packets) }} pkts)</span
                           >
                         </div>
                       </div>

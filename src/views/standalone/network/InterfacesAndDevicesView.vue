@@ -518,6 +518,14 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
     return true
   }
 }
+
+function formatPackets(packets: number) {
+  if (packets >= 1e6) {
+    return (packets / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 }) + 'M'
+  }
+
+  return packets.toLocaleString()
+}
 </script>
 
 <template>
@@ -775,14 +783,14 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
                           <span class="font-medium">RX: </span>
                           <span>{{ getRxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.rx_packets">
-                            ({{ device.stats.rx_packets }} pkts)</span
+                            ({{ formatPackets(device.stats.rx_packets) }} pkts)</span
                           >
                         </div>
                         <div v-if="getTxBytes(device)">
                           <span class="font-medium">TX: </span>
                           <span>{{ getTxBytes(device) || '-' }}</span>
                           <span v-if="device.stats?.tx_packets">
-                            ({{ device.stats.tx_packets || '-' }} pkts)</span
+                            ({{ formatPackets(device.stats.tx_packets) }} pkts)</span
                           >
                         </div>
                       </div>

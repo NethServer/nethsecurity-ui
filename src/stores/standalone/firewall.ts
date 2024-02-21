@@ -80,6 +80,24 @@ export interface NatRule {
   snat_ip?: string
 }
 
+export interface NetmapRule {
+  id?: string
+  name: string
+  src: string
+  dest: string
+  device_in: string[]
+  device_out: string[]
+  map_from: string
+  map_to: string
+}
+
+export interface NetmapDevice {
+  device: string
+  interface?: string
+}
+
+export type NetmapType = 'src' | 'dest'
+
 export interface RuleService {
   id: string
   proto: string[]

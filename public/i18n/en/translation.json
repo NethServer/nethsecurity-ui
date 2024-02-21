@@ -24,7 +24,8 @@
     "any": "Any",
     "loading": "Loading",
     "plus_num_others": "+{num} other | +{num} others",
-    "eg_value": "e.g. {value}"
+    "eg_value": "e.g. {value}",
+    "name": "Name"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -281,7 +282,14 @@
     "cannot_delete_address": "Cannot delete address",
     "cannot_retrieve_nat_rules": "Cannot retrieve NAT rules",
     "cannot_save_nat_rule": "Cannot save NAT rule",
-    "name_too_long": "Too many characters"
+    "name_too_long": "Too many characters",
+    "cannot_retrieve_netmap_rules": "Cannot retrieve NETMAP rules",
+    "map_from_invalid_format": "Invalid format",
+    "map_to_invalid_format": "Invalid format",
+    "src_invalid_format": "Invalid format",
+    "dest_invalid_format": "Invalid format",
+    "cannot_save_netmap": "Cannot save NETMAP",
+    "cannot_delete_netmap": "Cannot delete NETMAP"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1685,6 +1693,29 @@
       "rewrite_ip": "Rewrite IP",
       "delete_nat_rule": "Delete NAT rule",
       "confirm_delete_rule": "You are about to delete NAT rule '{name}'"
+    },
+    "netmap": {
+      "title": "NETMAP",
+      "netmap_rules_description": "Netmap implements static 1:1 network-level NAT, preserving individual host addresses within the translated network. This means it could map an entire private network (e.g. 192.168.1.0/24) to another network (e.g. 10.5.6.0/24) at once, eliminating the need to manually configure individual NAT rules for each device.",
+      "add_source_netmap": "Add source NETMAP",
+      "add_destination_netmap": "Add destination NETMAP",
+      "no_netmap_found": "No NETMAP found",
+      "source_network": "Source network",
+      "destination_network": "Destination network",
+      "mapped_network": "Mapped network",
+      "network_cidr": "Network CIDR",
+      "add_netmap": "Add NETMAP",
+      "inbound_devices": "Inbound devices",
+      "outbound_devices": "Outbound devices",
+      "device_helper": "Leave unselected for any device",
+      "edit_netmap": "Edit NETMAP",
+      "save_netmap": "Save NETMAP",
+      "edit_source_netmap": "Edit source NETMAP",
+      "edit_destination_netmap": "Edit destination NETMAP",
+      "source_netmap": "Source NETMAP",
+      "destination_netmap": "Destination NETMAP",
+      "delete_netmap": "Delete NETMAP",
+      "confirm_delete_rule": "You are about to delete NETMAP '{name}'"
     }
   },
   "controller": {

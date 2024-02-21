@@ -21,15 +21,20 @@ const emit = defineEmits<{
 }>()
 
 const firstPages = computed(() => props.currentPage <= 4)
-const lastPages = computed(() => props.currentPage >= props.totalPages - 4)
+const lastPages = computed(() => props.currentPage > props.totalPages - 4)
 
 const cellClass =
-  'flex h-10 items-center justify-center border border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-const currentPageCellClass =
-  'z-10 flex items-center justify-center px-4 h-10 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
+  'flex h-10 items-center justify-center border border-gray-300 bg-white px-4 leading-tight text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-white'
+const cellHoverClasses = 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700'
 
-function getCellClass(page: number) {
-  return props.currentPage === page ? currentPageCellClass : cellClass
+const currentPageCellClass =
+  'z-10 flex items-center justify-center px-4 h-10 leading-tight text-primary-700 border border-primary-300 bg-primary-50 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
+const currentPageHoverCellClasses = 'hover:bg-primary-100 hover:text-primary-800'
+
+function getCellClass(page: number, disableHoverClasses?: boolean) {
+  return props.currentPage === page
+    ? [currentPageCellClass, !disableHoverClasses ? currentPageHoverCellClasses : 'cursor-default']
+    : [cellClass, !disableHoverClasses ? cellHoverClasses : 'cursor-default']
 }
 
 function getAriaCurrent(page: number) {
@@ -94,7 +99,7 @@ function navigateToPage(page: number) {
         <li>
           <button
             :aria-current="getAriaCurrent(firstPages ? 2 : -1)"
-            :class="getCellClass(firstPages ? 2 : -1)"
+            :class="getCellClass(firstPages ? 2 : -1, !firstPages)"
             @click="firstPages ? navigateToPage(2) : undefined"
           >
             {{ firstPages ? 2 : '...' }}
@@ -118,7 +123,7 @@ function navigateToPage(page: number) {
         <li>
           <button
             :aria-current="getAriaCurrent(lastPages ? totalPages - 1 : -1)"
-            :class="getCellClass(lastPages ? totalPages - 1 : -1)"
+            :class="getCellClass(lastPages ? totalPages - 1 : -1, !lastPages)"
             @click="lastPages ? navigateToPage(totalPages - 1) : undefined"
           >
             {{ lastPages ? totalPages - 1 : '...' }}

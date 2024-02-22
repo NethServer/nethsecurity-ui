@@ -92,15 +92,15 @@ const errorBag = ref(new MessageBag())
 const actionOptions = ref([
   {
     id: 'DROP',
-    label: t('standalone.firewall_rules.drop')
+    label: 'DROP'
   },
   {
     id: 'REJECT',
-    label: t('standalone.firewall_rules.reject')
+    label: 'REJECT'
   },
   {
     id: 'ACCEPT',
-    label: t('standalone.firewall_rules.accept')
+    label: 'ACCEPT'
   }
 ])
 

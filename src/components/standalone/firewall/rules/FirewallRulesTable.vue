@@ -366,7 +366,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                       :icon="['fas', getRuleActionIcon(rule.target)]"
                       :class="getRuleActionColor(rule)"
                     />
-                    {{ t(`standalone.firewall_rules.${rule.target.toLowerCase()}`) }}
+                    {{ rule.target }}
                   </span>
                 </td>
                 <td>

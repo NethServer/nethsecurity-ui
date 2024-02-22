@@ -662,11 +662,6 @@
       "select_policy": "Seleziona la policy"
     },
     "zones_and_policies": {
-      "traffic_policy": {
-        "drop": "Scarta (drop)",
-        "reject": "Rifiuta (reject)",
-        "accept": "Accetta"
-      },
       "allow_forwards_to": "Consenti forward a",
       "logging": "Logging",
       "traffic_to_same_zone": "Traffico verso la stessa zona",

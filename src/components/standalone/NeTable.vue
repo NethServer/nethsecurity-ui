@@ -8,7 +8,7 @@ import type { PropType } from 'vue'
 import { NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
-import NePaginator, { type PaginatorProps } from './NePaginator.vue'
+import { NePaginator, NePaginatorProps } from '@nethesis/vue-components'
 
 /**
  * Headers that can be passed to the table.
@@ -95,7 +95,7 @@ defineProps({
    * Props passed to the paginator in the table
    */
   paginatorProps: {
-    type: Object as PropType<PaginatorProps>
+    type: Object as PropType<NePaginatorProps>
   }
 })
 

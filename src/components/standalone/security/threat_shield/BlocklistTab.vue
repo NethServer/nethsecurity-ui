@@ -45,6 +45,7 @@ const filteredBlocklists = computed(() => {
     ? blocklists.value.filter((x) => x.name.includes(filter.value))
     : blocklists.value
 })
+
 const isEnterprise = computed(() => {
   return blocklists.value.some((x) => x.type === 'enterprise')
 })

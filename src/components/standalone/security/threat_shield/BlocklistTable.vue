@@ -10,10 +10,11 @@ import NeTable from '../../NeTable.vue'
 import { NeProgressBar } from '@nethesis/vue-components'
 import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { range } from 'lodash-es'
+import { useItemPagination } from '@/composables/useItemPagination'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   blocklists: Blocklist[]
   disableToggle: boolean
 }>()
@@ -21,6 +22,10 @@ defineProps<{
 defineEmits<{
   enableDisable: [item: Blocklist]
 }>()
+
+const { currentPage, pageCount, paginatedItems } = useItemPagination(props.blocklists, {
+  itemsPerPage: 10
+})
 
 const tableHeaders = [
   {
@@ -65,9 +70,25 @@ function getTypeIcon(item: Blocklist) {
 </script>
 
 <template>
-  <NeTable :data="blocklists" :headers="tableHeaders" class="z-10">
+  <NeTable
+    :with-paginator="true"
+    :paginator-props="{
+      totalPages: pageCount,
+      currentPage,
+      previousLabel: t('common.previous'),
+      nextLabel: t('common.next')
+    }"
+    @select-page="
+      (page) => {
+        currentPage = page
+      }
+    "
+    :data="paginatedItems"
+    :headers="tableHeaders"
+    class="z-10"
+  >
     <template #name="{ item }: { item: Blocklist }">
-      <p>{{ item.description }}</p>
+      <p class="w-60 xl:w-40">{{ item.description }}</p>
     </template>
     <template #type="{ item }: { item: Blocklist }">
       <div class="flex flex-row items-center gap-x-2">

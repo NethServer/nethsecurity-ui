@@ -8,6 +8,7 @@ import type { PropType } from 'vue'
 import { NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
+import { NePaginator, NePaginatorProps } from '@nethesis/vue-components'
 
 /**
  * Headers that can be passed to the table.
@@ -82,52 +83,84 @@ defineProps({
    */
   condensed: {
     type: Boolean
+  },
+  /**
+   * If set to true, display the paginator at the end of the table
+   */
+  withPaginator: {
+    type: Boolean,
+    default: false
+  },
+  /**
+   * Props passed to the paginator in the table
+   */
+  paginatorProps: {
+    type: Object as PropType<NePaginatorProps>
   }
 })
+
+const emit = defineEmits<{
+  selectPage: [page: number]
+}>()
+
+function onSelectPage(page: number) {
+  emit('selectPage', page)
+}
 </script>
 
 <template>
-  <div :class="['table-' + style, { ghost: ghost, condensed: condensed, 'read-only': readonly }]">
-    <table v-bind="$attrs" :class="$attrs">
-      <slot name="thead">
-        <thead>
-          <tr>
-            <th v-for="header in headers" :key="header.key" scope="col">
-              {{ header.label }}
-            </th>
-          </tr>
-        </thead>
-      </slot>
-      <slot name="tbody">
-        <tbody>
-          <template v-if="loading">
+  <div>
+    <div :class="['table-' + style, { ghost: ghost, condensed: condensed, 'read-only': readonly }]">
+      <table v-bind="$attrs" :class="$attrs">
+        <slot name="thead">
+          <thead>
             <tr>
-              <td :colspan="headers.length">
-                <NeSkeleton :lines="skeletonLines" />
-              </td>
+              <th v-for="header in headers" :key="header.key" scope="col">
+                {{ header.label }}
+              </th>
             </tr>
-          </template>
-          <template v-else>
-            <template v-if="data.length > 0">
-              <tr v-for="item in data" :key="item.key">
-                <template v-for="header in headers" :key="header.key">
-                  <td>
-                    <slot :item="item" :name="header.key">
-                      {{ get(item, header.key) }}
-                    </slot>
-                  </td>
-                </template>
+          </thead>
+        </slot>
+        <slot name="tbody">
+          <tbody>
+            <template v-if="loading">
+              <tr>
+                <td :colspan="headers.length">
+                  <NeSkeleton :lines="skeletonLines" />
+                </td>
               </tr>
             </template>
             <template v-else>
-              <tr>
-                <td :colspan="headers.length">{{ t('ne_table.no_items') }}</td>
-              </tr>
+              <template v-if="data.length > 0">
+                <tr v-for="item in data" :key="item.key">
+                  <template v-for="header in headers" :key="header.key">
+                    <td>
+                      <slot :item="item" :name="header.key">
+                        {{ get(item, header.key) }}
+                      </slot>
+                    </td>
+                  </template>
+                </tr>
+              </template>
+              <template v-else>
+                <tr>
+                  <td :colspan="headers.length">{{ t('ne_table.no_items') }}</td>
+                </tr>
+              </template>
             </template>
-          </template>
-        </tbody>
-      </slot>
-    </table>
+          </tbody>
+        </slot>
+      </table>
+    </div>
+    <div v-if="withPaginator" class="mt-6 flex flex-row justify-end">
+      <NePaginator
+        :current-page="paginatorProps?.currentPage ?? 1"
+        :total-pages="paginatorProps?.totalPages ?? 1"
+        :next-label="paginatorProps?.nextLabel ?? ''"
+        :previous-label="paginatorProps?.previousLabel ?? ''"
+        @select-page="onSelectPage"
+      />
+    </div>
   </div>
 </template>
 

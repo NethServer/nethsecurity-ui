@@ -14,8 +14,10 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import NetmapTable from './NetmapTable.vue'
 import CreateOrEditNetmapRuleDrawer from './CreateOrEditNetmapRuleDrawer.vue'
 import DeleteNetmapModal from './DeleteNetmapModal.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 const netmapRules = ref<NetmapRule[]>([])
 const currentRule = ref<NetmapRule | undefined>(undefined)
 const netmapType = ref<NetmapType>('src')
@@ -45,6 +47,7 @@ onMounted(() => {
 
 async function loadData() {
   listNetmaps()
+  uciChangesStore.getChanges()
 }
 
 async function listNetmaps() {
@@ -73,6 +76,7 @@ function showCreateRuleDrawer(type: 'src' | 'dest') {
 
 function showEditRuleDrawer(rule: NetmapRule) {
   currentRule.value = rule
+  netmapType.value = rule.dest ? 'src' : 'dest'
   isShownCreateOrEditRuleDrawer.value = true
 }
 

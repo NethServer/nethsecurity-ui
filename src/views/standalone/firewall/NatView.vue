@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import NatRulesContent from '@/components/standalone/firewall/nat/NatRulesContent.vue'
+import NetmapContent from '@/components/standalone/firewall/nat/NetmapContent.vue'
 </script>
 
 <template>
@@ -12,6 +13,6 @@ import NatRulesContent from '@/components/standalone/firewall/nat/NatRulesConten
     <!-- nat rules -->
     <NatRulesContent />
     <!-- netmap -->
-    <!-- TODO -->
+    <NetmapContent class="mt-12" />
   </div>
 </template>

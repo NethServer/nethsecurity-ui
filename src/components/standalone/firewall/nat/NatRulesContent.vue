@@ -82,7 +82,8 @@ function hideCreateOrEditRuleDrawer() {
 <template>
   <div>
     <NeTitle>{{ t('standalone.nat.title') }}</NeTitle>
-    <div class="mb-8 flex items-start justify-between">
+    <NeTitle level="h3">{{ t('standalone.nat.nat_rules') }}</NeTitle>
+    <div class="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row">
       <div class="max-w-2xl text-gray-500 dark:text-gray-400">
         {{ t('standalone.nat.nat_rules_description') }}
       </div>
@@ -91,7 +92,7 @@ function hideCreateOrEditRuleDrawer() {
         kind="secondary"
         size="lg"
         @click="showCreateRuleDrawer"
-        class="ml-6 shrink-0"
+        class="shrink-0"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />

@@ -76,15 +76,18 @@ let error = ref({
 const actionOptions = ref([
   {
     id: 'SNAT',
-    label: `SNAT: ${t('standalone.nat.action_snat_description')}`
+    label: 'SNAT',
+    description: t('standalone.nat.action_snat_description')
   },
   {
     id: 'MASQUERADE',
-    label: `MASQUERADE: ${t('standalone.nat.action_masquerade_description')}`
+    label: 'MASQUERADE',
+    description: t('standalone.nat.action_masquerade_description')
   },
   {
     id: 'ACCEPT',
-    label: `ACCEPT (no NAT): ${t('standalone.nat.action_accept_description')}`
+    label: 'ACCEPT',
+    description: t('standalone.nat.action_accept_description')
   }
 ])
 

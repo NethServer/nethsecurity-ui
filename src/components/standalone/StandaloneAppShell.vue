@@ -29,6 +29,7 @@ const themeStore = useThemeStore()
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
 const unitName = ref('')
+const shakeNotificationsIcon = ref(false)
 
 let loading = ref({
   systemBoard: false
@@ -95,6 +96,22 @@ watch(
     setTimeout(() => {
       isChangesButtonFlashing.value = false
     }, 1000)
+  }
+)
+
+watch(
+  () => notificationsStore.numNotifications,
+  (newNum, oldNum) => {
+    if (newNum > oldNum) {
+      // briefly shake notifications icon
+      setTimeout(() => {
+        shakeNotificationsIcon.value = true
+      }, 700)
+
+      setTimeout(() => {
+        shakeNotificationsIcon.value = false
+      }, 2700)
+    }
   }
 )
 
@@ -315,7 +332,8 @@ onMounted(() => {
               <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
               <font-awesome-icon
                 :icon="['fas', 'bell']"
-                class="h-6 w-6 shrink-0"
+                :class="['h-6 w-6 shrink-0', { 'fa-shake': shakeNotificationsIcon }]"
+                style="--fa-animation-duration: 2s"
                 aria-hidden="true"
               />
             </button>

@@ -1,7 +1,7 @@
 //  Copyright (C) 2023 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { uid } from 'uid/single'
 import { getAxiosErrorMessage, type NeNotification } from '@nethserver/vue-tailwind-lib'
@@ -20,6 +20,10 @@ export const useNotificationsStore = defineStore('notifications', () => {
   const isAxiosErrorModalOpen = ref(false)
   const axiosErrorNotificationToShow = ref<NeNotification>()
   const isNotificationDrawerOpen = ref(false)
+
+  const numNotifications = computed(() => {
+    return notifications.value.length
+  })
 
   const addNotification = (notification: NeNotification) => {
     notifications.value.unshift(notification)
@@ -153,6 +157,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
   return {
     notifications,
+    numNotifications,
     axiosErrorNotificationToShow,
     isAxiosErrorModalOpen,
     isNotificationDrawerOpen,

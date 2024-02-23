@@ -159,24 +159,24 @@ function editZone(zone: Zone) {
           >
           <template v-else-if="getTrafficToWan(item, firewallConfig.forwardings)">
             <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
-            <p>{{ t('standalone.zones_and_policies.traffic_policy.accept') }}</p>
+            <p>ACCEPT</p>
           </template>
           <template v-else>
             <FontAwesomeIcon :icon="['fas', 'ban']" />
-            <p>{{ t('standalone.zones_and_policies.traffic_policy.reject') }}</p>
+            <p>REJECT</p>
           </template>
         </div>
       </template>
       <template #input="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-2">
           <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
-          {{ t(`standalone.zones_and_policies.traffic_policy.${item.input}`) }}
+          {{ item.input.toUpperCase() }}
         </div>
       </template>
       <template #forward="{ item }: { item: Zone }">
         <div class="flex items-center gap-x-2">
           <FontAwesomeIcon :icon="['fas', trafficIcon(item.forward)]" />
-          {{ t(`standalone.zones_and_policies.traffic_policy.${item.forward}`) }}
+          {{ item.forward.toUpperCase() }}
         </div>
       </template>
       <template #interfaces="{ item }: { item: Zone }">

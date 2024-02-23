@@ -1068,11 +1068,6 @@
     "zones_and_policies": {
       "title": "Zones & Policies",
       "description": "The firewall creates zones over your network interfaces to control network traffic flow.",
-      "traffic_policy": {
-        "accept": "Accept",
-        "reject": "Reject",
-        "drop": "Drop"
-      },
       "zone": "Zone",
       "allow_forwards_to": "Allow forwards to",
       "allow_forwards_from": "Allow forwards from",
@@ -1171,9 +1166,6 @@
       "destination_zone": "Destination zone",
       "destination_zone_tooltip": "Specifies the traffic destination zone, which must be distinct from the source zone.",
       "choose_action": "Choose action",
-      "drop": "Drop",
-      "accept": "Accept",
-      "reject": "Reject",
       "custom_service": "Custom service",
       "protocols": "Protocols",
       "ports": "Ports",
@@ -1675,11 +1667,8 @@
       "destination_address": "Destination address",
       "destination_address_tooltip": "Match forwarded traffic directed at this IPv4 address or CIDR",
       "action": "Action",
-      "action_snat": "SNAT",
       "action_snat_description": "Rewrite to specific source IP or port",
-      "action_masquerade": "Masquerade",
       "action_masquerade_description": "Automatically rewrite to outbound interface IP",
-      "action_accept": "Accept (no NAT)",
       "action_accept_description": "Disable address rewriting",
       "rewrite_ip_address": "Rewrite IP address",
       "rewrite_ip": "Rewrite IP",

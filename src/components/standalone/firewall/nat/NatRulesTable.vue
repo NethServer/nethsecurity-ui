@@ -85,7 +85,7 @@ function getDropdownItems(rule: NatRule) {
         />
       </template>
       <template #target="{ item }: { item: NatRule }">
-        {{ t(`standalone.nat.action_${item.target.toLowerCase()}`) }}
+        {{ item.target }}
       </template>
       <template #snat_ip="{ item }: { item: NatRule }">
         <span v-if="item.snat_ip">{{ item.snat_ip }}</span>

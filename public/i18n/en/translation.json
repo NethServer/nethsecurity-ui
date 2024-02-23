@@ -341,7 +341,8 @@
       "toggle_theme": "Toggle theme",
       "show_notifications": "Show notifications",
       "open_user_menu": "Open user menu",
-      "close_side_drawer": "Close side drawer"
+      "close_side_drawer": "Close side drawer",
+      "account": "Account"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -1720,7 +1721,7 @@
   },
   "notifications": {
     "title": "Notifications",
-    "no_notification": "No notification yet",
+    "no_notification": "No notifications yet",
     "ubus_call_failed": "Ubus call failed",
     "api_call_failed": "API call failed",
     "show_details": "Show details",

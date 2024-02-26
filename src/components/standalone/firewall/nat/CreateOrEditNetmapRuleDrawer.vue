@@ -9,9 +9,12 @@ import {
   type NeComboboxOption,
   NeInlineNotification,
   NeSideDrawer,
-  NeButton
+  NeButton,
+  NeExpandable,
+  focusElement,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type NetmapRule, type NetmapDevice, type NetmapType } from '@/stores/standalone/firewall'
@@ -349,23 +352,12 @@ async function saveRule() {
           </template>
         </NeInlineNotification>
         <!-- advanced settings -->
-        <NeButton
-          kind="tertiary"
-          size="sm"
-          @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
-          class="-ml-2"
+        <NeExpandable
+          :label="t('common.advanced_settings')"
+          :isExpanded="isExpandedAdvancedSettings"
+          @setExpanded="(ev: boolean) => (isExpandedAdvancedSettings = ev)"
         >
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', isExpandedAdvancedSettings ? 'chevron-up' : 'chevron-down']"
-              class="h-3 w-3"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('common.advanced_settings') }}
-        </NeButton>
-        <Transition name="slide-down">
-          <div v-show="isExpandedAdvancedSettings" class="space-y-6">
+          <div class="space-y-6">
             <!-- inbound devices -->
             <NeCombobox
               :label="t('standalone.netmap.inbound_devices')"
@@ -409,7 +401,7 @@ async function saveRule() {
               ref="outboundDevicesRef"
             />
           </div>
-        </Transition>
+        </NeExpandable>
         <!-- saveRule error notification -->
         <NeInlineNotification
           v-if="error.saveRule"

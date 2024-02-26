@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeExpandable, NeInlineNotification } from '@nethesis/vue-components'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeExpandable, NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -61,7 +61,7 @@ function onClose() {
   emit('close')
 }
 
-function toggleExpand(config: string, isExpanded: boolean) {
+function setExpanded(config: string, isExpanded: boolean) {
   expandedChanges.value[config] = isExpanded
 }
 
@@ -171,21 +171,24 @@ async function revertChanges() {
       <NeExpandable
         v-for="config in Object.keys(uciChangesStore.changes)"
         :key="config"
-        :title="`/etc/config/${config} (${uciChangesStore.changes[config].length})`"
-        :expanded="expandedChanges[config]"
-        @setExpanded="(ev: boolean) => toggleExpand(config, ev)"
+        :label="`/etc/config/${config} (${uciChangesStore.changes[config].length})`"
+        :isExpanded="expandedChanges[config]"
+        @setExpanded="(ev: boolean) => setExpanded(config, ev)"
+        fullWidth
       >
-        <div
-          v-for="(change, index) of uciChangesStore.changes[config]"
-          :key="index"
-          class="flex items-center border-b border-gray-300 px-2 py-1.5 dark:border-gray-500"
-        >
-          <font-awesome-icon
-            :icon="['fas', getChangeIcon(change)]"
-            :class="`mr-2 h-5 w-5 ${getChangeColor(change)}`"
-            aria-hidden="true"
-          />
-          <div class="break-all">{{ getChangeTemplate(config, change) }}</div>
+        <div class="-mt-4">
+          <div
+            v-for="(change, index) of uciChangesStore.changes[config]"
+            :key="index"
+            class="flex items-center border-b border-gray-300 px-2 py-1.5 dark:border-gray-500"
+          >
+            <font-awesome-icon
+              :icon="['fas', getChangeIcon(change)]"
+              :class="`mr-2 h-5 w-5 ${getChangeColor(change)}`"
+              aria-hidden="true"
+            />
+            <div class="break-all">{{ getChangeTemplate(config, change) }}</div>
+          </div>
         </div>
       </NeExpandable>
       <NeInlineNotification

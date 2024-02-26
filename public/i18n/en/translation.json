@@ -633,7 +633,7 @@
       "default": "Default",
       "certificate_expired": "Certificate expired",
       "delete_certificate": "Delete certificate",
-      "delete_certificate_message": "Are you sure you want to delete '{certificate}' certificate?",
+      "delete_certificate_message": "Are you sure you want to delete '{certificate}' certificate? This operation is irreversible.",
       "certificate_name": "Certificate name",
       "certificate": "Certificate",
       "private_key": "Private key",

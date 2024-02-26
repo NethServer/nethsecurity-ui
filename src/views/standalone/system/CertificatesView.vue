@@ -164,15 +164,11 @@ onMounted(() => {
     :item-to-delete="selectedCertificate"
     @certificate-deleted="
       () => {
-        if (selectedCertificate?.type === 'acme') {
-          uciChangesStore.getChanges()
-        } else {
-          notificationsStore.addNotification({
-            id: 'delete_certificate',
-            kind: 'success',
-            title: t('standalone.certificates.certificate_deleted')
-          })
-        }
+        notificationsStore.addNotification({
+          id: 'delete_certificate',
+          kind: 'success',
+          title: t('standalone.certificates.certificate_deleted')
+        })
         fetchCertificates()
       }
     "

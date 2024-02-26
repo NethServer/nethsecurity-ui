@@ -11,8 +11,8 @@ import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import SideMenu from './SideMenu.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton, NeSkeleton } from '@nethserver/vue-tailwind-lib'
+import { NeDropdown, NeSkeleton, NeTooltip } from '@nethesis/vue-components'
+import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { isStandaloneMode, getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
@@ -29,6 +29,7 @@ const themeStore = useThemeStore()
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
 const unitName = ref('')
+const shakeNotificationsIcon = ref(false)
 
 let loading = ref({
   systemBoard: false
@@ -95,6 +96,22 @@ watch(
     setTimeout(() => {
       isChangesButtonFlashing.value = false
     }, 1000)
+  }
+)
+
+watch(
+  () => notificationsStore.numNotifications,
+  (newNum, oldNum) => {
+    if (newNum > oldNum) {
+      // briefly shake notifications icon
+      setTimeout(() => {
+        shakeNotificationsIcon.value = true
+      }, 700)
+
+      setTimeout(() => {
+        shakeNotificationsIcon.value = false
+      }, 2700)
+    }
   }
 )
 
@@ -293,56 +310,78 @@ onMounted(() => {
             />
 
             <!-- help -->
-            <a
-              href="https://docs.nethsecurity.org/"
-              target="_blank"
-              rel="noreferrer"
-              :class="['-m-2.5 flex items-center gap-3 p-2.5', topBarButtonsColorClasses]"
-            >
-              <font-awesome-icon
-                :icon="['fas', 'circle-question']"
-                class="h-6 w-6 shrink-0"
-                aria-hidden="true"
-              />
-            </a>
+            <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+              <template #trigger>
+                <a
+                  href="https://docs.nethsecurity.org/"
+                  target="_blank"
+                  rel="noreferrer"
+                  :class="['-m-2.5 flex items-center gap-3 p-2.5', topBarButtonsColorClasses]"
+                >
+                  <font-awesome-icon
+                    :icon="['fas', 'circle-question']"
+                    class="h-6 w-6 shrink-0"
+                    aria-hidden="true"
+                  />
+                </a>
+              </template>
+              <template #content>
+                {{ t('common.help') }}
+              </template>
+            </NeTooltip>
 
             <!-- notifications -->
-            <button
-              type="button"
-              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
-              @click="openNotificationsDrawer"
-            >
-              <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
-              <font-awesome-icon
-                :icon="['fas', 'bell']"
-                class="h-6 w-6 shrink-0"
-                aria-hidden="true"
-              />
-            </button>
-
-            <!-- profile dropdown -->
-            <NeDropdown
-              :items="accountMenuOptions"
-              :alignToRight="true"
-              :openMenuAriaLabel="t('standalone.shell.open_user_menu')"
-            >
-              <template #button>
-                <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
-                  <div class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="['fas', 'circle-user']"
-                      class="h-6 w-6 shrink-0"
-                      aria-hidden="true"
-                    />
-                    <font-awesome-icon
-                      :icon="['fas', 'chevron-down']"
-                      class="h-3 w-3 shrink-0"
-                      aria-hidden="true"
-                    />
-                  </div>
+            <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+              <template #trigger>
+                <button
+                  type="button"
+                  :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
+                  @click="openNotificationsDrawer"
+                >
+                  <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
+                  <font-awesome-icon
+                    :icon="['fas', 'bell']"
+                    :class="['h-6 w-6 shrink-0', { 'fa-shake': shakeNotificationsIcon }]"
+                    style="--fa-animation-duration: 2s"
+                    aria-hidden="true"
+                  />
                 </button>
               </template>
-            </NeDropdown>
+              <template #content>
+                {{ t('notifications.title') }}
+              </template>
+            </NeTooltip>
+
+            <!-- profile dropdown -->
+            <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+              <template #trigger>
+                <NeDropdown
+                  :items="accountMenuOptions"
+                  :alignToRight="true"
+                  :openMenuAriaLabel="t('standalone.shell.open_user_menu')"
+                >
+                  <template #button>
+                    <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
+                      <div class="flex items-center gap-2">
+                        <font-awesome-icon
+                          :icon="['fas', 'circle-user']"
+                          class="h-6 w-6 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <font-awesome-icon
+                          :icon="['fas', 'chevron-down']"
+                          class="h-3 w-3 shrink-0"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </button>
+                  </template>
+                </NeDropdown>
+              </template>
+              <template #content>
+                {{ t('standalone.shell.account') }}
+              </template>
+            </NeTooltip>
           </div>
         </div>
       </div>

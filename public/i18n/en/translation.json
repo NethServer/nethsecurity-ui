@@ -642,7 +642,7 @@
       "domain": "Domain",
       "add_domain": "Add domain",
       "validation_method": "Validation method",
-      "validation_method_tooltip": "In Standalone mode, the server must be accessible externally on port 80. The domains for which you request certificates must be public domain names linked to the firewall's own public IP address. DNS mode enables the use of your DNS provider's API to issue certificates. Unlike standalone mode, the domain name in DNS mode does not need to resolve to the router IP. It is the sole mode supporting wildcard certificates",
+      "validation_method_tooltip": "In Standalone mode, the server will be temporary accessible on port 80 during certificate generation. The domains for which you request certificates must be public domain names linked to the firewall's own public IP address. DNS mode enables the use of your DNS provider's API to issue certificates. Unlike standalone mode, the domain name in DNS mode does not need to resolve to the router IP. It is the sole mode supporting wildcard certificates",
       "standalone": "Standalone",
       "dns": "DNS",
       "dns_api": "DNS API",
@@ -1028,7 +1028,7 @@
     },
     "reverse_proxy": {
       "title": "Reverse proxy",
-      "page_description": "A reverse proxy forwards HTTP client requests to another web server",
+      "page_description": "A reverse proxy forwards HTTP client requests to another web server. The reverse proxy feature works only on port 443 (HTTPS).",
       "no_reverse_proxy_found": "No reverse proxy found",
       "add_reverse_proxy": "Add reverse proxy",
       "edit_reverse_proxy": "Edit reverse proxy",

@@ -6,8 +6,8 @@
 <script setup lang="ts">
 import {
   MessageBag,
+  validateHost,
   validateIp4Cidr,
-  validateIpAddress,
   validatePositiveInteger,
   validateRequired,
   validateRequiredOption,
@@ -310,7 +310,7 @@ function validateFormByStep(step: number): boolean {
       [[validateRequired(name.value)], 'name'],
       [[validateRequired(wanIpAddress.value)], 'wanIpAddress'],
       [
-        [validateRequired(remoteIpAddress.value), validateIpAddress(remoteIpAddress.value)],
+        [validateRequired(remoteIpAddress.value), validateHost(remoteIpAddress.value)],
         'remoteIpAddress'
       ],
       [

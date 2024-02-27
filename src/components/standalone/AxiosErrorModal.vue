@@ -4,13 +4,12 @@
 -->
 
 <script lang="ts" setup>
-import { NeFormItemLabel, NeButton } from '@nethesis/vue-components'
+import { NeFormItemLabel, NeLink, NeTooltip } from '@nethesis/vue-components'
 import { NeModal } from '@nethserver/vue-tailwind-lib'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
-
-// Unlike NeAxiosErrorModal, this component is tailored to handle Ubus API calls too and copy to clipboard the specific command to invoke API script.
+import { getProductName } from '@/lib/config'
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
@@ -23,11 +22,21 @@ const axiosError = computed(() => {
   return notificationsStore.axiosErrorNotificationToShow
 })
 
-const secondaryButtonLabel = computed(() => {
-  const isUbusCall = axiosError.value?.payload.config.url.includes('/ubus/call')
-  const buttonLabel = isUbusCall ? t('notifications.copy_command') : t('notifications.copy_curl')
+const isUbusCall = computed(() => {
+  return axiosError.value?.payload?.config.url.includes('/ubus/call')
+})
 
-  return justCopied.value ? t('common.copied') : buttonLabel
+const callFailed = computed(() => {
+  if (isUbusCall.value) {
+    const ubusPath = JSON.parse(axiosError.value?.payload.config.data).path
+    const ubusMethod = JSON.parse(axiosError.value?.payload.config.data).method
+    return `${ubusPath} ${ubusMethod}`
+  } else {
+    // api call
+    const httpMethod = axiosError.value?.payload.config.method.toUpperCase()
+    const apiUrl = axiosError.value?.payload.config.url
+    return `${httpMethod} ${apiUrl}`
+  }
 })
 
 watch(
@@ -36,13 +45,16 @@ watch(
     if (notificationsStore.isAxiosErrorModalOpen) {
       isExpandedRequest.value = false
       isExpandedResponse.value = false
+
+      // print the error object on the console
+      console.info(toRaw(axiosError.value?.payload))
     }
   }
 )
 
 function copyCommandToClipboard() {
   if (axiosError.value) {
-    if (axiosError.value.payload.config.url.includes('/ubus/call')) {
+    if (isUbusCall.value) {
       notificationsStore.copyUbusApiCommandToClipboard(axiosError.value)
     } else {
       notificationsStore.copyCurlToClipboard(axiosError.value)
@@ -54,22 +66,11 @@ function copyCommandToClipboard() {
     }, 3000)
   }
 }
-
-function getFormattedJsonString(stringOrJson: any, indent: number = 4) {
-  if (typeof stringOrJson === 'string') {
-    return JSON.stringify(JSON.parse(stringOrJson), null, indent)
-  } else {
-    return JSON.stringify(stringOrJson, null, indent)
-  }
-}
 </script>
 <template>
   <NeModal
     size="lg"
     :primary-label="t('common.close')"
-    :secondary-button-disabled="justCopied"
-    :secondary-label="secondaryButtonLabel"
-    secondary-button-kind="tertiary"
     :title="axiosError ? axiosError.title : ''"
     :visible="notificationsStore.isAxiosErrorModalOpen"
     :close-aria-label="t('common.close')"
@@ -77,109 +78,45 @@ function getFormattedJsonString(stringOrJson: any, indent: number = 4) {
     kind="error"
     @close="notificationsStore.setAxiosErrorModalOpen(false)"
     @primary-click="notificationsStore.setAxiosErrorModalOpen(false)"
-    @secondary-click="copyCommandToClipboard"
   >
-    <div class="space-y-4">
-      <!-- ubus error message (if available) -->
-      <div v-if="axiosError?.payload?.response?.data?.message">
+    <div class="space-y-6">
+      <div>
         <NeFormItemLabel class="!mb-1">
-          {{ t('notifications.response_message') }}
+          {{ t('error_modal.request_failed') }}
         </NeFormItemLabel>
         <div class="font-mono">
-          {{ axiosError.payload.response.data.message }}
-        </div>
-      </div>
-      <!-- axios error message -->
-      <div v-if="axiosError?.payload?.message">
-        <NeFormItemLabel class="!mb-1">
-          {{ t('notifications.axios_message') }}
-        </NeFormItemLabel>
-        <div class="font-mono">
-          {{ axiosError.payload.message }}
-        </div>
-      </div>
-      <!-- http error status -->
-      <div v-if="axiosError?.payload?.response?.statusText">
-        <NeFormItemLabel class="!mb-1">
-          {{ t('notifications.status') }}
-        </NeFormItemLabel>
-        <div class="font-mono">
-          {{ axiosError.payload.response.statusText }}
-          <span v-if="axiosError?.payload?.response?.status">
-            ({{ axiosError.payload.response.status }})
-          </span>
+          {{ callFailed }}
         </div>
       </div>
       <div>
-        <!-- request -->
-        <NeButton
-          kind="tertiary"
-          size="sm"
-          @click="isExpandedRequest = !isExpandedRequest"
-          class="-ml-2"
-        >
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', isExpandedRequest ? 'chevron-up' : 'chevron-down']"
-              class="h-3 w-3"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('notifications.request') }}
-        </NeButton>
-        <Transition name="slide-down">
-          <div v-show="isExpandedRequest" class="space-y-4">
-            <div>
-              <div class="mt-4 font-mono">
-                {{ axiosError?.payload?.config?.method?.toUpperCase() }}
-                {{ axiosError?.payload?.config?.url }}
-              </div>
-            </div>
-            <!-- request payload -->
-            <div>
-              <!-- //// remove w-10/12 class after fixing modal margins -->
-              <pre
-                v-if="axiosError?.payload?.config?.data"
-                class="max-h-64 w-10/12 overflow-auto rounded-md bg-gray-100 p-2 dark:bg-gray-950"
-                >{{ getFormattedJsonString(axiosError.payload.config.data) }}</pre
-              >
-              <div v-else>{{ t('notifications.no_payload') }}</div>
-            </div>
-          </div>
-        </Transition>
-      </div>
-      <div>
-        <!-- response -->
-        <NeButton
-          kind="tertiary"
-          size="sm"
-          @click="isExpandedResponse = !isExpandedResponse"
-          class="-ml-2"
-        >
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', isExpandedResponse ? 'chevron-up' : 'chevron-down']"
-              class="h-3 w-3"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('notifications.response') }}
-        </NeButton>
-        <Transition name="slide-down">
-          <div v-show="isExpandedResponse" class="space-y-4">
-            <div>
-              <div class="mt-4">
-                <!-- //// remove w-10/12 class after fixing modal margins -->
-                <pre
-                  v-if="axiosError?.payload?.response?.data"
-                  class="max-h-64 w-10/12 overflow-auto rounded-md bg-gray-100 p-2 dark:bg-gray-950"
-                  >{{ getFormattedJsonString(axiosError.payload.response.data) }}</pre
-                >
-                <div v-else>{{ t('notifications.no_payload') }}</div>
-              </div>
-            </div>
-          </div>
-        </Transition>
+        <div class="mb-1">{{ t('error_modal.report_issue_description') }}:</div>
+        <ol class="list-inside list-decimal">
+          <li>
+            <i18n-t keypath="error_modal.report_issue_step_1" tag="span">
+              <template #copyTheCommand>
+                <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
+                  <template #trigger>
+                    <NeLink @click="copyCommandToClipboard">
+                      {{ t('error_modal.copy_the_command') }}
+                    </NeLink>
+                  </template>
+                  <template #content>
+                    {{ t('common.copied') }}
+                  </template>
+                </NeTooltip>
+                <NeLink v-else @click="copyCommandToClipboard">
+                  {{ t('error_modal.copy_the_command') }}
+                </NeLink>
+              </template>
+            </i18n-t>
+          </li>
+          <li>
+            {{ t('error_modal.report_issue_step_2', { product: getProductName() }) }}
+          </li>
+          <li>
+            {{ t('error_modal.report_issue_step_3') }}
+          </li>
+        </ol>
       </div>
     </div>
   </NeModal>

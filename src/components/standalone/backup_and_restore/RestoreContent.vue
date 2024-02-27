@@ -17,14 +17,11 @@ import {
   NeTooltip,
   NeSkeleton,
   NeSideDrawer,
-  NeRadioSelection
-} from '@nethesis/vue-components'
-import {
-  NeModal,
-  NeTextInput,
+  NeRadioSelection,
   getAxiosErrorMessage,
   focusElement
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'

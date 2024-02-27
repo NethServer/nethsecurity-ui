@@ -11,9 +11,11 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
-  NeRadioSelection
+  NeRadioSelection,
+  focusElement,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

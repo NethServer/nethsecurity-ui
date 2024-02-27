@@ -10,15 +10,11 @@ import {
   NeInlineNotification,
   NeButton,
   NeSkeleton,
-  NeTooltip
-} from '@nethesis/vue-components'
-import {
+  NeTooltip,
   focusElement,
-  getAxiosErrorMessage,
-  type NeNotification,
-  NeTextInput,
-  NeModal
-} from '@nethserver/vue-tailwind-lib'
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { type NeNotification, NeTextInput, NeModal } from '@nethserver/vue-tailwind-lib'
 import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'

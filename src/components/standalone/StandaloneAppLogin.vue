@@ -4,11 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { NeLink, NeInlineNotification, NeTitle, NeButton } from '@nethesis/vue-components'
+import {
+  NeLink,
+  NeInlineNotification,
+  NeTitle,
+  NeButton,
+  focusElement,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
-import { focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
 import { getProductName, getCompanyName } from '@/lib/config'

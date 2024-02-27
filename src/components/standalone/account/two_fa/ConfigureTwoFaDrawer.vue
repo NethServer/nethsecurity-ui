@@ -4,13 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
 import {
-  NeTextInput,
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
   getAxiosErrorMessage,
   focusElement,
   savePreference
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'

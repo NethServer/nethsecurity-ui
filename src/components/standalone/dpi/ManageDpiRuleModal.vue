@@ -19,16 +19,11 @@ import {
   NeInlineNotification,
   NeTooltip,
   NeButton,
-  NeSkeleton
-} from '@nethesis/vue-components'
-import {
-  NeModal,
-  NeToggle,
-  NeTextInput,
+  NeSkeleton,
   getAxiosErrorMessage,
-  focusElement,
-  NeEmptyState
-} from '@nethserver/vue-tailwind-lib'
+  focusElement
+} from '@nethesis/vue-components'
+import { NeModal, NeToggle, NeTextInput, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { watchDebounced } from '@vueuse/core'

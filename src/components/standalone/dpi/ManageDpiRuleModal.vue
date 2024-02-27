@@ -24,21 +24,25 @@ import {
   focusElement
 } from '@nethesis/vue-components'
 import { NeModal, NeToggle, NeTextInput, NeEmptyState } from '@nethserver/vue-tailwind-lib'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { watchDebounced } from '@vueuse/core'
 import { isEmpty } from 'lodash-es'
 import { MessageBag, validateRequired } from '@/lib/validation'
 
-interface Props {
-  visible: boolean
-  ruleToEdit: DpiRule
-  allRules: DpiRule[]
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  visible: false,
-  ruleToEdit: undefined
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  },
+  ruleToEdit: {
+    type: Object as PropType<DpiRule>,
+    default: undefined
+  },
+  allRules: {
+    type: Array as PropType<DpiRule[]>,
+    default: () => []
+  }
 })
 
 const emit = defineEmits(['close', 'reloadData'])
@@ -120,10 +124,11 @@ watch(
   () => props.visible,
   () => {
     if (props.visible) {
-      if (isCreating.value) {
-        enableRule.value = true
-      } else {
+      if (props.ruleToEdit) {
+        // editing rule
         enableRule.value = props.ruleToEdit.enabled
+      } else {
+        enableRule.value = true
       }
       sourceIface.value = undefined
       interfaces.value = []
@@ -405,7 +410,7 @@ async function editRule() {
   const selectedProtocolNames = getSelectedProtocolNames()
 
   const editRuleData = {
-    'config-name': props.ruleToEdit['config-name'],
+    'config-name': props.ruleToEdit?.['config-name'],
     enabled: enableRule.value,
     device: sourceIface.value,
     applications: selectedApplicationNames,

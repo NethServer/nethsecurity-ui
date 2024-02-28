@@ -1145,7 +1145,7 @@
     "factory_reset": {
       "title": "Factory reset",
       "perform_factory_confirm": "Conferma factory reset",
-      "perform_factory_reset": "Eseguire factory reset",
+      "perform_factory_reset": "Esegui factory reset",
       "current_version": "Versione attuale",
       "resetting_description": "Ripristino e riavvio dell'unità in corso, si prega di attendere...",
       "description_helper": "Il factory reset ripristina la versione attualmente installata.",

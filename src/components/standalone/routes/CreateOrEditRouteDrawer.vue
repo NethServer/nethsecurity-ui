@@ -10,14 +10,11 @@ import {
   NeButton,
   NeSideDrawer,
   NeSkeleton,
-  NeTooltip
-} from '@nethesis/vue-components'
-import {
+  NeTooltip,
   getAxiosErrorMessage,
-  focusElement,
-  NeTextInput,
-  NeToggle
-} from '@nethserver/vue-tailwind-lib'
+  focusElement
+} from '@nethesis/vue-components'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

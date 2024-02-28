@@ -12,8 +12,14 @@ import {
   validateUciName
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeInlineNotification, NeSideDrawer, NeButton } from '@nethesis/vue-components'
-import { NeTextInput, focusElement, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
+  focusElement,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { uniq } from 'lodash-es'
 import { ref, watch, type Ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'

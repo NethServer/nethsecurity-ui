@@ -15,14 +15,11 @@ import {
   NeSkeleton,
   NeTooltip,
   NeButton,
-  NeFormItemLabel
-} from '@nethesis/vue-components'
-import {
-  NeTextInput,
-  NeToggle,
+  NeFormItemLabel,
   focusElement,
   getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {

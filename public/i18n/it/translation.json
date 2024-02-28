@@ -1150,7 +1150,7 @@
       "resetting_description": "Ripristino e riavvio dell'unità in corso, si prega di attendere...",
       "description_helper": "Il factory reset ripristina la versione attualmente installata.",
       "perform_factory_reset_description": "Il factory reset elimina definitivamente tutti i dati e le impostazioni.",
-      "description": "Factory reset elimina tutti i pacchetti installati e le impostazioni personalizzate, riportando il firewall al suo stato originale come era dopo l'installazione.",
+      "description": "Il factory reset elimina tutti i pacchetti installati e le impostazioni personalizzate, riportando il firewall al suo stato originale come era dopo l'installazione.",
       "type_unit_name": "Digitare '{unit}' per confermare"
     },
     "reverse_proxy": {

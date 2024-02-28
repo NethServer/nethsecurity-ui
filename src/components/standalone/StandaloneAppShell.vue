@@ -208,7 +208,6 @@ onMounted(() => {
     </TransitionRoot>
 
     <!-- Static sidebar for desktop -->
-    <!-- //// removed lg:inset-y-0 class -->
     <div class="hidden lg:fixed lg:z-50 lg:flex lg:h-screen lg:w-72 lg:flex-col">
       <!-- Sidebar component -->
       <div
@@ -392,7 +391,7 @@ onMounted(() => {
         </div>
       </main>
     </div>
-    <NotificationDrawer />
+    <NotificationDrawer :closeOnClickOutside="true" />
     <ToastNotificationsArea />
   </div>
 </template>

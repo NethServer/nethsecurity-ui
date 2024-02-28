@@ -41,9 +41,18 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
   const getErrorDescription = (axiosError: any, isUbusCall: boolean) => {
     if (isUbusCall && JSON.parse(axiosError.config.data)?.method) {
-      return JSON.parse(axiosError.config.data).method
+      const ubusPath = JSON.parse(axiosError.config.data).path
+      const ubusMethod = JSON.parse(axiosError.config.data).method
+      return `${ubusPath} ${ubusMethod}`
     } else {
-      return t(getAxiosErrorMessage(axiosError))
+      // return last segment of api url
+      const chunks = axiosError.config.url.split('/api/')
+
+      if (chunks.length == 2) {
+        return axiosError.config.url.split('/api/')[1]
+      } else {
+        return axiosError.config.url
+      }
     }
   }
 
@@ -66,8 +75,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
   const createNotificationFromAxiosError = (axiosError: any) => {
     const isUbusCall = axiosError.config.url.includes('/ubus/call')
     const notificationTitle = isUbusCall
-      ? t('notifications.ubus_call_failed')
-      : t('notifications.api_call_failed')
+      ? t('error_modal.ubus_request_failed')
+      : t('error_modal.api_request_failed')
 
     const notification: NeNotification = {
       id: uid(),
@@ -77,7 +86,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
       timestamp: new Date(),
       payload: axiosError,
       primaryLabel: t('notifications.show_details'),
-      secondaryLabel: isUbusCall ? t('notifications.copy_command') : t('notifications.copy_curl')
+      secondaryLabel: t('error_modal.copy_command')
     }
 
     notification.primaryAction = () => {

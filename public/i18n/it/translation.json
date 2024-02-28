@@ -174,7 +174,7 @@
     "cannot_retrieve_ipsec_algorithms": "Impossibile recuperare gli algoritmi IPsec",
     "cannot_retrieve_ipsec_tunnels": "Impossibile recuperare i tunnel IPsec",
     "cannot_migrate": "Impossibile eseguire la migrazione",
-    "cannot_perform_factory_reset": "Impossibile eseguire factory default",
+    "cannot_perform_factory_reset": "Impossibile eseguire factory reset",
     "invalid_path": "Inserisci un percorso valido.",
     "cannot_retrieve_proxies": "Impossibile recuperare i proxy",
     "cannot_create_user": "Impossibile creare l'utente",
@@ -1143,14 +1143,14 @@
       "update": "Aggiornare"
     },
     "factory_reset": {
-      "title": "Factory default",
+      "title": "Factory reset",
       "perform_factory_confirm": "Confermare il ripristino",
-      "perform_factory_reset": "Eseguire factory default",
+      "perform_factory_reset": "Eseguire factory reset",
       "current_version": "Versione attuale",
       "resetting_description": "Ripristino e riavvio dell'unità in corso, si prega di attendere...",
-      "description_helper": "Il factory default ripristina la versione attualmente installata.",
-      "perform_factory_reset_description": "Il factory default elimina definitivamente tutti i dati e le impostazioni.",
-      "description": "Factory default elimina tutti i pacchetti installati e le impostazioni personalizzate, riportando il firewall al suo stato originale come era dopo l'installazione.",
+      "description_helper": "Il factory reset ripristina la versione attualmente installata.",
+      "perform_factory_reset_description": "Il factory reset elimina definitivamente tutti i dati e le impostazioni.",
+      "description": "Factory reset elimina tutti i pacchetti installati e le impostazioni personalizzate, riportando il firewall al suo stato originale come era dopo l'installazione.",
       "type_unit_name": "Digitare '{unit}' per confermare"
     },
     "reverse_proxy": {

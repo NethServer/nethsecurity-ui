@@ -185,7 +185,7 @@ onMounted(() => {
               >
                 <div class="flex h-16 shrink-0 items-center">
                   <img
-                    class="h-8 w-auto px-3"
+                    class="h-7 w-auto px-3"
                     :src="`/${logoFilename}`"
                     :alt="`${getCompanyName()} logo`"
                     aria-hidden="true"

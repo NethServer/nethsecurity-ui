@@ -1144,7 +1144,7 @@
     },
     "factory_reset": {
       "title": "Factory reset",
-      "perform_factory_confirm": "Confermare il ripristino",
+      "perform_factory_confirm": "Conferma factory reset",
       "perform_factory_reset": "Eseguire factory reset",
       "current_version": "Versione attuale",
       "resetting_description": "Ripristino e riavvio dell'unità in corso, si prega di attendere...",

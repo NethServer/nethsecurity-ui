@@ -1258,7 +1258,7 @@
       "delete_database_message": "Stai per eliminare il database '{name}'"
     },
     "openvpn_rw": {
-      "digest": "Impronta (Digest)",
+      "digest": "Digest",
       "create": "Crea",
       "authentication_mode": "Modalità di autenticazione",
       "weak": "Debole",
@@ -1269,8 +1269,8 @@
       "connected_clients": "Client connessi",
       "port": "Porta",
       "edit_server": "Modifica server",
-      "range_ip_end": "Fine intervallo IP",
-      "range_ip_start": "Inizio intervallo IP",
+      "range_ip_end": "Fine intervallo indirizzo IP",
+      "range_ip_start": "Inizio intervallo indirizzo IP",
       "local_database": "Database locale",
       "udp": "UDP",
       "bridge": "Bridge",
@@ -1309,7 +1309,19 @@
       "more_info": "Più info",
       "sent": "inviati",
       "add_account": "Aggiungi account",
-      "account_created": "Account creato"
+      "account_created": "Account creato",
+      "push_custom_network_routes": "Inoltra il traffico di queste reti",
+      "route_all_client_traffic_through_vpn": "Instrada tutto il traffico attraverso la VPN",
+      "allow_client_to_client_network_traffic": "Consenti il traffico tra i client",
+      "delete_roadwarrior_server": "Elimina server Road Warrior",
+      "tcp": "TCP",
+      "custom_dhcp_options": "Opzioni DHCP personalizzate",
+      "delete_roadwarrior_server_message": "L'esecuzione di questa azione comporta l'eliminazione di tutti gli account associati a questo server. Questa operazione è irreversibile.",
+      "cipher": "Cipher",
+      "enforce_minimum_tls_version": "Imporre una versione minima di TLS",
+      "server_client_negotiation": "Negoziazione server/client",
+      "roadwarrior_accounts": "Account Road Warrior",
+      "custom_dhcp_options_tooltip": "Inviare opzioni DHCP aggiuntive ai client; particolarmente utile per configurare un client OpenVPN per connettersi a una rete Windows attraverso la VPN"
     },
     "qos": {
       "interface": "Interfaccia",

@@ -297,7 +297,7 @@
   },
   "login": {
     "sign_in": "Accedi",
-    "cannot_login": "Impossibile accedere",
+    "cannot_login": "Impossibile effettuare il login",
     "incorrect_username_or_password": "Nome utente o password errati",
     "welcome_title_standalone": "Benvenuti",
     "welcome_description_standalone": "Accedi a {product}, proteggi la tua rete e accedi rapidamente al cloud.",
@@ -440,14 +440,14 @@
       "ping_latency_monitor": {
         "add_host": "Aggiungi host",
         "host_to_monitor": "Host da monitorare",
-        "description": "Impostare lo strumento di monitoraggio per valutare il tempo di andata e ritorno e la perdita di pacchetti inviando messaggi ping agli host di rete. Questo strumento viene utilizzato per il monitoraggio della qualità della connettività di rete. È possibile aggiungere uno o più host per monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
+        "description": "Impostare lo strumento di monitoraggio per valutare il tempo di andata e ritorno e la perdita di pacchetti inviando messaggi ping agli host della rete. Questo strumento è utilizzato per monitorare la qualità della connettività di rete. È possibile aggiungere uno o più host da monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
       },
       "tabs": {
         "real_time_report": "Report in tempo reale",
         "ping_latency_monitor": "Monitor latenza ping"
       },
       "real_time_report": {
-        "open_report": "Rapporto aperto",
+        "open_report": "Apri report",
         "description": "Lo strumento di monitoraggio offre un'analisi approfondita delle prestazioni del sistema e delle applicazioni, presentando metriche e visualizzazioni dettagliate. Queste metriche vengono memorizzate in RAM e reimpostate al riavvio della macchina, tranne quando l'unità è collegata a un controller remoto. In questo caso, le metriche vengono salvate nel controller e persistono al riavvio."
       }
     },
@@ -696,7 +696,12 @@
       "delete_bond_description": "Eliminare il bond '{name}'? I dispositivi del bond saranno scollegati e resi disponibili per altre configurazioni.",
       "cannot_delete_bond": "Impossibile eliminare il bond",
       "delete_bond": "Elimina bond",
-      "bond_name": "Nome bond"
+      "bond_name": "Nome bond",
+      "management_ipv4_address_cidr": "Indirizzo IPv4 di gestione (notazione CIDR)",
+      "create_bond": "Crea bond",
+      "configure_bond": "Configura bond",
+      "configure_bond_name": "Configura bond {name}",
+      "management_ipv4_address_cidr_tooltip": "Questo indirizzo IP è solamente per uso interno e non sarà l'indirizzo principale del bond. Assicurati che non sia già in uso nella tua rete"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -920,14 +925,14 @@
       "dns_records_description": "Configura i record DNS per la risoluzione locale di IP degli host specificati. I nomi host associano i nomi di dominio agli indirizzi IP. Questa funzione non è necessaria per i nomi host con lease statici, ma può essere utile per il rebind di FQDN.",
       "dhcp_option_combobox_placeholder": "Chiave di ricerca",
       "delete_dns_record_message": "Stai per eliminare il record DNS '{name}'",
-      "dns_forwarding_servers_tooltip": "Configura gli indirizzi IP del server DNS upstream per indirizzare query di dominio non-locali a questi server.",
+      "dns_forwarding_servers_tooltip": "Configura gli indirizzi IP del server DNS upstream per instradare le query di dominio non-locali a questi server. Inserisci l'IP address del server DNS remoto. Usa la sintassi '/{'<'}domain{'>'}/{'<'}server{'>'}' per instradare solamente le richieste per uno specifico dominio verso il server dato. Usa la sintassi '/{'<'}server{'>'}#{'<'}port{'>'}' se il server upstream non è in ascolto su una porta standard.",
       "delete_reservation_message": "Stai per eliminare '{hostname}'",
       "wildcard_dns_record_tooltip": "Quando questa opzione è attivata, il server risponderà a tutte le query fatte per questo dominio e tutti i suoi sottodomini.",
       "lease_expiration": "Scadenza lease",
       "static_leases_description": "I lease statici assegnano indirizzi IP stabili e nomi host simbolici ai client DHCP. L'host è identificato dal suo indirizzo MAC, gli è assegnato un indirizzo IP fisso, e gli viene fornito un nome host simbolico per un facile riconoscimento.",
       "no_dns_record_configured": "Nessun record DNS configurato",
       "add_reservation": "Aggiungi reservation",
-      "dns_domain_tooltip": "Inserisci il dominio DNS locale, assicurandoti che le query per questo dominio siano sempre risolte localmente.",
+      "dns_domain_tooltip": "Suffisso di dominio aggiunto ai nomi DNS e alle entry del file di hosts. Utile se è presente un dominio locale, altrimenti è possibile lasciare il valore di default (lan).",
       "dhcp_option_tooltip": "Personalizza le opzioni client DHCP. Per impostazione predefinita, opzioni standard come netmask, indirizzo broadcast, server DNS e default route corrispondono all'host dnsmasq. Sovrascrivi questi valori di default o specifica opzioni aggiuntive se necessario.",
       "no_dynamic_lease_found": "Nessun lease dinamico trovato",
       "no_reservation_found": "Nessuna reservation trovata",
@@ -982,8 +987,9 @@
     "account_management": {
       "change_password": "Modifica password",
       "change_password_description": "Nota: se cambi la password per l'utente 'root', cambierai anche la password per l'accesso alla shell.",
-      "title": "Gestione account per '{name}'",
-      "language": "Lingua"
+      "title": "Impostazioni account per '{name}'",
+      "language": "Lingua",
+      "ui_language": "Linguaggio dell'interfaccia utente"
     },
     "flashstart": {
       "username": "Nome utente",
@@ -1007,7 +1013,7 @@
         "unregister": "Rimuovi registrazione",
         "login": "Accedi",
         "login_username": "Nome utente",
-        "login_hostname": "Hotspot manager endpoint",
+        "login_hostname": "Endpoint dell'hotspot manager",
         "login_password": "Password",
         "configuration_network_address": "Indirizzo di rete",
         "configuration_max_client_allowed": "Numero massimo di clienti permessi:",
@@ -1035,8 +1041,9 @@
         "configuration_unit_name_placeholder": "NomeDiEsempio",
         "configuration_network_device": "Dispositivo di rete",
         "configuration_dhcp_limit": "Limite DHCP",
-        "configuration_dhcp_limit_helper": "Numero massimo di locazioni. Il primo indirizzo dell'intervallo DHCP viene calcolato automaticamente.",
-        "configuration_dhcp_start": "Inizio DHCP: "
+        "configuration_dhcp_limit_helper": "Numero massimo di lease. Il primo indirizzo dell'intervallo DHCP è calcolato automaticamente.",
+        "configuration_dhcp_start": "Inizio DHCP: ",
+        "hotspot_configuration_saved": "Configurazione hotspot salvata"
       },
       "status": {
         "idle_time": "Tempo di inattività",
@@ -1054,7 +1061,8 @@
         "session_key": "Chiave di sessione",
         "empty_sessions_description": "Le sessioni dei client collegati a questa unità appariranno qui.",
         "session_time": "Tempo di sessione",
-        "temporary": "Temporaneo"
+        "temporary": "Temporaneo",
+        "hotspot_configured": "Hostpot configurato"
       },
       "title": "Hotspot",
       "tabs": {
@@ -1202,7 +1210,7 @@
       "local_identifier": "Identificatore locale",
       "pfs_perfect_forward_secrecy_disabled": "PFS (Perfect Forward Secrecy) disabilitato",
       "name": "Nome",
-      "encryption_algorithm": "Algoritmo crittografia",
+      "encryption_algorithm": "Algoritmo di crittografia",
       "phase_two_esp": "Fase 2 (ESP)",
       "not_connected": "Non connesso",
       "started": "Iniziato",
@@ -1210,12 +1218,12 @@
       "received": "Ricevuto",
       "key_life_time_seconds": "Tempo di vita chiave (secondi)",
       "edit_tunnel": "Modifica tunnel",
-      "integrity_algorithm": "Algoritmo di Integrity",
+      "integrity_algorithm": "Algoritmo di Integrità",
       "compression": "Compressione",
       "remote_ip_address": "Indirizzo IP remoto",
       "no_tunnel_found": "Nessun tunnel trovato",
       "connected": "Connesso",
-      "use_generated_key": "Utilizzare la chiave generata",
+      "use_generated_key": "Utilizza la chiave generata",
       "dpd_dead_peer_detection": "DPD (dead peer detection)",
       "choose_wan": "Scegli WAN",
       "wan_ip_address": "Indirizzo IP WAN",
@@ -1297,7 +1305,19 @@
       "destination_url_tooltip": "Questo percorso specifica la posizione dove le richieste che arrivano verranno ridirezionate. Esempio: 'http://destination-server:port/path'",
       "no_certificate_configured_title": "Non c'è nessun certificato valido configurato",
       "path_tooltip": "Inserisci un percorso che inizia con '/' per creare una regola che fa match della risorsa",
-      "allowed_networks_tooltip": "Accesso permesso solo dai seguenti IPv4/IPV6 network"
+      "allowed_networks_tooltip": "Accesso permesso solo dai seguenti IPv4/IPV6 network",
+      "page_description": "Un reverse proxy inoltra le richieste HTTP dei client ad un altro web server. La funzionalità di reverse proxy funziona solamente sulla porta (HTTPS).",
+      "title": "Reverse proxy",
+      "delete_proxy_message": "Stai per eliminare il proxy '{path}'",
+      "allowed_networks": "Reti permesse",
+      "delete_proxy": "Elimina proxy",
+      "add_reverse_proxy": "Aggiungi reverse proxy",
+      "no_reverse_proxy_found": "Nessun reverse proxy trovato",
+      "edit_reverse_proxy": "Modifica reverse proxy",
+      "domain_path": "Dominio/Percorso",
+      "add_cidr_network": "Aggiungi rete CIDR",
+      "default_certificate": "Certificato predefinito",
+      "and_n_others": "+ {n} altri"
     },
     "users_database": {
       "set": "Impostata",
@@ -1349,7 +1369,11 @@
       "password_suggestion_3": "Almeno una minuscola (a-z)",
       "password_suggestion_4": "Almeno un numero (0-9)",
       "password_suggestion_5": "Almeno un carattere speciale (!{'@'}{'#'}^&_?-)",
-      "connection_verified": "Connessione verificata"
+      "connection_verified": "Connessione verificata",
+      "user_attribute": "Campo d'attributo utente",
+      "base_dn": "Base DN",
+      "user_dn": "Utente DN",
+      "user_cn": "Campo utente CN"
     },
     "openvpn_rw": {
       "digest": "Digest",
@@ -1450,7 +1474,8 @@
       "short_name": "OVPN RW",
       "title": "OpenVPN Road Warrior",
       "public_ip_hostname_unit": "Indirizzo IP/hostname pubblico di questa unità",
-      "add_public_ip_host": "Aggiungi indirizzo IP/host"
+      "add_public_ip_host": "Aggiungi indirizzo IP/host",
+      "vpn_network_tooltip": "La rete VPN è una rete virtuale utilizzata dai client; selezionare una rete non utilizzata in altre configurazioni del firewall."
     },
     "qos": {
       "interface": "Interfaccia",
@@ -1536,7 +1561,8 @@
       "add_to_the_bottom": "Aggiungi alla fine",
       "clear_filter_to_sort_rules": "Pulisci filtro per ordinare le regole",
       "forward_rules_description": "Configura le regole che definiscono come i pacchetti transitano tra le zone. La priorità è definita dall'ordine delle regole, con la prima che fa match che ha la precedenza.",
-      "service_ports": "{protocols} qualunque porta | {protocols} porta {ports} | {protocols} porte {ports}"
+      "service_ports": "{protocols} qualunque porta | {protocols} porta {ports} | {protocols} porte {ports}",
+      "source_zone": "Zona sorgente"
     },
     "certificates": {
       "title": "Certificati",
@@ -1615,6 +1641,83 @@
       "title": "Threat shield",
       "threat_shield_status_description": "Quando abilitato, threat shield blocca tutte le nuove connessioni da e per indirizzi IP malevoli 'banIP/{'<'}direction{'>'}-{'<'}zone{'>'}/{'<'}action{'>'}/{'<'}blocklist{'>'}'.",
       "blocklist_description": "Threat shield ti tiene al sicuro bloccando attacchi da indirizzi IP malevoli. Questi indirizzi sono aggiunti in blocklist, le quali hanno un nome chiaro che ti dice quale è il suo scopo e chi fa manutenzione alla lista. Il punteggio della confidenza è un valore da 1 a 10 che indica la qualità della lista. Un numero alto significa un numero basso di falsi positivi. Questo punteggio non è disponibile per le liste 'Community'."
+    },
+    "two_fa": {
+      "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
+      "store_recovery_codes_description": "Conserva i codici OTP di recupero in un luogo sicuro. Ti serviranno se devi effettuare login e non riesci ad accedere all'app di autenticazione.",
+      "configure": "Configura",
+      "configure_two_fa_step_1": "Scarica un'app di autenticazione sul tuo smartphone o tablet, ad esempio FreeOTP",
+      "revoke_two_fa": "Revoca 2FA",
+      "verify_code": "Verifica codice",
+      "few_recovery_codes_title": "Stai per terminare i codici OTP di recupero",
+      "configure_two_fa_step_3": "Inserire il codice OTP (codice di 6 cifre fornito dalla tua app di autenticazione) nel campo sottostante",
+      "reconfigure_two_fa": "Riconfigura 2FA",
+      "recovery_otp_codes": "Codici OTP di recupero",
+      "show_codes": "Mostra codici",
+      "copy_all_codes": "Copia tutti i codici",
+      "enter_otp_login_2": "Se non puoi utilizzare l'app di autenticazione, puoi usare uno dei codici OTP di recupero.",
+      "few_recovery_codes_description": "Revoca e riconfigura il 2FA per generare nuovi codici OTP di recupero.",
+      "enter_otp_login_1": "Inserire codice OTP generato dall'app di autenticazione.",
+      "store_recovery_codes_title": "Conserva i codici OTP di recupero",
+      "i_have_stored_recovery_codes": "Ho salvato i codici di recupero",
+      "two_fa_configured": "Autenticazione a due fattori configurata",
+      "two_fa_revoked": "Autenticazione a due fattori revocata",
+      "revoke_two_fa_message": "Vuoi revocare l'autenticazione a due fattori? Il tuo account avrà un livello di sicurezza inferiore. Quando effettui login non verrà più richiesto il codice OTP.",
+      "recovery_otp_codes_tooltip": "Puoi usare i codici OTP di recupero se devi fare login e non puoi utilizzare l'app di autenticazione. Ogni codice di recupero può essere utilizzato una volta sola.",
+      "two_fa_enabled": "L'autenticazione a due fattori è abilitata",
+      "otp": "OTP a due fattori",
+      "title": "Autenticazione a due fattori",
+      "configure_two_fa": "Configura 2FA",
+      "description": "L'autenticazione a due fattori (2FA) aggiunge un ulteriore livello di sicurezza al vostro account. Una volta attivata, al momento dell'accesso vi verrà chiesto di inserire un codice univoco (OTP) generato da un'app di autenticazione sul vostro smartphone o tablet.",
+      "two_fa_disabled": "L'autenticazione a due fattori è disattivata"
+    },
+    "nat": {
+      "no_rules_found": "Nessuna regola trovata",
+      "nat_rules": "Regole NAT",
+      "add_nat_rule": "Aggiungi regola di NAT",
+      "save_nat_rule": "Salva regola di NAT",
+      "rule_name": "Nome regola",
+      "title": "NAT",
+      "edit_nat_rule": "Modifica regola di NAT",
+      "name": "Nome",
+      "nat_rules_description": "Network Address Translation (NAT) viene utilizzato per modificare le informazioni sugli indirizzi di rete nelle intestazioni dei pacchetti durante il transito. Qui è possibile creare regole Masquerade, Source NAT (SNAT) e disabilitare il NAT per un traffico specifico. Masquerade è abilitato di default per il traffico che va dalle reti locali alla WAN.",
+      "source_address": "Indirizzo sorgente",
+      "address_helper": "Indirizzo IPv4 con notazione CIDR facoltativa",
+      "source_address_tooltip": "Si applica solo al traffico proveniente da questo indirizzo IPv4 o per CIDR",
+      "destination_address_tooltip": "Si applica solo al traffico destinato a questo indirizzo IPv4 o CIDR",
+      "action": "Azione",
+      "outbound_zone": "Zona di uscita",
+      "destination_address": "Indirizzo di destinazione",
+      "action_snat_description": "Riscrivi IP sorgente",
+      "action_masquerade_description": "Riscrivi automaticamente con l'IP dell'interfaccia di uscita",
+      "confirm_delete_rule": "Stai per eliminare la regola NAT '{name}'",
+      "action_accept_description": "Disabilita riscrittura dell'indirizzo",
+      "rewrite_ip_address": "Riscrivi indirizzo IP",
+      "rewrite_ip": "Riscrivi IP",
+      "delete_nat_rule": "Elimina regola NAT"
+    },
+    "netmap": {
+      "destination_network": "Rete destinazione",
+      "add_source_netmap": "Aggiungi NETMAP sorgente",
+      "add_destination_netmap": "Aggiungi NETMAP destinazione",
+      "no_netmap_found": "Nessun NETMAP trovato",
+      "source_network": "Rete sorgente",
+      "mapped_network": "Rete mappata",
+      "title": "NETMAP",
+      "netmap_rules_description": "Netmap permette di mappare un'intera rete privata (ad esempio 192.168.1.0/24) su un'altra rete (ad esempio 10.5.6.0/24) con una sola regola. Preserva gli indirizzi dei singoli host all'interno della rete tradotta, elimina la necessità di configurare manualmente le singole regole NAT per ogni dispositivo.",
+      "network_cidr": "Rete CIDR",
+      "add_netmap": "Aggiungi NETMAP",
+      "inbound_devices": "Dispositivi in entrata",
+      "outbound_devices": "DIspositivi in uscita",
+      "device_helper": "Lascia deselezionato per tutti i dispositivi",
+      "edit_netmap": "Modifica NETMAP",
+      "save_netmap": "Salva NETMAP",
+      "edit_destination_netmap": "Modifica NETMAP destinazione",
+      "source_netmap": "NETMAP sorgente",
+      "destination_netmap": "NETMAP destinazione",
+      "edit_source_netmap": "Modifica NETMAP sorgente",
+      "delete_netmap": "Elimina NETMAP",
+      "confirm_delete_rule": "Stai per eliminare il NETMAP '{name}'"
     }
   },
   "controller": {
@@ -1672,5 +1775,16 @@
     "copy_command": "Copia comando",
     "response_message": "Messaggio della risposta",
     "request_url": "URL della richiesta"
+  },
+  "error_modal": {
+    "ubus_request_failed": "Richiesta Ubus fallita",
+    "request_failed": "Richiesta fallita",
+    "report_issue_step_2": "Incolla il comando nel terminale di {product} ed eseguilo",
+    "api_request_failed": "Richiesta API fallita",
+    "copy_command": "Copia comando",
+    "report_issue_description": "Se il problema persiste e desideri segnalarlo, segui questi passi",
+    "copy_the_command": "Copia comando",
+    "report_issue_step_1": "{copyTheCommand} fallito",
+    "report_issue_step_3": "Riporta il problema, assicurati di fornire sia il comando che l'output corrispondente"
   }
 }

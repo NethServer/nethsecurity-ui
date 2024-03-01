@@ -692,7 +692,11 @@
       "zone_label_unknown": "Sconosciuto",
       "cannot_remove_device_configuration": "Impossibile rimuovere la configurazione del dispositivo",
       "delete_bond_title": "Elimina bond '{name}'?",
-      "ipv6_address_tooltip": "Inserisci un indirizzo IPv6 valido, oppure lascia il campo vuoto per l'assegnazione automatica da parte del provider WAN. La lunghezza assegnata a IPv6 sarà automaticamente configurata a 64."
+      "ipv6_address_tooltip": "Inserisci un indirizzo IPv6 valido, oppure lascia il campo vuoto per l'assegnazione automatica da parte del provider WAN. La lunghezza assegnata a IPv6 sarà automaticamente configurata a 64.",
+      "delete_bond_description": "Eliminare il bond '{name}'? I dispositivi del bond saranno scollegati e resi disponibili per altre configurazioni.",
+      "cannot_delete_bond": "Impossibile eliminare il bond",
+      "delete_bond": "Elimina bond",
+      "bond_name": "Nome bond"
     },
     "multi_wan": {
       "create_rule": "Crea regola",

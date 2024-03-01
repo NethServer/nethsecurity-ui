@@ -442,12 +442,12 @@
         "description": "Impostare lo strumento di monitoraggio per valutare il tempo di andata e ritorno e la perdita di pacchetti inviando messaggi ping agli host di rete. Questo strumento viene utilizzato per il monitoraggio della qualità della connettività di rete. È possibile aggiungere uno o più host per monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
       },
       "tabs": {
-        "real_time_report": "Rapporto di tempo reale",
-        "ping_latency_monitor": "Monitor di latenza Ping"
+        "real_time_report": "Report in tempo reale",
+        "ping_latency_monitor": "Monitor latenza ping"
       },
       "real_time_report": {
         "open_report": "Rapporto aperto",
-        "description": "Lo strumento di monitoraggio offre un'analisi approfondita delle prestazioni del sistema e delle applicazioni, presentando metriche e visualizzazioni dettagliate. Queste metriche vengono memorizzate in RAM e reimpostate sul riavvio della macchina, tranne quando l'unità è collegata a un controller remoto. In tali casi, le metriche vengono salvate nel controller e persistono tramite riavviamento."
+        "description": "Lo strumento di monitoraggio offre un'analisi approfondita delle prestazioni del sistema e delle applicazioni, presentando metriche e visualizzazioni dettagliate. Queste metriche vengono memorizzate in RAM e reimpostate al riavvio della macchina, tranne quando l'unità è collegata a un controller remoto. In questo caso, le metriche vengono salvate nel controller e persistono al riavvio."
       }
     },
     "shell": {
@@ -1169,7 +1169,7 @@
       "short_name": "OVPN TUN"
     },
     "ipsec_tunnel": {
-      "local_identifier_tooltip": "Si prega di inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",
+      "local_identifier_tooltip": "Inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",
       "add_tunnel": "Aggiungere tunnel",
       "title": "Tunnel IPsec",
       "disable": "Disabilita",
@@ -1284,7 +1284,7 @@
       "allowed_networks_tooltip": "Accesso permesso solo dai seguenti IPv4/IPV6 network"
     },
     "users_database": {
-      "set": "Imposta",
+      "set": "Impostata",
       "ldap_uri_tooltip": "LDAP Uniform Resource Identifier (URI), specifica come raggiungere il server LDAP. È necessario includere il protocollo (ad es. 'ldap://' o 'ldaps://') e l'indirizzo e la porta del server. Esempio: 'ldaps://ldap.secureexample.com:636'",
       "username": "Nome utente",
       "verify_tls_certificate": "Verifica certificato TLS",
@@ -1311,9 +1311,29 @@
       "password": "Password",
       "user_cn_tooltip": "Common Name (CN) dell'utente. Il CN è un componente del DN dell'utente e tipicamente rappresenta il nome completo dell'utente o un altro identificativo. Esempio: 'cn'",
       "database_configuration_description": "Gli utenti in questo database possono essere configurati per connettersi a servizi VPN come OpenVPN Road Warrior.",
-      "n_users_found": "Nessun utente trovato",
+      "n_users_found": "{n} utenti trovati",
       "delete_user_message": "Stai per eliminare l'utente '{name}'",
-      "delete_database_message": "Stai per eliminare il database '{name}'"
+      "delete_database_message": "Stai per eliminare il database '{name}'",
+      "configure_database": "Configura database",
+      "remote_ldap": "LDAP remoto",
+      "remote_active_directory": "Active Directory remoto",
+      "add_database": "Aggiungi database",
+      "no_database_found": "Nessun database trovato",
+      "title": "Database utenti",
+      "edit_database": "Modifica database",
+      "ldap_uri": "LDAP URI",
+      "configure_users_database": "Configura database utenti",
+      "starttls": "StartTLS",
+      "edit_users_database": "Modifica database utenti",
+      "password_suggestion_2": "Almeno una maiuscola (A-Z)",
+      "remote_database_added": "Database remoto aggiunto",
+      "database_configuration": "Configurazione del database",
+      "delete_database": "Elimina database",
+      "password_suggestion_1": "Minimo 8 caratteri",
+      "password_suggestion_3": "Almeno una minuscola (a-z)",
+      "password_suggestion_4": "Almeno un numero (0-9)",
+      "password_suggestion_5": "Almeno un carattere speciale (!{'@'}{'#'}^&_?-)",
+      "connection_verified": "Connessione verificata"
     },
     "openvpn_rw": {
       "digest": "Digest",
@@ -1403,7 +1423,14 @@
       "password_not_configured": "Password non configurata",
       "reserved_ip": "IP riservato",
       "roadwarrior_accounts_description": "Gli utenti in questa lista posso collegarsi al server OpenVPN Road Warrior. Solamente gli utenti che hanno configurato una password possono utilizzare la modalità di autenticazione 'utente e password'. Se la modalità di autenticazione selezionata richiede un certificato x509, il certificato deve essere valido. Le modifiche agli utenti hanno effetto immediato.",
-      "disable_account_message": "L'utente è attualmente collegato via VPN. Disabilitando questo utente, la sessione VPN corrente verrà terminata."
+      "disable_account_message": "L'utente è attualmente collegato via VPN. Disabilitando questo utente, la sessione VPN corrente verrà terminata.",
+      "create_accounts_for_all_users": "Crea un account per ogni utente",
+      "no_openvpn_rw_server_found": "Nessun server OpenVPN Road Warrior trovato",
+      "create_accounts_for_all_users_tooltip": "Questa azione è disponibile solo durante la creazione del server non verrà più mostrata in seguito. Tutti gli account creati avranno un certificato valido per 3650 giorni.",
+      "roadwarrior_server": "Server Road Warrior",
+      "user_database": "Database utenti",
+      "create_server": "Crea server",
+      "roadwarrior_server_description": "OpenVPN Road Warrior è un servizio progettato per utenti remoti, consente un accesso sicuro ad una rete privata da qualsiasi postazione."
     },
     "qos": {
       "interface": "Interfaccia",

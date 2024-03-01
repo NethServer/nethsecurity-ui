@@ -1223,7 +1223,14 @@
       "domain": "Dominio",
       "destination_url": "URL di destinazione",
       "description": "Descrizione",
-      "certificate": "Certificato"
+      "certificate": "Certificato",
+      "domain_tooltip": "Inserisci un nome di dominio completo per creare una regola che fa match del nome del sito web",
+      "no_certificate_configured_description": "Puoi configurare un certificato valido nella pagina 'Certificati'.",
+      "go_to_certificates": "Vai ai Certificati",
+      "destination_url_tooltip": "Questo percorso specifica la posizione dove le richieste che arrivano verranno ridirezionate. Esempio: 'http://destination-server:port/path'",
+      "no_certificate_configured_title": "Non c'è nessun certificato valido configurato",
+      "path_tooltip": "Inserisci un percorso che inizia con '/' per creare una regola che fa match della risorsa",
+      "allowed_networks_tooltip": "Accesso permesso solo dai seguenti IPv4/IPV6 network"
     },
     "users_database": {
       "set": "Imposta",
@@ -1327,7 +1334,15 @@
       "interface": "Interfaccia",
       "upload_speed": "Velocità Upload",
       "status": "Stato",
-      "choose_interface": "Scegli interfaccia"
+      "choose_interface": "Scegli interfaccia",
+      "no_interface_found": "Nessuna interfaccia trovata",
+      "add_qos_interface": "Aggiungi interfaccia QoS",
+      "edit_qos_interface": "Modifica interfaccia QoS",
+      "download_speed": "Velocità di download",
+      "title": "Quality of Service",
+      "download_speed_tooltip": "Inserisci la velocità di download in Mbit. Si raccomanda di ridurre il dato di circa 5-10%.",
+      "title_short": "QoS",
+      "description": "Il Quality of Service (QoS) assicura una distribuzione corretta di banda per tutte le connessioni network,aggiusta dinamicamente i limiti di banda basati sulle condizioni del network e risolve problemi di bufferbloat. Configura ogni interfaccia network dove che venga gestita da QoS (di solito solo le WAN sono gestite). Sii sicuro di configurare la banda in input e output in maniera proporzionale a quanta banda è effettivamente disponibile per permettere all'algoritmo di funzionare al meglio."
     },
     "firewall_rules": {
       "short_title": "Regole",

@@ -292,7 +292,8 @@
     "map_to_invalid_format": "Formato non valido",
     "src_invalid_format": "Formato non valido",
     "cannot_save_netmap": "Impossibile salvare NETMAP",
-    "cannot_delete_netmap": "Impossibile eliminare NETMAP"
+    "cannot_delete_netmap": "Impossibile eliminare NETMAP",
+    "dest_invalid_format": "Formato non valido"
   },
   "login": {
     "sign_in": "Accedi",

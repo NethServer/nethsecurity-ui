@@ -274,7 +274,25 @@
     "cannot_verify_otp": "Impossibile verificare l'OTP",
     "cannot_revoke_two_fa": "Impossibile revocare la 2FA",
     "cannot_retrieve_qr_code": "Impossibile recuperare il QR code",
-    "cannot_disable_automatic_updates": "Impossibile disabilitare gli aggiornamenti automatici"
+    "cannot_disable_automatic_updates": "Impossibile disabilitare gli aggiornamenti automatici",
+    "cannot_retrieve_nat_rules": "Impossibile recuperare le regole NAT",
+    "cannot_save_nat_rule": "Impossibile salvare la regola NAT",
+    "cannot_retrieve_allowlist": "Impossibile recuperare allowlist",
+    "cannot_create_address": "Impossibile creare indirizzo",
+    "cannot_edit_address": "Impossibile modificare indirizzo",
+    "cannot_delete_address": "Impossibile eliminare indirizzo",
+    "cannot_retrieve_threat_shield_settings": "Impossibile recuperare le impostazioni Threat shield",
+    "cannot_save_threat_shield_settings": "Impossibile salvare le impostazioni Threat shield",
+    "cannot_retrieve_blocklists": "Impossibile recuperare blocklist",
+    "cannot_disable_blocklist": "Impossibile disabilitare blocklist",
+    "cannot_enable_blocklist": "Impossibile abilitare blocklist",
+    "name_too_long": "Troppi caratteri",
+    "cannot_retrieve_netmap_rules": "Impossibile recuperare le regole NETMAP",
+    "map_from_invalid_format": "Formato non valido",
+    "map_to_invalid_format": "Formato non valido",
+    "src_invalid_format": "Formato non valido",
+    "cannot_save_netmap": "Impossibile salvare NETMAP",
+    "cannot_delete_netmap": "Impossibile eliminare NETMAP"
   },
   "login": {
     "sign_in": "Accedi",
@@ -293,7 +311,7 @@
     "ssh": {
       "title": "SSH",
       "ssh_access": {
-        "description": "Dropbear offre l'accesso alla shell di rete SSH e un server SCP integrato",
+        "description": "Accesso alla shell di rete SSH e server SCP integrato",
         "title": "Accesso SSH",
         "tcp_port_label": "Porta TCP",
         "allow_ssh_password_auth": "Consenti l'autenticazione SSH con password",
@@ -350,7 +368,7 @@
         "description_link": "Vedi il manuale per maggiori informazioni.",
         "remap_interfaces": "Remapping interfacce",
         "description": "La migrazione è il processo per convertire una macchina NethServer 7 in un'unità NethSecurity. Per avviare il processo, accedere alla macchina NethServer 7 e creare un archivio di migrazione, che dovrà poi essere caricato in questa pagina. A seguito del caricamento, assicurarsi il corretto remapping delle vecchie interfacce di rete su quelle dell'hardware che ospita NethSecurity.",
-        "migration_in_progress": "Migrazione e riavvio in corso, per favore attendere...",
+        "migration_in_progress": "Migrazione in corso, attendere... Al termine la unità sarà raggiungibile ai seguenti IP:",
         "input_upload_file": "Carica file (*.tar.gz)",
         "migrate": "Migra",
         "input_upload_file_description": "Trascina e rilascia o scegli il file"
@@ -440,7 +458,8 @@
       "show_notifications": "Mostra notifiche",
       "open_user_menu": "Apri il menu utente",
       "close_side_drawer": "Chiudi il cassetto laterale",
-      "account": "Account"
+      "account": "Account",
+      "account_settings": "Impostazioni account"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -625,7 +644,7 @@
       "delete_interface": "Elimina interfaccia",
       "ipv6_subnet_mask": "Maschera di sottorete IPv6",
       "delete_bridge_explanation": "Eliminare il bridge '{iface}' e il suo dispositivo '{device}'?",
-      "delete_bond_explanation": "Eliminare il bond '{iface}'?",
+      "delete_bond_explanation": "Rimuovere la configurazione del bond '{iface}'?",
       "dhcp_hostname_to_send_label": "Nome host da inviare quando si richiede DHCP",
       "dhcp_hostname_device": "Invia il nome host di questo dispositivo",
       "dhcp_hostname_do_not_send": "Non inviare un nome host",
@@ -644,7 +663,7 @@
       "zone_label_wan": "WAN (Red)",
       "zone_label_openvpnrw": "VPN (OpenVPN RW)",
       "zone_label_dmz": "DMZ (Orange)",
-      "create_logical_interface": "Crea interfaccia logica",
+      "create_logical_interface": "Configura interfaccia logica",
       "zone_label_unassigned": "Non assegnata",
       "bridge": "Bridge",
       "bond": "Bond",
@@ -668,7 +687,11 @@
       "no_devices_available": "Nessun dispositivo disponibile",
       "custom_zone": "Personalizzata",
       "hotspot_network": "Rete",
-      "add_ip_address": "Aggiungi indirizzo IP"
+      "add_ip_address": "Aggiungi indirizzo IP",
+      "zone_label_unknown": "Sconosciuto",
+      "cannot_remove_device_configuration": "Impossibile rimuovere la configurazione del dispositivo",
+      "delete_bond_title": "Elimina bond '{name}'?",
+      "ipv6_address_tooltip": "Inserisci un indirizzo IPv6 valido, oppure lascia il campo vuoto per l'assegnazione automatica da parte del provider WAN. La lunghezza assegnata a IPv6 sarà automaticamente configurata a 64."
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -927,16 +950,18 @@
       "unknown": "Sconosciuto",
       "format_storage_warning": "Tutti i dati contenuti in '{device}' saranno eliminati",
       "remove_storage_warning": "Stai per rimuovere lo storage '{storage}'. I log non saranno più scritti sul dispositivo",
-      "description": "È possibile mantenere una copia dei log di sistema su un dispositivo di storage esterno, come una chiavetta USB. Questo può essere utile per la risoluzione di problemi o per mantenere lo storico dell'attività del sistema.",
+      "description": "È possibile mantenere una copia dei log di sistema su un dispositivo persistente, come una chiavetta USB o un drive SATA. Questo può essere utile per la risoluzione di problemi o per mantenere lo storico dell'attività del sistema. Se non disponi di un dispositivo addizionale, in alternativa puoi scegliere il disco del sistema operativo se contiene sufficiente spazio non partizionato; il sistema genererà automaticamente una partizione e la utilizzerà.",
       "remove_storage": "Rimuovi storage",
       "format_and_configure": "Configura",
       "configure_storage_extra_data_description": "Dati supplementari possono essere memorizzati automaticamente sul dispositivo una volta al giorno",
       "configure_storage": "Configura lo storage",
-      "configure_storage_logs_description": "Da questo momento i log saranno scritti anche sul dispositivo al punto di mount",
+      "configure_storage_logs_description": "Da questo momento i log saranno scritti anche sul dispositivo al percorso",
       "storage_configuration": "Configurazione storage",
       "format_configure_storage": "Formatta e configura lo storage",
       "disk": "Disco",
-      "part": "Partizione"
+      "part": "Partizione",
+      "partition": "Partizione su",
+      "new_partition": "Una nuova partizione sarà creata sul dispositivo '{device}'"
     },
     "change_password": {
       "new_password": "Nuova password",
@@ -1212,7 +1237,7 @@
       "latest_release": "Ultima release",
       "system_update_scheduled_description": "L'unità verrà aggiornata alla versione '{version}' il {date}",
       "time_and_date": "Data e orario",
-      "bug_security_fixes_description": "Bugfix minori e di sicurezza sono distribuiti tramite l'aggiornamento di pacchetti. L'unità verrà aggiornato automaticamente, ma è possibile controllare gli aggiornamenti e installarli in qualsiasi momento.",
+      "bug_security_fixes_description": "Bugfix minori e di sicurezza sono distribuiti tramite l'aggiornamento di pacchetti.",
       "installed_release": "Release installata: {release}",
       "update_to_version": "Aggiorna alla versione",
       "system_update_in_progress_message": "Aggiornamento e riavvio dell'unità in corso, si prega di attendere...",
@@ -1224,7 +1249,12 @@
       "update_with_image_file": "Aggiorna con file immagine",
       "image_file": "File immagine",
       "check_for_fixes": "Controlla aggiornamenti",
-      "update": "Aggiornare"
+      "update": "Aggiorna",
+      "automatic_updates": "Aggiornamenti automatici",
+      "automatic_updates_enabled_message": "Aggiornamenti automatici abilitati con successo",
+      "automatic_updates_disabled_message": "Aggiornamenti automatici disattivati con successo",
+      "automatic_updates_tooltip": "Abilita per attivare gli aggiornamenti automatici. Disponibile solo con abbonamento.",
+      "go_to_subscription": "Vai ad Abbonamento"
     },
     "factory_reset": {
       "title": "Factory reset",
@@ -1337,7 +1367,7 @@
       "sent": "inviati",
       "add_account": "Aggiungi account",
       "account_created": "Account creato",
-      "push_custom_network_routes": "Inoltra il traffico di queste reti",
+      "push_custom_network_routes": "Instrada queste reti sulla VPN",
       "route_all_client_traffic_through_vpn": "Instrada tutto il traffico attraverso la VPN",
       "allow_client_to_client_network_traffic": "Consenti il traffico tra i client",
       "delete_roadwarrior_server": "Elimina server Road Warrior",
@@ -1400,8 +1430,8 @@
       "set_as_default": "Imposta come predefinito",
       "default": "Predefinito",
       "certificate": "Certificato",
-      "private_key": "Chiave Privata",
-      "import": "Importazione",
+      "private_key": "Chiave privata",
+      "import": "Importa",
       "domain": "Dominio",
       "add_domain": "Aggiungi dominio",
       "add_option": "Aggiungi opzione",
@@ -1411,7 +1441,30 @@
       "type": "Tipo",
       "pending": "In attesa",
       "key": "Chiave",
-      "value": "Valore"
+      "value": "Valore",
+      "description": "Questa pagina permette la configurazione di certificati X.509 utilizzati dal proxy server Nginx HTTP. Puoi caricare un certificato personalizzato oppure richiedere un certificato Let's Encrypt per connessioni sicure.",
+      "expire": "Scadenza",
+      "certificate_name": "Nome certificato",
+      "add_lets_encrypt_certificate": "Aggiungi certificato Let's Encrypt",
+      "standalone": "Standalone",
+      "dns_api_tooltip": "Scegli un provider DNS dalla lista indicata qui: {dnsapiurl}. Aggiungi voci chiave-valore come definito dal precedente URL per configurare l'accesso al provider DNS selezionato.",
+      "choose_or_type_dns_api": "Scegli o inserisci API DNS",
+      "certificate_added": "Certificato aggiunto",
+      "plus_n_others": "+{n} altri",
+      "certificate_expired": "Certificato scaduto",
+      "delete_certificate": "Elimina certificato",
+      "delete_certificate_message": "Vuoi veramente eliminare il certificato '{certificate}'? Questa operazione è irreversibile.",
+      "chain_file": "Chain file",
+      "validation_method": "Metodo di validazione",
+      "dns": "DNS",
+      "certificate_imported": "Certificato importato",
+      "dns_api_options": "Opzioni API DNS",
+      "add_certificate": "Aggiungi certificato",
+      "pending_tooltip": "Certificato in attesa di rilascio dal server remoto",
+      "default_certificate_tooltip": "Questo certificato è servito quando si accede alla unità usando il suo FQDN",
+      "certificate_deleted": "Certificato eliminato",
+      "dns_api": "API DNS",
+      "validation_method_tooltip": "In modalità Standalone, il server sarà temporaneamente accessibile sulla porta 80 durante la generazione del certificato. I domini per i quali richiedi i certificati devono essere nomi di dominio pubblici collegati all'indirizzo IP pubblico del firewall stesso. La modalità DNS abilita l'utilizzo delle API del tuo provider DNS per emettere certificati. A differenza della modalità standalone, il nome di dominio in modalità DNS non deve necessariamente essere risolvibile dall'IP del router. È l'unica modalità che supporta certificati wildcard"
     }
   },
   "controller": {
@@ -1439,7 +1492,10 @@
     "no_options_label": "Nessuna opzione disponibile",
     "selected": "Selezionato",
     "user_input_label": "Input utente",
-    "choose": "Scegli"
+    "choose": "Scegli",
+    "choose_or_enter_multiple": "Scegli o inserisci valori",
+    "choose_multiple": "Scegli uno o più",
+    "choose_or_enter": "Scegli o inserisci un valore"
   },
   "ne_dropdown": {
     "open_menu": "Apri menu"

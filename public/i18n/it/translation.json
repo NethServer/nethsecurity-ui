@@ -1448,7 +1448,9 @@
       "create_server": "Crea server",
       "roadwarrior_server_description": "OpenVPN Road Warrior è un servizio progettato per utenti remoti, consente un accesso sicuro ad una rete privata da qualunque parte di internet.",
       "short_name": "OVPN RW",
-      "title": "OpenVPN Road Warrior"
+      "title": "OpenVPN Road Warrior",
+      "public_ip_hostname_unit": "Indirizzo IP/hostname pubblico di questa unità",
+      "add_public_ip_host": "Aggiungi indirizzo IP/host"
     },
     "qos": {
       "interface": "Interfaccia",

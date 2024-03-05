@@ -122,7 +122,7 @@ export enum TrafficPolicy {
 }
 
 export enum SpecialZones {
-  GUESTS = 'guests',
+  GUEST = 'guest',
   LAN = 'lan',
   WAN = 'wan',
   DMZ = 'dmz',
@@ -138,7 +138,7 @@ export enum SpecialZones {
 export enum ZoneType {
   LAN,
   WAN,
-  GUESTS,
+  GUEST,
   DMZ,
   HOTSPOT,
   OPENVPN,
@@ -181,8 +181,8 @@ export class Zone {
         return ZoneType.WAN
       case 'LAN':
         return ZoneType.LAN
-      case 'GUESTS':
-        return ZoneType.GUESTS
+      case 'GUEST':
+        return ZoneType.GUEST
       case 'DMZ':
         return ZoneType.DMZ
       case 'HOTSPOT':
@@ -233,7 +233,7 @@ export class Forwarding {
 }
 
 export const zonesSorting = (zone1: any, zone2: any) => {
-  const zonesRanking = ['lan', 'wan', 'guests', 'dmz', 'hotspot', 'openvpn', 'rwopenvpn', 'ipsec']
+  const zonesRanking = ['lan', 'wan', 'guest', 'dmz', 'hotspot', 'openvpn', 'rwopenvpn', 'ipsec']
   let rank1 = zonesRanking.indexOf(zone1.name)
   let rank2 = zonesRanking.indexOf(zone2.name)
 

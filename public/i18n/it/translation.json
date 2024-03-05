@@ -641,7 +641,7 @@
       "remove_configuration_explanation": "Rimuovere la configurazione di '{name}'? Il dispositivo '{device}' diventerà non assegnato",
       "vlan_id_helper": "Un numero intero compreso tra 1 e 4094",
       "delete_device_name": "Eliminare il dispositivo '{name}'?",
-      "zone_label_guests": "GUESTS (Blue)",
+      "zone_label_guests": "GUEST (Blue)",
       "delete_interface": "Elimina interfaccia",
       "ipv6_subnet_mask": "Maschera di sottorete IPv6",
       "delete_bridge_explanation": "Eliminare il bridge '{iface}' e il suo dispositivo '{device}'?",

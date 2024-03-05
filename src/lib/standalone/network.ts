@@ -136,7 +136,7 @@ export function getZoneColor(zoneName: string) {
       return 'Green'
     case 'wan':
       return 'Red'
-    case 'guests':
+    case 'guest':
       return 'Blue'
     case 'dmz':
       return 'Orange'
@@ -157,7 +157,7 @@ export function getZoneColorClasses(zoneName: string) {
       return 'bg-rose-100 text-rose-700 dark:bg-rose-700 dark:text-rose-50'
     case 'lan':
       return 'bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-50'
-    case 'guests':
+    case 'guest':
       return 'bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-50'
     case 'dmz':
     case 'unknown':
@@ -182,7 +182,7 @@ export function getZoneBorderColorClasses(zoneName: string) {
       return 'border-green-700 dark:border-green-700'
     case 'wan':
       return 'border-rose-700 dark:border-rose-700'
-    case 'guests':
+    case 'guest':
       return 'border-blue-700 dark:border-blue-700'
     case 'dmz':
     case 'unknown':
@@ -205,7 +205,7 @@ export function getZoneIcon(zoneName: string) {
       return 'location-dot'
     case 'wan':
       return 'earth-americas'
-    case 'guests':
+    case 'guest':
       return 'users'
     case 'dmz':
       return 'shield'
@@ -235,7 +235,7 @@ export function getZoneIconBackgroundStyle(zoneName: string | undefined) {
       return 'bg-green-100 dark:bg-green-700'
     case 'wan':
       return 'bg-rose-100 dark:bg-rose-700'
-    case 'guests':
+    case 'guest':
       return 'bg-blue-100 dark:bg-blue-700'
     case 'dmz':
     case 'unknown':
@@ -261,7 +261,7 @@ export function getZoneIconForegroundStyle(zoneName: string | undefined) {
       return 'text-green-700 dark:text-green-50'
     case 'wan':
       return 'text-rose-700 dark:text-rose-50'
-    case 'guests':
+    case 'guest':
       return 'text-blue-700 dark:text-blue-50'
     case 'dmz':
       return 'text-amber-700 dark:text-amber-50'

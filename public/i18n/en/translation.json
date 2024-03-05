@@ -742,7 +742,7 @@
       "delete_device_name": "Delete device '{name}'?",
       "zone_label_lan": "LAN (Green)",
       "zone_label_wan": "WAN (Red)",
-      "zone_label_guests": "GUESTS (Blue)",
+      "zone_label_guests": "GUEST (Blue)",
       "zone_label_dmz": "DMZ (Orange)",
       "zone_label_unknown": "Unknown",
       "zone_label_unassigned": "Unassigned",

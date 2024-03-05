@@ -159,25 +159,20 @@ function successSetPassphrase() {
               </NeButton>
             </div>
           </template>
-          <template v-else>
-            <div class="mr-auto self-start">
-              <NeButton
-                class="mr-2"
-                kind="secondary"
-                size="lg"
-                type="submit"
-                @click="showDownloadModal = true"
-              >
-                <template #prefix>
-                  <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
-                </template>
-                {{ t('standalone.backup_and_restore.backup.download_backup') }}
-              </NeButton>
-              <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </NeButton>
-            </div>
-          </template>
+          <div class="mr-auto self-start">
+            <NeButton
+              class="mr-2"
+              kind="secondary"
+              size="lg"
+              type="submit"
+              @click="showDownloadModal = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_backup') }}
+            </NeButton>
+          </div>
         </div>
       </FormLayout>
     </template>

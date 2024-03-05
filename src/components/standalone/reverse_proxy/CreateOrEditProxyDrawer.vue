@@ -283,6 +283,7 @@ watch(
         :label="t('standalone.reverse_proxy.type')"
         :options="typeOptions"
         v-model="type"
+        :disabled="Boolean(itemToEdit)"
       />
       <NeTextInput
         v-if="type === 'path'"
@@ -302,6 +303,7 @@ watch(
           v-model="domain"
           :label="t('standalone.reverse_proxy.domain')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('domain'))"
+          :disabled="Boolean(itemToEdit)"
           ><template #tooltip>
             <NeTooltip>
               <template #content>

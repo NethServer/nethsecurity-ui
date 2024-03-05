@@ -51,10 +51,18 @@ const zone = computed(() => {
 <template>
   <div>
     <template v-if="rulesType === 'input' && props.columnType === 'destination'">
-      <NeBadge :text="t('standalone.firewall_rules.firewall')" kind="tertiary" />
+      <NeBadge
+        :class="{ 'opacity-50': !enabled }"
+        :text="t('standalone.firewall_rules.firewall')"
+        kind="tertiary"
+      />
     </template>
     <template v-else-if="rulesType === 'output' && props.columnType === 'source'">
-      <NeBadge :text="t('standalone.firewall_rules.firewall')" kind="tertiary" />
+      <NeBadge
+        :class="{ 'opacity-50': !enabled }"
+        :text="t('standalone.firewall_rules.firewall')"
+        kind="tertiary"
+      />
     </template>
     <template v-else-if="addresses.length">
       <!-- show addresses -->

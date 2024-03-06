@@ -86,7 +86,7 @@ function editZone(zone: Zone) {
     />
     <NeTable
       v-else
-      :data="firewallConfig.zones"
+      :data="firewallConfig.zonesWithoutAliases"
       :headers="[
         {
           key: 'label',

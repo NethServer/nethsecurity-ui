@@ -49,7 +49,7 @@ const loading = ref(false)
 const error = ref<Error>()
 
 const availableGateways = computed((): Array<NeComboboxOption> => {
-  return firewall.zones
+  return firewall.zonesWithoutAliases
     .filter((zone: Zone) => zone.configName == 'ns_wan')
     .map((zone: Zone) => zone.interfaces)
     .flat()

@@ -258,6 +258,7 @@ export const useFirewallStore = defineStore('firewall', () => {
   const error = ref<Error>()
   const zones = ref<Array<Zone>>([])
   const forwardings = ref<Array<Forwarding>>([])
+  const zonesWithoutAliases = ref<Array<Zone>>([])
   const loading = ref(true)
 
   function fetch() {
@@ -275,11 +276,18 @@ export const useFirewallStore = defineStore('firewall', () => {
             ([name, forwardingResponse]) => new Forwarding(name, forwardingResponse)
           )
         }
+      ),
+      ubusCall('ns.firewall', 'list_zones_no_aliases').then(
+        (response: AxiosResponse<BaseResponse<ZoneResponse>>) => {
+          zonesWithoutAliases.value = Object.entries(response.data)
+            .map(([name, zoneResponse]) => new Zone(name, zoneResponse))
+            .sort(zonesSorting)
+        }
       )
     ])
       .catch((exception: Error) => (error.value = exception))
       .then(() => (loading.value = false))
   }
 
-  return { loading, error, zones, forwardings, fetch }
+  return { loading, error, zones, forwardings, zonesWithoutAliases, fetch }
 })

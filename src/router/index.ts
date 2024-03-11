@@ -126,11 +126,6 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/StorageView.vue')
   },
   {
-    path: 'vpn',
-    name: 'Vpn',
-    component: () => import('../views/standalone/VpnView.vue')
-  },
-  {
     path: 'vpn/openvpn-rw',
     name: 'OpenVPNRoadWarrior',
     component: () => import('../views/standalone/vpn/OpenvpnRoadWarriorView.vue')

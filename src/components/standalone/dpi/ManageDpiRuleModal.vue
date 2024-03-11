@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2023 Nethesis S.r.l.
+  Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -21,9 +21,10 @@ import {
   NeButton,
   NeSkeleton,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  NeEmptyState
 } from '@nethesis/vue-components'
-import { NeModal, NeToggle, NeTextInput, NeEmptyState } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, computed, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { watchDebounced } from '@vueuse/core'

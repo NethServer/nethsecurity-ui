@@ -1,12 +1,18 @@
 <!--
-  Copyright (C) 2023 Nethesis S.r.l.
+  Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle, NeButton, NeInlineNotification, NeSkeleton } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeEmptyState } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeInlineNotification,
+  NeSkeleton,
+  getAxiosErrorMessage,
+  NeEmptyState
+} from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'

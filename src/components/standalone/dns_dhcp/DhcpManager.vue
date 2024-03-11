@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2023 Nethesis S.r.l.
+  Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -10,9 +10,10 @@ import {
   NeTitle,
   NeInlineNotification,
   NeButton,
-  NeSkeleton
+  NeSkeleton,
+  getAxiosErrorMessage,
+  NeEmptyState
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeEmptyState } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

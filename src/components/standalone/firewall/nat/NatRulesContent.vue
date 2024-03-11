@@ -5,8 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { NeInlineNotification, NeButton, NeTitle, NeSkeleton } from '@nethesis/vue-components'
+import {
+  NeInlineNotification,
+  NeButton,
+  NeTitle,
+  NeSkeleton,
+  NeEmptyState,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import { type NatRule } from '@/stores/standalone/firewall'

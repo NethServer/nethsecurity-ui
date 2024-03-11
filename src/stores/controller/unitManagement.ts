@@ -42,7 +42,7 @@ export const useUnitManagementStore = defineStore('unitManagement', () => {
     const res = await axios.post(
       `${getControllerApiEndpoint()}/units`,
       {
-        unit_name: unitName
+        unit_id: unitName
       },
       {
         headers: {

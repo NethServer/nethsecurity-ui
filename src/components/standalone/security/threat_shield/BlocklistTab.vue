@@ -6,8 +6,15 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { NeBadge, NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeTextInput, NeEmptyState } from '@nethserver/vue-tailwind-lib'
+import {
+  NeBadge,
+  NeButton,
+  NeSkeleton,
+  NeInlineNotification,
+  getAxiosErrorMessage,
+  NeEmptyState
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { computed } from 'vue'
 import { ref } from 'vue'

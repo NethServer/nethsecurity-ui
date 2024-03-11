@@ -6,13 +6,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeButton, NeSkeleton, NeBadge } from '@nethesis/vue-components'
 import {
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  NeBadge,
   NeEmptyState,
   byteFormat1024,
   formatDurationLoc,
   getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'

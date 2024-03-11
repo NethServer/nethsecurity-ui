@@ -11,9 +11,11 @@ import {
   NeTitle,
   NeInlineNotification,
   NeButton,
-  NeSkeleton
+  NeSkeleton,
+  getAxiosErrorMessage,
+  NeEmptyState
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal, NeEmptyState } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {

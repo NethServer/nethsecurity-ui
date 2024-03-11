@@ -11,9 +11,10 @@ import {
   NeTitle,
   NeButton,
   NeSkeleton,
-  NeInlineNotification
+  NeInlineNotification,
+  NeEmptyState,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

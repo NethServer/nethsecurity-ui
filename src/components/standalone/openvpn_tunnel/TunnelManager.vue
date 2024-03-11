@@ -4,8 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { NeInlineNotification, NeSkeleton, NeButton } from '@nethesis/vue-components'
-import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  NeSkeleton,
+  NeButton,
+  NeEmptyState,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

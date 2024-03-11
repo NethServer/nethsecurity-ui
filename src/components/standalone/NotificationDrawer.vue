@@ -4,8 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { NeSideDrawer } from '@nethesis/vue-components'
-import { NeEmptyState, NeToastNotification } from '@nethserver/vue-tailwind-lib'
+import { NeSideDrawer, NeEmptyState } from '@nethesis/vue-components'
+import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/standalone/notifications'
 import { isEmpty } from 'lodash'

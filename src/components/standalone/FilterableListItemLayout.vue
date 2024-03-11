@@ -7,8 +7,14 @@
 import { computed, onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
-import { NeTextInput, NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  NeEmptyState,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
   fetchItemsFunction: () => Promise<T[]>

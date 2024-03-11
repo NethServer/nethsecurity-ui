@@ -5,17 +5,17 @@
 
 <script setup lang="ts">
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
-import { NeTitle, NeInlineNotification } from '@nethesis/vue-components'
 import {
+  NeTitle,
+  NeInlineNotification,
   NeEmptyState,
-  NeTextInput,
   NeCombobox,
   NeButton,
   NeSkeleton,
-  NeModal,
   type NeComboboxOption,
   getAxiosErrorMessage
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
+import { NeTextInput, NeModal } from '@nethserver/vue-tailwind-lib'
 import { computed } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

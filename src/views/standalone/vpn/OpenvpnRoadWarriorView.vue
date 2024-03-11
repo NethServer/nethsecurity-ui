@@ -5,8 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle, NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
-import { NeEmptyState, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeButton,
+  NeSkeleton,
+  NeInlineNotification,
+  NeEmptyState,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import RWAccountsManager from '@/components/standalone/openvpn_rw/RWAccountsManager.vue'
 import RWServerDetails from '@/components/standalone/openvpn_rw/RWServerDetails.vue'
 import { ref } from 'vue'

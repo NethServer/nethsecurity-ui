@@ -141,12 +141,12 @@ function validate() {
 }
 
 async function connectUnit() {
-  isPerformingAction.value = true
   clearError()
 
   if (!validate()) {
     return
   }
+  isPerformingAction.value = true
 
   try {
     await ubusCall('ns.plug', 'register', {

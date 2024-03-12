@@ -10,14 +10,14 @@ import {
   NeTooltip,
   NeBadge,
   NeButton,
+  NeInlineNotification,
   focusElement
 } from '@nethesis/vue-components'
 import { NeTextInput, NeToggle, NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { MessageBag, validateRequired, validateURL, type validationOutput } from '@/lib/validation'
 
 type ControllerRegistrationStatus = {
@@ -33,8 +33,6 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const isPerformingAction = ref(false)
-const uciChangesStore = useUciPendingChangesStore()
-
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -47,6 +45,7 @@ const disconnectUnitError = ref({
 })
 
 const status = ref<'connected' | 'unregistered' | 'pending'>('unregistered')
+const statusFetchIntervalId = ref()
 
 const showDisconnectUnitModal = ref(false)
 
@@ -72,8 +71,10 @@ function clearError() {
   error.value.notificationDetails = ''
 }
 
-async function fetchControllerRegistrationStatus() {
-  loading.value = true
+async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) {
+  if (showLoadingSkeleton) {
+    loading.value = true
+  }
   try {
     const registrationStatus = (await ubusCall('ns.plug', 'status'))
       .data as ControllerRegistrationStatus
@@ -88,13 +89,30 @@ async function fetchControllerRegistrationStatus() {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {
-    loading.value = false
+    if (showLoadingSkeleton) {
+      loading.value = false
+    }
   }
 }
 
-function reloadControllerRegistrationStatus() {
-  uciChangesStore.getChanges()
-  fetchControllerRegistrationStatus()
+async function startRegistrationStatusFetchInterval() {
+  await fetchControllerRegistrationStatus(true)
+  if (status.value !== 'unregistered') {
+    statusFetchIntervalId.value = setInterval(() => {
+      fetchControllerRegistrationStatus()
+    }, 10000)
+  }
+}
+
+function stopRegistrationStatusFetchInterval() {
+  if (statusFetchIntervalId.value) {
+    clearInterval(statusFetchIntervalId.value)
+  }
+}
+
+function restartRegistrationStatusFetchInterval() {
+  stopRegistrationStatusFetchInterval()
+  startRegistrationStatusFetchInterval()
 }
 
 function runFieldValidators(
@@ -158,7 +176,7 @@ async function connectUnit() {
       tls_verify: verifyTlsCertificate.value,
       unit_name: unitName.value
     })
-    reloadControllerRegistrationStatus()
+    restartRegistrationStatusFetchInterval()
   } catch (err: any) {
     if (err instanceof ValidationError) {
       errorBag.value = err.errorBag
@@ -178,7 +196,7 @@ async function disconnectUnit() {
   try {
     await ubusCall('ns.plug', 'unregister')
     showDisconnectUnitModal.value = false
-    reloadControllerRegistrationStatus()
+    restartRegistrationStatusFetchInterval()
   } catch (err: any) {
     disconnectUnitError.value.notificationDescription = t(getAxiosErrorMessage(err))
     disconnectUnitError.value.notificationDetails = err.toString()
@@ -192,7 +210,7 @@ async function restartConnection() {
   clearError()
   try {
     await ubusCall('ns.plug', 'restart')
-    reloadControllerRegistrationStatus()
+    restartRegistrationStatusFetchInterval()
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_restart_connection')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -203,12 +221,21 @@ async function restartConnection() {
 }
 
 onMounted(() => {
-  fetchControllerRegistrationStatus()
+  startRegistrationStatusFetchInterval()
+})
+
+onUnmounted(() => {
+  stopRegistrationStatusFetchInterval()
 })
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.controller.title') }}</NeTitle>
+  <div class="flex flex-col justify-between md:flex-row md:items-center">
+    <NeTitle>{{ t('standalone.controller.title') }}</NeTitle>
+    <div v-if="status !== 'unregistered'" class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      {{ t('standalone.controller.data_updated_every_seconds', { seconds: 10 }) }}
+    </div>
+  </div>
   <div class="flex flex-col gap-y-6">
     <NeInlineNotification
       kind="error"
@@ -220,14 +247,13 @@ onMounted(() => {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton :lines="10" v-if="loading"></NeSkeleton>
     <FormLayout
-      v-else
       :title="t('standalone.controller.connect_unit')"
       :description="t('standalone.controller.connect_unit_description')"
       class="max-w-3xl"
     >
-      <div class="flex flex-col gap-y-6">
+      <NeSkeleton :lines="10" v-if="loading"></NeSkeleton>
+      <div class="flex flex-col gap-y-6" v-else>
         <NeTextInput v-model="unitId" :disabled="true" :label="t('standalone.controller.unit_id')">
           <template #tooltip>
             <NeTooltip>

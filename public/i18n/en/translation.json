@@ -685,7 +685,8 @@
       "restart_connection": "Restart connection",
       "vpn_ip_address": "VPN IP address",
       "disconnect": "Disconnect",
-      "disconnect_unit_message": "The unit will be disconnected from the controller and will no longer be accessible from the controller itself. Do you want to proceed?"
+      "disconnect_unit_message": "The unit will be disconnected from the controller and will no longer be accessible from the controller itself. Do you want to proceed?",
+      "data_updated_every_seconds": "Data updated every {seconds} seconds"
     },
     "network": {
       "title": "Network"

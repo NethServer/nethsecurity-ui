@@ -4,12 +4,341 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
+import {
+  NeSkeleton,
+  NeTitle,
+  NeTooltip,
+  NeBadge,
+  NeButton,
+  focusElement
+} from '@nethesis/vue-components'
+import { NeTextInput, NeToggle, NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
+import FormLayout from '@/components/standalone/FormLayout.vue'
+import { onMounted, ref, type Ref } from 'vue'
+import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { MessageBag, validateRequired, validateURL, type validationOutput } from '@/lib/validation'
+
+type ControllerRegistrationStatus = {
+  status: 'connected' | 'unregistered' | 'pending'
+  address: string | null
+  server: string | null
+  unit_name: string
+  unit_id: string
+  tls_verify: boolean
+}
 
 const { t } = useI18n()
+
+const loading = ref(false)
+const isPerformingAction = ref(false)
+const uciChangesStore = useUciPendingChangesStore()
+
+const error = ref({
+  notificationTitle: '',
+  notificationDescription: '',
+  notificationDetails: ''
+})
+
+const disconnectUnitError = ref({
+  notificationDescription: '',
+  notificationDetails: ''
+})
+
+const status = ref<'connected' | 'unregistered' | 'pending'>('unregistered')
+
+const showDisconnectUnitModal = ref(false)
+
+// form fields
+const unitId = ref('')
+const unitName = ref('')
+const controllerUrl = ref('')
+const verifyTlsCertificate = ref(false)
+const vpnIpAddress = ref('')
+
+// textinputs refs
+const unitNameRef = ref()
+const controllerUrlRef = ref()
+
+// contains the first invalid field ref
+const firstErrorRef = ref()
+
+const errorBag = ref(new MessageBag())
+
+function clearError() {
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+}
+
+async function fetchControllerRegistrationStatus() {
+  loading.value = true
+  try {
+    const registrationStatus = (await ubusCall('ns.plug', 'status'))
+      .data as ControllerRegistrationStatus
+    status.value = registrationStatus.status
+    unitId.value = registrationStatus.unit_id
+    controllerUrl.value = registrationStatus.server ?? ''
+    unitName.value = registrationStatus.unit_name
+    verifyTlsCertificate.value = registrationStatus.tls_verify
+    vpnIpAddress.value = registrationStatus.address ?? ''
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_fetch_controller_registration_status')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    loading.value = false
+  }
+}
+
+function reloadControllerRegistrationStatus() {
+  uciChangesStore.getChanges()
+  fetchControllerRegistrationStatus()
+}
+
+function runFieldValidators(
+  validators: validationOutput[],
+  fieldName: string,
+  fieldRef: Ref<any>
+): boolean {
+  for (let validator of validators) {
+    if (!validator.valid) {
+      errorBag.value.set(fieldName, [validator.errMessage as string])
+
+      // remember the first field with error for focus management
+      if (!firstErrorRef.value) {
+        firstErrorRef.value = fieldRef
+      }
+    }
+  }
+  return validators.every((validator) => validator.valid)
+}
+
+function validate() {
+  errorBag.value.clear()
+
+  const validators: [validationOutput[], string, Ref<any>][] = [
+    [[validateRequired(unitName.value)], 'unit_name', unitNameRef],
+    [
+      [validateRequired(controllerUrl.value), validateURL(controllerUrl.value)],
+      'url',
+      controllerUrlRef
+    ]
+  ]
+
+  // reset firstErrorRef for focus management
+  firstErrorRef.value = undefined
+
+  const isValidationOk = validators
+    .map(([validators, fieldName, fieldRef]) => runFieldValidators(validators, fieldName, fieldRef))
+    .every((result) => result)
+
+  if (firstErrorRef.value) {
+    focusElement(firstErrorRef.value)
+  }
+  return isValidationOk
+}
+
+async function connectUnit() {
+  isPerformingAction.value = true
+  clearError()
+
+  if (!validate()) {
+    return
+  }
+
+  try {
+    await ubusCall('ns.plug', 'register', {
+      // remove trailing slash from url if present
+      url:
+        controllerUrl.value.slice(-1) === '/'
+          ? controllerUrl.value.slice(0, -1)
+          : controllerUrl.value,
+      tls_verify: verifyTlsCertificate.value,
+      unit_name: unitName.value
+    })
+    reloadControllerRegistrationStatus()
+  } catch (err: any) {
+    if (err instanceof ValidationError) {
+      errorBag.value = err.errorBag
+    } else {
+      error.value.notificationTitle = t('error.cannot_connect_unit')
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
+  } finally {
+    isPerformingAction.value = false
+  }
+}
+
+async function disconnectUnit() {
+  isPerformingAction.value = true
+  clearError()
+  try {
+    await ubusCall('ns.plug', 'unregister')
+    showDisconnectUnitModal.value = false
+    reloadControllerRegistrationStatus()
+  } catch (err: any) {
+    disconnectUnitError.value.notificationDescription = t(getAxiosErrorMessage(err))
+    disconnectUnitError.value.notificationDetails = err.toString()
+  } finally {
+    isPerformingAction.value = false
+  }
+}
+
+async function restartConnection() {
+  isPerformingAction.value = true
+  clearError()
+  try {
+    await ubusCall('ns.plug', 'restart')
+    reloadControllerRegistrationStatus()
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_restart_connection')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    isPerformingAction.value = false
+  }
+}
+
+onMounted(() => {
+  fetchControllerRegistrationStatus()
+})
 </script>
 
 <template>
   <NeTitle>{{ t('standalone.controller.title') }}</NeTitle>
+  <div class="flex flex-col gap-y-6">
+    <NeInlineNotification
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      v-if="error.notificationDescription"
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <NeSkeleton :lines="10" v-if="loading"></NeSkeleton>
+    <FormLayout
+      v-else
+      :title="t('standalone.controller.connect_unit')"
+      :description="t('standalone.controller.connect_unit_description')"
+      class="max-w-3xl"
+    >
+      <div class="flex flex-col gap-y-6">
+        <NeTextInput v-model="unitId" :disabled="true" :label="t('standalone.controller.unit_id')">
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.controller.unit_id_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="unitName"
+          :disabled="status !== 'unregistered'"
+          :label="t('standalone.controller.unit_name')"
+          ref="unitNameRef"
+          :invalidMessage="t(errorBag.getFirstI18nKeyFor('unit_name'))"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.controller.unit_name_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="controllerUrl"
+          :disabled="status !== 'unregistered'"
+          :label="t('standalone.controller.controller_url')"
+          ref="controllerUrlRef"
+          :invalidMessage="t(errorBag.getFirstI18nKeyFor('url'))"
+        />
+        <NeTextInput
+          v-if="status === 'connected'"
+          v-model="vpnIpAddress"
+          :disabled="true"
+          :label="t('standalone.controller.vpn_ip_address')"
+        />
+        <NeToggle
+          v-if="status === 'unregistered'"
+          v-model="verifyTlsCertificate"
+          :top-label="t('standalone.controller.verify_tls_certificate')"
+          :label="verifyTlsCertificate ? t('common.enabled') : t('common.disabled')"
+        />
+        <div class="align-center flex flex-row" v-else>
+          <NeTitle class="mr-4 inline-block" style="margin-bottom: 0" level="h4">{{
+            t('common.status')
+          }}</NeTitle>
+          <NeBadge
+            :text="
+              status === 'pending'
+                ? t('standalone.controller.pending')
+                : t('standalone.controller.connected')
+            "
+            :kind="status === 'pending' ? 'warning' : 'success'"
+            size="sm"
+          />
+        </div>
+        <div v-if="status === 'unregistered'">
+          <NeButton kind="primary" @click="connectUnit" :disabled="isPerformingAction">
+            <template #prefix>
+              <font-awesome-icon :icon="['fas', 'link']" class="h-4 w-4" aria-hidden="true" />
+              {{ t('standalone.controller.connect_unit') }}
+            </template>
+          </NeButton>
+        </div>
+        <div class="-mx-2 flex flex-row gap-x-4" v-else>
+          <NeButton
+            kind="tertiary"
+            @click="showDisconnectUnitModal = true"
+            :disabled="isPerformingAction"
+          >
+            <template #prefix>
+              <font-awesome-icon :icon="['fas', 'link-slash']" class="h-4 w-4" aria-hidden="true" />
+              {{ t('standalone.controller.disconnect_unit') }}
+            </template>
+          </NeButton>
+          <NeButton kind="secondary" @click="restartConnection" :disabled="isPerformingAction">
+            <template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'arrows-rotate']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+              {{ t('standalone.controller.restart_connection') }}
+            </template>
+          </NeButton>
+        </div>
+      </div>
+    </FormLayout>
+  </div>
+  <NeModal
+    :primary-button-disabled="isPerformingAction"
+    :primary-button-loading="isPerformingAction"
+    :primary-label="t('standalone.controller.disconnect')"
+    :title="t('standalone.controller.disconnect_unit')"
+    :visible="showDisconnectUnitModal"
+    kind="warning"
+    primary-button-kind="danger"
+    @close="showDisconnectUnitModal = false"
+    @primary-click="disconnectUnit"
+  >
+    {{ t('standalone.controller.disconnect_unit_message') }}
+    <NeInlineNotification
+      v-if="disconnectUnitError.notificationDescription"
+      :title="t('error.cannot_connect_unit')"
+      :description="disconnectUnitError.notificationDescription"
+      kind="error"
+    >
+      <template #details v-if="disconnectUnitError.notificationDetails">
+        {{ disconnectUnitError.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+  </NeModal>
 </template>

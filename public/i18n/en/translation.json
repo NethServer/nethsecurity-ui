@@ -289,7 +289,11 @@
     "src_invalid_format": "Invalid format",
     "dest_invalid_format": "Invalid format",
     "cannot_save_netmap": "Cannot save NETMAP",
-    "cannot_delete_netmap": "Cannot delete NETMAP"
+    "cannot_delete_netmap": "Cannot delete NETMAP",
+    "cannot_fetch_controller_registration_status": "Cannot fetch controller registration status",
+    "cannot_disconnect_unit": "Cannot disconnect unit",
+    "cannot_connect_unit": "Cannot connect unit",
+    "cannot_restart_connection": "Cannot restart connection"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -666,7 +670,22 @@
       "plus_n_others": "+{n} others"
     },
     "controller": {
-      "title": "Controller"
+      "title": "Controller",
+      "connect_unit": "Connect unit",
+      "connect_unit_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus facilisis ullamcorper.",
+      "unit_id": "Unit ID",
+      "unit_id_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus facilisis ullamcorper.",
+      "unit_name": "Unit name",
+      "unit_name_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus facilisis ullamcorper.",
+      "controller_url": "Controller URL",
+      "verify_tls_certificate": "Verify TLS certificate",
+      "pending": "Pending",
+      "connected": "Connected",
+      "disconnect_unit": "Disconnect unit",
+      "restart_connection": "Restart connection",
+      "vpn_ip_address": "VPN IP address",
+      "disconnect": "Disconnect",
+      "disconnect_unit_message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus facilisis ullamcorper."
     },
     "network": {
       "title": "Network"

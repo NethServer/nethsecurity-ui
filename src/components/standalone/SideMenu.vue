@@ -67,6 +67,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.certificates.title'),
         to: 'system/certificates'
+      },
+      {
+        name: t('standalone.controller.title'),
+        to: 'system/controller'
       }
     ]
   },

@@ -665,6 +665,9 @@
       "value": "Value",
       "plus_n_others": "+{n} others"
     },
+    "controller": {
+      "title": "Controller"
+    },
     "network": {
       "title": "Network"
     },

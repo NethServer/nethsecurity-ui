@@ -62,15 +62,16 @@ async function changeLocale(lang: string) {
     class="mb-2 flex max-w-3xl items-center"
   >
     <template v-if="unit">
+      <span class="w-1/5">{{ unit.id }}</span>
       <span class="w-1/5">{{ unit.name }}</span>
       <span class="w-1/5">{{ unit.ipaddress ? unit.ipaddress : '-' }}</span>
       <span class="w-1/5">{{ unit.registered ? 'Registered' : 'Not registered' }}</span>
       <span class="w-1/5">{{ isEmpty(unit.vpn) ? 'Not connected' : 'Connected' }}</span>
       <span v-if="!unit.registered" class="w-1/5">
-        <NeButton size="lg" @click="approveUnit(unit.name)">Approve unit</NeButton>
+        <NeButton size="lg" @click="approveUnit(unit.id)">Approve unit</NeButton>
       </span>
       <span v-if="unit.registered && !isEmpty(unit.vpn)" class="w-1/5">
-        <NeButton size="lg" @click="manageUnit(unit.name)">Manage unit</NeButton>
+        <NeButton size="lg" @click="manageUnit(unit.id)">Manage unit</NeButton>
       </span>
     </template>
   </div>

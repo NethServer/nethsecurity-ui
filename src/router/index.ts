@@ -51,6 +51,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/system/CertificatesView.vue')
   },
   {
+    path: 'system/controller',
+    name: 'Controller',
+    component: () => import('../views/standalone/system/ControllerView.vue')
+  },
+  {
     path: 'network/interfaces-and-devices',
     name: 'Interfaces',
     component: () => import('../views/standalone/network/InterfacesAndDevicesView.vue')

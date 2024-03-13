@@ -289,7 +289,11 @@
     "src_invalid_format": "Invalid format",
     "dest_invalid_format": "Invalid format",
     "cannot_save_netmap": "Cannot save NETMAP",
-    "cannot_delete_netmap": "Cannot delete NETMAP"
+    "cannot_delete_netmap": "Cannot delete NETMAP",
+    "cannot_fetch_controller_registration_status": "Cannot fetch controller registration status",
+    "cannot_disconnect_unit": "Cannot disconnect unit",
+    "cannot_connect_unit": "Cannot connect unit",
+    "cannot_restart_connection": "Cannot restart connection"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -664,6 +668,25 @@
       "key": "Key",
       "value": "Value",
       "plus_n_others": "+{n} others"
+    },
+    "controller": {
+      "title": "Controller",
+      "connect_unit": "Connect unit",
+      "connect_unit_description": "Connect your unit to a remote controller for centralized management of multiple units. Enter the controller's URL (e.g., https://controller.nethsecurity.org/) and click 'Connect unit' to initiate the connection. Access your controller and approve the unit; the connection will automatically establish within seconds.",
+      "unit_id": "Unit ID",
+      "unit_id_tooltip": "The unit ID uniquely identifies the firewall within the controller; if you disconnect the unit from the controller, the ID will be preserved.",
+      "unit_name": "Unit name",
+      "unit_name_tooltip": "Insert a descriptive name to easily find the unit within the controller. It is good practice to use the firewall FQDN.",
+      "controller_url": "Controller URL",
+      "verify_tls_certificate": "Verify TLS certificate",
+      "pending": "Pending",
+      "connected": "Connected",
+      "disconnect_unit": "Disconnect unit",
+      "restart_connection": "Restart connection",
+      "vpn_ip_address": "VPN IP address",
+      "disconnect": "Disconnect",
+      "disconnect_unit_message": "The unit will be disconnected from the controller and will no longer be accessible from the controller itself. Do you want to proceed?",
+      "data_updated_every_seconds": "Data updated every {seconds} seconds"
     },
     "network": {
       "title": "Network"

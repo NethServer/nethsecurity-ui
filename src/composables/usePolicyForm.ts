@@ -83,7 +83,9 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
   })
 
   watch(selection, (value) => {
+    // When the selection changes, we need to update the priorities and filter/merge the gateways
     if (value == PolicyOptions.BACKUP) {
+      // merge all gateways into a single priority
       priorities.value = priorities.value
         .map((priority) => priority.map((gateway) => [gateway]))
         .flat(1)
@@ -91,9 +93,23 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
         priorities.value.push([new Gateway()])
       }
     } else if (value == PolicyOptions.BALANCE) {
+      // flatten all priorities in a single gateway per priority
       priorities.value = [priorities.value.flat(1)]
       for (let i = priorities.value[0].length; i < 2; i++) {
         priorities.value[0].push(new Gateway())
+      }
+    } else {
+      // filter out empty gateways
+      priorities.value.forEach((gateways, index) => {
+        priorities.value[index] = gateways.filter((gateway) => gateway.id != '')
+      })
+      // filter out empty priorities
+      priorities.value = priorities.value.filter(
+        (gateways) => gateways.filter((gateway) => gateway.id != '').length > 0
+      )
+      // add a new priority if none is defined
+      if (priorities.value.length == 0) {
+        priorities.value = [[new Gateway()]]
       }
     }
   })

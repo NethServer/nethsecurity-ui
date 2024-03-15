@@ -233,7 +233,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.dns_dhcp.edit_interface', { interface: iface })"
   >
     <NeInlineNotification

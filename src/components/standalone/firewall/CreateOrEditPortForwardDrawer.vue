@@ -332,7 +332,7 @@ async function createOrEditPortForward() {
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       id
         ? t('standalone.port_forward.edit_port_forward')

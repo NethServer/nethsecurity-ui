@@ -208,17 +208,12 @@ const router = createRouter({
     // controller
     {
       path: '/controller',
-      redirect: '/controller/dashboard'
+      redirect: '/controller/units'
     },
     {
-      path: '/controller/dashboard',
-      name: 'ControllerDashboard',
-      component: () => import('../views/controller/ControllerDashboardView.vue')
-    },
-    {
-      path: '/controller/logs',
-      name: 'ControllerLogs',
-      component: () => import('../views/controller/LogsView.vue')
+      path: '/controller/units',
+      name: 'Units',
+      component: () => import('../views/controller/UnitsView.vue')
     },
     {
       path: '/controller/settings',
@@ -226,13 +221,13 @@ const router = createRouter({
       component: () => import('../views/controller/SettingsView.vue')
     },
     {
-      path: '/controller/manage/:unitName',
+      path: '/controller/manage/:unitId',
       redirect: () => {
         return 'dashboard'
       }
     },
     {
-      path: '/controller/manage/:unitName',
+      path: '/controller/manage/:unitId',
       name: 'ControllerManage',
       component: () => import('../StandaloneApp.vue'),
       children: getControllerManageRoutes()

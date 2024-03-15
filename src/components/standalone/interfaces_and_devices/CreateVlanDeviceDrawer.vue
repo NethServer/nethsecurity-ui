@@ -227,7 +227,7 @@ function validate() {
   <NeSideDrawer
     :isShown="isShown"
     :title="t('standalone.interfaces_and_devices.create_vlan_device')"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>

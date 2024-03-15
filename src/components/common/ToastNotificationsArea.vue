@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useNotificationsStore } from '../../stores/standalone/notifications'
-import AxiosErrorModal from './AxiosErrorModal.vue'
+import { useNotificationsStore } from '../../stores/common/notifications'
+import AxiosErrorModal from '../common/AxiosErrorModal.vue'
 import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 

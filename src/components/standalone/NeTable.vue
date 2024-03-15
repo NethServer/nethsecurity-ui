@@ -195,7 +195,7 @@ table {
 }
 
 .table-basic tbody {
-  @apply divide-y divide-gray-300 dark:divide-gray-600 dark:bg-gray-950;
+  @apply divide-y divide-gray-300 bg-white dark:divide-gray-600 dark:bg-gray-950;
 }
 
 .table-basic.read-only tbody {

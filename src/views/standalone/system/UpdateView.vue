@@ -20,7 +20,7 @@ import { onMounted } from 'vue'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 import { getProductName } from '@/lib/config'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useNotificationsStore } from '@/stores/common/notifications'
 import { useRouter } from 'vue-router'
 
 export type PackageUpdate = {

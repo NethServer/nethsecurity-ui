@@ -301,7 +301,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       isEditing
         ? t('standalone.users_database.edit_database')

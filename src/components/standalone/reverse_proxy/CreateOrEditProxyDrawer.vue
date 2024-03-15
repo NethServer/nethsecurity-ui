@@ -259,7 +259,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       id
         ? t('standalone.reverse_proxy.edit_reverse_proxy')

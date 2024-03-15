@@ -1,7 +1,7 @@
 //  Copyright (C) 2024 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useUnitManagementStore } from '@/stores/controller/unitManagement'
+import { useUnitsStore } from '@/stores/controller/units'
 
 export const isStandaloneMode = () => {
   return import.meta.env.VITE_UI_MODE === 'standalone'
@@ -53,7 +53,7 @@ export const getControllerApiEndpoint = () => {
 }
 
 export const getUnitManagementApiEndpoint = () => {
-  const unitManagementStore = useUnitManagementStore()
+  const unitManagementStore = useUnitsStore()
 
   if (import.meta.env.DEV) {
     // controller development environment
@@ -62,17 +62,17 @@ export const getUnitManagementApiEndpoint = () => {
     const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
 
     // include unit name in endpoint
-    const unitName = unitManagementStore.unitName
-    return `${apiScheme}://${controllerApiHost}/${unitName}/api`
+    const unitId = unitManagementStore.unitId
+    return `${apiScheme}://${controllerApiHost}/${unitId}/api`
   } else {
     // include unit name in endpoint
-    const unitName = unitManagementStore.unitName
+    const unitId = unitManagementStore.unitId
     return (
       window.location.protocol +
       '//' +
       window.location.hostname +
       (window.location.port ? ':' + window.location.port : '') +
-      `/${unitName}/api`
+      `/${unitId}/api`
     )
   }
 }

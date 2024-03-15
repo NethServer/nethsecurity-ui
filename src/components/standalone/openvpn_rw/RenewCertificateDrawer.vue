@@ -107,7 +107,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="closeDrawer()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.openvpn_rw.renew_certificate')"
   >
     <div class="flex flex-col gap-y-6">

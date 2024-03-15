@@ -340,7 +340,7 @@ async function saveRule() {
   <NeSideDrawer
     :isShown="isShown"
     :title="isEditingRule ? t('standalone.nat.edit_nat_rule') : t('standalone.nat.add_nat_rule')"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>

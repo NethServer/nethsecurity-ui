@@ -297,7 +297,7 @@ async function saveAliasInterface() {
           })
         : t('standalone.interfaces_and_devices.edit_alias_interface')
     "
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>

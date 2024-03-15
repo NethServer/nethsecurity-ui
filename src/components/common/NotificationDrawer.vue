@@ -7,8 +7,8 @@
 import { NeSideDrawer, NeEmptyState } from '@nethesis/vue-components'
 import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
-import { isEmpty } from 'lodash'
+import { useNotificationsStore } from '@/stores/common/notifications'
+import { isEmpty } from 'lodash-es'
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
@@ -22,7 +22,7 @@ function closeDrawer() {
   <NeSideDrawer
     :isShown="notificationsStore.isNotificationDrawerOpen"
     :title="t('notifications.title')"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <!-- empty state -->

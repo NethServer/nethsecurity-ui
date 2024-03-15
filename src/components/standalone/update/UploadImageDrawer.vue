@@ -102,7 +102,7 @@ async function updateImageAndReboot() {
   <NeSideDrawer
     :is-shown="isShown"
     @close="!isRequestingUpdate ? close() : undefined"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.update.update_with_image_file')"
   >
     <div class="flex flex-col gap-y-6">

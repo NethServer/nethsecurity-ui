@@ -109,11 +109,6 @@ const navigation: Ref<MenuItem[]> = ref([
       }
     ]
   },
-  // { ////
-  //   name: t('standalone.users_and_objects.title'),
-  //   to: 'users-and-objects',
-  //   icon: 'user-group'
-  // },
   {
     name: t('standalone.firewall.title'),
     to: 'firewall',

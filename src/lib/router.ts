@@ -2,7 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { isStandaloneMode } from './config'
-import { useUnitManagementStore } from '@/stores/controller/unitManagement'
+import { useUnitsStore } from '@/stores/controller/units'
 
 /**
  * Used in <router-link> elements of standalone UI to build the full path of destination page
@@ -14,8 +14,8 @@ export const getStandaloneRoutePrefix = () => {
     return `/standalone`
   } else {
     // a controller is managing this unit
-    const unitManagementStore = useUnitManagementStore()
-    return `/controller/manage/${unitManagementStore.unitName}`
+    const unitManagementStore = useUnitsStore()
+    return `/controller/manage/${unitManagementStore.unitId}`
   }
 }
 

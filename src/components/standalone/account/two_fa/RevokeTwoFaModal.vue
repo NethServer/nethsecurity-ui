@@ -7,7 +7,7 @@
 import { revokeTwoFa, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useNotificationsStore } from '@/stores/common/notifications'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { NeInlineNotification, focusElement, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'

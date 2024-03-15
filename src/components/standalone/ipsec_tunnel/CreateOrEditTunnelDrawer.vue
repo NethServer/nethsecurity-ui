@@ -467,7 +467,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       id
         ? t('standalone.ipsec_tunnel.edit_ipsec_tunnel')

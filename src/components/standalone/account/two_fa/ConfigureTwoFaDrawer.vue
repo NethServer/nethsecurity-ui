@@ -20,7 +20,7 @@ import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import QRCodeVue3 from 'qrcode-vue3'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useNotificationsStore } from '@/stores/common/notifications'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false }
@@ -152,7 +152,7 @@ async function verifyOtp() {
   <NeSideDrawer
     :isShown="isShown"
     :title="t('standalone.two_fa.configure_two_fa')"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>

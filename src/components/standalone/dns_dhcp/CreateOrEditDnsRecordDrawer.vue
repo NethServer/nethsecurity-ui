@@ -146,7 +146,7 @@ onMounted(() => {
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.dns_dhcp.edit_dns_record') : t('standalone.dns_dhcp.add_dns_record')"
   >
     <NeInlineNotification

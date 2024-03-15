@@ -18,9 +18,9 @@ import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
 import { isEmpty, isEqual } from 'lodash-es'
 import router from '@/router'
-import ToastNotificationsArea from './ToastNotificationsArea.vue'
-import NotificationDrawer from './NotificationDrawer.vue'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import ToastNotificationsArea from '../common/ToastNotificationsArea.vue'
+import NotificationDrawer from '../common/NotificationDrawer.vue'
+import { useNotificationsStore } from '@/stores/common/notifications'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 const loginStore = useLoginStore()
@@ -56,7 +56,7 @@ const accountMenuOptions = computed(() => {
   return [
     {
       id: 'account',
-      label: t('standalone.shell.account_settings'),
+      label: t('common.shell.account_settings'),
       icon: 'circle-user',
       iconStyle: 'fas',
       action: () => router.push('/standalone/user'),
@@ -64,14 +64,14 @@ const accountMenuOptions = computed(() => {
     },
     {
       id: 'theme',
-      label: t('standalone.shell.toggle_theme'),
+      label: t('common.shell.toggle_theme'),
       icon: themeStore.isLight ? 'moon' : 'sun',
       iconStyle: 'fas',
       action: themeStore.toggleTheme
     },
     {
       id: 'logout',
-      label: t('standalone.shell.sign_out'),
+      label: t('common.shell.sign_out'),
       icon: 'right-from-bracket',
       iconStyle: 'fas',
       action: loginStore.logout,
@@ -170,7 +170,7 @@ onMounted(() => {
               >
                 <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
                   <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
-                    <span class="sr-only">{{ t('standalone.shell.close_sidebar') }}</span>
+                    <span class="sr-only">{{ t('common.shell.close_sidebar') }}</span>
                     <font-awesome-icon
                       :icon="['fas', 'xmark']"
                       class="h-6 w-6 text-white"
@@ -241,7 +241,7 @@ onMounted(() => {
           class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50 lg:hidden"
           @click="sidebarOpen = true"
         >
-          <span class="sr-only">{{ t('standalone.shell.open_sidebar') }}</span>
+          <span class="sr-only">{{ t('common.shell.open_sidebar') }}</span>
           <font-awesome-icon :icon="['fas', 'bars']" class="h-6 w-6 shrink-0" aria-hidden="true" />
         </button>
 
@@ -249,7 +249,8 @@ onMounted(() => {
         <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 lg:hidden" aria-hidden="true" />
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-          <form class="relative flex flex-1" action="#" method="GET">
+          <div class="relative flex flex-1">
+            <!-- global search -->
             <!-- <label for="search-field" class="sr-only">{{ t('common.search') }}</label> //// global search
             <font-awesome-icon
               :icon="['fas', 'magnifying-glass']"
@@ -266,7 +267,7 @@ onMounted(() => {
               type="search"
               name="search"
             /> -->
-          </form>
+          </div>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <div v-if="uciChangesStore.numChanges">
               <NeButton
@@ -337,7 +338,7 @@ onMounted(() => {
                   :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
                   @click="openNotificationsDrawer"
                 >
-                  <span class="sr-only">{{ t('standalone.shell.show_notifications') }}</span>
+                  <span class="sr-only">{{ t('common.shell.show_notifications') }}</span>
                   <font-awesome-icon
                     :icon="['fas', 'bell']"
                     :class="['h-6 w-6 shrink-0', { 'fa-shake': shakeNotificationsIcon }]"
@@ -357,7 +358,7 @@ onMounted(() => {
                 <NeDropdown
                   :items="accountMenuOptions"
                   :alignToRight="true"
-                  :openMenuAriaLabel="t('standalone.shell.open_user_menu')"
+                  :openMenuAriaLabel="t('common.shell.open_user_menu')"
                 >
                   <template #button>
                     <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
@@ -378,7 +379,7 @@ onMounted(() => {
                 </NeDropdown>
               </template>
               <template #content>
-                {{ t('standalone.shell.account') }}
+                {{ t('common.shell.account') }}
               </template>
             </NeTooltip>
           </div>

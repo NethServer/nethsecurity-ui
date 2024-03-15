@@ -93,7 +93,8 @@ import {
   faNetworkWired as falNetworkWired,
   faServer as falServer,
   faShieldHalved as falShieldHalved,
-  faUserGroup as falUserGroup
+  faUserGroup as falUserGroup,
+  faGear as falGear
 } from '@nethesis/nethesis-light-svg-icons'
 import {
   faBlockBrickFire as fasBlockBrickFire,
@@ -146,6 +147,7 @@ export async function loadFontAwesome(app: any) {
   library.add(fasChevronUp)
   library.add(fasXmark)
   library.add(fasGear)
+  library.add(falGear)
   library.add(fasBars)
   library.add(fasTrash)
   library.add(fasFloppyDisk)

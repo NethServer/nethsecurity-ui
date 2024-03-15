@@ -14,7 +14,7 @@ import {
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getProductName, getCompanyName } from '@/lib/config'
 import { validateRequired } from '@/lib/validation'
@@ -23,7 +23,6 @@ import {
   getStringFromStorage,
   saveToStorage
 } from '@nethserver/vue-tailwind-lib'
-import { useThemeStore } from '@/stores/theme'
 
 let username = ref('')
 let usernameRef = ref()
@@ -39,15 +38,6 @@ let error = ref({
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
-const themeStore = useThemeStore()
-
-const logoFilename = computed(() => {
-  if (themeStore.isLight) {
-    return 'logo_light.svg'
-  } else {
-    return 'logo_dark.svg'
-  }
-})
 
 onMounted(() => {
   // read username from storage, if present
@@ -56,9 +46,9 @@ onMounted(() => {
   if (usernameFromStorage) {
     rememberMe.value = true
     username.value = usernameFromStorage
-    passwordRef.value.focus()
+    focusElement(passwordRef)
   } else {
-    usernameRef.value.focus()
+    focusElement(usernameRef)
   }
 })
 
@@ -87,6 +77,7 @@ async function login() {
 
     if (err?.response?.status == 401) {
       error.value.login = 'login.incorrect_username_or_password'
+      focusElement(passwordRef)
     } else {
       error.value.login = getAxiosErrorMessage(err)
     }
@@ -94,6 +85,9 @@ async function login() {
 }
 
 function validate() {
+  error.value.username = ''
+  error.value.password = ''
+  error.value.login = ''
   let isValidationOk = true
 
   // username
@@ -130,19 +124,13 @@ function validate() {
 </script>
 
 <template>
-  <div class="flex h-screen min-h-full flex-1 bg-gray-950">
+  <div class="flex h-screen min-h-full flex-1 bg-gray-200 dark:bg-gray-950">
     <div
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
-      <!-- <div class="mx-auto w-full max-w-sm lg:w-96"> //// -->
       <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
-          <img
-            class="mb-6 h-8 w-auto"
-            :src="`/${logoFilename}`"
-            :alt="`${getCompanyName()} logo`"
-          />
-          <NeTitle level="h3">{{
+          <NeTitle level="h2">{{
             t('login.welcome_title_controller', { product: getProductName() })
           }}</NeTitle>
           <div class="mb-4 text-sm text-gray-700 dark:text-gray-100">
@@ -207,12 +195,13 @@ function validate() {
         </div>
       </div>
     </div>
-    <div class="relative hidden w-0 flex-1 lg:block">
-      <img
-        class="absolute inset-0 h-full w-full object-cover"
-        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
-        alt=""
-      />
+    <div
+      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-800 lg:flex"
+    >
+      <div class="flex w-2/3 flex-col items-center xl:w-2/5 3xl:w-1/3 5xl:w-1/4">
+        <img src="/login_logo.svg" :alt="`${getCompanyName()} logo`" class="" />
+        <span class="text-xl text-white">Controller</span>
+      </div>
     </div>
   </div>
 </template>

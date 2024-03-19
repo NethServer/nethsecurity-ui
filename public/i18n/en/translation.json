@@ -672,7 +672,7 @@
     "controller": {
       "title": "Controller",
       "connect_unit": "Connect unit",
-      "connect_unit_description": "Connect your unit to a remote controller for centralized management of multiple units. Enter the controller's URL (e.g., https://controller.nethsecurity.org/) and click 'Connect unit' to initiate the connection. Access your controller and approve the unit; the connection will automatically establish within seconds.",
+      "connect_unit_description": "Connect your unit to a remote controller for centralized management. Access the controller to add a unit, then enter the generated join code here. The connection will seamlessly establish within seconds.",
       "unit_id": "Unit ID",
       "unit_name": "Unit name",
       "unit_name_tooltip": "Insert a descriptive name to easily find the unit within the controller. It is good practice to use the firewall FQDN.",

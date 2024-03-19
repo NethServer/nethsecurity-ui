@@ -460,9 +460,12 @@ function validate() {
   } else {
     // server form fields validation
     const localNetworksCidrValidation = localNetworks.value.map((x) => validateIp4Cidr(x.id))
+    const vpnNetworkValidator: [validationOutput[], string][] = [
+      [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'vpnNetwork']
+    ]
     const serverTunnelFieldsValidators: [validationOutput[], string][] = [
       [[validateRequired(port.value), validatePort(port.value)], 'port'],
-      [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'vpnNetwork'],
+      ...(topology.value !== 'p2p' ? vpnNetworkValidator : []),
       [
         [
           validateRequiredOption(localNetworks.value),

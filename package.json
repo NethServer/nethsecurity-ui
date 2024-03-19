@@ -21,6 +21,7 @@
     "@fortawesome/free-solid-svg-icons": "github:nethesis/Font-Awesome#solid",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@headlessui/vue": "^1.7.13",
+    "@lukeed/uuid": "^2.0.1",
     "@nethesis/nethesis-brands-svg-icons": "github:nethesis/Font-Awesome#ns-brands",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#ns-light",
     "@nethesis/nethesis-solid-svg-icons": "github:nethesis/Font-Awesome#ns-solid",

@@ -281,7 +281,7 @@ async function saveRule() {
   <NeSideDrawer
     :isShown="isShown"
     :title="drawerTitle"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>

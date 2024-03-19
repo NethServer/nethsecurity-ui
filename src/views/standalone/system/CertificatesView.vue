@@ -13,7 +13,7 @@ import CertificatesTable from '@/components/standalone/certificates/Certificates
 import DeleteCertificateModal from '@/components/standalone/certificates/DeleteCertificateModal.vue'
 import ImportCertificateDrawer from '@/components/standalone/certificates/ImportCertificateDrawer.vue'
 import CreateLetsEncryptCertificateDrawer from '@/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useNotificationsStore } from '@/stores/common/notifications'
 import { onMounted } from 'vue'
 import { map } from 'lodash-es'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'

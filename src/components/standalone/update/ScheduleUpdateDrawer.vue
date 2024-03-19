@@ -147,7 +147,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       !isEditing ? t('standalone.update.update_system') : t('standalone.update.edit_scheduled_date')
     "

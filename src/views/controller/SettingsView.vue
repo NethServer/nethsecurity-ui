@@ -3,10 +3,15 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { NeTitle } from '@nethesis/vue-components'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
 
 <template>
   <div>
-    <h1 class="mb-4 text-2xl">Settings</h1>
+    <NeTitle>{{ t('controller.account_settings.account_settings_for') }}</NeTitle>
   </div>
 </template>

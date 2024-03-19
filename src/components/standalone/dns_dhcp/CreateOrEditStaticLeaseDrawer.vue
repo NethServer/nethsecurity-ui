@@ -161,7 +161,7 @@ onMounted(() => {
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       id ? t('standalone.dns_dhcp.edit_reservation') : t('standalone.dns_dhcp.add_reservation')
     "

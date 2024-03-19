@@ -144,7 +144,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.certificates.import_certificate')"
   >
     <div class="flex flex-col gap-y-6">

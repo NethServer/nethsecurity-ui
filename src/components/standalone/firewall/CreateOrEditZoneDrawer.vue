@@ -231,7 +231,7 @@ function validate(): boolean {
         ? t('standalone.zones_and_policies.add_zone')
         : t('standalone.zones_and_policies.edit_zone_name', { name: zoneToEdit?.name })
     "
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     @close="emit('close')"
   >
     <NeInlineNotification

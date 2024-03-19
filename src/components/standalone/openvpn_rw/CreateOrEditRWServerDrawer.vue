@@ -435,7 +435,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       itemToEdit?.ns_description
         ? t('standalone.openvpn_rw.edit_server')

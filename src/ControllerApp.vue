@@ -8,13 +8,15 @@ import ControllerAppShell from '@/components/controller/ControllerAppShell.vue'
 import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { nextTick, onMounted, ref } from 'vue'
-import axios from 'axios'
+import axios, { CanceledError } from 'axios'
 import { getPreference } from '@nethserver/vue-tailwind-lib'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
+import { useNotificationsStore } from './stores/common/notifications'
 
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+const notificationsStore = useNotificationsStore()
 
 const isLoaded = ref(false)
 
@@ -70,6 +72,15 @@ function configureAxios() {
       if (error.response?.status == 401) {
         console.warn('[interceptor]', 'Detected error 401, logout')
         loginStore.logout()
+      } else {
+        // show error notification only if error is not caused from cancellation
+        // and if it isn't a validation error
+        if (
+          !(error instanceof CanceledError) &&
+          !error.response?.data?.data?.validation?.errors?.length
+        ) {
+          notificationsStore.createNotificationFromAxiosError(error)
+        }
       }
       return Promise.reject(error)
     }
@@ -78,7 +89,6 @@ function configureAxios() {
 </script>
 
 <template>
-  <!-- //// skeleton? -->
   <template v-if="isLoaded">
     <template v-if="loginStore.isLoggedIn">
       <ControllerAppShell />

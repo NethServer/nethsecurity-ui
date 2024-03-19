@@ -24,7 +24,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
 import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
-import { useNotificationsStore } from '@/stores/standalone/notifications'
+import { useNotificationsStore } from '@/stores/common/notifications'
 
 const props = defineProps<{
   users: RWAccount[]

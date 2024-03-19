@@ -9,7 +9,7 @@ export interface validationOutput {
   i18Params?: Object
 }
 
-//// move general purpose functions to vue-tailwind library?
+//// move general purpose functions to vue-components library?
 
 /**
  * Validate a string against a list of validation functions.

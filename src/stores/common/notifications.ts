@@ -4,10 +4,12 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { uid } from 'uid/single'
-import { getAxiosErrorMessage, type NeNotification } from '@nethserver/vue-tailwind-lib'
+import { type NeNotification } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
-import { useLoginStore } from './standaloneLogin'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { isEmpty } from 'lodash-es'
+import { isStandaloneMode } from '@/lib/config'
 
 const NOTIFICATIONS_LIMIT = 30
 const DEFAULT_NOTIFICATION_TIMEOUT = 5000
@@ -15,7 +17,6 @@ const ERROR_NOTIFICATION_TIMEOUT = 10000
 
 export const useNotificationsStore = defineStore('notifications', () => {
   const { t } = useI18n()
-  const loginStore = useLoginStore()
   const notifications = ref<NeNotification[]>([])
   const isAxiosErrorModalOpen = ref(false)
   const axiosErrorNotificationToShow = ref<NeNotification>()
@@ -126,8 +127,13 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const copyCurlToClipboard = (notification: NeNotification) => {
+    let token
+    if (isStandaloneMode()) {
+      token = useStandaloneLoginStore().token
+    } else {
+      token = useControllerLoginStore().token
+    }
     const url = notification.payload.config.url
-    const token = loginStore.token
     const tokenChunk = token ? `-H 'Authorization: Bearer ${token}'` : ''
     const data = notification.payload.config.data
     const dataChunk = data ? `-d ${JSON.stringify(data)}` : ''

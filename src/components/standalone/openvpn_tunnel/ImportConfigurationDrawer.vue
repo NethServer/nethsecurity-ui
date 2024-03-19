@@ -70,7 +70,7 @@ async function importConfiguration() {
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.openvpn_tunnel.import_configuration')"
   >
     <div class="flex flex-col gap-y-6">

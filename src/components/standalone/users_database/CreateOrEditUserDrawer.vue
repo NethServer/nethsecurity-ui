@@ -156,7 +156,7 @@ watch(
   <NeSideDrawer
     :is-shown="isShown"
     @close="close()"
-    :closeAriaLabel="t('standalone.shell.close_side_drawer')"
+    :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.users_database.edit_user') : t('standalone.users_database.add_user')"
   >
     <NeInlineNotification

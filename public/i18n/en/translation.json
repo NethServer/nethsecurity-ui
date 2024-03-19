@@ -1,5 +1,16 @@
 {
   "common": {
+    "shell": {
+      "account_settings": "Account settings",
+      "sign_out": "Sign out",
+      "open_sidebar": "Open sidebar",
+      "close_sidebar": "Close sidebar",
+      "toggle_theme": "Toggle theme",
+      "show_notifications": "Show notifications",
+      "open_user_menu": "Open user menu",
+      "close_side_drawer": "Close side drawer",
+      "account": "Account"
+    },
     "save": "Save",
     "cancel": "Cancel",
     "search": "Search",
@@ -25,7 +36,9 @@
     "loading": "Loading",
     "plus_num_others": "+{num} other | +{num} others",
     "eg_value": "e.g. {value}",
-    "name": "Name"
+    "name": "Name",
+    "clear_filter": "Clear filter",
+    "try_changing_search_filter": "Try changing your search filter"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -293,7 +306,8 @@
     "cannot_fetch_controller_registration_status": "Cannot fetch controller registration status",
     "cannot_disconnect_unit": "Cannot disconnect unit",
     "cannot_connect_unit": "Cannot connect unit",
-    "cannot_restart_connection": "Cannot restart connection"
+    "cannot_restart_connection": "Cannot restart connection",
+    "cannot_retrieve_join_code": "Cannot retrieve join code"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -337,17 +351,6 @@
     "incorrect_username_or_password": "Incorrect username or password"
   },
   "standalone": {
-    "shell": {
-      "account_settings": "Account settings",
-      "sign_out": "Sign out",
-      "open_sidebar": "Open sidebar",
-      "close_sidebar": "Close sidebar",
-      "toggle_theme": "Toggle theme",
-      "show_notifications": "Show notifications",
-      "open_user_menu": "Open user menu",
-      "close_side_drawer": "Close side drawer",
-      "account": "Account"
-    },
     "dashboard": {
       "title": "Dashboard",
       "system": "System",
@@ -1733,14 +1736,36 @@
     }
   },
   "controller": {
-    "dashboard": {
-      "title": "Dashboard"
+    "units": {
+      "title": "Unit manager",
+      "page_description": "This page lists the units configured in the controller. To connect a new unit to this controller click 'Add unit' and follow the instructions. Once connected, the metrics and logs of the unit will be collected automatically.",
+      "add_unit": "Add unit",
+      "reload_units": "Reload units",
+      "filter_units": "Filter units",
+      "no_units_configured": "No units configured",
+      "no_units_found": "No units found",
+      "unit_name": "Unit name",
+      "unit_id": "Unit ID",
+      "status": "Status",
+      "installed_version": "Installed version",
+      "connected": "Connected",
+      "not_connected": "Not connected",
+      "open_unit": "Open unit",
+      "open_metrics": "Open metrics",
+      "open_logs": "Open logs",
+      "open_ssh": "Open SSH",
+      "remove_unit": "Remove unit",
+      "add_unit_step_1": "Copy Controller join code",
+      "add_unit_step_2": "Access {product} UI on the unit you want to add and go to 'System > Controller' page",
+      "add_unit_step_3": "Paste Controller join code in the form and click 'Connect the unit'",
+      "add_unit_step_4": "The unit will appear in 'Unit manager' page"
     },
-    "settings": {
-      "title": "Settings"
-    },
-    "logs": {
-      "title": "Logs"
+    "account_settings": {
+      "title": "Account settings",
+      "account_settings_for": "Account settings for '{name}'",
+      "change_password": "Change password",
+      "language": "Language",
+      "ui_language": "User interface language"
     }
   },
   "notifications": {

@@ -58,6 +58,7 @@ const showDisconnectUnitModal = ref(false)
 // form fields
 const unitId = ref('')
 const unitName = ref('')
+const controllerUrl = ref('')
 const controllerJoinCode = ref('')
 const verifyTlsCertificate = ref(false)
 const vpnIpAddress = ref('')
@@ -86,7 +87,7 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
       .data as ControllerRegistrationStatus
     status.value = registrationStatus.status
     unitId.value = registrationStatus.unit_id
-    controllerJoinCode.value = registrationStatus.server ?? ''
+    controllerUrl.value = registrationStatus.server ?? ''
     unitName.value = registrationStatus.unit_name
     verifyTlsCertificate.value = registrationStatus.tls_verify
     vpnIpAddress.value = registrationStatus.address ?? ''
@@ -268,8 +269,8 @@ onUnmounted(() => {
           </template>
         </NeTextInput>
         <NeTextArea
+          v-if="status === 'unregistered'"
           v-model="controllerJoinCode"
-          :disabled="status !== 'unregistered'"
           :label="t('standalone.controller.controller_join_code')"
           ref="controllerJoinCodeRef"
           :invalidMessage="t(errorBag.getFirstI18nKeyFor('join_code'))"
@@ -282,6 +283,18 @@ onUnmounted(() => {
             </NeTooltip>
           </template>
         </NeTextArea>
+        <template v-else
+          ><NeTextInput
+            v-model="unitId"
+            :disabled="true"
+            :label="t('standalone.controller.unit_id')"
+          />
+          <NeTextInput
+            v-model="controllerUrl"
+            :disabled="true"
+            :label="t('standalone.controller.controller_url')"
+          />
+        </template>
         <NeTextInput
           v-if="status === 'connected'"
           v-model="vpnIpAddress"

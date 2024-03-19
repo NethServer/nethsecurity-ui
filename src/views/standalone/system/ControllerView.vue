@@ -13,12 +13,18 @@ import {
   NeInlineNotification,
   focusElement
 } from '@nethesis/vue-components'
-import { NeTextInput, NeToggle, NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTextInput,
+  NeToggle,
+  NeModal,
+  getAxiosErrorMessage,
+  NeTextArea
+} from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { MessageBag, validateRequired, validateURL, type validationOutput } from '@/lib/validation'
+import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
 
 type ControllerRegistrationStatus = {
   status: 'connected' | 'unregistered' | 'pending'
@@ -52,13 +58,13 @@ const showDisconnectUnitModal = ref(false)
 // form fields
 const unitId = ref('')
 const unitName = ref('')
-const controllerUrl = ref('')
+const controllerJoinCode = ref('')
 const verifyTlsCertificate = ref(false)
 const vpnIpAddress = ref('')
 
 // textinputs refs
 const unitNameRef = ref()
-const controllerUrlRef = ref()
+const controllerJoinCodeRef = ref()
 
 // contains the first invalid field ref
 const firstErrorRef = ref()
@@ -80,7 +86,7 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
       .data as ControllerRegistrationStatus
     status.value = registrationStatus.status
     unitId.value = registrationStatus.unit_id
-    controllerUrl.value = registrationStatus.server ?? ''
+    controllerJoinCode.value = registrationStatus.server ?? ''
     unitName.value = registrationStatus.unit_name
     verifyTlsCertificate.value = registrationStatus.tls_verify
     vpnIpAddress.value = registrationStatus.address ?? ''
@@ -138,11 +144,7 @@ function validate() {
 
   const validators: [validationOutput[], string, Ref<any>][] = [
     [[validateRequired(unitName.value)], 'unit_name', unitNameRef],
-    [
-      [validateRequired(controllerUrl.value), validateURL(controllerUrl.value)],
-      'url',
-      controllerUrlRef
-    ]
+    [[validateRequired(controllerJoinCode.value)], 'join_code', controllerJoinCodeRef]
   ]
 
   // reset firstErrorRef for focus management
@@ -168,11 +170,7 @@ async function connectUnit() {
 
   try {
     await ubusCall('ns.plug', 'register', {
-      // remove trailing slash from url if present
-      url:
-        controllerUrl.value.slice(-1) === '/'
-          ? controllerUrl.value.slice(0, -1)
-          : controllerUrl.value,
+      join_code: controllerJoinCode.value,
       tls_verify: verifyTlsCertificate.value,
       unit_name: unitName.value
     })
@@ -254,15 +252,6 @@ onUnmounted(() => {
     >
       <NeSkeleton :lines="10" v-if="loading"></NeSkeleton>
       <div class="flex flex-col gap-y-6" v-else>
-        <NeTextInput v-model="unitId" :disabled="true" :label="t('standalone.controller.unit_id')">
-          <template #tooltip>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.controller.unit_id_tooltip') }}
-              </template>
-            </NeTooltip>
-          </template>
-        </NeTextInput>
         <NeTextInput
           v-model="unitName"
           :disabled="status !== 'unregistered'"
@@ -271,20 +260,28 @@ onUnmounted(() => {
           :invalidMessage="t(errorBag.getFirstI18nKeyFor('unit_name'))"
         >
           <template #tooltip>
-            <NeTooltip>
+            <NeTooltip v-if="status === 'unregistered'">
               <template #content>
                 {{ t('standalone.controller.unit_name_tooltip') }}
               </template>
             </NeTooltip>
           </template>
         </NeTextInput>
-        <NeTextInput
-          v-model="controllerUrl"
+        <NeTextArea
+          v-model="controllerJoinCode"
           :disabled="status !== 'unregistered'"
-          :label="t('standalone.controller.controller_url')"
-          ref="controllerUrlRef"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('url'))"
-        />
+          :label="t('standalone.controller.controller_join_code')"
+          ref="controllerJoinCodeRef"
+          :invalidMessage="t(errorBag.getFirstI18nKeyFor('join_code'))"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.controller.controller_join_code_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextArea>
         <NeTextInput
           v-if="status === 'connected'"
           v-model="vpnIpAddress"

@@ -594,6 +594,15 @@ watch(
 )
 
 watch(
+  () => [topology.value],
+  () => {
+    if (!props.itemToEdit) {
+      cipher.value = topology.value === 'p2p' ? 'AES-256-CBC' : 'AES-256-GCM'
+    }
+  }
+)
+
+watch(
   () => props.isShown,
   () => {
     if (props.isShown) {

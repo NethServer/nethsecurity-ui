@@ -19,7 +19,7 @@ export async function uploadFile(
   const formData = new FormData()
 
   formData.append('file', file)
-  return axios.post(`${getStandaloneApiEndpoint()}/upload`, formData, {
+  return axios.post(`${getStandaloneApiEndpoint()}/files`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${loginStore.token}`

@@ -22,8 +22,9 @@ import {
 } from '@nethesis/vue-components'
 import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { validateRequired } from '@/lib/validation'
+import { validateFile, validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import { uploadFile } from '@/lib/standalone/fileUpload'
 
 const { t } = useI18n()
 const RESTORE_WAIT_TIME = 45000
@@ -58,6 +59,11 @@ const sourceRestoreOptions = [
 const passphraseRef = ref()
 const fileRef = ref()
 const backupRef = ref()
+
+const uploadProgress = ref(0)
+const isUploadingBackupFile = ref(false)
+const uploadedBackupFileName = ref('')
+const canRestoreBackupFile = ref(false)
 
 let errorPage = ref({
   notificationTitle: '',
@@ -195,20 +201,7 @@ async function restoreBackup() {
         methodCall = 'registered-restore'
         Object.assign(payload, { file: formRestore.value.backup })
       } else {
-        await new Promise((resolve: any) => {
-          let reader = new FileReader()
-          reader.onload = function (event) {
-            if (event?.target?.result) {
-              Object.assign(payload, { backup: String(event.target.result).split(',')[1] })
-            } else {
-              error = true
-            }
-            resolve()
-          }
-          if (formRestore.value.file) {
-            reader.readAsDataURL(formRestore.value.file)
-          }
-        })
+        Object.assign(payload, { backup: uploadedBackupFileName.value })
       }
 
       if (!error && methodCall) {
@@ -222,12 +215,49 @@ async function restoreBackup() {
         errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
       }
     } catch (exception: any) {
-      errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
-      errorRestoreBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorRestoreBackup.value.notificationDetails = exception.toString()
+      errorPage.value.notificationTitle = t('error.cannot_restore_backup')
+      errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      errorPage.value.notificationDetails = exception.toString()
     } finally {
       loadingRestore.value = false
     }
+  }
+}
+
+async function handleFileUpload() {
+  errorRestore.value.file = ''
+  isUploadingBackupFile.value = false
+  canRestoreBackupFile.value = false
+
+  if (!formRestore.value.file) {
+    return
+  }
+
+  const tarGzFileValidation = validateFile(formRestore.value.file as File | null, 'tar.gz')
+  const tarGzGpgFileValidation = validateFile(formRestore.value.file as File | null, 'tar.gz.gpg')
+
+  if (!tarGzFileValidation.valid && tarGzGpgFileValidation.valid) {
+    const validatorErrMessage = !tarGzFileValidation.valid
+      ? tarGzFileValidation.errMessage
+      : tarGzGpgFileValidation.errMessage
+    errorRestore.value.file = t(validatorErrMessage as string)
+    return
+  }
+
+  try {
+    uploadProgress.value = 0.1
+    isUploadingBackupFile.value = true
+    const uploadResult = await uploadFile(formRestore.value.file as File, (e) => {
+      uploadProgress.value = (e.progress as number) * 100
+    })
+    uploadedBackupFileName.value = uploadResult.data.data
+    canRestoreBackupFile.value = true
+  } catch (err: any) {
+    errorPage.value.notificationTitle = t('error.cannot_upload_backup')
+    errorPage.value.notificationDescription = t(getAxiosErrorMessage(err))
+    errorPage.value.notificationDetails = err.toString()
+  } finally {
+    isUploadingBackupFile.value = false
   }
 }
 
@@ -313,6 +343,7 @@ function setRestoreTimer() {
             :label="t('standalone.backup_and_restore.restore.upload_file')"
             :dropzoneLabel="t('ne_file_input.dropzone_label')"
             :invalid-message="errorRestore.file"
+            @select="handleFileUpload"
             v-model="formRestore.file"
             ref="fileRef"
           />
@@ -355,7 +386,10 @@ function setRestoreTimer() {
             {{ t('common.cancel') }}
           </NeButton>
           <NeButton
-            :disabled="loadingRestore"
+            :disabled="
+              loadingRestore ||
+              ((!isEnterprise || typeRestore === 'upload_file') && !canRestoreBackupFile)
+            "
             :kind="'primary'"
             :loading="loadingRestore"
             @click="restoreBackup()"

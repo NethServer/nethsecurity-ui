@@ -307,7 +307,8 @@
     "cannot_disconnect_unit": "Cannot disconnect unit",
     "cannot_connect_unit": "Cannot connect unit",
     "cannot_restart_connection": "Cannot restart connection",
-    "cannot_retrieve_join_code": "Cannot retrieve join code"
+    "cannot_retrieve_join_code": "Cannot retrieve join code",
+    "cannot_upload_backup": "Cannot upload backup"
   },
   "ne_text_input": {
     "show_password": "Show password",

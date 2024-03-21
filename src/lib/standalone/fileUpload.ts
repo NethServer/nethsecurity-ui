@@ -30,19 +30,21 @@ export async function uploadFile(
 
 export async function downloadFile(filename: string) {
   const loginStore = useLoginStore()
-  return axios.get(`${getStandaloneApiEndpoint()}/files/${filename}`, {
+  const fileResponse = await axios.get(`${getStandaloneApiEndpoint()}/files/${filename}`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${loginStore.token}`
-    }
+    },
+    responseType: 'arraybuffer'
   })
+  return new Blob([fileResponse.data])
 }
 
 export async function deleteFile(filename: string) {
   const loginStore = useLoginStore()
   return axios.delete(`${getStandaloneApiEndpoint()}/files/${filename}`, {
     headers: {
-      'Content-Type': 'multipart/application/json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${loginStore.token}`
     }
   })

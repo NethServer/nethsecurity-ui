@@ -27,3 +27,23 @@ export async function uploadFile(
     onUploadProgress
   })
 }
+
+export async function downloadFile(filename: string) {
+  const loginStore = useLoginStore()
+  return axios.get(`${getStandaloneApiEndpoint()}/files/${filename}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginStore.token}`
+    }
+  })
+}
+
+export async function deleteFile(filename: string) {
+  const loginStore = useLoginStore()
+  return axios.delete(`${getStandaloneApiEndpoint()}/files/${filename}`, {
+    headers: {
+      'Content-Type': 'multipart/application/json',
+      Authorization: `Bearer ${loginStore.token}`
+    }
+  })
+}

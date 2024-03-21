@@ -19,8 +19,9 @@ import {
   NeFormItemLabel
 } from '@nethesis/vue-components'
 import { NeModal, getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
-import { validateRequired } from '@/lib/validation'
+import { validateFile, validateRequired } from '@/lib/validation'
 import { useTimer } from '@/composables/useTimer'
+import { uploadFile } from '@/lib/standalone/fileUpload'
 const { t } = useI18n()
 
 const props = defineProps({
@@ -32,13 +33,12 @@ const props = defineProps({
 
 const MIGRATION_WAIT_TIME = 25000
 const emit = defineEmits(['success', 'close'])
-const formMigration = ref({
+const formMigration = ref<{ file?: File; devices: any[] }>({
   file: undefined,
   devices: []
 })
 
 const loading = ref(false)
-const loadingFile = ref(false)
 const loadingMigration = ref(false)
 const isMigrating = ref(false)
 const listDevices = ref<{ id: string; label: string; role: string; hwaddr: string }[]>([])
@@ -52,6 +52,10 @@ const listDevicesMigration = ref([
 ])
 const migrationIntervalRef = ref<number | undefined>()
 const fileRef = ref()
+
+const uploadProgress = ref(0)
+const isUploadingMigrationFile = ref(false)
+const uploadedMigrationFileName = ref('')
 
 const { startTimer, currentProgress, clearTimer } = useTimer({
   duration: MIGRATION_WAIT_TIME,
@@ -81,63 +85,58 @@ let errorLoadDevices = ref({
   notificationDetails: ''
 })
 
+async function handleFileUpload() {
+  errorMigration.value.file = ''
+  isUploadingMigrationFile.value = false
+
+  if (!formMigration.value.file) {
+    return
+  }
+  const fileValidation = validateFile(formMigration.value.file as File | null, 'tar.gz')
+  if (!fileValidation.valid) {
+    errorMigration.value.file = t(fileValidation.errMessage as string)
+    return
+  }
+
+  try {
+    uploadProgress.value = 0.1
+    isUploadingMigrationFile.value = true
+    const uploadResult = await uploadFile(formMigration.value.file as File, (e) => {
+      uploadProgress.value = (e.progress as number) * 100
+    })
+    uploadedMigrationFileName.value = uploadResult.data.data
+
+    let res = await ubusCall('ns.migration', 'list-source-devices', {
+      archive: uploadedMigrationFileName.value
+    })
+    if (res?.data?.devices?.length) {
+      listDevicesMigration.value = res.data.devices.map((item: any) => ({
+        id: item.hwaddr,
+        selected: undefined,
+        ipaddr: item.ipaddr,
+        label:
+          item.name +
+          (item.ipaddr ? ' - ' + item.ipaddr : '') +
+          (item.role ? ' - ' + item.role : '')
+      }))
+    }
+  } catch (err: any) {
+    errorMigrationFile.value.notificationTitle = t('error.upload_file_migration')
+    errorMigrationFile.value.notificationDescription = t(getAxiosErrorMessage(err))
+    errorMigrationFile.value.notificationDetails = err.toString()
+  } finally {
+    isUploadingMigrationFile.value = false
+  }
+}
+
 onMounted(() => {
   getListDevices()
 })
 
-watch(
-  () => formMigration.value.file,
-  async () => {
-    errorMigrationFile.value = {
-      notificationTitle: '',
-      notificationDescription: '',
-      notificationDetails: ''
-    }
-    if (formMigration.value.file) {
-      loadingFile.value = true
-      await new Promise((resolve: any) => {
-        let reader = new FileReader()
-        reader.onload = async function (event) {
-          if (event?.target?.result) {
-            try {
-              let payload = {
-                archive: String(event.target.result).split(',')[1]
-              }
-
-              let res = await ubusCall('ns.migration', 'upload', payload)
-              if (res?.data?.devices?.length) {
-                listDevicesMigration.value = res.data.devices.map((item: any) => ({
-                  id: item.hwaddr,
-                  selected: undefined,
-                  ipaddr: item.ipaddr,
-                  label:
-                    item.name +
-                    (item.ipaddr ? ' - ' + item.ipaddr : '') +
-                    (item.role ? ' - ' + item.role : '')
-                }))
-              }
-            } catch (exception: any) {
-              errorMigrationFile.value.notificationTitle = t('error.upload_file_migration')
-              errorMigrationFile.value.notificationDescription = t(getAxiosErrorMessage(exception))
-              errorMigrationFile.value.notificationDetails = exception.toString()
-            } finally {
-              loadingFile.value = false
-            }
-          }
-          resolve()
-        }
-        if (formMigration.value.file) {
-          reader.readAsDataURL(formMigration.value.file)
-        }
-      })
-    }
-  }
-)
-
 async function getListDevices() {
   loading.value = true
   try {
-    let res = await ubusCall('ns.migration', 'list-devices', {})
+    let res = await ubusCall('ns.migration', 'list-target-devices', {})
     if (res?.data?.devices?.length) {
       listDevices.value = res.data.devices.map((item: any) => ({
         id: item.hwaddr,
@@ -162,7 +161,7 @@ function validateMigration(): boolean {
   let isValidationOk = true
 
   let { valid, errMessage } = validateRequired(
-    formMigration?.value?.file ? formMigration.value.file : ''
+    formMigration?.value?.file ? formMigration.value.file.name : ''
   )
   if (!valid) {
     errorMigration.value.file = t(errMessage as string)
@@ -209,7 +208,8 @@ async function startMigration() {
       }
 
       let payload = {
-        mappings: devices
+        mappings: devices,
+        archive: uploadedMigrationFileName.value
       }
 
       emit('close')
@@ -264,10 +264,12 @@ watch(
       <div v-if="!loading && !errorLoadDevices.notificationTitle" class="space-y-5">
         <NeTitle>{{ t('standalone.backup_and_restore.migration.drawer_title') }}</NeTitle>
         <hr />
-        <NeSkeleton v-if="loadingFile" :lines="5" />
+        <NeSkeleton v-if="isUploadingMigrationFile" :lines="5" />
         <NeFileInput
-          v-if="!loadingFile"
+          v-else
           :label="t('standalone.backup_and_restore.migration.input_upload_file')"
+          :progress="uploadProgress"
+          @select="handleFileUpload"
           :dropzoneLabel="t('ne_file_input.dropzone_label')"
           :invalid-message="errorMigration.file"
           v-model="formMigration.file"
@@ -284,7 +286,9 @@ watch(
             {{ errorMigrationFile.notificationDetails }}
           </template>
         </NeInlineNotification>
-        <template v-if="formMigration.file && !loadingFile && listDevicesMigration.length">
+        <template
+          v-if="formMigration.file && !isUploadingMigrationFile && listDevicesMigration.length"
+        >
           <div>
             <NeFormItemLabel>
               {{ t('standalone.backup_and_restore.migration.remap_interfaces') }}

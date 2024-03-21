@@ -248,7 +248,11 @@ watch(
 
 <template>
   <div>
-    <NeSideDrawer :is-shown="showMigrationDrawer" title="" @close="$emit('close')">
+    <NeSideDrawer
+      :is-shown="showMigrationDrawer"
+      :title="t('standalone.backup_and_restore.migration.drawer_title')"
+      @close="$emit('close')"
+    >
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
         v-if="!loading && errorLoadDevices.notificationTitle"
@@ -262,8 +266,6 @@ watch(
         </template>
       </NeInlineNotification>
       <div v-if="!loading && !errorLoadDevices.notificationTitle" class="space-y-5">
-        <NeTitle>{{ t('standalone.backup_and_restore.migration.drawer_title') }}</NeTitle>
-        <hr />
         <NeSkeleton v-if="isUploadingMigrationFile" :lines="5" />
         <NeFileInput
           v-else

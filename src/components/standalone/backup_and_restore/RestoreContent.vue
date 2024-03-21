@@ -280,10 +280,12 @@ function setRestoreTimer() {
         </div>
       </FormLayout>
     </template>
-    <NeSideDrawer :is-shown="showRestoreDrawer" title="" @close="showRestoreDrawer = false">
+    <NeSideDrawer
+      :is-shown="showRestoreDrawer"
+      :title="t('standalone.backup_and_restore.restore.restore_backup')"
+      @close="showRestoreDrawer = false"
+    >
       <div class="space-y-8">
-        <NeTitle>{{ t('standalone.backup_and_restore.restore.restore_backup') }}</NeTitle>
-        <hr />
         <template v-if="isEnterprise">
           <NeRadioSelection
             v-model="typeRestore"

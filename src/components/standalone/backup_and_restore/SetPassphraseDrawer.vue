@@ -76,10 +76,12 @@ async function setPassphrase() {
 </script>
 
 <template>
-  <NeSideDrawer :is-shown="showPassphraseDrawer" title="" @close="$emit('close')">
+  <NeSideDrawer
+    :is-shown="showPassphraseDrawer"
+    :title="t('standalone.backup_and_restore.backup.passphrase_drawer_title')"
+    @close="$emit('close')"
+  >
     <div class="space-y-8">
-      <NeTitle>{{ t('standalone.backup_and_restore.backup.passphrase_drawer_title') }}</NeTitle>
-      <hr />
       <NeTextInput
         v-model="formPassphrase.passphrase"
         :label="t('standalone.backup_and_restore.backup.passphrase')"

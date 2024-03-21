@@ -11,7 +11,6 @@ import {
   NeCombobox,
   NeFileInput,
   NeProgressBar,
-  NeTitle,
   NeInlineNotification,
   NeButton,
   NeSideDrawer,

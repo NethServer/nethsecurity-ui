@@ -9,20 +9,23 @@ import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
-import { getPreference } from '@nethserver/vue-tailwind-lib'
+import { getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/common/notifications'
+import { useDefaultsStore } from './stores/controller/defaults'
 
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
 const notificationsStore = useNotificationsStore()
+const defaultsStore = useDefaultsStore()
 
 const isLoaded = ref(false)
 
 onMounted(async () => {
   await loginStore.loadUserFromStorage()
   await loadI18n()
+  await defaultsStore.getDefaults()
   configureAxios()
   isLoaded.value = true
 })

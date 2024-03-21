@@ -26,14 +26,10 @@ import {
   NeTooltip,
   NeSkeleton,
   NeFormItemLabel,
-  NeRadioSelection
+  NeRadioSelection,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import {
-  NeToggle,
-  NeTextInput,
-  getAxiosErrorMessage,
-  NeTextArea
-} from '@nethserver/vue-tailwind-lib'
+import { NeToggle, NeTextInput, NeTextArea } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'

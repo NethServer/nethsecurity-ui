@@ -9,13 +9,14 @@ import { CYAN_500, CYAN_600, INDIGO_400, INDIGO_600 } from '@/lib/color'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useThemeStore } from '@/stores/theme'
-import { NeCombobox, NeCard } from '@nethesis/vue-components'
 import {
+  NeCombobox,
+  NeCard,
   NeSkeleton,
   getAxiosErrorMessage,
   getPreference,
   savePreference
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
 import { isEmpty } from 'lodash-es'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

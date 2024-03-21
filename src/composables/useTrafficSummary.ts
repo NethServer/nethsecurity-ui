@@ -5,7 +5,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { padStart, upperFirst } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { useThemeStore } from '@/stores/theme'
 import { CYAN_500, CYAN_600 } from '@/lib/color'
 

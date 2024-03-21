@@ -10,9 +10,10 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
-  NeRadioSelection
+  NeRadioSelection,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref, type PropType, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'

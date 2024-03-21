@@ -15,7 +15,7 @@ import {
 } from 'chart.js'
 import { Bar } from 'vue-chartjs'
 import { computed } from 'vue'
-import { byteFormat1024 } from '@nethserver/vue-tailwind-lib'
+import { byteFormat1024 } from '@nethesis/vue-components'
 import { useThemeStore } from '@/stores/theme'
 import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
 

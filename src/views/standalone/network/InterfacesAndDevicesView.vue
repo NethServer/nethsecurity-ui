@@ -10,9 +10,10 @@ import {
   NeDropdown,
   NeTitle,
   NeButton,
-  NeInlineNotification
+  NeInlineNotification,
+  getAxiosErrorMessage,
+  byteFormat1000
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, byteFormat1000 } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

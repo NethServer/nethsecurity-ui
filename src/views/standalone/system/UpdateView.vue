@@ -5,9 +5,10 @@ import {
   NeInlineNotification,
   NeSkeleton,
   NeLink,
-  NeTooltip
+  NeTooltip,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal, NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'

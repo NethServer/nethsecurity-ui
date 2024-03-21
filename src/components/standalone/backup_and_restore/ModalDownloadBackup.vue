@@ -7,8 +7,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeInlineNotification } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { downloadFile } from '@/lib/standalone/fileUpload'
 import { deleteFile } from '@/lib/standalone/fileUpload'
 

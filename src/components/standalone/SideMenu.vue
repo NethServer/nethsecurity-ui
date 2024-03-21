@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { getPreference, savePreference } from '@nethserver/vue-tailwind-lib'
+import { getPreference, savePreference } from '@nethesis/vue-components'
 import { isEmpty } from 'lodash-es'
 import { onMounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'

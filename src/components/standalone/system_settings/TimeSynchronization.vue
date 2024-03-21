@@ -13,9 +13,10 @@ import {
   NeCheckbox,
   NeButton,
   NeSkeleton,
-  NeInlineNotification
+  NeInlineNotification,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { isEmpty, uniq } from 'lodash-es'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

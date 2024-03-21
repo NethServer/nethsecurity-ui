@@ -5,8 +5,13 @@
 
 <script setup lang="ts">
 import FormLayout from '../../FormLayout.vue'
-import { NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
-import { NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-components'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import {
+  NeButton,
+  NeSkeleton,
+  NeInlineNotification,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

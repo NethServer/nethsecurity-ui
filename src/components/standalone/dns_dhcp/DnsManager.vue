@@ -7,8 +7,14 @@
 import { ref } from 'vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeTooltip, NeButton, NeSkeleton } from '@nethesis/vue-components'
-import { NeTextInput, NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  NeTooltip,
+  NeButton,
+  NeSkeleton,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {

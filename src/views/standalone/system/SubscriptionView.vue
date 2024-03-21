@@ -10,8 +10,7 @@ import RemoteSupport from '@/components/standalone/subscription/RemoteSupport.vu
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
-import { NeInlineNotification } from '@nethesis/vue-components'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 
 export type SubscriptionDataType = {
   server_id: number

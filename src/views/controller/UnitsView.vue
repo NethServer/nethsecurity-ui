@@ -10,8 +10,9 @@ import { isEmpty } from 'lodash-es'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { NeTitle, NeButton, NeEmptyState, NeSkeleton } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import UnitsTable from '@/components/controller/UnitsTable.vue'
-import AddUnitModal from '@/components/controller/AddUnitModal.vue'
+import UnitsTable from '@/components/controller/units/UnitsTable.vue'
+import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
+import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
 
 const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
@@ -20,6 +21,8 @@ const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
 const getUnitsIntervalId = ref(0)
 const isUnitsSkeletonEnabled = ref(true)
+const isShownOpenSshModal = ref(false)
+const currentUnit = ref<Unit>()
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -71,6 +74,11 @@ async function loadData() {
   isUnitsSkeletonEnabled.value = true
   await unitsStore.getUnits()
   isUnitsSkeletonEnabled.value = false
+}
+
+function showOpenSshModal(unit: Unit) {
+  currentUnit.value = unit
+  isShownOpenSshModal.value = true
 }
 </script>
 
@@ -152,9 +160,21 @@ async function loadData() {
       </NeEmptyState>
     </template>
     <!-- units table -->
-    <UnitsTable v-else :filteredUnits="filteredUnits" @reloadData="loadData" />
+    <UnitsTable
+      v-else
+      :filteredUnits="filteredUnits"
+      @reloadData="loadData"
+      @openSshModal="showOpenSshModal"
+    />
   </template>
 
   <!-- add unit modal -->
   <AddUnitModal :visible="isShownAddUnitModal" @close="isShownAddUnitModal = false" />
+
+  <!-- open ssh modal -->
+  <OpenSshModal
+    :visible="isShownOpenSshModal"
+    :unit="currentUnit"
+    @close="isShownOpenSshModal = false"
+  />
 </template>

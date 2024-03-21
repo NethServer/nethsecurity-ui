@@ -5,10 +5,15 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeSkeleton, NeButton, NeEmptyState } from '@nethesis/vue-components'
+import {
+  NeInlineNotification,
+  NeSkeleton,
+  NeButton,
+  NeEmptyState,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import DeleteDpiExceptionModal from './DeleteDpiExceptionModal.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DpiExceptionCard from './DpiExceptionCard.vue'

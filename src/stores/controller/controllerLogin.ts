@@ -4,7 +4,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { isEmpty } from 'lodash-es'
-import { getJsonFromStorage, deleteFromStorage, saveToStorage } from '@nethserver/vue-tailwind-lib'
+import { getJsonFromStorage, deleteFromStorage, saveToStorage } from '@nethesis/vue-components'
 import axios from 'axios'
 import { getControllerApiEndpoint } from '../../lib/config'
 import { useRouter } from 'vue-router'

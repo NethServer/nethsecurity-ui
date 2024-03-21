@@ -5,10 +5,9 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification } from '@nethesis/vue-components'
+import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethserver/vue-tailwind-lib'
 import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 

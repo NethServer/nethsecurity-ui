@@ -6,8 +6,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { MessageBag, validateAddress, validateRequired } from '@/lib/validation'
-import { NeInlineNotification, NeSideDrawer, NeButton, NeTooltip } from '@nethesis/vue-components'
-import { NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  NeSideDrawer,
+  NeButton,
+  NeTooltip,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { AllowlistAddress } from './AllowlistTab.vue'

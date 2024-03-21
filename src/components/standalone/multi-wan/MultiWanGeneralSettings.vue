@@ -13,9 +13,10 @@ import {
   NeInlineNotification,
   NeButton,
   NeSkeleton,
-  NeFormItemLabel
+  NeFormItemLabel,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'

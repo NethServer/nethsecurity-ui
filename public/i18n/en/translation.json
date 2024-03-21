@@ -38,7 +38,8 @@
     "eg_value": "e.g. {value}",
     "name": "Name",
     "clear_filter": "Clear filter",
-    "try_changing_search_filter": "Try changing your search filter"
+    "try_changing_search_filter": "Try changing your search filter",
+    "dont_show_again": "Don't show again"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -308,7 +309,10 @@
     "cannot_connect_unit": "Cannot connect unit",
     "cannot_restart_connection": "Cannot restart connection",
     "cannot_retrieve_join_code": "Cannot retrieve join code",
-    "cannot_upload_backup": "Cannot upload backup"
+    "cannot_upload_backup": "Cannot upload backup",
+    "cannot_retrieve_xsrf_token": "Cannot retrieve XSRF token",
+    "cannot_retrieve_ssh_keys": "Cannot retrieve SSH keys",
+    "cannot_retrieve_websocket_id": "Cannot retrieve websocket ID"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1754,12 +1758,31 @@
       "open_unit": "Open unit",
       "open_metrics": "Open metrics",
       "open_logs": "Open logs",
-      "open_ssh": "Open SSH",
+      "open_ssh_terminal": "Open SSH terminal",
+      "open_terminal": "Open terminal",
       "remove_unit": "Remove unit",
       "add_unit_step_1": "Copy Controller join code",
       "add_unit_step_2": "Access {product} UI on the unit you want to add and go to 'System > Controller' page",
       "add_unit_step_3": "Paste Controller join code in the form and click 'Connect the unit'",
-      "add_unit_step_4": "The unit will appear in 'Unit manager' page"
+      "add_unit_step_4": "The unit will appear in 'Unit manager' page",
+      "unit_username": "Unit username",
+      "unit_password": "Password",
+      "popup_permission_title": "Some browsers need permission to open popups",
+      "popup_permission_description": "To open the SSH terminal, you might need to allow popups for this site.",
+      "auth_error": "Authentication error",
+      "auth_error_description": "Incorrect username or password",
+      "open_unit_tooltip": "To open a unit, you might need to allow popups for this site."
+    },
+    "unit_terminal": {
+      "name_unit_terminal": "{name} unit terminal",
+      "connection": "Connection",
+      "connection_status_pending": "Pending",
+      "connection_status_active": "Active",
+      "connection_status_error": "Error",
+      "connection_status_closed": "Closed",
+      "connection_closed": "Connection closed",
+      "connection_closed_description": "Connection to the unit terminal was closed. Please close this window and connect again, if needed.",
+      "exit_terminal_description": "To exit the unit terminal, simply close this window."
     },
     "account_settings": {
       "title": "Account settings",

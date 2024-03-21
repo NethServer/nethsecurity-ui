@@ -24,6 +24,6 @@ export const getStandaloneRoutePrefix = () => {
  *
  */
 export const getControllerRoutePrefix = () => {
-  //// call this function in controller menu items
+  // call this function in controller menu items
   return `/controller`
 }

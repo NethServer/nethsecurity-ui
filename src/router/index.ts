@@ -231,6 +231,11 @@ const router = createRouter({
       name: 'ControllerManage',
       component: () => import('../StandaloneApp.vue'),
       children: getControllerManageRoutes()
+    },
+    {
+      path: '/controller/unit-terminal',
+      name: 'ControllerUnitTerminal',
+      component: () => import('../views/controller/UnitTerminalView.vue')
     }
   ]
 })

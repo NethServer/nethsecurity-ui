@@ -4,40 +4,19 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeTitle, savePreference } from '@nethesis/vue-components'
+import { NeCombobox, NeTitle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { onMounted, ref, watch } from 'vue'
 import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
+import { useLanguage } from '@/composables/useLanguage'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const loginStore = useLoginStore()
 
-const uiLanguage = ref('')
-const supportedLanguages = [
-  { id: 'en', label: 'English' },
-  { id: 'it', label: 'Italiano' }
-]
-
-watch(uiLanguage, (newValue, oldValue) => {
-  // don't change locale on first load
-  if (oldValue && newValue) {
-    changeLocale(uiLanguage.value)
-  }
-})
-
-onMounted(() => {
-  uiLanguage.value = locale.value
-})
-
-async function changeLocale(lang: string) {
-  savePreference('locale', lang, loginStore.username)
-
-  // reload page
-  location.reload()
-}
+//TODO: test language switching on standalone mode
+const { uiLanguage, supportedLanguages } = useLanguage()
 </script>
 
 <template>

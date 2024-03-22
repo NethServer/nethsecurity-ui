@@ -291,7 +291,10 @@ export function isBridge(device: DeviceOrIface) {
 }
 
 export function isBond(deviceOrIface: DeviceOrIface) {
-  return deviceOrIface?.proto === 'bonding' || deviceOrIface.name?.startsWith('bond-')
+  return (
+    deviceOrIface?.proto === 'bonding' ||
+    (deviceOrIface.name?.startsWith('bond-') && !isVlan(deviceOrIface))
+  )
 }
 
 export function isUnconfiguredBond(deviceOrIface: DeviceOrIface) {

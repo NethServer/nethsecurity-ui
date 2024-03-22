@@ -7,13 +7,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import {
-  NeTitle,
-  NeInlineNotification,
-  NeButton,
-  NeSideDrawer,
-  NeTooltip
-} from '@nethesis/vue-components'
+import { NeInlineNotification, NeButton, NeSideDrawer, NeTooltip } from '@nethesis/vue-components'
 import { getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { AxiosError } from 'axios'
 
@@ -76,10 +70,12 @@ async function setPassphrase() {
 </script>
 
 <template>
-  <NeSideDrawer :is-shown="showPassphraseDrawer" title="" @close="$emit('close')">
+  <NeSideDrawer
+    :is-shown="showPassphraseDrawer"
+    :title="t('standalone.backup_and_restore.backup.passphrase_drawer_title')"
+    @close="$emit('close')"
+  >
     <div class="space-y-8">
-      <NeTitle>{{ t('standalone.backup_and_restore.backup.passphrase_drawer_title') }}</NeTitle>
-      <hr />
       <NeTextInput
         v-model="formPassphrase.passphrase"
         :label="t('standalone.backup_and_restore.backup.passphrase')"

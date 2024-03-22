@@ -19,11 +19,33 @@ export async function uploadFile(
   const formData = new FormData()
 
   formData.append('file', file)
-  return axios.post(`${getStandaloneApiEndpoint()}/upload`, formData, {
+  return axios.post(`${getStandaloneApiEndpoint()}/files`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${loginStore.token}`
     },
     onUploadProgress
+  })
+}
+
+export async function downloadFile(filename: string) {
+  const loginStore = useLoginStore()
+  const fileResponse = await axios.get(`${getStandaloneApiEndpoint()}/files/${filename}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginStore.token}`
+    },
+    responseType: 'arraybuffer'
+  })
+  return new Blob([fileResponse.data])
+}
+
+export async function deleteFile(filename: string) {
+  const loginStore = useLoginStore()
+  return axios.delete(`${getStandaloneApiEndpoint()}/files/${filename}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginStore.token}`
+    }
   })
 }

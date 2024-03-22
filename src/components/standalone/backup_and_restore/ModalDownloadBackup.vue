@@ -9,6 +9,8 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification } from '@nethesis/vue-components'
 import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
+import { downloadFile } from '@/lib/standalone/fileUpload'
+import { deleteFile } from '@/lib/standalone/fileUpload'
 
 const { t } = useI18n()
 const props = defineProps({
@@ -55,14 +57,19 @@ async function downloadBackup() {
 
     let res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.backup) {
+      const file = await downloadFile(res.data.backup)
+      const fileURL = URL.createObjectURL(file)
+
       let extension = '.tar.gz'
       if (props.isSetPassphrase) {
         extension += '.gpg'
       }
       let link = document.createElement('a')
-      link.href = `data:application/gzip;base64,${res.data.backup}`
+      link.href = fileURL
       link.download = 'backup' + extension
       link.click()
+
+      await deleteFile(res.data.backup)
 
       emit('close')
     }

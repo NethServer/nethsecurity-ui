@@ -7,8 +7,14 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeProgressBar, NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import {
+  NeProgressBar,
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 

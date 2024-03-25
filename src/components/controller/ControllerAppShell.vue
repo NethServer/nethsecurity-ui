@@ -22,8 +22,13 @@ const sidebarOpen = ref(false)
 
 <template>
   <div>
-    <template v-if="router.currentRoute.value.path.includes('/controller/manage')">
-      <!-- managing a unit, display only standalone shell -->
+    <template
+      v-if="
+        router.currentRoute.value.path.includes('/controller/manage') ||
+        router.currentRoute.value.path.includes('/controller/unit-terminal')
+      "
+    >
+      <!-- hide controller shell in some page -->
       <RouterView />
     </template>
     <template v-else>

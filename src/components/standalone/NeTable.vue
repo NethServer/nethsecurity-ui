@@ -5,10 +5,9 @@
 
 <script lang="ts" setup>
 import type { PropType } from 'vue'
-import { NeSkeleton } from '@nethserver/vue-tailwind-lib'
 import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
-import { NePaginator, NePaginatorProps } from '@nethesis/vue-components'
+import { NePaginator, NePaginatorProps, NeSkeleton } from '@nethesis/vue-components'
 
 /**
  * Headers that can be passed to the table.

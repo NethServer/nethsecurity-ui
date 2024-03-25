@@ -14,7 +14,7 @@ import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getPreference } from '@nethserver/vue-tailwind-lib'
+import { getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useNotificationsStore } from './stores/common/notifications'
 

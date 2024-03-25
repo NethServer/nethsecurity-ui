@@ -6,10 +6,19 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '@/components/standalone/NeTable.vue'
-import { NeButton, NeDropdown } from '@nethesis/vue-components'
+import {
+  NeButton,
+  NeDropdown,
+  NeLink,
+  NeTooltip,
+  getPreference,
+  savePreference
+} from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
+import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
-import { type PropType } from 'vue'
+import { onMounted, ref, type PropType } from 'vue'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 defineProps({
   filteredUnits: {
@@ -18,10 +27,13 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['reloadData'])
+const emit = defineEmits(['reloadData', 'openSshModal'])
 
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
+const defaultsStore = useDefaultsStore()
+const loginStore = useLoginStore()
+const hideOpenUnitPopupsTooltip = ref(false)
 
 const tableHeaders = [
   // { ////
@@ -43,6 +55,11 @@ const tableHeaders = [
     key: 'actions'
   }
 ]
+
+onMounted(() => {
+  defaultsStore.getDefaults()
+  hideOpenUnitPopupsTooltip.value = getPreference('hideOpenUnitPopupsTooltip', loginStore.username)
+})
 
 async function openUnit(unitId: string) {
   try {
@@ -73,11 +90,10 @@ function getKebabMenuItems(unit: Unit) {
     },
     {
       id: 'openSsh',
-      label: t('controller.units.open_ssh'),
+      label: t('controller.units.open_ssh_terminal'),
       icon: 'arrow-up-right-from-square',
       iconStyle: 'fas',
-      action: () => openSsh(unit),
-      disabled: true //// TODO
+      action: () => emit('openSshModal', unit)
     },
     {
       id: 'divider1'
@@ -109,13 +125,14 @@ function openLogs(unit: Unit) {
   }
 }
 
-function openSsh(unit: Unit) {
-  console.log('openSsh, TODO', unit) ////
-}
-
 async function removeUnit(unit: Unit) {
   await unitsStore.removeUnit(unit.id)
   emit('reloadData')
+}
+
+function dontShowAgainHideOpenUnitPopupsTooltip() {
+  hideOpenUnitPopupsTooltip.value = true
+  savePreference('hideOpenUnitPopupsTooltip', true, loginStore.username)
 }
 </script>
 
@@ -160,18 +177,47 @@ async function removeUnit(unit: Unit) {
     </template>
     <!-- actions -->
     <template #actions="{ item }: { item: Unit }">
-      <div class="flex justify-end gap-2">
+      <div class="flex items-center justify-end gap-2">
         <!-- open unit button -->
-        <NeButton v-if="item.connected" kind="tertiary" size="sm" @click="openUnit(item.id)">
-          <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'arrow-up-right-from-square']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('controller.units.open_unit') }}
-        </NeButton>
+        <template v-if="item.connected">
+          <NeButton v-if="hideOpenUnitPopupsTooltip" size="sm" @click="openUnit(item.id)">
+            <template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'arrow-up-right-from-square']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </template>
+            {{ t('controller.units.open_unit') }}
+          </NeButton>
+          <!-- show popups warning tooltip -->
+          <NeTooltip v-else kind="tertiary" triggerEvent="mouseenter focus" placement="top-end">
+            <template #trigger>
+              <NeButton size="sm" @click="openUnit(item.id)">
+                <template #prefix>
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+                {{ t('controller.units.open_unit') }}
+              </NeButton>
+            </template>
+            <template #content>
+              <div>
+                {{ t('controller.units.open_unit_tooltip') }}
+              </div>
+              <!-- link with inverted theme -->
+              <NeLink
+                @click="dontShowAgainHideOpenUnitPopupsTooltip()"
+                class="mt-2 inline-block text-primary-300 hover:text-primary-200 dark:text-primary-700 dark:hover:text-primary-800"
+              >
+                {{ t('common.dont_show_again') }}
+              </NeLink>
+            </template>
+          </NeTooltip>
+        </template>
         <!-- kebab menu -->
         <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
       </div>

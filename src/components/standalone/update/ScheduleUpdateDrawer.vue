@@ -10,9 +10,10 @@ import {
   NeTooltip,
   NeInlineNotification,
   NeFormItemLabel,
-  NeRadioSelection
+  NeRadioSelection,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { validateFutureDate } from '@/lib/validation'

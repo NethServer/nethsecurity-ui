@@ -5,12 +5,13 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, NeProgressBar } from '@nethesis/vue-components'
 import {
+  NeCard,
+  NeProgressBar,
   getAxiosErrorMessage,
   formatDurationLoc,
   byteFormat1024
-} from '@nethserver/vue-tailwind-lib'
+} from '@nethesis/vue-components'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

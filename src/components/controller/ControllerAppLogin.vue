@@ -10,7 +10,10 @@ import {
   NeInlineNotification,
   NeButton,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  deleteFromStorage,
+  getStringFromStorage,
+  saveToStorage
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
@@ -18,11 +21,6 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getProductName, getCompanyName } from '@/lib/config'
 import { validateRequired } from '@/lib/validation'
-import {
-  deleteFromStorage,
-  getStringFromStorage,
-  saveToStorage
-} from '@nethserver/vue-tailwind-lib'
 
 let username = ref('')
 let usernameRef = ref()
@@ -136,7 +134,7 @@ function validate() {
           <div class="mb-4 text-sm text-gray-700 dark:text-gray-100">
             {{ t('login.welcome_description_controller', { product: getProductName() }) }}
           </div>
-          <form class="space-y-6">
+          <form class="space-y-6" @submit.prevent>
             <NeInlineNotification
               v-if="error.login"
               kind="error"
@@ -147,6 +145,7 @@ function validate() {
               :label="t('login.username')"
               v-model.trim="username"
               :invalidMessage="t(error.username)"
+              autocomplete="username"
               ref="usernameRef"
             />
             <NeTextInput
@@ -156,6 +155,7 @@ function validate() {
               :showPasswordLabel="t('ne_text_input.show_password')"
               :hidePasswordLabel="t('ne_text_input.hide_password')"
               :invalidMessage="t(error.password)"
+              autocomplete="current-password"
               ref="passwordRef"
             />
             <div class="flex items-center justify-between">

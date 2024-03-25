@@ -19,9 +19,10 @@ import {
   NeCombobox,
   NeSkeleton,
   type NeComboboxOption,
-  NeFormItemLabel
+  NeFormItemLabel,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'

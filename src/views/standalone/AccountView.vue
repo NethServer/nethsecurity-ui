@@ -4,8 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeTitle } from '@nethesis/vue-components'
-import { savePreference } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, NeTitle, savePreference } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'

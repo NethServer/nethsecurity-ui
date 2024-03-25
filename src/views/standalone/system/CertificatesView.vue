@@ -5,8 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle, NeInlineNotification, NeButton, NeSkeleton } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
+import {
+  NeTitle,
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CertificatesTable from '@/components/standalone/certificates/CertificatesTable.vue'

@@ -12,14 +12,12 @@ import {
   NeSkeleton,
   NeTooltip,
   NeButton,
-  NeFormItemLabel
-} from '@nethesis/vue-components'
-import {
-  NeTextArea,
-  getAxiosErrorMessage,
+  NeFormItemLabel,
   getPreference,
-  savePreference
-} from '@nethserver/vue-tailwind-lib'
+  savePreference,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
+import { NeTextArea } from '@nethserver/vue-tailwind-lib'
 import ConfigureTwoFaDrawer from './ConfigureTwoFaDrawer.vue'
 import RevokeTwoFaModal from './RevokeTwoFaModal.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'

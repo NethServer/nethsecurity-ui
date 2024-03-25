@@ -19,7 +19,7 @@ import 'chartjs-adapter-date-fns'
 import { Line } from 'vue-chartjs'
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
-import { formatDateLoc, kbpsFormat } from '@nethserver/vue-tailwind-lib'
+import { formatDateLoc, kbpsFormat } from '@nethesis/vue-components'
 import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
 
 const themeStore = useThemeStore()

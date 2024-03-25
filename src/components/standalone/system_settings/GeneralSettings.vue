@@ -14,9 +14,10 @@ import {
   NeInlineNotification,
   NeFormItemLabel,
   focusElement,
-  formatInTimeZoneLoc
+  formatInTimeZoneLoc,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, NeTextArea, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput, NeTextArea } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

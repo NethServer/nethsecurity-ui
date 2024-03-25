@@ -12,9 +12,10 @@ import {
   NeTitle,
   NeButton,
   NeInlineNotification,
-  NeSkeleton
+  NeSkeleton,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

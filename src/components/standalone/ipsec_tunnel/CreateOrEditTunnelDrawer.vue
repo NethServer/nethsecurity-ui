@@ -27,9 +27,10 @@ import {
   NeSkeleton,
   NeTooltip,
   NeRadioSelection,
-  NeFormItemLabel
+  NeFormItemLabel,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ubusCall } from '@/lib/standalone/ubus'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import NeCopyField from '../NeCopyField.vue'

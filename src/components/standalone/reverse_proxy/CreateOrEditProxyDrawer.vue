@@ -24,9 +24,10 @@ import {
   NeSkeleton,
   NeButton,
   NeTooltip,
-  NeRadioSelection
+  NeRadioSelection,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 

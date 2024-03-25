@@ -10,7 +10,10 @@ import {
   NeTitle,
   NeButton,
   focusElement,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  deleteFromStorage,
+  getStringFromStorage,
+  saveToStorage
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
@@ -18,11 +21,6 @@ import { onMounted, ref, watch } from 'vue'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
 import { getProductName, getCompanyName } from '@/lib/config'
-import {
-  deleteFromStorage,
-  getStringFromStorage,
-  saveToStorage
-} from '@nethserver/vue-tailwind-lib'
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
@@ -234,6 +232,7 @@ async function verifyOtp() {
                 :label="t('login.username')"
                 v-model.trim="username"
                 :invalidMessage="t(error.username)"
+                autocomplete="username"
                 ref="usernameRef"
               />
               <NeTextInput
@@ -243,6 +242,7 @@ async function verifyOtp() {
                 :showPasswordLabel="t('ne_text_input.show_password')"
                 :hidePasswordLabel="t('ne_text_input.hide_password')"
                 :invalidMessage="t(error.password)"
+                autocomplete="current-password"
                 ref="passwordRef"
               />
               <div class="flex items-center justify-between">

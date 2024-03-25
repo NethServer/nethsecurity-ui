@@ -4,9 +4,10 @@ import {
   type NeComboboxOption,
   NeTitle,
   NeInlineNotification,
-  NeTooltip
+  NeTooltip,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { getAxiosErrorMessage, NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

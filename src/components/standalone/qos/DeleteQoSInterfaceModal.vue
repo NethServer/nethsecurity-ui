@@ -7,8 +7,8 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification } from '@nethesis/vue-components'
-import { NeModal, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 
 const props = defineProps<{

@@ -15,9 +15,10 @@ import {
   NeButton,
   NeSideDrawer,
   NeSkeleton,
-  NeFormItemLabel
+  NeFormItemLabel,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal, getAxiosErrorMessage, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { validateFile, validateRequired } from '@/lib/validation'
 import { useTimer } from '@/composables/useTimer'
 import { uploadFile } from '@/lib/standalone/fileUpload'

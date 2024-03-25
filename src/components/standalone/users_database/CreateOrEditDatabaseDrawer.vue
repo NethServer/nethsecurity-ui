@@ -20,9 +20,10 @@ import {
   NeSideDrawer,
   NeTooltip,
   NeFormItemLabel,
-  NeRadioSelection
+  NeRadioSelection,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, NeToggle, getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import { debounce } from 'lodash-es'
 

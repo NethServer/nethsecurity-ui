@@ -6,8 +6,13 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateFile } from '@/lib/validation'
-import { NeFileInput, NeSideDrawer, NeButton, NeInlineNotification } from '@nethesis/vue-components'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeFileInput,
+  NeSideDrawer,
+  NeButton,
+  NeInlineNotification,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

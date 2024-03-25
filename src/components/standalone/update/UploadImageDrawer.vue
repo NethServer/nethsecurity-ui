@@ -7,8 +7,13 @@
 import { validateFile } from '@/lib/validation'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeFileInput, NeSideDrawer, NeInlineNotification, NeButton } from '@nethesis/vue-components'
-import { getAxiosErrorMessage } from '@nethserver/vue-tailwind-lib'
+import {
+  NeFileInput,
+  NeSideDrawer,
+  NeInlineNotification,
+  NeButton,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 

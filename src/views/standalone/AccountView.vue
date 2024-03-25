@@ -15,7 +15,6 @@ import { useLanguage } from '@/composables/useLanguage'
 const { t } = useI18n()
 const loginStore = useLoginStore()
 
-//TODO: test language switching on standalone mode
 const { uiLanguage, supportedLanguages } = useLanguage()
 </script>
 

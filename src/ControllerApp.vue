@@ -18,14 +18,12 @@ import { useDefaultsStore } from './stores/controller/defaults'
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
 const notificationsStore = useNotificationsStore()
-const defaultsStore = useDefaultsStore()
 
 const isLoaded = ref(false)
 
 onMounted(async () => {
   await loginStore.loadUserFromStorage()
   await loadI18n()
-  await defaultsStore.getDefaults()
   configureAxios()
   isLoaded.value = true
 })

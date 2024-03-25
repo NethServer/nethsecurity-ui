@@ -104,22 +104,6 @@ onMounted(() => {
         }}</NeButton></template
       >
     </FormLayout>
-    <hr />
-    <FormLayout
-      :title="t('controller.account_settings.two_factor_authentication')"
-      :description="t('controller.account_settings.two_factor_authentication_description')"
-    >
-      <div class="mb-4 flex flex-row gap-x-2">
-        <FontAwesomeIcon
-          :icon="['fas', 'circle-info']"
-          class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
-        />
-        <p>
-          {{ t('controller.account_settings.two_factor_authentication_disabled') }}
-        </p>
-      </div>
-      <NeButton kind="secondary">{{ t('controller.account_settings.configure_2fa') }}</NeButton>
-    </FormLayout>
   </div>
   <ChangePasswordDrawer
     :is-shown="showChangePasswordDrawer"

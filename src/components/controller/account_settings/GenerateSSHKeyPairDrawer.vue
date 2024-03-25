@@ -8,8 +8,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   MessageBag,
-  validatePassword,
   validateRequired,
+  validateSshKeyPassphrase,
   validateStringEqual
 } from '@/lib/validation'
 import { useAccountsStore } from '@/stores/controller/accounts'
@@ -75,8 +75,7 @@ function validate() {
   }
 
   if (passphrase.value != '' || confirmPassphrase.value != '') {
-    //TODO: validate string length instead of password
-    const passwordValidator = validateRequired(passphrase.value)
+    const passwordValidator = validateSshKeyPassphrase(passphrase.value)
     if (!passwordValidator.valid) {
       validationErrorBag.value.set('passphrase', [passwordValidator.errMessage as string])
       valid = false
@@ -155,6 +154,7 @@ watch(
         :label="t('controller.account_settings.new_passphrase')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
         :is-password="true"
+        :helper-text="t('controller.account_settings.minimum_characters')"
       >
         <template #tooltip>
           <NeTooltip>

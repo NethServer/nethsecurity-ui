@@ -140,6 +140,7 @@
     "password_uppercase_required": "Password must contain at least one uppercase letter",
     "password_number_required": "Password must contain at least one number",
     "password_special_character_required": "Password must contain at least one special character",
+    "passphrase_too_short": "Passphrase is too short",
     "invalid_equal": "Passwords don't match",
     "invalid_dns_forwarding": "Enter a valid IP address or DNS forwarding item",
     "user_not_found": "User not found",

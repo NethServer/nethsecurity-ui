@@ -122,6 +122,8 @@ async function performChangePassword() {
     error.value.notificationTitle = t('error.cannot_change_password')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    isSavingChanges.value = false
   }
 }
 

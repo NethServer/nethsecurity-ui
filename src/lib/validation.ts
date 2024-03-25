@@ -720,6 +720,14 @@ export const validateSixDigitCode = (value: String): validationOutput => {
   return { valid: true }
 }
 
+export const validateSshKeyPassphrase = (value: String): validationOutput => {
+  if (value.length < 8) {
+    return { valid: false, errMessage: 'error.passphrase_too_short' }
+  }
+
+  return { valid: true }
+}
+
 /**
  * Extends Map class to provide a name-array for errors
  */

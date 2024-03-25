@@ -80,8 +80,8 @@ export const useAccountsStore = defineStore('accounts', () => {
 
   const changePassword = async (oldPassword: string, newPassword: string) => {
     return (
-      await axios.post(
-        `${getControllerApiEndpoint()}/accounts/ssh-keys`,
+      await axios.put(
+        `${getControllerApiEndpoint()}/accounts/password`,
         { old_password: oldPassword, new_password: newPassword },
         {
           headers: {

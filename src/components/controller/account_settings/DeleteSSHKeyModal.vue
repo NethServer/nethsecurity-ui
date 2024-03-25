@@ -83,7 +83,9 @@ watch(
         @setExpanded="(ev: boolean) => (showUnits = ev)"
       >
         <ul>
-          <li v-for="unit in unitsStore.units" :key="unit.id">{{ unit.id }}</li>
+          <li class="list-inside list-disc" v-for="unit in unitsStore.units" :key="unit.id">
+            {{ unit.id }}
+          </li>
         </ul>
       </NeExpandable></template
     >

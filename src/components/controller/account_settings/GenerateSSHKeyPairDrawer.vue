@@ -24,13 +24,13 @@ import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
 
 const { t } = useI18n()
-const { changePassword } = useAccountsStore()
+const { generateSshKeys } = useAccountsStore()
 
 const props = defineProps<{
   isShown: boolean
 }>()
 
-const emit = defineEmits(['close', 'change-password'])
+const emit = defineEmits(['close', 'generate-key-pair'])
 
 const isSavingChanges = ref(false)
 const error = ref({
@@ -40,14 +40,12 @@ const error = ref({
 })
 const validationErrorBag = ref(new MessageBag())
 
-const oldPassword = ref('')
-const newPassword = ref('')
-const confirmPassword = ref('')
+const passphrase = ref('')
+const confirmPassphrase = ref('')
 
 function resetForm() {
-  oldPassword.value = ''
-  newPassword.value = ''
-  confirmPassword.value = ''
+  passphrase.value = ''
+  confirmPassphrase.value = ''
 }
 
 function close() {
@@ -62,37 +60,33 @@ function validate() {
   validationErrorBag.value.clear()
   let valid = true
 
-  const requiredOldPasswordValidator = validateRequired(oldPassword.value)
-  if (!requiredOldPasswordValidator.valid) {
-    validationErrorBag.value.set('old_password', [
-      requiredOldPasswordValidator.errMessage as string
-    ])
-    valid = false
-  }
-
-  const requiredPasswordValidator = validateRequired(newPassword.value)
+  const requiredPasswordValidator = validateRequired(passphrase.value)
   if (!requiredPasswordValidator.valid) {
-    validationErrorBag.value.set('new_password', [requiredPasswordValidator.errMessage as string])
+    validationErrorBag.value.set('passphrase', [requiredPasswordValidator.errMessage as string])
     valid = false
   }
 
-  const requiredConfirmPasswordValidator = validateRequired(newPassword.value)
+  const requiredConfirmPasswordValidator = validateRequired(passphrase.value)
   if (!requiredConfirmPasswordValidator.valid) {
-    validationErrorBag.value.set('confirm_password', [
+    validationErrorBag.value.set('confirm_passphrase', [
       requiredConfirmPasswordValidator.errMessage as string
     ])
     valid = false
   }
 
-  if (newPassword.value != '' || confirmPassword.value != '') {
-    const passwordValidator = validatePassword(newPassword.value)
+  if (passphrase.value != '' || confirmPassphrase.value != '') {
+    //TODO: validate string length instead of password
+    const passwordValidator = validateRequired(passphrase.value)
     if (!passwordValidator.valid) {
-      validationErrorBag.value.set('new_password', [passwordValidator.errMessage as string])
+      validationErrorBag.value.set('passphrase', [passwordValidator.errMessage as string])
       valid = false
     } else {
-      const confirmPasswordValidator = validateStringEqual(newPassword.value, confirmPassword.value)
+      const confirmPasswordValidator = validateStringEqual(
+        passphrase.value,
+        confirmPassphrase.value
+      )
       if (!confirmPasswordValidator.valid) {
-        validationErrorBag.value.set('confirm_password', [
+        validationErrorBag.value.set('confirm_passphrase', [
           confirmPasswordValidator.errMessage as string
         ])
         valid = false
@@ -114,14 +108,16 @@ async function performChangePassword() {
 
   isSavingChanges.value = true
   try {
-    await changePassword(oldPassword.value, newPassword.value)
+    await generateSshKeys(passphrase.value)
 
-    emit('change-password')
+    emit('generate-key-pair')
     close()
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_change_password')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    isSavingChanges.value = false
   }
 }
 
@@ -140,7 +136,7 @@ watch(
     :is-shown="isShown"
     @close="close()"
     :closeAriaLabel="t('common.shell.close_side_drawer')"
-    :title="t('controller.account_settings.change_password')"
+    :title="t('controller.account_settings.generate_ssh_key_pair')"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -155,46 +151,25 @@ watch(
     </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
-        v-model="oldPassword"
-        :label="t('controller.account_settings.old_password')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('old_password'))"
-        :is-password="true"
-      />
-      <NeTextInput
-        v-model="newPassword"
-        :label="t('controller.account_settings.new_password')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('new_password'))"
+        v-model="passphrase"
+        :label="t('controller.account_settings.new_passphrase')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
         :is-password="true"
       >
         <template #tooltip>
           <NeTooltip>
             <template #content>
-              {{ t('controller.account_settings.new_password_tooltip') }}
+              {{ t('controller.account_settings.new_passphrase_tooltip') }}
             </template>
           </NeTooltip>
         </template>
       </NeTextInput>
-      <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
-        <li>{{ t('controller.account_settings.password_suggestion_1') }}</li>
-        <li>{{ t('controller.account_settings.password_suggestion_2') }}</li>
-        <li>{{ t('controller.account_settings.password_suggestion_3') }}</li>
-        <li>{{ t('controller.account_settings.password_suggestion_4') }}</li>
-        <li>{{ t('controller.account_settings.password_suggestion_5') }}</li>
-      </ul>
       <NeTextInput
-        v-model="confirmPassword"
-        :label="t('controller.account_settings.confirm_password')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_password'))"
+        v-model="confirmPassphrase"
+        :label="t('controller.account_settings.confirm_passphrase')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_passphrase'))"
         :is-password="true"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('controller.account_settings.confirm_password_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template></NeTextInput
-      >
+      />
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
@@ -203,7 +178,7 @@ watch(
           @click="performChangePassword()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
-          >{{ t('common.save') }}</NeButton
+          >{{ t('controller.account_settings.generate_key') }}</NeButton
         >
       </div>
     </div></NeSideDrawer

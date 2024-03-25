@@ -315,7 +315,8 @@
     "cannot_retrieve_ssh_keys": "Cannot retrieve SSH keys",
     "cannot_retrieve_websocket_id": "Cannot retrieve websocket ID",
     "cannot_retrieve_defaults": "Cannot retrieve defaults",
-    "cannot_change_password": "Cannot change password"
+    "cannot_change_password": "Cannot change password",
+    "cannot_delete_ssh_key": "Cannot delete SSH key"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1809,6 +1810,7 @@
       "confirm_passphrase": "Confirm passphrase",
       "generate_key": "Generate key",
       "ssh_key_generated": "SSH key generated",
+      "ssh_key_removed": "SSH key removed",
       "passphrase_enabled": "Passphrase enabled",
       "ssh_public_key": "SSH public key",
       "remove_key": "Remove key",

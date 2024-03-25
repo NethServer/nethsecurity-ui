@@ -45,7 +45,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         }
       })
 
-      sshKeys.value = res.data
+      sshKeys.value = res.data.data
     } catch (err: any) {
       listSshKeysError.value.notificationDescription = t(getAxiosErrorMessage(err))
       listSshKeysError.value.notificationDetails = err.toString()

@@ -13,7 +13,6 @@ import { getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/common/notifications'
-import { useDefaultsStore } from './stores/controller/defaults'
 
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })

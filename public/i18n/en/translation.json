@@ -312,7 +312,8 @@
     "cannot_upload_backup": "Cannot upload backup",
     "cannot_retrieve_xsrf_token": "Cannot retrieve XSRF token",
     "cannot_retrieve_ssh_keys": "Cannot retrieve SSH keys",
-    "cannot_retrieve_websocket_id": "Cannot retrieve websocket ID"
+    "cannot_retrieve_websocket_id": "Cannot retrieve websocket ID",
+    "cannot_retrieve_defaults": "Cannot retrieve defaults"
   },
   "ne_text_input": {
     "show_password": "Show password",

@@ -43,12 +43,16 @@ export async function getWebsocketId(payload: SshConnectionPayload) {
   formData.append('term', payload.term)
   formData.append('_xsrf', payload._xsrf)
 
-  const res = await axios.post(`${defaultsStore.fqdn}${defaultsStore.websshPath}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
-    withCredentials: true
-  })
+  const res = await axios.post(
+    `https://${defaultsStore.fqdn}${defaultsStore.websshPath}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      withCredentials: true
+    }
+  )
 
   if (res.data.status?.includes('Authentication failed')) {
     // API returns 200 in case of auth error, let's manually raise a 401 error

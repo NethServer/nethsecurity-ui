@@ -10,7 +10,6 @@ import { getControllerApiEndpoint } from '../../lib/config'
 import { useRouter } from 'vue-router'
 import { getControllerRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
-import { useDefaultsStore } from './defaults'
 
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
@@ -32,8 +31,6 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   }
 
   const login = async (user: string, password: string) => {
-    const defaultsStore = useDefaultsStore()
-
     const res = await axios.post(`${getControllerApiEndpoint()}/login`, {
       username: user,
       password

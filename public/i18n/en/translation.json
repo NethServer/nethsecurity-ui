@@ -314,7 +314,8 @@
     "cannot_retrieve_xsrf_token": "Cannot retrieve XSRF token",
     "cannot_retrieve_ssh_keys": "Cannot retrieve SSH keys",
     "cannot_retrieve_websocket_id": "Cannot retrieve websocket ID",
-    "cannot_retrieve_defaults": "Cannot retrieve defaults"
+    "cannot_retrieve_defaults": "Cannot retrieve defaults",
+    "cannot_change_password": "Cannot change password"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1795,8 +1796,6 @@
       "ui_language": "User interface language",
       "change_language": "Change language",
       "change_password_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat, turpis sed facilisis",
-      "change_password_in_nethserver": "Change password in NethServer 8",
-      "change_password_in_nethserver_description": "Controller super-administrator can change their password on NethServer 8. Access your NS8 cluster admin UI, open NethSecurity Controller app and go to Settings page.",
       "ssh_key": "SSH key",
       "ssh_key_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat, turpis sed facilisis",
       "two_factor_authentication": "Two-factor authentication",
@@ -1815,7 +1814,17 @@
       "remove_key": "Remove key",
       "remove_key_description": "Remove private key will also remove all public keys for the connected units.",
       "view_unit_list": "View unit list",
-      "password_changed": "Password changed"
+      "password_changed": "Password changed",
+      "new_password": "New password",
+      "new_password_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat, turpis sed facilisis",
+      "confirm_password": "Confirm password",
+      "confirm_password_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat, turpis sed facilisis",
+      "password_suggestion_1": "Minimum 8 characters",
+      "password_suggestion_2": "At least one uppercase (A-Z)",
+      "password_suggestion_3": "At least one lowercase (a-z)",
+      "password_suggestion_4": "At least one number (0-9)",
+      "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
+      "old_password": "Old password"
     }
   },
   "notifications": {

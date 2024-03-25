@@ -78,6 +78,20 @@ export const useAccountsStore = defineStore('accounts', () => {
     ).data as { key_pub: string }
   }
 
+  const changePassword = async (oldPassword: string, newPassword: string) => {
+    return (
+      await axios.post(
+        `${getControllerApiEndpoint()}/accounts/ssh-keys`,
+        { old_password: oldPassword, new_password: newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${controllerLoginStore.token}`
+          }
+        }
+      )
+    ).data as { key_pub: string }
+  }
+
   return {
     sshKeys,
     accounts,
@@ -85,6 +99,9 @@ export const useAccountsStore = defineStore('accounts', () => {
     listAccountsError,
     listSshKeysLoading,
     listSshKeysError,
-    loadSshKeys
+    loadSshKeys,
+    generateSshKeys,
+    deleteSshKeys,
+    changePassword
   }
 })

@@ -9,15 +9,18 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { NeCombobox } from '@nethserver/vue-tailwind-lib'
 import { NeButton } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAccountsStore } from '@/stores/controller/accounts'
 import { useLanguage } from '@/composables/useLanguage'
+import ChangePasswordDrawer from '@/components/controller/account_settings/ChangePasswordDrawer.vue'
 
 const { t } = useI18n()
 
 const { sshKeys, loadSshKeys } = useAccountsStore()
 
 const { uiLanguage, supportedLanguages } = useLanguage()
+
+const showChangePasswordDrawer = ref(false)
 
 onMounted(() => {
   loadSshKeys()
@@ -43,7 +46,9 @@ onMounted(() => {
       :title="t('controller.account_settings.change_password')"
       :description="t('controller.account_settings.change_password_description')"
     >
-      <NeButton kind="secondary">{{ t('controller.account_settings.change_password') }}</NeButton>
+      <NeButton kind="secondary" @click="showChangePasswordDrawer = true">{{
+        t('controller.account_settings.change_password')
+      }}</NeButton>
     </FormLayout>
     <hr />
     <FormLayout
@@ -74,4 +79,13 @@ onMounted(() => {
       <NeButton kind="secondary">{{ t('controller.account_settings.configure_2fa') }}</NeButton>
     </FormLayout>
   </div>
+  <ChangePasswordDrawer
+    :is-shown="showChangePasswordDrawer"
+    @close="
+      () => {
+        showChangePasswordDrawer = false
+        //TODO: show notification
+      }
+    "
+  />
 </template>

@@ -79,7 +79,7 @@ watch(
       ><p class="mb-2">{{ t('controller.account_settings.remove_key_description') }}</p>
       <NeExpandable
         v-if="unitsStore.units.length > 0"
-        :label="t('controller.account_settings.view_unit_list')"
+        :label="t('controller.account_settings.show_unit_list')"
         :isExpanded="showUnits"
         @setExpanded="(ev: boolean) => (showUnits = ev)"
       >

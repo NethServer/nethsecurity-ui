@@ -18,7 +18,8 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
-  NeTooltip
+  NeTooltip,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
@@ -43,6 +44,9 @@ const validationErrorBag = ref(new MessageBag())
 const passphrase = ref('')
 const confirmPassphrase = ref('')
 
+const passphraseRef = ref()
+const confirmPassphraseRef = ref()
+
 function resetForm() {
   passphrase.value = ''
   confirmPassphrase.value = ''
@@ -60,35 +64,47 @@ function validate() {
   validationErrorBag.value.clear()
   let valid = true
 
-  const requiredPasswordValidator = validateRequired(passphrase.value)
-  if (!requiredPasswordValidator.valid) {
-    validationErrorBag.value.set('passphrase', [requiredPasswordValidator.errMessage as string])
-    valid = false
+  const requiredPassphraseValidator = validateRequired(passphrase.value)
+  if (!requiredPassphraseValidator.valid) {
+    validationErrorBag.value.set('passphrase', [requiredPassphraseValidator.errMessage as string])
+    if (valid) {
+      focusElement(passphraseRef)
+      valid = false
+    }
   }
 
-  const requiredConfirmPasswordValidator = validateRequired(passphrase.value)
-  if (!requiredConfirmPasswordValidator.valid) {
+  const requiredConfirmPassphraseValidator = validateRequired(confirmPassphrase.value)
+  if (!requiredConfirmPassphraseValidator.valid) {
     validationErrorBag.value.set('confirm_passphrase', [
-      requiredConfirmPasswordValidator.errMessage as string
+      requiredConfirmPassphraseValidator.errMessage as string
     ])
-    valid = false
+    if (valid) {
+      focusElement(confirmPassphraseRef)
+      valid = false
+    }
   }
 
   if (passphrase.value != '' || confirmPassphrase.value != '') {
-    const passwordValidator = validateSshKeyPassphrase(passphrase.value)
-    if (!passwordValidator.valid) {
-      validationErrorBag.value.set('passphrase', [passwordValidator.errMessage as string])
-      valid = false
+    const passphraseFormatValidator = validateSshKeyPassphrase(passphrase.value)
+    if (!passphraseFormatValidator.valid) {
+      validationErrorBag.value.set('passphrase', [passphraseFormatValidator.errMessage as string])
+      if (valid) {
+        focusElement(passphraseRef)
+        valid = false
+      }
     } else {
-      const confirmPasswordValidator = validateStringEqual(
+      const confirmPassphraseEqualValidator = validateStringEqual(
         passphrase.value,
         confirmPassphrase.value
       )
-      if (!confirmPasswordValidator.valid) {
+      if (!confirmPassphraseEqualValidator.valid) {
         validationErrorBag.value.set('confirm_passphrase', [
-          confirmPasswordValidator.errMessage as string
+          confirmPassphraseEqualValidator.errMessage as string
         ])
-        valid = false
+        if (valid) {
+          focusElement(confirmPassphraseRef)
+          valid = false
+        }
       }
     }
   }
@@ -155,6 +171,7 @@ watch(
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
         :is-password="true"
         :helper-text="t('controller.account_settings.minimum_characters')"
+        ref="passphraseRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -169,6 +186,7 @@ watch(
         :label="t('controller.account_settings.confirm_passphrase')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_passphrase'))"
         :is-password="true"
+        ref="confirmPassphraseRef"
       />
       <hr />
       <div class="flex justify-end">

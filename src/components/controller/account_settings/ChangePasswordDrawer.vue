@@ -17,7 +17,8 @@ import {
   getAxiosErrorMessage,
   NeInlineNotification,
   NeSideDrawer,
-  NeButton
+  NeButton,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
@@ -43,6 +44,10 @@ const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 
+const oldPasswordRef = ref()
+const newPasswordRef = ref()
+const confirmPasswordRef = ref()
+
 function resetForm() {
   oldPassword.value = ''
   newPassword.value = ''
@@ -60,19 +65,24 @@ function close() {
 function validate() {
   validationErrorBag.value.clear()
   let valid = true
-
   const requiredOldPasswordValidator = validateRequired(oldPassword.value)
   if (!requiredOldPasswordValidator.valid) {
     validationErrorBag.value.set('old_password', [
       requiredOldPasswordValidator.errMessage as string
     ])
-    valid = false
+    if (valid) {
+      focusElement(oldPasswordRef)
+      valid = false
+    }
   }
 
   const requiredPasswordValidator = validateRequired(newPassword.value)
   if (!requiredPasswordValidator.valid) {
     validationErrorBag.value.set('new_password', [requiredPasswordValidator.errMessage as string])
-    valid = false
+    if (valid) {
+      focusElement(newPasswordRef)
+      valid = false
+    }
   }
 
   const requiredConfirmPasswordValidator = validateRequired(newPassword.value)
@@ -80,21 +90,30 @@ function validate() {
     validationErrorBag.value.set('confirm_password', [
       requiredConfirmPasswordValidator.errMessage as string
     ])
-    valid = false
+    if (valid) {
+      focusElement(confirmPasswordRef)
+      valid = false
+    }
   }
 
   if (newPassword.value != '' || confirmPassword.value != '') {
     const passwordValidator = validatePassword(newPassword.value)
     if (!passwordValidator.valid) {
       validationErrorBag.value.set('new_password', [passwordValidator.errMessage as string])
-      valid = false
+      if (valid) {
+        focusElement(newPasswordRef)
+        valid = false
+      }
     } else {
       const confirmPasswordValidator = validateStringEqual(newPassword.value, confirmPassword.value)
       if (!confirmPasswordValidator.valid) {
         validationErrorBag.value.set('confirm_password', [
           confirmPasswordValidator.errMessage as string
         ])
-        valid = false
+        if (valid) {
+          focusElement(confirmPasswordRef)
+          valid = false
+        }
       }
     }
   }
@@ -160,12 +179,14 @@ watch(
         :label="t('controller.account_settings.current_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('old_password'))"
         :is-password="true"
+        ref="oldPasswordRef"
       />
       <NeTextInput
         v-model="newPassword"
         :label="t('controller.account_settings.new_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('new_password'))"
         :is-password="true"
+        ref="newPasswordRef"
       />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.account_settings.password_suggestion_1') }}</li>
@@ -179,6 +200,7 @@ watch(
         :label="t('controller.account_settings.confirm_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_password'))"
         :is-password="true"
+        ref="confirmPasswordRef"
       />
       <hr />
       <div class="flex justify-end">

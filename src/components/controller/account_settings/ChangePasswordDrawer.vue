@@ -167,15 +167,7 @@ watch(
         :label="t('controller.account_settings.new_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('new_password'))"
         :is-password="true"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('controller.account_settings.new_password_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
+      />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.account_settings.password_suggestion_1') }}</li>
         <li>{{ t('controller.account_settings.password_suggestion_2') }}</li>
@@ -188,15 +180,7 @@ watch(
         :label="t('controller.account_settings.confirm_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_password'))"
         :is-password="true"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('controller.account_settings.confirm_password_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template></NeTextInput
-      >
+      />
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>

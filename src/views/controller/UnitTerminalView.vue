@@ -9,7 +9,13 @@ import { useRoute } from 'vue-router'
 import { Terminal } from '@xterm/xterm'
 import { AttachAddon } from '@xterm/addon-attach'
 import { useI18n } from 'vue-i18n'
-import { NeBadge, NeInlineNotification, NeTitle } from '@nethesis/vue-components'
+import {
+  NeBadge,
+  NeInlineNotification,
+  NeSkeleton,
+  NeTitle,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useDefaultsStore } from '@/stores/controller/defaults'
 
@@ -25,6 +31,14 @@ const unitName = ref('')
 const websocketId = ref('')
 const connectionStatus = ref<ConnectionStatus>('pending')
 
+let loading = ref({
+  getDefaults: false
+})
+
+let error = ref({
+  getDefaults: ''
+})
+
 onMounted(() => {
   // load xterm.js
   const xtermScript = document.createElement('script')
@@ -33,10 +47,25 @@ onMounted(() => {
 
   unitName.value = route.query.unitName as string
   websocketId.value = route.query.websocketId as string
+  getDefaults()
+})
 
-  // connect to websocket
+async function getDefaults() {
+  loading.value.getDefaults = true
+
+  try {
+    await defaultsStore.getDefaults()
+    connectWebSocket()
+  } catch (err: any) {
+    error.value.getDefaults = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.getDefaults = false
+  }
+}
+
+function connectWebSocket() {
   webSocket.value = new WebSocket(
-    `wss://${defaultsStore.fqdn}${defaultsStore.websshPath}/ws?id=${websocketId.value}`
+    `wss://${defaultsStore.fqdn}${defaultsStore.websshPath}ws?id=${websocketId.value}`
   )
 
   webSocket.value.onopen = () => {
@@ -57,7 +86,7 @@ onMounted(() => {
     console.log('WebSocket connection closed:', event.code, event)
     connectionStatus.value = 'closed'
   }
-})
+}
 
 function initTerminal() {
   term.value = new Terminal()
@@ -114,9 +143,17 @@ function getBadgeIcon() {
           :icon="getBadgeIcon()"
         />
       </div>
-      <div>
+      <NeSkeleton v-if="loading.getDefaults" :lines="2" size="lg" />
+      <div v-else>
         {{ t('controller.unit_terminal.exit_terminal_description') }}
       </div>
+      <!-- getDefaults error notification -->
+      <NeInlineNotification
+        v-if="error.getDefaults"
+        kind="error"
+        :title="t('error.cannot_retrieve_defaults')"
+        :description="error.getDefaults"
+      />
       <!-- connection error/closed notification -->
       <NeInlineNotification
         v-if="['error', 'closed'].includes(connectionStatus)"

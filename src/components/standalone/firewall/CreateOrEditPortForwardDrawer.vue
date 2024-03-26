@@ -31,10 +31,12 @@ import {
   MessageBag,
   validateIpAddress,
   validateRequired,
-  validatePort,
   validateRequiredOption,
   type validationOutput,
-  validateIpOrCidr
+  validateIpOrCidr,
+  validatePortRange,
+  validateAnyOf,
+  validatePort
 } from '@/lib/validation'
 
 const props = defineProps<{
@@ -255,12 +257,26 @@ function validate(): boolean {
       [
         // if destination port is present, source port is required
         destinationPort.value ? validateRequired(sourcePort.value) : { valid: true },
-        sourcePort.value ? validatePort(sourcePort.value) : { valid: true }
+        sourcePort.value
+          ? validateAnyOf(
+              [validatePort, validatePortRange],
+              sourcePort.value,
+              t('error.invalid_port_or_port_range')
+            )
+          : { valid: true }
       ],
       'sourcePort'
     ],
     [
-      [destinationPort.value ? validatePort(destinationPort.value) : { valid: true }],
+      [
+        destinationPort.value
+          ? validateAnyOf(
+              [validatePort, validatePortRange],
+              destinationPort.value,
+              t('error.invalid_port_or_port_range')
+            )
+          : { valid: true }
+      ],
       'destinationPort'
     ]
   ]
@@ -400,8 +416,15 @@ async function createOrEditPortForward() {
         :optional="true"
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
-        type="number"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.port_forward.source_port_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         :label="t('standalone.port_forward.destination_address')"
         v-model="destinationIP"
@@ -423,7 +446,6 @@ async function createOrEditPortForward() {
         :optional="true"
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
-        type="number"
       >
         <template #tooltip
           ><NeTooltip

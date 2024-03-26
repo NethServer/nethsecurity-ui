@@ -371,7 +371,7 @@ export const validateVlanId = (value: String): validationOutput => {
 }
 
 export function validatePort(value: string, minPort = 1, maxPort = 65535): validationOutput {
-  const port = Number.parseInt(value)
+  const port = +value
 
   if (Number.isNaN(port) || port < minPort || port > maxPort) {
     return { valid: false, errMessage: 'error.invalid_port' }

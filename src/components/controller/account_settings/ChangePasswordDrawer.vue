@@ -85,7 +85,7 @@ function validate() {
     }
   }
 
-  const requiredConfirmPasswordValidator = validateRequired(newPassword.value)
+  const requiredConfirmPasswordValidator = validateRequired(confirmPassword.value)
   if (!requiredConfirmPasswordValidator.valid) {
     validationErrorBag.value.set('confirm_password', [
       requiredConfirmPasswordValidator.errMessage as string

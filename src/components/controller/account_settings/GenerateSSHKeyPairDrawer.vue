@@ -112,7 +112,7 @@ async function performChangePassword() {
     emit('generate-key-pair')
     close()
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_change_password')
+    error.value.notificationTitle = t('error.cannot_generate_ssh_key_pair')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {

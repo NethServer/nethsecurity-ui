@@ -17,8 +17,7 @@ import {
   getAxiosErrorMessage,
   NeInlineNotification,
   NeSideDrawer,
-  NeButton,
-  NeTooltip
+  NeButton
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'

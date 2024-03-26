@@ -495,6 +495,7 @@ function validate() {
               isValidationOk = false
               focusElement(sourceAddressesRef)
             }
+            break
           }
         }
       }
@@ -524,16 +525,21 @@ function validate() {
         const ipCidrValidation = validateIpCidr(destinationAddress.id)
 
         if (!ipCidrValidation.valid) {
-          errorBag.value.set('dest_ip', [
-            t('standalone.firewall_rules.invalid_destination_address_value', {
-              value: destinationAddress.id
-            })
-          ])
-          if (isValidationOk) {
-            isValidationOk = false
-            focusElement(destinationAddressesRef)
+          // check if it's an ipv4 or ipv6 address range
+          const ipRangeValidation = validateIpAddressRange(destinationAddress.id)
+
+          if (!ipRangeValidation.valid) {
+            errorBag.value.set('dest_ip', [
+              t('standalone.firewall_rules.invalid_destination_address_value', {
+                value: destinationAddress.id
+              })
+            ])
+            if (isValidationOk) {
+              isValidationOk = false
+              focusElement(destinationAddressesRef)
+            }
+            break
           }
-          break
         }
       }
     }

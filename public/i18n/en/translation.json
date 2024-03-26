@@ -1827,7 +1827,7 @@
       "password_suggestion_3": "At least one lowercase (a-z)",
       "password_suggestion_4": "At least one number (0-9)",
       "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
-      "old_password": "Old password"
+      "current_password": "Current password"
     }
   },
   "notifications": {

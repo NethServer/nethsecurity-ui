@@ -78,13 +78,14 @@ watch(
     <template v-else
       ><p class="mb-2">{{ t('controller.account_settings.remove_key_description') }}</p>
       <NeExpandable
+        v-if="unitsStore.units.length > 0"
         :label="t('controller.account_settings.view_unit_list')"
         :isExpanded="showUnits"
         @setExpanded="(ev: boolean) => (showUnits = ev)"
       >
         <ul>
           <li class="list-inside list-disc" v-for="unit in unitsStore.units" :key="unit.id">
-            {{ unit.id }}
+            {{ unit.info.unit_name ? `${unit.info.unit_name} (${unit.id})` : unit.id }}
           </li>
         </ul>
       </NeExpandable></template

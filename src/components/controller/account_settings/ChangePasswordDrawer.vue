@@ -158,7 +158,7 @@ watch(
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="oldPassword"
-        :label="t('controller.account_settings.old_password')"
+        :label="t('controller.account_settings.current_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('old_password'))"
         :is-password="true"
       />

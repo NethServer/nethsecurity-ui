@@ -52,27 +52,24 @@ export const getControllerApiEndpoint = () => {
   }
 }
 
-export const getUnitManagementApiEndpoint = () => {
-  const unitManagementStore = useUnitsStore()
+export const getUnitManagementApiEndpoint = (unitId?: string) => {
+  const unitsStore = useUnitsStore()
+  // in case of "Open unit" unitsStore.unitId is used
+  const currentUnitId = unitId || unitsStore.unitId
 
   if (import.meta.env.DEV) {
     // controller development environment
 
     const apiScheme = import.meta.env.VITE_API_SCHEME
     const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
-
-    // include unit name in endpoint
-    const unitId = unitManagementStore.unitId
-    return `${apiScheme}://${controllerApiHost}/${unitId}/api`
+    return `${apiScheme}://${controllerApiHost}/${currentUnitId}/api`
   } else {
-    // include unit name in endpoint
-    const unitId = unitManagementStore.unitId
     return (
       window.location.protocol +
       '//' +
       window.location.hostname +
       (window.location.port ? ':' + window.location.port : '') +
-      `/${unitId}/api`
+      `/${currentUnitId}/api`
     )
   }
 }

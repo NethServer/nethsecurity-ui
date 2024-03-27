@@ -11,6 +11,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, getJsonFromStorage, saveToStorage } from '@nethesis/vue-components'
 import { isEmpty } from 'lodash-es'
+import { jwtDecode } from 'jwt-decode'
 
 export interface Unit {
   id: string
@@ -128,7 +129,7 @@ export const useUnitsStore = defineStore('units', () => {
     return res.data.data.join_code
   }
 
-  const manageUnit = async (unit: string) => {
+  const retrieveAndSaveUnitToken = async (unit: string) => {
     const token = await getUnitToken(unit)
     unitToken.value = token
     unitId.value = unit
@@ -138,6 +139,30 @@ export const useUnitsStore = defineStore('units', () => {
       token
     }
     saveToStorage(`unit-${unit}`, unitLoginInfo)
+  }
+
+  const checkUnitToken = async (unitId: string) => {
+    const unitsStore = useUnitsStore()
+
+    // check if unit token is already in local storage
+    const loginInfo = getJsonFromStorage(`unit-${unitId}`)
+
+    if (loginInfo) {
+      // check if token is still valid
+      const tokenDecoded: any = jwtDecode(loginInfo.token)
+      const tokenExpirationMillis = tokenDecoded.exp * 1000
+
+      if (tokenExpirationMillis > Date.now()) {
+        // unit token is still valid
+        return loginInfo.token
+      } else {
+        // unit token has expired, let's retrieve a new one
+        await unitsStore.retrieveAndSaveUnitToken(unitId)
+      }
+    } else {
+      // unit token is not in local storage, let's retrieve it
+      await unitsStore.retrieveAndSaveUnitToken(unitId)
+    }
   }
 
   const getUnitToken = async (unit: string) => {
@@ -163,7 +188,8 @@ export const useUnitsStore = defineStore('units', () => {
     unitId,
     load,
     addUnit,
-    manageUnit,
+    retrieveAndSaveUnitToken,
+    checkUnitToken,
     removeUnit,
     loadingListUnits,
     errorListUnits,

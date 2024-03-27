@@ -278,7 +278,7 @@ function deleteKey() {
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'plus']" aria-hidden="true" />
         </template>
-        Add Key
+        {{ t('standalone.ssh.ssh_keys.add_key_button') }}
       </NeButton>
     </form>
   </FormLayout>

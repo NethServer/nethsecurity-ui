@@ -18,8 +18,5 @@ export async function getSshKeys() {
       Authorization: `Bearer ${loginStore.token}`
     }
   })
-
-  console.log('getSshKeys', res.data) ////
-
   return res.data
 }

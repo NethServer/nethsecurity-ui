@@ -14,8 +14,10 @@ import WanTrafficCard from '@/components/standalone/dashboard/WanTrafficCard.vue
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
+const route = useRoute()
 const {
   clientsLabels,
   clientsDatasets,
@@ -29,7 +31,7 @@ const {
 } = useTrafficSummary()
 
 function goToMultiwan() {
-  router.push(`${getStandaloneRoutePrefix()}/network/multi-wan`)
+  router.push(`${getStandaloneRoutePrefix(route)}/network/multi-wan`)
 }
 </script>
 

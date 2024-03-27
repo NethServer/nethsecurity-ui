@@ -318,7 +318,9 @@
     "cannot_retrieve_defaults": "Cannot retrieve defaults",
     "cannot_change_password": "Cannot change password",
     "cannot_delete_ssh_key": "Cannot delete SSH key",
-    "cannot_generate_ssh_key_pair": "Cannot generate SSH key pair"
+    "cannot_generate_ssh_key_pair": "Cannot generate SSH key pair",
+    "cannot_retrieve_unit_ssh_port": "Cannot retrieve unit SSH port",
+    "cannot_open_unit": "Cannot open unit"
   },
   "ne_text_input": {
     "show_password": "Show password",

@@ -20,7 +20,7 @@ import { useNotificationsStore } from './stores/common/notifications'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()
-const unitManagementStore = useUnitsStore()
+const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
 
@@ -32,7 +32,7 @@ onMounted(async () => {
     await loadI18n()
   } else {
     // a controller is managing this unit
-    await unitManagementStore.load()
+    await unitsStore.load()
   }
   configureAxios()
 
@@ -117,8 +117,8 @@ function configureAxios() {
           // a controller is managing this unit
           console.warn('[interceptor]', 'Detected error 401, getting a new token for this unit')
           const route = useRoute()
-          const unitName = route.params.unitName
-          unitManagementStore.manageUnit(unitName as string)
+          const unitId = route.params.unitId
+          unitsStore.retrieveAndSaveUnitToken(unitId as string)
           //// page refresh needed?
         }
       } else {

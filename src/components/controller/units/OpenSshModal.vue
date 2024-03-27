@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import type { Unit } from '@/stores/controller/units'
 import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
-import { ref, watch, type PropType, computed } from 'vue'
+import { ref, watch, type PropType, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getSshKeys, type SshKey } from '@/lib/controller/sshKeys'
 import { getXsrfToken, getWebsocketId, type SshConnectionPayload } from '@/lib/controller/webssh'
@@ -14,10 +14,13 @@ import {
   NeInlineNotification,
   NeSkeleton,
   focusElement,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  getPreference,
+  savePreference
 } from '@nethesis/vue-components'
 import router from '@/router'
 import { getUciConfigFromController } from '@/lib/standalone/ubus'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 const props = defineProps({
   visible: {
@@ -33,12 +36,14 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const { t } = useI18n()
+const loginStore = useLoginStore()
 const sshKeys = ref<SshKey>()
 const xsrfToken = ref('')
 const unitUsername = ref('root')
 const unitPassword = ref('')
 const unitSshPort = ref(22)
 const websocketId = ref('')
+const hideOpenSshPopupsTooltip = ref(false)
 const unitUsernameRef = ref()
 const unitPasswordRef = ref()
 
@@ -84,6 +89,15 @@ watch(
     }
   }
 )
+
+onMounted(() => {
+  hideOpenSshPopupsTooltip.value = getPreference('hideOpenSshPopupsTooltip', loginStore.username)
+})
+
+function dontShowAgainHideOpenSshPopupsTooltip() {
+  hideOpenSshPopupsTooltip.value = true
+  savePreference('hideOpenSshPopupsTooltip', true, loginStore.username)
+}
 
 function clearErrors() {
   for (const key of Object.keys(error.value)) {
@@ -217,9 +231,12 @@ async function retrieveWebsocketId() {
   >
     <div class="space-y-6">
       <NeInlineNotification
+        v-if="!hideOpenSshPopupsTooltip"
         kind="info"
         :title="t('controller.units.popup_permission_title')"
         :description="t('controller.units.popup_permission_description')"
+        :secondaryButtonLabel="t('common.dont_show_again')"
+        @secondaryClick="dontShowAgainHideOpenSshPopupsTooltip"
         :closeAriaLabel="t('common.close')"
       />
       <!-- getXsrfToken error modal -->

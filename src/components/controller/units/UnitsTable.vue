@@ -230,7 +230,7 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
                 </div>
                 <!-- link with inverted theme -->
                 <NeLink
-                  @click="dontShowAgainHideOpenUnitPopupsTooltip()"
+                  @click="dontShowAgainHideOpenUnitPopupsTooltip"
                   class="mt-2 inline-block text-primary-300 hover:text-primary-200 dark:text-primary-700 dark:hover:text-primary-800"
                 >
                   {{ t('common.dont_show_again') }}

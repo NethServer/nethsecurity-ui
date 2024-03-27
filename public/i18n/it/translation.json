@@ -1,14 +1,14 @@
 {
   "common": {
     "save": "Salva",
-    "cancel": "Annulla",
+    "cancel": "Cancel",
     "show_password": "Mostra password",
     "hide_password": "Nascondi password",
     "search": "Ricerca",
     "help": "Aiuto",
     "optional": "Opzionale",
-    "close": "Chiudi",
-    "edit": "Modifica",
+    "close": "Close",
+    "edit": "Edit",
     "delete": "Elimina",
     "advanced_settings": "Impostazioni avanzate",
     "filter": "Filtro",

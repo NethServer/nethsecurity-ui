@@ -1776,7 +1776,7 @@
       "add_unit_step_4": "The unit will appear in 'Unit manager' page",
       "unit_username": "Unit username",
       "unit_password": "Password",
-      "popup_permission_title": "Some browsers need permission to open popups",
+      "popup_permission_title": "Your browser might need the permission to open popups",
       "popup_permission_description": "To open the SSH terminal, you might need to allow popups for this site.",
       "auth_error": "Authentication error",
       "auth_error_description": "Incorrect username or password",

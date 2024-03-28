@@ -8,7 +8,6 @@ import type { Unit } from '@/stores/controller/units'
 import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type PropType, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getSshKeys, type SshKey } from '@/lib/controller/sshKeys'
 import { getXsrfToken, getWebsocketId, type SshConnectionPayload } from '@/lib/controller/webssh'
 import {
   NeInlineNotification,
@@ -19,7 +18,6 @@ import {
   savePreference
 } from '@nethesis/vue-components'
 import router from '@/router'
-import { getUciConfigFromController } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 const props = defineProps({
@@ -37,11 +35,9 @@ const emit = defineEmits(['close'])
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
-const sshKeys = ref<SshKey>()
 const xsrfToken = ref('')
 const unitUsername = ref('root')
 const unitPassword = ref('')
-const unitSshPort = ref(22)
 const websocketId = ref('')
 const hideOpenSshPopupsTooltip = ref(false)
 const unitUsernameRef = ref()
@@ -49,23 +45,19 @@ const unitPasswordRef = ref()
 
 let loading = ref({
   getXsrfToken: false,
-  getSshKeys: false,
-  getWebsocketId: false,
-  retrieveUnitSshPort: false
+  getWebsocketId: false
 })
 
 let error = ref({
   unitUsername: '',
   unitPassword: '',
   getXsrfToken: '',
-  getSshKeys: '',
   getWebsocketId: '',
-  retrieveUnitSshPort: '',
   authError: ''
 })
 
 const isLoading = computed(() => {
-  return loading.value.getXsrfToken || loading.value.getSshKeys || loading.value.retrieveUnitSshPort
+  return loading.value.getXsrfToken
 })
 
 watch(
@@ -74,9 +66,7 @@ watch(
     if (props.visible) {
       clearErrors()
       unitPassword.value = ''
-      retrieveSshKeys()
       retrieveXsrfToken()
-      retrieveUnitSshPort()
     }
   }
 )
@@ -102,32 +92,6 @@ function dontShowAgainHideOpenSshPopupsTooltip() {
 function clearErrors() {
   for (const key of Object.keys(error.value)) {
     error.value[key as keyof typeof error.value] = ''
-  }
-}
-
-async function retrieveUnitSshPort() {
-  loading.value.retrieveUnitSshPort = true
-
-  try {
-    const config = await getUciConfigFromController('dropbear', props.unit.id)
-    unitSshPort.value = Number(config.dropbear[0].Port)
-  } catch (err: any) {
-    console.error(err)
-    error.value.retrieveUnitSshPort = t(getAxiosErrorMessage(err))
-  } finally {
-    loading.value.retrieveUnitSshPort = false
-  }
-}
-
-async function retrieveSshKeys() {
-  loading.value.getSshKeys = true
-
-  try {
-    sshKeys.value = await getSshKeys()
-  } catch (err: any) {
-    error.value.getSshKeys = t(getAxiosErrorMessage(err))
-  } finally {
-    loading.value.getSshKeys = false
   }
 }
 
@@ -180,7 +144,7 @@ async function retrieveWebsocketId() {
 
   const sshPayload: SshConnectionPayload = {
     hostname: props.unit.ipaddress,
-    port: unitSshPort.value,
+    port: props.unit.info.ssh_port,
     username: unitUsername.value,
     password: unitPassword.value,
     passphrase: '', //// TODO
@@ -247,28 +211,12 @@ async function retrieveWebsocketId() {
         :description="error.getXsrfToken"
         :closeAriaLabel="t('common.close')"
       />
-      <!-- getSshKeys error modal -->
-      <NeInlineNotification
-        v-if="error.getSshKeys"
-        kind="error"
-        :title="t('error.cannot_retrieve_ssh_keys')"
-        :description="error.getSshKeys"
-        :closeAriaLabel="t('common.close')"
-      />
       <!-- getWebsocketId error modal -->
       <NeInlineNotification
         v-if="error.getWebsocketId"
         kind="error"
         :title="t('error.cannot_retrieve_websocket_id')"
         :description="error.getWebsocketId"
-        :closeAriaLabel="t('common.close')"
-      />
-      <!-- retrieveUnitSshPort error modal -->
-      <NeInlineNotification
-        v-if="error.retrieveUnitSshPort"
-        kind="error"
-        :title="t('error.cannot_retrieve_unit_ssh_port')"
-        :description="error.retrieveUnitSshPort"
         :closeAriaLabel="t('common.close')"
       />
       <!-- authentication error (from getWebsocketId) modal -->

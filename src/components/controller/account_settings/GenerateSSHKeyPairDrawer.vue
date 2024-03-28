@@ -153,52 +153,64 @@ watch(
     :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('controller.account_settings.generate_ssh_key_pair')"
   >
-    <NeInlineNotification
-      v-if="error.notificationTitle"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
-      class="mb-6"
-      kind="error"
-    >
-      <template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
-      </template>
-    </NeInlineNotification>
-    <div class="flex flex-col gap-y-6">
-      <NeTextInput
-        v-model="passphrase"
-        :label="t('controller.account_settings.new_passphrase')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
-        :is-password="true"
-        :helper-text="t('controller.account_settings.minimum_characters')"
-        ref="passphraseRef"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('controller.account_settings.new_passphrase_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
-      <NeTextInput
-        v-model="confirmPassphrase"
-        :label="t('controller.account_settings.confirm_passphrase')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_passphrase'))"
-        :is-password="true"
-        ref="confirmPassphraseRef"
+    <div class="space-y-6">
+      <!-- generate key pair description -->
+      <NeInlineNotification
+        kind="info"
+        :title="t('controller.account_settings.generate_ssh_key_pair')"
+        :description="t('controller.account_settings.generate_ssh_key_pair_description')"
+        :closeAriaLabel="t('common.close')"
+        :showDetailsLabel="t('notifications.show_details')"
       />
-      <hr />
-      <div class="flex justify-end">
-        <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-        <NeButton
-          kind="primary"
-          @click="performChangePassword()"
-          :disabled="isSavingChanges"
-          :loading="isSavingChanges"
-          >{{ t('controller.account_settings.generate_key') }}</NeButton
+      <!-- error notification -->
+      <NeInlineNotification
+        v-if="error.notificationTitle"
+        :title="error.notificationTitle"
+        :description="error.notificationDescription"
+        kind="error"
+      >
+        <template #details v-if="error.notificationDetails">
+          {{ error.notificationDetails }}
+        </template>
+      </NeInlineNotification>
+      <div class="flex flex-col gap-y-6">
+        <NeTextInput
+          v-model="passphrase"
+          :label="t('controller.account_settings.new_passphrase')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
+          :is-password="true"
+          :helper-text="t('controller.account_settings.minimum_characters')"
+          ref="passphraseRef"
         >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('controller.account_settings.new_passphrase_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="confirmPassphrase"
+          :label="t('controller.account_settings.confirm_passphrase')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_passphrase'))"
+          :is-password="true"
+          ref="confirmPassphraseRef"
+        />
+        <hr />
+        <div class="flex justify-end">
+          <NeButton kind="tertiary" class="mr-4" @click="close()">{{
+            t('common.cancel')
+          }}</NeButton>
+          <NeButton
+            kind="primary"
+            @click="performChangePassword()"
+            :disabled="isSavingChanges"
+            :loading="isSavingChanges"
+            >{{ t('controller.account_settings.generate_key') }}</NeButton
+          >
+        </div>
       </div>
-    </div></NeSideDrawer
-  >
+    </div>
+  </NeSideDrawer>
 </template>

@@ -72,7 +72,7 @@ onMounted(() => {
           {{ accountsStore.listSshKeysError.notificationDetails }}
         </template>
       </NeInlineNotification>
-      <NeSkeleton v-if="accountsStore.listSshKeysLoading" :lines="5" />
+      <NeSkeleton v-if="accountsStore.listSshKeysLoading" :lines="4" />
       <template v-else-if="accountsStore.sshKeys.key && accountsStore.sshKeys.key_pub">
         <div class="mb-4 flex flex-row items-center gap-x-2">
           <font-awesome-icon

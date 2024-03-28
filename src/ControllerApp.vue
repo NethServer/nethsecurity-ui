@@ -9,7 +9,7 @@ import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
-import { getPreference } from '@nethesis/vue-components'
+import { deleteFromStorage, getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/common/notifications'
@@ -70,8 +70,27 @@ function configureAxios() {
 
       // logout if 401 response code is intercepted
       if (error.response?.status == 401) {
-        console.warn('[interceptor]', 'Detected error 401, logout')
-        loginStore.logout()
+        if (error.config.url.includes('/ubus/call')) {
+          // unit token has become invalid (e.g. ns-api-server has been restarted), let's remove it from local storage
+
+          console.warn(
+            '[interceptor]',
+            'Detected error 401, removing unit token from local storage'
+          )
+
+          const matched = error.config.url.match(/^(.+:\/\/)(.+)\/(.+)\/api\/ubus\/call$/)
+
+          if (matched.length == 4) {
+            const unitId = matched[3]
+            deleteFromStorage(`unit-${unitId}`)
+
+            // show error notification
+            notificationsStore.createNotificationFromAxiosError(error)
+          }
+        } else {
+          console.warn('[interceptor]', 'Detected error 401, logout')
+          loginStore.logout()
+        }
       } else {
         // show error notification only if error is not caused from cancellation
         // and if it isn't a validation error

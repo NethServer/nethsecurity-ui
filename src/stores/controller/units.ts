@@ -17,9 +17,11 @@ export interface Unit {
   id: string
   ipaddress: string
   netmask: string
-  connected?: boolean
+  registered: boolean
+  connected: boolean
   vpn: UnitVpnData
   info: UnitInfo
+  join_code?: string
 }
 
 interface UnitInfo {
@@ -64,6 +66,7 @@ export const useUnitsStore = defineStore('units', () => {
 
         // set connected attribute
         for (const unit of unitsList) {
+          unit.registered = !isEmpty(unit.info)
           unit.connected = !isEmpty(unit.vpn)
         }
 
@@ -75,6 +78,20 @@ export const useUnitsStore = defineStore('units', () => {
       errorListUnitsDetails.value = err.toString()
     } finally {
       loadingListUnits.value = false
+    }
+  }
+
+  const getUnitInfo = async (unitId: string) => {
+    const res = await axios.get(`${getControllerApiEndpoint()}/units/${unitId}`, {
+      headers: {
+        Authorization: `Bearer ${controllerLoginStore.token}`
+      }
+    })
+
+    if (res.data.data) {
+      console.log('getUnitInfo', res.data.data) ////
+
+      ////
     }
   }
 
@@ -185,6 +202,7 @@ export const useUnitsStore = defineStore('units', () => {
   return {
     units,
     getUnits,
+    getUnitInfo,
     unitId,
     load,
     addUnit,

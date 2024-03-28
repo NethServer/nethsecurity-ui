@@ -81,7 +81,31 @@ async function openUnit(unitId: string) {
 }
 
 function getKebabMenuItems(unit: Unit) {
-  return [
+  const commonMenuItems = [
+    {
+      id: 'divider1'
+    },
+    {
+      id: 'removeUnit',
+      label: t('controller.units.remove_unit'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      action: () => removeUnit(unit),
+      danger: true
+    }
+  ]
+
+  const unregisteredUnitMenuItems = [
+    {
+      id: 'copyJoinCode',
+      label: t('controller.units.copy_join_code'),
+      icon: 'copy',
+      iconStyle: 'fas',
+      action: () => copyJoinCode(unit)
+    }
+  ]
+
+  const registeredUnitMenuItems = [
     {
       id: 'openMetrics',
       label: t('controller.units.open_metrics'),
@@ -104,33 +128,34 @@ function getKebabMenuItems(unit: Unit) {
       iconStyle: 'fas',
       action: () => emit('openSshModal', unit),
       disabled: !unit.connected
-    },
-    {
-      id: 'divider1'
-    },
-    {
-      id: 'removeUnit',
-      label: t('controller.units.remove_unit'),
-      icon: 'trash',
-      iconStyle: 'fas',
-      action: () => removeUnit(unit),
-      danger: true
     }
   ]
+
+  if (unit.registered) {
+    return [...registeredUnitMenuItems, ...commonMenuItems]
+  } else {
+    return [...unregisteredUnitMenuItems, ...commonMenuItems]
+  }
+}
+
+function copyJoinCode(unit: Unit) {
+  if (unit.join_code) {
+    navigator.clipboard.writeText(unit.join_code)
+  }
 }
 
 function openMetrics(unit: Unit) {
-  //// use defaults api
-  window.open(`${window.location.origin}/grafana/d/W3S__804z/unit-metrics?var-unit=${unit.id}`)
+  window.open(
+    `https://${defaultsStore.fqdn}${defaultsStore.grafanaPath}/d/W3S__804z/unit-metrics?var-unit=${unit.id}`
+  )
 }
 
 function openLogs(unit: Unit) {
-  //// use defaults api
   const unitName = unit.info.unit_name
 
   if (unitName) {
     window.open(
-      `${window.location.origin}/grafana/d/liz0yRCZz/logs?var-hostname=${unitName}&var-level=error`
+      `https://${defaultsStore.fqdn}${defaultsStore.grafanaPath}/d/liz0yRCZz/logs?var-hostname=${unitName}&var-level=error`
     )
   }
 }
@@ -162,32 +187,94 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
 
       <!-- unit name -->
       <template #unit_name="{ item }: { item: Unit }">
-        <div v-if="item.info.unit_name" class="flex items-center gap-2">
-          <font-awesome-icon
-            :icon="['fas', item.info?.system_id ? 'award' : 'users']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          />
-          {{ item.info.unit_name }}
+        <div class="space-y-1">
+          <!-- unit name -->
+          <div>
+            <div v-if="item.info.unit_name" class="flex items-center gap-2">
+              <font-awesome-icon
+                :icon="['fas', item.info?.system_id ? 'award' : 'users']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+              {{ item.info.unit_name }}
+            </div>
+            <template v-else>
+              {{ item.id || '-' }}
+            </template>
+          </div>
+          <!-- more info button -->
+          <div>
+            <NeTooltip interactive :maxWidth="450">
+              <template #trigger>
+                <NeButton size="sm" kind="tertiary" class="-mx-2">
+                  {{ t('common.more_info') }}
+                </NeButton>
+              </template>
+              <template #content>
+                <div class="space-y-1 px-2 py-1">
+                  <div>
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.unit_id') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{ item.id }}
+                    </span>
+                  </div>
+                  <!-- <div> ////
+                <span class="mr-2 inline-block font-semibold">
+                  {{ t('standalone.openvpn_rw.remote_ip') }}:
+                </span>
+                <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
+              </div>
+              <div>
+                <span class="mr-2 inline-block font-semibold"
+                  >{{ t('standalone.openvpn_rw.started') }}:</span
+                >
+                <span class="text-gray-300 dark:text-gray-500">{{
+                  `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
+                    (item.since as number) * 1000
+                  ).toLocaleTimeString()}`
+                }}</span>
+              </div>
+              <div class="align-top">
+                <span class="mr-2 inline-block align-top font-semibold"
+                  >{{ t('standalone.openvpn_rw.traffic') }}:</span
+                >
+                <span class="inline-block align-top text-gray-300 dark:text-gray-500"
+                  >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
+                  {{ t('standalone.openvpn_rw.sent') }}<br />{{
+                    parseInt(item.bytes_received as string) / 1000
+                  }}
+                  KB {{ t('standalone.openvpn_rw.received') }}</span
+                >
+              </div> -->
+                </div>
+              </template>
+            </NeTooltip>
+          </div>
         </div>
-        <template v-else>
-          {{ item.id || '-' }}
-        </template>
       </template>
       <!-- status -->
       <template #status="{ item }: { item: Unit }">
         <div class="flex items-center gap-2">
-          <template v-if="!item.connected">
-            <font-awesome-icon :icon="['fas', 'circle-xmark']" class="h-4 w-4" aria-hidden="true" />
-            <span>{{ t('controller.units.not_connected') }}</span>
-          </template>
-          <template v-else>
+          <template v-if="item.connected">
+            <!-- connected unit -->
             <font-awesome-icon
               :icon="['fas', 'circle-check']"
               class="h-4 w-4 text-green-700 dark:text-green-500"
               aria-hidden="true"
             />
             <span>{{ t('controller.units.connected') }}</span>
+          </template>
+          <template v-else-if="item.registered">
+            <!-- registered unit, but not connected -->
+            <font-awesome-icon :icon="['fas', 'circle-xmark']" class="h-4 w-4" aria-hidden="true" />
+            <span>{{ t('controller.units.not_connected') }}</span>
+          </template>
+          <template v-else>
+            <!-- unit not registered yet -->
+            <font-awesome-icon :icon="['fas', 'circle-xmark']" class="h-4 w-4" aria-hidden="true" />
+            <span>{{ t('controller.units.not_registered_yet') }}</span>
           </template>
         </div>
       </template>
@@ -217,7 +304,7 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
                   <template #prefix>
                     <font-awesome-icon
                       :icon="['fas', 'arrow-up-right-from-square']"
-                      class="h-4 w-4"
+                      class="h-3.5 w-3.5"
                       aria-hidden="true"
                     />
                   </template>

@@ -13,10 +13,12 @@ import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
 import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
 import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
+import { useAccountsStore } from '@/stores/controller/accounts'
 
-const GET_UNITS_REFRESH_INTERVAL = 10000
+const GET_UNITS_REFRESH_INTERVAL = 20000 //// 10000
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
+const accountsStore = useAccountsStore()
 const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
 const getUnitsIntervalId = ref(0)
@@ -71,6 +73,7 @@ onUnmounted(() => {
 })
 
 async function loadData() {
+  accountsStore.loadSshKeys()
   isUnitsSkeletonEnabled.value = true
   await unitsStore.getUnits()
   isUnitsSkeletonEnabled.value = false

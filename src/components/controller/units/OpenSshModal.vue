@@ -8,7 +8,6 @@ import type { Unit } from '@/stores/controller/units'
 import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type PropType, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getSshKeys, type SshKey } from '@/lib/controller/sshKeys'
 import { getXsrfToken, getWebsocketId, type SshConnectionPayload } from '@/lib/controller/webssh'
 import {
   NeInlineNotification,
@@ -49,7 +48,6 @@ const unitPasswordRef = ref()
 
 let loading = ref({
   getXsrfToken: false,
-  getSshKeys: false,
   getWebsocketId: false,
   retrieveUnitSshPort: false
 })
@@ -58,14 +56,13 @@ let error = ref({
   unitUsername: '',
   unitPassword: '',
   getXsrfToken: '',
-  getSshKeys: '',
   getWebsocketId: '',
   retrieveUnitSshPort: '',
   authError: ''
 })
 
 const isLoading = computed(() => {
-  return loading.value.getXsrfToken || loading.value.getSshKeys || loading.value.retrieveUnitSshPort
+  return loading.value.getXsrfToken || loading.value.retrieveUnitSshPort
 })
 
 watch(
@@ -116,18 +113,6 @@ async function retrieveUnitSshPort() {
     error.value.retrieveUnitSshPort = t(getAxiosErrorMessage(err))
   } finally {
     loading.value.retrieveUnitSshPort = false
-  }
-}
-
-async function retrieveSshKeys() {
-  loading.value.getSshKeys = true
-
-  try {
-    sshKeys.value = await getSshKeys()
-  } catch (err: any) {
-    error.value.getSshKeys = t(getAxiosErrorMessage(err))
-  } finally {
-    loading.value.getSshKeys = false
   }
 }
 
@@ -245,14 +230,6 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('error.cannot_retrieve_xsrf_token')"
         :description="error.getXsrfToken"
-        :closeAriaLabel="t('common.close')"
-      />
-      <!-- getSshKeys error modal -->
-      <NeInlineNotification
-        v-if="error.getSshKeys"
-        kind="error"
-        :title="t('error.cannot_retrieve_ssh_keys')"
-        :description="error.getSshKeys"
         :closeAriaLabel="t('common.close')"
       />
       <!-- getWebsocketId error modal -->

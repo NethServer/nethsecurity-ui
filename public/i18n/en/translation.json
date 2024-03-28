@@ -39,7 +39,8 @@
     "name": "Name",
     "clear_filter": "Clear filter",
     "try_changing_search_filter": "Try changing your search filter",
-    "dont_show_again": "Don't show again"
+    "dont_show_again": "Don't show again",
+    "more_info": "More info"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -1764,13 +1765,15 @@
       "installed_version": "Installed version",
       "connected": "Connected",
       "not_connected": "Not connected",
+      "not_registered_yet": "Not registered yet",
       "open_unit": "Open unit",
       "open_metrics": "Open metrics",
       "open_logs": "Open logs",
       "open_ssh_terminal": "Open SSH terminal",
       "open_terminal": "Open terminal",
       "remove_unit": "Remove unit",
-      "add_unit_step_1": "Copy Controller join code",
+      "copy_join_code": "Copy join code",
+      "add_unit_step_1": "Copy join code",
       "add_unit_step_2": "Access {product} UI on the unit you want to add and go to 'System > Controller' page",
       "add_unit_step_3": "Paste Controller join code in the form and click 'Connect the unit'",
       "add_unit_step_4": "The unit will appear in 'Unit manager' page",

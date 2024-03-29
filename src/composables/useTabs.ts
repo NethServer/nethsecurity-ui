@@ -19,14 +19,17 @@ export function useTabs(tabsList: Tab[], initialTabName?: string) {
 
   const tabs = ref(tabsList)
   const selectedTab = ref('')
+  const currentPath = route.path
 
   watch(
     () => route.query.tab,
     () => {
-      selectedTab.value =
-        (route.query.tab as string) ??
-        initialTabName ??
-        (tabs.value.length > 0 ? tabs.value[0].name : '')
+      if (route.path === currentPath) {
+        selectedTab.value =
+          (route.query.tab as string) ??
+          initialTabName ??
+          (tabs.value.length > 0 ? tabs.value[0].name : '')
+      }
     },
     { immediate: true }
   )

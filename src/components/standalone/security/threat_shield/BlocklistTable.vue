@@ -23,7 +23,7 @@ defineEmits<{
   enableDisable: [item: Blocklist]
 }>()
 
-const { currentPage, pageCount, paginatedItems } = useItemPagination(props.blocklists, {
+const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.blocklists, {
   itemsPerPage: 10
 })
 

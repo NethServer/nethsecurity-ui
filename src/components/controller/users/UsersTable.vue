@@ -9,10 +9,11 @@ import NeTable from '../../standalone/NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { type ControllerAccount } from '@/stores/controller/accounts'
+import { useItemPagination } from '@/composables/useItemPagination'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   users: ControllerAccount[]
 }>()
 
@@ -20,6 +21,10 @@ const emit = defineEmits<{
   delete: [item: ControllerAccount]
   edit: [item: ControllerAccount]
 }>()
+
+const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.users, {
+  itemsPerPage: 10
+})
 
 const tableHeaders = [
   {
@@ -53,7 +58,22 @@ function getDropdownItems(item: ControllerAccount) {
 </script>
 
 <template>
-  <NeTable :data="users" :headers="tableHeaders">
+  <NeTable
+    :data="paginatedItems"
+    :headers="tableHeaders"
+    :with-paginator="true"
+    :paginator-props="{
+      totalPages: pageCount,
+      currentPage,
+      previousLabel: t('common.previous'),
+      nextLabel: t('common.next')
+    }"
+    @select-page="
+      (page) => {
+        currentPage = page
+      }
+    "
+  >
     <template #menu="{ item }: { item: ControllerAccount }">
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('edit', item)">

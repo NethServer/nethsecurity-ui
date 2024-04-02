@@ -16,7 +16,8 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ValidationError } from '@/lib/standalone/ubus'
@@ -47,6 +48,12 @@ const displayName = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
+// input refs
+const usernameRef = ref()
+const displayNameRef = ref()
+const passwordRef = ref()
+const confirmPasswordRef = ref()
+
 async function resetForm() {
   if (props.itemToEdit) {
     id.value = props.itemToEdit.id
@@ -76,21 +83,61 @@ function validate() {
 
   const usernameValidator = validateRequired(username.value)
   if (!usernameValidator.valid) {
-    validationErrorBag.value.set('name', [usernameValidator.errMessage as string])
-    valid = false
+    validationErrorBag.value.set('username', [usernameValidator.errMessage as string])
+    if (valid) {
+      focusElement(usernameRef)
+      valid = false
+    }
   }
 
-  if (password.value != '' || confirmPassword.value != '') {
-    const passwordValidator = validatePassword(password.value)
-    if (!passwordValidator.valid) {
-      validationErrorBag.value.set('password', [passwordValidator.errMessage as string])
+  const displayNameValidator = validateRequired(displayName.value)
+  if (!displayNameValidator.valid) {
+    validationErrorBag.value.set('display_name', [usernameValidator.errMessage as string])
+    if (valid) {
+      focusElement(displayNameRef)
       valid = false
-    } else {
-      const confirmPasswordValidator = validateStringEqual(password.value, confirmPassword.value)
-      if (!confirmPasswordValidator.valid) {
-        validationErrorBag.value.set('confirmPassword', [
-          confirmPasswordValidator.errMessage as string
-        ])
+    }
+  }
+
+  if (!id.value) {
+    const requiredPasswordValidator = validateRequired(password.value)
+    if (!requiredPasswordValidator.valid) {
+      validationErrorBag.value.set('password', [requiredPasswordValidator.errMessage as string])
+      if (valid) {
+        focusElement(passwordRef)
+        valid = false
+      }
+    }
+
+    const requiredConfirmPasswordValidator = validateRequired(confirmPassword.value)
+    if (!requiredConfirmPasswordValidator.valid) {
+      validationErrorBag.value.set('confirmPassword', [
+        requiredConfirmPasswordValidator.errMessage as string
+      ])
+      if (valid) {
+        focusElement(confirmPasswordRef)
+        valid = false
+      }
+    }
+  }
+
+  const passwordValidator = validatePassword(password.value)
+  // password format validator is checked only if we are adding a new user or
+  // we are editing one and password field is not empty
+  if (!passwordValidator.valid && (!id.value || password.value != '')) {
+    validationErrorBag.value.set('password', [passwordValidator.errMessage as string])
+    if (valid) {
+      focusElement(passwordRef)
+      valid = false
+    }
+  } else {
+    const confirmPasswordValidator = validateStringEqual(password.value, confirmPassword.value)
+    if (!confirmPasswordValidator.valid) {
+      validationErrorBag.value.set('confirmPassword', [
+        confirmPasswordValidator.errMessage as string
+      ])
+      if (valid) {
+        focusElement(confirmPasswordRef)
         valid = false
       }
     }
@@ -170,23 +217,22 @@ watch(
         v-model="username"
         :disabled="Boolean(id)"
         :label="t('controller.users.username')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
+        ref="usernameRef"
       />
       <NeTextInput
         v-model="displayName"
         :label="t('controller.users.display_name')"
-        :optional="true"
-        :optional-label="t('common.optional')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('display_name'))"
+        ref="displayNameRef"
       />
       <NeTextInput
         v-model="password"
         :label="t('controller.users.user_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('password'))"
-        :optional="true"
-        :optional-label="t('common.optional')"
         :is-password="true"
         :placeholder="id ? t('controller.users.unchanged') : ''"
+        ref="passwordRef"
       />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.users.password_suggestion_1') }}</li>
@@ -199,10 +245,9 @@ watch(
         v-model="confirmPassword"
         :label="t('controller.users.confirm_user_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirmPassword'))"
-        :optional="true"
-        :optional-label="t('common.optional')"
         :is-password="true"
         :placeholder="id ? t('controller.users.unchanged') : ''"
+        ref="confirmPasswordRef"
       />
       <hr />
       <div class="flex justify-end">

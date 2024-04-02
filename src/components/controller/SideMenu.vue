@@ -29,6 +29,11 @@ const navigation: Ref<MenuItem[]> = ref([
     name: t('controller.account_settings.title'),
     to: 'settings',
     icon: 'gear'
+  },
+  {
+    name: t('controller.users.title'),
+    to: 'users',
+    icon: 'user-group'
   }
 ])
 

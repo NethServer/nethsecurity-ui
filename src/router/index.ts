@@ -221,6 +221,11 @@ const router = createRouter({
       component: () => import('../views/controller/SettingsView.vue')
     },
     {
+      path: '/controller/users',
+      name: 'ControllerUsers',
+      component: () => import('../views/controller/UsersView.vue')
+    },
+    {
       path: '/controller/manage/:unitId',
       redirect: () => {
         return 'dashboard'

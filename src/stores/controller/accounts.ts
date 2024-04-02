@@ -37,6 +37,8 @@ export const useAccountsStore = defineStore('accounts', () => {
   const controllerLoginStore = useControllerLoginStore()
 
   const loadSshKeys = async () => {
+    listSshKeysError.value.notificationDescription = ''
+    listSshKeysError.value.notificationDetails = ''
     try {
       listSshKeysLoading.value = true
       const res = await axios.get(`${getControllerApiEndpoint()}/accounts/ssh-keys`, {
@@ -55,6 +57,8 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   const loadAccounts = async () => {
+    listAccountsError.value.notificationDescription = ''
+    listAccountsError.value.notificationDetails = ''
     try {
       listAccountsLoading.value = true
       const res = await axios.get(`${getControllerApiEndpoint()}/accounts`, {
@@ -63,7 +67,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         }
       })
 
-      accounts.value = res.data.accounts
+      accounts.value = res.data.data.accounts
     } catch (err: any) {
       listAccountsError.value.notificationDescription = t(getAxiosErrorMessage(err))
       listAccountsError.value.notificationDetails = err.toString()
@@ -85,7 +89,7 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   const updateAccount = async (
-    accountId: string,
+    accountId: number,
     username: string,
     password: string,
     displayName: string
@@ -101,7 +105,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     )
   }
 
-  const deleteAccount = async (accountId: string) => {
+  const deleteAccount = async (accountId: number) => {
     await axios.delete(`${getControllerApiEndpoint()}/accounts/${accountId}`, {
       headers: {
         Authorization: `Bearer ${controllerLoginStore.token}`

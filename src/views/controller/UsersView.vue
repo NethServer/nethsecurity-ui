@@ -4,12 +4,130 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
+import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
+import {
+  NeTitle,
+  NeButton,
+  NeInlineNotification,
+  NeSkeleton,
+  NeEmptyState
+} from '@nethesis/vue-components'
+import { NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UsersTable from '@/components/controller/users/UsersTable.vue'
+import CreateOrEditUserDrawer from '@/components/controller/users/CreateOrEditUserDrawer.vue'
+import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
+
+const accountsStore = useAccountsStore()
 
 const { t } = useI18n()
+
+const filter = ref('')
+const selectedItem = ref<ControllerAccount>()
+const showCreateEditDrawer = ref(false)
+const showDeleteModal = ref(false)
+
+const filteredAccounts = computed(() =>
+  accountsStore.accounts.filter(
+    (account) =>
+      account.display_name.includes(filter.value) || account.username.includes(filter.value)
+  )
+)
+
+function openCreateEditDrawer(itemToEdit?: ControllerAccount) {
+  selectedItem.value = itemToEdit
+  showCreateEditDrawer.value = true
+}
+
+function openDeleteModal(itemToEdit?: ControllerAccount) {
+  selectedItem.value = itemToEdit
+  showDeleteModal.value = true
+}
+
+onMounted(() => {
+  accountsStore.loadAccounts()
+})
 </script>
 
 <template>
   <NeTitle>{{ t('controller.users.title') }}</NeTitle>
+  <div class="flex flex-col gap-y-6">
+    <div class="flex flex-row items-center justify-between">
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('controller.users.description') }}
+      </p>
+      <div class="ml-2 shrink-0">
+        <NeButton
+          kind="secondary"
+          @click="openCreateEditDrawer()"
+          v-if="accountsStore.accounts.length > 0"
+        >
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('controller.users.add_user') }}
+        </NeButton>
+      </div>
+    </div>
+    <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+    <NeInlineNotification
+      kind="error"
+      :title="t('error.cannot_retrieve_users')"
+      :description="accountsStore.listAccountsError.notificationDescription"
+      v-if="accountsStore.listAccountsError.notificationDescription"
+    >
+      <template #details v-if="accountsStore.listAccountsError.notificationDetails">
+        {{ accountsStore.listAccountsError.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <NeSkeleton v-if="accountsStore.listAccountsLoading" :lines="10" />
+    <template v-else>
+      <NeEmptyState
+        v-if="accountsStore.accounts.length == 0"
+        :title="t('controller.users.no_users_found')"
+        :icon="['fas', 'user-group']"
+        ><NeButton kind="primary" @click="openCreateEditDrawer()"
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'circle-plus']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('controller.users.add_user') }}</NeButton
+        ></NeEmptyState
+      >
+      <NeEmptyState
+        v-else-if="filteredAccounts.length == 0"
+        :title="t('controller.users.no_users_found')"
+        :icon="['fas', 'circle-info']"
+      />
+      <UsersTable
+        v-else
+        :users="filteredAccounts"
+        @edit="openCreateEditDrawer"
+        @delete="openDeleteModal"
+      />
+    </template>
+  </div>
+  <CreateOrEditUserDrawer
+    :is-shown="showCreateEditDrawer"
+    @add-edit-user="
+      () => {
+        accountsStore.loadAccounts()
+      }
+    "
+    @close="showCreateEditDrawer = false"
+    :item-to-edit="selectedItem"
+  />
+  <DeleteUserModal
+    :visible="showDeleteModal"
+    :item-to-delete="selectedItem"
+    @close="showDeleteModal = false"
+    @user-deleted="
+      () => {
+        accountsStore.loadAccounts()
+      }
+    "
+  />
 </template>

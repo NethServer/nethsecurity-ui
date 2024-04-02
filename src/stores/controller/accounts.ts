@@ -54,6 +54,61 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
 
+  const loadAccounts = async () => {
+    try {
+      listAccountsLoading.value = true
+      const res = await axios.get(`${getControllerApiEndpoint()}/accounts`, {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      })
+
+      accounts.value = res.data.accounts
+    } catch (err: any) {
+      listAccountsError.value.notificationDescription = t(getAxiosErrorMessage(err))
+      listAccountsError.value.notificationDetails = err.toString()
+    } finally {
+      listAccountsLoading.value = false
+    }
+  }
+
+  const addAccount = async (username: string, password: string, displayName: string) => {
+    await axios.post(
+      `${getControllerApiEndpoint()}/accounts`,
+      { username, password, display_name: displayName },
+      {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      }
+    )
+  }
+
+  const updateAccount = async (
+    accountId: string,
+    username: string,
+    password: string,
+    displayName: string
+  ) => {
+    await axios.put(
+      `${getControllerApiEndpoint()}/accounts/${accountId}`,
+      { username, password, display_name: displayName },
+      {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      }
+    )
+  }
+
+  const deleteAccount = async (accountId: string) => {
+    await axios.delete(`${getControllerApiEndpoint()}/accounts/${accountId}`, {
+      headers: {
+        Authorization: `Bearer ${controllerLoginStore.token}`
+      }
+    })
+  }
+
   const generateSshKeys = async (passphrase: string) => {
     return (
       await axios.post(
@@ -102,6 +157,10 @@ export const useAccountsStore = defineStore('accounts', () => {
     loadSshKeys,
     generateSshKeys,
     deleteSshKeys,
-    changePassword
+    changePassword,
+    loadAccounts,
+    addAccount,
+    updateAccount,
+    deleteAccount
   }
 })

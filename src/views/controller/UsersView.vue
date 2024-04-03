@@ -18,8 +18,10 @@ import { useI18n } from 'vue-i18n'
 import UsersTable from '@/components/controller/users/UsersTable.vue'
 import CreateOrEditUserDrawer from '@/components/controller/users/CreateOrEditUserDrawer.vue'
 import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
+import { useNotificationsStore } from '@/stores/common/notifications'
 
 const accountsStore = useAccountsStore()
+const notificationsStore = useNotificationsStore()
 
 const { t } = useI18n()
 
@@ -100,7 +102,7 @@ onMounted(() => {
       <NeEmptyState
         v-else-if="filteredAccounts.length == 0"
         :title="t('controller.users.no_users_found')"
-        :icon="['fas', 'circle-info']"
+        :icon="['fas', 'user-group']"
       />
       <UsersTable
         v-else
@@ -112,9 +114,24 @@ onMounted(() => {
   </div>
   <CreateOrEditUserDrawer
     :is-shown="showCreateEditDrawer"
-    @add-edit-user="
+    @add-user="
       () => {
         accountsStore.loadAccounts()
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'add-user',
+          title: t('controller.users.user_added')
+        })
+      }
+    "
+    @edit-user="
+      () => {
+        accountsStore.loadAccounts()
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'edit-user',
+          title: t('controller.users.user_edited')
+        })
       }
     "
     @close="showCreateEditDrawer = false"
@@ -127,6 +144,11 @@ onMounted(() => {
     @user-deleted="
       () => {
         accountsStore.loadAccounts()
+        notificationsStore.addNotification({
+          kind: 'success',
+          id: 'delete-user',
+          title: t('controller.users.user_deleted')
+        })
       }
     "
   />

@@ -31,7 +31,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const accountsStore = useAccountsStore()
 
-const emit = defineEmits(['close', 'add-edit-user'])
+const emit = defineEmits(['close', 'add-user', 'edit-user'])
 
 const isSavingChanges = ref(false)
 const error = ref({
@@ -158,6 +158,7 @@ async function createOrEditUser() {
     if (validate()) {
       if (!id.value) {
         await accountsStore.addAccount(username.value, password.value, displayName.value)
+        emit('add-user')
       } else {
         await accountsStore.updateAccount(
           id.value,
@@ -165,8 +166,8 @@ async function createOrEditUser() {
           password.value,
           displayName.value
         )
+        emit('edit-user')
       }
-      emit('add-edit-user')
       close()
     }
   } catch (err: any) {

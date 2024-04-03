@@ -1829,7 +1829,7 @@
     },
     "users": {
       "title": "Users",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lobortis interdum sollicitudin. Proin eget accumsan massa.",
+      "description": "The users listed on this page are granted full control over all firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator.",
       "no_users_found": "No users found",
       "add_user": "Add user",
       "username": "Username",
@@ -1844,6 +1844,8 @@
       "delete_user": "Delete user",
       "delete_user_message": "You are about to delete user '{name}'",
       "user_deleted": "User deleted",
+      "user_added": "User added",
+      "user_edited": "User edited",
       "unchanged": "Unchanged",
       "edit_user": "Edit user"
     }

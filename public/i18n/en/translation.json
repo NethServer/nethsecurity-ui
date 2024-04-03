@@ -1197,7 +1197,7 @@
       "source_zone": "Source zone",
       "source_zone_tooltip": "Specifies the traffic source zone, which must be distinct from the destination zone. Choose a zone or select 'Any' to include any zone.",
       "destination_addresses": "Destination addresses",
-      "destination_addresses_tooltip": "Enter one or more IPv4/IPv6 addresses, networks or ipranges (ipranges require a hypen as a separator: e.g. 10.10.10.1-10.10.10.5). Leave unselected to apply the rule to any source address",
+      "destination_addresses_tooltip": "Enter one or more IPv4/IPv6 addresses, networks or IP ranges (IP ranges require a hypen as a separator: e.g. 10.10.10.1-10.10.10.5). Leave unselected to apply the rule to any source address",
       "destination_addresses_helper": "Leave unselected for any destination address",
       "destination_zone": "Destination zone",
       "destination_zone_tooltip": "Specifies the traffic destination zone, which must be distinct from the source zone.",

@@ -119,7 +119,6 @@ function configureAxios() {
           const route = useRoute()
           const unitId = route.params.unitId
           unitsStore.retrieveAndSaveUnitToken(unitId as string)
-          //// page refresh needed?
         }
       } else {
         // show error notification only if error is not caused from cancellation

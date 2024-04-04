@@ -17,13 +17,16 @@ export interface Unit {
   id: string
   ipaddress: string
   netmask: string
-  connected?: boolean
+  registered: boolean
+  connected: boolean
   vpn: UnitVpnData
   info: UnitInfo
+  join_code?: string
 }
 
 interface UnitInfo {
-  created: string
+  fqdn: string
+  ssh_port: number
   subscription_type: string
   system_id: string
   unit_id: string
@@ -50,13 +53,14 @@ export const useUnitsStore = defineStore('units', () => {
   const errorListUnits = ref('')
   const errorListUnitsDetails = ref('')
 
-  const getUnits = async () => {
+  const getUnits = async (useCache = true) => {
     loadingListUnits.value = true
     try {
       const res = await axios.get(`${getControllerApiEndpoint()}/units`, {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`
-        }
+        },
+        params: { cache: useCache }
       })
 
       if (res.data.data) {
@@ -64,6 +68,7 @@ export const useUnitsStore = defineStore('units', () => {
 
         // set connected attribute
         for (const unit of unitsList) {
+          unit.registered = !isEmpty(unit.info)
           unit.connected = !isEmpty(unit.vpn)
         }
 

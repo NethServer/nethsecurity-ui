@@ -14,6 +14,9 @@ export type ControllerAccount = {
   created: string
 }
 
+/*
+ * Store of controller accounts
+ */
 export const useAccountsStore = defineStore('accounts', () => {
   const { t } = useI18n()
   const sshKeys = ref({

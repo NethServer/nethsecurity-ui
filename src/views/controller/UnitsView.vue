@@ -8,11 +8,14 @@ import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
-import { NeTitle, NeButton, NeEmptyState, NeSkeleton } from '@nethesis/vue-components'
+import { NeTitle, NeButton, NeEmptyState, NeSkeleton, NeDropdown } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
 import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
 import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
+import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevokeSshKeyDrawer.vue'
+
+export type SendOrRevokeAction = 'send' | 'revoke'
 
 const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
@@ -22,7 +25,9 @@ const isShownAddUnitModal = ref(false)
 const getUnitsIntervalId = ref(0)
 const isUnitsSkeletonEnabled = ref(true)
 const isShownOpenSshModal = ref(false)
+const isShownSendOrRevokeSshKeyDrawer = ref(false)
 const currentUnit = ref<Unit>()
+const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -39,7 +44,7 @@ const isShownUnitsSkeleton = computed(() => {
 })
 
 function searchStringInUnit(unit: Unit, queryText: string) {
-  const regex = /[^a-zA-Z0-9]/g
+  const regex = /[^a-zA-Z0-9-]/g
   queryText = queryText.replace(regex, '')
   let found = false
 
@@ -51,6 +56,12 @@ function searchStringInUnit(unit: Unit, queryText: string) {
 
   // search in unit name
   found = new RegExp(queryText, 'i').test(unit.info?.unit_name?.replace(regex, ''))
+  if (found) {
+    return true
+  }
+
+  // search in installed version
+  found = new RegExp(queryText, 'i').test(unit.info?.version?.replace(regex, ''))
   if (found) {
     return true
   }
@@ -76,105 +87,169 @@ async function loadData() {
   isUnitsSkeletonEnabled.value = false
 }
 
+async function forceReloadUnitsData() {
+  isUnitsSkeletonEnabled.value = true
+  await unitsStore.getUnits(false)
+  isUnitsSkeletonEnabled.value = false
+}
+
 function showOpenSshModal(unit: Unit) {
   currentUnit.value = unit
   isShownOpenSshModal.value = true
+}
+
+function showSendSshKeyDrawer() {
+  sendOrRevokeAction.value = 'send'
+  isShownSendOrRevokeSshKeyDrawer.value = true
+}
+
+function showRevokeSshKeyDrawer() {
+  sendOrRevokeAction.value = 'revoke'
+  isShownSendOrRevokeSshKeyDrawer.value = true
+}
+
+function getBulkActionsKebabMenuItems() {
+  return [
+    {
+      id: 'sendSshKey',
+      label: t('controller.units.send_ssh_public_key'),
+      iconStyle: 'fas',
+      icon: 'key',
+      action: () => showSendSshKeyDrawer()
+    },
+    {
+      id: 'revokeSshKey',
+      label: t('controller.units.revoke_ssh_public_key'),
+      iconStyle: 'fas',
+      icon: 'circle-minus',
+      action: () => showRevokeSshKeyDrawer()
+    }
+  ]
 }
 </script>
 
 <template>
   <div>
-    <div class="flex flex-col justify-between md:flex-row md:items-center">
-      <NeTitle>{{ t('controller.units.title') }}</NeTitle>
-      <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
-        {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
+    <div>
+      <div class="flex flex-col justify-between md:flex-row md:items-center">
+        <NeTitle>{{ t('controller.units.title') }}</NeTitle>
+        <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+          {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
+        </div>
+      </div>
+      <div class="mb-8 flex flex-col items-start justify-between gap-6 xl:flex-row">
+        <div class="max-w-2xl text-gray-500 dark:text-gray-400">
+          {{ t('controller.units.page_description') }}
+        </div>
+        <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-6 xl:flex-row">
+          <NeButton kind="tertiary" size="lg" @click="isShownAddUnitModal = true" class="shrink-0">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+            </template>
+            {{ t('controller.units.add_unit') }}
+          </NeButton>
+          <NeButton kind="secondary" size="lg" @click="forceReloadUnitsData" class="shrink-0">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
+            </template>
+            {{ t('controller.units.force_data_reload') }}
+          </NeButton>
+        </div>
       </div>
     </div>
-    <div class="mb-8 flex flex-col items-start justify-between gap-6 xl:flex-row">
-      <div class="max-w-2xl text-gray-500 dark:text-gray-400">
-        {{ t('controller.units.page_description') }}
-      </div>
-      <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-6 xl:flex-row">
-        <NeButton kind="tertiary" size="lg" @click="isShownAddUnitModal = true" class="shrink-0">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-          </template>
-          {{ t('controller.units.add_unit') }}
+    <div class="space-y-4">
+      <!-- text filter -->
+      <div class="flex items-center gap-4">
+        <NeTextInput
+          :placeholder="t('controller.units.filter_units')"
+          v-model.trim="textFilter"
+          :disabled="isShownUnitsSkeleton"
+          class="max-w-xs"
+        />
+        <NeButton
+          kind="tertiary"
+          @click="textFilter = ''"
+          :disabled="isShownUnitsSkeleton || !textFilter"
+        >
+          {{ t('common.clear_filter') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="loadData" class="shrink-0">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
-          </template>
-          {{ t('controller.units.reload_units') }}
-        </NeButton>
       </div>
+      <!-- bulk actions -->
+      <NeDropdown
+        :items="getBulkActionsKebabMenuItems()"
+        :openMenuAriaLabel="t('controller.units.open_actions_menu')"
+      >
+        <template #button>
+          <NeButton kind="secondary">
+            {{ t('controller.units.actions') }}
+            <template #suffix>
+              <font-awesome-icon
+                :icon="['fas', 'chevron-down']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </template>
+          </NeButton>
+        </template>
+      </NeDropdown>
+      <!-- skeleton -->
+      <template v-if="isShownUnitsSkeleton && isUnitsSkeletonEnabled">
+        <NeSkeleton :lines="7" size="lg" />
+      </template>
+      <template v-else>
+        <!-- empty state -->
+        <template v-if="isEmpty(unitsStore.units)">
+          <NeEmptyState
+            :title="t('controller.units.no_units_configured')"
+            :icon="['fas', 'server']"
+            class="mt-4"
+          >
+            <NeButton kind="primary" size="lg" @click="isShownAddUnitModal = true">
+              <template #prefix>
+                <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+              </template>
+              {{ t('controller.units.add_unit') }}</NeButton
+            >
+          </NeEmptyState>
+        </template>
+        <!-- no rule matching filter -->
+        <template v-else-if="isEmpty(filteredUnits)">
+          <NeEmptyState
+            :title="t('controller.units.no_units_found')"
+            :description="t('common.try_changing_search_filter')"
+            :icon="['fas', 'circle-info']"
+            class="mt-4"
+          >
+            <NeButton kind="tertiary" @click="textFilter = ''">
+              {{ t('common.clear_filter') }}</NeButton
+            >
+          </NeEmptyState>
+        </template>
+        <!-- units table -->
+        <UnitsTable
+          v-else
+          :filteredUnits="filteredUnits"
+          @reloadData="loadData"
+          @openSshModal="showOpenSshModal"
+        />
+      </template>
     </div>
-  </div>
-  <!-- text filter -->
-  <div class="mb-5 flex items-center gap-4">
-    <NeTextInput
-      :placeholder="t('controller.units.filter_units')"
-      v-model.trim="textFilter"
-      :disabled="isShownUnitsSkeleton"
-      class="max-w-xs"
-    />
-    <NeButton
-      kind="tertiary"
-      @click="textFilter = ''"
-      :disabled="isShownUnitsSkeleton || !textFilter"
-    >
-      {{ t('common.clear_filter') }}
-    </NeButton>
-  </div>
-  <!-- skeleton -->
-  <template v-if="isShownUnitsSkeleton && isUnitsSkeletonEnabled">
-    <NeSkeleton :lines="7" size="lg" />
-  </template>
-  <template v-else>
-    <!-- empty state -->
-    <template v-if="isEmpty(unitsStore.units)">
-      <NeEmptyState
-        :title="t('controller.units.no_units_configured')"
-        :icon="['fas', 'server']"
-        class="mt-4"
-      >
-        <NeButton kind="primary" size="lg" @click="isShownAddUnitModal = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-          </template>
-          {{ t('controller.units.add_unit') }}</NeButton
-        >
-      </NeEmptyState>
-    </template>
-    <!-- no rule matching filter -->
-    <template v-else-if="isEmpty(filteredUnits)">
-      <NeEmptyState
-        :title="t('controller.units.no_units_found')"
-        :description="t('common.try_changing_search_filter')"
-        :icon="['fas', 'circle-info']"
-        class="mt-4"
-      >
-        <NeButton kind="tertiary" @click="textFilter = ''">
-          {{ t('common.clear_filter') }}</NeButton
-        >
-      </NeEmptyState>
-    </template>
-    <!-- units table -->
-    <UnitsTable
-      v-else
-      :filteredUnits="filteredUnits"
-      @reloadData="loadData"
-      @openSshModal="showOpenSshModal"
-    />
-  </template>
 
-  <!-- add unit modal -->
-  <AddUnitModal :visible="isShownAddUnitModal" @close="isShownAddUnitModal = false" />
+    <!-- add unit modal -->
+    <AddUnitModal :visible="isShownAddUnitModal" @close="isShownAddUnitModal = false" />
 
-  <!-- open ssh modal -->
-  <OpenSshModal
-    :visible="isShownOpenSshModal"
-    :unit="currentUnit"
-    @close="isShownOpenSshModal = false"
-  />
+    <!-- open ssh modal -->
+    <OpenSshModal
+      :visible="isShownOpenSshModal"
+      :unit="currentUnit"
+      @close="isShownOpenSshModal = false"
+    />
+
+    <!-- send/revoke ssh key drawer -->
+    <SendOrRevokeSshKeyDrawer
+      :isShown="isShownSendOrRevokeSshKeyDrawer"
+      :action="sendOrRevokeAction"
+      @close="isShownSendOrRevokeSshKeyDrawer = false"
+    />
+  </div>
 </template>

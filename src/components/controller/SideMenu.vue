@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { getControllerRoutePrefix } from '@/lib/router'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -18,6 +19,7 @@ interface MenuItem {
 
 const { t } = useI18n()
 const route = useRoute()
+const controllerLogin = useLoginStore()
 
 const navigation: Ref<MenuItem[]> = ref([
   {
@@ -29,7 +31,16 @@ const navigation: Ref<MenuItem[]> = ref([
     name: t('controller.account_settings.title'),
     to: 'settings',
     icon: 'gear'
-  }
+  },
+  ...(controllerLogin.isAdmin
+    ? [
+        {
+          name: t('controller.users.title'),
+          to: 'users',
+          icon: 'user-group'
+        }
+      ]
+    : [])
 ])
 
 function isCurrentRoute(itemPath: string) {

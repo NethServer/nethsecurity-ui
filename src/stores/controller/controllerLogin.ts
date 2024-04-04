@@ -14,12 +14,14 @@ import { useThemeStore } from '../theme'
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
   const token = ref('')
+  const role = ref('')
 
   const router = useRouter()
 
   const isLoggedIn = computed(() => {
     return !isEmpty(username.value)
   })
+  const isAdmin = computed(() => role.value === 'admin')
 
   const loadUserFromStorage = () => {
     const loginInfo = getJsonFromStorage('controllerLoginInfo')
@@ -27,6 +29,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     if (loginInfo) {
       username.value = loginInfo.username
       token.value = loginInfo.token
+      role.value = JSON.parse(atob(loginInfo.token.split('.')[1])).role
     }
   }
 
@@ -44,6 +47,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     saveToStorage('controllerLoginInfo', loginInfo)
     username.value = user
     token.value = jwtToken
+    role.value = JSON.parse(atob(jwtToken.split('.')[1])).role
     const themeStore = useThemeStore()
     themeStore.loadTheme()
     router.push(`${getControllerRoutePrefix()}/`)
@@ -71,6 +75,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     isLoggedIn,
     loadUserFromStorage,
     login,
-    logout
+    logout,
+    isAdmin
   }
 })

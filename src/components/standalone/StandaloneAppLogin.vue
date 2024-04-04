@@ -20,7 +20,7 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
-import { getProductName, getCompanyName } from '@/lib/config'
+import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/config'
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
@@ -219,6 +219,11 @@ async function verifyOtp() {
                 {{ t('standalone.two_fa.enter_otp_login_2') }}
               </p>
             </template>
+            <div v-if="getPrivacyPolicyUrl() != ''" class="mt-1 text-sm leading-6">
+              <NeLink :href="getPrivacyPolicyUrl()" target="_blank" class="font-medium">
+                {{ t('login.privacy_policy') }}
+              </NeLink>
+            </div>
           </div>
           <form class="space-y-6">
             <template v-if="step === 'login'">

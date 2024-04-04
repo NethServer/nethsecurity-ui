@@ -103,3 +103,8 @@ export const getHelpdeskUrl = () => {
   // @ts-ignore
   return window.BRANDING.HELPDESK_URL
 }
+
+export const getPrivacyPolicyUrl = () => {
+  // @ts-ignore
+  return window.BRANDING.PRIVACY_POLICY_URL
+}

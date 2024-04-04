@@ -19,7 +19,7 @@ import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getProductName, getCompanyName } from '@/lib/config'
+import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/config'
 import { validateRequired } from '@/lib/validation'
 
 let username = ref('')
@@ -133,6 +133,11 @@ function validate() {
           }}</NeTitle>
           <div class="mb-4 text-sm text-gray-700 dark:text-gray-100">
             {{ t('login.welcome_description_controller', { product: getProductName() }) }}
+          </div>
+          <div v-if="getPrivacyPolicyUrl() != ''" class="mt-1 text-sm leading-6">
+            <NeLink :href="getPrivacyPolicyUrl()" target="_blank" class="font-medium">
+              {{ t('login.privacy_policy') }}
+            </NeLink>
           </div>
           <form class="space-y-6" @submit.prevent>
             <NeInlineNotification

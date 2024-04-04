@@ -361,7 +361,8 @@
     "need_help": "Need help?",
     "sign_in": "Sign in",
     "cannot_login": "Cannot login",
-    "incorrect_username_or_password": "Incorrect username or password"
+    "incorrect_username_or_password": "Incorrect username or password",
+    "privacy_policy": "Privacy policy"
   },
   "standalone": {
     "dashboard": {

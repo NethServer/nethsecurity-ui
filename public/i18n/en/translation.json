@@ -1767,7 +1767,7 @@
       "installed_version": "Installed version",
       "connected": "Connected",
       "not_connected": "Not connected",
-      "not_registered_yet": "Not registered yet",
+      "not_registered_yet": "Not registered",
       "open_unit": "Open unit",
       "open_metrics": "Open metrics",
       "open_logs": "Open logs",
@@ -1806,7 +1806,12 @@
       "revoke_ssh_key_description": "Revoke your public SSH key from one or more units. When you connect to the SSH terminal of a unit that doesn't contain your SSH key you'll have to enter unit credentials instead of your passphrase.",
       "hostname": "Hostname",
       "passphrase": "Passphrase",
-      "passphrase_tooltip": "Enter the passphrase you used to generate your SSH key pair"
+      "passphrase_tooltip": "Enter the passphrase you used to generate your SSH key pair",
+      "data_received": "Data received",
+      "data_sent": "Data sent",
+      "connected_since": "Connected since",
+      "real_address": "Real address",
+      "virtual_address": "Virtual address"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

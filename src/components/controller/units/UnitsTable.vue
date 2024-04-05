@@ -14,13 +14,16 @@ import {
   NeTooltip,
   getAxiosErrorMessage,
   getPreference,
-  savePreference
+  savePreference,
+  byteFormat1024,
+  formatDateLoc
 } from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
 import { onMounted, ref, type PropType } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { isEmpty } from 'lodash-es'
 
 defineProps({
   filteredUnits: {
@@ -198,8 +201,8 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
             </template>
           </div>
           <!-- more info button -->
-          <div>
-            <NeTooltip interactive :maxWidth="450">
+          <div v-if="item.registered">
+            <NeTooltip interactive :maxWidth="450" placement="bottom">
               <template #trigger>
                 <NeButton size="sm" kind="tertiary" class="-mx-2">
                   {{ t('common.more_info') }}
@@ -225,34 +228,54 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
                       {{ item.id }}
                     </span>
                   </div>
-                  <!-- <div> ////
-                <span class="mr-2 inline-block font-semibold">
-                  {{ t('standalone.openvpn_rw.remote_ip') }}:
-                </span>
-                <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
-              </div>
-              <div>
-                <span class="mr-2 inline-block font-semibold"
-                  >{{ t('standalone.openvpn_rw.started') }}:</span
-                >
-                <span class="text-gray-300 dark:text-gray-500">{{
-                  `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
-                    (item.since as number) * 1000
-                  ).toLocaleTimeString()}`
-                }}</span>
-              </div>
-              <div class="align-top">
-                <span class="mr-2 inline-block align-top font-semibold"
-                  >{{ t('standalone.openvpn_rw.traffic') }}:</span
-                >
-                <span class="inline-block align-top text-gray-300 dark:text-gray-500"
-                  >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
-                  {{ t('standalone.openvpn_rw.sent') }}<br />{{
-                    parseInt(item.bytes_received as string) / 1000
-                  }}
-                  KB {{ t('standalone.openvpn_rw.received') }}</span
-                >
-              </div> -->
+                  <!-- data received -->
+                  <div v-if="item.vpn.bytes_rcvd">
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.data_received') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{ byteFormat1024(item.vpn.bytes_rcvd) }}
+                    </span>
+                  </div>
+                  <!-- data sent -->
+                  <div v-if="item.vpn.bytes_sent">
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.data_sent') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{ byteFormat1024(item.vpn.bytes_sent) }}
+                    </span>
+                  </div>
+                  <!-- connected since -->
+                  <div v-if="item.vpn.connected_since">
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.connected_since') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{
+                        formatDateLoc(new Date(Number(item.vpn.connected_since) * 1000), 'PPpp') ||
+                        '-'
+                      }}
+                    </span>
+                  </div>
+                  <!-- real address -->
+                  <div v-if="item.vpn.real_address">
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.real_address') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{ item.vpn.real_address || '-' }}
+                    </span>
+                  </div>
+                  <!-- virtual address -->
+                  <div v-if="item.vpn.virtual_address">
+                    <span class="mr-2 inline-block font-semibold">
+                      {{ t('controller.units.virtual_address') }}:
+                    </span>
+                    <span class="text-gray-300 dark:text-gray-600">
+                      {{ item.vpn.virtual_address || '-' }}
+                    </span>
+                  </div>
                 </div>
               </template>
             </NeTooltip>

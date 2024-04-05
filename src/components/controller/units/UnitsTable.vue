@@ -23,7 +23,6 @@ import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
 import { onMounted, ref, type PropType } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { isEmpty } from 'lodash-es'
 
 defineProps({
   filteredUnits: {

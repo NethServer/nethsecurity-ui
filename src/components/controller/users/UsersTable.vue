@@ -10,8 +10,7 @@ import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useItemPagination } from '@/composables/useItemPagination'
-
-const { t } = useI18n()
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 const props = defineProps<{
   users: ControllerAccount[]
@@ -22,6 +21,8 @@ const emit = defineEmits<{
   edit: [item: ControllerAccount]
 }>()
 
+const { t } = useI18n()
+const controllerLogin = useLoginStore()
 const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.users, {
   itemsPerPage: 10
 })
@@ -51,7 +52,8 @@ function getDropdownItems(item: ControllerAccount) {
       danger: true,
       action: () => {
         emit('delete', item)
-      }
+      },
+      disabled: item.username === controllerLogin.username
     }
   ]
 }
@@ -76,7 +78,11 @@ function getDropdownItems(item: ControllerAccount) {
   >
     <template #menu="{ item }: { item: ControllerAccount }">
       <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('edit', item)">
+        <NeButton
+          kind="tertiary"
+          @click="emit('edit', item)"
+          :disabled="item.username === controllerLogin.username"
+        >
           <template #prefix>
             <font-awesome-icon
               :icon="['fas', 'pen-to-square']"

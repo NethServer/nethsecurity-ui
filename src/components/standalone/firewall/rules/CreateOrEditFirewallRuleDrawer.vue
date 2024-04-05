@@ -656,9 +656,13 @@ async function saveRule() {
 
   if (props.ruleType !== 'output') {
     // source addresses
-    ruleData.src_ip = sourceAddresses.value.map((address) => {
-      return address.label
-    })
+    ruleData.src_ip = [
+      ...new Set(
+        sourceAddresses.value.map((address) => {
+          return address.id
+        })
+      )
+    ]
 
     // source zone
     ruleData.src = sourceZone.value
@@ -666,9 +670,13 @@ async function saveRule() {
 
   if (props.ruleType !== 'input') {
     // destination addresses
-    ruleData.dest_ip = destinationAddresses.value.map((address) => {
-      return address.label
-    })
+    ruleData.dest_ip = [
+      ...new Set(
+        destinationAddresses.value.map((address) => {
+          return address.id
+        })
+      )
+    ]
 
     // destination zone
     ruleData.dest = destinationZone.value

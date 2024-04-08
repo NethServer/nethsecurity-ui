@@ -137,27 +137,11 @@ function getBulkActionsKebabMenuItems() {
           {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
         </div>
       </div>
-      <div class="mb-8 flex flex-col items-start justify-between gap-6 xl:flex-row">
-        <div class="max-w-2xl text-gray-500 dark:text-gray-400">
-          {{ t('controller.units.page_description') }}
-        </div>
-        <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-6 xl:flex-row">
-          <NeButton kind="tertiary" size="lg" @click="isShownAddUnitModal = true" class="shrink-0">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-            </template>
-            {{ t('controller.units.add_unit') }}
-          </NeButton>
-          <NeButton kind="secondary" size="lg" @click="forceReloadUnitsData" class="shrink-0">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
-            </template>
-            {{ t('controller.units.force_data_reload') }}
-          </NeButton>
-        </div>
+      <div class="mb-8 max-w-2xl text-gray-500 dark:text-gray-400">
+        {{ t('controller.units.page_description') }}
       </div>
     </div>
-    <div class="space-y-4">
+    <div class="mb-6 flex flex-col-reverse items-start justify-between gap-6 xl:flex-row">
       <!-- text filter -->
       <div class="flex items-center gap-4">
         <NeTextInput
@@ -174,24 +158,44 @@ function getBulkActionsKebabMenuItems() {
           {{ t('common.clear_filter') }}
         </NeButton>
       </div>
-      <!-- bulk actions -->
-      <NeDropdown
-        :items="getBulkActionsKebabMenuItems()"
-        :openMenuAriaLabel="t('controller.units.open_actions_menu')"
-      >
-        <template #button>
-          <NeButton kind="secondary">
-            {{ t('controller.units.actions') }}
-            <template #suffix>
-              <font-awesome-icon
-                :icon="['fas', 'chevron-down']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+      <div>
+        <!-- buttons -->
+        <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
+          <NeButton kind="tertiary" size="lg" @click="isShownAddUnitModal = true" class="shrink-0">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
             </template>
+            {{ t('controller.units.add_unit') }}
           </NeButton>
-        </template>
-      </NeDropdown>
+          <NeButton kind="tertiary" size="lg" @click="forceReloadUnitsData" class="shrink-0">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
+            </template>
+            {{ t('controller.units.force_data_reload') }}
+          </NeButton>
+          <!-- bulk actions -->
+          <NeDropdown
+            :items="getBulkActionsKebabMenuItems()"
+            :openMenuAriaLabel="t('controller.units.open_actions_menu')"
+            alignToRight
+          >
+            <template #button>
+              <NeButton kind="secondary">
+                {{ t('controller.units.actions') }}
+                <template #suffix>
+                  <font-awesome-icon
+                    :icon="['fas', 'chevron-down']"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+              </NeButton>
+            </template>
+          </NeDropdown>
+        </div>
+      </div>
+    </div>
+    <div>
       <!-- skeleton -->
       <template v-if="isShownUnitsSkeleton && isUnitsSkeletonEnabled">
         <NeSkeleton :lines="7" size="lg" />

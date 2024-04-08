@@ -10,6 +10,7 @@ export interface SshConnectionPayload {
   username: string
   password: string
   passphrase: string
+  privatekey: string
   totp: string
   term: string
   _xsrf: string
@@ -39,6 +40,7 @@ export async function getWebsocketId(payload: SshConnectionPayload) {
   formData.append('username', payload.username)
   formData.append('password', payload.password)
   formData.append('passphrase', payload.passphrase)
+  formData.append('privatekey', payload.privatekey)
   formData.append('totp', payload.totp)
   formData.append('term', payload.term)
   formData.append('_xsrf', payload._xsrf)
@@ -54,8 +56,9 @@ export async function getWebsocketId(payload: SshConnectionPayload) {
     }
   )
 
-  if (res.data.status?.includes('Authentication failed')) {
-    // API returns 200 in case of auth error, let's manually raise a 401 error
+  // If API call fails returns the reason inside status field
+  if (res.data.status) {
+    // let's manually raise a 401 error
     throw { response: { status: 401 } }
   }
   return res.data.id

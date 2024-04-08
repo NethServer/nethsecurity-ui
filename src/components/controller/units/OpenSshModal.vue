@@ -12,6 +12,7 @@ import { getXsrfToken, getWebsocketId, type SshConnectionPayload } from '@/lib/c
 import {
   NeInlineNotification,
   NeSkeleton,
+  NeTooltip,
   focusElement,
   getAxiosErrorMessage,
   getPreference,
@@ -19,6 +20,8 @@ import {
 } from '@nethesis/vue-components'
 import router from '@/router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { ubusCallFromController } from '@/lib/standalone/ubus'
+import { useAccountsStore } from '@/stores/controller/accounts'
 
 const props = defineProps({
   visible: {
@@ -35,6 +38,7 @@ const emit = defineEmits(['close'])
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
+const accountsStore = useAccountsStore()
 const xsrfToken = ref('')
 const unitUsername = ref('root')
 const unitPassword = ref('')
@@ -42,22 +46,31 @@ const websocketId = ref('')
 const hideOpenSshPopupsTooltip = ref(false)
 const unitUsernameRef = ref()
 const unitPasswordRef = ref()
+const usePassphrase = ref(false)
+const passphrase = ref('')
+const passphraseRef = ref()
 
 let loading = ref({
   getXsrfToken: false,
-  getWebsocketId: false
+  getWebsocketId: false,
+  sshKeys: false
 })
 
 let error = ref({
   unitUsername: '',
   unitPassword: '',
+  passphrase: '',
   getXsrfToken: '',
+  getXsrfTokenDetails: '',
   getWebsocketId: '',
-  authError: ''
+  getWebsocketIdDetails: '',
+  authError: '',
+  getUnitSshKeys: '',
+  getUnitSshKeysDetails: ''
 })
 
 const isLoading = computed(() => {
-  return loading.value.getXsrfToken
+  return loading.value.getXsrfToken || loading.value.sshKeys
 })
 
 watch(
@@ -65,8 +78,11 @@ watch(
   () => {
     if (props.visible) {
       clearErrors()
+      unitUsername.value = 'root'
       unitPassword.value = ''
+      passphrase.value = ''
       retrieveXsrfToken()
+      loadAccountAndUnitSshKeys()
     }
   }
 )
@@ -75,7 +91,11 @@ watch(
   () => isLoading.value,
   () => {
     if (!isLoading.value) {
-      focusElement(unitPasswordRef)
+      if (usePassphrase.value) {
+        focusElement(passphraseRef)
+      } else {
+        focusElement(unitPasswordRef)
+      }
     }
   }
 )
@@ -83,6 +103,43 @@ watch(
 onMounted(() => {
   hideOpenSshPopupsTooltip.value = getPreference('hideOpenSshPopupsTooltip', loginStore.username)
 })
+
+async function loadAccountAndUnitSshKeys() {
+  loading.value.sshKeys = true
+
+  try {
+    await accountsStore.loadSshKeys()
+    const pubKey = accountsStore.sshKeys.key_pub
+
+    if (!pubKey) {
+      usePassphrase.value = false
+      loading.value.sshKeys = false
+      return
+    }
+
+    try {
+      const res = await ubusCallFromController('ns.ssh', 'list-keys', {}, props.unit.id)
+      const keysString: string = res.data.keys
+
+      // split on newline, trim whitespaces and remove empty lines
+      const unitSshKeys = keysString
+        .split('\n')
+        .map((key) => key.trim())
+        .filter((key) => key)
+
+      if (unitSshKeys.includes(pubKey.trim())) {
+        usePassphrase.value = true
+      } else {
+        usePassphrase.value = false
+      }
+    } catch (err: any) {
+      error.value.getUnitSshKeys = t(getAxiosErrorMessage(err))
+      error.value.getUnitSshKeysDetails = err.toString()
+    }
+  } finally {
+    loading.value.sshKeys = false
+  }
+}
 
 function dontShowAgainHideOpenSshPopupsTooltip() {
   hideOpenSshPopupsTooltip.value = true
@@ -102,12 +159,13 @@ async function retrieveXsrfToken() {
     xsrfToken.value = await getXsrfToken()
   } catch (err: any) {
     error.value.getXsrfToken = t(getAxiosErrorMessage(err))
+    error.value.getXsrfTokenDetails = err.toString()
   } finally {
     loading.value.getXsrfToken = false
   }
 }
 
-function validateUsernameAndPassword() {
+function validateCredentials() {
   clearErrors()
   let isValidationOk = true
 
@@ -122,13 +180,26 @@ function validateUsernameAndPassword() {
     }
   }
 
-  // password
-  {
-    if (!unitPassword.value) {
-      error.value.unitPassword = t('error.required')
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(unitPasswordRef)
+  if (usePassphrase.value) {
+    // passphrase
+    {
+      if (!passphrase.value) {
+        error.value.passphrase = t('error.required')
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(passphraseRef)
+        }
+      }
+    }
+  } else {
+    // password
+    {
+      if (!unitPassword.value) {
+        error.value.unitPassword = t('error.required')
+        if (isValidationOk) {
+          isValidationOk = false
+          focusElement(unitPasswordRef)
+        }
       }
     }
   }
@@ -136,7 +207,7 @@ function validateUsernameAndPassword() {
 }
 
 async function retrieveWebsocketId() {
-  const isValidationOk = validateUsernameAndPassword()
+  const isValidationOk = validateCredentials()
 
   if (!isValidationOk) {
     return
@@ -146,22 +217,32 @@ async function retrieveWebsocketId() {
     hostname: props.unit.ipaddress,
     port: props.unit.info.ssh_port,
     username: unitUsername.value,
-    password: unitPassword.value,
-    passphrase: '', //// TODO
+    password: usePassphrase.value ? '' : unitPassword.value,
+    passphrase: usePassphrase.value ? passphrase.value : '',
+    privatekey: usePassphrase.value ? accountsStore.sshKeys.key : '',
     totp: '',
     term: 'xterm-256color',
     _xsrf: xsrfToken.value
   }
   loading.value.getWebsocketId = true
+  websocketId.value = ''
 
   try {
     websocketId.value = await getWebsocketId(sshPayload)
   } catch (err: any) {
     if (err.response?.status === 401) {
-      error.value.authError = t('controller.units.auth_error')
-      focusElement(unitPasswordRef)
+      error.value.authError = usePassphrase.value
+        ? t('controller.units.auth_error_passphrase')
+        : t('controller.units.auth_error_credentials')
+
+      if (usePassphrase.value) {
+        focusElement(passphraseRef)
+      } else {
+        focusElement(unitPasswordRef)
+      }
     } else {
       error.value.getWebsocketId = t(getAxiosErrorMessage(err))
+      error.value.getWebsocketIdDetails = err.toString()
     }
   } finally {
     loading.value.getWebsocketId = false
@@ -199,32 +280,64 @@ async function retrieveWebsocketId() {
         kind="info"
         :title="t('controller.units.popup_permission_title')"
         :description="t('controller.units.popup_permission_description')"
-        :secondaryButtonLabel="t('common.dont_show_again')"
-        @secondaryClick="dontShowAgainHideOpenSshPopupsTooltip"
+        :primaryButtonLabel="t('common.dont_show_again')"
+        @primaryClick="dontShowAgainHideOpenSshPopupsTooltip"
         :closeAriaLabel="t('common.close')"
       />
-      <!-- getXsrfToken error modal -->
+      <!-- getXsrfToken error notification -->
       <NeInlineNotification
         v-if="error.getXsrfToken"
         kind="error"
         :title="t('error.cannot_retrieve_xsrf_token')"
         :description="error.getXsrfToken"
         :closeAriaLabel="t('common.close')"
-      />
-      <!-- getWebsocketId error modal -->
+      >
+        <template v-if="error.getXsrfTokenDetails" #details>
+          {{ error.getXsrfTokenDetails }}
+        </template>
+      </NeInlineNotification>
+      <!-- getWebsocketId error notification -->
       <NeInlineNotification
         v-if="error.getWebsocketId"
         kind="error"
         :title="t('error.cannot_retrieve_websocket_id')"
         :description="error.getWebsocketId"
         :closeAriaLabel="t('common.close')"
-      />
-      <!-- authentication error (from getWebsocketId) modal -->
+      >
+        <template v-if="error.getWebsocketIdDetails" #details>
+          {{ error.getWebsocketIdDetails }}
+        </template>
+      </NeInlineNotification>
+      <!-- listSshKeys error notification -->
+      <NeInlineNotification
+        v-if="accountsStore.listSshKeysError.notificationDescription"
+        kind="error"
+        :title="t('error.cannot_retrieve_ssh_keys')"
+        :description="accountsStore.listSshKeysError.notificationDescription"
+        :closeAriaLabel="t('common.close')"
+      >
+        <template #details v-if="accountsStore.listSshKeysError.notificationDetails">
+          {{ accountsStore.listSshKeysError.notificationDetails }}
+        </template>
+      </NeInlineNotification>
+      <!-- getUnitSshKeys error notification -->
+      <NeInlineNotification
+        v-if="error.getUnitSshKeys"
+        kind="error"
+        :title="t('error.cannot_retrieve_unit_ssh_keys')"
+        :description="error.getUnitSshKeys"
+        :closeAriaLabel="t('common.close')"
+      >
+        <template v-if="error.getUnitSshKeysDetails" #details>
+          {{ error.getUnitSshKeysDetails }}
+        </template>
+      </NeInlineNotification>
+      <!-- authentication error (from getWebsocketId) notification -->
       <NeInlineNotification
         v-if="error.authError"
         kind="error"
         :title="t('controller.units.auth_error')"
-        :description="t('controller.units.auth_error_description')"
+        :description="error.authError"
         :closeAriaLabel="t('common.close')"
       />
       <!-- skeleton -->
@@ -238,17 +351,39 @@ async function retrieveWebsocketId() {
           autocomplete="username"
           ref="unitUsernameRef"
         />
-        <!-- unit password -->
-        <NeTextInput
-          :label="t('controller.units.unit_password')"
-          v-model="unitPassword"
-          isPassword
-          :showPasswordLabel="t('ne_text_input.show_password')"
-          :hidePasswordLabel="t('ne_text_input.hide_password')"
-          :invalidMessage="t(error.unitPassword)"
-          autocomplete="current-password"
-          ref="unitPasswordRef"
-        />
+        <template v-if="usePassphrase">
+          <!-- passphrase -->
+          <NeTextInput
+            :label="t('controller.units.passphrase')"
+            v-model.trim="passphrase"
+            :invalidMessage="t(error.passphrase)"
+            isPassword
+            :showPasswordLabel="t('ne_text_input.show_password')"
+            :hidePasswordLabel="t('ne_text_input.hide_password')"
+            ref="passphraseRef"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('controller.units.passphrase_tooltip') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeTextInput>
+        </template>
+        <template v-else>
+          <!-- unit password -->
+          <NeTextInput
+            :label="t('controller.units.unit_password')"
+            v-model="unitPassword"
+            isPassword
+            :showPasswordLabel="t('ne_text_input.show_password')"
+            :hidePasswordLabel="t('ne_text_input.hide_password')"
+            :invalidMessage="t(error.unitPassword)"
+            autocomplete="current-password"
+            ref="unitPasswordRef"
+          />
+        </template>
       </template>
     </div>
   </NeModal>

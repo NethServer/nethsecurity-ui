@@ -303,7 +303,7 @@ function mapDestinationAddressesToUi(rule: FirewallRule) {
   for (const destIp of rule.dest_ip) {
     const destAddr = destIp as RuleHost
     const addrFound = addressOptions.value.find((addr: NeComboboxOption) => {
-      return addr.value === `${destAddr.value} ${destAddr.label} (${destAddr.type})`
+      return addr.id === `${destAddr.value} ${destAddr.label} (${destAddr.type})`
     })
 
     if (addrFound) {

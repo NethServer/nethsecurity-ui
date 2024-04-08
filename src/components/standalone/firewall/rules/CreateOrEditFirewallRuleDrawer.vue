@@ -275,7 +275,7 @@ function mapSourceAddressesToUi(rule: FirewallRule) {
   for (const srcIp of rule.src_ip) {
     const srcAddr = srcIp as RuleHost
     const addrFound = addressOptions.value.find((addr: NeComboboxOption) => {
-      return addr.id === srcAddr.value
+      return addr.id === `${srcAddr.value} ${srcAddr.label} (${srcAddr.type})`
     })
 
     if (addrFound) {
@@ -303,7 +303,7 @@ function mapDestinationAddressesToUi(rule: FirewallRule) {
   for (const destIp of rule.dest_ip) {
     const destAddr = destIp as RuleHost
     const addrFound = addressOptions.value.find((addr: NeComboboxOption) => {
-      return addr.id === destAddr.value
+      return addr.id === `${destAddr.value} ${destAddr.label} (${destAddr.type})`
     })
 
     if (addrFound) {
@@ -347,7 +347,7 @@ async function listHostSuggestions() {
       const description = `${host.label} (${host.type})`
 
       return {
-        id: host.value,
+        id: `${host.value} ${description}`,
         label: host.value,
         description
       }
@@ -475,20 +475,20 @@ function validate() {
   if (props.ruleType !== 'output') {
     for (const sourceAddress of sourceAddresses.value) {
       // check if it's an ip address
-      const ipAddressValidation = validateIpAddress(sourceAddress.id)
+      const ipAddressValidation = validateIpAddress(sourceAddress.label)
 
       if (!ipAddressValidation.valid) {
         //  check if it's a cidr
-        const ipCidrValidation = validateIpCidr(sourceAddress.id)
+        const ipCidrValidation = validateIpCidr(sourceAddress.label)
 
         if (!ipCidrValidation.valid) {
           // check if it's an ipv4 or ipv6 address range
-          const ipRangeValidation = validateIpAddressRange(sourceAddress.id)
+          const ipRangeValidation = validateIpAddressRange(sourceAddress.label)
 
           if (!ipRangeValidation.valid) {
             errorBag.value.set('src_ip', [
               t('standalone.firewall_rules.invalid_source_address_value', {
-                value: sourceAddress.id
+                value: sourceAddress.label
               })
             ])
             if (isValidationOk) {
@@ -518,20 +518,20 @@ function validate() {
   if (props.ruleType !== 'input') {
     for (const destinationAddress of destinationAddresses.value) {
       // check if it's an ip address
-      const ipAddressValidation = validateIpAddress(destinationAddress.id)
+      const ipAddressValidation = validateIpAddress(destinationAddress.label)
 
       if (!ipAddressValidation.valid) {
         //  check if it's a cidr
-        const ipCidrValidation = validateIpCidr(destinationAddress.id)
+        const ipCidrValidation = validateIpCidr(destinationAddress.label)
 
         if (!ipCidrValidation.valid) {
           // check if it's an ipv4 or ipv6 address range
-          const ipRangeValidation = validateIpAddressRange(destinationAddress.id)
+          const ipRangeValidation = validateIpAddressRange(destinationAddress.label)
 
           if (!ipRangeValidation.valid) {
             errorBag.value.set('dest_ip', [
               t('standalone.firewall_rules.invalid_destination_address_value', {
-                value: destinationAddress.id
+                value: destinationAddress.label
               })
             ])
             if (isValidationOk) {
@@ -656,9 +656,13 @@ async function saveRule() {
 
   if (props.ruleType !== 'output') {
     // source addresses
-    ruleData.src_ip = sourceAddresses.value.map((address) => {
-      return address.id
-    })
+    ruleData.src_ip = [
+      ...new Set(
+        sourceAddresses.value.map((address) => {
+          return address.label
+        })
+      )
+    ]
 
     // source zone
     ruleData.src = sourceZone.value
@@ -666,9 +670,13 @@ async function saveRule() {
 
   if (props.ruleType !== 'input') {
     // destination addresses
-    ruleData.dest_ip = destinationAddresses.value.map((address) => {
-      return address.id
-    })
+    ruleData.dest_ip = [
+      ...new Set(
+        destinationAddresses.value.map((address) => {
+          return address.label
+        })
+      )
+    ]
 
     // destination zone
     ruleData.dest = destinationZone.value

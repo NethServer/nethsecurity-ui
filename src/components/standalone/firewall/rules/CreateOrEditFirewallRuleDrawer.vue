@@ -659,7 +659,7 @@ async function saveRule() {
     ruleData.src_ip = [
       ...new Set(
         sourceAddresses.value.map((address) => {
-          return address.id
+          return address.label
         })
       )
     ]
@@ -673,7 +673,7 @@ async function saveRule() {
     ruleData.dest_ip = [
       ...new Set(
         destinationAddresses.value.map((address) => {
-          return address.id
+          return address.label
         })
       )
     ]

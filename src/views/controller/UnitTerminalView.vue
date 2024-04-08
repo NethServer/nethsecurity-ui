@@ -40,11 +40,6 @@ let error = ref({
 })
 
 onMounted(() => {
-  // load xterm.js
-  const xtermScript = document.createElement('script')
-  xtermScript.setAttribute('src', '../../../node_modules/@xterm/xterm/lib/xterm.js')
-  document.head.appendChild(xtermScript)
-
   unitName.value = route.query.unitName as string
   websocketId.value = route.query.websocketId as string
   getDefaults()

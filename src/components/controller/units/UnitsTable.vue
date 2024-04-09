@@ -168,6 +168,17 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
   hideOpenUnitPopupsTooltip.value = true
   savePreference('hideOpenUnitPopupsTooltip', true, loginStore.username)
 }
+
+function getSubscriptionLabel(subscriptionType: string) {
+  switch (subscriptionType) {
+    case 'community':
+      return t('controller.units.subscription_community')
+    case 'enterprise':
+      return t('controller.units.subscription_enterprise')
+    default:
+      return t('controller.units.subscription_none')
+  }
+}
 </script>
 
 <template>
@@ -188,11 +199,21 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
           <!-- unit name -->
           <div>
             <div v-if="item.info.unit_name" class="flex items-center gap-2">
-              <font-awesome-icon
-                :icon="['fas', item.info.system_id ? 'award' : 'users']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+              <NeTooltip interactive :maxWidth="450" placement="bottom">
+                <template #trigger>
+                  <font-awesome-icon
+                    :icon="[
+                      'fas',
+                      item.info.subscription_type === 'enterprise' ? 'award' : 'users'
+                    ]"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+                <template #content>
+                  {{ getSubscriptionLabel(item.info.subscription_type) }}
+                </template>
+              </NeTooltip>
               {{ item.info.unit_name }}
             </div>
             <template v-else>

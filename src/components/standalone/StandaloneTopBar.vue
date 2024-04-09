@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { useNotificationsStore } from '@/stores/notifications'
-import { NeButton, NeDropdown, NeSkeleton, NeTooltip } from '@nethesis/vue-components'
+import { NeBadge, NeButton, NeDropdown, NeSkeleton, NeTooltip } from '@nethesis/vue-components'
 import { ref, watch, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
@@ -151,6 +151,7 @@ function openNotificationsDrawer() {
               name="search"
             /> -->
       </div>
+      <!-- unsaved changes button -->
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <div v-if="uciChangesStore.numChanges">
           <NeButton kind="primary" size="md" @click="showUciChangesModal = true" class="relative">
@@ -172,6 +173,15 @@ function openNotificationsDrawer() {
           <UciChangesModal :visible="showUciChangesModal" @close="showUciChangesModal = false" />
         </div>
 
+        <!-- badge for controlled unit -->
+        <NeTooltip v-if="!isStandaloneMode()">
+          <template #trigger>
+            <NeBadge kind="tertiary" text="Controller" />
+          </template>
+          <template #content>
+            {{ t('common.shell.controlled_unit_tooltip') }}
+          </template>
+        </NeTooltip>
         <!-- unit name -->
         <div class="hidden text-sm lg:block lg:h-6" aria-hidden="true">
           <NeSkeleton v-if="loading.systemBoard" class="w-28" />

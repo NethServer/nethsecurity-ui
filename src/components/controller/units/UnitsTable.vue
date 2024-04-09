@@ -199,7 +199,7 @@ function getSubscriptionLabel(subscriptionType: string) {
           <!-- unit name -->
           <div>
             <div v-if="item.info.unit_name" class="flex items-center gap-2">
-              <NeTooltip interactive :maxWidth="450" placement="bottom">
+              <NeTooltip interactive>
                 <template #trigger>
                   <font-awesome-icon
                     :icon="[
@@ -222,7 +222,7 @@ function getSubscriptionLabel(subscriptionType: string) {
           </div>
           <!-- more info button -->
           <div v-if="item.registered">
-            <NeTooltip interactive :maxWidth="450" placement="bottom">
+            <NeTooltip interactive :maxWidth="450">
               <template #trigger>
                 <NeButton size="sm" kind="tertiary" class="-mx-2">
                   {{ t('common.more_info') }}
@@ -346,7 +346,7 @@ function getSubscriptionLabel(subscriptionType: string) {
               {{ t('controller.units.open_unit') }}
             </NeButton>
             <!-- show popups warning tooltip -->
-            <NeTooltip v-else kind="tertiary" triggerEvent="mouseenter focus" placement="top-end">
+            <NeTooltip v-else triggerEvent="mouseenter focus" placement="top-end">
               <template #trigger>
                 <NeButton kind="tertiary" @click="openUnit(item.id)">
                   <template #prefix>

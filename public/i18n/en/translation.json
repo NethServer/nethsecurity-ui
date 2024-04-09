@@ -9,7 +9,8 @@
       "show_notifications": "Show notifications",
       "open_user_menu": "Open user menu",
       "close_side_drawer": "Close side drawer",
-      "account": "Account"
+      "account": "Account",
+      "controlled_unit_tooltip": "This unit has been opened by a Controller"
     },
     "save": "Save",
     "cancel": "Cancel",

@@ -25,7 +25,7 @@ import {
 } from '@nethesis/vue-components'
 import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { debounce } from 'lodash-es'
+import { bind, debounce } from 'lodash-es'
 
 type LDAPDatabasePayload = {
   name: string
@@ -38,6 +38,8 @@ type LDAPDatabasePayload = {
   start_tls: string | boolean
   tls_reqcert: string
   description: string
+  bind_dn: string
+  bind_password: string
 }
 
 const props = defineProps<{
@@ -72,6 +74,8 @@ const userCn = ref('')
 const userAttribute = ref('')
 const startTls = ref(false)
 const verifyTlsCertificate = ref(false)
+const bindDn = ref('')
+const bindPassword = ref('')
 
 const typeOptions = [
   {
@@ -101,6 +105,8 @@ async function resetForm() {
       userAttribute.value = databaseData.user_attr
       startTls.value = databaseData.start_tls === '1'
       verifyTlsCertificate.value = databaseData.tls_reqcert === 'always'
+      bindDn.value = databaseData.bind_dn
+      bindPassword.value = databaseData.bind_password
 
       loading.value = false
     } catch (err: any) {
@@ -119,6 +125,8 @@ async function resetForm() {
     userAttribute.value = ''
     startTls.value = false
     verifyTlsCertificate.value = false
+    bindDn.value = ''
+    bindPassword.value = ''
   }
 }
 
@@ -201,7 +209,9 @@ async function testDatabaseConfiguration() {
         start_tls: startTls.value,
         user_cn: 'cn',
         description: '',
-        tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never'
+        tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never',
+        bind_dn: bindDn.value,
+        bind_password: bindPassword.value
       }
 
       testUserResults.value = (await ubusCall('ns.users', 'test-ldap', payload)).data.users
@@ -231,6 +241,8 @@ async function getLdapDefaults() {
       userDn.value = ldapDefaultsResponse.user_dn
       userAttribute.value = ldapDefaultsResponse.user_attr
       userCn.value = ldapDefaultsResponse.user_cn
+      bindDn.value = ldapDefaultsResponse.bind_dn
+      bindPassword.value = ldapDefaultsResponse.bind_password
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_ldap_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -266,7 +278,9 @@ async function createOrEditDatabase() {
         start_tls: startTls.value,
         user_cn: 'cn',
         description: '',
-        tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never'
+        tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never',
+        bind_dn: bindDn.value,
+        bind_password: bindPassword.value
       }
 
       await ubusCall('ns.users', requestType, payload)
@@ -403,6 +417,38 @@ watch(
           <NeTooltip>
             <template #content>
               {{ t('standalone.users_database.user_cn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
+      <NeTextInput
+        v-model="bindDn"
+        :disabled="isRetrievingDefaults"
+        :label="t('standalone.users_database.bind_dn')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('bind_dn'))"
+        :optional="true"
+        :optional-label="t('common.optional')"
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.bind_dn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
+      <NeTextInput
+        v-model="bindPassword"
+        :disabled="isRetrievingDefaults"
+        :label="t('standalone.users_database.bind_password')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('bind_password'))"
+        :optional="true"
+        :optional-label="t('common.optional')"
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.bind_password_tooltip') }}
             </template>
           </NeTooltip>
         </template></NeTextInput

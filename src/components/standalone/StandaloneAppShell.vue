@@ -58,7 +58,7 @@ const accountMenuOptions = computed(() => {
       label: t('common.shell.account_settings'),
       icon: 'circle-user',
       iconStyle: 'fas',
-      action: () => router.push('/standalone/user'),
+      action: () => router.push('/standalone/account'),
       disabled: !isStandaloneMode()
     },
     {

@@ -192,7 +192,7 @@ async function sendOrRevokeSshKeyOnUnit(unit: NeComboboxOption) {
 }
 
 function goToAccountSettings() {
-  router.push(`${getControllerRoutePrefix()}/settings`)
+  router.push(`${getControllerRoutePrefix()}/account`)
 }
 
 function selectAllUnits() {

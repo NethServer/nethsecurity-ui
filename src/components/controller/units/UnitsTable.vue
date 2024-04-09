@@ -16,7 +16,8 @@ import {
   getPreference,
   savePreference,
   byteFormat1024,
-  formatDateLoc
+  formatDateLoc,
+  deleteFromStorage
 } from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
@@ -183,6 +184,10 @@ async function maybeShowRemoveUnitModal(unit: Unit) {
     showRemoveUnitModal(unit)
   } else {
     await unitsStore.removeUnit(unit.id)
+
+    // remove unit credentials from local storage
+    deleteFromStorage(`unit-${unit.id}`)
+
     emit('reloadData')
   }
 }

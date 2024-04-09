@@ -6,7 +6,11 @@
 <script setup lang="ts">
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { useNotificationsStore } from '@/stores/notifications'
-import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import {
+  NeInlineNotification,
+  deleteFromStorage,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type PropType, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -64,6 +68,10 @@ async function removeUnit() {
 
   try {
     await unitsStore.removeUnit(props.unit.id)
+
+    // remove unit credentials from local storage
+    deleteFromStorage(`unit-${props.unit.id}`)
+
     emit('close')
     emit('reloadData')
 

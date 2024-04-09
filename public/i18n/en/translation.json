@@ -1811,7 +1811,9 @@
       "data_sent": "Data sent",
       "connected_since": "Connected since",
       "real_address": "Real address",
-      "virtual_address": "Virtual address"
+      "virtual_address": "Virtual address",
+      "select_all_units": "Select all units",
+      "deselect_all_units": "Deselect all units"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

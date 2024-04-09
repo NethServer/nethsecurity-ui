@@ -23,6 +23,7 @@ import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
 import { onMounted, ref, type PropType } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 
 defineProps({
   filteredUnits: {
@@ -38,6 +39,8 @@ const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
 const loginStore = useLoginStore()
 const hideOpenUnitPopupsTooltip = ref(false)
+const currentUnit = ref<Unit>()
+const isShownRemoveUnitModal = ref(false)
 
 let error = ref({
   openUnit: ''
@@ -89,7 +92,7 @@ function getKebabMenuItems(unit: Unit) {
       label: t('controller.units.remove_unit'),
       icon: 'trash',
       iconStyle: 'fas',
-      action: () => removeUnit(unit),
+      action: () => maybeShowRemoveUnitModal(unit),
       danger: true
     }
   ]
@@ -159,11 +162,6 @@ function openLogs(unit: Unit) {
   }
 }
 
-async function removeUnit(unit: Unit) {
-  await unitsStore.removeUnit(unit.id)
-  emit('reloadData')
-}
-
 function dontShowAgainHideOpenUnitPopupsTooltip() {
   hideOpenUnitPopupsTooltip.value = true
   savePreference('hideOpenUnitPopupsTooltip', true, loginStore.username)
@@ -178,6 +176,20 @@ function getSubscriptionLabel(subscriptionType: string) {
     default:
       return t('controller.units.subscription_none')
   }
+}
+
+async function maybeShowRemoveUnitModal(unit: Unit) {
+  if (unit.registered) {
+    showRemoveUnitModal(unit)
+  } else {
+    await unitsStore.removeUnit(unit.id)
+    emit('reloadData')
+  }
+}
+
+function showRemoveUnitModal(unit: Unit) {
+  currentUnit.value = unit
+  isShownRemoveUnitModal.value = true
 }
 </script>
 
@@ -378,5 +390,12 @@ function getSubscriptionLabel(subscriptionType: string) {
         </div>
       </template>
     </NeTable>
+    <!-- remove unit modal -->
+    <RemoveUnitModal
+      :visible="isShownRemoveUnitModal"
+      :unit="currentUnit"
+      @close="isShownRemoveUnitModal = false"
+      @reloadData="emit('reloadData')"
+    />
   </div>
 </template>

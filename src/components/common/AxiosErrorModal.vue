@@ -54,11 +54,7 @@ watch(
 
 function copyCommandToClipboard() {
   if (axiosError.value) {
-    if (isUbusCall.value) {
-      notificationsStore.copyUbusApiCommandToClipboard(axiosError.value)
-    } else {
-      notificationsStore.copyCurlToClipboard(axiosError.value)
-    }
+    notificationsStore.copyCommandToClipboard(axiosError.value)
     justCopied.value = true
 
     setTimeout(() => {

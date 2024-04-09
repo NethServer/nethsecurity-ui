@@ -68,10 +68,6 @@ function connectWebSocket() {
     connectionStatus.value = 'active'
   }
 
-  // webSocket.onmessage = (event) => { ////
-  //   console.log('WebSocket message received:', event) ////
-  // }
-
   webSocket.value.onerror = (error) => {
     console.log('WebSocket error:', error)
     connectionStatus.value = 'error'

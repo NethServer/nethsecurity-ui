@@ -134,22 +134,6 @@ function openNotificationsDrawer() {
     <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
       <div class="relative flex flex-1">
         <!-- global search -->
-        <!-- <label for="search-field" class="sr-only">{{ t('common.search') }}</label> //// global search
-            <font-awesome-icon
-              :icon="['fas', 'magnifying-glass']"
-              :class="[
-                'pointer-events-none absolute inset-y-0 left-0 h-full w-4',
-                topBarButtonsColorClasses
-              ]"
-              aria-hidden="true"
-            />
-            <input
-              id="search-field"
-              class="block h-full w-full border-0 bg-white py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 dark:bg-gray-950 dark:text-gray-50 dark:placeholder:text-gray-500 sm:text-sm"
-              :placeholder="t('common.search')"
-              type="search"
-              name="search"
-            /> -->
       </div>
       <!-- unsaved changes button -->
       <div class="flex items-center gap-x-4 lg:gap-x-6">

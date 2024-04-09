@@ -143,13 +143,15 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const copyCommandToClipboard = (notification: NeNotification) => {
-    const inputData = JSON.parse(notification.payload.config.data)
+    console.log('copyCommandToClipboard, notification', notification) ////
+
     const isUbusCall = notification.payload?.config.url.includes('/ubus/call')
 
     if (!isUbusCall) {
       copyCurlToClipboard(notification)
     } else {
       // it's a ubus call
+      const inputData = JSON.parse(notification.payload.config.data)
       const ubusPath = inputData.path
 
       // check if it's a ns.xyz api

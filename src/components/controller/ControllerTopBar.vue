@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { getControllerRoutePrefix } from '@/lib/router'
 import router from '@/router'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import { NeDropdown, NeTooltip } from '@nethesis/vue-components'
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'

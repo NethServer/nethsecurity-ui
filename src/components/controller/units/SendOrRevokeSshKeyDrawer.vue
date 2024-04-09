@@ -21,7 +21,7 @@ import { ubusCallFromController } from '@/lib/standalone/ubus'
 import { useAccountsStore } from '@/stores/controller/accounts'
 import router from '@/router'
 import { getControllerRoutePrefix } from '@/lib/router'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import type { SendOrRevokeAction } from '@/views/controller/UnitsView.vue'
 
 const props = defineProps({

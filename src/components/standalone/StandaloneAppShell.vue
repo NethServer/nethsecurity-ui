@@ -17,9 +17,9 @@ import { useI18n } from 'vue-i18n'
 import UciChangesModal from './UciChangesModal.vue'
 import { isEmpty, isEqual } from 'lodash-es'
 import router from '@/router'
-import ToastNotificationsArea from '../common/ToastNotificationsArea.vue'
-import NotificationDrawer from '../common/NotificationDrawer.vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import ToastNotificationsArea from '../ToastNotificationsArea.vue'
+import NotificationDrawer from '../NotificationDrawer.vue'
+import { useNotificationsStore } from '@/stores/notifications'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 const loginStore = useLoginStore()

@@ -20,7 +20,7 @@ import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import QRCodeVue3 from 'qrcode-vue3'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false }

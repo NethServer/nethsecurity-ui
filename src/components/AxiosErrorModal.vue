@@ -8,7 +8,7 @@ import { NeFormItemLabel, NeLink, NeTooltip } from '@nethesis/vue-components'
 import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { computed, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import { getProductName } from '@/lib/config'
 
 const { t } = useI18n()

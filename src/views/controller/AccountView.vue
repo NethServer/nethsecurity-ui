@@ -15,7 +15,7 @@ import { useLanguage } from '@/composables/useLanguage'
 import ChangePasswordDrawer from '@/components/controller/account_settings/ChangePasswordDrawer.vue'
 import GenerateSSHKeyPairDrawer from '@/components/controller/account_settings/GenerateSSHKeyPairDrawer.vue'
 import DeleteSSHKeyModal from '@/components/controller/account_settings/DeleteSSHKeyModal.vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const { t } = useI18n()
 

@@ -14,7 +14,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import AllowlistTable from './AllowlistTable.vue'
 import DeleteAddressModal from './DeleteAddressModal.vue'
 import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export type AllowlistAddress = {
   address: string

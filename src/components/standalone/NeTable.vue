@@ -151,7 +151,10 @@ function onSelectPage(page: number) {
         </slot>
       </table>
     </div>
-    <div v-if="withPaginator" class="mt-6 flex flex-row justify-end">
+    <div
+      v-if="withPaginator && paginatorProps?.totalPages > 1"
+      class="mt-6 flex flex-row justify-end"
+    >
       <NePaginator
         :current-page="paginatorProps?.currentPage ?? 1"
         :total-pages="paginatorProps?.totalPages ?? 1"

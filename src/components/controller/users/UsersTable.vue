@@ -6,10 +6,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import NeTable from '../../standalone/NeTable.vue'
-import { NeDropdown } from '@nethesis/vue-components'
+import { NeDropdown, useItemPagination } from '@nethesis/vue-components'
 import { NeButton } from '@nethserver/vue-tailwind-lib'
 import { type ControllerAccount } from '@/stores/controller/accounts'
-import { useItemPagination } from '@/composables/useItemPagination'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 const props = defineProps<{

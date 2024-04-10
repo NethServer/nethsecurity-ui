@@ -78,11 +78,7 @@ function getDropdownItems(item: ControllerAccount) {
   >
     <template #menu="{ item }: { item: ControllerAccount }">
       <div class="align-center flex justify-end">
-        <NeButton
-          kind="tertiary"
-          @click="emit('edit', item)"
-          :disabled="item.username === controllerLogin.username"
-        >
+        <NeButton kind="tertiary" @click="emit('edit', item)">
           <template #prefix>
             <font-awesome-icon
               :icon="['fas', 'pen-to-square']"

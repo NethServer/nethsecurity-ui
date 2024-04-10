@@ -7,10 +7,9 @@
 import type { Blocklist } from './BlocklistTab.vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '../../NeTable.vue'
-import { NeProgressBar } from '@nethesis/vue-components'
+import { NeProgressBar, useItemPagination } from '@nethesis/vue-components'
 import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { range } from 'lodash-es'
-import { useItemPagination } from '@/composables/useItemPagination'
 
 const { t } = useI18n()
 

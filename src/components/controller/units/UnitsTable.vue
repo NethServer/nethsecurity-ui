@@ -17,7 +17,8 @@ import {
   savePreference,
   byteFormat1024,
   formatDateLoc,
-  deleteFromStorage
+  deleteFromStorage,
+  useItemPagination
 } from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
@@ -26,7 +27,7 @@ import { onMounted, ref, type PropType } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 
-defineProps({
+const props = defineProps({
   filteredUnits: {
     type: Object as PropType<Array<Unit>>,
     required: true
@@ -39,6 +40,10 @@ const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
 const loginStore = useLoginStore()
+const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.filteredUnits, {
+  itemsPerPage: 10
+})
+
 const hideOpenUnitPopupsTooltip = ref(false)
 const currentUnit = ref<Unit>()
 const isShownRemoveUnitModal = ref(false)
@@ -209,7 +214,22 @@ function showRemoveUnitModal(unit: Unit) {
       :closeAriaLabel="t('common.close')"
       class="mb-6"
     />
-    <NeTable :data="filteredUnits" :headers="tableHeaders">
+    <NeTable
+      :data="paginatedItems"
+      :with-paginator="true"
+      :paginator-props="{
+        totalPages: pageCount,
+        currentPage,
+        previousLabel: t('common.previous'),
+        nextLabel: t('common.next')
+      }"
+      @select-page="
+        (page) => {
+          currentPage = page
+        }
+      "
+      :headers="tableHeaders"
+    >
       <!-- unit name -->
       <template #unit_name="{ item }: { item: Unit }">
         <div class="space-y-1">

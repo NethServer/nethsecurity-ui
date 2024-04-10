@@ -4,24 +4,37 @@
 -->
 
 <script setup lang="ts">
-import { getControllerRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { useNotificationsStore } from '@/stores/notifications'
-import { NeDropdown, NeTooltip } from '@nethesis/vue-components'
-import { ref, watch, computed } from 'vue'
+import { NeBadge, NeButton, NeDropdown, NeSkeleton, NeTooltip } from '@nethesis/vue-components'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
-import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { isEmpty, isEqual } from 'lodash-es'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { isStandaloneMode } from '@/lib/config'
+import UciChangesModal from './UciChangesModal.vue'
 
 const emit = defineEmits(['openSidebar'])
 
 const { t } = useI18n()
-const notificationsStore = useNotificationsStore()
-const themeStore = useThemeStore()
 const loginStore = useLoginStore()
-const shakeNotificationsIcon = ref(false)
+const themeStore = useThemeStore()
+const uciChangesStore = useUciPendingChangesStore()
+const notificationsStore = useNotificationsStore()
+
+let showUciChangesModal = ref(false)
+let isChangesButtonFlashing = ref(false)
+const unitName = ref('')
 const topBarButtonsColorClasses =
   'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
+const shakeNotificationsIcon = ref(false)
+
+let loading = ref({
+  systemBoard: false
+})
 
 const accountMenuOptions = computed(() => {
   return [
@@ -30,7 +43,8 @@ const accountMenuOptions = computed(() => {
       label: t('common.shell.account_settings'),
       icon: 'circle-user',
       iconStyle: 'fas',
-      action: () => router.push(`${getControllerRoutePrefix()}/account`)
+      action: () => router.push('/standalone/account'),
+      disabled: !isStandaloneMode()
     },
     {
       id: 'theme',
@@ -44,10 +58,30 @@ const accountMenuOptions = computed(() => {
       label: t('common.shell.sign_out'),
       icon: 'right-from-bracket',
       iconStyle: 'fas',
-      action: loginStore.logout
+      action: loginStore.logout,
+      disabled: !isStandaloneMode()
     }
   ]
 })
+
+watch(
+  () => uciChangesStore.changes,
+  (newChanges, oldChanges) => {
+    // do nothing if there are no changes or they are the same as the previous ones
+    if (isEmpty(newChanges) || isEqual(newChanges, oldChanges)) {
+      return
+    }
+
+    // briefly flash unsaved changes button
+    setTimeout(() => {
+      isChangesButtonFlashing.value = true
+    }, 500)
+
+    setTimeout(() => {
+      isChangesButtonFlashing.value = false
+    }, 1000)
+  }
+)
 
 watch(
   () => notificationsStore.numNotifications,
@@ -64,6 +98,17 @@ watch(
     }
   }
 )
+
+onMounted(() => {
+  getSystemBoard()
+})
+
+async function getSystemBoard() {
+  loading.value.systemBoard = true
+  const systemBoard = await ubusCall('system', 'board')
+  unitName.value = systemBoard.data.hostname
+  loading.value.systemBoard = false
+}
 
 function openNotificationsDrawer() {
   notificationsStore.setNotificationDrawerOpen(true)
@@ -90,10 +135,41 @@ function openNotificationsDrawer() {
       <div class="relative flex flex-1">
         <!-- global search -->
       </div>
+      <!-- unsaved changes button -->
       <div class="flex items-center gap-x-4 lg:gap-x-6">
+        <div v-if="uciChangesStore.numChanges">
+          <NeButton kind="primary" size="md" @click="showUciChangesModal = true" class="relative">
+            <template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'pen-to-square']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </template>
+            <span>
+              {{ t('standalone.uci_changes.unsaved_changes') }}
+            </span>
+            <span
+              v-if="isChangesButtonFlashing"
+              class="absolute inline-flex h-full w-3/4 animate-ping rounded-md bg-primary-500 opacity-75 dark:bg-primary-300 dark:opacity-75"
+            ></span>
+          </NeButton>
+          <UciChangesModal :visible="showUciChangesModal" @close="showUciChangesModal = false" />
+        </div>
+
+        <!-- badge for controlled unit -->
+        <NeTooltip v-if="!isStandaloneMode()">
+          <template #trigger>
+            <NeBadge kind="tertiary" text="Controller" />
+          </template>
+          <template #content>
+            {{ t('common.shell.controlled_unit_tooltip') }}
+          </template>
+        </NeTooltip>
         <!-- unit name -->
         <div class="hidden text-sm lg:block lg:h-6" aria-hidden="true">
-          <span>Controller</span>
+          <NeSkeleton v-if="loading.systemBoard" class="w-28" />
+          <span v-else>{{ unitName }}</span>
         </div>
 
         <!-- separator -->
@@ -161,7 +237,6 @@ function openNotificationsDrawer() {
                       class="h-6 w-6 shrink-0"
                       aria-hidden="true"
                     />
-                    {{ loginStore.username }}
                     <font-awesome-icon
                       :icon="['fas', 'chevron-down']"
                       class="h-3 w-3 shrink-0"

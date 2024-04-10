@@ -16,7 +16,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
-import { useNotificationsStore } from './stores/common/notifications'
+import { useNotificationsStore } from './stores/notifications'
 
 const loginStore = useLoginStore()
 const uciChangesStore = useUciPendingChangesStore()

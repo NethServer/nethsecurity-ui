@@ -12,7 +12,7 @@ import { useAccountsStore } from '@/stores/controller/accounts'
 import { NeExpandable, getAxiosErrorMessage, NeSkeleton } from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { watch } from 'vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import { ubusCallFromController } from '@/lib/standalone/ubus'
 
 const { t } = useI18n()

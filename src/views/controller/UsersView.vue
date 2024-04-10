@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n'
 import UsersTable from '@/components/controller/users/UsersTable.vue'
 import CreateOrEditUserDrawer from '@/components/controller/users/CreateOrEditUserDrawer.vue'
 import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const accountsStore = useAccountsStore()
 const notificationsStore = useNotificationsStore()

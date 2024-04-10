@@ -94,7 +94,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
       showErrorDetails(notification)
     }
     notification.secondaryAction = () => {
-      isUbusCall ? copyUbusApiCommandToClipboard(notification) : copyCurlToClipboard(notification)
+      copyCommandToClipboard(notification)
     }
     addNotification(notification)
   }
@@ -142,6 +142,28 @@ export const useNotificationsStore = defineStore('notifications', () => {
     navigator.clipboard.writeText(curlCommand)
   }
 
+  const copyCommandToClipboard = (notification: NeNotification) => {
+    console.log('copyCommandToClipboard, notification', notification) ////
+
+    const isUbusCall = notification.payload?.config.url.includes('/ubus/call')
+
+    if (!isUbusCall) {
+      copyCurlToClipboard(notification)
+    } else {
+      // it's a ubus call
+      const inputData = JSON.parse(notification.payload.config.data)
+      const ubusPath = inputData.path
+
+      // check if it's a ns.xyz api
+      if (new RegExp(/^ns\..+/).test(ubusPath)) {
+        copyUbusApiCommandToClipboard(notification)
+      } else {
+        // it's a ubus call but not a ns.xyz api, let's copy curl command
+        copyCurlToClipboard(notification)
+      }
+    }
+  }
+
   const copyUbusApiCommandToClipboard = (notification: NeNotification) => {
     const inputData = JSON.parse(notification.payload.config.data)
     const ubusPath = inputData.path
@@ -182,8 +204,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     createNotificationFromAxiosError,
     setAxiosErrorModalOpen,
     setAxiosErrorNotificationToShow,
-    copyCurlToClipboard,
-    copyUbusApiCommandToClipboard,
+    copyCommandToClipboard,
     setNotificationDrawerOpen,
     hideNotification
   }

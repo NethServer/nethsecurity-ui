@@ -26,7 +26,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { uid } from 'uid/single'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()

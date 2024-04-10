@@ -10,8 +10,8 @@ import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessu
 import { ref } from 'vue'
 import SideMenu from './SideMenu.vue'
 import ControllerTopBar from './ControllerTopBar.vue'
-import NotificationDrawer from '../common/NotificationDrawer.vue'
-import ToastNotificationsArea from '../common/ToastNotificationsArea.vue'
+import NotificationDrawer from '../NotificationDrawer.vue'
+import ToastNotificationsArea from '../ToastNotificationsArea.vue'
 import router from '@/router'
 import ControllerShellLogo from './ControllerShellLogo.vue'
 

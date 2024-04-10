@@ -15,7 +15,7 @@ import { useI18n } from 'vue-i18n'
 import UsersDatabaseManager from '@/components/standalone/users_database/UsersDatabaseManager.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditDatabaseDrawer from '@/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export type UserDatabase = {
   name: string

@@ -33,7 +33,7 @@ const emit = defineEmits<{
         danger: true
       }
     ]"
-    class="min-h-[10rem] border-l-4 border-indigo-400 dark:border-indigo-500"
+    class="border-l-4 border-indigo-400 dark:border-indigo-500"
   >
     <template #title>
       <div :class="{ 'opacity-50': !exception.enabled }">

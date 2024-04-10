@@ -16,13 +16,15 @@ import {
   getPreference,
   savePreference,
   byteFormat1024,
-  formatDateLoc
+  formatDateLoc,
+  deleteFromStorage
 } from '@nethesis/vue-components'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
 import { onMounted, ref, type PropType } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 
 defineProps({
   filteredUnits: {
@@ -38,6 +40,8 @@ const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
 const loginStore = useLoginStore()
 const hideOpenUnitPopupsTooltip = ref(false)
+const currentUnit = ref<Unit>()
+const isShownRemoveUnitModal = ref(false)
 
 let error = ref({
   openUnit: ''
@@ -89,7 +93,7 @@ function getKebabMenuItems(unit: Unit) {
       label: t('controller.units.remove_unit'),
       icon: 'trash',
       iconStyle: 'fas',
-      action: () => removeUnit(unit),
+      action: () => maybeShowRemoveUnitModal(unit),
       danger: true
     }
   ]
@@ -159,14 +163,38 @@ function openLogs(unit: Unit) {
   }
 }
 
-async function removeUnit(unit: Unit) {
-  await unitsStore.removeUnit(unit.id)
-  emit('reloadData')
-}
-
 function dontShowAgainHideOpenUnitPopupsTooltip() {
   hideOpenUnitPopupsTooltip.value = true
   savePreference('hideOpenUnitPopupsTooltip', true, loginStore.username)
+}
+
+function getSubscriptionLabel(subscriptionType: string) {
+  switch (subscriptionType) {
+    case 'community':
+      return t('controller.units.subscription_community')
+    case 'enterprise':
+      return t('controller.units.subscription_enterprise')
+    default:
+      return t('controller.units.subscription_none')
+  }
+}
+
+async function maybeShowRemoveUnitModal(unit: Unit) {
+  if (unit.registered) {
+    showRemoveUnitModal(unit)
+  } else {
+    await unitsStore.removeUnit(unit.id)
+
+    // remove unit credentials from local storage
+    deleteFromStorage(`unit-${unit.id}`)
+
+    emit('reloadData')
+  }
+}
+
+function showRemoveUnitModal(unit: Unit) {
+  currentUnit.value = unit
+  isShownRemoveUnitModal.value = true
 }
 </script>
 
@@ -188,11 +216,21 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
           <!-- unit name -->
           <div>
             <div v-if="item.info.unit_name" class="flex items-center gap-2">
-              <font-awesome-icon
-                :icon="['fas', item.info.system_id ? 'award' : 'users']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+              <NeTooltip interactive>
+                <template #trigger>
+                  <font-awesome-icon
+                    :icon="[
+                      'fas',
+                      item.info.subscription_type === 'enterprise' ? 'award' : 'users'
+                    ]"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+                <template #content>
+                  {{ getSubscriptionLabel(item.info.subscription_type) }}
+                </template>
+              </NeTooltip>
               {{ item.info.unit_name }}
             </div>
             <template v-else>
@@ -201,7 +239,7 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
           </div>
           <!-- more info button -->
           <div v-if="item.registered">
-            <NeTooltip interactive :maxWidth="450" placement="bottom">
+            <NeTooltip interactive :maxWidth="450">
               <template #trigger>
                 <NeButton size="sm" kind="tertiary" class="-mx-2">
                   {{ t('common.more_info') }}
@@ -325,7 +363,7 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
               {{ t('controller.units.open_unit') }}
             </NeButton>
             <!-- show popups warning tooltip -->
-            <NeTooltip v-else kind="tertiary" triggerEvent="mouseenter focus" placement="top-end">
+            <NeTooltip v-else triggerEvent="mouseenter focus" placement="top-end">
               <template #trigger>
                 <NeButton kind="tertiary" @click="openUnit(item.id)">
                   <template #prefix>
@@ -357,5 +395,12 @@ function dontShowAgainHideOpenUnitPopupsTooltip() {
         </div>
       </template>
     </NeTable>
+    <!-- remove unit modal -->
+    <RemoveUnitModal
+      :visible="isShownRemoveUnitModal"
+      :unit="currentUnit"
+      @close="isShownRemoveUnitModal = false"
+      @reloadData="emit('reloadData')"
+    />
   </div>
 </template>

@@ -161,7 +161,7 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/ReportView.vue')
   },
   {
-    path: 'user',
+    path: 'account',
     name: 'Account',
     component: () => import('../views/standalone/AccountView.vue')
   },
@@ -216,9 +216,9 @@ const router = createRouter({
       component: () => import('../views/controller/UnitsView.vue')
     },
     {
-      path: '/controller/settings',
-      name: 'ControllerSettings',
-      component: () => import('../views/controller/SettingsView.vue')
+      path: '/controller/account',
+      name: 'ControllerAccount',
+      component: () => import('../views/controller/AccountView.vue')
     },
     {
       path: '/controller/users',

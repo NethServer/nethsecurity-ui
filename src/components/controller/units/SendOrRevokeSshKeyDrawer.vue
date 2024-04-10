@@ -21,7 +21,7 @@ import { ubusCallFromController } from '@/lib/standalone/ubus'
 import { useAccountsStore } from '@/stores/controller/accounts'
 import router from '@/router'
 import { getControllerRoutePrefix } from '@/lib/router'
-import { useNotificationsStore } from '@/stores/common/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import type { SendOrRevokeAction } from '@/views/controller/UnitsView.vue'
 
 const props = defineProps({
@@ -66,6 +66,10 @@ const unitsOptions = computed(() => {
       description: unit.info?.unit_name ? unit.id : ''
     }
   })
+})
+
+const allUnitsSelected = computed(() => {
+  return selectedUnits.value.length === unitsOptions.value.length
 })
 
 watch(
@@ -188,7 +192,15 @@ async function sendOrRevokeSshKeyOnUnit(unit: NeComboboxOption) {
 }
 
 function goToAccountSettings() {
-  router.push(`${getControllerRoutePrefix()}/settings`)
+  router.push(`${getControllerRoutePrefix()}/account`)
+}
+
+function selectAllUnits() {
+  selectedUnits.value = unitsOptions.value
+}
+
+function deselectAllUnits() {
+  selectedUnits.value = []
 }
 </script>
 
@@ -234,24 +246,38 @@ function goToAccountSettings() {
             :closeAriaLabel="t('common.close')"
             :showDetailsLabel="t('notifications.show_details')"
           />
-          <!-- //// select all / unselect all -->
-
-          <NeCombobox
-            :label="t('controller.units.units')"
-            v-model="selectedUnits"
-            :options="unitsOptions"
-            :placeholder="t('ne_combobox.choose_multiple')"
-            multiple
-            :invalidMessage="t(errorBag.getFirstI18nKeyFor('units'))"
-            :disabled="loading.sendOrRevokeSshKey"
-            :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('controller.units.no_unit_is_currently_connected')"
-            :selected-label="t('ne_combobox.selected')"
-            :user-input-label="t('ne_combobox.user_input_label')"
-            ref="selectedUnitsRef"
-          />
+          <div>
+            <!-- select all / deselect all -->
+            <NeButton
+              v-if="allUnitsSelected"
+              kind="tertiary"
+              @click="deselectAllUnits"
+              class="-mx-2"
+            >
+              {{ t('controller.units.deselect_all_units') }}
+            </NeButton>
+            <NeButton v-else kind="tertiary" @click="selectAllUnits" class="-mx-2">
+              {{ t('controller.units.select_all_units') }}
+            </NeButton>
+            <!-- units -->
+            <NeCombobox
+              :label="t('controller.units.units')"
+              v-model="selectedUnits"
+              :options="unitsOptions"
+              :placeholder="t('ne_combobox.choose_multiple')"
+              multiple
+              :invalidMessage="t(errorBag.getFirstI18nKeyFor('units'))"
+              :disabled="loading.sendOrRevokeSshKey"
+              :optionalLabel="t('common.optional')"
+              :noResultsLabel="t('ne_combobox.no_results')"
+              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+              :noOptionsLabel="t('controller.units.no_unit_is_currently_connected')"
+              :selected-label="t('ne_combobox.selected')"
+              :user-input-label="t('ne_combobox.user_input_label')"
+              ref="selectedUnitsRef"
+              class="mt-2"
+            />
+          </div>
           <!-- sendOrRevokeSshKey error notification -->
           <NeInlineNotification
             v-if="error.sendOrRevokeSshKey"

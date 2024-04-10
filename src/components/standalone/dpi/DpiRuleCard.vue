@@ -82,7 +82,6 @@ async function toggleRule() {
 </script>
 
 <template>
-  <!-- //// remove min-h-[10rem] when menu overflow is fixed -->
   <NeCard
     :menuItems="[
       {
@@ -103,7 +102,7 @@ async function toggleRule() {
     ]"
     :errorTitle="errorTitle"
     :errorDescription="errorDescription"
-    :class="['min-h-[10rem] border-l-4', zone?.name ? getZoneBorderColorClasses(zone?.name) : '']"
+    :class="['border-l-4', zone?.name ? getZoneBorderColorClasses(zone?.name) : '']"
   >
     <template #title>
       <div :class="{ 'opacity-50': !rule.enabled }">

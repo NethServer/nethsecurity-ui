@@ -9,7 +9,8 @@
       "show_notifications": "Show notifications",
       "open_user_menu": "Open user menu",
       "close_side_drawer": "Close side drawer",
-      "account": "Account"
+      "account": "Account",
+      "controlled_unit_tooltip": "This unit has been opened by a Controller"
     },
     "save": "Save",
     "cancel": "Cancel",
@@ -322,7 +323,8 @@
     "cannot_generate_ssh_key_pair": "Cannot generate SSH key pair",
     "cannot_retrieve_unit_ssh_port": "Cannot retrieve unit SSH port",
     "cannot_open_unit": "Cannot open unit",
-    "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys"
+    "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
+    "cannot_remove_unit": "Cannot remove unit"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1779,7 +1781,7 @@
       "open_terminal": "Open terminal",
       "remove_unit": "Remove unit",
       "copy_join_code": "Copy join code",
-      "add_unit_step_1": "Copy join code",
+      "add_unit_step_1": "Copy the join code of the unit",
       "add_unit_step_2": "Access {product} UI on the unit you want to add and go to 'System > Controller' page",
       "add_unit_step_3": "Paste Controller join code in the form and click 'Connect the unit'",
       "add_unit_step_4": "The unit will appear in 'Unit manager' page",
@@ -1815,7 +1817,14 @@
       "data_sent": "Data sent",
       "connected_since": "Connected since",
       "real_address": "Real address",
-      "virtual_address": "Virtual address"
+      "virtual_address": "Virtual address",
+      "select_all_units": "Select all units",
+      "deselect_all_units": "Deselect all units",
+      "subscription_community": "Community subscription",
+      "subscription_enterprise": "Enterprise subscription",
+      "subscription_none": "No subscription",
+      "confirm_remove_unit": "You are about to remove unit '{name}'. The unit will continue to operate normally, but it will no longer be managed by this Controller.",
+      "unit_name_removed": "Unit '{name}' removed"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

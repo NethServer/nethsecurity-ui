@@ -63,17 +63,15 @@ export const useUnitsStore = defineStore('units', () => {
         params: { cache: useCache }
       })
 
-      if (res.data.data) {
-        const unitsList = res.data.data as Unit[]
+      const unitsList = (res.data.data || []) as Unit[]
 
-        // set connected attribute
-        for (const unit of unitsList) {
-          unit.registered = !isEmpty(unit.info)
-          unit.connected = !isEmpty(unit.vpn)
-        }
-
-        units.value = unitsList.sort(sortUnits)
+      // set connected attribute
+      for (const unit of unitsList) {
+        unit.registered = !isEmpty(unit.info)
+        unit.connected = !isEmpty(unit.vpn)
       }
+
+      units.value = unitsList.sort(sortUnits)
     } catch (err: any) {
       console.error(err)
       errorListUnits.value = t(getAxiosErrorMessage(err))

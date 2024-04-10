@@ -4,8 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeTitle } from '@nethesis/vue-components'
-import { NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import MultiWanGeneralSettings from '@/components/standalone/multi-wan/MultiWanGeneralSettings.vue'
 import MultiWanManager from '@/components/standalone/multi-wan/MultiWanManager.vue'

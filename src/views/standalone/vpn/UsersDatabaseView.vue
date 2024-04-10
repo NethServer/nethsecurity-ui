@@ -6,9 +6,9 @@ import {
   NeButton,
   NeSkeleton,
   NeInlineNotification,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeTabs
 } from '@nethesis/vue-components'
-import { NeTabs } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

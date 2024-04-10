@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
-import { NeTitle } from '@nethesis/vue-components'
-import { NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import BackupContent from '@/components/standalone/backup_and_restore/BackupContent.vue'
 import RestoreContent from '@/components/standalone/backup_and_restore/RestoreContent.vue'
 import MigrationContent from '@/components/standalone/backup_and_restore/MigrationContent.vue'

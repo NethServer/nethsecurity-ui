@@ -125,7 +125,8 @@ function getBadgeIcon() {
 <template>
   <div class="p-6">
     <NeTitle>{{ t('controller.unit_terminal.name_unit_terminal', { name: unitName }) }}</NeTitle>
-    <div class="flex flex-col gap-6">
+    <!-- 50 rem is an appropriate width for the default number or colums of xterm.js terminal -->
+    <div class="flex max-w-[50rem] flex-col gap-6">
       <div class="flex items-center gap-4">
         <span>{{ t('controller.unit_terminal.connection') }}</span>
         <NeBadge

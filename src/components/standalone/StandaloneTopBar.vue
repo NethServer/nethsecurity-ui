@@ -160,7 +160,7 @@ function openNotificationsDrawer() {
         <!-- badge for controlled unit -->
         <NeTooltip v-if="!isStandaloneMode()">
           <template #trigger>
-            <NeBadge kind="tertiary" text="Controller" />
+            <NeBadge kind="primary" text="Controller" />
           </template>
           <template #content>
             {{ t('common.shell.controlled_unit_tooltip') }}

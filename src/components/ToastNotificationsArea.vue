@@ -20,23 +20,25 @@ const notificationsToShow = computed(() => {
 
 <template>
   <div>
-    <div
-      aria-live="assertive"
-      class="pointer-events-none fixed inset-0 flex items-start px-4 pb-6 pt-20 text-sm"
-    >
-      <div class="flex w-full flex-col items-end space-y-4">
-        <TransitionGroup name="fade">
-          <NeToastNotification
-            v-for="notification in notificationsToShow"
-            :key="notification.id"
-            :notification="notification"
-            :srCloseLabel="t('common.close')"
-            showCloseButton
-            @close="notificationsStore.hideNotification(notification.id)"
-          />
-        </TransitionGroup>
+    <Teleport to="body">
+      <div
+        aria-live="assertive"
+        class="pointer-events-none fixed inset-0 z-[120] flex items-start px-8 pb-6 pt-24 text-sm"
+      >
+        <div class="flex w-full flex-col items-end space-y-4">
+          <TransitionGroup name="fade">
+            <NeToastNotification
+              v-for="notification in notificationsToShow"
+              :key="notification.id"
+              :notification="notification"
+              :srCloseLabel="t('common.close')"
+              showCloseButton
+              @close="notificationsStore.hideNotification(notification.id)"
+            />
+          </TransitionGroup>
+        </div>
       </div>
-    </div>
+    </Teleport>
     <!-- axios error modal -->
     <AxiosErrorModal />
   </div>

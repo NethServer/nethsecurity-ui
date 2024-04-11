@@ -412,7 +412,8 @@
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
       "data_updated_every_seconds": "Data updated every {seconds} seconds",
-      "usage_free_of_total": "{free} free of {total}"
+      "usage_free_of_total": "{free} free of {total}",
+      "default_hostname_warning": "Using the default hostname 'NethSec' is not recommended. Change it in {systemSettingsLink} and apply the change."
     },
     "subscription": {
       "title": "Subscription",
@@ -460,7 +461,9 @@
       "all_interfaces": "All interfaces",
       "settings": "Settings",
       "ntp_server_candidates": "NTP servers",
-      "add_ntp_server": "Add NTP server"
+      "add_ntp_server": "Add NTP server",
+      "default_hostname": "Default hostname",
+      "default_hostname_description": "Using the default hostname 'NethSec' is not recommended. You can assign a different hostname to this unit here."
     },
     "uci_changes": {
       "configuration_changes": "Configuration changes",

@@ -8,6 +8,8 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import {
   NeCard,
   NeProgressBar,
+  NeTooltip,
+  NeLink,
   getAxiosErrorMessage,
   formatDurationLoc,
   byteFormat1024
@@ -16,10 +18,13 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash-es'
+import { getStandaloneRoutePrefix } from '@/lib/router'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
+const router = useRouter()
 const REFRESH_INTERVAL = 10000
-const systemInfo = ref<any>(null)
+const systemInfo = ref<any>({})
 const systemInfoIntervalId = ref(0)
 
 const freeMemory = ref(0)
@@ -105,6 +110,10 @@ function getProgressBarColor(progress: number) {
     return 'rose'
   }
 }
+
+function goToSystemSettings() {
+  router.push(`${getStandaloneRoutePrefix()}/system/systemSettings`)
+}
 </script>
 
 <template>
@@ -126,7 +135,28 @@ function getProgressBarColor(progress: number) {
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
       <div class="py-2">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.hostname') }}</span>
-        <span>{{ systemInfo?.hostname || '-' }}</span>
+        <div class="inline-flex items-center gap-1">
+          <span>{{ systemInfo?.hostname || '-' }}</span>
+          <!-- warning for default hostname -->
+          <NeTooltip v-if="systemInfo.hostname === 'NethSec'" interactive class="leading-none">
+            <template #trigger>
+              <font-awesome-icon
+                :icon="['fas', 'warning']"
+                class="h-4 w-4 text-amber-700 dark:text-amber-500"
+                aria-hidden="true"
+              />
+            </template>
+            <template #content>
+              <i18n-t keypath="standalone.dashboard.default_hostname_warning" tag="p">
+                <template #systemSettingsLink>
+                  <NeLink invertedTheme @click="goToSystemSettings">
+                    {{ t('standalone.system_settings.title') }}
+                  </NeLink>
+                </template>
+              </i18n-t>
+            </template>
+          </NeTooltip>
+        </div>
       </div>
       <div class="py-2">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.operating_system') }}</span>

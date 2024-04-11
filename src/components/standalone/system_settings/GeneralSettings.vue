@@ -34,6 +34,7 @@ let timezone = ref('')
 let timezoneRef = ref()
 let timezones = ref([])
 let systemConfig: any = ref({})
+let hostnameFromConfig = ref('')
 
 let loading = ref({
   systemConfig: true,
@@ -107,6 +108,7 @@ async function getSystemConfig() {
     const config = await getUciConfig('system')
     systemConfig.value = config
     hostname.value = config.system[0].hostname
+    hostnameFromConfig.value = hostname.value
     description.value = config.system[0].description
     notes.value = config.system[0].notes
   } catch (err: any) {
@@ -246,6 +248,13 @@ async function syncWithNtpServer() {
       <!-- main section -->
       <div class="border-b border-gray-200 pb-6 dark:border-gray-700">
         <div class="space-y-6">
+          <NeInlineNotification
+            v-if="hostnameFromConfig === 'NethSec'"
+            kind="warning"
+            :title="t('standalone.system_settings.default_hostname')"
+            :description="t('standalone.system_settings.default_hostname_description')"
+            :closeAriaLabel="t('common.close')"
+          />
           <!-- hostname -->
           <NeTextInput
             :label="t('standalone.system_settings.hostname')"

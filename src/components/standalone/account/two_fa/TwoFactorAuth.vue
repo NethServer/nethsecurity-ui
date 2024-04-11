@@ -15,9 +15,9 @@ import {
   NeFormItemLabel,
   getPreference,
   savePreference,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeTextArea
 } from '@nethesis/vue-components'
-import { NeTextArea } from '@nethserver/vue-tailwind-lib'
 import ConfigureTwoFaDrawer from './ConfigureTwoFaDrawer.vue'
 import RevokeTwoFaModal from './RevokeTwoFaModal.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'

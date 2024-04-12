@@ -25,7 +25,7 @@ import {
 } from '@nethesis/vue-components'
 import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { bind, debounce } from 'lodash-es'
+import { debounce } from 'lodash-es'
 
 type LDAPDatabasePayload = {
   name: string

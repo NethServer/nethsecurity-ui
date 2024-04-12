@@ -400,11 +400,7 @@ function showRemoveUnitModal(unit: Unit) {
                 <div>
                   {{ t('controller.units.open_unit_tooltip') }}
                 </div>
-                <!-- link with inverted theme -->
-                <NeLink
-                  @click="dontShowAgainHideOpenUnitPopupsTooltip"
-                  class="mt-2 inline-block text-primary-300 hover:text-primary-200 dark:text-primary-700 dark:hover:text-primary-800"
-                >
+                <NeLink invertedTheme @click="dontShowAgainHideOpenUnitPopupsTooltip">
                   {{ t('common.dont_show_again') }}
                 </NeLink>
               </template>

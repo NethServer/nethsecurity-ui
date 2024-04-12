@@ -4,11 +4,16 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { NeButton, NeSkeleton, NeInlineNotification, NeCombobox } from '@nethesis/vue-components'
-import { NeTextArea } from '@nethserver/vue-tailwind-lib'
+import {
+  NeButton,
+  NeSkeleton,
+  NeInlineNotification,
+  NeCombobox,
+  NeTitle,
+  NeTextArea
+} from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useAccountsStore } from '@/stores/controller/accounts'
 import { useLanguage } from '@/composables/useLanguage'

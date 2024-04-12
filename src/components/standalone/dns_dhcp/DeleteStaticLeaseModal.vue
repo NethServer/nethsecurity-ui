@@ -66,6 +66,7 @@ function close() {
     kind="warning"
     :title="t('standalone.dns_dhcp.delete_reservation')"
     :primaryLabel="t('common.delete')"
+    primaryButtonKind="danger"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     @primaryClick="deleteStaticLease()"

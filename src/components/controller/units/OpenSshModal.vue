@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import type { Unit } from '@/stores/controller/units'
-import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref, watch, type PropType, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getXsrfToken, getWebsocketId, type SshConnectionPayload } from '@/lib/controller/webssh'
@@ -13,6 +13,7 @@ import {
   NeInlineNotification,
   NeSkeleton,
   NeTooltip,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage,
   getPreference,

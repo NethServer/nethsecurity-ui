@@ -20,9 +20,10 @@ import {
   NeButton,
   NeSkeleton,
   NeTooltip,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

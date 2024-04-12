@@ -6,8 +6,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import { NeCombobox, type NeComboboxOption, NeButton } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, type NeComboboxOption, NeButton, NeTextInput } from '@nethesis/vue-components'
 import { watch } from 'vue'
 import { zip } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
@@ -167,7 +166,7 @@ onMounted(() => {
           :disabled="disableInputs"
           :placeholder="placeholder"
           :ref="
-            (r) => {
+            (r: any) => {
               if (i == 0) {
                 inputRef = r
               }

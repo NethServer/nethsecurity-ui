@@ -9,13 +9,13 @@ import {
   NeInlineNotification,
   NeTitle,
   NeButton,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage,
   deleteFromStorage,
   getStringFromStorage,
   saveToStorage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
 import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'

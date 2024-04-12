@@ -10,9 +10,9 @@ import {
   NeButton,
   NeInlineNotification,
   NeSkeleton,
+  NeTextInput,
   NeEmptyState
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UsersTable from '@/components/controller/users/UsersTable.vue'

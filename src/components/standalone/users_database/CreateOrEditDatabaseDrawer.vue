@@ -21,9 +21,10 @@ import {
   NeTooltip,
   NeFormItemLabel,
   NeRadioSelection,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import { debounce } from 'lodash-es'
 
@@ -349,7 +350,7 @@ watch(
       <NeTextInput
         v-model="ldapUri"
         @update:model-value="
-          (_) => {
+          () => {
             debouncedGetLdapDefaults()
           }
         "

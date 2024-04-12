@@ -16,10 +16,11 @@ import {
   NeTooltip,
   NeButton,
   NeFormItemLabel,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {

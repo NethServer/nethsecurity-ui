@@ -12,9 +12,9 @@ import {
   NeButton,
   NeSkeleton,
   NeEmptyState,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
   fetchItemsFunction: () => Promise<T[]>

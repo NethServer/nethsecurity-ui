@@ -9,8 +9,13 @@ import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { NeInlineNotification, focusElement, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import {
+  NeInlineNotification,
+  focusElement,
+  getAxiosErrorMessage,
+  NeTextInput
+} from '@nethesis/vue-components'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

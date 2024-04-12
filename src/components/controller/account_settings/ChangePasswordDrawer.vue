@@ -18,9 +18,9 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
+  NeTextInput,
   focusElement
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { watch } from 'vue'
 
 const { t } = useI18n()

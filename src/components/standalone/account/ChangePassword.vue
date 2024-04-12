@@ -8,9 +8,9 @@ import {
   NeInlineNotification,
   NeButton,
   NeTooltip,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

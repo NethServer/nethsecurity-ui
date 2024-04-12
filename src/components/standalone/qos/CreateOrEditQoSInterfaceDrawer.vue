@@ -20,9 +20,10 @@ import {
   NeTooltip,
   type NeComboboxOption,
   NeFormItemLabel,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'

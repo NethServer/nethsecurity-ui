@@ -11,10 +11,10 @@ import {
   NeSideDrawer,
   NeButton,
   NeExpandable,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type NetmapRule, type NetmapDevice, type NetmapType } from '@/stores/standalone/firewall'

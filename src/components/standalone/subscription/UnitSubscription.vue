@@ -12,10 +12,10 @@ import {
   NeButton,
   NeInlineNotification,
   NeSkeleton,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import type { SubscriptionDataType } from '@/views/standalone/system/SubscriptionView.vue'
 import type { PropType } from 'vue'
 import { ref, toRefs } from 'vue'

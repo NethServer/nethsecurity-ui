@@ -5,13 +5,13 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import {
   NeInlineNotification,
   type NeComboboxOption,
   NeButton,
   getAxiosErrorMessage,
-  NeEmptyState
+  NeEmptyState,
+  NeTextInput
 } from '@nethesis/vue-components'
 import { onMounted, ref, type PropType, watch, computed } from 'vue'
 import CreateOrEditFirewallRuleDrawer from './CreateOrEditFirewallRuleDrawer.vue'

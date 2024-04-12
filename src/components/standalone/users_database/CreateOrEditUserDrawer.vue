@@ -16,9 +16,9 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { User } from './UsersDatabaseManager.vue'
 

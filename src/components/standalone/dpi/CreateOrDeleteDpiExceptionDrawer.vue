@@ -20,9 +20,10 @@ import {
   NeSideDrawer,
   NeButton,
   NeFormItemLabel,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 
 const props = defineProps<{
   isShown: boolean

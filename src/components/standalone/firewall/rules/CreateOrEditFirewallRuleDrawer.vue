@@ -12,10 +12,11 @@ import {
   NeSideDrawer,
   NeButton,
   NeRadioSelection,
+  NeTextInput,
   getAxiosErrorMessage,
   focusElement
 } from '@nethesis/vue-components'
-import { NeToggle, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethserver/vue-tailwind-lib'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

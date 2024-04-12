@@ -15,9 +15,9 @@ import {
   NeSideDrawer,
   NeSkeleton,
   NeFormItemLabel,
-  NeRadioSelection
+  NeRadioSelection,
+  NeTextInput
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { usePolicyForm } from '@/composables/usePolicyForm'
 import { MessageBag } from '@/lib/validation'

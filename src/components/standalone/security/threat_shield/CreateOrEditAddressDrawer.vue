@@ -11,9 +11,9 @@ import {
   NeSideDrawer,
   NeButton,
   NeTooltip,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { AllowlistAddress } from './AllowlistTab.vue'

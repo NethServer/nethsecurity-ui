@@ -12,9 +12,9 @@ import {
   NeButton,
   NeSideDrawer,
   NeTooltip,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { AxiosError } from 'axios'
 
 const { t } = useI18n()

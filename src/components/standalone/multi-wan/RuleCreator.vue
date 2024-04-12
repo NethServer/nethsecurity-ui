@@ -4,8 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeButton, NeSideDrawer } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeCombobox, NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
 import { ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Policy } from '@/composables/useMwan'

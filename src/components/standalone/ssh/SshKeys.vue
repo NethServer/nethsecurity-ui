@@ -12,10 +12,11 @@ import {
   NeInlineNotification,
   NeButton,
   NeSkeleton,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'

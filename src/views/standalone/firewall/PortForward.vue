@@ -11,9 +11,9 @@ import {
   NeSkeleton,
   NeInlineNotification,
   getAxiosErrorMessage,
+  NeTextInput,
   NeEmptyState
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import PortForwardTable from '@/components/standalone/firewall/PortForwardTable.vue'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

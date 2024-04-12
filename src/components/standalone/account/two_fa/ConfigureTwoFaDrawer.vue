@@ -8,11 +8,11 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
+  NeTextInput,
   getAxiosErrorMessage,
   focusElement,
   savePreference
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'

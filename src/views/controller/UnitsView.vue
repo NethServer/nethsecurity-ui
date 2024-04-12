@@ -4,11 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import { useUnitsStore, type Unit } from '@/stores/controller/units'
-import { NeTitle, NeButton, NeEmptyState, NeSkeleton, NeDropdown } from '@nethesis/vue-components'
+import {
+  NeTitle,
+  NeButton,
+  NeEmptyState,
+  NeSkeleton,
+  NeDropdown,
+  NeTextInput
+} from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
 import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'

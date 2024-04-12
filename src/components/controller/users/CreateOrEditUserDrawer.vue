@@ -16,10 +16,10 @@ import {
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
+  NeTextInput,
   getAxiosErrorMessage,
   focusElement
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
 

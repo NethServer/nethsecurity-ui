@@ -12,9 +12,9 @@ import {
   NeButton,
   NeSideDrawer,
   NeFormItemLabel,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { MessageBag, validateFile, validateRequired, type validationOutput } from '@/lib/validation'
 import { watch } from 'vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'

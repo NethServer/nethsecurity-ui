@@ -12,9 +12,9 @@ import {
   NeSkeleton,
   NeInlineNotification,
   getAxiosErrorMessage,
+  NeTextInput,
   NeEmptyState
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { onMounted } from 'vue'
 import { computed } from 'vue'
 import { ref } from 'vue'

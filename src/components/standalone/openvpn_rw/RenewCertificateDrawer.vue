@@ -14,9 +14,10 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal, NeTextInput } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethserver/vue-tailwind-lib'
 import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -38,10 +38,10 @@ import {
   NeTooltip,
   NeFormItemLabel,
   NeRadioSelection,
+  NeTextInput,
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { cloneDeep, isEmpty, toUpper } from 'lodash-es'
 import { ref, watch, computed, type PropType, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'

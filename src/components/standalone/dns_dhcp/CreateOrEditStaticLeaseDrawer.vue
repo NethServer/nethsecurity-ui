@@ -19,9 +19,9 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeButton,
+  NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeTextInput } from '@nethserver/vue-tailwind-lib'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { StaticLease } from './StaticLeases.vue'

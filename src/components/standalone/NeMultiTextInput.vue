@@ -166,7 +166,7 @@ onMounted(() => {
           :disabled="disableInputs"
           :placeholder="placeholder"
           :ref="
-            (r) => {
+            (r: any) => {
               if (i == 0) {
                 inputRef = r
               }

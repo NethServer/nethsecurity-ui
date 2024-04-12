@@ -350,7 +350,7 @@ watch(
       <NeTextInput
         v-model="ldapUri"
         @update:model-value="
-          (_) => {
+          () => {
             debouncedGetLdapDefaults()
           }
         "

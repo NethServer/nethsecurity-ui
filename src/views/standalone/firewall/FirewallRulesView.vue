@@ -4,8 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
-import { NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
 import FirewallRulesContent from '@/components/standalone/firewall/rules/FirewallRulesContent.vue'

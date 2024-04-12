@@ -5,8 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle } from '@nethesis/vue-components'
-import { NeTabs } from '@nethserver/vue-tailwind-lib'
+import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import { useTabs } from '@/composables/useTabs'
 import AllowlistTab from '@/components/standalone/security/threat_shield/AllowlistTab.vue'
 import BlocklistTab from '@/components/standalone/security/threat_shield/BlocklistTab.vue'

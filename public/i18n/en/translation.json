@@ -1761,7 +1761,7 @@
   "controller": {
     "units": {
       "title": "Unit manager",
-      "page_description": "This page lists the units configured in the controller. To connect a new unit to this controller click 'Add unit' and follow the instructions. Once connected, the metrics and logs of the unit will be collected automatically. Connection status of the units is updated every 10 seconds; installed version and subscription information are updated every hour, but you can click 'Force data reload' to update them right away.",
+      "page_description": "This page lists the units configured in the controller. Here you can access SSH terminal, metrics and logs of the units. Connection status of the units is updated every 10 seconds; installed version and subscription information are updated every hour, but you can click 'Force data reload' to update them right away.",
       "add_unit": "Add unit",
       "force_data_reload": "Force data reload",
       "filter_units": "Filter units",

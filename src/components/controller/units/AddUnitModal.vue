@@ -22,7 +22,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
@@ -36,19 +36,27 @@ watch(
   () => props.visible,
   () => {
     if (props.visible) {
-      getJoinCode()
+      addUnit()
     }
   }
 )
 
-async function getJoinCode() {
+async function addUnit() {
+  error.value.addUnit = ''
+
   // generate a random uuid
   const unitId = uuid()
 
   try {
     joinCode.value = await unitsStore.addUnit(unitId)
+    emit('reloadData')
   } catch (err: any) {
-    error.value.addUnit = t(getAxiosErrorMessage(err))
+    // check if unit limit has been reached
+    if (err.response?.data?.message === 'subscription limit reached') {
+      error.value.addUnit = t('error.max_units_reached')
+    } else {
+      error.value.addUnit = t(getAxiosErrorMessage(err))
+    }
   }
 }
 
@@ -81,7 +89,7 @@ function copyJoinCode() {
     <NeInlineNotification
       v-if="error.addUnit"
       kind="error"
-      :title="t('error.cannot_retrieve_join_code')"
+      :title="t('error.cannot_add_unit')"
       :description="error.addUnit"
       class="mb-4"
     />

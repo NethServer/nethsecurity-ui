@@ -22,7 +22,7 @@ import { useAccountsStore } from '@/stores/controller/accounts'
 import router from '@/router'
 import { getControllerRoutePrefix } from '@/lib/router'
 import { useNotificationsStore } from '@/stores/notifications'
-import type { SendOrRevokeAction } from '@/views/controller/UnitsView.vue'
+import type { SendOrRevokeAction } from '@/views/controller/UnitManagerView.vue'
 
 const props = defineProps({
   isShown: {

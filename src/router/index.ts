@@ -213,7 +213,7 @@ const router = createRouter({
     {
       path: '/controller/units',
       name: 'Units',
-      component: () => import('../views/controller/UnitsView.vue')
+      component: () => import('../views/controller/UnitManagerView.vue')
     },
     {
       path: '/controller/account',

@@ -27,7 +27,9 @@
     "loading": "Caricamento",
     "eg_value": "ad es. {value}",
     "name": "Nome",
-    "plus_num_others": "+{num} altro | +{num} altri"
+    "plus_num_others": "+{num} altro | +{num} altri",
+    "more_info": "Più info",
+    "clear_filter": "Rimuovi filtro"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",

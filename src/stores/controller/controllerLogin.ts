@@ -43,6 +43,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     const loginInfo = {
       username: user,
       token: jwtToken
+      // tokenRefreshedTime: refreshedTime //// need to implement refresh on controller UI
     }
     saveToStorage('controllerLoginInfo', loginInfo)
     username.value = user

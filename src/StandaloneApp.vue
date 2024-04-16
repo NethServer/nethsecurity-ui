@@ -21,6 +21,7 @@ const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 const isLoaded = ref(false)
 
@@ -114,7 +115,7 @@ function configureAxios() {
         } else {
           // a controller is managing this unit
           console.warn('[interceptor]', 'Detected error 401, getting a new token for this unit')
-          const route = useRoute()
+
           const unitId = route.params.unitId
           unitsStore.retrieveAndSaveUnitToken(unitId as string)
         }

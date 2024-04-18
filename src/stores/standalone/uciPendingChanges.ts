@@ -23,8 +23,12 @@ export const useUciPendingChangesStore = defineStore('uciPendingChanges', () => 
 
   const commitChanges = async () => {
     await ubusCall('ns.commit', 'commit', { changes: changes.value })
-    // reload page
-    location.reload()
+
+    // reload page using a timeout: some browsers (e.g. Firefox) detect an axios error if the page is reloaded just after a POST request
+
+    setTimeout(() => {
+      location.reload()
+    }, 200)
   }
 
   const revertChanges = async () => {

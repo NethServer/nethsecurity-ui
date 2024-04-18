@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
@@ -83,7 +83,7 @@ function configureAxios() {
         const now = new Date().getTime()
 
         // refresh token once in a while
-        if (loginStore.tokenRefreshedTime + loginStore.TOKEN_REFRESH_INTERVAL < now) {
+        if (loginStore.tokenRefreshedTime + TOKEN_REFRESH_INTERVAL < now) {
           loginStore.refreshToken()
         }
       }

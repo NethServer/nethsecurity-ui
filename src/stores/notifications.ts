@@ -143,8 +143,6 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const copyCommandToClipboard = (notification: NeNotification) => {
-    console.log('copyCommandToClipboard, notification', notification) ////
-
     const isUbusCall = notification.payload?.config.url.includes('/ubus/call')
 
     if (!isUbusCall) {

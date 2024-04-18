@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import ControllerAppShell from '@/components/controller/ControllerAppShell.vue'
 import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
-import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/controller/controllerLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
 import { deleteFromStorage, getPreference } from '@nethesis/vue-components'
@@ -14,7 +14,7 @@ import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/notifications'
 import { useFavicon, useTitle } from '@vueuse/core'
-import { getProductName } from './lib/config'
+import { getControllerApiEndpoint, getProductName } from './lib/config'
 
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
@@ -64,6 +64,31 @@ async function loadI18n() {
 
 function configureAxios() {
   axios.defaults.headers.post['Content-Type'] = 'application/json'
+
+  // request interceptor
+  axios.interceptors.request.use(
+    function (config: any) {
+      // check if token needs to be refreshed
+      if (
+        ![
+          `${getControllerApiEndpoint()}/login`,
+          `${getControllerApiEndpoint()}/refresh`,
+          `${getControllerApiEndpoint()}/logout`
+        ].includes(config.url)
+      ) {
+        const now = new Date().getTime()
+
+        // refresh token once in a while
+        if (loginStore.tokenRefreshedTime + TOKEN_REFRESH_INTERVAL < now) {
+          loginStore.refreshToken()
+        }
+      }
+      return config
+    },
+    function (error: any) {
+      return Promise.reject(error)
+    }
+  )
 
   // response interceptor
   axios.interceptors.response.use(

@@ -30,8 +30,8 @@ const {
   errorDescription
 } = useTrafficSummary()
 
-function goToMultiwan() {
-  router.push(`${getStandaloneRoutePrefix(route)}/network/multi-wan`)
+function goTo(path: string) {
+  router.push(`${getStandaloneRoutePrefix(route)}${path}`)
 }
 </script>
 
@@ -43,9 +43,9 @@ function goToMultiwan() {
     </div>
   </div>
 
-  <!-- system -->
   <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
-    <SystemInfoCard class="sm:col-span-2 xl:row-span-3" />
+    <!-- system -->
+    <SystemInfoCard class="sm:col-span-2 xl:row-span-2" />
     <!-- internet connection -->
     <ServiceCard
       serviceName="internet"
@@ -56,7 +56,7 @@ function goToMultiwan() {
     <!-- multiwan -->
     <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
       <template #title>
-        <NeLink @click="goToMultiwan">
+        <NeLink @click="goTo('/network/multi-wan')">
           {{ t('standalone.dashboard.multiwan') }}
         </NeLink>
       </template>
@@ -68,47 +68,30 @@ function goToMultiwan() {
       :title="t('standalone.dashboard.dpi_core')"
       :icon="['fas', 'bolt']"
     />
-    <ServiceCard
-      serviceName="openvpn_rw"
-      hasStatus
-      :title="t('standalone.dashboard.openvpn_rw')"
-      :icon="['fas', 'globe']"
-    />
+    <!-- openvpn rw -->
+    <ServiceCard serviceName="openvpn_rw" hasStatus :icon="['fas', 'globe']">
+      <template #title>
+        <NeLink @click="goTo('/vpn/openvpn-rw')">
+          {{ t('standalone.dashboard.openvpn_rw') }}
+        </NeLink>
+      </template>
+    </ServiceCard>
     <!-- hotspot -->
-    <ServiceCard
-      serviceName="dedalo"
-      hasStatus
-      :title="t('standalone.dashboard.hotspot')"
-      :icon="['fas', 'wifi']"
-    />
-    <!-- banIP -->
-    <ServiceCard
-      serviceName="banip"
-      hasStatus
-      :title="t('standalone.dashboard.ban_ip')"
-      :icon="['fas', 'ban']"
-    />
-    <!-- adblock dns -->
-    <ServiceCard
-      serviceName="adblock"
-      hasStatus
-      :title="t('standalone.dashboard.adblock_dns')"
-      :icon="['fas', 'ban']"
-    />
-    <!-- threat shield ip -->
-    <ServiceCard
-      serviceName="threat_shield_ip"
-      hasStatus
-      :title="t('standalone.dashboard.thread_shield_ip')"
-      :icon="['fas', 'shield']"
-    />
-    <!-- threat shield dns -->
-    <ServiceCard
-      serviceName="threat_shield_dns"
-      hasStatus
-      :title="t('standalone.dashboard.thread_shield_dns')"
-      :icon="['fas', 'shield']"
-    />
+    <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
+      <template #title>
+        <NeLink @click="goTo('/network/hotspot')">
+          {{ t('standalone.dashboard.hotspot') }}
+        </NeLink>
+      </template>
+    </ServiceCard>
+    <!-- threat shield / banIP -->
+    <ServiceCard serviceName="banip" hasStatus :icon="['fas', 'shield']">
+      <template #title>
+        <NeLink @click="goTo('/security/threat-shield')">
+          {{ t('standalone.dashboard.thread_shield_ip') }}
+        </NeLink>
+      </template>
+    </ServiceCard>
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"
@@ -116,8 +99,8 @@ function goToMultiwan() {
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />
-    <!-- three-column spacer (only from 3xl screen) -->
-    <div class="col-span-2 hidden 3xl:block"></div>
+    <!-- column spacer (only from 3xl screen) -->
+    <div class="col-span-1 hidden 3xl:block"></div>
     <WanTrafficCard class="sm:col-span-2 3xl:col-span-3" />
     <!-- realtime traffic -->
     <RealTimeTrafficCard class="sm:col-span-2 3xl:col-span-3" />

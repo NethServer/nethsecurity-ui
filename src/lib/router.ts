@@ -5,7 +5,7 @@ import { useRoute, type RouteLocationNormalizedLoaded } from 'vue-router'
 import { isStandaloneMode } from './config'
 
 /**
- * Used in <router-link> elements of standalone UI to build the full path of destination page. 'route' input param is sometimes needed (e.g. from goToMultiwan() function in StandaloneDashboardView.vue)
+ * Used in <router-link> elements of standalone UI to build the full path of destination page. 'route' input param is sometimes needed (e.g. from goTo() function in StandaloneDashboardView.vue)
  *
  */
 export const getStandaloneRoutePrefix = (route?: RouteLocationNormalizedLoaded) => {

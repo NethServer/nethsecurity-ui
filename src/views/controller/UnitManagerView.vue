@@ -6,26 +6,32 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
-import { useUnitsStore, type Unit } from '@/stores/controller/units'
+import { MAX_NO_SUBSCRIPTION_UNITS, useUnitsStore, type Unit } from '@/stores/controller/units'
 import {
   NeTitle,
   NeButton,
   NeEmptyState,
   NeSkeleton,
   NeDropdown,
-  NeTextInput
+  NeTextInput,
+  NeCard,
+  NeTooltip,
+  NeProgressBar
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
 import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
 import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
 import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevokeSshKeyDrawer.vue'
+import { useDefaultsStore } from '@/stores/controller/defaults'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
 const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
+const defaultsStore = useDefaultsStore()
+
 const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
 const getUnitsIntervalId = ref(0)
@@ -47,6 +53,13 @@ const filteredUnits = computed(() => {
 
 const isShownUnitsSkeleton = computed(() => {
   return unitsStore.loadingListUnits && isUnitsSkeletonEnabled.value
+})
+
+const isAddUnitDisabled = computed(() => {
+  return !(
+    defaultsStore.defaultsLoaded &&
+    (defaultsStore.validSubscription || unitsStore.units.length < MAX_NO_SUBSCRIPTION_UNITS)
+  )
 })
 
 function searchStringInUnit(unit: Unit, queryText: string) {
@@ -75,6 +88,7 @@ function searchStringInUnit(unit: Unit, queryText: string) {
 }
 
 onMounted(() => {
+  defaultsStore.getDefaults()
   loadData()
 
   // periodically retrieve units data
@@ -143,8 +157,47 @@ function getBulkActionsKebabMenuItems() {
           {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
         </div>
       </div>
-      <div class="mb-8 max-w-2xl text-gray-500 dark:text-gray-400">
-        {{ t('controller.units.page_description') }}
+      <div class="mb-10 flex flex-col justify-between gap-6 2xl:flex-row">
+        <!-- page description -->
+        <div class="max-w-2xl text-gray-500 dark:text-gray-400">
+          {{ t('controller.units.page_description') }}
+        </div>
+        <!-- units left -->
+        <NeCard
+          v-if="defaultsStore.defaultsLoaded && !defaultsStore.validSubscription"
+          :title="
+            t(
+              'controller.units.num_units_left',
+              {
+                num: MAX_NO_SUBSCRIPTION_UNITS - unitsStore.units.length
+              },
+              MAX_NO_SUBSCRIPTION_UNITS - unitsStore.units.length
+            )
+          "
+          class="w-96"
+        >
+          <template #titleTooltip>
+            <NeTooltip>
+              <template #content>
+                <!-- //// remove font-normal after fixing NeCard tooltip style -->
+                <span class="font-normal">
+                  {{
+                    t('controller.units.num_units_left_tooltip', {
+                      num: unitsStore.units.length,
+                      max: MAX_NO_SUBSCRIPTION_UNITS
+                    })
+                  }}
+                </span>
+              </template>
+            </NeTooltip>
+          </template>
+          <NeProgressBar
+            color="custom"
+            custom-color-classes="bg-gradient-to-r from-indigo-400 to-indigo-700"
+            :progress="(unitsStore.units.length / MAX_NO_SUBSCRIPTION_UNITS) * 100"
+            size="sm"
+          />
+        </NeCard>
       </div>
     </div>
     <div class="mb-6 flex flex-col-reverse items-start justify-between gap-6 xl:flex-row">
@@ -167,7 +220,14 @@ function getBulkActionsKebabMenuItems() {
       <div>
         <!-- buttons -->
         <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
-          <NeButton kind="tertiary" size="lg" @click="isShownAddUnitModal = true" class="shrink-0">
+          <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
+          <NeButton
+            kind="tertiary"
+            size="lg"
+            @click="isShownAddUnitModal = true"
+            :disabled="isAddUnitDisabled"
+            class="shrink-0"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
             </template>
@@ -246,7 +306,11 @@ function getBulkActionsKebabMenuItems() {
     </div>
 
     <!-- add unit modal -->
-    <AddUnitModal :visible="isShownAddUnitModal" @close="isShownAddUnitModal = false" />
+    <AddUnitModal
+      :visible="isShownAddUnitModal"
+      @close="isShownAddUnitModal = false"
+      @reloadData="loadData"
+    />
 
     <!-- open ssh modal -->
     <OpenSshModal

@@ -312,7 +312,8 @@
     "cannot_disconnect_unit": "Cannot disconnect unit",
     "cannot_connect_unit": "Cannot connect unit",
     "cannot_restart_connection": "Cannot restart connection",
-    "cannot_retrieve_join_code": "Cannot retrieve join code",
+    "cannot_add_unit": "Cannot add unit",
+    "max_units_reached": "Maximum number of units reached",
     "cannot_upload_backup": "Cannot upload backup",
     "cannot_retrieve_xsrf_token": "Cannot retrieve XSRF token",
     "cannot_retrieve_ssh_keys": "Cannot retrieve account SSH keys",
@@ -1761,7 +1762,7 @@
   "controller": {
     "units": {
       "title": "Unit manager",
-      "page_description": "This page lists the units configured in the controller. To connect a new unit to this controller click 'Add unit' and follow the instructions. Once connected, the metrics and logs of the unit will be collected automatically. Connection status of the units is updated every 10 seconds; installed version and subscription information are updated every hour, but you can click 'Force data reload' to update them right away.",
+      "page_description": "This page lists the units configured in the controller. Here you can access SSH terminal, metrics and logs of the units. Connection status of the units is updated every 10 seconds; installed version and subscription information are updated every hour, but you can click 'Force data reload' to update them right away.",
       "add_unit": "Add unit",
       "force_data_reload": "Force data reload",
       "filter_units": "Filter units",
@@ -1824,7 +1825,9 @@
       "subscription_enterprise": "Enterprise subscription",
       "subscription_none": "No subscription",
       "confirm_remove_unit": "You are about to remove unit '{name}'. The unit will continue to operate normally, but it will no longer be managed by this Controller.",
-      "unit_name_removed": "Unit '{name}' removed"
+      "unit_name_removed": "Unit '{name}' removed",
+      "num_units_left": "No units left | {num} unit left | {num} units left",
+      "num_units_left_tooltip": "You have configured {num} of {max} units. Upgrade to a subscription plan to manage more units."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

@@ -42,10 +42,13 @@ interface UnitVpnData {
   virtual_address: string
 }
 
+export const MAX_NO_SUBSCRIPTION_UNITS = 3
+
 export const useUnitsStore = defineStore('units', () => {
   const { t } = useI18n()
   const controllerLoginStore = useControllerLoginStore()
   const standaloneLoginStore = useStandaloneLoginStore()
+
   const units = ref<Unit[]>([])
   const unitId = ref('')
   const unitToken = ref('')

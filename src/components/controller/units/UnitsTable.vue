@@ -71,7 +71,6 @@ const tableHeaders = [
 ]
 
 onMounted(() => {
-  defaultsStore.getDefaults()
   hideOpenUnitPopupsTooltip.value = getPreference('hideOpenUnitPopupsTooltip', loginStore.username)
 })
 

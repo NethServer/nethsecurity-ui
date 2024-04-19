@@ -11,10 +11,14 @@ import { useRouter } from 'vue-router'
 import { getControllerRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
 
+export const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
+
 export const useLoginStore = defineStore('controllerLogin', () => {
   const username = ref('')
   const token = ref('')
   const role = ref('')
+  const tokenRefreshedTime = ref(0)
+  const isRefreshingToken = ref(false)
 
   const router = useRouter()
 
@@ -30,6 +34,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       username.value = loginInfo.username
       token.value = loginInfo.token
       role.value = JSON.parse(atob(loginInfo.token.split('.')[1])).role
+      tokenRefreshedTime.value = loginInfo.tokenRefreshedTime
     }
   }
 
@@ -39,10 +44,12 @@ export const useLoginStore = defineStore('controllerLogin', () => {
       password
     })
     const jwtToken = res.data.token
+    tokenRefreshedTime.value = new Date().getTime()
 
     const loginInfo = {
       username: user,
-      token: jwtToken
+      token: jwtToken,
+      tokenRefreshedTime: tokenRefreshedTime.value
     }
     saveToStorage('controllerLoginInfo', loginInfo)
     username.value = user
@@ -66,16 +73,51 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     deleteFromStorage('controllerLoginInfo')
     username.value = ''
     token.value = ''
+    tokenRefreshedTime.value = 0
     router.push(`${getControllerRoutePrefix()}/`)
+  }
+
+  const refreshToken = async () => {
+    if (isRefreshingToken.value) {
+      return
+    }
+    isRefreshingToken.value = true
+
+    try {
+      const res = await axios.get(`${getControllerApiEndpoint()}/refresh`, {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      })
+      const jwtToken = res.data.token
+      const refreshedTime = new Date().getTime()
+
+      const loginInfo = {
+        username: username.value,
+        token: jwtToken,
+        tokenRefreshedTime: refreshedTime
+      }
+      saveToStorage('controllerLoginInfo', loginInfo)
+      token.value = jwtToken
+      tokenRefreshedTime.value = refreshedTime
+      return jwtToken
+    } catch (err) {
+      console.error(err)
+      return null
+    } finally {
+      isRefreshingToken.value = false
+    }
   }
 
   return {
     username,
     token,
+    tokenRefreshedTime,
     isLoggedIn,
     loadUserFromStorage,
     login,
     logout,
+    refreshToken,
     isAdmin
   }
 })

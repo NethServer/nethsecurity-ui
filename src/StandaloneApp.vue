@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { nextTick, onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
@@ -21,6 +21,7 @@ const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 const isLoaded = ref(false)
 
@@ -82,7 +83,7 @@ function configureAxios() {
         const now = new Date().getTime()
 
         // refresh token once in a while
-        if (loginStore.tokenRefreshedTime + loginStore.TOKEN_REFRESH_INTERVAL < now) {
+        if (loginStore.tokenRefreshedTime + TOKEN_REFRESH_INTERVAL < now) {
           loginStore.refreshToken()
         }
       }
@@ -114,7 +115,7 @@ function configureAxios() {
         } else {
           // a controller is managing this unit
           console.warn('[interceptor]', 'Detected error 401, getting a new token for this unit')
-          const route = useRoute()
+
           const unitId = route.params.unitId
           unitsStore.retrieveAndSaveUnitToken(unitId as string)
         }

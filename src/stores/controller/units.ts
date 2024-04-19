@@ -49,6 +49,7 @@ export const useUnitsStore = defineStore('units', () => {
   const units = ref<Unit[]>([])
   const unitId = ref('')
   const unitToken = ref('')
+  const unitTokenRefreshedTime = ref(0)
   const loadingListUnits = ref(false)
   const errorListUnits = ref('')
   const errorListUnitsDetails = ref('')
@@ -110,10 +111,12 @@ export const useUnitsStore = defineStore('units', () => {
     if (loginInfo) {
       unitId.value = unit
       unitToken.value = loginInfo.token
+      unitTokenRefreshedTime.value = loginInfo.tokenRefreshedTime
 
       // update standalone login store credentials
       standaloneLoginStore.setUsername(unitId.value)
       standaloneLoginStore.setToken(unitToken.value)
+      standaloneLoginStore.setTokenRefreshedTime(unitTokenRefreshedTime.value)
     }
   }
 
@@ -136,12 +139,19 @@ export const useUnitsStore = defineStore('units', () => {
     const token = await getUnitToken(unit)
     unitToken.value = token
     unitId.value = unit
+    const refreshedTime = new Date().getTime()
 
     const unitLoginInfo = {
       unit,
-      token
+      token,
+      tokenRefreshedTime: refreshedTime
     }
     saveToStorage(`unit-${unit}`, unitLoginInfo)
+
+    // update standalone login store credentials
+    standaloneLoginStore.setUsername(unit)
+    standaloneLoginStore.setToken(unitToken.value)
+    standaloneLoginStore.setTokenRefreshedTime(refreshedTime)
   }
 
   const checkUnitToken = async (unitId: string) => {

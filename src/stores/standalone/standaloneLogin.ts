@@ -6,22 +6,24 @@ import { defineStore } from 'pinia'
 import { isEmpty } from 'lodash-es'
 import axios from 'axios'
 import { deleteFromStorage, saveToStorage, getJsonFromStorage } from '@nethesis/vue-components'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { getProductName, getStandaloneApiEndpoint } from '@/lib/config'
+import { getProductName, getStandaloneApiEndpoint, isStandaloneMode } from '@/lib/config'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useTitle } from '@vueuse/core'
+
+export const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
   const token = ref('')
   const tokenRefreshedTime = ref(0)
   const isRefreshingToken = ref(false)
-  const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
   const router = useRouter()
+  const route = useRoute()
 
   const isLoggedIn = computed(() => {
     return !isEmpty(username.value)
@@ -96,12 +98,25 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       const jwtToken = res.data.token
       const refreshedTime = new Date().getTime()
 
-      const loginInfo = {
-        username: username.value,
-        token: jwtToken,
-        tokenRefreshedTime: refreshedTime
+      if (isStandaloneMode()) {
+        const loginInfo = {
+          username: username.value,
+          token: jwtToken,
+          tokenRefreshedTime: refreshedTime
+        }
+        saveToStorage('standaloneLoginInfo', loginInfo)
+      } else {
+        // a controller is managing this unit
+        const unit = route.params.unitId as string
+
+        const unitLoginInfo = {
+          unit,
+          token: jwtToken,
+          tokenRefreshedTime: refreshedTime
+        }
+
+        saveToStorage(`unit-${unit}`, unitLoginInfo)
       }
-      saveToStorage('standaloneLoginInfo', loginInfo)
       token.value = jwtToken
       tokenRefreshedTime.value = refreshedTime
       return jwtToken
@@ -142,17 +157,21 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     token.value = tok
   }
 
+  const setTokenRefreshedTime = (refreshedTime: number) => {
+    tokenRefreshedTime.value = refreshedTime
+  }
+
   return {
     username,
     token,
     tokenRefreshedTime,
-    TOKEN_REFRESH_INTERVAL,
     isLoggedIn,
     loadUserFromStorage,
     login,
     logout,
     setUsername,
     setToken,
+    setTokenRefreshedTime,
     refreshToken,
     loginSuccessful,
     loadAppData

@@ -13,6 +13,8 @@ import { deleteFromStorage, getPreference } from '@nethesis/vue-components'
 import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/notifications'
+import { useFavicon, useTitle } from '@vueuse/core'
+import { getProductName } from './lib/config'
 
 const loginStore = useLoginStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
@@ -25,6 +27,14 @@ onMounted(async () => {
   await loadI18n()
   configureAxios()
   isLoaded.value = true
+
+  // set window title
+  const title = useTitle()
+  title.value = `Controller - ${getProductName()}`
+
+  // set favicon
+  const favIcon = useFavicon()
+  favIcon.value = '/favicon-controller.ico'
 })
 
 async function loadI18n() {

@@ -8,7 +8,6 @@ import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { nextTick, onMounted, ref } from 'vue'
-import { useUciPendingChangesStore } from './stores/standalone/uciPendingChanges'
 import axios, { CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
@@ -19,7 +18,6 @@ import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useNotificationsStore } from './stores/notifications'
 
 const loginStore = useLoginStore()
-const uciChangesStore = useUciPendingChangesStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
@@ -37,7 +35,7 @@ onMounted(async () => {
   configureAxios()
 
   if (loginStore.isLoggedIn) {
-    uciChangesStore.getChanges()
+    loginStore.loadAppData()
   }
   isLoaded.value = true
 })

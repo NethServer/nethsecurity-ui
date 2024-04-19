@@ -8,9 +8,11 @@ import axios from 'axios'
 import { deleteFromStorage, saveToStorage, getJsonFromStorage } from '@nethesis/vue-components'
 import { useRouter } from 'vue-router'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { getStandaloneApiEndpoint } from '@/lib/config'
+import { getProductName, getStandaloneApiEndpoint } from '@/lib/config'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { useTitle } from '@vueuse/core'
 
 export const useLoginStore = defineStore('standaloneLogin', () => {
   const username = ref('')
@@ -58,9 +60,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
     const themeStore = useThemeStore()
     themeStore.loadTheme()
-
-    const uciChangesStore = useUciPendingChangesStore()
-    uciChangesStore.getChanges()
+    loadAppData()
     router.push(`${getStandaloneRoutePrefix()}/`)
   }
 
@@ -113,6 +113,27 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     }
   }
 
+  // load data after login or on page load (if already logged in)
+  const loadAppData = () => {
+    // load uci pending changes
+    const uciChangesStore = useUciPendingChangesStore()
+    uciChangesStore.getChanges()
+
+    // load unit hostname
+    loadHostname()
+  }
+
+  const loadHostname = async () => {
+    const res = await ubusCall('system', 'board')
+    const unitHostname = res.data.hostname
+
+    if (unitHostname) {
+      // set window title
+      const title = useTitle()
+      title.value = `${unitHostname} - ${getProductName()}`
+    }
+  }
+
   const setUsername = (user: string) => {
     username.value = user
   }
@@ -133,6 +154,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     setUsername,
     setToken,
     refreshToken,
-    loginSuccessful
+    loginSuccessful,
+    loadAppData
   }
 })

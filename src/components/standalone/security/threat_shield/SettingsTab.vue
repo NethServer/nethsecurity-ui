@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import FormLayout from '../../FormLayout.vue'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import {
   NeButton,
   NeSkeleton,

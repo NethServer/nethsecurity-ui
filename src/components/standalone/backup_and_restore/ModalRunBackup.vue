@@ -8,7 +8,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 
@@ -58,6 +58,7 @@ async function runBackup() {
     :visible="showRunBackupModal"
     kind="info"
     primary-button-kind="primary"
+    :close-aria-label="t('common.close')"
     @close="$emit('close')"
     @primary-click="runBackup()"
   >

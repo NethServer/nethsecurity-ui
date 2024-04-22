@@ -21,7 +21,7 @@ import {
   getAxiosErrorMessage,
   focusElement
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { validateFile, validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
@@ -407,6 +407,7 @@ function setRestoreTimer() {
       :visible="isRestoring"
       cancel-label=""
       kind="warning"
+      :close-aria-label="t('common.close')"
       @close="isRestoring = false"
     >
       {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}

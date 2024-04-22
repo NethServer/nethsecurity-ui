@@ -7,7 +7,7 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -60,6 +60,7 @@ function close() {
     :primaryLabel="t('standalone.port_forward.delete_port_forward')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    :close-aria-label="t('common.close')"
     @primaryClick="deletePortForward()"
     @close="close()"
   >

@@ -7,7 +7,7 @@
 import { useI18n } from 'vue-i18n'
 import NeTable from '../../standalone/NeTable.vue'
 import { NeDropdown, useItemPagination } from '@nethesis/vue-components'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 

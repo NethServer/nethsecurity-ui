@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { NeInlineNotification } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAccountsStore } from '@/stores/controller/accounts'
@@ -124,6 +124,7 @@ async function revokeSshKeyFromUnit(unit: Unit) {
     :primaryButtonDisabled="isDeleting || isRevoking"
     :primaryButtonLoading="isDeleting || isRevoking"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @primaryClick="revokeAndDeleteSshKey"
     @close="close()"
   >

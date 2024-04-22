@@ -7,7 +7,7 @@
 import { computed } from 'vue'
 import { useNotificationsStore } from '../stores/notifications'
 import AxiosErrorModal from './AxiosErrorModal.vue'
-import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
+import { NeToastNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

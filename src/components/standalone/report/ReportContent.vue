@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 

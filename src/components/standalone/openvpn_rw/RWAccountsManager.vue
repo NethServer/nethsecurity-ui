@@ -16,7 +16,7 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -361,6 +361,7 @@ const filteredUsers = computed(() => {
       showConfirmDisableModal = false
       toggleAccountEnable(selectedAccount as RWAccount)
     }"
+    :close-aria-label="t('common.close')"
     @close="showConfirmDisableModal = false"
   >
     {{ t('standalone.openvpn_rw.disable_account_message') }}

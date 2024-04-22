@@ -15,7 +15,7 @@ import {
   NeSkeleton,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -123,6 +123,7 @@ onMounted(() => {
     :visible="showShutdownModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="closeModal()"
     @primary-click="performRequest('poweroff')"
   >
@@ -144,6 +145,7 @@ onMounted(() => {
     :visible="showRebootModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="!isRebooting ? closeModal() : undefined"
     @primary-click="performRequest('reboot')"
   >

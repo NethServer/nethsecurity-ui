@@ -19,7 +19,7 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { validateFile, validateRequired } from '@/lib/validation'
 import { useTimer } from '@/composables/useTimer'
 import { uploadFile } from '@/lib/standalone/fileUpload'
@@ -362,6 +362,7 @@ watch(
       cancel-label=""
       kind="warning"
       primary-button-kind="danger"
+      :close-aria-label="t('common.close')"
     >
       {{ t('standalone.backup_and_restore.migration.migration_in_progress') }}
       {{

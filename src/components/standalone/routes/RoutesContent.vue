@@ -15,7 +15,7 @@ import {
   getAxiosErrorMessage,
   NeEmptyState
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -413,6 +413,7 @@ function scrollToMainTable() {
     :visible="deleteRouteId !== undefined"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="deleteRouteId = undefined"
     @primary-click="deleteRouteHandler()"
   >

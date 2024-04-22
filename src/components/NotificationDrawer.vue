@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { NeSideDrawer, NeEmptyState } from '@nethesis/vue-components'
-import { NeToastNotification } from '@nethserver/vue-tailwind-lib'
+import { NeToastNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/notifications'
 import { isEmpty } from 'lodash-es'

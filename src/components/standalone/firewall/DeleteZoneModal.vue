@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import type { PropType } from 'vue'
 import { ref } from 'vue'
 import type { Zone } from '@/stores/standalone/firewall'
@@ -62,6 +62,7 @@ function cancelHandler() {
     :visible="zone != undefined"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="cancelHandler()"
     @primary-click="deleteZone()"
   >

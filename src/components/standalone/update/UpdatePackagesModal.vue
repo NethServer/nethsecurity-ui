@@ -8,7 +8,7 @@ import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { PackageUpdate } from '@/views/standalone/system/UpdateView.vue'
 import { NeProgressBar, NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -71,6 +71,7 @@ async function updatePackages() {
     :primary-button-disabled="isSubmittingUpdateRequest || isUpdatingPackages"
     :primary-button-loading="isSubmittingUpdateRequest || isUpdatingPackages"
     :cancel-label="!isUpdatingPackages ? t('common.cancel') : ''"
+    :close-aria-label="t('common.close')"
     @close="!isUpdatingPackages && !isSubmittingUpdateRequest ? close() : undefined"
     @primary-click="updatePackages"
   >

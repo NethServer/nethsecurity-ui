@@ -8,7 +8,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import type { User } from './UsersDatabaseManager.vue'
 
 const props = defineProps<{
@@ -62,6 +62,7 @@ function close() {
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    :close-aria-label="t('common.close')"
     @primaryClick="deleteUser()"
     @close="close()"
   >

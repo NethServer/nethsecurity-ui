@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 import { NeBadge, NeDropdown } from '@nethesis/vue-components'
 import { type PropType } from 'vue'
 import NeTable from '@/components/standalone/NeTable.vue'

@@ -15,7 +15,7 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { type NeNotification, NeModal } from '@nethserver/vue-tailwind-lib'
+import { type NeNotification, NeModal } from '@nethesis/vue-components'
 import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
@@ -790,6 +790,7 @@ function goToInterfaces() {
     :visible="showUnregisterModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="showUnregisterModal = false"
     @primary-click="unregisterUnit()"
   >

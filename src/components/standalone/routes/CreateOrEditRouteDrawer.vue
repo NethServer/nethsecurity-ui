@@ -15,7 +15,7 @@ import {
   getAxiosErrorMessage,
   focusElement
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'

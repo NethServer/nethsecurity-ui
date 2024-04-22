@@ -16,7 +16,7 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
@@ -184,6 +184,7 @@ function deleteKey() {
     @primary-click="deleteKey()"
     :primary-button-loading="deleting"
     :primary-button-disabled="deleting"
+    :close-aria-label="t('common.close')"
   >
     <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
     <code class="my-1 break-all">

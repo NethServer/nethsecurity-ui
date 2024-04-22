@@ -7,7 +7,7 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { NatRule } from '@/stores/standalone/firewall'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref, watch, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -77,7 +77,7 @@ async function deleteRule() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.deleteRule"
     :primaryButtonLoading="loading.deleteRule"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="emit('close')"
     @primaryClick="deleteRule"
   >

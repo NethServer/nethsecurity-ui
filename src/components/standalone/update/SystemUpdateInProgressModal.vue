@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { NeProgressBar } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { watch } from 'vue'
 import { useTimer } from '@/composables/useTimer'
@@ -45,6 +45,7 @@ watch(
     :primary-label="t('standalone.update.update')"
     kind="info"
     :cancel-label="''"
+    :close-aria-label="t('common.close')"
   >
     <p>
       {{ t('standalone.update.system_update_in_progress_message') }}

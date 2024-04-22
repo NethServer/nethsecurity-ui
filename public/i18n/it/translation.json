@@ -29,7 +29,16 @@
     "name": "Nome",
     "plus_num_others": "+{num} altro | +{num} altri",
     "more_info": "Più info",
-    "clear_filter": "Rimuovi filtro"
+    "clear_filter": "Rimuovi filtro",
+    "shell": {
+      "account_settings": "Impostazioni account",
+      "sign_out": "Esci",
+      "close_sidebar": "Chiudi la barra laterale",
+      "toggle_theme": "Cambia tema",
+      "show_notifications": "Mostra notifiche",
+      "account": "Account"
+    },
+    "try_changing_search_filter": "Prova a cambiare il filtro di ricerca"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",

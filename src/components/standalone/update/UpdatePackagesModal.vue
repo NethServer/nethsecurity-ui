@@ -71,6 +71,7 @@ async function updatePackages() {
     :primary-button-disabled="isSubmittingUpdateRequest || isUpdatingPackages"
     :primary-button-loading="isSubmittingUpdateRequest || isUpdatingPackages"
     :cancel-label="!isUpdatingPackages ? t('common.cancel') : ''"
+    :close-aria-label="t('common.close')"
     @close="!isUpdatingPackages && !isSubmittingUpdateRequest ? close() : undefined"
     @primary-click="updatePackages"
   >

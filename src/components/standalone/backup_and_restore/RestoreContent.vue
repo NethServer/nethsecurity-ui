@@ -407,6 +407,7 @@ function setRestoreTimer() {
       :visible="isRestoring"
       cancel-label=""
       kind="warning"
+      :close-aria-label="t('common.close')"
       @close="isRestoring = false"
     >
       {{ t('standalone.backup_and_restore.restore.restore_in_progress') }}

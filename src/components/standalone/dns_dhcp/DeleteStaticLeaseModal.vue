@@ -69,6 +69,7 @@ function close() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    :close-aria-label="t('common.close')"
     @primaryClick="deleteStaticLease()"
     @close="close()"
   >

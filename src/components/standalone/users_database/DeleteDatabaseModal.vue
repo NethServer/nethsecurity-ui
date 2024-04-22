@@ -57,6 +57,7 @@ function close() {
     :primaryLabel="t('common.delete')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    :close-aria-label="t('common.close')"
     @primaryClick="deleteDatabase()"
     @close="close()"
   >

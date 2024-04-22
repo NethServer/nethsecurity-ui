@@ -361,6 +361,7 @@ const filteredUsers = computed(() => {
       showConfirmDisableModal = false
       toggleAccountEnable(selectedAccount as RWAccount)
     }"
+    :close-aria-label="t('common.close')"
     @close="showConfirmDisableModal = false"
   >
     {{ t('standalone.openvpn_rw.disable_account_message') }}

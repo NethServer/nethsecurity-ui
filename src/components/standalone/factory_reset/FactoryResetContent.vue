@@ -156,6 +156,7 @@ function setResetTimer() {
       :cancel-label="t('common.cancel')"
       kind="warning"
       primary-button-kind="danger"
+      :close-aria-label="t('common.close')"
       @close="showModalFactoryReset = false"
       @primaryClick="startFactoryReset()"
     >
@@ -186,6 +187,7 @@ function setResetTimer() {
       :visible="isResetting"
       cancel-label=""
       kind="neutral"
+      :close-aria-label="t('common.close')"
       @close="isResetting = false"
     >
       {{ t('standalone.factory_reset.resetting_description') }}

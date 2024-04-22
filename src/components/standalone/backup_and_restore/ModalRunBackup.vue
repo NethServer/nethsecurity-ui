@@ -58,6 +58,7 @@ async function runBackup() {
     :visible="showRunBackupModal"
     kind="info"
     primary-button-kind="primary"
+    :close-aria-label="t('common.close')"
     @close="$emit('close')"
     @primary-click="runBackup()"
   >

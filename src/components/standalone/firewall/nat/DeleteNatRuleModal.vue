@@ -77,7 +77,7 @@ async function deleteRule() {
     primaryButtonKind="danger"
     :primaryButtonDisabled="loading.deleteRule"
     :primaryButtonLoading="loading.deleteRule"
-    :closeAriaLabe="t('common.close')"
+    :closeAriaLabel="t('common.close')"
     @close="emit('close')"
     @primaryClick="deleteRule"
   >

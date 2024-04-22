@@ -252,6 +252,7 @@ onMounted(() => {
     :visible="showConfigureModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
     @primary-click="configureStorage()"
   >
@@ -295,6 +296,7 @@ onMounted(() => {
     :visible="showDeleteModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="!isConfiguringOrRemovingStorage ? closeModal() : undefined"
     @primary-click="removeStorage()"
   >

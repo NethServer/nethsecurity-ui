@@ -359,6 +359,7 @@ onUnmounted(() => {
     :visible="showDisconnectUnitModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="showDisconnectUnitModal = false"
     @primary-click="disconnectUnit"
   >

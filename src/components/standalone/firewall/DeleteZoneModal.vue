@@ -62,6 +62,7 @@ function cancelHandler() {
     :visible="zone != undefined"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="cancelHandler()"
     @primary-click="deleteZone()"
   >

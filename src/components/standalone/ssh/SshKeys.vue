@@ -184,6 +184,7 @@ function deleteKey() {
     @primary-click="deleteKey()"
     :primary-button-loading="deleting"
     :primary-button-disabled="deleting"
+    :close-aria-label="t('common.close')"
   >
     <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
     <code class="my-1 break-all">

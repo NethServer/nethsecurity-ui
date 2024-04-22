@@ -362,6 +362,7 @@ onMounted(() => {
     :cancel-label="t('standalone.update.keep_scheduled_update')"
     :primary-button-disabled="isCancellingSchedule"
     :primary-button-loading="isCancellingSchedule"
+    :close-aria-label="t('common.close')"
     @primary-click="cancelSchedule"
     @close="!isCancellingSchedule ? closeConfirmCancelScheduleModal() : undefined"
   >

@@ -124,6 +124,7 @@ async function revokeSshKeyFromUnit(unit: Unit) {
     :primaryButtonDisabled="isDeleting || isRevoking"
     :primaryButtonLoading="isDeleting || isRevoking"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @primaryClick="revokeAndDeleteSshKey"
     @close="close()"
   >

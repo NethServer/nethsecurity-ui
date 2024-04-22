@@ -123,6 +123,7 @@ onMounted(() => {
     :visible="showShutdownModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="closeModal()"
     @primary-click="performRequest('poweroff')"
   >
@@ -144,6 +145,7 @@ onMounted(() => {
     :visible="showRebootModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="!isRebooting ? closeModal() : undefined"
     @primary-click="performRequest('reboot')"
   >

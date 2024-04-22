@@ -68,6 +68,7 @@ function submit() {
     :primary-button-disabled="loading"
     :primary-button-loading="loading"
     :secondary-button-disabled="loading"
+    :close-aria-label="t('common.close')"
     @primary-click="submit()"
   >
     <NeInlineNotification kind="error" v-if="error" :title="t(getAxiosErrorMessage(error))" />

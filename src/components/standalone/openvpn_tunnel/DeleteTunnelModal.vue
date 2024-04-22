@@ -60,6 +60,7 @@ function close() {
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @primaryClick="deleteTunnel()"
     @close="close()"
   >

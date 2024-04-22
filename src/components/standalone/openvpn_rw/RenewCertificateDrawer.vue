@@ -155,6 +155,7 @@ watch(
     :primaryLabel="t('standalone.openvpn_rw.renew')"
     :primaryButtonDisabled="isRenewingCertificate"
     :primaryButtonLoading="isRenewingCertificate"
+    :close-aria-label="t('common.close')"
     @primaryClick="renewUserCertificate()"
     @close="closeConfirmModal()"
   >

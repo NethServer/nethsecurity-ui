@@ -790,6 +790,7 @@ function goToInterfaces() {
     :visible="showUnregisterModal"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="showUnregisterModal = false"
     @primary-click="unregisterUnit()"
   >

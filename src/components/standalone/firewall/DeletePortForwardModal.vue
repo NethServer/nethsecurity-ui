@@ -60,6 +60,7 @@ function close() {
     :primaryLabel="t('standalone.port_forward.delete_port_forward')"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
+    :close-aria-label="t('common.close')"
     @primaryClick="deletePortForward()"
     @close="close()"
   >

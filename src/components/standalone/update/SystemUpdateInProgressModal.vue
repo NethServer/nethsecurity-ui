@@ -45,6 +45,7 @@ watch(
     :primary-label="t('standalone.update.update')"
     kind="info"
     :cancel-label="''"
+    :close-aria-label="t('common.close')"
   >
     <p>
       {{ t('standalone.update.system_update_in_progress_message') }}

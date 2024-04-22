@@ -93,6 +93,7 @@ function close() {
     :primaryLabel="t('standalone.openvpn_tunnel.download')"
     :primaryButtonDisabled="!downloadMode || isDownloading"
     :primaryButtonLoading="isDownloading"
+    :close-aria-label="t('common.close')"
     @primaryClick="downloadTunnel()"
     @close="close()"
   >

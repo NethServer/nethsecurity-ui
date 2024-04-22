@@ -413,6 +413,7 @@ function scrollToMainTable() {
     :visible="deleteRouteId !== undefined"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="deleteRouteId = undefined"
     @primary-click="deleteRouteHandler()"
   >

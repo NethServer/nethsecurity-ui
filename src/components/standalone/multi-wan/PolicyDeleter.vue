@@ -55,6 +55,7 @@ function handleClose() {
     :visible="policy != undefined"
     kind="warning"
     primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
     @close="handleClose()"
     @primary-click="deletePolicy()"
   >

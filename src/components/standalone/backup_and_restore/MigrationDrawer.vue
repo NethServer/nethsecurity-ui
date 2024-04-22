@@ -362,6 +362,7 @@ watch(
       cancel-label=""
       kind="warning"
       primary-button-kind="danger"
+      :close-aria-label="t('common.close')"
     >
       {{ t('standalone.backup_and_restore.migration.migration_in_progress') }}
       {{

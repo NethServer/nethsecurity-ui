@@ -11,7 +11,7 @@ import {
   deleteFromStorage,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref, watch, type PropType, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -7,7 +7,7 @@
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 import type { User } from './UsersDatabaseManager.vue'
 
 const { t } = useI18n()

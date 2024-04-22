@@ -7,7 +7,7 @@
 import { useI18n } from 'vue-i18n'
 import type { DpiException } from './DpiExceptions.vue'
 import { NeCard } from '@nethesis/vue-components'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 
 defineProps<{
   exception: DpiException

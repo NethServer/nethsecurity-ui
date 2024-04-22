@@ -16,7 +16,7 @@ import {
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import { isEmpty, uniq } from 'lodash-es'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

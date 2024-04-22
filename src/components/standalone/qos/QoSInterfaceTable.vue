@@ -8,7 +8,7 @@ import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 import type { Zone } from '@/stores/standalone/firewall'
 import {
   getZoneIcon,

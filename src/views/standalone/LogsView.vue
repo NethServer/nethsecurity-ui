@@ -8,7 +8,7 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

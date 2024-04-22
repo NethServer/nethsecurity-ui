@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import type { PropType } from 'vue'
 import { ref } from 'vue'
 import type { Policy } from '@/composables/useMwan'

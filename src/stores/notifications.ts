@@ -4,7 +4,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { uid } from 'uid/single'
-import { type NeNotification } from '@nethserver/vue-tailwind-lib'
+import { type NeNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'

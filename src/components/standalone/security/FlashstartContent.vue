@@ -20,7 +20,7 @@ import {
   focusElement,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {

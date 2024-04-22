@@ -10,7 +10,7 @@ import {
   NeEmptyState,
   byteFormat1024
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { computed, onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

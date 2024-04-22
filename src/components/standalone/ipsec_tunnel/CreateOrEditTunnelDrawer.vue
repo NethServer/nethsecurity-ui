@@ -31,7 +31,7 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeToggle } from '@nethesis/vue-components'
 import { ubusCall } from '@/lib/standalone/ubus'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import NeCopyField from '../NeCopyField.vue'

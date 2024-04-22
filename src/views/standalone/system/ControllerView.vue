@@ -16,7 +16,7 @@ import {
   NeTextInput,
   NeTextArea
 } from '@nethesis/vue-components'
-import { NeToggle, NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeToggle, NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'

@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StaticLease } from './StaticLeases.vue'

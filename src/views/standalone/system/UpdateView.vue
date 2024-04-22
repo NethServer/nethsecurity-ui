@@ -8,7 +8,7 @@ import {
   NeTooltip,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal, NeToggle } from '@nethserver/vue-tailwind-lib'
+import { NeModal, NeToggle } from '@nethesis/vue-components'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'

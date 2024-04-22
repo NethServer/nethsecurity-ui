@@ -9,7 +9,7 @@ import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
 import { toRefs } from 'vue'
 import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
-import { NeButton } from '@nethserver/vue-tailwind-lib'
+import { NeButton } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 

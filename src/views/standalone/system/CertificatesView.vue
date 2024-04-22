@@ -12,7 +12,7 @@ import {
   NeSkeleton,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethserver/vue-tailwind-lib'
+import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CertificatesTable from '@/components/standalone/certificates/CertificatesTable.vue'

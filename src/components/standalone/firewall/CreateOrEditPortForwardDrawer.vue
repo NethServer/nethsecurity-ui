@@ -70,7 +70,7 @@ const supportedDestinationZones = computed<NeComboboxOption[]>(() => {
     return []
   } else {
     return [
-      { id: 'any', label: t('standalone.port_forward.any_zone') },
+      { id: 'any', label: t('standalone.port_forward.automatic') },
       ...firewallConfig.zones
         .filter((zone) => zone.type() != ZoneType.WAN)
         .map((zone) => ({

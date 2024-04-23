@@ -163,19 +163,9 @@ const trafficInput = ref('input-drop')
 const trafficForward = ref('forward-drop')
 const trafficToWan = ref(false)
 
-/*const subnets = ref<string[]>([])
-const newSubnet = ref('')
-const enableLogging = ref(false)
-const logPerSecond = ref('10')*/
-
 const saving = ref(false)
 const saveError = ref<Error>()
 const errorBag = ref(new MessageBag())
-
-/*function addNewSubnet() {
-  subnets.value.push(newSubnet.value)
-  newSubnet.value = ''
-}*/
 
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {
@@ -325,62 +315,6 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :label="t('standalone.zones_and_policies.traffic_to_same_zone')"
         :options="forwardTrafficOptions"
       />
-      <!--    <NeButton kind="tertiary" size="sm" @click="advancedSettings = !advancedSettings" class="-ml-2">
-      <template #suffix>
-        <font-awesome-icon
-          :icon="['fas', advancedSettings ? 'chevron-up' : 'chevron-down']"
-          class="h-3 w-3"
-          aria-hidden="true"
-        />
-      </template>
-      {{ t('standalone.zones_and_policies.advanced_settings') }}
-    </NeButton>
-    <Transition name="slide-down">
-      <div class="mt-2 space-y-4" v-show="advancedSettings">
-        <div>
-          <NeFormItemLabel>
-            {{ t('standalone.zones_and_policies.covered_subnets') }}
-          </NeFormItemLabel>
-          <div class="space-y-2">
-            <div
-              v-for="index in subnets.keys()"
-              :key="index"
-              class="flex flex-nowrap items-center gap-4"
-            >
-              <NeTextInput v-model="subnets[index]" :disabled="saving" class="grow" />
-              <NeButton :disabled="saving" class="h-8 w-8" @click="subnets.splice(index, 1)">
-                <FontAwesomeIcon :icon="['fas', 'trash']" />
-              </NeButton>
-            </div>
-            <div class="flex flex-nowrap items-center gap-x-4">
-              <NeTextInput
-                v-model="newSubnet"
-                :disabled="saving"
-                :placeholder="t('standalone.zones_and_policies.add_new_subnet')"
-                class="grow"
-              />
-              <NeButton :disabled="saving" class="h-8 w-8" @click="addNewSubnet">
-                <FontAwesomeIcon :icon="['fas', 'plus']" />
-              </NeButton>
-            </div>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <NeToggle
-            v-model="enableLogging"
-            :disabled="saving"
-            :label="t('standalone.zones_and_policies.enable_logging')"
-          />
-          <NeTextInput
-            v-if="enableLogging"
-            v-model="logPerSecond"
-            :disabled="saving"
-            :label="t('standalone.zones_and_policies.limit_log_messages')"
-            type="number"
-          />
-        </div>
-      </div>
-    </Transition>-->
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" kind="tertiary" size="lg" @click="$emit('close')">

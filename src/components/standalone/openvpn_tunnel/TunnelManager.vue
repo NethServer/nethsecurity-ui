@@ -11,7 +11,7 @@ import {
   NeEmptyState,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TunnelTable from './TunnelTable.vue'
@@ -52,9 +52,9 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-
 const uciChangesStore = useUciPendingChangesStore()
 
+const RELOAD_INTERVAL = 10000
 const loading = ref(true)
 const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([])
 const selectedTunnel = ref<Tunnel | null>(null)
@@ -62,28 +62,34 @@ const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
 const showDownloadModal = ref(false)
 const showImportConfigurationDrawer = ref(false)
+const fetchTunnelsIntervalId = ref(0)
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
 
-async function fetchTunnels() {
+async function fetchTunnels(setLoading: boolean = true) {
   try {
-    loading.value = true
+    if (setLoading) {
+      loading.value = true
+    }
     const listTunnelResponse = await ubusCall('ns.ovpntunnel', 'list-tunnels')
     if (props.manageClientTunnels) {
       tunnels.value = listTunnelResponse.data.clients
     } else {
       tunnels.value = listTunnelResponse.data.servers
     }
-    loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = props.manageClientTunnels
       ? t('error.cannot_retrieve_client_tunnels')
       : t('error.cannot_retrieve_server_tunnels')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    if (setLoading) {
+      loading.value = false
+    }
   }
 }
 
@@ -146,6 +152,15 @@ async function reloadTunnels() {
 
 onMounted(() => {
   fetchTunnels()
+
+  // periodically reload data
+  fetchTunnelsIntervalId.value = setInterval(() => fetchTunnels(false), RELOAD_INTERVAL)
+})
+
+onUnmounted(() => {
+  if (fetchTunnelsIntervalId.value) {
+    clearInterval(fetchTunnelsIntervalId.value)
+  }
 })
 </script>
 

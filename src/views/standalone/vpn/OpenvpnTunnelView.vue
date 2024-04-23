@@ -19,7 +19,12 @@ const { tabs, selectedTab } = useTabs([
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.openvpn_tunnel.title') }}</NeTitle>
+  <div class="flex flex-col justify-between md:flex-row md:items-center">
+    <NeTitle>{{ t('standalone.openvpn_tunnel.title') }}</NeTitle>
+    <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      {{ t('common.data_updated_every_seconds', { seconds: 10 }) }}
+    </div>
+  </div>
   <div>
     <NeTabs
       :selected="selectedTab"

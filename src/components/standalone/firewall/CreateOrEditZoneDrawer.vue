@@ -56,8 +56,8 @@ watch(
         name.value = ''
         forwardsTo.value = []
         forwardsFrom.value = []
-        trafficInput.value = TrafficPolicy.DROP
-        trafficForward.value = TrafficPolicy.DROP
+        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
         trafficToWan.value = false
       } else {
         // editing zone
@@ -80,8 +80,8 @@ watch(
           }
         })
 
-        trafficInput.value = props.zoneToEdit.input
-        trafficForward.value = props.zoneToEdit.forward
+        trafficInput.value = mapTrafficPolicyToRadioId(props.zoneToEdit.input, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(props.zoneToEdit.forward, 'forward')
         trafficToWan.value = !!getTrafficToWan(props.zoneToEdit, firewallConfig.forwardings)
       }
     }
@@ -124,17 +124,32 @@ const forwardPlaceholder = computed((): string => {
     .concat('...')
 })
 
-const trafficOptions = [
+const inputTrafficOptions = [
   {
-    id: TrafficPolicy.DROP,
+    id: 'input-drop',
     label: 'DROP'
   },
   {
-    id: TrafficPolicy.REJECT,
+    id: 'input-reject',
     label: 'REJECT'
   },
   {
-    id: TrafficPolicy.ACCEPT,
+    id: 'input-accept',
+    label: 'ACCEPT'
+  }
+]
+
+const forwardTrafficOptions = [
+  {
+    id: 'forward-drop',
+    label: 'DROP'
+  },
+  {
+    id: 'forward-reject',
+    label: 'REJECT'
+  },
+  {
+    id: 'forward-accept',
     label: 'ACCEPT'
   }
 ]
@@ -142,8 +157,10 @@ const trafficOptions = [
 const name = ref('')
 const forwardsTo = ref<NeComboboxOption[]>([])
 const forwardsFrom = ref<NeComboboxOption[]>([])
-const trafficInput = ref(TrafficPolicy.DROP)
-const trafficForward = ref(TrafficPolicy.DROP)
+// ID of radio selection
+const trafficInput = ref('input-drop')
+// ID of radio selection
+const trafficForward = ref('forward-drop')
 const trafficToWan = ref(false)
 
 /*const subnets = ref<string[]>([])
@@ -163,8 +180,8 @@ const errorBag = ref(new MessageBag())
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {
     name: name.value,
-    input: trafficInput.value.toUpperCase(),
-    forward: trafficForward.value.toUpperCase(),
+    input: mapRadioIdToTrafficPolicy(trafficInput.value),
+    forward: mapRadioIdToTrafficPolicy(trafficForward.value),
     traffic_to_wan: trafficToWan.value,
     forwards_to: forwardsTo.value.map((item) => item.id),
     forwards_from: forwardsFrom.value.map((item) => item.id)
@@ -184,8 +201,8 @@ function addZone() {
 
     ubusCall('ns.firewall', 'create_zone', {
       name: name.value,
-      input: trafficInput.value.toUpperCase(),
-      forward: trafficForward.value.toUpperCase(),
+      input: mapRadioIdToTrafficPolicy(trafficInput.value),
+      forward: mapRadioIdToTrafficPolicy(trafficForward.value),
       traffic_to_wan: trafficToWan.value,
       forwards_to: forwardsTo.value.map((item) => item.id),
       forwards_from: forwardsFrom.value.map((item) => item.id)
@@ -223,6 +240,15 @@ function validate(): boolean {
     }
   })
   return validateName.some((output) => !output.valid)
+}
+
+function mapTrafficPolicyToRadioId(trafficPolicy: TrafficPolicy, prefix: string): string {
+  return `${prefix}-${trafficPolicy}`
+}
+
+function mapRadioIdToTrafficPolicy(radioId: string): string {
+  const [, trafficPolicy] = radioId.split('-')
+  return trafficPolicy.toUpperCase()
 }
 </script>
 <template>
@@ -291,13 +317,13 @@ function validate(): boolean {
         v-model="trafficInput"
         :disabled="saving"
         :label="t('standalone.zones_and_policies.traffic_to_firewall')"
-        :options="trafficOptions"
+        :options="inputTrafficOptions"
       />
       <NeRadioSelection
         v-model="trafficForward"
         :disabled="saving"
         :label="t('standalone.zones_and_policies.traffic_to_same_zone')"
-        :options="trafficOptions"
+        :options="forwardTrafficOptions"
       />
       <!--    <NeButton kind="tertiary" size="sm" @click="advancedSettings = !advancedSettings" class="-ml-2">
       <template #suffix>

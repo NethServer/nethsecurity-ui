@@ -284,7 +284,7 @@ function scrollToMainTable() {
                     {{ item.target }}
                   </td>
                   <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    {{ item.gateway }}
+                    {{ item.gateway || '-' }}
                   </td>
                   <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     {{ item.metric }}
@@ -303,6 +303,7 @@ function scrollToMainTable() {
                     <NeButton
                       kind="tertiary"
                       size="lg"
+                      :disabled="item.readonly"
                       @click="openEditRoute({ item: { item: item } })"
                     >
                       <template #prefix>
@@ -320,6 +321,7 @@ function scrollToMainTable() {
                           id: 'delete',
                           danger: true,
                           label: t('common.delete'),
+                          disabled: item.readonly,
                           action: () => {
                             deleteRouteId = item.id
                             deleteRouteName = item.ns_description

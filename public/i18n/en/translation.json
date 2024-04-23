@@ -41,7 +41,8 @@
     "clear_filter": "Clear filter",
     "try_changing_search_filter": "Try changing your search filter",
     "dont_show_again": "Don't show again",
-    "more_info": "More info"
+    "more_info": "More info",
+    "data_updated_every_seconds": "Data updated every {seconds} seconds"
   },
   "error": {
     "generic_error": "Something went wrong",

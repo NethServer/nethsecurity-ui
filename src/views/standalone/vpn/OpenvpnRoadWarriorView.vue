@@ -15,7 +15,7 @@ import {
 } from '@nethesis/vue-components'
 import RWAccountsManager from '@/components/standalone/openvpn_rw/RWAccountsManager.vue'
 import RWServerDetails from '@/components/standalone/openvpn_rw/RWServerDetails.vue'
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -77,6 +77,7 @@ export type RWAccount = {
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
+const RELOAD_INTERVAL = 10000
 const loading = ref(true)
 const loadingUsers = ref(true)
 const instanceName = ref('')
@@ -92,12 +93,15 @@ const isInitializingInstance = ref(false)
 const showDeleteServerModal = ref(false)
 const showCreateOrEditServerModal = ref(false)
 const loadingError = ref(false)
+const fetchServerIntervalId = ref(0)
 
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
 
-async function fetchUsers() {
+async function fetchUsers(setLoading: boolean = true) {
   try {
-    loadingUsers.value = true
+    if (setLoading) {
+      loadingUsers.value = true
+    }
     users.value = (
       await ubusCall('ns.ovpnrw', 'list-users', { instance: instanceName.value })
     ).data.users
@@ -107,13 +111,17 @@ async function fetchUsers() {
     error.value.notificationDetails = err.toString()
     loadingError.value = true
   } finally {
-    loadingUsers.value = false
+    if (setLoading) {
+      loadingUsers.value = false
+    }
   }
 }
 
-async function fetchServer() {
+async function fetchServer(setLoading: boolean = true) {
   try {
-    loading.value = true
+    if (setLoading) {
+      loading.value = true
+    }
     const instances: string[] = (await ubusCall('ns.ovpnrw', 'list-instances')).data.instances
     if (instances.length > 0) {
       instanceName.value = instances[0]
@@ -121,7 +129,7 @@ async function fetchServer() {
         await ubusCall('ns.ovpnrw', 'get-configuration', { instance: instanceName.value })
       ).data
       if (instanceData.value?.ns_description) {
-        await fetchUsers()
+        await fetchUsers(setLoading)
       }
     }
   } catch (err: any) {
@@ -130,7 +138,9 @@ async function fetchServer() {
     error.value.notificationDetails = err.toString()
     loadingError.value = true
   } finally {
-    loading.value = false
+    if (setLoading) {
+      loading.value = false
+    }
   }
 }
 
@@ -166,11 +176,25 @@ async function initAndConfigureServer() {
 
 onMounted(() => {
   fetchServer()
+
+  // periodically reload data
+  fetchServerIntervalId.value = setInterval(() => fetchServer(false), RELOAD_INTERVAL)
+})
+
+onUnmounted(() => {
+  if (fetchServerIntervalId.value) {
+    clearInterval(fetchServerIntervalId.value)
+  }
 })
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.openvpn_rw.title') }}</NeTitle>
+  <div class="flex flex-col justify-between md:flex-row md:items-center">
+    <NeTitle>{{ t('standalone.openvpn_rw.title') }}</NeTitle>
+    <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      {{ t('common.data_updated_every_seconds', { seconds: RELOAD_INTERVAL / 1000 }) }}
+    </div>
+  </div>
   <NeInlineNotification
     v-if="error.notificationDescription"
     :title="t('error.cannot_retrieve_databases')"

@@ -25,7 +25,6 @@ import {
   faCircleCheck,
   faCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
-import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
 const { t } = useI18n()
@@ -161,7 +160,7 @@ function scrollToMainTable() {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="15" />
+  <NeSkeleton v-if="loading" :lines="8" size="lg" />
   <NeEmptyState
     v-if="!loading && !error.notificationTitle && !routes.length"
     :title="t('standalone.routes.no_route_found')"
@@ -261,7 +260,6 @@ function scrollToMainTable() {
                   </td>
                   <td :class="{ 'opacity-30': item.disabled !== '0' }">
                     <span>
-                      <FontAwesomeIcon v-if="!item.interface" :icon="faEmptySet" />
                       <FontAwesomeIcon
                         v-if="item.interface && item.interface === 'wan'"
                         :icon="faEarthAmerica"
@@ -273,11 +271,7 @@ function scrollToMainTable() {
                         "
                         :icon="faLocationDot"
                       />
-                      {{
-                        item.interface
-                          ? item.interface
-                          : t('standalone.routes.interface_unspecified')
-                      }}
+                      {{ item.interface ? item.interface : t('common.any') }}
                     </span>
                   </td>
                   <td :class="{ 'opacity-30': item.disabled !== '0' }">

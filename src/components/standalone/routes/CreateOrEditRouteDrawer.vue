@@ -215,7 +215,7 @@ async function getFirewallData() {
       if (routeInterfaces.value) {
         routeInterfaces.value.unshift({
           id: '',
-          label: t('standalone.routes.interface_unspecified')
+          label: t('common.any')
         })
       }
     }
@@ -480,9 +480,9 @@ function submit() {
       :description="errorLoadingData.notificationDescription"
     />
     <div v-else class="space-y-8">
-      {{ t('standalone.routes.route_status') }}
       <NeToggle
         v-model="form.status"
+        :topLabel="t('common.status')"
         :label="
           form.status
             ? t('standalone.routes.route_status_enabled')

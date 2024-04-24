@@ -26,11 +26,13 @@ import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
+import type { ScanResult } from './ScanNetwork.vue'
 
 const props = defineProps<{
   isShown: boolean
   itemToEdit?: StaticLease
   importDynamicLease?: DynamicLease
+  importScanResult?: ScanResult
 }>()
 
 const { t } = useI18n()
@@ -58,6 +60,12 @@ function resetForm() {
     hostname.value = props.importDynamicLease.hostname
     ipAddress.value = props.importDynamicLease.ipaddr
     macAddress.value = props.importDynamicLease.macaddr
+    reservationName.value = ''
+  } else if (props.importScanResult) {
+    id.value = ''
+    hostname.value = props.importScanResult.hostname || ''
+    ipAddress.value = props.importScanResult.ip
+    macAddress.value = props.importScanResult.mac
     reservationName.value = ''
   } else {
     id.value = props.itemToEdit?.lease ?? ''
@@ -160,6 +168,13 @@ watchEffect(() => {
 onMounted(() => {
   resetForm()
 })
+
+function getReservationLocation() {
+  const networkTitle = t('standalone.network.title')
+  const dnsDhcpTitle = t('standalone.dns_dhcp.title')
+  const staticLeasesTitle = t('standalone.dns_dhcp.tabs.static_leases')
+  return `${networkTitle} > ${dnsDhcpTitle} > ${staticLeasesTitle}`
+}
 </script>
 
 <template>
@@ -171,6 +186,22 @@ onMounted(() => {
       id ? t('standalone.dns_dhcp.edit_reservation') : t('standalone.dns_dhcp.add_reservation')
     "
   >
+    <!-- info notification if we are adding a static lease from dynamic leases or scan network pages -->
+    <NeInlineNotification
+      v-if="importDynamicLease || importScanResult"
+      kind="info"
+      :closeAriaLabel="t('common.close')"
+      class="mb-6"
+    >
+      <template #description>
+        <div>
+          {{ t('standalone.dns_dhcp.reservation_location_info_description') }}
+        </div>
+        <div class="font-semibold">
+          {{ getReservationLocation() }}
+        </div>
+      </template>
+    </NeInlineNotification>
     <NeInlineNotification
       v-if="error.notificationTitle"
       :title="error.notificationTitle"

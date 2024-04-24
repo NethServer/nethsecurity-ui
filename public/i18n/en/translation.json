@@ -326,7 +326,8 @@
     "cannot_retrieve_unit_ssh_port": "Cannot retrieve unit SSH port",
     "cannot_open_unit": "Cannot open unit",
     "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
-    "cannot_remove_unit": "Cannot remove unit"
+    "cannot_remove_unit": "Cannot remove unit",
+    "cannot_scan_network": "Cannot scan network"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -911,7 +912,8 @@
         "dns": "DNS",
         "static_leases": "Static leases",
         "dynamic_leases": "Dynamic leases",
-        "dns_records": "DNS records"
+        "dns_records": "DNS records",
+        "scan_network": "Scan network"
       },
       "dns_forwarding_servers": "DNS forwarding servers",
       "dns_forwarding_servers_tooltip": "Configure upstream DNS server IP addresses to route non-local domain queries to these servers. Enter the IP address of the remote DNS server. Use '/{'<'}domain{'>'}/{'<'}server{'>'}' syntax to route only requests for a specific domain to the given server. Use the '/{'<'}server{'>'}#{'<'}port{'>'}` syntax if the upstream server does not listen on a standard port.",
@@ -978,7 +980,16 @@
       "filter_change_suggestion": "Try changing filter value",
       "dhcp_option_combobox_placeholder": "Search key",
       "force_start": "Force DHCP server start",
-      "force_start_tooltip": "When force option is enabled, DHCP will start even if there is another DHCP server in the network. Disable force option only if you want to avoid conflicts with other DHCP servers."
+      "force_start_tooltip": "When force option is enabled, DHCP will start even if there is another DHCP server in the network. Disable force option only if you want to avoid conflicts with other DHCP servers.",
+      "scan_network_description": "Scan the network to discover devices and assign them IP reservations or DNS records.",
+      "scan_results": "Scan results",
+      "interface_name": "Interface: {name}",
+      "description": "Description",
+      "scan_network": "Scan network",
+      "scan_not_requested_empty_state": "Click 'Scan network' on an interface to discover devices",
+      "scan_no_results_empty_state": "No devices found on interface '{iface}'",
+      "reservation_location_info_description": "This reservation will appear in:",
+      "dns_record_location_info_description": "This DNS record will appear in:"
     },
     "routes": {
       "title": "Routes",

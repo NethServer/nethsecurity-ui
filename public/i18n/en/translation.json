@@ -995,13 +995,13 @@
       "delete_route_ipv4": "Delete IPv4 route",
       "delete_route_ipv6": "Delete IPv6 route",
       "delete_route_name": "Delete route '{name}'?",
-      "interface_unspecified": "Unspecified",
       "route_status": "Status",
       "route_status_table": "Status",
       "route_status_enabled": "Enabled",
       "route_status_disabled": "Disabled",
       "route_name": "Route name",
       "route_network_address": "Network address",
+      "route_network_address_cidr": "Network address (CIDR notation)",
       "route_gateway": "Gateway",
       "route_gateway_helper": "Enter the gateway IP address. The gateway address should be reacheable by the firewall.",
       "route_metric": "Metric",
@@ -1012,7 +1012,9 @@
       "route_choose_type": "Select route type",
       "route_mtu": "MTU",
       "route_onlink": "On-link",
-      "route_onlink_description": "When enabled, gateway is on-link even if the gateway does not match any interface prefix"
+      "route_onlink_description": "When enabled, gateway is on-link even if the gateway does not match any interface prefix",
+      "network_address_ip4_tooltip": "Enter the network address in CIDR notation, or '0.0.0./0' to route all traffic",
+      "network_address_ip6_tooltip": "Enter the network address in CIDR notation, or '::/0' to route all traffic"
     },
     "hotspot": {
       "title": "Hotspot",

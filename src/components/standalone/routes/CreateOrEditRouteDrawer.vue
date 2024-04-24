@@ -80,8 +80,8 @@ const originalForm = {
   id: '',
   name: '',
   status: true,
-  network_address: props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0',
-  gateway: props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1',
+  network_address: '',
+  gateway: '',
   metric: '0',
   routeInterface: '',
   routeType: 'unicast',
@@ -215,7 +215,7 @@ async function getFirewallData() {
       if (routeInterfaces.value) {
         routeInterfaces.value.unshift({
           id: '',
-          label: t('standalone.routes.interface_unspecified')
+          label: t('common.any')
         })
       }
     }
@@ -294,12 +294,6 @@ function validate(): boolean {
         error.value.gateway = t(errMessage as string)
         isValidationOk = false
       }
-    }
-  } else {
-    let { valid, errMessage } = validateRequired(form.value.gateway)
-    if (!valid) {
-      error.value.gateway = t(errMessage as string)
-      isValidationOk = false
     }
   }
 
@@ -480,9 +474,9 @@ function submit() {
       :description="errorLoadingData.notificationDescription"
     />
     <div v-else class="space-y-8">
-      {{ t('standalone.routes.route_status') }}
       <NeToggle
         v-model="form.status"
+        :topLabel="t('common.status')"
         :label="
           form.status
             ? t('standalone.routes.route_status_enabled')
@@ -498,15 +492,27 @@ function submit() {
       <NeTextInput
         v-model="form.network_address"
         :invalid-message="error.networkAddress"
-        :placeholder="props.protocol === 'ipv4' ? '0.0.0.0/0' : '::/0'"
-        :label="t('standalone.routes.route_network_address')"
+        :label="t('standalone.routes.route_network_address_cidr')"
         ref="networkAddressRef"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{
+                props.protocol === 'ipv4'
+                  ? t('standalone.routes.network_address_ip4_tooltip')
+                  : t('standalone.routes.network_address_ip6_tooltip')
+              }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model="form.gateway"
         :invalid-message="error.gateway"
-        :placeholder="props.protocol === 'ipv4' ? '192.168.9.1' : 'fe80::1'"
         :label="t('standalone.routes.route_gateway')"
+        optional
+        :optionalLabel="t('common.optional')"
         ref="gatewayRef"
       >
         <template #tooltip>

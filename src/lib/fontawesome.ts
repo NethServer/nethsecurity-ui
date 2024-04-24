@@ -99,7 +99,6 @@ import {
 } from '@nethesis/nethesis-light-svg-icons'
 import {
   faBlockBrickFire as fasBlockBrickFire,
-  faEmptySet,
   faTrafficCone as fasTrafficCone
 } from '@nethesis/nethesis-solid-svg-icons'
 import {
@@ -178,7 +177,6 @@ export async function loadFontAwesome(app: any) {
   library.add(faArrowsRotate)
   library.add(fasCircleInfo)
   library.add(faArrowRight)
-  library.add(faEmptySet)
   library.add(faClone)
   library.add(faUserGear)
   library.add(faCircleStop)

@@ -11,7 +11,7 @@ import {
   NeEmptyState,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TunnelTable from './TunnelTable.vue'
@@ -52,9 +52,9 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-
 const uciChangesStore = useUciPendingChangesStore()
 
+const RELOAD_INTERVAL = 10000
 const loading = ref(true)
 const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([])
 const selectedTunnel = ref<Tunnel | null>(null)
@@ -62,28 +62,34 @@ const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
 const showDownloadModal = ref(false)
 const showImportConfigurationDrawer = ref(false)
+const fetchTunnelsIntervalId = ref(0)
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
 
-async function fetchTunnels() {
+async function fetchTunnels(setLoading: boolean = true) {
   try {
-    loading.value = true
+    if (setLoading) {
+      loading.value = true
+    }
     const listTunnelResponse = await ubusCall('ns.ovpntunnel', 'list-tunnels')
     if (props.manageClientTunnels) {
       tunnels.value = listTunnelResponse.data.clients
     } else {
       tunnels.value = listTunnelResponse.data.servers
     }
-    loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = props.manageClientTunnels
       ? t('error.cannot_retrieve_client_tunnels')
       : t('error.cannot_retrieve_server_tunnels')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    if (setLoading) {
+      loading.value = false
+    }
   }
 }
 
@@ -146,12 +152,21 @@ async function reloadTunnels() {
 
 onMounted(() => {
   fetchTunnels()
+
+  // periodically reload data
+  fetchTunnelsIntervalId.value = setInterval(() => fetchTunnels(false), RELOAD_INTERVAL)
+})
+
+onUnmounted(() => {
+  if (fetchTunnelsIntervalId.value) {
+    clearInterval(fetchTunnelsIntervalId.value)
+  }
 })
 </script>
 
 <template>
   <div class="flex flex-col gap-y-6">
-    <div class="flex flex-row items-center justify-between">
+    <div class="flex flex-col justify-between gap-6 xl:flex-row">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{
           manageClientTunnels
@@ -160,7 +175,7 @@ onMounted(() => {
         }}
       </p>
       <template v-if="tunnels.length > 0">
-        <div class="ml-2 shrink-0" v-if="!manageClientTunnels">
+        <div class="shrink-0" v-if="!manageClientTunnels">
           <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
             <template #prefix>
               <font-awesome-icon
@@ -173,7 +188,7 @@ onMounted(() => {
           </NeButton>
         </div>
         <div
-          class="ml-2 flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0"
+          class="flex shrink-0 flex-row-reverse items-start justify-end gap-4 xl:flex-row"
           v-else
         >
           <NeButton kind="tertiary" @click="openCreateEditDrawer(null)">
@@ -209,7 +224,7 @@ onMounted(() => {
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton v-if="loading" :lines="10" />
+    <NeSkeleton v-if="loading" :lines="8" size="lg" />
     <template v-else>
       <NeEmptyState
         v-if="tunnels.length == 0"

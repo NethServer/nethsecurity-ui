@@ -20,7 +20,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-y-6 xl:flex-row xl:gap-x-6 xl:gap-y-0">
+  <div class="flex w-full flex-col gap-6 2xl:flex-row">
     <div
       class="flex grow flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 bg-gray-100 p-2 dark:border-indigo-500 dark:bg-gray-800 sm:rounded-lg sm:shadow"
     >

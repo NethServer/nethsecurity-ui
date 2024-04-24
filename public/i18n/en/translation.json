@@ -953,7 +953,7 @@
       "no_reservation_found": "No reservations found",
       "interfaces": "Interfaces",
       "active": "Active",
-      "not_active": "Not active",
+      "inactive": "Inactive",
       "options": "Options",
       "expand_all_cards": "Expand all cards",
       "collapse_all_cards": "Collapse all cards",

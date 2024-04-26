@@ -54,7 +54,7 @@ async function fetchTunnels(setLoading: boolean = true) {
     error.value.notificationDetails = err.toString()
   } finally {
     if (setLoading) {
-      loading.value = true
+      loading.value = false
     }
   }
 }

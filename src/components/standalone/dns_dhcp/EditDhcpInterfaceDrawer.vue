@@ -59,6 +59,7 @@ const rangeIpStart = ref('')
 const rangeIpEnd = ref('')
 const leaseTime = ref('')
 const dhcpOptions = ref<KeyValueItem[]>([])
+const force = ref(true)
 
 async function resetForm() {
   if (props.interfaceToEdit) {
@@ -76,6 +77,7 @@ async function resetForm() {
         const key = Object.keys(optionObj)[0]
         return { key, value: optionObj[key] }
       })
+      force.value = interfaceResponse.force
       loading.value = false
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_interface_details')
@@ -92,6 +94,7 @@ async function resetForm() {
     rangeIpEnd.value = ''
     leaseTime.value = ''
     dhcpOptions.value = []
+    force.value = true
   }
 }
 
@@ -186,7 +189,8 @@ async function saveChanges() {
         last: rangeIpEnd.value,
         active: enableDhcp.value,
         leasetime: leaseTime.value,
-        options: dhcpOptions.value.map((option) => ({ [option.key]: option.value }))
+        options: dhcpOptions.value.map((option) => ({ [option.key]: option.value })),
+        force: force.value
       })
       emit('edit-interface')
       close()
@@ -287,6 +291,15 @@ watch(
         </NeButton>
       </div>
       <template v-if="showAdvancedSettings">
+        <NeToggle v-model="force" :label="t('standalone.dns_dhcp.force_start')">
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.dns_dhcp.force_start_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
         <NeMultiTextInput
           v-model="dhcpOptions"
           :title="t('standalone.dns_dhcp.dhcp_option')"

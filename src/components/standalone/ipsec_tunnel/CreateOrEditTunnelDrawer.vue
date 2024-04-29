@@ -284,10 +284,19 @@ function validateNetworkFields(
 
   for (let [index, networkEntry] of networkList.entries()) {
     if (networkEntry) {
+      // check ipv4 cidr
       let validator = validateIp4Cidr(networkEntry)
       if (!validator.valid) {
         validationErrors[index] = t(validator.errMessage as string)
         validationResult = false
+      } else {
+        // check if remote network is already in local networks
+        if (localNetworks.value.find((x) => x.id === networkEntry)) {
+          validationErrors[index] = t(
+            'standalone.ipsec_tunnel.ipsec_network_already_used_in_local_networks'
+          )
+          validationResult = false
+        }
       }
     } else {
       validationErrors[index] = t('error.required')

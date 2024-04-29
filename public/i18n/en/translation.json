@@ -1003,7 +1003,7 @@
       "route_network_address": "Network address",
       "route_network_address_cidr": "Network address (CIDR notation)",
       "route_gateway": "Gateway",
-      "route_gateway_helper": "Enter the gateway IP address. If omitted a link-scope routes will be created. If set to 0.0.0.0 no gateway will be specified for the route.",
+      "route_gateway_helper": "Enter the gateway IP address. If omitted, a link-scope route will be created. If set to 0.0.0.0, no gateway will be specified for the route.",
       "route_metric": "Metric",
       "route_interface": "Interface",
       "route_protocol": "Protocol",

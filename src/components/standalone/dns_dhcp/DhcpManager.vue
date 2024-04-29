@@ -159,11 +159,11 @@ onMounted(() => {
       :title="t('standalone.dns_dhcp.no_interface_configured')"
       :icon="['fas', 'circle-info']"
     />
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" v-else>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3" v-else>
       <div
         v-for="(iface, ifaceName) in interfaces"
         :key="ifaceName"
-        :class="`bg-whitetext-sm overflow-hidden rounded-md border-l-4 text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow ${getBorderColorForInterface(
+        :class="`overflow-hidden rounded-md border-l-4 bg-white text-sm text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow ${getBorderColorForInterface(
           ifaceName
         )}`"
       >
@@ -178,9 +178,7 @@ onMounted(() => {
               <NeBadge
                 size="sm"
                 :text="
-                  iface.active
-                    ? t('standalone.dns_dhcp.active')
-                    : t('standalone.dns_dhcp.not_active')
+                  iface.active ? t('standalone.dns_dhcp.active') : t('standalone.dns_dhcp.inactive')
                 "
                 :kind="iface.active ? 'success' : 'secondary'"
               />

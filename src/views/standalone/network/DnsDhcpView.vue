@@ -11,6 +11,7 @@ import StaticLeases from '@/components/standalone/dns_dhcp/StaticLeases.vue'
 import DynamicLeases from '@/components/standalone/dns_dhcp/DynamicLeases.vue'
 import DnsManager from '@/components/standalone/dns_dhcp/DnsManager.vue'
 import DnsRecords from '@/components/standalone/dns_dhcp/DnsRecords.vue'
+import ScanNetwork from '@/components/standalone/dns_dhcp/ScanNetwork.vue'
 import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
@@ -35,6 +36,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'dns-records',
     label: t('standalone.dns_dhcp.tabs.dns_records')
+  },
+  {
+    name: 'scan-network',
+    label: t('standalone.dns_dhcp.tabs.scan_network')
   }
 ])
 </script>
@@ -54,6 +59,7 @@ const { tabs, selectedTab } = useTabs([
     <StaticLeases v-else-if="selectedTab === 'static-leases'" />
     <DynamicLeases v-else-if="selectedTab === 'dynamic-leases'" />
     <DnsManager v-else-if="selectedTab === 'dns'" />
-    <DnsRecords v-else />
+    <DnsRecords v-else-if="selectedTab === 'dns-records'" />
+    <ScanNetwork v-else />
   </div>
 </template>

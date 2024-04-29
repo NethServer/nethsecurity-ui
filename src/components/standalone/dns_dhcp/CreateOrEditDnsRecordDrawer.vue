@@ -26,10 +26,12 @@ import {
 import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
+import type { ScanResult } from './ScanNetwork.vue'
 
 const props = defineProps<{
   isShown: boolean
   itemToEdit?: DnsRecord
+  importScanResult?: ScanResult
 }>()
 
 const { t } = useI18n()
@@ -52,11 +54,19 @@ const name = ref('')
 const wildcard = ref(false)
 
 function resetForm() {
-  id.value = props.itemToEdit?.record ?? ''
-  hostname.value = props.itemToEdit?.name ?? ''
-  ipAddress.value = props.itemToEdit?.ip ?? ''
-  name.value = props.itemToEdit?.description ?? ''
-  wildcard.value = props.itemToEdit?.wildcard ?? false
+  if (props.importScanResult) {
+    id.value = ''
+    hostname.value = props.importScanResult.hostname || ''
+    ipAddress.value = props.importScanResult.ip
+    name.value = ''
+    wildcard.value = false
+  } else {
+    id.value = props.itemToEdit?.record ?? ''
+    hostname.value = props.itemToEdit?.name ?? ''
+    ipAddress.value = props.itemToEdit?.ip ?? ''
+    name.value = props.itemToEdit?.description ?? ''
+    wildcard.value = props.itemToEdit?.wildcard ?? false
+  }
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
@@ -147,6 +157,13 @@ watchEffect(() => {
 onMounted(() => {
   resetForm()
 })
+
+function getDnsRecordsLocation() {
+  const networkTitle = t('standalone.network.title')
+  const dnsDhcpTitle = t('standalone.dns_dhcp.title')
+  const dnsRecordsTitle = t('standalone.dns_dhcp.tabs.dns_records')
+  return `${networkTitle} > ${dnsDhcpTitle} > ${dnsRecordsTitle}`
+}
 </script>
 
 <template>
@@ -156,6 +173,22 @@ onMounted(() => {
     :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.dns_dhcp.edit_dns_record') : t('standalone.dns_dhcp.add_dns_record')"
   >
+    <!-- info notification if we are adding a dns record from scan network page -->
+    <NeInlineNotification
+      v-if="importScanResult"
+      kind="info"
+      :closeAriaLabel="t('common.close')"
+      class="mb-6"
+    >
+      <template #description>
+        <div>
+          {{ t('standalone.dns_dhcp.dns_record_location_info_description') }}
+        </div>
+        <div class="font-semibold">
+          {{ getDnsRecordsLocation() }}
+        </div>
+      </template>
+    </NeInlineNotification>
     <NeInlineNotification
       v-if="error.notificationTitle"
       :title="error.notificationTitle"

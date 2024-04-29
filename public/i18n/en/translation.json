@@ -978,7 +978,7 @@
       "filter_change_suggestion": "Try changing filter value",
       "dhcp_option_combobox_placeholder": "Search key",
       "force_start": "Force DHCP server start",
-      "force_start_tooltip": "When force option is disabled, the DHCP will not start if there is another DHCP in the network. Disable the force option, only if you want to avoid conflicts with other DHCP servers."
+      "force_start_tooltip": "When force option is enabled, DHCP will start even if there is another DHCP server in the network. Disable force option only if you want to avoid conflicts with other DHCP servers."
     },
     "routes": {
       "title": "Routes",

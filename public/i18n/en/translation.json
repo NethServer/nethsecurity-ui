@@ -437,7 +437,7 @@
       "invalid_secret_or_server_not_found": "Invalid token or server not found",
       "active": "Active",
       "inactive": "Inactive",
-      "confirm_cancel_subscription": "If you cancel unit subscription you will lose all subscription features",
+      "confirm_cancel_subscription": "If you cancel the unit subscription you will lose all subscription features",
       "if_included_in_subscription_plan": "if included in your subscription plan",
       "dpi_filter": "1800+ applications for DPI filter",
       "automatic_updates": "Automatic updates",

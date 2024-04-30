@@ -1658,7 +1658,8 @@
       "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
       "unchanged": "Unchanged",
       "remote_database_added": "Remote database added",
-      "remote_database_added_description": "{name} added successfully"
+      "remote_database_added_description": "{name} added successfully",
+      "add_remote_database_tooltip": "Remote users databases are available only with a subscription plan"
     },
     "logs": {
       "title": "Logs",

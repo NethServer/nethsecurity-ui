@@ -9,10 +9,17 @@ import {
   NeDropdown,
   NeTitle,
   NeButton,
-  NeInlineNotification
+  NeInlineNotification,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell,
+  NePaginator,
+  useItemPagination
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import CreateOrEditZoneDrawer from '@/components/standalone/firewall/CreateOrEditZoneDrawer.vue'
@@ -29,6 +36,12 @@ import {
 const { t } = useI18n()
 
 const firewallConfig = useFirewallStore()
+const { currentPage, pageCount, paginatedItems } = useItemPagination(
+  () => firewallConfig.zonesWithoutAliases,
+  {
+    itemsPerPage: 10
+  }
+)
 
 const creatingOrEditingZone = ref(false)
 const zoneToDelete = ref<Zone>()
@@ -86,133 +99,135 @@ function editZone(zone: Zone) {
     />
     <NeTable
       v-else
-      :data="firewallConfig.zonesWithoutAliases"
-      :headers="[
-        {
-          key: 'label',
-          label: t('standalone.zones_and_policies.zone')
-        },
-        {
-          key: 'forwards',
-          label: t('standalone.zones_and_policies.allow_forwards_to')
-        },
-        {
-          key: 'output',
-          label: t('standalone.zones_and_policies.traffic_to_wan')
-        },
-        {
-          key: 'input',
-          label: t('standalone.zones_and_policies.traffic_to_firewall')
-        },
-        {
-          key: 'forward',
-          label: t('standalone.zones_and_policies.traffic_to_same_zone')
-        },
-        {
-          key: 'interfaces',
-          label: t('standalone.zones_and_policies.interfaces')
-        },
-        {
-          key: 'covered_subnets',
-          label: t('standalone.zones_and_policies.covered_subnets')
-        },
-        {
-          key: 'logging',
-          label: t('standalone.zones_and_policies.logging')
-        },
-        {
-          key: 'actions'
-        }
-      ]"
+      ariaLabel="Aria label for the table"
+      cardBreakpoint="xl"
       :loading="firewallConfig.loading"
+      :skeletonColumns="6"
+      :skeletonRows="5"
     >
-      <template #label="{ item }: { item: Zone }">
-        <div class="flex items-center gap-x-4">
-          <div
-            :class="getZoneColorClasses(item.name)"
-            class="flex h-10 w-10 items-center justify-center rounded-full"
-          >
-            <FontAwesomeIcon :icon="['fas', getZoneIcon(item.name)]" class="h-5 w-5" />
-          </div>
-          <span class="uppercase">{{ item.name }}</span>
-        </div>
-      </template>
-      <template #forwards="{ item }: { item: Zone }">
-        <div class="flex flex-wrap gap-2">
-          <template
-            v-for="forward in forwardingsToByZone(item, firewallConfig.forwardings)"
-            :key="forward.name"
-          >
-            <NeBadge
-              :text="forward.destination.toUpperCase()"
-              kind="custom"
-              :customColorClasses="getZoneColorClasses(forward.destination)"
-            />
-          </template>
-          <span v-if="isEmpty(forwardingsToByZone(item, firewallConfig.forwardings))">-</span>
-        </div>
-      </template>
-      <template #output="{ item }: { item: Zone }">
-        <div class="flex items-center gap-x-2">
-          <template v-if="getTrafficToWan(item, firewallConfig.forwardings) == undefined">
-            -</template
-          >
-          <template v-else-if="getTrafficToWan(item, firewallConfig.forwardings)">
-            <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
-            <p>ACCEPT</p>
-          </template>
-          <template v-else>
-            <FontAwesomeIcon :icon="['fas', 'ban']" />
-            <p>REJECT</p>
-          </template>
-        </div>
-      </template>
-      <template #input="{ item }: { item: Zone }">
-        <div class="flex items-center gap-x-2">
-          <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
-          {{ item.input.toUpperCase() }}
-        </div>
-      </template>
-      <template #forward="{ item }: { item: Zone }">
-        <div class="flex items-center gap-x-2">
-          <FontAwesomeIcon :icon="['fas', trafficIcon(item.forward)]" />
-          {{ item.forward.toUpperCase() }}
-        </div>
-      </template>
-      <template #interfaces="{ item }: { item: Zone }">
-        <template v-if="item.interfaces.length > 0">
-          <p v-for="(iface, index) in item.interfaces" :key="index">
-            {{ iface }}
-          </p>
-        </template>
-        <template v-else>-</template>
-      </template>
-      <template #covered_subnets> -</template>
-      <template #logging="{ item }: { item: Zone }">
-        <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
-      </template>
-      <template #actions="{ item }: { item: Zone }">
-        <div class="flex gap-3">
-          <NeDropdown
-            :items="[
-              {
-                id: 'edit',
-                label: t('common.edit'),
-                action: () => editZone(item),
-                icon: 'pen-to-square'
-              },
-              {
-                id: 'delete',
-                danger: true,
-                label: t('common.delete'),
-                action: () => (zoneToDelete = item),
-                icon: 'trash',
-                disabled: isSpecialZone(item)
+      <NeTableHead>
+        <NeTableHeadCell>{{ t('standalone.zones_and_policies.zone') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{
+          t('standalone.zones_and_policies.allow_forwards_to')
+        }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.zones_and_policies.traffic_to_wan') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{
+          t('standalone.zones_and_policies.traffic_to_firewall')
+        }}</NeTableHeadCell>
+        <NeTableHeadCell>{{
+          t('standalone.zones_and_policies.traffic_to_same_zone')
+        }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.zones_and_policies.interfaces') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.zones_and_policies.covered_subnets') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.zones_and_policies.logging') }}</NeTableHeadCell>
+        <NeTableHeadCell></NeTableHeadCell>
+      </NeTableHead>
+      <NeTableBody>
+        <NeTableRow v-for="item in paginatedItems" :key="item.name">
+          <NeTableCell :data-label="t('standalone.zones_and_policies.zone')">
+            <div class="flex items-center gap-x-4">
+              <div
+                :class="getZoneColorClasses(item.name)"
+                class="flex h-10 w-10 items-center justify-center rounded-full"
+              >
+                <FontAwesomeIcon :icon="['fas', getZoneIcon(item.name)]" class="h-5 w-5" />
+              </div>
+              <span class="uppercase">{{ item.name }}</span>
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.allow_forwards_to')">
+            <div class="flex flex-wrap gap-2">
+              <template
+                v-for="forward in forwardingsToByZone(item, firewallConfig.forwardings)"
+                :key="forward.name"
+              >
+                <NeBadge
+                  :text="forward.destination.toUpperCase()"
+                  kind="custom"
+                  :customColorClasses="getZoneColorClasses(forward.destination)"
+                />
+              </template>
+              <span v-if="isEmpty(forwardingsToByZone(item, firewallConfig.forwardings))">-</span>
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.traffic_to_wan')">
+            <div class="flex items-center gap-x-2">
+              <template v-if="getTrafficToWan(item, firewallConfig.forwardings) == undefined">
+                -</template
+              >
+              <template v-else-if="getTrafficToWan(item, firewallConfig.forwardings)">
+                <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
+                <p>ACCEPT</p>
+              </template>
+              <template v-else>
+                <FontAwesomeIcon :icon="['fas', 'ban']" />
+                <p>REJECT</p>
+              </template>
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.traffic_to_firewall')">
+            <div class="flex items-center gap-x-2">
+              <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
+              {{ item.input.toUpperCase() }}
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.traffic_to_same_zone')">
+            <div class="flex items-center gap-x-2">
+              <FontAwesomeIcon :icon="['fas', trafficIcon(item.forward)]" />
+              {{ item.forward.toUpperCase() }}
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.interfaces')">
+            <template v-if="item.interfaces.length > 0">
+              <p v-for="(iface, index) in item.interfaces" :key="index">
+                {{ iface }}
+              </p>
+            </template>
+            <template v-else>-</template>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.covered_subnets')">
+            -
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
+            <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
+          </NeTableCell>
+          <NeTableCell data-label="Actions">
+            <div class="-ml-4 flex xl:ml-0">
+              <NeDropdown
+                :items="[
+                  {
+                    id: 'edit',
+                    label: t('common.edit'),
+                    action: () => editZone(item),
+                    icon: 'pen-to-square'
+                  },
+                  {
+                    id: 'delete',
+                    danger: true,
+                    label: t('common.delete'),
+                    action: () => (zoneToDelete = item),
+                    icon: 'trash',
+                    disabled: isSpecialZone(item)
+                  }
+                ]"
+                align-to-right
+              />
+            </div>
+          </NeTableCell>
+        </NeTableRow>
+      </NeTableBody>
+      <template #paginator v-if="pageCount > 1">
+        <NePaginator
+          :current-page="currentPage ?? 1"
+          :total-pages="pageCount ?? 1"
+          :next-label="t('common.next')"
+          :previous-label="t('common.previous')"
+          @select-page="
+              (page: number) => {
+                currentPage = page
               }
-            ]"
-            align-to-right
-          />
-        </div>
+            "
+        />
       </template>
     </NeTable>
     <CreateOrEditZoneDrawer

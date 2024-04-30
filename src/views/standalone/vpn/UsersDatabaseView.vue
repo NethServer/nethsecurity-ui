@@ -79,7 +79,7 @@ onMounted(() => fetchDatabases())
           class="h-4 w-4"
           aria-hidden="true"
         /> </template
-      >{{ t('standalone.users_database.add_database') }}</NeButton
+      >{{ t('standalone.users_database.add_remote_database') }}</NeButton
     >
   </div>
   <NeInlineNotification

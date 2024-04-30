@@ -110,7 +110,7 @@
     "cannot_retrieve_wan_list": "Cannot retrieve WAN list",
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
-    "cancel_registration_error": "Cannot cancel registration",
+    "cancel_registration_error": "Cannot cancel subscription",
     "cannot_load_routes": "Cannot retrieve routes",
     "cannot_create_route": "Cannot create route",
     "cannot_edit_route": "Cannot edit route",
@@ -430,13 +430,22 @@
       "expiration": "Expiration",
       "no_expiration": "No expiration",
       "status": "Status",
-      "cancel_registration": "Cancel registration",
+      "cancel_registration": "Cancel subscription",
       "session_id": "Session ID",
       "copy_id": "Copy ID",
       "end_session": "End session",
       "invalid_secret_or_server_not_found": "Invalid token or server not found",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "confirm_cancel_subscription": "If you cancel unit subscription you will lose all subscription features",
+      "if_included_in_subscription_plan": "if included in your subscription plan",
+      "dpi_filter": "1800+ applications for DPI filter",
+      "automatic_updates": "Automatic updates",
+      "remote_backup": "Remote backup",
+      "remote_vpn_users_databases": "Remote VPN users databases",
+      "unlimited_controlled_units": "Unlimited units to be managed from a registered controller",
+      "threat_shield": "Advanced Threat shield blocklists",
+      "monitoring_service": "Monitoring service"
     },
     "system": {
       "title": "System"

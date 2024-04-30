@@ -22,6 +22,7 @@ import { ref, toRefs } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired } from '@/lib/validation'
 import { computed } from 'vue'
+import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
 
 const { t } = useI18n()
 
@@ -41,6 +42,8 @@ const emit = defineEmits(['subscription-update'])
 const authTokenRef = ref()
 const authToken = ref('')
 const isProcessingRequest = ref(false)
+const isShownCancelSubscriptionModal = ref(false)
+
 const errors = ref({
   authToken: '',
   request: ''
@@ -92,18 +95,8 @@ async function subscribe() {
   }
 }
 
-async function cancelSubscription() {
-  try {
-    errors.value.request = ''
-
-    isProcessingRequest.value = true
-    await ubusCall('ns.subscription', 'unregister')
-    emit('subscription-update')
-  } catch (e: any) {
-    errors.value.request = t(getAxiosErrorMessage(e))
-  } finally {
-    isProcessingRequest.value = false
-  }
+function showCancelSubscriptionModal() {
+  isShownCancelSubscriptionModal.value = true
 }
 </script>
 
@@ -155,43 +148,47 @@ async function cancelSubscription() {
             :description="errors.request"
           />
           <div>
-            <NeButton
-              kind="tertiary"
-              class="-ml-2.5"
-              :disabled="isProcessingRequest"
-              :loading="isProcessingRequest"
-              @click="cancelSubscription"
-              >{{ t('standalone.subscription.cancel_registration') }}</NeButton
-            >
+            <NeButton kind="tertiary" class="-ml-2.5" @click="showCancelSubscriptionModal">{{
+              t('standalone.subscription.cancel_registration')
+            }}</NeButton>
           </div>
         </div>
       </template>
       <template v-else>
-        <NeTextInput
-          :label="t('standalone.subscription.authentication_token')"
-          :placeholder="t('standalone.subscription.authentication_token_placeholder')"
-          :invalidMessage="errors.authToken"
-          :disabled="false"
-          v-model.trim="authToken"
-          ref="authTokenRef"
-        />
-        <NeInlineNotification
-          v-if="errors.request"
-          kind="error"
-          :title="t('error.register_unit_error')"
-          :description="errors.request"
-          class="my-4"
-        />
-        <div class="mt-6 flex justify-end">
-          <NeButton
-            kind="primary"
-            @click="subscribe"
+        <form @submit.prevent>
+          <NeTextInput
+            :label="t('standalone.subscription.authentication_token')"
+            :placeholder="t('standalone.subscription.authentication_token_placeholder')"
+            :invalidMessage="errors.authToken"
             :disabled="isProcessingRequest"
-            :loading="isProcessingRequest"
-            >{{ t('standalone.subscription.register') }}</NeButton
-          >
-        </div>
+            v-model.trim="authToken"
+            ref="authTokenRef"
+          />
+          <NeInlineNotification
+            v-if="errors.request"
+            kind="error"
+            :title="t('error.register_unit_error')"
+            :description="errors.request"
+            class="my-4"
+          />
+          <div class="mt-6 flex justify-end">
+            <NeButton
+              type="submit"
+              kind="primary"
+              @click="subscribe"
+              :disabled="isProcessingRequest"
+              :loading="isProcessingRequest"
+              >{{ t('standalone.subscription.register') }}</NeButton
+            >
+          </div>
+        </form>
       </template>
     </template>
   </FormLayout>
+  <!-- cancel subscription modal -->
+  <CancelSubscriptionModal
+    :visible="isShownCancelSubscriptionModal"
+    @close="isShownCancelSubscriptionModal = false"
+    @subscription-update="emit('subscription-update')"
+  />
 </template>

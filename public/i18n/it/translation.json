@@ -1931,7 +1931,7 @@
       "show_connected_units": "Mostra unità collegate"
     },
     "users": {
-      "description": "Gli utenti elencati in questa pagina hanno il pieno controllo su tutte le unità collegate al firewall. Le autorizzazioni per creare, modificare o eliminare account utente sono riservate esclusivamente all'amministratore.",
+      "description": "Gli utenti elencati in questa pagina hanno il pieno controllo su tutte le unità firewall. Le autorizzazioni per creare, modificare o eliminare account utente sono riservate esclusivamente all'amministratore.",
       "title": "Utenti",
       "no_users_found": "Nessun utente trovato",
       "user_password": "Password utente",

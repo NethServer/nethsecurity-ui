@@ -1857,7 +1857,7 @@
       "no_unit_is_currently_connected": "Attualmente nessuna unità è collegata",
       "send_ssh_key": "Invia la chiave SSH",
       "ssh_key_not_generated": "Chiave SSH non generata",
-      "ssh_key_not_generated_description": "Si può generare all'interno della pagina 'Account settings'",
+      "ssh_key_not_generated_description": "È possibile generarla all'interno della pagina 'Impostazioni account'",
       "go_to_account_settings": "Vai alle impostazioni account",
       "cannot_send_ssh_key_to_n_units": "Non può inviare la chiave SSH a {n} unità | Non può inviare la chiave SSH a {n} unità",
       "cannot_revoke_ssh_key_from_n_units": "Non può revocare la chiave SSH da {n} unità | Non può revocare la chiave SSH da {n} unità",

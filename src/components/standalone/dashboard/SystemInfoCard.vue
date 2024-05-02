@@ -12,20 +12,23 @@ import {
   NeLink,
   getAxiosErrorMessage,
   formatDurationLoc,
-  byteFormat1024
+  byteFormat1024,
+  NeSpinner
 } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash-es'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
+import type { SystemUpdate } from '@/views/standalone/system/UpdateView.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const REFRESH_INTERVAL = 10000
 const systemInfo = ref<any>({})
-const systemInfoIntervalId = ref(0)
+const loadDataIntervalId = ref(0)
+const systemUpdateData = ref<SystemUpdate | null>(null)
 
 const freeMemory = ref(0)
 const totalMemory = ref(0)
@@ -44,7 +47,8 @@ const totalDataStorage = ref(0)
 const dataStorageUsagePerc = ref(0)
 
 let loading = ref({
-  getSystemInfo: true
+  getSystemInfo: true,
+  getUpdatesStatus: true
 })
 
 let error = ref({
@@ -52,23 +56,37 @@ let error = ref({
   description: ''
 })
 
+const isUpdateAvailable = computed(
+  () =>
+    systemUpdateData.value?.lastVersion &&
+    systemUpdateData.value.lastVersion != systemUpdateData.value?.currentVersion
+)
+
+const isUpdateScheduled = computed(
+  () => systemUpdateData.value?.scheduledAt && systemUpdateData.value.scheduledAt != -1
+)
+
 onMounted(() => {
-  getSystemInfo()
+  loadData()
 
   // periodically reload system info
-  systemInfoIntervalId.value = setInterval(getSystemInfo, REFRESH_INTERVAL)
+  loadDataIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
 })
 
 onUnmounted(() => {
-  if (systemInfoIntervalId.value) {
-    clearInterval(systemInfoIntervalId.value)
+  if (loadDataIntervalId.value) {
+    clearInterval(loadDataIntervalId.value)
   }
 })
 
-async function getSystemInfo() {
+function loadData() {
   error.value.title = ''
   error.value.description = ''
+  getSystemInfo()
+  getUpdatesStatus()
+}
 
+async function getSystemInfo() {
   try {
     const res = await ubusCall('ns.dashboard', 'system-info')
     systemInfo.value = res.data.result
@@ -113,6 +131,22 @@ function getProgressBarColor(progress: number) {
 
 function goToSystemSettings() {
   router.push(`${getStandaloneRoutePrefix()}/system/systemSettings`)
+}
+
+function goToUpdates() {
+  router.push(`${getStandaloneRoutePrefix()}/system/update`)
+}
+
+async function getUpdatesStatus() {
+  try {
+    systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
+  } catch (err: any) {
+    console.error(err)
+    error.value.title = t('error.cannot_retrieve_updates_status')
+    error.value.description = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.getUpdatesStatus = false
+  }
 }
 </script>
 
@@ -160,7 +194,13 @@ function goToSystemSettings() {
       </div>
       <div class="py-2">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.operating_system') }}</span>
-        <span>{{ systemInfo?.version?.release || '-' }}</span>
+        <div class="inline-flex items-center gap-2">
+          <span>{{ systemInfo?.version?.release || '-' }}</span>
+          <NeSpinner v-if="loading.getUpdatesStatus" size="4" />
+          <NeLink v-if="isUpdateAvailable && !isUpdateScheduled" @click="goToUpdates">
+            {{ t('standalone.update.update') }}
+          </NeLink>
+        </div>
       </div>
       <div class="py-2">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.uptime') }}</span>

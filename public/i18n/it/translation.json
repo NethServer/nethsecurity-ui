@@ -1005,7 +1005,7 @@
       "inactive": "Inattivo",
       "force_start": "Forza l'avvio del server DHCP",
       "force_start_tooltip": "Quando l'opzione di forzatura è abilitata, il DHCP verrà avviato anche se nella rete è presente un altro server DHCP. Disabilitare l'opzione di forzatura solo se si desidera evitare conflitti con altri server DHCP.",
-      "scan_network_description": "Scansiona la rete per scoprire i dispositivi di rete e assegnargli l'ìindirizzo IP o record DNS.",
+      "scan_network_description": "Scansiona la rete per scoprire i dispositivi di rete e assegnargli una reservation o un record DNS.",
       "scan_results": "Risultati della scansione",
       "description": "Descrizione",
       "interface_name": "Interfaccia: {name}",

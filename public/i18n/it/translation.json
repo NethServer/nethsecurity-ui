@@ -1885,7 +1885,7 @@
       "num_units_left_tooltip": "Hai configurato {num} di {max} unità. Passa a un piano di abbonamento per gestire più unità."
     },
     "unit_terminal": {
-      "connection_status_active": "Attivo",
+      "connection_status_active": "Attiva",
       "connection_closed": "Connessione chiusa",
       "connection": "Connessione",
       "connection_status_error": "Errore",

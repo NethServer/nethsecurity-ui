@@ -1905,7 +1905,7 @@
       "change_password_description": "Modifica la password di autenticazione per accedere all'interfaccia web del controller.",
       "ssh_key_description": "Una coppia di chiavi SSH consiste in una chiave pubblica (condivisa con i server) e una chiave privata (conservata localmente), che consente l'autenticazione sicura e la crittografia dei dati nelle connessioni SSH verso le unità controllate.",
       "ssh_key": "Chiave SSH",
-      "generate_ssh_key_pair_description": "Devi scegliere un passphrase per generare la tua coppia di chiavi SSH. Successivamente è possibile inviare la chiave pubblica a una o più unità dalla pagina 'Unit manager': questo vi permetterà di connettervi in SSH al terminale di quelle unità utilizzando la passphrase invece delle credenziali dell'unità.",
+      "generate_ssh_key_pair_description": "Devi scegliere un passphrase per generare la tua coppia di chiavi SSH. Successivamente è possibile inviare la chiave pubblica a una o più unità dalla pagina 'Gestione unità': questo vi permetterà di connettervi in SSH al terminale di quelle unità utilizzando la passphrase invece delle credenziali dell'unità.",
       "configure_2fa": "Configurazione 2FA",
       "generate_ssh_key_pair": "Generare coppia di chiavi SSH",
       "new_passphrase": "Nuova passphrase",

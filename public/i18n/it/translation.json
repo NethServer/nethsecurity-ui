@@ -1917,7 +1917,7 @@
       "ssh_key_removed": "Chiave SSH rimossa",
       "passphrase_enabled": "Passphrase abilitata",
       "ssh_public_key": "Chiave pubblica SSH",
-      "remove_key": "Rimuovere la chiave SSH",
+      "remove_key": "Rimuovi la chiave SSH",
       "remove_key_description": "Rimuovere la coppia di chiavi SSH rimuoverà anche la chiave pubblica dalle unità attualmente connesse.",
       "password_suggestion_4": "Almeno un numero (0-9)",
       "password_suggestion_5": "Almeno un carattere speciale (!{'@'}{'#'}^&_?-)",

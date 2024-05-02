@@ -1937,7 +1937,7 @@
       "user_password": "Password utente",
       "user_added": "Utente creato",
       "confirm_user_password": "Conferma password utente",
-      "delete_user": "Cancella utente",
+      "delete_user": "Elimina utente",
       "password_suggestion_5": "Almeno un carattere speciale (!{'@'}{'#'}^&_?-)",
       "delete_user_message": "Stai per eliminare l'utente '{name}'",
       "username": "Nome utente",

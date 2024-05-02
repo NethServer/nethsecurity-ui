@@ -1911,7 +1911,7 @@
       "new_passphrase": "Nuova passphrase",
       "new_passphrase_tooltip": "La passphrase viene utilizzata per crittografare la chiave privata per una maggiore sicurezza. Dovrebbe essere composta da un'insieme di lettere, numeri e simboli, difficile da indovinare ma facile da ricordare.",
       "minimum_characters": "Minimo 8 caratteri",
-      "confirm_passphrase": "Conferma la Passphrase",
+      "confirm_passphrase": "Conferma la passphrase",
       "generate_key": "Genera chiave SSH",
       "ssh_key_generated": "Chiave SSH generata",
       "ssh_key_removed": "Chiave SSH rimossa",

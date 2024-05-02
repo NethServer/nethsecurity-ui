@@ -1891,7 +1891,7 @@
       "connection_status_error": "Errore",
       "connection_status_pending": "In attesa",
       "connection_status_closed": "Chiusa",
-      "connection_closed_description": "Il collegamento al terminale dell'unità è stato chiuso. Se necessario, di chiudere questa finestra e provare nuovamente il collegamento.",
+      "connection_closed_description": "La connessione al terminale dell'unità è stata chiusa. Se necessario, chiudi questa finestra e connettiti di nuovo.",
       "exit_terminal_description": "Per uscire dal terminale dell'unità, basta chiudere questa finestra.",
       "name_unit_terminal": "{name} unità terminale"
     },

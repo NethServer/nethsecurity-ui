@@ -1010,7 +1010,7 @@
       "description": "Descrizione",
       "interface_name": "Interfaccia: {name}",
       "scan_network": "Scansiona rete",
-      "scan_not_requested_empty_state": "Fare clic su \"Scan di rete\" su un'interfaccia per individuarne i dispositivi",
+      "scan_not_requested_empty_state": "Fare clic su 'Scansiona rete' su un'interfaccia per individuarne i dispositivi",
       "scan_no_results_empty_state": "Nessun dispositivo trovato sull'interfaccia '{iface}'",
       "reservation_location_info_description": "Questa reservation apparirà in:",
       "dns_record_location_info_description": "Questo record DNS verrà visualizzato in:"

@@ -1816,7 +1816,7 @@
       "title": "Log"
     },
     "units": {
-      "page_description": "Questa pagina elenca le unità configurate nel controller. Qui è possibile accedere al terminale SSH, alle metriche e ai log delle unità. Lo stato di connessione delle unità viene aggiornato ogni 10 secondi; la versione installata e le informazioni sull'abbonamento vengono aggiornate ogni ora, ma puoi fare clic su \"Forza ricarica dati\" per aggiornarli immediatamente.",
+      "page_description": "Questa pagina elenca le unità configurate nel controller. Qui è possibile accedere al terminale SSH, alle metriche e ai log delle unità. Lo stato di connessione delle unità viene aggiornato ogni 10 secondi; la versione installata e le informazioni sull'abbonamento vengono aggiornate ogni ora, ma puoi fare clic su 'Forza aggiornamento dati' per aggiornarli immediatamente.",
       "add_unit": "Aggiungi unità",
       "status": "Stato",
       "installed_version": "Versione installata",

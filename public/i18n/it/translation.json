@@ -1838,7 +1838,7 @@
       "unit_id": "ID unità",
       "no_units_configured": "Nessuna unità configurata",
       "add_unit_step_2": "Accedi alla UI di {product} sull'unità che si desidera aggiungere e vai alla pagina 'Sistema > Controller'",
-      "add_unit_step_3": "Incolla il codice di accesso al controller nel modulo e fai clic su \"Connetti l'unità\"",
+      "add_unit_step_3": "Incolla il codice di join del controller nel form e clicca 'Connetti unità'",
       "add_unit_step_4": "L'unità apparirà nella pagina 'Unit manager'",
       "unit_username": "Nome unità",
       "unit_password": "Password unità",

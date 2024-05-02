@@ -942,7 +942,7 @@
         "dns_records": "Record DNS",
         "dynamic_leases": "Lease dinamici",
         "dns": "DNS",
-        "scan_network": "Scan di rete"
+        "scan_network": "Scansiona rete"
       },
       "ip_address": "Indirizzo IP",
       "interfaces": "Interfacce",

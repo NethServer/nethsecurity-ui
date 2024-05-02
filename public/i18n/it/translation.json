@@ -1009,7 +1009,7 @@
       "scan_results": "Risultati della scansione",
       "description": "Descrizione",
       "interface_name": "Interfaccia: {name}",
-      "scan_network": "Scan di rete",
+      "scan_network": "Scansiona rete",
       "scan_not_requested_empty_state": "Fare clic su \"Scan di rete\" su un'interfaccia per individuarne i dispositivi",
       "scan_no_results_empty_state": "Nessun dispositivo trovato sull'interfaccia '{iface}'",
       "reservation_location_info_description": "Questa reservation apparirà in:",

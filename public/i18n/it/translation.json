@@ -593,7 +593,7 @@
       "ntp_server_candidates": "Server NTP",
       "add_ntp_server": "Aggiungi server NTP",
       "default_hostname": "Nome host predefinito",
-      "default_hostname_description": "Non è consigliabile utilizzare il nome host predefinito \"NethSec\". Puoi assegnare un nome host diverso all'unità qui"
+      "default_hostname_description": "Non è consigliabile utilizzare il nome host predefinito 'NethSec'. Puoi assegnare un nome host diverso all'unità qui"
     },
     "services": {
       "title": "Servizi"

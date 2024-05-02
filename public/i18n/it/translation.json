@@ -1906,7 +1906,7 @@
       "ssh_key_description": "Una coppia di chiavi SSH consiste in una chiave pubblica (condivisa con i server) e una chiave privata (conservata localmente), che consente l'autenticazione sicura e la crittografia dei dati nelle connessioni SSH verso le unità controllate.",
       "ssh_key": "Chiave SSH",
       "generate_ssh_key_pair_description": "Devi scegliere un passphrase per generare la tua coppia di chiavi SSH. Successivamente è possibile inviare la chiave pubblica a una o più unità dalla pagina 'Gestione unità': questo vi permetterà di connettervi in SSH al terminale di quelle unità utilizzando la passphrase invece delle credenziali dell'unità.",
-      "configure_2fa": "Configurazione 2FA",
+      "configure_2fa": "Configura 2FA",
       "generate_ssh_key_pair": "Genera coppia di chiavi SSH",
       "new_passphrase": "Nuova passphrase",
       "new_passphrase_tooltip": "La passphrase viene utilizzata per crittografare la chiave privata per una maggiore sicurezza. Dovrebbe essere composta da un'insieme di lettere, numeri e simboli, difficile da indovinare ma facile da ricordare.",

@@ -320,7 +320,7 @@
     "cannot_disconnect_unit": "Impossibile disconnettere l'unità",
     "cannot_restart_connection": "Impossibile riavviare la connessione",
     "cannot_upload_backup": "Impossibile caricare il backup",
-    "cannot_retrieve_xsrf_token": "Non riesco a recuperare XSRF token",
+    "cannot_retrieve_xsrf_token": "Impossibile recuperare il token XSRF",
     "cannot_retrieve_ssh_keys": "Non riesco a recuperare le chiavi SSH dell'account",
     "cannot_retrieve_websocket_id": "Non riesco a recuperare il websocket ID",
     "cannot_retrieve_defaults": "Impossibile recuperare le impostazioni predefinite",

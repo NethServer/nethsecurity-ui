@@ -1859,7 +1859,7 @@
       "ssh_key_not_generated": "Chiave SSH non generata",
       "ssh_key_not_generated_description": "È possibile generarla all'interno della pagina 'Impostazioni account'",
       "go_to_account_settings": "Vai alle impostazioni account",
-      "cannot_send_ssh_key_to_n_units": "Non può inviare la chiave SSH a {n} unità | Non può inviare la chiave SSH a {n} unità",
+      "cannot_send_ssh_key_to_n_units": "Impossibile inviare la chiave SSH a {n} unità | Impossibile inviare la chiave SSH a {n} unità",
       "cannot_revoke_ssh_key_from_n_units": "Non può revocare la chiave SSH da {n} unità | Non può revocare la chiave SSH da {n} unità",
       "ssh_key_sent_to_n_units": "Chiave SSH inviata all'unità {n} | chiave SSH inviata a unità {n}",
       "ssh_key_revoked_from_n_units": "Chiave SSH revocata da {n} unità | chiave SSH revocata da {n} unità",

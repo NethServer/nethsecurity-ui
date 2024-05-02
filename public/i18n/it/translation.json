@@ -1864,7 +1864,7 @@
       "ssh_key_sent_to_n_units": "Chiave SSH inviata a {n} unità | Chiave SSH inviata a {n} unità",
       "ssh_key_revoked_from_n_units": "Chiave SSH revocata da {n} unità | Chiave SSH revocata da {n} unità",
       "send_ssh_key_description": "Invia la tua chiave SSH pubblica a una o più unità: questo ti permetterà di connetterti al terminale SSH di quelle unità utilizzando la tua passphrase invece delle credenziali dell'unità.",
-      "revoke_ssh_key_description": "Revoca la tua chiave SSH pubblica da una o più unità. Quando ti colleghi al terminale SSH di un'unità che non contiene la chiave SSH dovrai inserire le credenziali dell'unità invece della tua passphrase.",
+      "revoke_ssh_key_description": "Revoca la tua chiave SSH pubblica da una o più unità. Quando ti collegherai al terminale SSH di un'unità che non contiene la chiave SSH dovrai inserire le credenziali dell'unità invece della tua passphrase.",
       "hostname": "Nome host",
       "passphrase": "Passphrase",
       "passphrase_tooltip": "Inserisci la passphrase per generare la tua coppia di chiavi SSH",

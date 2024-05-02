@@ -1842,7 +1842,7 @@
       "add_unit_step_4": "L'unità apparirà nella pagina 'Gestione unità'",
       "unit_username": "Nome utente unità",
       "unit_password": "Password unità",
-      "popup_permission_title": "Il tuo browser potrebbe aver bisogno dei permessi per aprire i popup",
+      "popup_permission_title": "Il tuo browser potrebbe necessitare dei permessi per aprire i popup",
       "popup_permission_description": "Per aprire il terminale SSH, potrebbe essere necessario consentire i popup per questo sito.",
       "auth_error": "Errore di autenticazione",
       "auth_error_credentials": "Nome utente o password errati",

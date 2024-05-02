@@ -1839,7 +1839,7 @@
       "no_units_configured": "Nessuna unità configurata",
       "add_unit_step_2": "Accedi alla UI di {product} sull'unità che si desidera aggiungere e vai alla pagina 'Sistema > Controller'",
       "add_unit_step_3": "Incolla il codice di join del controller nel form e clicca 'Connetti unità'",
-      "add_unit_step_4": "L'unità apparirà nella pagina 'Unit manager'",
+      "add_unit_step_4": "L'unità apparirà nella pagina 'Gestione unità'",
       "unit_username": "Nome unità",
       "unit_password": "Password unità",
       "popup_permission_title": "Il tuo browser potrebbe aver bisogno dei permessi per aprire i popup",

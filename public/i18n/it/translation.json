@@ -1881,7 +1881,7 @@
       "title": "Gestione unità",
       "confirm_remove_unit": "Stai per rimuovere l'unità '{name}'. L'unità continuerà ad operare normalmente, ma non sarà più gestita da questo Controller.",
       "unit_name_removed": "Unità '{name}' rimossa",
-      "num_units_left": "Nessuna unità rimasta | {num} unità rimaste | {num} unità rimaste",
+      "num_units_left": "Nessuna unità rimasta | {num} unità rimasta | {num} unità rimaste",
       "num_units_left_tooltip": "Hai configurato {num} di {max} unità. Passa a un piano di subscription per gestire più unità."
     },
     "unit_terminal": {

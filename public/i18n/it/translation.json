@@ -325,7 +325,7 @@
     "cannot_retrieve_websocket_id": "Impossibile recuperare il websocket ID",
     "cannot_retrieve_defaults": "Impossibile recuperare le impostazioni predefinite",
     "cannot_change_password": "Impossibile cambiare la password",
-    "cannot_delete_ssh_key": "Non è possibile eliminare la chiave SSH",
+    "cannot_delete_ssh_key": "Impossibile eliminare la chiave SSH",
     "cannot_generate_ssh_key_pair": "Impossibile generare una coppia di chiavi SSH",
     "cannot_retrieve_unit_ssh_port": "Porta SSH non recuperabile",
     "cannot_retrieve_unit_ssh_keys": "Impossibile recuperare la chiave ssh dell'unità",

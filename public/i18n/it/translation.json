@@ -327,7 +327,7 @@
     "cannot_change_password": "Impossibile cambiare la password",
     "cannot_delete_ssh_key": "Impossibile eliminare la chiave SSH",
     "cannot_generate_ssh_key_pair": "Impossibile generare una coppia di chiavi SSH",
-    "cannot_retrieve_unit_ssh_port": "Porta SSH non recuperabile",
+    "cannot_retrieve_unit_ssh_port": "Impossibile recuperare la porta SSH dell'unità",
     "cannot_retrieve_unit_ssh_keys": "Impossibile recuperare la chiave ssh dell'unità",
     "cannot_remove_unit": "Impossibile rimuovere l'unità",
     "cannot_open_unit": "Impossibile aprire l'unità",

@@ -322,7 +322,7 @@
     "cannot_upload_backup": "Impossibile caricare il backup",
     "cannot_retrieve_xsrf_token": "Impossibile recuperare il token XSRF",
     "cannot_retrieve_ssh_keys": "Impossibile recuperare le chiavi SSH dell'account",
-    "cannot_retrieve_websocket_id": "Non riesco a recuperare il websocket ID",
+    "cannot_retrieve_websocket_id": "Impossibile recuperare il websocket ID",
     "cannot_retrieve_defaults": "Impossibile recuperare le impostazioni predefinite",
     "cannot_change_password": "Impossibile cambiare la password",
     "cannot_delete_ssh_key": "Non è possibile eliminare la chiave SSH",

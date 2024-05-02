@@ -1790,7 +1790,7 @@
       "connect_unit_description": "Connetti l'unità a un controller remoto per la gestione centralizzata. Accedi al controller per aggiungere un'unità, quindi inserisci qui il codice di join generato. La connessione verrà stabilita entro pochi secondi.",
       "unit_id": "ID unità",
       "unit_name": "Nome unità",
-      "unit_name_tooltip": "Inserisci un nome descrittivo per trovare facilmente l'unità all'interno del controller. È consigliabile usare FQDN del firewall.",
+      "unit_name_tooltip": "Inserisci un nome descrittivo per trovare facilmente l'unità all'interno del controller. È consigliabile usare il FQDN del firewall.",
       "controller_url": "URL del controller",
       "controller_join_code": "Codice di join del controller",
       "controller_join_code_tooltip": "Generare un codice di join dal controller: aggiungere un'unità nel controller, copiare il codice generato e incollarlo di seguito.",

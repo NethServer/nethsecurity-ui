@@ -1785,7 +1785,7 @@
       "confirm_delete_rule": "Stai per eliminare il NETMAP '{name}'"
     },
     "controller": {
-      "connect_unit": "Unità collegate",
+      "connect_unit": "Connetti unità",
       "title": "Controller",
       "connect_unit_description": "Collegare l'unità a un controller remoto per la gestione centralizzata. Accedere al controller per aggiungere un'unità, quindi inserire il codice generato qui. La connessione verrà stabilirà entro pochi secondi.",
       "unit_id": "ID unità",

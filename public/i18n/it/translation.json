@@ -1800,7 +1800,7 @@
       "restart_connection": "Riavvia connessione",
       "disconnect": "Disconnetti",
       "vpn_ip_address": "Indirizzo IP VPN",
-      "disconnect_unit": "Disconnessione unità",
+      "disconnect_unit": "Disconnetti unità",
       "disconnect_unit_message": "L'unità sarà disconnessa dal controller e non sarà più accessibile dal controller stesso. Vuoi procedere?",
       "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi"
     }

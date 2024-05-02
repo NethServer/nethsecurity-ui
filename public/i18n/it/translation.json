@@ -1787,7 +1787,7 @@
     "controller": {
       "connect_unit": "Connetti unità",
       "title": "Controller",
-      "connect_unit_description": "Collegare l'unità a un controller remoto per la gestione centralizzata. Accedere al controller per aggiungere un'unità, quindi inserire il codice generato qui. La connessione verrà stabilirà entro pochi secondi.",
+      "connect_unit_description": "Connetti l'unità a un controller remoto per la gestione centralizzata. Accedi al controller per aggiungere un'unità, quindi inserisci qui il codice di join generato. La connessione verrà stabilita entro pochi secondi.",
       "unit_id": "ID unità",
       "unit_name": "Nome unità",
       "unit_name_tooltip": "Inserisci un nome descrittivo per trovare facilmente l'unità all'interno del controller. È consigliabile usare FQDN del firewall.",

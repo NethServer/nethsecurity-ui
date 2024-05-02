@@ -1793,7 +1793,7 @@
       "unit_name_tooltip": "Inserisci un nome descrittivo per trovare facilmente l'unità all'interno del controller. È consigliabile usare il FQDN del firewall.",
       "controller_url": "URL del controller",
       "controller_join_code": "Codice di join del controller",
-      "controller_join_code_tooltip": "Generare un codice di join dal controller: aggiungere un'unità nel controller, copiare il codice generato e incollarlo di seguito.",
+      "controller_join_code_tooltip": "Genera il codice di join dal controller: aggiungi un'unità nel controller, copia il codice generato e incollalo qui sotto.",
       "verify_tls_certificate": "Verifica certificato TLS",
       "pending": "In attesa",
       "connected": "Connesso",

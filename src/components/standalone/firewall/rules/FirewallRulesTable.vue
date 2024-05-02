@@ -278,12 +278,15 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 <!-- vertical grip -->
                 <td
                   v-if="!textFilter"
-                  class="cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70"
+                  :class="[
+                    'cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70',
+                    { '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }
+                  ]"
                 >
                   <FontAwesomeIcon :icon="faGripVertical" />
                 </td>
                 <!-- cannot drag & drop rules with active text filter -->
-                <td v-else>
+                <td v-else :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                     <template #trigger>
                       <FontAwesomeIcon
@@ -297,7 +300,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </NeTooltip>
                 </td>
                 <!-- name -->
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <div
                     class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
                   >
@@ -336,7 +339,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </div>
                 </td>
                 <!-- source -->
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="source"
@@ -345,7 +348,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   />
                 </td>
                 <!-- destination -->
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="destination"
@@ -354,13 +357,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   />
                 </td>
                 <!-- service -->
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <span :class="{ 'opacity-50': !rule.enabled }">
                     {{ getServiceText(rule) }}
                   </span>
                 </td>
                 <!-- action -->
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <span :class="['flex items-center gap-x-2', { 'opacity-50': !rule.enabled }]">
                     <font-awesome-icon
                       :icon="['fas', getRuleActionIcon(rule.target)]"
@@ -369,9 +372,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     {{ rule.target }}
                   </span>
                 </td>
-                <td>
+                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
                   <!-- edit and kebab menu -->
-                  <div class="flex">
+                  <div class="flex justify-end">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">
                       <template #prefix>
                         <font-awesome-icon

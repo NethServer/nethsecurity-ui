@@ -242,7 +242,7 @@ table {
 }
 
 .table-card td {
-  @apply bg-gray-100 px-6 py-4 first-of-type:rounded-l-md last-of-type:rounded-r-md dark:bg-gray-800;
+  @apply bg-white px-6 py-4 first-of-type:rounded-l-md last-of-type:rounded-r-md dark:bg-gray-800;
 }
 
 .table-card.condensed td {

@@ -1609,7 +1609,8 @@
       "no_users_found": "No users found",
       "add_user": "Add user",
       "add_database": "Add database",
-      "edit_database": "Edit database",
+      "add_remote_database": "Add remote database",
+      "edit_remote_database": "Edit remote database",
       "no_database_found": "No database found",
       "configure_database": "Configure database",
       "type": "Type",
@@ -1657,7 +1658,8 @@
       "password_suggestion_5": "At least one special character (!{'@'}{'#'}^&_?-)",
       "unchanged": "Unchanged",
       "remote_database_added": "Remote database added",
-      "remote_database_added_description": "{name} added successfully"
+      "remote_database_added_description": "{name} added successfully",
+      "add_remote_database_tooltip": "Remote users databases are available only with a subscription plan"
     },
     "logs": {
       "title": "Logs",

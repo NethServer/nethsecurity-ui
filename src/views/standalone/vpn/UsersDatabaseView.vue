@@ -7,7 +7,8 @@ import {
   NeSkeleton,
   NeInlineNotification,
   getAxiosErrorMessage,
-  NeTabs
+  NeTabs,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -29,19 +30,25 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
 
-const loading = ref(true)
+const loading = ref({
+  listDatabases: true,
+  getSubscriptionInfo: true
+})
 const databases = ref<UserDatabase[]>([])
 const error = ref({
-  notificationDescription: '',
-  notificationDetails: ''
+  listDatabases: '',
+  listDatabasesDetails: '',
+  getSubscriptionInfo: '',
+  getSubscriptionInfoDetails: ''
 })
 const showCreateDrawer = ref(false)
+const activeSubscription = ref(false)
 
 const { tabs, selectedTab } = useTabs([])
 
 async function fetchDatabases(resetSelectedTab: boolean = false) {
   try {
-    loading.value = true
+    loading.value.listDatabases = true
     if (resetSelectedTab) {
       selectedTab.value = ''
     }
@@ -54,10 +61,10 @@ async function fetchDatabases(resetSelectedTab: boolean = false) {
       selectedTab.value = tabs.value[0].name
     }
   } catch (err: any) {
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    error.value.listDatabases = t(getAxiosErrorMessage(err))
+    error.value.listDatabasesDetails = err.toString()
   } finally {
-    loading.value = false
+    loading.value.listDatabases = false
   }
 }
 
@@ -66,35 +73,81 @@ async function reloadDatabases(resetSelectedTab: boolean = false) {
   await fetchDatabases(resetSelectedTab)
 }
 
-onMounted(() => fetchDatabases())
+onMounted(() => {
+  fetchDatabases()
+  fetchSubscriptionInfo()
+})
+
+async function fetchSubscriptionInfo() {
+  loading.value.getSubscriptionInfo = true
+
+  try {
+    const res = await ubusCall('ns.subscription', 'info')
+
+    activeSubscription.value = res.data.active || false
+  } catch (err: any) {
+    error.value.getSubscriptionInfo = t(getAxiosErrorMessage(err))
+    error.value.getSubscriptionInfoDetails = err.toString()
+  } finally {
+    loading.value.getSubscriptionInfo = false
+  }
+}
 </script>
 
 <template>
   <div class="mb-6 flex flex-row items-center justify-between">
     <NeTitle class="!mb-0">{{ t('standalone.users_database.title') }}</NeTitle>
-    <NeButton kind="secondary" @click="showCreateDrawer = true"
+    <!-- add remote database button (subscription only) -->
+    <NeButton v-if="activeSubscription" kind="secondary" @click="showCreateDrawer = true"
       ><template #prefix>
         <font-awesome-icon
           :icon="['fas', 'circle-plus']"
           class="h-4 w-4"
           aria-hidden="true"
         /> </template
-      >{{ t('standalone.users_database.add_database') }}</NeButton
+      >{{ t('standalone.users_database.add_remote_database') }}</NeButton
     >
+    <!-- disabled add remote database button for community -->
+    <NeTooltip v-else triggerEvent="mouseenter focus" placement="bottom">
+      <template #trigger>
+        <NeButton kind="secondary" disabled>
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.users_database.add_remote_database') }}
+        </NeButton>
+      </template>
+      <template #content>
+        {{ t('standalone.users_database.add_remote_database_tooltip') }}
+      </template>
+    </NeTooltip>
   </div>
+  <!-- list databases error -->
   <NeInlineNotification
-    v-if="error.notificationDescription"
+    v-if="error.listDatabases"
     :title="t('error.cannot_retrieve_databases')"
-    :description="error.notificationDescription"
+    :description="error.listDatabases"
     class="mb-6"
     kind="error"
   >
-    <template #details v-if="error.notificationDetails">
-      {{ error.notificationDetails }}
+    <template #details v-if="error.listDatabasesDetails">
+      {{ error.listDatabasesDetails }}
     </template></NeInlineNotification
   >
-  <NeSkeleton v-if="loading" :lines="20" />
-  <div v-else-if="!error.notificationDescription">
+  <!-- get subscription info error -->
+  <NeInlineNotification
+    v-if="error.getSubscriptionInfo"
+    :title="t('error.cannot_retrieve_subscription_info')"
+    :description="error.getSubscriptionInfo"
+    class="mb-6"
+    kind="error"
+  >
+    <template #details v-if="error.listDatabasesDetails">
+      {{ error.listDatabasesDetails }}
+    </template></NeInlineNotification
+  >
+  <NeSkeleton v-if="loading.listDatabases || loading.getSubscriptionInfo" :lines="10" size="lg" />
+  <div v-else-if="!error.listDatabases && !error.getSubscriptionInfo">
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

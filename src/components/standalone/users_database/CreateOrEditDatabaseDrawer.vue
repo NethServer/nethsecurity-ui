@@ -320,8 +320,8 @@ watch(
     :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="
       isEditing
-        ? t('standalone.users_database.edit_database')
-        : t('standalone.users_database.add_database')
+        ? t('standalone.users_database.edit_remote_database')
+        : t('standalone.users_database.add_remote_database')
     "
   >
     <NeInlineNotification

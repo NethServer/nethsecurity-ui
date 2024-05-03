@@ -73,6 +73,7 @@ const headers = [
 
 const ruleDragged = ref<number>()
 const indexOver = ref<number>()
+const disabledRuleClasses = '!bg-[#fcfdfd] dark:!bg-[#18212f]'
 
 const filteredRules = computed(() => {
   if (!props.textFilter) {
@@ -280,13 +281,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   v-if="!textFilter"
                   :class="[
                     'cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70',
-                    { '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }
+                    !rule.enabled ? disabledRuleClasses : ''
                   ]"
                 >
                   <FontAwesomeIcon :icon="faGripVertical" />
                 </td>
                 <!-- cannot drag & drop rules with active text filter -->
-                <td v-else :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td v-else :class="!rule.enabled ? disabledRuleClasses : ''">
                   <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                     <template #trigger>
                       <FontAwesomeIcon
@@ -300,7 +301,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </NeTooltip>
                 </td>
                 <!-- name -->
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <div
                     class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
                   >
@@ -339,7 +340,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </div>
                 </td>
                 <!-- source -->
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="source"
@@ -348,7 +349,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   />
                 </td>
                 <!-- destination -->
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="destination"
@@ -357,13 +358,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   />
                 </td>
                 <!-- service -->
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <span :class="{ 'opacity-50': !rule.enabled }">
                     {{ getServiceText(rule) }}
                   </span>
                 </td>
                 <!-- action -->
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <span :class="['flex items-center gap-x-2', { 'opacity-50': !rule.enabled }]">
                     <font-awesome-icon
                       :icon="['fas', getRuleActionIcon(rule.target)]"
@@ -372,7 +373,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     {{ rule.target }}
                   </span>
                 </td>
-                <td :class="{ '!bg-[#fcfdfd] dark:!bg-[#18212f]': !rule.enabled }">
+                <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->
                   <div class="flex justify-end">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">

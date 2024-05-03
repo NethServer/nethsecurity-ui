@@ -54,14 +54,14 @@ const zone = computed(() => {
       <NeBadge
         :class="{ 'opacity-50': !enabled }"
         :text="t('standalone.firewall_rules.firewall')"
-        kind="tertiary"
+        :kind="enabled ? 'tertiary' : 'secondary'"
       />
     </template>
     <template v-else-if="rulesType === 'output' && props.columnType === 'source'">
       <NeBadge
         :class="{ 'opacity-50': !enabled }"
         :text="t('standalone.firewall_rules.firewall')"
-        kind="tertiary"
+        :kind="enabled ? 'tertiary' : 'secondary'"
       />
     </template>
     <template v-else-if="addresses.length">
@@ -127,7 +127,7 @@ const zone = computed(() => {
         <span v-else-if="zone">
           <NeBadge
             :text="zone.toUpperCase()"
-            kind="custom"
+            :kind="enabled ? 'custom' : 'secondary'"
             :customColorClasses="getZoneColorClasses(zone)"
           />
         </span>

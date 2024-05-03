@@ -107,10 +107,7 @@ function pingsOptions(intervals: number[]): Array<NeComboboxOption> {
 function fetchData() {
   loading.value = true
   networkError.value = undefined
-  ubusCall('uci', 'get', {
-    config: 'ns-api',
-    section: 'defaults_mwan'
-  })
+  ubusCall('ns.mwan', 'get_default_config')
     .then((response: AxiosResponse<DefaultsMwanResponse>) => {
       data.value = {
         track_ip: response.data.values.track_ip,
@@ -146,11 +143,7 @@ function validate(): boolean {
 function sendData() {
   sending.value = true
   if (validate()) {
-    ubusCall('uci', 'set', {
-      config: 'ns-api',
-      section: 'defaults_mwan',
-      values: data.value
-    })
+    ubusCall('ns.mwan', 'set_default_config', data.value)
       .then(() => {
         uciChangesStore.getChanges()
       })

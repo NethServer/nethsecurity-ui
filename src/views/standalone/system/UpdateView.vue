@@ -246,6 +246,7 @@ onMounted(() => {
                   {{ t('standalone.update.automatic_updates_tooltip') }}
                 </p>
                 <NeLink
+                  invertedTheme
                   @click="
                     () => {
                       router.push(`${getStandaloneRoutePrefix()}/system/subscription`)

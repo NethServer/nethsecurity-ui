@@ -297,6 +297,7 @@ watch(
                   <i18n-t keypath="standalone.certificates.dns_api_tooltip" tag="span">
                     <template #dnsapiurl>
                       <NeLink
+                        invertedTheme
                         href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi"
                         target="_blank"
                         >https://github.com/acmesh-official/acme.sh/wiki/dnsapi</NeLink

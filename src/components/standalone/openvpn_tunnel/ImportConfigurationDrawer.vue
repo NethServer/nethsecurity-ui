@@ -15,6 +15,7 @@ import {
 } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getProductName } from '@/lib/config'
 
 defineProps<{
   isShown: boolean
@@ -90,7 +91,9 @@ async function importConfiguration() {
       >
       <div>
         <NeFileInput
-          :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration')} (*.json)`"
+          :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration', {
+            product: getProductName()
+          })} (*.json)`"
           :invalid-message="fileInputValidationError"
           :dropzoneLabel="t('ne_file_input.dropzone_label')"
           v-model="fileToUpload"

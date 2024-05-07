@@ -21,6 +21,7 @@ import DeleteTunnelModal from './DeleteTunnelModal.vue'
 import DownloadTunnelModal from './DownloadTunnelModal.vue'
 import ImportConfigurationDrawer from './ImportConfigurationDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { getProductName } from '@/lib/config'
 
 export type ServerTunnel = {
   id: string
@@ -170,8 +171,12 @@ onUnmounted(() => {
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{
           manageClientTunnels
-            ? t('standalone.openvpn_tunnel.client_tunnel_description')
-            : t('standalone.openvpn_tunnel.server_tunnel_description')
+            ? t('standalone.openvpn_tunnel.client_tunnel_description', {
+                product: getProductName()
+              })
+            : t('standalone.openvpn_tunnel.server_tunnel_description', {
+                product: getProductName()
+              })
         }}
       </p>
       <template v-if="tunnels.length > 0">

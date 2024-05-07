@@ -14,6 +14,7 @@ import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { getProductName } from '@/lib/config'
 
 const props = defineProps<{
   visible: boolean
@@ -36,8 +37,12 @@ const downloadMode = ref<
 const downloadOptions = [
   {
     id: 'nethsecurity_client_configuration',
-    label: t('standalone.openvpn_tunnel.nethsecurity_client_configuration'),
-    description: t('standalone.openvpn_tunnel.nethsecurity_client_configuration_description')
+    label: t('standalone.openvpn_tunnel.nethsecurity_client_configuration', {
+      product: getProductName()
+    }),
+    description: t('standalone.openvpn_tunnel.nethsecurity_client_configuration_description', {
+      product: getProductName()
+    })
   }
 ]
 

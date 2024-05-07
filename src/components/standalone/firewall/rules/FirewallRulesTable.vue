@@ -238,6 +238,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :data="filteredRules"
       :headers="headers"
       :style="'card'"
+      class="!border-spacing-y-1"
     >
       <template #tbody>
         <tbody>

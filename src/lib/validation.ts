@@ -9,8 +9,6 @@ export interface validationOutput {
   i18Params?: Object
 }
 
-//// move general purpose functions to vue-components library?
-
 /**
  * Validate a string against a list of validation functions.
  * Input value is considered valid if it satisfies at least one of the validators.

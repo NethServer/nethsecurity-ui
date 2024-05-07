@@ -6,17 +6,16 @@
 <script lang="ts" setup>
 import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ReportContent from '@/components/standalone/report/ReportContent.vue'
 import PingContent from '@/components/standalone/report/PingContent.vue'
+import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-
-// tabs management
-const tabs = ref([
+const { tabs, selectedTab } = useTabs([
   {
     name: 'tab-report',
     label: t('standalone.report.tabs.real_time_report')
@@ -26,7 +25,6 @@ const tabs = ref([
     label: t('standalone.report.tabs.ping_latency_monitor')
   }
 ])
-const selectedTab = ref('')
 
 onMounted(() => {
   selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name

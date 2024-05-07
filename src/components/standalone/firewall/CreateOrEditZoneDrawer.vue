@@ -299,9 +299,11 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :optionalLabel="t('common.optional')"
       />
       <NeToggle
+        v-if="zoneToEdit?.name !== SpecialZones.WAN"
         v-model="trafficToWan"
         :disabled="saving"
-        :label="t('standalone.zones_and_policies.traffic_to_wan')"
+        :topLabel="t('standalone.zones_and_policies.traffic_to_wan')"
+        :label="trafficToWan ? t('common.enabled') : t('common.disabled')"
       />
       <NeRadioSelection
         v-model="trafficInput"

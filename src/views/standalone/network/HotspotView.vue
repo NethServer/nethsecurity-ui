@@ -6,17 +6,16 @@
 <script lang="ts" setup>
 import { NeTitle, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StatusContent from '@/components/standalone/hotspot/StatusContent.vue'
 import SettingsContent from '@/components/standalone/hotspot/SettingsContent.vue'
+import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-
-// tabs management
-const tabs = ref([
+const { tabs, selectedTab } = useTabs([
   {
     name: 'tab-status',
     label: t('standalone.hotspot.tabs.status')
@@ -26,7 +25,6 @@ const tabs = ref([
     label: t('standalone.hotspot.tabs.settings')
   }
 ])
-const selectedTab = ref('')
 
 onMounted(() => {
   selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name

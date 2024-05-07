@@ -706,7 +706,7 @@ watch(
         />
         <NeCombobox
           v-model="espDiffieHellmanGroup"
-          :label="t('standalone.ipsec_tunnel.diffie_hellman_group')"
+          :label="t('standalone.ipsec_tunnel.diffie_hellman_group_pfs')"
           :invalidMessage="validationErrorBag.getFirstFor('espDiffieHellmanGroup')"
           :noOptionsLabel="t('ne_combobox.no_options_label')"
           :noResultsLabel="t('ne_combobox.no_results')"
@@ -715,7 +715,15 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :optionalLabel="t('common.optional')"
-        />
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.ipsec_tunnel.diffie_hellman_group_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeCombobox>
         <NeTextInput
           v-model="espKeyLifetime"
           type="number"

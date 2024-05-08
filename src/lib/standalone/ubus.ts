@@ -8,7 +8,6 @@ import { MessageBag, getValidationErrorsFromAxiosError } from '../validation'
 import { useUnitsStore } from '@/stores/controller/units'
 import { getJsonFromStorage } from '@nethesis/vue-components'
 
-//// TODO move to validation.ts and rename
 export class ValidationError extends Error {
   errorBag: MessageBag
 

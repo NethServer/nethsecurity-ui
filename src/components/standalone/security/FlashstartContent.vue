@@ -272,7 +272,7 @@ function save() {
                 <template #content>
                   <i18n-t keypath="standalone.flashstart.username_helper" tag="span">
                     <template #flashstartUrl>
-                      <NeLink href="https://flashstart.nethesis.it/" target="_blank">
+                      <NeLink invertedTheme href="https://flashstart.nethesis.it/" target="_blank">
                         https://flashstart.nethesis.it/
                       </NeLink>
                     </template>

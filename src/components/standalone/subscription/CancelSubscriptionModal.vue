@@ -81,21 +81,9 @@ async function cancelSubscription() {
         <li>{{ t('standalone.subscription.remote_backup') }}</li>
         <li>{{ t('standalone.subscription.remote_vpn_users_databases') }}</li>
         <li>{{ t('standalone.subscription.unlimited_controlled_units') }}</li>
-        <li>
-          {{ t('standalone.subscription.threat_shield') }} ({{
-            t('standalone.subscription.if_included_in_subscription_plan')
-          }})
-        </li>
-        <li>
-          {{ t('standalone.subscription.monitoring_service') }} ({{
-            t('standalone.subscription.if_included_in_subscription_plan')
-          }})
-        </li>
-        <li>
-          {{ t('standalone.subscription.remote_support') }} ({{
-            t('standalone.subscription.if_included_in_subscription_plan')
-          }})
-        </li>
+        <li>{{ t('standalone.subscription.threat_shield') }}</li>
+        <li>{{ t('standalone.subscription.monitoring_service') }}</li>
+        <li>{{ t('standalone.subscription.remote_support') }}</li>
       </ul>
       <NeInlineNotification
         v-if="error.unregister"

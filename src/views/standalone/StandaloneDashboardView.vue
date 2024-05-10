@@ -85,7 +85,15 @@ function goTo(path: string) {
       </template>
     </ServiceCard>
     <!-- threat shield / banIP -->
-    <ServiceCard serviceName="banip" hasStatus :icon="['fas', 'shield']">
+    <ServiceCard
+      serviceName="banip"
+      hasStatus
+      :counter="{
+        name: 'threat_shield_ip',
+        label: t('standalone.dashboard.blocked_ips_last_hour')
+      }"
+      :icon="['fas', 'shield']"
+    >
       <template #title>
         <NeLink @click="goTo('/security/threat-shield')">
           {{ t('standalone.dashboard.thread_shield_ip') }}
@@ -95,7 +103,10 @@ function goTo(path: string) {
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"
-      hasCounter
+      :counter="{
+        name: 'hosts',
+        label: ''
+      }"
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />

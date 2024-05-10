@@ -6,14 +6,19 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeBadge, NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
+
+interface CardCounter {
+  name: string
+  label: string
+}
 
 const props = defineProps({
   serviceName: { type: String },
   hasStatus: { type: Boolean, default: false },
-  hasCounter: { type: Boolean, default: false },
+  counter: { type: Object as PropType<CardCounter>, default: undefined },
   title: {
     type: String
   },
@@ -48,7 +53,7 @@ onMounted(() => {
     statusIntervalId.value = setInterval(getServiceStatus, STATUS_REFRESH_INTERVAL)
   }
 
-  if (props.hasCounter) {
+  if (props.counter) {
     getServiceCounter()
 
     // periodically reload data
@@ -95,7 +100,7 @@ async function getServiceCounter() {
   error.value.description = ''
 
   try {
-    const res = await ubusCall('ns.dashboard', 'counter', { service: props.serviceName })
+    const res = await ubusCall('ns.dashboard', 'counter', { service: props.counter?.name })
     serviceCounter.value = res.data.result.count
   } catch (err: any) {
     console.error(err)
@@ -159,16 +164,20 @@ function getBadgeIcon(status: string) {
     <template #title>
       <slot name="title"></slot>
     </template>
-    <NeBadge
-      v-if="hasStatus"
-      :kind="getBadgeKind(serviceStatus)"
-      :text="getBadgeText(serviceStatus)"
-      :icon="getBadgeIcon(serviceStatus)"
-    />
-
-    <template v-if="hasCounter">
-      <NeSkeleton v-if="loading.getServiceCounter" :lines="1" class="w-14"></NeSkeleton>
-      <div v-else class="text-xl">{{ serviceCounter }}</div>
-    </template>
+    <div class="space-y-3">
+      <NeBadge
+        v-if="hasStatus"
+        :kind="getBadgeKind(serviceStatus)"
+        :text="getBadgeText(serviceStatus)"
+        :icon="getBadgeIcon(serviceStatus)"
+      />
+      <template v-if="counter">
+        <NeSkeleton v-if="loading.getServiceCounter" :lines="1" class="w-14"></NeSkeleton>
+        <div v-else>
+          <span class="text-xl">{{ serviceCounter }}</span>
+          <span v-if="counter.label" class="ml-2">{{ counter.label }}</span>
+        </div>
+      </template>
+    </div>
   </NeCard>
 </template>

@@ -327,7 +327,8 @@
     "cannot_open_unit": "Cannot open unit",
     "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
     "cannot_remove_unit": "Cannot remove unit",
-    "cannot_scan_network": "Cannot scan network"
+    "cannot_scan_network": "Cannot scan network",
+    "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -836,7 +837,8 @@
       "management_ipv4_address_cidr_tooltip": "This IP address is for internal use only and won't be the primary address of the bond. Make sure it's not already used in your network",
       "create_bond": "Create bond",
       "configure_bond": "Configure bond",
-      "configure_bond_name": "Configure bond {name}"
+      "configure_bond_name": "Configure bond {name}",
+      "clients_network": "Clients network"
     },
     "multi_wan": {
       "title": "MultiWAN",

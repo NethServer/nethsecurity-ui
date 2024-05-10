@@ -12,7 +12,8 @@ import {
   NeButton,
   NeInlineNotification,
   getAxiosErrorMessage,
-  byteFormat1000
+  byteFormat1000,
+  NeSkeleton
 } from '@nethesis/vue-components'
 import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
@@ -40,7 +41,8 @@ import {
   type ZoneWithDeviceNames,
   isVpn,
   getZoneIconBackgroundStyle,
-  getZoneIconForegroundStyle
+  getZoneIconForegroundStyle,
+  type DeviceVpnNetworks
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -79,6 +81,11 @@ let isShownCreateVlanDeviceDrawer = ref(false)
 let isShownDeleteDeviceModal = ref(false)
 let deviceToConfigureType = ref('physical' as DeviceType)
 let isShownDeleteBondModal = ref(false)
+const vpnNetworks = ref<DeviceVpnNetworks>({
+  openvpn: {},
+  openvpnRw: {},
+  ipsec: {}
+})
 
 let loading = ref({
   networkDevices: true,
@@ -89,7 +96,9 @@ let loading = ref({
 let error = ref({
   notificationTitle: '',
   notificationDescription: '',
-  notificationDetails: ''
+  notificationDetails: '',
+  getVpnNetworks: '',
+  getVpnNetworksDetails: ''
 })
 
 const bondToDelete = ref<string>()
@@ -196,6 +205,20 @@ async function listDevices() {
       (device: DeviceOrIface) => !bond_devices.includes(device.name ?? device['.name'])
     )
     devicesByZone.value = res.data.devices_by_zone
+
+    // check and retrieve VPN networks only the first time
+
+    if (loading.value.networkDevices) {
+      for (const device of allDevices.value) {
+        if (isOpenVpnRw(device)) {
+          fetchOpenVpnRwNetwork(device)
+        } else if (isOpenVpnTunnel(device)) {
+          fetchOpenVpnTunnelNetworks(device)
+        } else if (isIpsec(device)) {
+          fetchIpsecNetworks()
+        }
+      }
+    }
   } catch (err: any) {
     console.error(err)
     error.value.notificationTitle = t('error.cannot_load_network_devices')
@@ -203,6 +226,74 @@ async function listDevices() {
     error.value.notificationDetails = err.toString()
   }
   loading.value.networkDevices = false
+}
+
+async function fetchOpenVpnRwNetwork(device: DeviceOrIface) {
+  error.value.getVpnNetworks = ''
+  error.value.getVpnNetworksDetails = ''
+
+  try {
+    const res = await ubusCall('ns.ovpnrw', 'get-configuration', {
+      instance: device.openvpn_rw['.name']
+    })
+    const clientsNetwork = res.data.server
+    vpnNetworks.value.openvpnRw[getName(device)] = clientsNetwork
+  } catch (err: any) {
+    console.error(err)
+    error.value.getVpnNetworks = t(getAxiosErrorMessage(err))
+    error.value.getVpnNetworksDetails = err.toString()
+  }
+}
+
+async function fetchIpsecNetworks() {
+  error.value.getVpnNetworks = ''
+  error.value.getVpnNetworksDetails = ''
+
+  try {
+    const res = await ubusCall('ns.ipsectunnel', 'list-tunnels')
+    const tunnels = res.data.tunnels
+
+    for (const tunnel of tunnels) {
+      const ipsecName = `ipsec/${tunnel.id}`
+      vpnNetworks.value.ipsec[ipsecName] = tunnel.remote
+    }
+  } catch (err: any) {
+    console.error(err)
+    error.value.getVpnNetworks = t(getAxiosErrorMessage(err))
+    error.value.getVpnNetworksDetails = err.toString()
+  }
+}
+
+async function fetchOpenVpnTunnelNetworks(device: DeviceOrIface) {
+  error.value.getVpnNetworks = ''
+  error.value.getVpnNetworksDetails = ''
+
+  try {
+    const res = await ubusCall('ns.ovpntunnel', 'list-tunnels')
+
+    const tunnels = res.data
+    const tunnelName = device.openvpn.ns_name
+
+    if (device.openvpn.server) {
+      // server tunnel
+      const tunFound = tunnels.servers.find((tun: any) => tun.ns_name === tunnelName)
+
+      if (tunFound) {
+        vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
+      }
+    } else {
+      // client tunnel
+      const tunFound = tunnels.clients.find((tun: any) => tun.ns_name === tunnelName)
+
+      if (tunFound) {
+        vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
+      }
+    }
+  } catch (err: any) {
+    console.error(err)
+    error.value.getVpnNetworks = t(getAxiosErrorMessage(err))
+    error.value.getVpnNetworksDetails = err.toString()
+  }
 }
 
 function toggleExpandAlias(deviceOrIface: any) {
@@ -548,6 +639,17 @@ function formatPackets(packets: number) {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
+    <NeInlineNotification
+      v-if="error.getVpnNetworks"
+      kind="error"
+      :title="t('error.cannot_retrieve_vpn_networks')"
+      :description="error.getVpnNetworks"
+      class="mb-4"
+    >
+      <template #details v-if="error.getVpnNetworksDetails">
+        {{ error.getVpnNetworksDetails }}
+      </template>
+    </NeInlineNotification>
     <div class="space-y-6 text-sm">
       <div class="flex justify-end gap-4">
         <NeButton kind="tertiary" size="lg" @click="showCreateVlanDeviceDrawer">
@@ -776,6 +878,61 @@ function formatPackets(packets: number) {
                             </span>
                             <span>{{ getIpv6Gateway(device) }}</span>
                           </div>
+                        </div>
+                        <!-- vpn networks -->
+                        <div v-if="isVpn(device)" class="!-mt-2">
+                          <template v-if="isOpenVpnRw(device)">
+                            <!-- openvpn rw -->
+                            <div class="font-medium">
+                              {{ t('standalone.interfaces_and_devices.clients_network') }}:
+                            </div>
+                            <!-- skeleton -->
+                            <NeSkeleton
+                              v-if="!vpnNetworks.openvpnRw[getName(device)]"
+                              size="sm"
+                              class="mt-1"
+                            />
+                            <!-- clients network -->
+                            <div v-else>
+                              {{ vpnNetworks.openvpnRw[getName(device)] }}
+                            </div>
+                          </template>
+                          <template v-if="isIpsec(device)">
+                            <!-- ipsec -->
+                            <div class="font-medium">
+                              {{ t('standalone.ipsec_tunnel.remote_networks') }}:
+                            </div>
+                            <!-- skeleton -->
+                            <NeSkeleton
+                              v-if="!vpnNetworks.ipsec[device.ns_link as string]"
+                              size="sm"
+                              class="mt-1"
+                            />
+                            <!-- remote networks -->
+                            <div
+                              v-else
+                              v-for="network in vpnNetworks.ipsec[device.ns_link as string]"
+                              :key="network"
+                            >
+                              {{ network }}
+                            </div>
+                          </template>
+                          <template v-if="isOpenVpnTunnel(device)">
+                            <!-- openvpn tunnel -->
+                            <div class="font-medium">
+                              {{ t('standalone.openvpn_tunnel.remote_networks') }}:
+                            </div>
+                            <!-- no remote networks -->
+                            <div v-if="isEmpty(vpnNetworks.openvpn[device.openvpn.ns_name])">-</div>
+                            <!-- remote networks -->
+                            <div
+                              v-else
+                              v-for="network in vpnNetworks.openvpn[device.openvpn.ns_name]"
+                              :key="network"
+                            >
+                              {{ network }}
+                            </div>
+                          </template>
                         </div>
                       </div>
                       <!-- third column -->

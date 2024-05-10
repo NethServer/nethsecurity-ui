@@ -179,8 +179,7 @@ function getBulkActionsKebabMenuItems() {
           <template #titleTooltip>
             <NeTooltip>
               <template #content>
-                <!-- //// remove font-normal after fixing NeCard tooltip style -->
-                <span class="font-normal">
+                <span>
                   {{
                     t('controller.units.num_units_left_tooltip', {
                       num: unitsStore.units.length,

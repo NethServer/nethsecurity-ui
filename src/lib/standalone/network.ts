@@ -31,6 +31,7 @@ export interface DeviceOrIface {
   iface?: any
   openvpn?: any
   openvpn_rw?: any
+  ns_link?: string
 }
 
 export interface ZoneWithDevices {
@@ -41,6 +42,12 @@ export interface ZoneWithDevices {
 export interface ZoneWithDeviceNames {
   name: string
   devices: string[]
+}
+
+export interface DeviceVpnNetworks {
+  openvpn: Record<string, string[]>
+  openvpnRw: Record<string, string>
+  ipsec: Record<string, string[]>
 }
 
 interface Ipv4Address {

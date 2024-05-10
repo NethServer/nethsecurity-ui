@@ -69,7 +69,15 @@ function goTo(path: string) {
       :icon="['fas', 'bolt']"
     />
     <!-- openvpn rw -->
-    <ServiceCard serviceName="openvpn_rw" hasStatus :icon="['fas', 'globe']">
+    <ServiceCard
+      serviceName="openvpn_rw"
+      hasStatus
+      :counter="{
+        name: 'openvpn_rw',
+        label: t('standalone.dashboard.clients_connected')
+      }"
+      :icon="['fas', 'globe']"
+    >
       <template #title>
         <NeLink @click="goTo('/vpn/openvpn-rw')">
           {{ t('standalone.dashboard.openvpn_rw') }}

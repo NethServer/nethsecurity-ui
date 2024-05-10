@@ -416,7 +416,9 @@
       "usage_free_of_total": "{free} free of {total}",
       "default_hostname_warning": "Using the default hostname 'NethSec' is not recommended. Change it in {systemSettingsLink} and apply the change.",
       "blocked_ips_last_hour": "IPs blocked in the last hour",
-      "clients_connected": "clients connected"
+      "clients_connected": "clients connected",
+      "tunnels_enabled": "tunnel enabled | tunnels enabled",
+      "tunnels_connected": "tunnel connected | tunnels connected"
     },
     "subscription": {
       "title": "Subscription",

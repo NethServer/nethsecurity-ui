@@ -15,6 +15,7 @@ import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -84,6 +85,22 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </ServiceCard>
+    <!-- ipsec tunnels -->
+    <OpenVpnTunnelOrIpsecCard method="ipsec-tunnels">
+      <template #title>
+        <NeLink @click="goTo('/vpn/ipsec-tunnel')">
+          {{ t('standalone.ipsec_tunnel.title') }}
+        </NeLink>
+      </template>
+    </OpenVpnTunnelOrIpsecCard>
+    <!-- ovpn tunnels -->
+    <OpenVpnTunnelOrIpsecCard method="ovpn-tunnels">
+      <template #title>
+        <NeLink @click="goTo('/vpn/openvpn-tunnel')">
+          {{ t('standalone.openvpn_tunnel.title') }}
+        </NeLink>
+      </template>
+    </OpenVpnTunnelOrIpsecCard>
     <!-- hotspot -->
     <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
       <template #title>

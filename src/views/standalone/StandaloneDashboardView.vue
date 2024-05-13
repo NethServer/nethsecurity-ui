@@ -15,6 +15,7 @@ import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -45,7 +46,7 @@ function goTo(path: string) {
 
   <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
     <!-- system -->
-    <SystemInfoCard class="sm:col-span-2 xl:row-span-2" />
+    <SystemInfoCard class="sm:col-span-2 xl:row-span-3" />
     <!-- internet connection -->
     <ServiceCard
       serviceName="internet"
@@ -69,13 +70,37 @@ function goTo(path: string) {
       :icon="['fas', 'bolt']"
     />
     <!-- openvpn rw -->
-    <ServiceCard serviceName="openvpn_rw" hasStatus :icon="['fas', 'globe']">
+    <ServiceCard
+      serviceName="openvpn_rw"
+      hasStatus
+      :counter="{
+        name: 'openvpn_rw',
+        label: t('standalone.dashboard.clients_connected')
+      }"
+      :icon="['fas', 'globe']"
+    >
       <template #title>
         <NeLink @click="goTo('/vpn/openvpn-rw')">
           {{ t('standalone.dashboard.openvpn_rw') }}
         </NeLink>
       </template>
     </ServiceCard>
+    <!-- ipsec tunnels -->
+    <OpenVpnTunnelOrIpsecCard method="ipsec-tunnels">
+      <template #title>
+        <NeLink @click="goTo('/vpn/ipsec-tunnel')">
+          {{ t('standalone.ipsec_tunnel.title') }}
+        </NeLink>
+      </template>
+    </OpenVpnTunnelOrIpsecCard>
+    <!-- ovpn tunnels -->
+    <OpenVpnTunnelOrIpsecCard method="ovpn-tunnels">
+      <template #title>
+        <NeLink @click="goTo('/vpn/openvpn-tunnel')">
+          {{ t('standalone.openvpn_tunnel.title') }}
+        </NeLink>
+      </template>
+    </OpenVpnTunnelOrIpsecCard>
     <!-- hotspot -->
     <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
       <template #title>
@@ -85,7 +110,15 @@ function goTo(path: string) {
       </template>
     </ServiceCard>
     <!-- threat shield / banIP -->
-    <ServiceCard serviceName="banip" hasStatus :icon="['fas', 'shield']">
+    <ServiceCard
+      serviceName="banip"
+      hasStatus
+      :counter="{
+        name: 'threat_shield_ip',
+        label: t('standalone.dashboard.blocked_ips_last_hour')
+      }"
+      :icon="['fas', 'shield']"
+    >
       <template #title>
         <NeLink @click="goTo('/security/threat-shield')">
           {{ t('standalone.dashboard.thread_shield_ip') }}
@@ -95,7 +128,10 @@ function goTo(path: string) {
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"
-      hasCounter
+      :counter="{
+        name: 'hosts',
+        label: ''
+      }"
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />

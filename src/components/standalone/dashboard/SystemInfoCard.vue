@@ -25,7 +25,9 @@ import type { SystemUpdate } from '@/views/standalone/system/UpdateView.vue'
 
 const { t } = useI18n()
 const router = useRouter()
-const REFRESH_INTERVAL = 10000
+
+// random refresh interval between 20 and 30 seconds
+const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
 const systemInfo = ref<any>({})
 const loadDataIntervalId = ref(0)
 const systemUpdateData = ref<SystemUpdate | null>(null)

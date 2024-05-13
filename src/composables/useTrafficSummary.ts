@@ -10,7 +10,8 @@ import { useThemeStore } from '@/stores/theme'
 import { CYAN_500, CYAN_600 } from '@/lib/color'
 
 export function useTrafficSummary() {
-  const REFRESH_INTERVAL = 10000
+  // random refresh interval between 20 and 30 seconds
+  const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
   const CHART_NUM_ITEMS = 5
   const { t } = useI18n()
   const themeStore = useThemeStore()

@@ -28,8 +28,9 @@ const props = defineProps({
 })
 
 const { t } = useI18n()
-const STATUS_REFRESH_INTERVAL = 10000
-const COUNTER_REFRESH_INTERVAL = 10000
+
+// random refresh interval between 20 and 30 seconds
+const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
 const serviceStatus = ref<any>(null)
 const serviceCounter = ref<any>(null)
 const statusIntervalId = ref(0)
@@ -50,14 +51,14 @@ onMounted(() => {
     getServiceStatus()
 
     // periodically reload data
-    statusIntervalId.value = setInterval(getServiceStatus, STATUS_REFRESH_INTERVAL)
+    statusIntervalId.value = setInterval(getServiceStatus, REFRESH_INTERVAL)
   }
 
   if (props.counter) {
     getServiceCounter()
 
     // periodically reload data
-    counterIntervalId.value = setInterval(getServiceCounter, COUNTER_REFRESH_INTERVAL)
+    counterIntervalId.value = setInterval(getServiceCounter, REFRESH_INTERVAL)
   }
 })
 

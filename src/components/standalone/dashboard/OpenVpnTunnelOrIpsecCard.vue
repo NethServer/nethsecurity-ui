@@ -21,7 +21,9 @@ const props = defineProps({
 })
 
 const { t } = useI18n()
-const COUNTER_REFRESH_INTERVAL = 10000
+
+// random refresh interval between 20 and 30 seconds
+const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
 const counters = ref<TunnelCounters>({ enabled: 0, connected: 0 })
 const counterIntervalId = ref(0)
 
@@ -38,7 +40,7 @@ onMounted(() => {
   getCounters()
 
   // periodically reload data
-  counterIntervalId.value = setInterval(getCounters, COUNTER_REFRESH_INTERVAL)
+  counterIntervalId.value = setInterval(getCounters, REFRESH_INTERVAL)
 })
 
 onUnmounted(() => {

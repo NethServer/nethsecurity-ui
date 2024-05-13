@@ -42,7 +42,8 @@
     "try_changing_search_filter": "Try changing your search filter",
     "dont_show_again": "Don't show again",
     "more_info": "More info",
-    "data_updated_every_seconds": "Data updated every {seconds} seconds"
+    "data_updated_every_seconds": "Data updated every {seconds} seconds",
+    "actions": "Actions"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -1171,7 +1172,8 @@
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
       "delete_zone": "Delete \"{0}\"?",
-      "edit_zone_name": "Edit zone {name}"
+      "edit_zone_name": "Edit zone {name}",
+      "firewall_zones": "Firewall zones"
     },
     "port_forward": {
       "title": "Port forward",

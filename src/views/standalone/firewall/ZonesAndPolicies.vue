@@ -99,7 +99,7 @@ function editZone(zone: Zone) {
     />
     <NeTable
       v-else
-      ariaLabel="Aria label for the table"
+      :ariaLabel="t('standalone.zones_and_policies.firewall_zones')"
       cardBreakpoint="xl"
       :loading="firewallConfig.loading"
       :skeletonColumns="6"
@@ -120,7 +120,9 @@ function editZone(zone: Zone) {
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.interfaces') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.covered_subnets') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.logging') }}</NeTableHeadCell>
-        <NeTableHeadCell></NeTableHeadCell>
+        <NeTableHeadCell>
+          <!-- no header for actions -->
+        </NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
         <NeTableRow v-for="item in paginatedItems" :key="item.name">
@@ -191,8 +193,8 @@ function editZone(zone: Zone) {
           <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
             <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
           </NeTableCell>
-          <NeTableCell data-label="Actions">
-            <div class="-ml-4 flex xl:ml-0">
+          <NeTableCell :data-label="t('common.actions')">
+            <div class="-ml-2.5 flex xl:ml-0">
               <NeDropdown
                 :items="[
                   {

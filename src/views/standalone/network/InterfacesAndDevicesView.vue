@@ -86,6 +86,7 @@ const vpnNetworks = ref<DeviceVpnNetworks>({
   openvpnRw: {},
   ipsec: {}
 })
+const ipsecTunnelNames = ref<Record<string, string>>({})
 
 let loading = ref({
   networkDevices: true,
@@ -256,6 +257,7 @@ async function fetchIpsecNetworks() {
     for (const tunnel of tunnels) {
       const ipsecName = `ipsec/${tunnel.id}`
       vpnNetworks.value.ipsec[ipsecName] = tunnel.remote
+      ipsecTunnelNames.value[ipsecName] = tunnel.name
     }
   } catch (err: any) {
     console.error(err)
@@ -716,7 +718,7 @@ function formatPackets(packets: number) {
                     >
                       <!-- first column -->
                       <div
-                        class="flex flex-wrap items-start gap-4 border-gray-200 pr-8 dark:border-gray-600 md:justify-between md:border-r"
+                        class="flex flex-wrap items-start gap-x-1 gap-y-6 border-gray-200 pr-6 dark:border-gray-600 md:justify-between md:border-r"
                       >
                         <div class="flex items-center">
                           <div
@@ -731,13 +733,27 @@ function formatPackets(packets: number) {
                             />
                           </div>
                           <div>
-                            <div v-if="getInterfaceDisplayName(device)" class="font-semibold">
-                              {{ getInterfaceDisplayName(device) }}
-                            </div>
-                            <div v-if="device.name?.startsWith('bond-')">
-                              {{ device.name.slice(5) }}
-                            </div>
-                            <div v-else>{{ device.name }}</div>
+                            <template v-if="isIpsec(device)">
+                              <!-- tunnel name -->
+                              <div class="font-semibold">
+                                {{ ipsecTunnelNames[device.ns_link as string] }}
+                              </div>
+                              <!-- tunnel device name -->
+                              <div v-if="getInterfaceDisplayName(device)">
+                                {{ getInterfaceDisplayName(device) }}
+                              </div>
+                            </template>
+                            <template v-else>
+                              <!-- interface name -->
+                              <div v-if="getInterfaceDisplayName(device)" class="font-semibold">
+                                {{ getInterfaceDisplayName(device) }}
+                              </div>
+                              <!-- device name -->
+                              <div v-if="device.name?.startsWith('bond-')">
+                                {{ device.name.slice(5) }}
+                              </div>
+                              <div v-else>{{ device.name }}</div>
+                            </template>
                           </div>
                         </div>
                         <div class="flex flex-col items-center gap-2">

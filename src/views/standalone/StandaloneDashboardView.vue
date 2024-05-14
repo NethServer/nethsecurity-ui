@@ -40,7 +40,7 @@ function goTo(path: string) {
   <div class="flex flex-col justify-between md:flex-row md:items-center">
     <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
     <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
-      {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
+      {{ t('common.data_updated_every_seconds', { seconds: 20 }) }}
     </div>
   </div>
 

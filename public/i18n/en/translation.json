@@ -523,7 +523,7 @@
       }
     },
     "backup_and_restore": {
-      "title": "Backup & restore",
+      "title": "Backup and restore",
       "tabs": {
         "backup": "Backup",
         "restore": "Restore",
@@ -575,7 +575,7 @@
       }
     },
     "reboot_and_shutdown": {
-      "title": "Reboot & shutdown",
+      "title": "Reboot and shutdown",
       "reboot": "Reboot",
       "reboot_unit": "Reboot unit",
       "system_reboot": "System reboot",
@@ -588,7 +588,7 @@
     },
     "update": {
       "title": "Updates",
-      "bug_security_fixes": "Bug & security fixes",
+      "bug_security_fixes": "Bug and security fixes",
       "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages.",
       "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
@@ -600,7 +600,7 @@
       "update_with_image_file": "Update with image file",
       "all_updates_installed_notification": "All updates are installed",
       "latest_release": "Latest release",
-      "bug_security_fixes_to_update": "Bug & security fixes to update",
+      "bug_security_fixes_to_update": "Bug and security fixes to update",
       "component_update_details": "{versionFrom} to {versionTo}",
       "update_in_progress_message": "Updating the unit, please wait...",
       "update_to_version": "Update to version",
@@ -614,7 +614,7 @@
       "system_update_scheduled": "System update scheduled",
       "system_update_scheduled_description": "The system will be updated to '{version}' at {date}",
       "image_file": "Image file",
-      "update_and_reboot": "Update & reboot",
+      "update_and_reboot": "Update and reboot",
       "keep_scheduled_update": "Keep scheduled update",
       "cancel_update_description": "The scheduled update to version '{version}' will be canceled",
       "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
@@ -920,7 +920,7 @@
       "all": "all"
     },
     "dns_dhcp": {
-      "title": "DNS & DHCP",
+      "title": "DNS and DHCP",
       "tabs": {
         "dhcp": "DHCP",
         "dns": "DNS",
@@ -1148,10 +1148,10 @@
       "add_interface": "Add interface"
     },
     "users_and_objects": {
-      "title": "Users & objects"
+      "title": "Users and objects"
     },
     "zones_and_policies": {
-      "title": "Zones & Policies",
+      "title": "Zones and policies",
       "description": "The firewall creates zones over your network interfaces to control network traffic flow.",
       "zone": "Zone",
       "allow_forwards_to": "Allow forwards to",

@@ -5,8 +5,17 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '../../standalone/NeTable.vue'
-import { NeDropdown, useItemPagination } from '@nethesis/vue-components'
+import {
+  NeDropdown,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell,
+  NePaginator,
+  useItemPagination
+} from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
@@ -26,21 +35,6 @@ const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props
   itemsPerPage: 10
 })
 
-const tableHeaders = [
-  {
-    label: t('controller.users.username'),
-    key: 'username'
-  },
-  {
-    label: t('controller.users.display_name'),
-    key: 'display_name'
-  },
-  {
-    label: '',
-    key: 'menu'
-  }
-]
-
 function getDropdownItems(item: ControllerAccount) {
   return [
     {
@@ -59,36 +53,55 @@ function getDropdownItems(item: ControllerAccount) {
 </script>
 
 <template>
-  <NeTable
-    :data="paginatedItems"
-    :headers="tableHeaders"
-    :with-paginator="true"
-    :paginator-props="{
-      totalPages: pageCount,
-      currentPage,
-      previousLabel: t('common.previous'),
-      nextLabel: t('common.next')
-    }"
-    @select-page="
-      (page) => {
-        currentPage = page
-      }
-    "
-  >
-    <template #menu="{ item }: { item: ControllerAccount }">
-      <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('edit', item)">
-          <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'pen-to-square']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
-          </template>
-          {{ t('common.edit') }}
-        </NeButton>
-        <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
-      </div>
+  <NeTable :ariaLabel="t('controller.users.title')" cardBreakpoint="md">
+    <NeTableHead>
+      <NeTableHeadCell>
+        {{ t('controller.users.username') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>
+        {{ t('controller.users.display_name') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>
+        <!-- no header for actions -->
+      </NeTableHeadCell>
+    </NeTableHead>
+    <NeTableBody>
+      <NeTableRow v-for="item in paginatedItems" :key="item.username">
+        <NeTableCell :data-label="t('controller.users.username')">
+          {{ item.username }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('controller.users.display_name')">
+          {{ item.display_name }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('common.actions')">
+          <div class="align-center -ml-2.5 flex gap-2 md:ml-0 md:justify-end">
+            <NeButton kind="tertiary" @click="emit('edit', item)">
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'pen-to-square']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('common.edit') }}
+            </NeButton>
+            <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+          </div>
+        </NeTableCell>
+      </NeTableRow>
+    </NeTableBody>
+    <template #paginator v-if="pageCount > 1">
+      <NePaginator
+        :current-page="currentPage ?? 1"
+        :total-pages="pageCount ?? 1"
+        :next-label="t('common.next')"
+        :previous-label="t('common.previous')"
+        @select-page="
+                (page: number) => {
+                  currentPage = page
+                }
+              "
+      />
     </template>
   </NeTable>
 </template>

@@ -109,9 +109,11 @@ function configureAxios() {
 
       if (error.response?.status == 401) {
         if (isStandaloneMode()) {
-          console.warn('[interceptor]', 'Detected error 401, logout')
-          //// TODO: show "Session expired, please login again"
-          loginStore.logout()
+          if (error.response?.data?.message === 'Token is expired') {
+            console.warn('[interceptor]', 'Detected error 401, logout')
+            loginStore.isSessionExpired = true
+            loginStore.logout()
+          }
         } else {
           // a controller is managing this unit
           console.warn('[interceptor]', 'Detected error 401, getting a new token for this unit')

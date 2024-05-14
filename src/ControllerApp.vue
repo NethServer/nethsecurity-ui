@@ -123,8 +123,11 @@ function configureAxios() {
             notificationsStore.createNotificationFromAxiosError(error)
           }
         } else {
-          console.warn('[interceptor]', 'Detected error 401, logout')
-          loginStore.logout()
+          if (error.response?.data?.message === 'Token is expired') {
+            console.warn('[interceptor]', 'Detected error 401, logout')
+            loginStore.isSessionExpired = true
+            loginStore.logout()
+          }
         }
       } else {
         // show error notification only if error is not caused from cancellation

@@ -131,8 +131,17 @@ function validate() {
           <NeTitle level="h2">{{
             t('login.welcome_title_controller', { product: getProductName() })
           }}</NeTitle>
-          <div class="mb-4 text-sm text-gray-700 dark:text-gray-100">
+          <div class="mb-6 text-sm text-gray-700 dark:text-gray-100">
             {{ t('login.welcome_description_controller', { product: getProductName() }) }}
+            <!-- session expired notification -->
+            <NeInlineNotification
+              v-if="loginStore.isSessionExpired"
+              kind="info"
+              :title="t('login.session_has_expired')"
+              :description="t('login.please_sign_in_again')"
+              :closeAriaLabel="t('common.close')"
+              class="mt-6"
+            />
           </div>
           <div v-if="getPrivacyPolicyUrl() != ''" class="mt-1 text-sm leading-6">
             <NeLink :href="getPrivacyPolicyUrl()" target="_blank" class="font-medium">

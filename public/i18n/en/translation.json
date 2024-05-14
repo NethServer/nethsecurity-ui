@@ -371,7 +371,9 @@
     "sign_in": "Sign in",
     "cannot_login": "Cannot login",
     "incorrect_username_or_password": "Incorrect username or password",
-    "privacy_policy": "Privacy policy"
+    "privacy_policy": "Privacy policy",
+    "session_has_expired": "Session has expired",
+    "please_sign_in_again": "Please sign in again"
   },
   "standalone": {
     "dashboard": {

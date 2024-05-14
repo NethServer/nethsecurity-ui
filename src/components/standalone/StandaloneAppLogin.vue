@@ -210,6 +210,15 @@ async function verifyOtp() {
           <div class="mb-6 text-sm text-gray-700 dark:text-gray-100">
             <template v-if="step === 'login'">
               {{ t('login.welcome_description_standalone', { product: getProductName() }) }}
+              <!-- session expired notification -->
+              <NeInlineNotification
+                v-if="loginStore.isSessionExpired"
+                kind="info"
+                :title="t('login.session_has_expired')"
+                :description="t('login.please_sign_in_again')"
+                :closeAriaLabel="t('common.close')"
+                class="mt-6"
+              />
             </template>
             <template v-if="step === '2fa'">
               <p>

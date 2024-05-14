@@ -330,7 +330,7 @@ function showRemoveUnitModal(unit: Unit) {
             </div>
           </NeTableCell>
           <!-- status -->
-          <NeTableCell :data-label="t('standalone.units.status')">
+          <NeTableCell :data-label="t('controller.units.status')">
             <div class="flex items-center gap-2">
               <template v-if="item.connected">
                 <!-- connected unit -->

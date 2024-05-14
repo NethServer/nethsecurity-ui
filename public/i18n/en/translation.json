@@ -413,7 +413,6 @@
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_updated_every_seconds": "Data updated every {seconds} seconds",
       "usage_free_of_total": "{free} free of {total}",
       "default_hostname_warning": "Using the default hostname 'NethSec' is not recommended. Change it in {systemSettingsLink} and apply the change.",
       "blocked_ips_last_hour": "IPs blocked in the last hour",

@@ -19,6 +19,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   const role = ref('')
   const tokenRefreshedTime = ref(0)
   const isRefreshingToken = ref(false)
+  const isSessionExpired = ref(false)
 
   const router = useRouter()
 
@@ -57,6 +58,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     role.value = JSON.parse(atob(jwtToken.split('.')[1])).role
     const themeStore = useThemeStore()
     themeStore.loadTheme()
+    isSessionExpired.value = false
     router.push(`${getControllerRoutePrefix()}/`)
   }
 
@@ -114,6 +116,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     token,
     tokenRefreshedTime,
     isLoggedIn,
+    isSessionExpired,
     loadUserFromStorage,
     login,
     logout,

@@ -5,13 +5,19 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import NeTable from '@/components/standalone/NeTable.vue'
 import {
   NeButton,
   NeDropdown,
   NeInlineNotification,
   NeLink,
   NeTooltip,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell,
+  NePaginator,
   getAxiosErrorMessage,
   getPreference,
   savePreference,
@@ -51,24 +57,6 @@ const isShownRemoveUnitModal = ref(false)
 let error = ref({
   openUnit: ''
 })
-
-const tableHeaders = [
-  {
-    label: t('controller.units.unit_name'),
-    key: 'unit_name'
-  },
-  {
-    label: t('controller.units.status'),
-    key: 'status'
-  },
-  {
-    label: t('controller.units.installed_version'),
-    key: 'version'
-  },
-  {
-    key: 'actions'
-  }
-]
 
 onMounted(() => {
   hideOpenUnitPopupsTooltip.value = getPreference('hideOpenUnitPopupsTooltip', loginStore.username)
@@ -213,201 +201,237 @@ function showRemoveUnitModal(unit: Unit) {
       :closeAriaLabel="t('common.close')"
       class="mb-6"
     />
-    <NeTable
-      :data="paginatedItems"
-      :with-paginator="true"
-      :paginator-props="{
-        totalPages: pageCount,
-        currentPage,
-        previousLabel: t('common.previous'),
-        nextLabel: t('common.next')
-      }"
-      @select-page="
-        (page) => {
-          currentPage = page
-        }
-      "
-      :headers="tableHeaders"
-    >
-      <!-- unit name -->
-      <template #unit_name="{ item }: { item: Unit }">
-        <div class="space-y-1">
+    <NeTable :ariaLabel="t('controller.units.units')" cardBreakpoint="xl">
+      <NeTableHead>
+        <NeTableHeadCell>
+          {{ t('controller.units.unit_name') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
+          {{ t('controller.units.status') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
+          {{ t('controller.units.installed_version') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
+          <!-- no header for actions -->
+        </NeTableHeadCell>
+      </NeTableHead>
+      <NeTableBody>
+        <NeTableRow v-for="item in paginatedItems" :key="item.name">
           <!-- unit name -->
-          <div>
-            <div v-if="item.info.unit_name" class="flex items-center gap-2">
-              <NeTooltip interactive>
-                <template #trigger>
-                  <font-awesome-icon
-                    :icon="[
-                      'fas',
-                      item.info.subscription_type === 'enterprise' ? 'award' : 'users'
-                    ]"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                </template>
-                <template #content>
-                  {{ getSubscriptionLabel(item.info.subscription_type) }}
-                </template>
-              </NeTooltip>
-              {{ item.info.unit_name }}
-            </div>
-            <template v-else>
-              {{ item.id || '-' }}
-            </template>
-          </div>
-          <!-- more info button -->
-          <div v-if="item.registered">
-            <NeTooltip interactive :maxWidth="450">
-              <template #trigger>
-                <NeButton size="sm" kind="tertiary" class="-mx-2">
-                  {{ t('common.more_info') }}
-                </NeButton>
-              </template>
-              <template #content>
-                <div class="space-y-1 px-2 py-1">
-                  <!-- hostname -->
-                  <div>
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.hostname') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ item.info.fqdn || '-' }}
-                    </span>
-                  </div>
-                  <!-- unit id -->
-                  <div>
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.unit_id') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ item.id }}
-                    </span>
-                  </div>
-                  <!-- data received -->
-                  <div v-if="item.vpn.bytes_rcvd">
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.data_received') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ byteFormat1024(item.vpn.bytes_rcvd) }}
-                    </span>
-                  </div>
-                  <!-- data sent -->
-                  <div v-if="item.vpn.bytes_sent">
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.data_sent') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ byteFormat1024(item.vpn.bytes_sent) }}
-                    </span>
-                  </div>
-                  <!-- connected since -->
-                  <div v-if="item.vpn.connected_since">
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.connected_since') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{
-                        formatDateLoc(new Date(Number(item.vpn.connected_since) * 1000), 'PPpp') ||
-                        '-'
-                      }}
-                    </span>
-                  </div>
-                  <!-- real address -->
-                  <div v-if="item.vpn.real_address">
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.real_address') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ item.vpn.real_address || '-' }}
-                    </span>
-                  </div>
-                  <!-- virtual address -->
-                  <div v-if="item.vpn.virtual_address">
-                    <span class="mr-2 inline-block font-semibold">
-                      {{ t('controller.units.virtual_address') }}:
-                    </span>
-                    <span class="text-gray-300 dark:text-gray-600">
-                      {{ item.vpn.virtual_address || '-' }}
-                    </span>
-                  </div>
+          <NeTableCell :data-label="t('controller.units.unit_name')">
+            <div class="space-y-1">
+              <!-- unit name -->
+              <div>
+                <div v-if="item.info.unit_name" class="flex items-center gap-2">
+                  <NeTooltip interactive>
+                    <template #trigger>
+                      <font-awesome-icon
+                        :icon="[
+                          'fas',
+                          item.info.subscription_type === 'enterprise' ? 'award' : 'users'
+                        ]"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    <template #content>
+                      {{ getSubscriptionLabel(item.info.subscription_type) }}
+                    </template>
+                  </NeTooltip>
+                  {{ item.info.unit_name }}
                 </div>
-              </template>
-            </NeTooltip>
-          </div>
-        </div>
-      </template>
-      <!-- status -->
-      <template #status="{ item }: { item: Unit }">
-        <div class="flex items-center gap-2">
-          <template v-if="item.connected">
-            <!-- connected unit -->
-            <font-awesome-icon
-              :icon="['fas', 'circle-check']"
-              class="h-4 w-4 text-green-700 dark:text-green-500"
-              aria-hidden="true"
-            />
-            <span>{{ t('controller.units.connected') }}</span>
-          </template>
-          <template v-else-if="item.registered">
-            <!-- registered unit, but not connected -->
-            <font-awesome-icon :icon="['fas', 'circle-xmark']" class="h-4 w-4" aria-hidden="true" />
-            <span>{{ t('controller.units.not_connected') }}</span>
-          </template>
-          <template v-else>
-            <!-- unit not registered yet -->
-            <font-awesome-icon :icon="['fas', 'circle-xmark']" class="h-4 w-4" aria-hidden="true" />
-            <span>{{ t('controller.units.not_registered_yet') }}</span>
-          </template>
-        </div>
-      </template>
-      <!-- installed version -->
-      <template #version="{ item }: { item: Unit }">
-        {{ item.info.version || '-' }}
-      </template>
-      <!-- actions -->
-      <template #actions="{ item }: { item: Unit }">
-        <div class="flex items-center justify-end gap-2">
-          <!-- open unit button -->
-          <template v-if="item.connected">
-            <NeButton v-if="hideOpenUnitPopupsTooltip" kind="tertiary" @click="openUnit(item.id)">
-              <template #prefix>
+                <template v-else>
+                  {{ item.id || '-' }}
+                </template>
+              </div>
+              <!-- more info button -->
+              <div v-if="item.registered">
+                <NeTooltip interactive :maxWidth="450">
+                  <template #trigger>
+                    <NeButton size="sm" kind="tertiary" class="-mx-2">
+                      {{ t('common.more_info') }}
+                    </NeButton>
+                  </template>
+                  <template #content>
+                    <div class="space-y-1 px-2 py-1">
+                      <!-- hostname -->
+                      <div>
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.hostname') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ item.info.fqdn || '-' }}
+                        </span>
+                      </div>
+                      <!-- unit id -->
+                      <div>
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.unit_id') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ item.id }}
+                        </span>
+                      </div>
+                      <!-- data received -->
+                      <div v-if="item.vpn.bytes_rcvd">
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.data_received') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ byteFormat1024(item.vpn.bytes_rcvd) }}
+                        </span>
+                      </div>
+                      <!-- data sent -->
+                      <div v-if="item.vpn.bytes_sent">
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.data_sent') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ byteFormat1024(item.vpn.bytes_sent) }}
+                        </span>
+                      </div>
+                      <!-- connected since -->
+                      <div v-if="item.vpn.connected_since">
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.connected_since') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{
+                            formatDateLoc(
+                              new Date(Number(item.vpn.connected_since) * 1000),
+                              'PPpp'
+                            ) || '-'
+                          }}
+                        </span>
+                      </div>
+                      <!-- real address -->
+                      <div v-if="item.vpn.real_address">
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.real_address') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ item.vpn.real_address || '-' }}
+                        </span>
+                      </div>
+                      <!-- virtual address -->
+                      <div v-if="item.vpn.virtual_address">
+                        <span class="mr-2 inline-block font-semibold">
+                          {{ t('controller.units.virtual_address') }}:
+                        </span>
+                        <span class="text-gray-300 dark:text-gray-600">
+                          {{ item.vpn.virtual_address || '-' }}
+                        </span>
+                      </div>
+                    </div>
+                  </template>
+                </NeTooltip>
+              </div>
+            </div>
+          </NeTableCell>
+          <!-- status -->
+          <NeTableCell :data-label="t('controller.units.status')">
+            <div class="flex items-center gap-2">
+              <template v-if="item.connected">
+                <!-- connected unit -->
                 <font-awesome-icon
-                  :icon="['fas', 'arrow-up-right-from-square']"
+                  :icon="['fas', 'circle-check']"
+                  class="h-4 w-4 text-green-700 dark:text-green-500"
+                  aria-hidden="true"
+                />
+                <span>{{ t('controller.units.connected') }}</span>
+              </template>
+              <template v-else-if="item.registered">
+                <!-- registered unit, but not connected -->
+                <font-awesome-icon
+                  :icon="['fas', 'circle-xmark']"
                   class="h-4 w-4"
                   aria-hidden="true"
                 />
+                <span>{{ t('controller.units.not_connected') }}</span>
               </template>
-              {{ t('controller.units.open_unit') }}
-            </NeButton>
-            <!-- show popups warning tooltip -->
-            <NeTooltip v-else triggerEvent="mouseenter focus" placement="top-end">
-              <template #trigger>
-                <NeButton kind="tertiary" @click="openUnit(item.id)">
+              <template v-else>
+                <!-- unit not registered yet -->
+                <font-awesome-icon
+                  :icon="['fas', 'circle-xmark']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+                <span>{{ t('controller.units.not_registered_yet') }}</span>
+              </template>
+            </div>
+          </NeTableCell>
+          <!-- installed version -->
+          <NeTableCell :data-label="t('controller.units.installed_version')">
+            {{ item.info.version || '-' }}
+          </NeTableCell>
+          <!-- actions -->
+          <NeTableCell :data-label="t('common.actions')">
+            <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
+              <!-- open unit button -->
+              <template v-if="item.connected">
+                <NeButton
+                  v-if="hideOpenUnitPopupsTooltip"
+                  kind="tertiary"
+                  @click="openUnit(item.id)"
+                  class="shrink-0"
+                >
                   <template #prefix>
                     <font-awesome-icon
                       :icon="['fas', 'arrow-up-right-from-square']"
-                      class="h-3.5 w-3.5"
+                      class="h-4 w-4"
                       aria-hidden="true"
                     />
                   </template>
                   {{ t('controller.units.open_unit') }}
                 </NeButton>
+                <!-- show popups warning tooltip -->
+                <NeTooltip
+                  v-else
+                  triggerEvent="mouseenter focus"
+                  placement="top-end"
+                  class="shrink-0"
+                >
+                  <template #trigger>
+                    <NeButton kind="tertiary" @click="openUnit(item.id)">
+                      <template #prefix>
+                        <font-awesome-icon
+                          :icon="['fas', 'arrow-up-right-from-square']"
+                          class="h-3.5 w-3.5"
+                          aria-hidden="true"
+                        />
+                      </template>
+                      {{ t('controller.units.open_unit') }}
+                    </NeButton>
+                  </template>
+                  <template #content>
+                    <div>
+                      {{ t('controller.units.open_unit_tooltip') }}
+                    </div>
+                    <NeLink invertedTheme @click="dontShowAgainHideOpenUnitPopupsTooltip">
+                      {{ t('common.dont_show_again') }}
+                    </NeLink>
+                  </template>
+                </NeTooltip>
               </template>
-              <template #content>
-                <div>
-                  {{ t('controller.units.open_unit_tooltip') }}
-                </div>
-                <NeLink invertedTheme @click="dontShowAgainHideOpenUnitPopupsTooltip">
-                  {{ t('common.dont_show_again') }}
-                </NeLink>
-              </template>
-            </NeTooltip>
-          </template>
-          <!-- kebab menu -->
-          <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
-        </div>
+              <!-- kebab menu -->
+              <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+            </div>
+          </NeTableCell>
+        </NeTableRow>
+      </NeTableBody>
+      <template #paginator v-if="pageCount > 1">
+        <NePaginator
+          :current-page="currentPage ?? 1"
+          :total-pages="pageCount ?? 1"
+          :next-label="t('common.next')"
+          :previous-label="t('common.previous')"
+          @select-page="
+              (page: number) => {
+                currentPage = page
+              }
+            "
+        />
       </template>
     </NeTable>
     <!-- remove unit modal -->

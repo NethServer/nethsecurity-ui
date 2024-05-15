@@ -21,6 +21,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   const token = ref('')
   const tokenRefreshedTime = ref(0)
   const isRefreshingToken = ref(false)
+  const isSessionExpired = ref(false)
 
   const router = useRouter()
   const route = useRoute()
@@ -63,6 +64,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     const themeStore = useThemeStore()
     themeStore.loadTheme()
     loadAppData()
+    isSessionExpired.value = false
     router.push(`${getStandaloneRoutePrefix()}/`)
   }
 
@@ -166,6 +168,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     token,
     tokenRefreshedTime,
     isLoggedIn,
+    isSessionExpired,
     loadUserFromStorage,
     login,
     logout,

@@ -42,7 +42,8 @@
     "try_changing_search_filter": "Try changing your search filter",
     "dont_show_again": "Don't show again",
     "more_info": "More info",
-    "data_updated_every_seconds": "Data updated every {seconds} seconds"
+    "data_updated_every_seconds": "Data updated every {seconds} seconds",
+    "actions": "Actions"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -370,7 +371,9 @@
     "sign_in": "Sign in",
     "cannot_login": "Cannot login",
     "incorrect_username_or_password": "Incorrect username or password",
-    "privacy_policy": "Privacy policy"
+    "privacy_policy": "Privacy policy",
+    "session_has_expired": "Session has expired",
+    "please_sign_in_again": "Please sign in again"
   },
   "standalone": {
     "dashboard": {
@@ -412,7 +415,6 @@
       "no_applications": "No applications",
       "no_protocols": "No protocols",
       "openvpn_rw": "OpenVPN RW",
-      "data_updated_every_seconds": "Data updated every {seconds} seconds",
       "usage_free_of_total": "{free} free of {total}",
       "default_hostname_warning": "Using the default hostname 'NethSec' is not recommended. Change it in {systemSettingsLink} and apply the change.",
       "blocked_ips_last_hour": "IPs blocked in the last hour",
@@ -523,7 +525,7 @@
       }
     },
     "backup_and_restore": {
-      "title": "Backup & restore",
+      "title": "Backup and restore",
       "tabs": {
         "backup": "Backup",
         "restore": "Restore",
@@ -575,7 +577,7 @@
       }
     },
     "reboot_and_shutdown": {
-      "title": "Reboot & shutdown",
+      "title": "Reboot and shutdown",
       "reboot": "Reboot",
       "reboot_unit": "Reboot unit",
       "system_reboot": "System reboot",
@@ -588,7 +590,7 @@
     },
     "update": {
       "title": "Updates",
-      "bug_security_fixes": "Bug & security fixes",
+      "bug_security_fixes": "Bug and security fixes",
       "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages.",
       "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
@@ -600,7 +602,7 @@
       "update_with_image_file": "Update with image file",
       "all_updates_installed_notification": "All updates are installed",
       "latest_release": "Latest release",
-      "bug_security_fixes_to_update": "Bug & security fixes to update",
+      "bug_security_fixes_to_update": "Bug and security fixes to update",
       "component_update_details": "{versionFrom} to {versionTo}",
       "update_in_progress_message": "Updating the unit, please wait...",
       "update_to_version": "Update to version",
@@ -614,7 +616,7 @@
       "system_update_scheduled": "System update scheduled",
       "system_update_scheduled_description": "The system will be updated to '{version}' at {date}",
       "image_file": "Image file",
-      "update_and_reboot": "Update & reboot",
+      "update_and_reboot": "Update and reboot",
       "keep_scheduled_update": "Keep scheduled update",
       "cancel_update_description": "The scheduled update to version '{version}' will be canceled",
       "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
@@ -920,7 +922,7 @@
       "all": "all"
     },
     "dns_dhcp": {
-      "title": "DNS & DHCP",
+      "title": "DNS and DHCP",
       "tabs": {
         "dhcp": "DHCP",
         "dns": "DNS",
@@ -1148,10 +1150,10 @@
       "add_interface": "Add interface"
     },
     "users_and_objects": {
-      "title": "Users & objects"
+      "title": "Users and objects"
     },
     "zones_and_policies": {
-      "title": "Zones & Policies",
+      "title": "Zones and policies",
       "description": "The firewall creates zones over your network interfaces to control network traffic flow.",
       "zone": "Zone",
       "allow_forwards_to": "Allow forwards to",
@@ -1171,7 +1173,8 @@
       "limit_log_messages": "Limit log messages",
       "enable_logging": "Enable logging on this zone",
       "delete_zone": "Delete \"{0}\"?",
-      "edit_zone_name": "Edit zone {name}"
+      "edit_zone_name": "Edit zone {name}",
+      "firewall_zones": "Firewall zones"
     },
     "port_forward": {
       "title": "Port forward",

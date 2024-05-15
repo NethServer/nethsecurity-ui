@@ -627,7 +627,7 @@ function formatPackets(packets: number) {
     <div class="flex flex-col justify-between md:flex-row md:items-center">
       <NeTitle>{{ t('standalone.interfaces_and_devices.title') }}</NeTitle>
       <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
-        {{ t('standalone.dashboard.data_updated_every_seconds', { seconds: 10 }) }}
+        {{ t('common.data_updated_every_seconds', { seconds: 10 }) }}
       </div>
     </div>
     <NeInlineNotification

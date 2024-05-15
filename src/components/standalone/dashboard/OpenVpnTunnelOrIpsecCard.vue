@@ -9,8 +9,6 @@ import { NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-componen
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-//// review
-
 interface TunnelCounters {
   enabled: number
   connected: number

@@ -83,7 +83,7 @@ onMounted(() => {
         {{ accountsStore.listAccountsError.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="accountsStore.listAccountsLoading" :lines="10" />
+    <NeSkeleton v-if="accountsStore.listAccountsLoading" :lines="7" size="lg" />
     <template v-else>
       <NeEmptyState
         v-if="accountsStore.accounts.length == 0"

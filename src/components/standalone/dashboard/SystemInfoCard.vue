@@ -183,7 +183,11 @@ async function getUpdatesStatus() {
               />
             </template>
             <template #content>
-              <i18n-t keypath="standalone.dashboard.default_hostname_warning" tag="p">
+              <i18n-t
+                keypath="standalone.dashboard.default_hostname_warning"
+                tag="p"
+                scope="global"
+              >
                 <template #systemSettingsLink>
                   <NeLink invertedTheme @click="goToSystemSettings">
                     {{ t('standalone.system_settings.title') }}

@@ -88,7 +88,7 @@ function copyCommandToClipboard() {
         <div class="mb-1">{{ t('error_modal.report_issue_description') }}:</div>
         <ol class="list-inside list-decimal">
           <li>
-            <i18n-t keypath="error_modal.report_issue_step_1" tag="span">
+            <i18n-t keypath="error_modal.report_issue_step_1" tag="span" scope="global">
               <template #copyTheCommand>
                 <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
                   <template #trigger>

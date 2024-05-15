@@ -109,7 +109,7 @@ function configureAxios() {
 
       if (error.response?.status == 401) {
         if (isStandaloneMode()) {
-          if (error.response?.data?.message === 'Token is expired') {
+          if (error.response?.data?.message !== 'incorrect Username or Password') {
             console.warn('[interceptor]', 'Detected error 401, logout')
             loginStore.isSessionExpired = true
             loginStore.logout()

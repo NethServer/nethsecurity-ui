@@ -420,7 +420,9 @@
       "blocked_ips_last_hour": "IPs blocked in the last hour",
       "clients_connected": "clients connected",
       "tunnels_enabled": "tunnel enabled | tunnels enabled",
-      "tunnels_connected": "tunnel connected | tunnels connected"
+      "tunnels_connected": "tunnel connected | tunnels connected",
+      "dns_not_configured_tooltip": "You're using one or more WANs with a static IP: make sure to configure at least one DNS forwarder. Go to {dnsLink}",
+      "check_dns_configuration": "Check DNS"
     },
     "subscription": {
       "title": "Subscription",

@@ -12,10 +12,11 @@ import {
   NeSideDrawer,
   NeRadioSelection,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
-import { computed, onMounted, ref, type PropType, watch } from 'vue'
+import { computed, onMounted, ref, type PropType, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'
 import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
@@ -43,6 +44,7 @@ const uciPendingChangesStore = useUciPendingChangesStore()
 const firewallConfig = useFirewallStore()
 
 const name = ref('')
+const nameRef = ref()
 const forwardsTo = ref<NeComboboxOption[]>([])
 const forwardsFrom = ref<NeComboboxOption[]>([])
 // ID of radio selection
@@ -95,6 +97,7 @@ watch(
     if (props.isShown) {
       // clear errors
       saveError.value = undefined
+      errorBag.value.clear()
 
       if (!props.zoneToEdit) {
         // creating zone, reset fields to default
@@ -104,6 +107,10 @@ watch(
         trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
         trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
         trafficToWan.value = false
+
+        nextTick(() => {
+          focusElement(nameRef)
+        })
       } else {
         // editing zone
         name.value = props.zoneToEdit.name
@@ -267,6 +274,7 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.zones_and_policies.name')"
         :placeholder="t('standalone.zones_and_policies.name')"
+        ref="nameRef"
       />
       <NeCombobox
         v-model="forwardsTo"

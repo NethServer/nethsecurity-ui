@@ -16,6 +16,7 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
+import InternetConnectionCard from '@/components/standalone/dashboard/InternetConnectionCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -48,12 +49,7 @@ function goTo(path: string) {
     <!-- system -->
     <SystemInfoCard class="sm:col-span-2 xl:row-span-3" />
     <!-- internet connection -->
-    <ServiceCard
-      serviceName="internet"
-      hasStatus
-      :title="t('standalone.dashboard.internet_connection')"
-      :icon="['fas', 'earth-americas']"
-    />
+    <InternetConnectionCard />
     <!-- multiwan -->
     <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
       <template #title>

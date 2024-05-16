@@ -294,7 +294,11 @@ watch(
             ><template #tooltip>
               <NeTooltip>
                 <template #content>
-                  <i18n-t keypath="standalone.certificates.dns_api_tooltip" tag="span">
+                  <i18n-t
+                    keypath="standalone.certificates.dns_api_tooltip"
+                    tag="span"
+                    scope="global"
+                  >
                     <template #dnsapiurl>
                       <NeLink
                         invertedTheme

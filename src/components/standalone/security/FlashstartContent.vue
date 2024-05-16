@@ -225,7 +225,7 @@ function save() {
   <div>
     <FormLayout :title="t('standalone.flashstart.content_title')" class="max-w-3xl">
       <template #description>
-        <i18n-t keypath="standalone.flashstart.content_description" tag="p">
+        <i18n-t keypath="standalone.flashstart.content_description" tag="p" scope="global">
           <template #createAccount>
             <NeLink href="https://flashstart.nethesis.it/" target="_blank">
               {{ t('standalone.flashstart.content_link') }}
@@ -270,7 +270,7 @@ function save() {
             <template #tooltip>
               <NeTooltip>
                 <template #content>
-                  <i18n-t keypath="standalone.flashstart.username_helper" tag="span">
+                  <i18n-t keypath="standalone.flashstart.username_helper" tag="span" scope="global">
                     <template #flashstartUrl>
                       <NeLink invertedTheme href="https://flashstart.nethesis.it/" target="_blank">
                         https://flashstart.nethesis.it/

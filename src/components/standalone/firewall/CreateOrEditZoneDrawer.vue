@@ -140,6 +140,16 @@ watch(
   }
 )
 
+watch(
+  () => name.value,
+  () => {
+    // always show uppercase zone name
+    if (name.value !== name.value.toUpperCase()) {
+      name.value = name.value.toUpperCase()
+    }
+  }
+)
+
 onMounted(() => {
   if (firewallConfig.loading) {
     firewallConfig.fetch()
@@ -174,7 +184,7 @@ const forwardPlaceholder = computed((): string => {
 
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {
-    name: name.value,
+    name: name.value.toLowerCase(),
     input: mapRadioIdToTrafficPolicy(trafficInput.value),
     forward: mapRadioIdToTrafficPolicy(trafficForward.value),
     traffic_to_wan: trafficToWan.value,
@@ -195,7 +205,7 @@ function addZone() {
     saving.value = true
 
     ubusCall('ns.firewall', 'create_zone', {
-      name: name.value,
+      name: name.value.toLowerCase(),
       input: mapRadioIdToTrafficPolicy(trafficInput.value),
       forward: mapRadioIdToTrafficPolicy(trafficForward.value),
       traffic_to_wan: trafficToWan.value,
@@ -228,7 +238,7 @@ function save() {
 
 function validate(): boolean {
   errorBag.value.clear()
-  const validateName = [validateRequired(name.value), validateUciName(name.value)]
+  const validateName = [validateRequired(name.value), validateUciName(name.value.toLowerCase())]
   validateName.forEach((output) => {
     if (!output.valid) {
       errorBag.value.set('name', [String(output.errMessage)])

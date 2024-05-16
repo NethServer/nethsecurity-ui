@@ -36,13 +36,58 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['close', 'success'])
+
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 const firewallConfig = useFirewallStore()
 
+const name = ref('')
+const forwardsTo = ref<NeComboboxOption[]>([])
+const forwardsFrom = ref<NeComboboxOption[]>([])
+// ID of radio selection
+const trafficInput = ref('input-drop')
+// ID of radio selection
+const trafficForward = ref('forward-drop')
+const trafficToWan = ref(false)
+
+const saving = ref(false)
+const saveError = ref<Error>()
+const errorBag = ref(new MessageBag())
+
 const isCreating = computed(() => {
   return !props.zoneToEdit
 })
+
+const inputTrafficOptions = [
+  {
+    id: 'input-drop',
+    label: 'DROP'
+  },
+  {
+    id: 'input-reject',
+    label: 'REJECT'
+  },
+  {
+    id: 'input-accept',
+    label: 'ACCEPT'
+  }
+]
+
+const forwardTrafficOptions = [
+  {
+    id: 'forward-drop',
+    label: 'DROP'
+  },
+  {
+    id: 'forward-reject',
+    label: 'REJECT'
+  },
+  {
+    id: 'forward-accept',
+    label: 'ACCEPT'
+  }
+]
 
 watch(
   () => props.isShown,
@@ -94,10 +139,6 @@ onMounted(() => {
   }
 })
 
-/*const advancedSettings = ref(false)*/
-
-const emit = defineEmits(['close', 'success'])
-
 const zoneComboboxOptions = computed((): NeComboboxOption[] => {
   return (
     firewallConfig.zones
@@ -123,49 +164,6 @@ const forwardPlaceholder = computed((): string => {
     .join(', ')
     .concat('...')
 })
-
-const inputTrafficOptions = [
-  {
-    id: 'input-drop',
-    label: 'DROP'
-  },
-  {
-    id: 'input-reject',
-    label: 'REJECT'
-  },
-  {
-    id: 'input-accept',
-    label: 'ACCEPT'
-  }
-]
-
-const forwardTrafficOptions = [
-  {
-    id: 'forward-drop',
-    label: 'DROP'
-  },
-  {
-    id: 'forward-reject',
-    label: 'REJECT'
-  },
-  {
-    id: 'forward-accept',
-    label: 'ACCEPT'
-  }
-]
-
-const name = ref('')
-const forwardsTo = ref<NeComboboxOption[]>([])
-const forwardsFrom = ref<NeComboboxOption[]>([])
-// ID of radio selection
-const trafficInput = ref('input-drop')
-// ID of radio selection
-const trafficForward = ref('forward-drop')
-const trafficToWan = ref(false)
-
-const saving = ref(false)
-const saveError = ref<Error>()
-const errorBag = ref(new MessageBag())
 
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {

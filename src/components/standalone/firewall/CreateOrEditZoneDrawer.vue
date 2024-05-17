@@ -12,10 +12,11 @@ import {
   NeSideDrawer,
   NeRadioSelection,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
-import { computed, onMounted, ref, type PropType, watch } from 'vue'
+import { computed, onMounted, ref, type PropType, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'
 import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
@@ -36,92 +37,28 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['close', 'success'])
+
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 const firewallConfig = useFirewallStore()
 
+const name = ref('')
+const nameRef = ref()
+const forwardsTo = ref<NeComboboxOption[]>([])
+const forwardsFrom = ref<NeComboboxOption[]>([])
+// ID of radio selection
+const trafficInput = ref('input-drop')
+// ID of radio selection
+const trafficForward = ref('forward-drop')
+const trafficToWan = ref(false)
+
+const saving = ref(false)
+const saveError = ref<Error>()
+const errorBag = ref(new MessageBag())
+
 const isCreating = computed(() => {
   return !props.zoneToEdit
-})
-
-watch(
-  () => props.isShown,
-  () => {
-    if (props.isShown) {
-      // clear errors
-      saveError.value = undefined
-
-      if (!props.zoneToEdit) {
-        // creating zone, reset fields to default
-        name.value = ''
-        forwardsTo.value = []
-        forwardsFrom.value = []
-        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
-        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
-        trafficToWan.value = false
-      } else {
-        // editing zone
-        name.value = props.zoneToEdit.name
-        forwardsTo.value = forwardingsToByZone(props.zoneToEdit, firewallConfig.forwardings).map(
-          (forwarding) => {
-            return {
-              id: forwarding.destination,
-              label: forwarding.destination.toUpperCase()
-            }
-          }
-        )
-        forwardsFrom.value = forwardingsFromByZone(
-          props.zoneToEdit,
-          firewallConfig.forwardings
-        ).map((forwarding) => {
-          return {
-            id: forwarding.source,
-            label: forwarding.source.toUpperCase()
-          }
-        })
-
-        trafficInput.value = mapTrafficPolicyToRadioId(props.zoneToEdit.input, 'input')
-        trafficForward.value = mapTrafficPolicyToRadioId(props.zoneToEdit.forward, 'forward')
-        trafficToWan.value = !!getTrafficToWan(props.zoneToEdit, firewallConfig.forwardings)
-      }
-    }
-  }
-)
-
-onMounted(() => {
-  if (firewallConfig.loading) {
-    firewallConfig.fetch()
-  }
-})
-
-/*const advancedSettings = ref(false)*/
-
-const emit = defineEmits(['close', 'success'])
-
-const zoneComboboxOptions = computed((): NeComboboxOption[] => {
-  return (
-    firewallConfig.zones
-      // exclude WAN and current zone (if editing)
-      .filter(
-        (zone) =>
-          zone.name != SpecialZones.WAN &&
-          (!props.zoneToEdit || props.zoneToEdit.name !== zone.name)
-      )
-      .map((zone) => {
-        return {
-          id: zone.name,
-          label: zone.name.toUpperCase()
-        }
-      })
-  )
-})
-
-const forwardPlaceholder = computed((): string => {
-  return zoneComboboxOptions.value
-    .slice(0, 2)
-    .map((zone: NeComboboxOption) => zone.label.toUpperCase())
-    .join(', ')
-    .concat('...')
 })
 
 const inputTrafficOptions = [
@@ -154,22 +91,100 @@ const forwardTrafficOptions = [
   }
 ]
 
-const name = ref('')
-const forwardsTo = ref<NeComboboxOption[]>([])
-const forwardsFrom = ref<NeComboboxOption[]>([])
-// ID of radio selection
-const trafficInput = ref('input-drop')
-// ID of radio selection
-const trafficForward = ref('forward-drop')
-const trafficToWan = ref(false)
+watch(
+  () => props.isShown,
+  () => {
+    if (props.isShown) {
+      // clear errors
+      saveError.value = undefined
+      errorBag.value.clear()
 
-const saving = ref(false)
-const saveError = ref<Error>()
-const errorBag = ref(new MessageBag())
+      if (!props.zoneToEdit) {
+        // creating zone, reset fields to default
+        name.value = ''
+        forwardsTo.value = []
+        forwardsFrom.value = []
+        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
+        trafficToWan.value = false
+
+        nextTick(() => {
+          focusElement(nameRef)
+        })
+      } else {
+        // editing zone
+        name.value = props.zoneToEdit.name
+        forwardsTo.value = forwardingsToByZone(props.zoneToEdit, firewallConfig.forwardings).map(
+          (forwarding) => {
+            return {
+              id: forwarding.destination,
+              label: forwarding.destination.toUpperCase()
+            }
+          }
+        )
+        forwardsFrom.value = forwardingsFromByZone(
+          props.zoneToEdit,
+          firewallConfig.forwardings
+        ).map((forwarding) => {
+          return {
+            id: forwarding.source,
+            label: forwarding.source.toUpperCase()
+          }
+        })
+
+        trafficInput.value = mapTrafficPolicyToRadioId(props.zoneToEdit.input, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(props.zoneToEdit.forward, 'forward')
+        trafficToWan.value = !!getTrafficToWan(props.zoneToEdit, firewallConfig.forwardings)
+      }
+    }
+  }
+)
+
+watch(
+  () => name.value,
+  () => {
+    // always show uppercase zone name
+    if (name.value !== name.value.toUpperCase()) {
+      name.value = name.value.toUpperCase()
+    }
+  }
+)
+
+onMounted(() => {
+  if (firewallConfig.loading) {
+    firewallConfig.fetch()
+  }
+})
+
+const zoneComboboxOptions = computed((): NeComboboxOption[] => {
+  return (
+    firewallConfig.zones
+      // exclude WAN and current zone (if editing)
+      .filter(
+        (zone) =>
+          zone.name != SpecialZones.WAN &&
+          (!props.zoneToEdit || props.zoneToEdit.name !== zone.name)
+      )
+      .map((zone) => {
+        return {
+          id: zone.name,
+          label: zone.name.toUpperCase()
+        }
+      })
+  )
+})
+
+const forwardPlaceholder = computed((): string => {
+  return zoneComboboxOptions.value
+    .slice(0, 2)
+    .map((zone: NeComboboxOption) => zone.label.toUpperCase())
+    .join(', ')
+    .concat('...')
+})
 
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {
-    name: name.value,
+    name: name.value.toLowerCase(),
     input: mapRadioIdToTrafficPolicy(trafficInput.value),
     forward: mapRadioIdToTrafficPolicy(trafficForward.value),
     traffic_to_wan: trafficToWan.value,
@@ -190,7 +205,7 @@ function addZone() {
     saving.value = true
 
     ubusCall('ns.firewall', 'create_zone', {
-      name: name.value,
+      name: name.value.toLowerCase(),
       input: mapRadioIdToTrafficPolicy(trafficInput.value),
       forward: mapRadioIdToTrafficPolicy(trafficForward.value),
       traffic_to_wan: trafficToWan.value,
@@ -223,7 +238,7 @@ function save() {
 
 function validate(): boolean {
   errorBag.value.clear()
-  const validateName = [validateRequired(name.value), validateUciName(name.value)]
+  const validateName = [validateRequired(name.value), validateUciName(name.value.toLowerCase())]
   validateName.forEach((output) => {
     if (!output.valid) {
       errorBag.value.set('name', [String(output.errMessage)])
@@ -269,6 +284,7 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.zones_and_policies.name')"
         :placeholder="t('standalone.zones_and_policies.name')"
+        ref="nameRef"
       />
       <NeCombobox
         v-model="forwardsTo"

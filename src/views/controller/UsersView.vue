@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -53,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('controller.users.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('controller.users.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
     <div class="flex flex-row items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">

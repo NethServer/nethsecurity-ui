@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import {
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   getAxiosErrorMessage,
   NeEmptyState
@@ -140,7 +140,7 @@ function addDnsRecord(scanResult: ScanResult) {
       </NeInlineNotification>
       <!-- interfaces -->
       <div>
-        <NeTitle level="h4" class="mb-4">{{ t('standalone.dns_dhcp.interfaces') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-4">{{ t('standalone.dns_dhcp.interfaces') }}</NeHeading>
         <!-- scan error -->
         <NeInlineNotification
           v-if="error.scanNetwork"
@@ -181,7 +181,7 @@ function addDnsRecord(scanResult: ScanResult) {
       </div>
       <!-- scan results -->
       <div v-if="!isLoadingData">
-        <NeTitle level="h4" class="mb-4">{{ t('standalone.dns_dhcp.scan_results') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-4">{{ t('standalone.dns_dhcp.scan_results') }}</NeHeading>
         <!-- empty state -->
         <template v-if="!loading.scanNetwork && isEmpty(scanResults)">
           <!-- no results -->

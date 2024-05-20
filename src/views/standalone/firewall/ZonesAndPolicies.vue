@@ -7,7 +7,7 @@
 import {
   NeBadge,
   NeDropdown,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeTable,
@@ -77,7 +77,7 @@ function editZone(zone: Zone) {
 
 <template>
   <div class="space-y-8">
-    <NeTitle>{{ t('standalone.zones_and_policies.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.zones_and_policies.title') }}</NeHeading>
     <div class="flex flex-wrap gap-6">
       <p class="grow text-sm font-normal dark:text-gray-400">
         {{ t('standalone.zones_and_policies.description') }}

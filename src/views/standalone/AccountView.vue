@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeTitle } from '@nethesis/vue-components'
+import { NeCombobox, NeHeading } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
@@ -19,7 +19,9 @@ const { uiLanguage, supportedLanguages } = useLanguage()
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.account_management.title', { name: loginStore.username }) }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{
+    t('standalone.account_management.title', { name: loginStore.username })
+  }}</NeHeading>
   <div class="max-w-3xl space-y-8">
     <FormLayout :title="t('standalone.account_management.ui_language')">
       <NeCombobox

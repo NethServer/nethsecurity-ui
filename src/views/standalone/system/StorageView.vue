@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeSkeleton,
@@ -103,7 +103,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.storage.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.storage.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
     <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
       {{ t('standalone.storage.description') }}
@@ -117,7 +117,9 @@ onMounted(() => {
     <NeSkeleton :lines="10" v-if="loading" />
     <template v-else-if="currentStorageConfiguration?.name">
       <div>
-        <NeTitle level="h4">{{ t('standalone.storage.storage_configuration') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-1.5">{{
+          t('standalone.storage.storage_configuration')
+        }}</NeHeading>
         <div
           class="flex max-w-3xl flex-row items-center rounded-md bg-white p-6 transition-colors duration-200 dark:bg-gray-800 sm:shadow"
         >
@@ -180,7 +182,7 @@ onMounted(() => {
     </template>
     <template v-else-if="deviceOptions.length > 0">
       <div class="max-w-5xl">
-        <NeTitle level="h4">{{ t('standalone.storage.select_device') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.storage.select_device') }}</NeHeading>
         <NeRadioSelection
           :options="deviceOptions"
           :grid-style="'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3'"

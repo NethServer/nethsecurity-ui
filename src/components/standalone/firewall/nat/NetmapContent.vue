@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import {
   NeInlineNotification,
   NeButton,
-  NeTitle,
+  NeHeading,
   NeSkeleton,
   NeEmptyState,
   getAxiosErrorMessage
@@ -98,7 +98,7 @@ function hideCreateOrEditRuleDrawer() {
 
 <template>
   <div>
-    <NeTitle level="h3">{{ t('standalone.netmap.title') }}</NeTitle>
+    <NeHeading tag="h5" class="mb-2">{{ t('standalone.netmap.title') }}</NeHeading>
     <div class="mb-8 flex flex-col items-start justify-between gap-6 xl:flex-row">
       <div class="max-w-2xl text-gray-500 dark:text-gray-400">
         {{ t('standalone.netmap.netmap_rules_description') }}

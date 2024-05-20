@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeSkeleton,
@@ -117,7 +117,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.certificates.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.certificates.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
     <NeInlineNotification
       v-if="error.notificationDescription"

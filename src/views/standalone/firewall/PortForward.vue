@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
@@ -187,7 +187,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.port_forward.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.port_forward.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
     <div class="flex flex-row items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">

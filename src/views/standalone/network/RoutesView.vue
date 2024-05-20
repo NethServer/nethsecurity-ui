@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import RoutesContent from '@/components/standalone/routes/RoutesContent.vue'
 import { useTabs } from '@/composables/useTabs'
@@ -25,7 +25,7 @@ const { tabs, selectedTab } = useTabs([
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.routes.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.routes.title') }}</NeHeading>
   <div>
     <NeTabs
       :selected="selectedTab"

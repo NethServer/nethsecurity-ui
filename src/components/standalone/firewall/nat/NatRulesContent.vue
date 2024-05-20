@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import {
   NeInlineNotification,
   NeButton,
-  NeTitle,
+  NeHeading,
   NeSkeleton,
   NeEmptyState,
   getAxiosErrorMessage
@@ -87,8 +87,8 @@ function hideCreateOrEditRuleDrawer() {
 
 <template>
   <div>
-    <NeTitle>{{ t('standalone.nat.title') }}</NeTitle>
-    <NeTitle level="h3">{{ t('standalone.nat.nat_rules') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.nat.title') }}</NeHeading>
+    <NeHeading tag="h5" class="mb-2">{{ t('standalone.nat.nat_rules') }}</NeHeading>
     <div class="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row">
       <div class="max-w-2xl text-gray-500 dark:text-gray-400">
         {{ t('standalone.nat.nat_rules_description') }}

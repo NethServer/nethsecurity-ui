@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import {
   NeBadge,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -116,21 +116,23 @@ function showCancelSubscriptionModal() {
             :modelValue="subscriptionData.systemd_id"
           />
           <div>
-            <NeTitle level="h4">{{ t('standalone.subscription.plan') }}</NeTitle>
+            <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.subscription.plan') }}</NeHeading>
             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
               {{ subscriptionData.plan }}
             </p>
           </div>
           <div>
-            <NeTitle level="h4">{{ t('standalone.subscription.expiration') }}</NeTitle>
+            <NeHeading tag="h6" class="mb-1.5">{{
+              t('standalone.subscription.expiration')
+            }}</NeHeading>
             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
               {{ expirationDateString }}
             </p>
           </div>
           <div class="align-center flex flex-row">
-            <NeTitle class="mr-4 inline-block" style="margin-bottom: 0" level="h4">{{
+            <NeHeading tag="h6" class="!mb-0 mr-4 inline-block">{{
               t('standalone.subscription.status')
-            }}</NeTitle>
+            }}</NeHeading>
             <NeBadge
               :text="
                 subscriptionData.active

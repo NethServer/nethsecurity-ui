@@ -10,7 +10,7 @@ import RemoteSupport from '@/components/standalone/subscription/RemoteSupport.vu
 import { ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
-import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeInlineNotification, NeHeading, getAxiosErrorMessage } from '@nethesis/vue-components'
 
 export type SubscriptionDataType = {
   server_id: number
@@ -43,7 +43,7 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-y-6">
-    <h1 class="page-title">{{ t('standalone.subscription.title') }}</h1>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.subscription.title') }}</NeHeading>
     <NeInlineNotification
       v-if="pageError"
       kind="error"

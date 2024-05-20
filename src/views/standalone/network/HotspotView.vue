@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -36,7 +36,7 @@ watch(selectedTab, () => {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.hotspot.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.hotspot.title') }}</NeHeading>
 
   <NeTabs
     :selected="selectedTab"

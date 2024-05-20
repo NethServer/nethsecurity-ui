@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle } from '@nethesis/vue-components'
+import { NeHeading } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FactoryResetContent from '@/components/standalone/factory_reset/FactoryResetContent.vue'
 
@@ -13,7 +13,7 @@ const { t } = useI18n()
 
 <template>
   <div>
-    <NeTitle>{{ t('standalone.factory_reset.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.factory_reset.title') }}</NeHeading>
     <FactoryResetContent />
   </div>
 </template>

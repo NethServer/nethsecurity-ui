@@ -7,7 +7,7 @@
 import {
   NeLink,
   NeInlineNotification,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeTextInput,
   focusElement,
@@ -199,14 +199,14 @@ async function verifyOtp() {
     >
       <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
-          <NeTitle level="h2">
+          <NeHeading tag="h4" class="mb-4">
             <template v-if="step === 'login'">
               {{ t('login.welcome_title_standalone', { product: getProductName() }) }}
             </template>
             <template v-if="step === '2fa'">
               {{ t('standalone.two_fa.title') }}
             </template>
-          </NeTitle>
+          </NeHeading>
           <div class="mb-6 text-sm text-gray-700 dark:text-gray-100">
             <template v-if="step === 'login'">
               {{ t('login.welcome_description_standalone', { product: getProductName() }) }}

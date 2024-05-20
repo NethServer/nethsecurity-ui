@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import GeneralSettings from '@/components/standalone/system_settings/GeneralSettings.vue'
 import TimeSynchronization from '@/components/standalone/system_settings/TimeSynchronization.vue'
@@ -20,7 +20,7 @@ const { tabs, selectedTab } = useTabs([
 
 <template>
   <div>
-    <NeTitle>{{ t('standalone.system_settings.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.system_settings.title') }}</NeHeading>
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import DhcpManager from '@/components/standalone/dns_dhcp/DhcpManager.vue'
 import StaticLeases from '@/components/standalone/dns_dhcp/StaticLeases.vue'
@@ -45,7 +45,7 @@ const { tabs, selectedTab } = useTabs([
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.dns_dhcp.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.dns_dhcp.title') }}</NeHeading>
   <div>
     <NeTabs
       :selected="selectedTab"

@@ -2,7 +2,7 @@
 import { useTabs } from '@/composables/useTabs'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
@@ -96,7 +96,7 @@ async function fetchSubscriptionInfo() {
 
 <template>
   <div class="mb-6 flex flex-row items-center justify-between">
-    <NeTitle class="!mb-0">{{ t('standalone.users_database.title') }}</NeTitle>
+    <NeHeading tag="h3">{{ t('standalone.users_database.title') }}</NeHeading>
     <!-- add remote database button (subscription only) -->
     <NeButton v-if="activeSubscription" kind="secondary" @click="showCreateDrawer = true"
       ><template #prefix>

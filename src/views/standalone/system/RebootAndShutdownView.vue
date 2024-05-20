@@ -9,7 +9,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   NeProgressBar,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -82,9 +82,9 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="page-title">{{ t('standalone.reboot_and_shutdown.title') }}</h1>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.reboot_and_shutdown.title') }}</NeHeading>
     <div class="flex flex-col gap-y-4">
-      <NeTitle level="h3">{{ t('standalone.reboot_and_shutdown.reboot') }}</NeTitle>
+      <NeHeading tag="h5" class="mb-2">{{ t('standalone.reboot_and_shutdown.reboot') }}</NeHeading>
       <NeInlineNotification
         v-if="pageError"
         :title="t('error.generic_error')"
@@ -102,7 +102,9 @@ onMounted(() => {
           </NeButton>
         </div>
         <hr class="my-4" />
-        <NeTitle level="h3">{{ t('standalone.reboot_and_shutdown.shutdown') }}</NeTitle>
+        <NeHeading tag="h5" class="mb-2">{{
+          t('standalone.reboot_and_shutdown.shutdown')
+        }}</NeHeading>
         <div>
           <NeButton kind="secondary" size="lg" @click="showShutdownModal = true">
             <template #prefix>

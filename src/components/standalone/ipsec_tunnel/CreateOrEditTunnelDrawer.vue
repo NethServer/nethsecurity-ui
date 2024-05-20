@@ -20,7 +20,7 @@ import NeStepper from '../NeStepper.vue'
 import {
   NeCombobox,
   type NeComboboxOption,
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeSideDrawer,
@@ -624,7 +624,9 @@ watch(
         </div>
       </template>
       <template v-else>
-        <NeTitle level="h4">{{ t('standalone.ipsec_tunnel.phase_one_ike') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-1.5">{{
+          t('standalone.ipsec_tunnel.phase_one_ike')
+        }}</NeHeading>
         <NeCombobox
           v-model="ikeVersion"
           :label="t('standalone.ipsec_tunnel.ike_version')"
@@ -679,7 +681,9 @@ watch(
           :label="t('standalone.ipsec_tunnel.key_life_time_seconds')"
           :invalidMessage="validationErrorBag.getFirstFor('ikeKeyLifetime')"
         />
-        <NeTitle level="h4">{{ t('standalone.ipsec_tunnel.phase_two_esp') }}</NeTitle>
+        <NeHeading tag="h6" class="mb-1.5">{{
+          t('standalone.ipsec_tunnel.phase_two_esp')
+        }}</NeHeading>
         <NeCombobox
           v-model="espEncryptionAlgorithm"
           :label="t('standalone.ipsec_tunnel.encryption_algorithm')"

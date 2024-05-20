@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
 import FirewallRulesContent from '@/components/standalone/firewall/rules/FirewallRulesContent.vue'
@@ -32,7 +32,7 @@ const rulesType = computed(() => {
 
 <template>
   <div class="text-sm">
-    <NeTitle>{{ t('standalone.firewall_rules.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.firewall_rules.title') }}</NeHeading>
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"

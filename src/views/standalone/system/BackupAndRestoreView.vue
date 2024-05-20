@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import BackupContent from '@/components/standalone/backup_and_restore/BackupContent.vue'
 import RestoreContent from '@/components/standalone/backup_and_restore/RestoreContent.vue'
 import MigrationContent from '@/components/standalone/backup_and_restore/MigrationContent.vue'
@@ -29,7 +29,7 @@ const { tabs, selectedTab } = useTabs([
 ])
 </script>
 <template>
-  <NeTitle>{{ t('standalone.backup_and_restore.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.backup_and_restore.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
     <NeTabs
       :selected="selectedTab"

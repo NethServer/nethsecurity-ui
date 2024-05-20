@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import {
   NeLink,
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeTextInput,
@@ -128,9 +128,9 @@ function validate() {
     >
       <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
-          <NeTitle level="h2">{{
-            t('login.welcome_title_controller', { product: getProductName() })
-          }}</NeTitle>
+          <NeHeading tag="h4" class="mb-4">
+            {{ t('login.welcome_title_controller', { product: getProductName() }) }}
+          </NeHeading>
           <div class="mb-6 text-sm text-gray-700 dark:text-gray-100">
             {{ t('login.welcome_description_controller', { product: getProductName() }) }}
             <!-- session expired notification -->

@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
 import {
   NeDropdown,
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeSkeleton,
@@ -332,7 +332,7 @@ function scrollToMainTable() {
         </NeTable>
       </template>
       <div id="divMainTable">
-        <NeTitle level="h3">{{ t('standalone.routes.main_table') }}</NeTitle>
+        <NeHeading tag="h5" class="mb-2">{{ t('standalone.routes.main_table') }}</NeHeading>
         <template v-if="!loading && table.length > 0">
           <NeTable
             :data="table"

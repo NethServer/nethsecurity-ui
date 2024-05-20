@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import {
   NeBadge,
   NeDropdown,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   getAxiosErrorMessage,
@@ -625,7 +625,9 @@ function formatPackets(packets: number) {
 <template>
   <div>
     <div class="flex flex-col justify-between md:flex-row md:items-center">
-      <NeTitle>{{ t('standalone.interfaces_and_devices.title') }}</NeTitle>
+      <NeHeading tag="h3" class="mb-7">{{
+        t('standalone.interfaces_and_devices.title')
+      }}</NeHeading>
       <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
         {{ t('common.data_updated_every_seconds', { seconds: 10 }) }}
       </div>
@@ -680,11 +682,11 @@ function formatPackets(packets: number) {
       <template v-else-if="!error.notificationTitle" v-for="zone in sortedZonesAndDevices">
         <template v-if="!isEmpty(zone.devices)">
           <div :key="zone.name">
-            <NeTitle level="h4">{{
+            <NeHeading tag="h6" class="mb-1.5">{{
               te(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 ? t(`standalone.interfaces_and_devices.zone_label_${zone.name}`)
                 : toUpper(zone.name)
-            }}</NeTitle>
+            }}</NeHeading>
             <div class="space-y-4">
               <template v-for="(device, i) in zone.devices" :key="i">
                 <div>

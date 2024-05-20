@@ -8,7 +8,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
 import {
   NeDropdown,
-  NeTitle,
+  NeHeading,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
@@ -120,7 +120,9 @@ onMounted(() => {
 <template>
   <div class="flex flex-col gap-y-6">
     <div>
-      <NeTitle level="h3">{{ t('standalone.users_database.database_configuration') }}</NeTitle>
+      <NeHeading tag="h5" class="mb-2">{{
+        t('standalone.users_database.database_configuration')
+      }}</NeHeading>
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.users_database.database_configuration_description') }}
       </p>
@@ -195,7 +197,7 @@ onMounted(() => {
 
     <div class="flex flex-row items-center justify-between">
       <div>
-        <NeTitle level="h3">{{ t('standalone.users_database.users') }}</NeTitle>
+        <NeHeading tag="h5" class="mb-2">{{ t('standalone.users_database.users') }}</NeHeading>
         <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
           {{ t('standalone.users_database.users_description') }}
         </p>

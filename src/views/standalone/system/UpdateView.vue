@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -181,7 +181,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.update.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.update.title') }}</NeHeading>
   <NeInlineNotification
     v-if="error.notificationTitle"
     :title="error.notificationTitle"

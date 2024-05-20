@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import MultiWanGeneralSettings from '@/components/standalone/multi-wan/MultiWanGeneralSettings.vue'
 import MultiWanManager from '@/components/standalone/multi-wan/MultiWanManager.vue'
@@ -25,7 +25,7 @@ const { tabs, selectedTab } = useTabs([
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.multi_wan.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.multi_wan.title') }}</NeHeading>
   <div>
     <NeTabs
       :selected="selectedTab"

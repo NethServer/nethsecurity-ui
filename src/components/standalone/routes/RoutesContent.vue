@@ -13,10 +13,15 @@ import {
   NeButton,
   NeSkeleton,
   getAxiosErrorMessage,
-  NeEmptyState
+  NeEmptyState,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
@@ -218,174 +223,164 @@ function scrollToMainTable() {
       <NeSkeleton v-if="loading" :lines="3" :size="'sm'" />
       <template v-if="!loading && routes.length > 0">
         <NeTable
-          :data="routes"
-          :headers="[
-            {
-              key: 'ns_description',
-              label: t('standalone.routes.route_name')
-            },
-            {
-              key: 'interface',
-              label: t('standalone.routes.route_interface')
-            },
-            {
-              key: 'target',
-              label: t('standalone.routes.route_network_address')
-            },
-            {
-              key: 'gateway',
-              label: t('standalone.routes.route_gateway')
-            },
-            {
-              key: 'metric',
-              label: t('standalone.routes.route_metric')
-            },
-            {
-              key: 'status',
-              label: t('standalone.routes.route_status_table')
-            },
-            {
-              key: 'actions'
-            }
-          ]"
+          :ariaLabel="t('standalone.routes.title')"
+          cardBreakpoint="xl"
           :loading="loading"
+          :skeletonColumns="7"
+          :skeletonRows="5"
         >
-          <template #tbody>
-            <tbody>
-              <template v-for="item in routes" :key="item.id">
-                <tr>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    <span v-if="item.ns_description">{{ item.ns_description }}</span>
-                    <span v-else>-</span>
-                  </td>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    <span>
-                      <FontAwesomeIcon
-                        v-if="item.interface && item.interface === 'wan'"
-                        :icon="faEarthAmerica"
-                      />
-                      <FontAwesomeIcon
-                        v-if="
-                          item.interface &&
-                          (item.interface === 'lan' || item.interface === 'loopback')
-                        "
-                        :icon="faLocationDot"
-                      />
-                      {{ item.interface ? item.interface : t('common.any') }}
-                    </span>
-                  </td>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    {{ item.target }}
-                  </td>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    {{ item.gateway || '-' }}
-                  </td>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    {{ item.metric }}
-                  </td>
-                  <td :class="{ 'opacity-30': item.disabled !== '0' }">
-                    <span v-if="item.disabled === '0'">
-                      <FontAwesomeIcon :icon="faCircleCheck" />
-                      {{ t('standalone.routes.route_status_enabled') }}
-                    </span>
-                    <span v-else>
-                      <FontAwesomeIcon :icon="faCircleXmark" />
-                      {{ t('standalone.routes.route_status_disabled') }}
-                    </span>
-                  </td>
-                  <td class="flex justify-end">
-                    <NeButton
-                      kind="tertiary"
-                      size="lg"
-                      :disabled="item.readonly"
-                      @click="openEditRoute({ item: { item: item } })"
-                    >
-                      <template #prefix>
-                        <font-awesome-icon
-                          :icon="['fas', 'pen-to-square']"
-                          class="h-4 w-4"
-                          aria-hidden="true"
-                        />
-                      </template>
-                      {{ t('common.edit') }}
-                    </NeButton>
-                    <NeDropdown
-                      :items="[
-                        {
-                          id: 'delete',
-                          danger: true,
-                          label: t('common.delete'),
-                          disabled: item.readonly,
-                          action: () => {
-                            deleteRouteId = item.id
-                            deleteRouteName = item.ns_description
-                          }
-                        }
-                      ]"
-                      align-to-right
+          <NeTableHead>
+            <NeTableHeadCell>{{ t('standalone.routes.route_name') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.routes.route_interface') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.routes.route_network_address') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.routes.route_gateway') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.routes.route_metric') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.routes.route_status_table') }}</NeTableHeadCell>
+            <NeTableHeadCell>
+              <!-- no header for actions -->
+            </NeTableHeadCell>
+          </NeTableHead>
+          <NeTableBody>
+            <NeTableRow v-for="item in routes" :key="item.id">
+              <NeTableCell :data-label="t('standalone.routes.route_name')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  <span v-if="item.ns_description">{{ item.ns_description }}</span>
+                  <span v-else>-</span>
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.routes.route_interface')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  <span>
+                    <FontAwesomeIcon
+                      v-if="item.interface && item.interface === 'wan'"
+                      :icon="faEarthAmerica"
                     />
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </template>
+                    <FontAwesomeIcon
+                      v-if="
+                        item.interface &&
+                        (item.interface === 'lan' || item.interface === 'loopback')
+                      "
+                      :icon="faLocationDot"
+                    />
+                    {{ item.interface ? item.interface : t('common.any') }}
+                  </span>
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.routes.route_network_address')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  {{ item.target }}
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.routes.route_gateway')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  {{ item.gateway || '-' }}
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.routes.route_metric')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  {{ item.metric }}
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.routes.route_status_table')">
+                <div :class="{ 'opacity-30': item.disabled !== '0' }">
+                  <span v-if="item.disabled === '0'">
+                    <FontAwesomeIcon :icon="faCircleCheck" />
+                    {{ t('standalone.routes.route_status_enabled') }}
+                  </span>
+                  <span v-else>
+                    <FontAwesomeIcon :icon="faCircleXmark" />
+                    {{ t('standalone.routes.route_status_disabled') }}
+                  </span>
+                </div>
+              </NeTableCell>
+              <NeTableCell :data-label="t('common.actions')">
+                <div class="-ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">
+                  <NeButton
+                    kind="tertiary"
+                    size="lg"
+                    :disabled="item.readonly"
+                    @click="openEditRoute({ item: { item: item } })"
+                  >
+                    <template #prefix>
+                      <font-awesome-icon
+                        :icon="['fas', 'pen-to-square']"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      />
+                    </template>
+                    {{ t('common.edit') }}
+                  </NeButton>
+                  <NeDropdown
+                    :items="[
+                      {
+                        id: 'delete',
+                        danger: true,
+                        label: t('common.delete'),
+                        disabled: item.readonly,
+                        icon: 'trash',
+                        action: () => {
+                          deleteRouteId = item.id
+                          deleteRouteName = item.ns_description
+                        }
+                      }
+                    ]"
+                    align-to-right
+                  />
+                </div>
+              </NeTableCell>
+            </NeTableRow>
+          </NeTableBody>
         </NeTable>
       </template>
       <div id="divMainTable">
         <NeHeading tag="h5" class="mb-2">{{ t('standalone.routes.main_table') }}</NeHeading>
         <template v-if="!loading && table.length > 0">
           <NeTable
-            :data="table"
-            :readonly="true"
-            :headers="[
-              {
-                key: 'interface',
-                label: t('standalone.routes.route_interface')
-              },
-              {
-                key: 'network',
-                label: t('standalone.routes.route_network_address')
-              },
-              {
-                key: 'gateway',
-                label: t('standalone.routes.route_gateway')
-              },
-              {
-                key: 'metric',
-                label: t('standalone.routes.route_metric')
-              },
-              {
-                key: 'protocol',
-                label: t('standalone.routes.route_protocol')
-              }
-            ]"
+            :ariaLabel="t('standalone.routes.main_table')"
+            cardBreakpoint="xl"
             :loading="loading"
+            :skeletonColumns="7"
+            :skeletonRows="5"
           >
-            <template #tbody>
-              <tbody>
-                <template v-for="item in table" :key="item.id">
-                  <tr>
-                    <td>
-                      {{ item.interface }}
-                    </td>
-                    <td>
-                      {{ item.network }}
-                    </td>
-                    <td>
-                      <span v-if="item.gateway">{{ item.gateway }}</span>
-                      <span v-else>-</span>
-                    </td>
-                    <td>
-                      <span v-if="item.metric">{{ item.metric }}</span>
-                      <span v-else>-</span>
-                    </td>
-                    <td>
-                      {{ item.protocol }}
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </template>
+            <NeTableHead>
+              <NeTableHeadCell>{{ t('standalone.routes.route_interface') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.routes.route_network_address') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.routes.route_gateway') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.routes.route_metric') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.routes.route_protocol') }}</NeTableHeadCell>
+            </NeTableHead>
+            <NeTableBody>
+              <NeTableRow v-for="item in table" :key="item.id">
+                <NeTableCell :data-label="t('standalone.routes.route_interface')">
+                  <div>
+                    {{ item.interface }}
+                  </div>
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.routes.route_network_address')">
+                  <div>
+                    {{ item.network }}
+                  </div>
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.routes.route_gateway')">
+                  <div>
+                    <span v-if="item.gateway">{{ item.gateway }}</span>
+                    <span v-else>-</span>
+                  </div>
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.routes.route_metric')">
+                  <div>
+                    <span v-if="item.metric">{{ item.metric }}</span>
+                    <span v-else>-</span>
+                  </div>
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.routes.route_protocol')">
+                  <div>
+                    <span v-if="item.protocol">{{ item.protocol }}</span>
+                    <span v-else>-</span>
+                  </div>
+                </NeTableCell>
+              </NeTableRow>
+            </NeTableBody>
           </NeTable>
         </template>
       </div>
@@ -400,12 +395,13 @@ function scrollToMainTable() {
     @route-created="routeCreatedEditedHandler()"
     @route-edited="routeCreatedEditedHandler()"
   />
+  <!-- delete route modal -->
   <NeModal
     :primary-button-disabled="deleting"
     :primary-button-loading="deleting"
     :primary-label="t('common.delete')"
-    :secondary-button-disabled="deleting"
-    :title="t('standalone.routes.delete_route_ipv4')"
+    :cancelLabel="t('common.cancel')"
+    :title="t('standalone.routes.delete_route')"
     :visible="deleteRouteId !== undefined"
     kind="warning"
     primary-button-kind="danger"

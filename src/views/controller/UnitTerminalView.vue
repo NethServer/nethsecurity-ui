@@ -13,7 +13,7 @@ import {
   NeBadge,
   NeInlineNotification,
   NeSkeleton,
-  NeTitle,
+  NeHeading,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -124,7 +124,9 @@ function getBadgeIcon() {
 
 <template>
   <div class="p-6">
-    <NeTitle>{{ t('controller.unit_terminal.name_unit_terminal', { name: unitName }) }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{
+      t('controller.unit_terminal.name_unit_terminal', { name: unitName })
+    }}</NeHeading>
     <!-- 50 rem is an appropriate width for the default number or colums of xterm.js terminal -->
     <div class="flex max-w-[50rem] flex-col gap-6">
       <div class="flex items-center gap-4">

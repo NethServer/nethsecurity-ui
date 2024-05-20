@@ -7,7 +7,7 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
   NeBadge,
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeButton,
   NeSkeleton,
@@ -130,7 +130,7 @@ onMounted(() => {
   <NeSkeleton :lines="10" v-if="loading || firewallConfig.loading" />
   <template v-else-if="!firewallConfig.error">
     <div class="mb-4 flex flex-row items-center justify-between">
-      <NeTitle level="h4" class="grow">{{ t('standalone.dns_dhcp.interfaces') }}</NeTitle>
+      <NeHeading tag="h6" class="mb-1.5 grow">{{ t('standalone.dns_dhcp.interfaces') }}</NeHeading>
       <NeButton
         kind="tertiary"
         @click="toggleExpandAllCards()"

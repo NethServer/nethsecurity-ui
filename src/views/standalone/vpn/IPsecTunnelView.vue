@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -122,7 +122,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col">
     <div class="flex flex-col justify-between md:flex-row md:items-center">
-      <NeTitle>{{ t('standalone.ipsec_tunnel.title') }}</NeTitle>
+      <NeHeading tag="h3" class="mb-7">{{ t('standalone.ipsec_tunnel.title') }}</NeHeading>
       <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
         {{ t('common.data_updated_every_seconds', { seconds: RELOAD_INTERVAL / 1000 }) }}
       </div>

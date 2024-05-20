@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import {
   NeSkeleton,
-  NeTitle,
+  NeHeading,
   NeTooltip,
   NeBadge,
   NeButton,
@@ -227,7 +227,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col justify-between md:flex-row md:items-center">
-    <NeTitle>{{ t('standalone.controller.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.controller.title') }}</NeHeading>
     <div v-if="status !== 'unregistered'" class="mb-6 text-sm text-gray-500 dark:text-gray-400">
       {{ t('standalone.controller.data_updated_every_seconds', { seconds: 10 }) }}
     </div>
@@ -305,9 +305,7 @@ onUnmounted(() => {
           :label="verifyTlsCertificate ? t('common.enabled') : t('common.disabled')"
         />
         <div class="align-center flex flex-row" v-else>
-          <NeTitle class="mr-4 inline-block" style="margin-bottom: 0" level="h4">{{
-            t('common.status')
-          }}</NeTitle>
+          <NeHeading tag="h6" class="!mb-0 mr-4 inline-block">{{ t('common.status') }}</NeHeading>
           <NeBadge
             :text="
               status === 'pending'

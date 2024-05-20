@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTitle, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useTabs } from '@/composables/useTabs'
 import AllowlistTab from '@/components/standalone/security/threat_shield/AllowlistTab.vue'
 import BlocklistTab from '@/components/standalone/security/threat_shield/BlocklistTab.vue'
@@ -30,7 +30,7 @@ const { tabs, selectedTab } = useTabs([
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.threat_shield.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.threat_shield.title') }}</NeHeading>
   <div>
     <NeTabs
       :selected="selectedTab"

@@ -2,7 +2,7 @@
 import {
   NeCombobox,
   type NeComboboxOption,
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeTooltip,
   NeTextInput,
@@ -134,7 +134,7 @@ function fetchData() {
 </script>
 
 <template>
-  <NeTitle>{{ t('standalone.logs.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('standalone.logs.title') }}</NeHeading>
   <div class="space-y-8">
     <div class="grid grid-cols-1 gap-6 sm:max-w-xl sm:grid-cols-2">
       <NeTextInput

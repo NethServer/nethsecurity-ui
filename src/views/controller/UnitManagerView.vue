@@ -8,7 +8,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import { MAX_NO_SUBSCRIPTION_UNITS, useUnitsStore, type Unit } from '@/stores/controller/units'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeEmptyState,
   NeSkeleton,
@@ -152,7 +152,7 @@ function getBulkActionsKebabMenuItems() {
   <div>
     <div>
       <div class="flex flex-col justify-between md:flex-row md:items-center">
-        <NeTitle>{{ t('controller.units.title') }}</NeTitle>
+        <NeHeading tag="h3" class="mb-7">{{ t('controller.units.title') }}</NeHeading>
         <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
           {{ t('common.data_updated_every_seconds', { seconds: 10 }) }}
         </div>

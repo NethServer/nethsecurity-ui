@@ -11,7 +11,7 @@ import {
   NeSkeleton,
   NeInlineNotification,
   NeCombobox,
-  NeTitle,
+  NeHeading,
   NeTextArea
 } from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
@@ -39,7 +39,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeTitle>{{ t('controller.account_settings.title') }}</NeTitle>
+  <NeHeading tag="h3" class="mb-7">{{ t('controller.account_settings.title') }}</NeHeading>
   <div class="flex max-w-3xl flex-col gap-y-8">
     <FormLayout :title="t('controller.account_settings.change_language')">
       <NeCombobox

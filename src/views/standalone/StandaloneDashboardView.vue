@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeCard, NeLink, NeTitle } from '@nethesis/vue-components'
+import { NeCard, NeLink, NeHeading } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
@@ -39,7 +39,7 @@ function goTo(path: string) {
 
 <template>
   <div class="flex flex-col justify-between md:flex-row md:items-center">
-    <NeTitle>{{ t('standalone.dashboard.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.dashboard.title') }}</NeHeading>
     <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
       {{ t('common.data_updated_every_seconds', { seconds: 20 }) }}
     </div>

@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import type { RWServer, RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import {
-  NeTitle,
+  NeHeading,
   NeInlineNotification,
   NeEmptyState,
   NeCombobox,
@@ -221,7 +221,9 @@ const filteredUsers = computed(() => {
 
 <template>
   <div class="flex flex-col">
-    <NeTitle level="h3">{{ t('standalone.openvpn_rw.roadwarrior_accounts') }}</NeTitle>
+    <NeHeading tag="h5" class="mb-2">{{
+      t('standalone.openvpn_rw.roadwarrior_accounts')
+    }}</NeHeading>
     <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
       {{ t('standalone.openvpn_rw.roadwarrior_accounts_description') }}
     </p>

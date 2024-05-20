@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
-  NeTitle,
+  NeHeading,
   NeButton,
   NeInlineNotification,
   NeSkeleton,
@@ -98,7 +98,7 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-y-6">
-    <NeTitle>{{ t('standalone.reverse_proxy.title') }}</NeTitle>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.reverse_proxy.title') }}</NeHeading>
     <div class="flex flex-row items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.reverse_proxy.page_description') }}

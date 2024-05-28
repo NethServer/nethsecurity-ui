@@ -19,9 +19,11 @@ import {
   NeTableHeadCell,
   NeTableBody,
   NeTableRow,
-  NeTableCell
+  NeModal,
+  NeTableCell,
+  NePaginator,
+  useItemPagination
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
@@ -32,10 +34,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
-const { t } = useI18n()
 import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEditRouteDrawer.vue'
 import { AxiosError } from 'axios'
-const uciPendingChangesStore = useUciPendingChangesStore()
 
 /**
  * Props parent component
@@ -47,9 +47,12 @@ const props = defineProps({
   }
 })
 
+const { t } = useI18n()
+const uciPendingChangesStore = useUciPendingChangesStore()
+
 let createEditRoute = ref(false)
-let routes: any = ref({})
-let table: any = ref({})
+let routes: any = ref([])
+let table: any = ref([])
 let loading = ref(true)
 let selectedRoute = ref({})
 let deleting = ref(false)
@@ -60,6 +63,21 @@ let error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
+
+const pageSizeRoutes = ref(10)
+const pageSizeTable = ref(10)
+const { currentPage: currentPageRoutes, paginatedItems: paginatedItemsRoutes } = useItemPagination(
+  routes,
+  {
+    itemsPerPage: pageSizeRoutes
+  }
+)
+const { currentPage: currentPageTable, paginatedItems: paginatedItemsTable } = useItemPagination(
+  table,
+  {
+    itemsPerPage: pageSizeTable
+  }
+)
 
 onMounted(async () => {
   await loadRoutes()
@@ -241,7 +259,16 @@ function scrollToMainTable() {
             </NeTableHeadCell>
           </NeTableHead>
           <NeTableBody>
-            <NeTableRow v-for="item in routes" :key="item.id">
+            <NeTableRow v-if="!paginatedItemsRoutes.length">
+              <NeTableCell colspan="7">
+                <NeEmptyState
+                  :title="t('ne_table.no_items')"
+                  :icon="['fas', 'table']"
+                  class="bg-white dark:bg-gray-950"
+                />
+              </NeTableCell>
+            </NeTableRow>
+            <NeTableRow v-else v-for="item in paginatedItemsRoutes" :key="item.id">
               <NeTableCell :data-label="t('standalone.routes.route_name')">
                 <div :class="{ 'opacity-30': item.disabled !== '0' }">
                   <span v-if="item.ns_description">{{ item.ns_description }}</span>
@@ -320,7 +347,7 @@ function scrollToMainTable() {
                         icon: 'trash',
                         action: () => {
                           deleteRouteId = item.id
-                          deleteRouteName = item.ns_description
+                          deleteRouteName = item.ns_description || item.target
                         }
                       }
                     ]"
@@ -330,16 +357,36 @@ function scrollToMainTable() {
               </NeTableCell>
             </NeTableRow>
           </NeTableBody>
+          <template #paginator>
+            <NePaginator
+              :current-page="currentPageRoutes"
+              :total-rows="routes.length"
+              :page-size="pageSizeRoutes"
+              :nav-pagination-label="t('ne_table.pagination')"
+              :next-label="t('ne_table.go_to_next_page')"
+              :previous-label="t('ne_table.go_to_previous_page')"
+              :range-of-total-label="t('ne_table.of')"
+              :page-size-label="t('ne_table.show')"
+              @select-page="
+                (page: number) => {
+                  currentPageRoutes = page
+                }"
+              @selectPageSize="
+                (size: number) => {
+                  pageSizeRoutes = size
+                }"
+            />
+          </template>
         </NeTable>
       </template>
       <div id="divMainTable">
         <NeHeading tag="h5" class="mb-2">{{ t('standalone.routes.main_table') }}</NeHeading>
-        <template v-if="!loading && table.length > 0">
+        <template v-if="!loading">
           <NeTable
             :ariaLabel="t('standalone.routes.main_table')"
             cardBreakpoint="xl"
             :loading="loading"
-            :skeletonColumns="7"
+            :skeletonColumns="5"
             :skeletonRows="5"
           >
             <NeTableHead>
@@ -350,7 +397,16 @@ function scrollToMainTable() {
               <NeTableHeadCell>{{ t('standalone.routes.route_protocol') }}</NeTableHeadCell>
             </NeTableHead>
             <NeTableBody>
-              <NeTableRow v-for="item in table" :key="item.id">
+              <NeTableRow v-if="!paginatedItemsTable.length">
+                <NeTableCell colspan="5">
+                  <NeEmptyState
+                    :title="t('ne_table.no_items')"
+                    :icon="['fas', 'table']"
+                    class="bg-white dark:bg-gray-950"
+                  />
+                </NeTableCell>
+              </NeTableRow>
+              <NeTableRow v-else v-for="item in paginatedItemsTable" :key="item.id">
                 <NeTableCell :data-label="t('standalone.routes.route_interface')">
                   <div>
                     {{ item.interface }}
@@ -381,6 +437,26 @@ function scrollToMainTable() {
                 </NeTableCell>
               </NeTableRow>
             </NeTableBody>
+            <template #paginator>
+              <NePaginator
+                :current-page="currentPageTable"
+                :total-rows="table.length"
+                :page-size="pageSizeTable"
+                :nav-pagination-label="t('ne_table.pagination')"
+                :next-label="t('ne_table.go_to_next_page')"
+                :previous-label="t('ne_table.go_to_previous_page')"
+                :range-of-total-label="t('ne_table.of')"
+                :page-size-label="t('ne_table.show')"
+                @select-page="
+                  (page: number) => {
+                    currentPageTable = page
+                  }"
+                @selectPageSize="
+                  (size: number) => {
+                    pageSizeTable = size
+                  }"
+              />
+            </template>
           </NeTable>
         </template>
       </div>

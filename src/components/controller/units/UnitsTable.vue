@@ -46,8 +46,9 @@ const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
 const loginStore = useLoginStore()
-const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.filteredUnits, {
-  itemsPerPage: 10
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(() => props.filteredUnits, {
+  itemsPerPage: pageSize
 })
 
 const hideOpenUnitPopupsTooltip = ref(false)
@@ -420,17 +421,24 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>
-      <template #paginator v-if="pageCount > 1">
+      <template #paginator>
         <NePaginator
-          :current-page="currentPage ?? 1"
-          :total-pages="pageCount ?? 1"
-          :next-label="t('common.next')"
-          :previous-label="t('common.previous')"
+          :current-page="currentPage"
+          :total-rows="props.filteredUnits.length"
+          :page-size="pageSize"
+          :nav-pagination-label="t('ne_table.pagination')"
+          :next-label="t('ne_table.go_to_next_page')"
+          :previous-label="t('ne_table.go_to_previous_page')"
+          :range-of-total-label="t('ne_table.of')"
+          :page-size-label="t('ne_table.show')"
           @select-page="
-              (page: number) => {
-                currentPage = page
-              }
-            "
+            (page: number) => {
+              currentPage = page
+            }"
+          @selectPageSize="
+            (size: number) => {
+              pageSize = size
+            }"
         />
       </template>
     </NeTable>

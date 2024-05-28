@@ -19,6 +19,7 @@ import {
 import { NeButton } from '@nethesis/vue-components'
 import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { ref } from 'vue'
 
 const props = defineProps<{
   users: ControllerAccount[]
@@ -31,8 +32,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const controllerLogin = useLoginStore()
-const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.users, {
-  itemsPerPage: 10
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(() => props.users, {
+  itemsPerPage: pageSize
 })
 
 function getDropdownItems(item: ControllerAccount) {
@@ -90,17 +92,24 @@ function getDropdownItems(item: ControllerAccount) {
         </NeTableCell>
       </NeTableRow>
     </NeTableBody>
-    <template #paginator v-if="pageCount > 1">
+    <template #paginator>
       <NePaginator
-        :current-page="currentPage ?? 1"
-        :total-pages="pageCount ?? 1"
-        :next-label="t('common.next')"
-        :previous-label="t('common.previous')"
+        :current-page="currentPage"
+        :total-rows="props.users.length"
+        :page-size="pageSize"
+        :nav-pagination-label="t('ne_table.pagination')"
+        :next-label="t('ne_table.go_to_next_page')"
+        :previous-label="t('ne_table.go_to_previous_page')"
+        :range-of-total-label="t('ne_table.of')"
+        :page-size-label="t('ne_table.show')"
         @select-page="
-                (page: number) => {
-                  currentPage = page
-                }
-              "
+            (page: number) => {
+              currentPage = page
+            }"
+        @selectPageSize="
+            (size: number) => {
+              pageSize = size
+            }"
       />
     </template>
   </NeTable>

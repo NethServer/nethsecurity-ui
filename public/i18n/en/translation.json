@@ -354,7 +354,12 @@
     "open_menu": "Open menu"
   },
   "ne_table": {
-    "no_items": "No items"
+    "no_items": "No items",
+    "go_to_previous_page": "Go to previous page",
+    "go_to_next_page": "Go to next page",
+    "of": "of",
+    "pagination": "Table pagination",
+    "show": "Show"
   },
   "ne_file_input": {
     "dropzone_label": "Drag and drop or click to upload"

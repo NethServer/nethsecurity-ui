@@ -83,7 +83,8 @@ import {
   faAward,
   faLink,
   faLinkSlash,
-  faTerminal as fasTerminal
+  faTerminal as fasTerminal,
+  faTable
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faBlockBrickFire as falBlockBrickFire,
@@ -229,4 +230,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faLink)
   library.add(faLinkSlash)
   library.add(fasTerminal)
+  library.add(faTable)
 }

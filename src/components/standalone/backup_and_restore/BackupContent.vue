@@ -12,9 +12,14 @@ import {
   NeButton,
   NeSkeleton,
   getAxiosErrorMessage,
-  NeEmptyState
+  NeEmptyState,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell
 } from '@nethesis/vue-components'
-import NeTable from '@/components/standalone/NeTable.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
@@ -208,33 +213,34 @@ function successSetPassphrase() {
       </NeEmptyState>
       <NeTable
         v-if="listBackups.length"
-        :data="listBackups"
-        :headers="[
-          {
-            key: 'name',
-            label: 'Date'
-          },
-          {
-            key: 'actions'
-          }
-        ]"
+        :ariaLabel="t('standalone.backup_and_restore.backup.backups')"
       >
-        <template #name="{ item }">
-          <div>
-            <FontAwesomeIcon :icon="['fa', 'clock']" class="mr-2" />
-            {{ item.name }}
-          </div>
-        </template>
-        <template #actions="{ item }">
-          <div class="flex items-center justify-end">
-            <NeButton :kind="'tertiary'" @click="openDownloadEnterprise(item.file)">
-              <template #prefix>
-                <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download') }}
-            </NeButton>
-          </div>
-        </template>
+        <NeTableHead>
+          <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.date') }}</NeTableHeadCell>
+          <NeTableHeadCell>
+            <!-- no header for actions -->
+          </NeTableHeadCell>
+        </NeTableHead>
+        <NeTableBody>
+          <NeTableRow v-for="item in listBackups" :key="item.name">
+            <NeTableCell :data-label="t('standalone.backup_and_restore.backup.date')">
+              <div>
+                <FontAwesomeIcon :icon="['fa', 'clock']" class="mr-2" />
+                {{ item.name }}
+              </div>
+            </NeTableCell>
+            <NeTableCell :data-label="t('common.actions')">
+              <div class="-ml-2.5 flex items-center md:justify-end xl:ml-0">
+                <NeButton :kind="'tertiary'" @click="openDownloadEnterprise(item.file)">
+                  <template #prefix>
+                    <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
+                  </template>
+                  {{ t('standalone.backup_and_restore.backup.download') }}
+                </NeButton>
+              </div>
+            </NeTableCell>
+          </NeTableRow>
+        </NeTableBody>
       </NeTable>
     </div>
   </div>

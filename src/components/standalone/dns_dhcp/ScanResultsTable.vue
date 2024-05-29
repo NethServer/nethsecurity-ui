@@ -4,11 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { NeDropdown, useItemPagination } from '@nethesis/vue-components'
-import { type PropType } from 'vue'
+import {
+  NeDropdown,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell,
+  NePaginator,
+  useItemPagination
+} from '@nethesis/vue-components'
+import { ref, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ScanResult } from './ScanNetwork.vue'
-import NeTable from '../NeTable.vue'
 
 const props = defineProps({
   results: {
@@ -24,32 +33,10 @@ const props = defineProps({
 const emit = defineEmits(['addIpReservation', 'addDnsRecord'])
 
 const { t } = useI18n()
-
-const { currentPage, pageCount, paginatedItems } = useItemPagination(() => props.results, {
-  itemsPerPage: 10
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(() => props.results, {
+  itemsPerPage: pageSize
 })
-
-const tableHeaders = [
-  {
-    label: t('standalone.dns_dhcp.ip_address'),
-    key: 'ip'
-  },
-  {
-    label: t('standalone.dns_dhcp.mac_address'),
-    key: 'mac'
-  },
-  {
-    label: t('standalone.dns_dhcp.hostname'),
-    key: 'hostname'
-  },
-  {
-    label: t('standalone.dns_dhcp.description'),
-    key: 'description'
-  },
-  {
-    key: 'actions'
-  }
-]
 
 function getKebabMenuItems(scanResult: ScanResult) {
   return [
@@ -73,44 +60,61 @@ function getKebabMenuItems(scanResult: ScanResult) {
 
 <template>
   <NeTable
-    :data="paginatedItems"
-    :with-paginator="true"
-    :paginator-props="{
-      totalPages: pageCount,
-      currentPage,
-      previousLabel: t('common.previous'),
-      nextLabel: t('common.next')
-    }"
-    @select-page="
-      (page) => {
-        currentPage = page
-      }
-    "
-    :headers="tableHeaders"
+    :ariaLabel="t('standalone.dns_dhcp.scan_results')"
+    cardBreakpoint="xl"
     :loading="loading"
-    :skeletonLines="8"
+    :skeletonColumns="5"
+    :skeletonRows="5"
   >
-    <!-- ip -->
-    <template #ip="{ item }: { item: ScanResult }">
-      {{ item.ip || '-' }}
-    </template>
-    <!-- mac -->
-    <template #mac="{ item }: { item: ScanResult }">
-      {{ item.mac || '-' }}
-    </template>
-    <!-- hostname -->
-    <template #hostname="{ item }: { item: ScanResult }">
-      {{ item.hostname || '-' }}
-    </template>
-    <!-- description -->
-    <template #description="{ item }: { item: ScanResult }">
-      {{ item.description || '-' }}
-    </template>
-    <!-- actions -->
-    <template #actions="{ item }: { item: ScanResult }">
-      <div class="flex justify-end">
-        <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
-      </div>
+    <NeTableHead>
+      <NeTableHeadCell>{{ t('standalone.dns_dhcp.ip_address') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.dns_dhcp.mac_address') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.dns_dhcp.hostname') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.dns_dhcp.description') }}</NeTableHeadCell>
+      <NeTableHeadCell>
+        <!-- no header for actions -->
+      </NeTableHeadCell>
+    </NeTableHead>
+    <NeTableBody>
+      <NeTableRow v-for="item in paginatedItems" :key="item.ip">
+        <NeTableCell :data-label="t('standalone.dns_dhcp.ip_address')">
+          {{ item.ip || '-' }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.dns_dhcp.mac_address')">
+          {{ item.mac || '-' }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.dns_dhcp.hostname')">
+          {{ item.hostname || '-' }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.dns_dhcp.description')">
+          {{ item.description || '-' }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('common.actions')">
+          <div class="flex justify-end">
+            <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+          </div>
+        </NeTableCell>
+      </NeTableRow>
+    </NeTableBody>
+    <template #paginator>
+      <NePaginator
+        :current-page="currentPage"
+        :total-rows="props.results.length"
+        :page-size="pageSize"
+        :nav-pagination-label="t('ne_table.pagination')"
+        :next-label="t('ne_table.go_to_next_page')"
+        :previous-label="t('ne_table.go_to_previous_page')"
+        :range-of-total-label="t('ne_table.of')"
+        :page-size-label="t('ne_table.show')"
+        @select-page="
+            (page: number) => {
+              currentPage = page
+            }"
+        @selectPageSize="
+            (size: number) => {
+              pageSize = size
+            }"
+      />
     </template>
   </NeTable>
 </template>

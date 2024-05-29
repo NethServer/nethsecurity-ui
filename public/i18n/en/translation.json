@@ -354,7 +354,12 @@
     "open_menu": "Open menu"
   },
   "ne_table": {
-    "no_items": "No items"
+    "no_items": "No items",
+    "go_to_previous_page": "Go to previous page",
+    "go_to_next_page": "Go to next page",
+    "of": "of",
+    "pagination": "Table pagination",
+    "show": "Show"
   },
   "ne_file_input": {
     "dropzone_label": "Drag and drop or click to upload"
@@ -549,7 +554,9 @@
         "run_backup": "Run backup",
         "run_backup_description": "Are you sure you want to start '{name}' backup?",
         "success_run_backup": "Backup performed successfully",
-        "success_download": "Backup downloaded successfully"
+        "success_download": "Backup downloaded successfully",
+        "date": "Date",
+        "backups": "Backups"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",
@@ -1165,7 +1172,6 @@
       "traffic_to_firewall": "Traffic to firewall",
       "traffic_to_same_zone": "Traffic to same zone",
       "interfaces": "Interfaces",
-      "covered_subnets": "Covered subnets",
       "logging": "Logging",
       "add_zone": "Add zone",
       "name": "Name",

@@ -17,6 +17,7 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
+  NeEmptyState,
   useItemPagination
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
@@ -34,12 +35,12 @@ import {
 } from '@/lib/standalone/network'
 
 const { t } = useI18n()
-
 const firewallConfig = useFirewallStore()
-const { currentPage, pageCount, paginatedItems } = useItemPagination(
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(
   () => firewallConfig.zonesWithoutAliases,
   {
-    itemsPerPage: 10
+    itemsPerPage: pageSize
   }
 )
 
@@ -100,7 +101,7 @@ function editZone(zone: Zone) {
     <NeTable
       v-else
       :ariaLabel="t('standalone.zones_and_policies.firewall_zones')"
-      cardBreakpoint="xl"
+      cardBreakpoint="2xl"
       :loading="firewallConfig.loading"
       :skeletonColumns="6"
       :skeletonRows="5"
@@ -118,14 +119,22 @@ function editZone(zone: Zone) {
           t('standalone.zones_and_policies.traffic_to_same_zone')
         }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.interfaces') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('standalone.zones_and_policies.covered_subnets') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.logging') }}</NeTableHeadCell>
         <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
-        <NeTableRow v-for="item in paginatedItems" :key="item.name">
+        <NeTableRow v-if="isEmpty(paginatedItems)">
+          <NeTableCell colspan="9">
+            <NeEmptyState
+              :title="t('ne_table.no_items')"
+              :icon="['fas', 'table']"
+              class="bg-white dark:bg-gray-950"
+            />
+          </NeTableCell>
+        </NeTableRow>
+        <NeTableRow v-else v-for="item in paginatedItems" :key="item.name">
           <NeTableCell :data-label="t('standalone.zones_and_policies.zone')">
             <div class="flex items-center gap-x-4">
               <div
@@ -187,14 +196,11 @@ function editZone(zone: Zone) {
             </template>
             <template v-else>-</template>
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.zones_and_policies.covered_subnets')">
-            -
-          </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
             <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
-            <div class="-ml-2.5 flex xl:ml-0">
+            <div class="-ml-2.5 flex 2xl:ml-0">
               <NeDropdown
                 :items="[
                   {
@@ -218,17 +224,24 @@ function editZone(zone: Zone) {
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>
-      <template #paginator v-if="pageCount > 1">
+      <template #paginator>
         <NePaginator
-          :current-page="currentPage ?? 1"
-          :total-pages="pageCount ?? 1"
-          :next-label="t('common.next')"
-          :previous-label="t('common.previous')"
+          :current-page="currentPage"
+          :total-rows="firewallConfig.zonesWithoutAliases.length"
+          :page-size="pageSize"
+          :nav-pagination-label="t('ne_table.pagination')"
+          :next-label="t('ne_table.go_to_next_page')"
+          :previous-label="t('ne_table.go_to_previous_page')"
+          :range-of-total-label="t('ne_table.of')"
+          :page-size-label="t('ne_table.show')"
           @select-page="
-              (page: number) => {
-                currentPage = page
-              }
-            "
+            (page: number) => {
+              currentPage = page
+            }"
+          @selectPageSize="
+            (size: number) => {
+              pageSize = size
+            }"
         />
       </template>
     </NeTable>

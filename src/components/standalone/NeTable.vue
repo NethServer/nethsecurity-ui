@@ -7,7 +7,7 @@
 import type { PropType } from 'vue'
 import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
-import { NePaginator, NePaginatorProps, NeSkeleton } from '@nethesis/vue-components'
+import { NeSkeleton } from '@nethesis/vue-components'
 
 /**
  * Headers that can be passed to the table.
@@ -82,29 +82,8 @@ defineProps({
    */
   condensed: {
     type: Boolean
-  },
-  /**
-   * If set to true, display the paginator at the end of the table
-   */
-  withPaginator: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * Props passed to the paginator in the table
-   */
-  paginatorProps: {
-    type: Object as PropType<NePaginatorProps>
   }
 })
-
-const emit = defineEmits<{
-  selectPage: [page: number]
-}>()
-
-function onSelectPage(page: number) {
-  emit('selectPage', page)
-}
 </script>
 
 <template>
@@ -150,18 +129,6 @@ function onSelectPage(page: number) {
           </tbody>
         </slot>
       </table>
-    </div>
-    <div
-      v-if="withPaginator && paginatorProps?.totalPages > 1"
-      class="mt-6 flex flex-row justify-end"
-    >
-      <NePaginator
-        :current-page="paginatorProps?.currentPage ?? 1"
-        :total-pages="paginatorProps?.totalPages ?? 1"
-        :next-label="paginatorProps?.nextLabel ?? ''"
-        :previous-label="paginatorProps?.previousLabel ?? ''"
-        @select-page="onSelectPage"
-      />
     </div>
   </div>
 </template>

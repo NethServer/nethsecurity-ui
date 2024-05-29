@@ -554,7 +554,9 @@
         "run_backup": "Run backup",
         "run_backup_description": "Are you sure you want to start '{name}' backup?",
         "success_run_backup": "Backup performed successfully",
-        "success_download": "Backup downloaded successfully"
+        "success_download": "Backup downloaded successfully",
+        "date": "Date",
+        "backups": "Backups"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

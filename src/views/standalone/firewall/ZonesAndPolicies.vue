@@ -101,7 +101,7 @@ function editZone(zone: Zone) {
     <NeTable
       v-else
       :ariaLabel="t('standalone.zones_and_policies.firewall_zones')"
-      cardBreakpoint="xl"
+      cardBreakpoint="2xl"
       :loading="firewallConfig.loading"
       :skeletonColumns="6"
       :skeletonRows="5"
@@ -119,7 +119,6 @@ function editZone(zone: Zone) {
           t('standalone.zones_and_policies.traffic_to_same_zone')
         }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.interfaces') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('standalone.zones_and_policies.covered_subnets') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.logging') }}</NeTableHeadCell>
         <NeTableHeadCell>
           <!-- no header for actions -->
@@ -197,14 +196,11 @@ function editZone(zone: Zone) {
             </template>
             <template v-else>-</template>
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.zones_and_policies.covered_subnets')">
-            -
-          </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
             <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
-            <div class="-ml-2.5 flex xl:ml-0">
+            <div class="-ml-2.5 flex 2xl:ml-0">
               <NeDropdown
                 :items="[
                   {

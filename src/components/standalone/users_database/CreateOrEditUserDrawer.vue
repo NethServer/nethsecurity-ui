@@ -177,13 +177,13 @@ watch(
     >
     <div class="flex flex-col gap-y-6">
       <NeTextInput
-        v-model="username"
+        v-model.trim="username"
         :disabled="Boolean(id)"
         :label="t('standalone.users_database.username')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
       <NeTextInput
-        v-model="displayName"
+        v-model.trim="displayName"
         :label="t('standalone.users_database.display_name')"
         :optional="true"
         :optional-label="t('common.optional')"

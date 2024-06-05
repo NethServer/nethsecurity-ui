@@ -329,7 +329,8 @@
     "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
     "cannot_remove_unit": "Cannot remove unit",
     "cannot_scan_network": "Cannot scan network",
-    "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks"
+    "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks",
+    "length_12_max": "Maximum 12 characters allowed"
   },
   "ne_text_input": {
     "show_password": "Show password",

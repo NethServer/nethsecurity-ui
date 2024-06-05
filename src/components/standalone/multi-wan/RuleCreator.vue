@@ -76,7 +76,7 @@ function save() {
       <NeTextInput
         v-model="name"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('name')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.rule_name')"
         :placeholder="t('standalone.multi_wan.rule_name')"
         name="rule_name"

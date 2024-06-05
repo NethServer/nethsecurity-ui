@@ -41,6 +41,21 @@ const {
 const saving = ref(false)
 const error = ref<Error>()
 
+function close() {
+  emit('cancel')
+  cleanForm()
+}
+function cleanForm() {
+  name.value = ''
+  policy.value = ''
+  protocol.value = ''
+  sourceAddress.value = ''
+  sourcePort.value = ''
+  destinationAddress.value = ''
+  destinationPort.value = ''
+  validationErrors.value.clear()
+}
+
 function save() {
   if (isValid()) {
     saving.value = true
@@ -70,7 +85,7 @@ function save() {
   <NeSideDrawer
     :is-shown="isShown"
     :title="t('standalone.multi_wan.create_new_rule')"
-    @close="$emit('cancel')"
+    @close="close()"
   >
     <div class="space-y-8">
       <NeTextInput
@@ -147,7 +162,7 @@ function save() {
       />
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="saving" :kind="'secondary'" @click="emit('cancel')">
+        <NeButton :disabled="saving" :kind="'secondary'" @click="close()">
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">

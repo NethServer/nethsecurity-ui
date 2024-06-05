@@ -63,6 +63,15 @@ const availableGateways = computed((): Array<NeComboboxOption> => {
     })
 })
 
+function close() {
+  emit('close')
+  cleanForm()
+}
+function cleanForm() {
+  policyForm.cleanForm()
+  messageBag.value.clear()
+}
+
 /**
  * Validation form.
  */
@@ -119,7 +128,7 @@ function submit() {
   <NeSideDrawer
     :is-shown="policy != undefined"
     :title="t('standalone.multi_wan.edit_policy', { name: policyForm.label })"
-    @close="$emit('close')"
+    @close="close()"
   >
     <NeInlineNotification v-if="firewall.error" :kind="'error'" :title="firewall.error.message" />
     <div v-else class="space-y-8">
@@ -192,7 +201,7 @@ function submit() {
       </NeButton>
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="loading" :kind="'tertiary'" @click="$emit('close')">
+        <NeButton :disabled="loading" :kind="'tertiary'" @click="close()">
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton :disabled="loading" :kind="'primary'" :loading="loading" @click="submit()">

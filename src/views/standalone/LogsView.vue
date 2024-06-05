@@ -101,20 +101,7 @@ function fetchData() {
     limit: limit.value
   })
     .then((response: AxiosResponse<LogResponse>) => {
-      // please don't call the RegExp with an empty string, it appears to hang the system way longer than it should
-      // this STILL IS NOT a feasible solution due to the task inefficiency, but it's better than nothing
-      // TODO: defer loading and don't lock the interface
-      if (search.value == '') {
-        data.value = response.data.values
-      } else {
-        const regExStr = new RegExp(search.value, 'g')
-        data.value = response.data.values.map((entry) => {
-          return entry.replace(
-            regExStr,
-            (match) => `<span class="dark:bg-yellow-800 bg-yellow-400">${match}</span>`
-          )
-        })
-      }
+      data.value = response.data.values
     })
     .catch((reason: Error) => {
       if (reason instanceof ValidationError) {
@@ -183,8 +170,9 @@ function fetchData() {
         :key="index"
         :class="logRowStyle"
         class="p-2 odd:bg-gray-100 odd:dark:bg-gray-950"
-        v-html="entry"
-      ></li>
+      >
+        {{ entry }}
+      </li>
     </ul>
   </div>
 </template>

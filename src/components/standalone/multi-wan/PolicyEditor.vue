@@ -103,7 +103,7 @@ function submit() {
       <NeTextInput
         ref="labelElement"
         v-model="policyForm.label"
-        :disabled="policy?.name == 'ns_default'"
+        disabled
         :invalid-message="messageBag.getFirstFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"
       />

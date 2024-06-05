@@ -78,7 +78,7 @@ function save() {
     <div class="space-y-8">
       <NeTextInput
         v-model="name"
-        :disabled="saving || rule?.name == 'ns_default_rule'"
+        disabled
         :invalid-message="validationErrors.getFirstFor('name')"
         :label="t('standalone.multi_wan.rule_name')"
         :placeholder="t('standalone.multi_wan.rule_name')"

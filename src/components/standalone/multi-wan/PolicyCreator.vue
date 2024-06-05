@@ -151,7 +151,7 @@ function create() {
         ref="labelElement"
         v-model="policyForm.label"
         :disabled="createDefault"
-        :invalid-message="messageBag.getFirstFor('name')"
+        :invalid-message="t(messageBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.label_input_label')"
       />
       <NeRadioSelection

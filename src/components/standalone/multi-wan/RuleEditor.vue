@@ -93,7 +93,7 @@ function save() {
       <NeTextInput
         v-model="name"
         disabled
-        :invalid-message="validationErrors.getFirstFor('name')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.rule_name')"
         :placeholder="t('standalone.multi_wan.rule_name')"
         name="rule_name"
@@ -101,7 +101,7 @@ function save() {
       <NeCombobox
         v-model="policy"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('policy')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('policy'))"
         :label="t('standalone.multi_wan.assigned_policy')"
         :options="policyDropdownOptions"
         :placeholder="policyDropdownPlaceholder"
@@ -116,7 +116,7 @@ function save() {
       <NeCombobox
         v-model="protocol"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('protocol')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('protocol'))"
         :label="t('standalone.multi_wan.protocol')"
         :options="protocolOptions"
         :placeholder="protocolOptions[0].label"
@@ -131,7 +131,7 @@ function save() {
       <NeTextInput
         v-model="sourceAddress"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('source_address')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_address'))"
         :label="t('standalone.multi_wan.source_address')"
         name="source_address"
         placeholder="any"
@@ -140,7 +140,7 @@ function save() {
         v-if="protocol == 'tcp' || protocol == 'udp'"
         v-model="sourcePort"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('source_port')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_port'))"
         :label="t('standalone.multi_wan.source_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="source_port"
@@ -148,7 +148,7 @@ function save() {
       <NeTextInput
         v-model="destinationAddress"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('destination_address')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_address'))"
         :label="t('standalone.multi_wan.destination_address')"
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_address"
@@ -157,7 +157,7 @@ function save() {
         v-if="protocol == 'tcp' || protocol == 'udp'"
         v-model="destinationPort"
         :disabled="saving"
-        :invalid-message="validationErrors.getFirstFor('destination_port')"
+        :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_port'))"
         :label="t('standalone.multi_wan.destination_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"

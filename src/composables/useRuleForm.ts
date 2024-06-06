@@ -84,35 +84,35 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     validationErrors.value.clear()
     let validationCheck = validateRequired(name.value)
     if (!validationCheck.valid) {
-      validationErrors.value.set('name', t(String(validationCheck.errMessage)))
+      validationErrors.value.set('name', String(validationCheck.errMessage))
     }
     validationCheck = validateRequired(policy.value)
     if (!validationCheck.valid) {
-      validationErrors.value.set('policy', t(String(validationCheck.errMessage)))
+      validationErrors.value.set('policy', String(validationCheck.errMessage))
     }
     if (sourceAddress.value != '') {
       validationCheck = validateIp4OrCidr(sourceAddress.value)
       if (!validationCheck.valid) {
-        validationErrors.value.set('source_address', t(String(validationCheck.errMessage)))
+        validationErrors.value.set('source_address', String(validationCheck.errMessage))
       }
     }
     if (destinationAddress.value != '') {
       validationCheck = validateIp4OrCidr(destinationAddress.value)
       if (!validationCheck.valid) {
-        validationErrors.value.set('destination_address', t(String(validationCheck.errMessage)))
+        validationErrors.value.set('destination_address', String(validationCheck.errMessage))
       }
     }
     if (protocol.value == 'tcp' || protocol.value == 'udp') {
       if (sourcePort.value != '') {
         validationCheck = validatePortRangeForMwan(sourcePort.value)
         if (!validationCheck.valid) {
-          validationErrors.value.set('source_port', t(String(validationCheck.errMessage)))
+          validationErrors.value.set('source_port', String(validationCheck.errMessage))
         }
       }
       if (destinationPort.value != '') {
         validationCheck = validatePortRangeForMwan(destinationPort.value)
         if (!validationCheck.valid) {
-          validationErrors.value.set('destination_port', t(String(validationCheck.errMessage)))
+          validationErrors.value.set('destination_port', String(validationCheck.errMessage))
         }
       }
     }

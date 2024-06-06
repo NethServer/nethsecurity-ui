@@ -23,7 +23,7 @@ import {
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { validateFile, validateRequired } from '@/lib/validation'
+import { validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 
@@ -226,22 +226,10 @@ async function restoreBackup() {
 }
 
 async function handleFileUpload() {
-  errorRestore.value.file = ''
   isUploadingBackupFile.value = false
   canRestoreBackupFile.value = false
 
   if (!formRestore.value.file) {
-    return
-  }
-
-  const tarGzFileValidation = validateFile(formRestore.value.file as File | null, 'tar.gz')
-  const tarGzGpgFileValidation = validateFile(formRestore.value.file as File | null, 'tar.gz.gpg')
-
-  if (!tarGzFileValidation.valid && tarGzGpgFileValidation.valid) {
-    const validatorErrMessage = !tarGzFileValidation.valid
-      ? tarGzFileValidation.errMessage
-      : tarGzGpgFileValidation.errMessage
-    errorRestore.value.file = t(validatorErrMessage as string)
     return
   }
 
@@ -341,11 +329,16 @@ function setRestoreTimer() {
         </template>
         <template v-if="typeRestore === 'upload_file'">
           <NeFileInput
-            :label="t('standalone.backup_and_restore.restore.upload_file')"
+            :label="
+              t('standalone.backup_and_restore.restore.upload_file', {
+                extensions: '*.tar.gz, *.tar.gz.gpg, *.bin'
+              })
+            "
             :dropzoneLabel="t('ne_file_input.dropzone_label')"
             :invalid-message="errorRestore.file"
             @select="handleFileUpload"
             v-model="formRestore.file"
+            accept=".tar.gz,.tar.gz.gpg,.bin"
             ref="fileRef"
           />
         </template>

@@ -9,7 +9,7 @@ import {
   NeSideDrawer,
   NeButton,
   NeCombobox,
-  NeComboboxOption,
+  type NeComboboxOption,
   focusElement,
   NeSkeleton
 } from '@nethesis/vue-components'

@@ -79,13 +79,13 @@ function validate(): boolean {
   messageBag.value = new MessageBag()
   let errMessage = validateRequired(policyForm.label).errMessage
   if (errMessage) {
-    messageBag.value.set('name', [t(errMessage.valueOf())])
+    messageBag.value.set('name', [errMessage.valueOf()])
     labelElement.value?.focus()
   }
   policyForm.priorities.flat().forEach((priority, index) => {
     errMessage = validateRequired(priority.id).errMessage
     if (errMessage) {
-      messageBag.value.set(`interfaces.${index}.name`, [t(errMessage.valueOf())])
+      messageBag.value.set(`interfaces.${index}.name`, [errMessage.valueOf()])
     }
   })
   return !(messageBag.value.size > 0)
@@ -136,7 +136,7 @@ function submit() {
         ref="labelElement"
         v-model="policyForm.label"
         disabled
-        :invalid-message="messageBag.getFirstFor('name')"
+        :invalid-message="messageBag.getFirstI18nKeyFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"
       />
       <NeRadioSelection
@@ -159,7 +159,7 @@ function submit() {
             <div class="flex gap-x-4">
               <NeCombobox
                 v-model="gateway.id"
-                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.name`)"
+                :invalid-message="t(messageBag.getFirstI18nKeyFor(`interfaces.${index}.name`))"
                 :options="availableGateways"
                 :placeholder="t('standalone.multi_wan.choose_gateway')"
                 class="grow"
@@ -173,7 +173,7 @@ function submit() {
               <NeTextInput
                 v-if="policyForm.selection != 'backup'"
                 v-model.number="gateway.weight"
-                :invalid-message="messageBag.getFirstFor(`interfaces.${index}.weight`)"
+                :invalid-message="t(messageBag.getFirstI18nKeyFor(`interfaces.${index}.weight`))"
                 :placeholder="t('standalone.multi_wan.weight')"
               />
               <NeButton

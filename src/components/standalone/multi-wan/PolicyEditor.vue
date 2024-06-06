@@ -20,7 +20,7 @@ import {
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { usePolicyForm } from '@/composables/usePolicyForm'
-import { MessageBag } from '@/lib/validation'
+import { MessageBag, validateRequired } from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useFirewallStore, Zone } from '@/stores/standalone/firewall'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -30,6 +30,8 @@ import type { AxiosError } from 'axios'
 const { t } = useI18n()
 
 const firewall = useFirewallStore()
+
+const labelElement = ref<HTMLInputElement | null>(null)
 
 onMounted(() => {
   firewall.fetch()
@@ -61,34 +63,64 @@ const availableGateways = computed((): Array<NeComboboxOption> => {
     })
 })
 
-function submit() {
-  ubusCall('ns.mwan', 'edit_policy', {
-    name: props.policy?.name,
-    label: policyForm.label,
-    interfaces: policyForm.priorities
-      .map((gateways, index) =>
-        gateways.map((gateway) => {
-          return {
-            name: gateway.id,
-            metric: (index + 1) * 10,
-            weight: gateway.weight
-          }
-        })
-      )
-      .flat()
+function close() {
+  emit('close')
+  cleanForm()
+}
+function cleanForm() {
+  policyForm.cleanForm()
+  messageBag.value.clear()
+}
+
+/**
+ * Validation form.
+ */
+function validate(): boolean {
+  messageBag.value = new MessageBag()
+  let errMessage = validateRequired(policyForm.label).errMessage
+  if (errMessage) {
+    messageBag.value.set('name', [t(errMessage.valueOf())])
+    labelElement.value?.focus()
+  }
+  policyForm.priorities.flat().forEach((priority, index) => {
+    errMessage = validateRequired(priority.id).errMessage
+    if (errMessage) {
+      messageBag.value.set(`interfaces.${index}.name`, [t(errMessage.valueOf())])
+    }
   })
-    .then(() => {
-      emit('success')
+  return !(messageBag.value.size > 0)
+}
+
+function submit() {
+  if (validate()) {
+    ubusCall('ns.mwan', 'edit_policy', {
+      name: props.policy?.name,
+      label: policyForm.label,
+      interfaces: policyForm.priorities
+        .map((gateways, index) =>
+          gateways.map((gateway) => {
+            return {
+              name: gateway.id,
+              metric: (index + 1) * 10,
+              weight: gateway.weight
+            }
+          })
+        )
+        .flat()
     })
-    .catch((reason: ValidationError) => {
-      messageBag.value = reason.errorBag
-    })
-    .catch((reason: AxiosError) => {
-      error.value = reason
-    })
-    .finally(() => {
-      loading.value = false
-    })
+      .then(() => {
+        emit('success')
+      })
+      .catch((reason: ValidationError) => {
+        messageBag.value = reason.errorBag
+      })
+      .catch((reason: AxiosError) => {
+        error.value = reason
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
 }
 </script>
 
@@ -96,14 +128,14 @@ function submit() {
   <NeSideDrawer
     :is-shown="policy != undefined"
     :title="t('standalone.multi_wan.edit_policy', { name: policyForm.label })"
-    @close="$emit('close')"
+    @close="close()"
   >
     <NeInlineNotification v-if="firewall.error" :kind="'error'" :title="firewall.error.message" />
     <div v-else class="space-y-8">
       <NeTextInput
         ref="labelElement"
         v-model="policyForm.label"
-        :disabled="policy?.name == 'ns_default'"
+        disabled
         :invalid-message="messageBag.getFirstFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"
       />
@@ -169,7 +201,7 @@ function submit() {
       </NeButton>
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="loading" :kind="'tertiary'" @click="$emit('close')">
+        <NeButton :disabled="loading" :kind="'tertiary'" @click="close()">
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton :disabled="loading" :kind="'primary'" :loading="loading" @click="submit()">

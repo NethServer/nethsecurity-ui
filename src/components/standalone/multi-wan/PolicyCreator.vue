@@ -68,6 +68,7 @@ watch(
   () => props.isShown,
   () => {
     policyForm.cleanForm()
+    messageBag.value.clear()
     if (props.createDefault) {
       policyForm.label = 'Default'
     }

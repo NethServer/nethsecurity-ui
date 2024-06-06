@@ -43,6 +43,20 @@ const saving = ref(false)
 const messageBag = ref(new MessageBag())
 const error = ref<Error>()
 
+function close() {
+  emit('close')
+  cleanForm()
+}
+function cleanForm() {
+  name.value = ''
+  policy.value = ''
+  protocol.value = ''
+  sourceAddress.value = ''
+  sourcePort.value = ''
+  destinationAddress.value = ''
+  destinationPort.value = ''
+  validationErrors.value.clear()
+}
 function save() {
   if (isValid()) {
     saving.value = true
@@ -73,12 +87,12 @@ function save() {
   <NeSideDrawer
     :is-shown="rule != undefined"
     :title="t('standalone.multi_wan.edit_rule', { name: name })"
-    @close="$emit('close')"
+    @close="close()"
   >
     <div class="space-y-8">
       <NeTextInput
         v-model="name"
-        :disabled="saving || rule?.name == 'ns_default_rule'"
+        disabled
         :invalid-message="validationErrors.getFirstFor('name')"
         :label="t('standalone.multi_wan.rule_name')"
         :placeholder="t('standalone.multi_wan.rule_name')"
@@ -150,7 +164,7 @@ function save() {
       />
       <hr />
       <div class="flex justify-end gap-4">
-        <NeButton :disabled="saving" :kind="'secondary'" @click="emit('close')">
+        <NeButton :disabled="saving" :kind="'secondary'" @click="close()">
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">

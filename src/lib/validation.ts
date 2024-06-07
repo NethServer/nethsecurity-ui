@@ -383,9 +383,9 @@ export function validatePortRangeForMwan(
   maxRange = 65535
 ): validationOutput {
   let strings: string[]
-  if (value.indexOf(',')) {
+  if (value.includes(',')) {
     strings = value.split(',')
-  } else if (value.indexOf('-')) {
+  } else if (value.includes('-')) {
     strings = value.split('-')
   } else {
     strings = [value]
@@ -393,7 +393,7 @@ export function validatePortRangeForMwan(
   for (const port of strings) {
     const validation = validatePort(port, minRange, maxRange)
     if (!validation.valid) {
-      return { valid: false, errMessage: 'error.invalid_port_range' }
+      return { valid: false, errMessage: 'error.invalid_port_or_port_range' }
     }
   }
   return { valid: true }

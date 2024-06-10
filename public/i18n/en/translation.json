@@ -565,7 +565,7 @@
         "restore_in_progress": "Restoring backup and rebooting the unit, please wait\n",
         "restore_backup": "Restore backup",
         "passphrase": "Passphrase",
-        "passphrase_helper": "Enter the passphrase used to encrypt the backup; if the passphrase is incorrect, it will not be possible to restore the backup.",
+        "passphrase_helper": "Enter the passphrase used to encrypt the backup, or leave empty if the backup is not encrypted. If the passphrase is incorrect, the backup cannot be restored.",
         "source": "Backup source",
         "backup": "Backup",
         "from_backup": "From last backups",

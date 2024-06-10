@@ -141,19 +141,6 @@ function validateRestore(): boolean {
   let isValidationOk = true
   let isFocusInput = false
 
-  if (isSetPassphrase.value) {
-    let { valid, errMessage } = validateRequired(formRestore.value.passphrase)
-    if (!valid) {
-      errorRestore.value.passphrase = t(errMessage as string)
-      isValidationOk = false
-    }
-  }
-
-  if (!isValidationOk) {
-    focusElement(passphraseRef)
-    isFocusInput = true
-  }
-
   if (typeRestore.value === 'upload_file') {
     let { valid, errMessage } = validateRequired(
       formRestore?.value?.file ? formRestore.value.file : ''
@@ -342,23 +329,23 @@ function setRestoreTimer() {
             ref="fileRef"
           />
         </template>
-        <template v-if="isSetPassphrase">
-          <NeTextInput
-            v-model="formRestore.passphrase"
-            :invalid-message="errorRestore.passphrase"
-            :label="t('standalone.backup_and_restore.restore.passphrase')"
-            isPassword
-            ref="passphraseRef"
-          >
-            <template #tooltip>
-              <NeTooltip>
-                <template #content>
-                  {{ t('standalone.backup_and_restore.restore.passphrase_helper') }}
-                </template>
-              </NeTooltip>
-            </template>
-          </NeTextInput>
-        </template>
+        <NeTextInput
+          v-model="formRestore.passphrase"
+          :invalid-message="errorRestore.passphrase"
+          :label="t('standalone.backup_and_restore.restore.passphrase')"
+          isPassword
+          optional
+          :optionalLabel="t('common.optional')"
+          ref="passphraseRef"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.backup_and_restore.restore.passphrase_helper') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
         <hr />
         <NeInlineNotification
           v-if="errorRestoreBackup.notificationTitle"

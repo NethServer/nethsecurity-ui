@@ -39,7 +39,6 @@ const formRestore = ref({
 const loading = ref(true)
 const loadingRestore = ref(false)
 const isEnterprise = ref(false)
-const isSetPassphrase = ref(false)
 const showRestoreDrawer = ref(false)
 const typeRestore = ref('upload_file')
 const listBackups: any = ref([])
@@ -84,7 +83,6 @@ let errorRestore = ref({
 
 onMounted(() => {
   getSubscription()
-  getIsPassphrase()
 })
 
 async function getSubscription() {
@@ -97,21 +95,6 @@ async function getSubscription() {
     }
   } catch (exception: any) {
     errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    errorPage.value.notificationDetails = exception.toString()
-  } finally {
-    loading.value = false
-  }
-}
-
-async function getIsPassphrase() {
-  try {
-    let res = await ubusCall('ns.backup', 'is-passphrase-set', {})
-    if (res?.data?.values?.set) {
-      isSetPassphrase.value = true
-    }
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_passphrase')
     errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
     errorPage.value.notificationDetails = exception.toString()
   } finally {
@@ -181,7 +164,7 @@ async function restoreBackup() {
       let payload = {}
       let methodCall = 'restore'
 
-      if (isSetPassphrase.value) {
+      if (formRestore.value.passphrase) {
         Object.assign(payload, { passphrase: formRestore.value.passphrase })
       }
 

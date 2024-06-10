@@ -330,7 +330,8 @@
     "cannot_remove_unit": "Cannot remove unit",
     "cannot_scan_network": "Cannot scan network",
     "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks",
-    "length_12_max": "Maximum 12 characters allowed"
+    "length_12_max": "Maximum 12 characters allowed",
+    "sticky_not_valid": "Invalid sticky value"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -883,6 +884,8 @@
       "destination_address": "Destination Address",
       "destination_port": "Destination Port",
       "protocol": "Protocol",
+      "sticky": "Sticky",
+      "sticky_tooltip": "Allow traffic from the same source IP address to use same WAN interface as prior session (default timeout: 10 minutes).",
       "edit_rule": "Edit {name} rule",
       "priority": "Priority {n}",
       "rules": "Rules",

@@ -6,7 +6,14 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { ref, toRef } from 'vue'
-import { NeCombobox, NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  NeButton,
+  NeSideDrawer,
+  NeTextInput,
+  NeTooltip,
+  NeToggle
+} from '@nethesis/vue-components'
 import { MessageBag } from '@/lib/validation'
 import type { Policy, Rule } from '@/composables/useMwan'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
@@ -30,6 +37,7 @@ const {
   sourcePort,
   destinationAddress,
   destinationPort,
+  sticky,
   validationErrors,
   isValid
 } = useRuleForm(
@@ -68,7 +76,8 @@ function save() {
       source_address: sourceAddress.value,
       source_port: sourcePort.value,
       destination_address: destinationAddress.value,
-      destination_port: destinationPort.value
+      destination_port: destinationPort.value,
+      sticky: sticky.value
     })
       .then(() => emit('success'))
       .catch((reason: Error) => {
@@ -162,6 +171,15 @@ function save() {
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"
       />
+      <NeToggle v-model="sticky" :label="t('standalone.multi_wan.sticky')">
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.sticky_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" :kind="'secondary'" @click="close()">

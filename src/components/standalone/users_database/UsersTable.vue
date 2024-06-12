@@ -15,9 +15,11 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
-  useItemPagination
+  useItemPagination,
+  NeTooltip
 } from '@nethesis/vue-components'
 import type { User } from './UsersDatabaseManager.vue'
+import { faCrown } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 
 const props = defineProps<{
@@ -28,6 +30,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   delete: [item: User]
   edit: [item: User]
+  set_admin: [item: User]
+  remove_admin: [item: User]
 }>()
 
 const { t } = useI18n()
@@ -47,7 +51,26 @@ function getDropdownItems(item: User) {
       action: () => {
         emit('delete', item)
       }
-    }
+    },
+    item.admin
+      ? {
+          id: 'remove_admin',
+          label: t('standalone.users_database.remove_admin'),
+          iconStyle: 'fas',
+          icon: 'circle-minus',
+          action: () => {
+            emit('remove_admin', item)
+          }
+        }
+      : {
+          id: 'set_admin',
+          label: t('standalone.users_database.set_admin'),
+          iconStyle: 'fas',
+          icon: 'crown',
+          action: () => {
+            emit('set_admin', item)
+          }
+        }
   ]
 }
 </script>
@@ -68,7 +91,24 @@ function getDropdownItems(item: User) {
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.name">
         <NeTableCell :data-label="t('standalone.users_database.username')">
-          {{ item.name }}
+          <div :class="['flex', 'flex-row', 'items-center']">
+            {{ item.name }}
+            <NeTooltip interactive v-if="item.admin">
+              <template #trigger>
+                <FontAwesomeIcon
+                  v-if="item.admin"
+                  :icon="faCrown"
+                  class="ml-2 text-indigo-700 dark:text-indigo-500"
+                  aria-hidden="true"
+                />
+              </template>
+              <template #content>
+                <p class="text-center">
+                  {{ t('standalone.users_database.administrator_table_tooltip') }}
+                </p>
+              </template></NeTooltip
+            >
+          </div>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.users_database.display_name')">
           {{ item.description || '-' }}

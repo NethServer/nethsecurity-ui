@@ -36,6 +36,7 @@ export type User = {
   password?: string
   openpvn_ipaddr?: string
   openvpn_enabled?: string
+  admin: boolean
 }
 
 const props = defineProps<{
@@ -69,6 +70,14 @@ function openCreateEditUserDrawer(itemToEdit?: User) {
 function openDeleteUserModal(itemToDelete: User) {
   selectedUser.value = itemToDelete
   showDeleteUserModal.value = true
+}
+async function set_admin(set_admin: User) {
+  await ubusCall('ns.users', 'set-admin', { name: set_admin.name, database: 'main' })
+  refreshUsers()
+}
+async function remove_admin(remove_admin: User) {
+  await ubusCall('ns.users', 'remove-admin', { name: remove_admin.name, database: 'main' })
+  refreshUsers()
 }
 
 async function fetchUsers() {
@@ -252,6 +261,8 @@ onMounted(() => {
         :users="users"
         @delete="openDeleteUserModal"
         @edit="openCreateEditUserDrawer"
+        @set_admin="set_admin"
+        @remove_admin="remove_admin"
       />
     </template>
   </div>

@@ -65,6 +65,7 @@ import {
   faStar as fasStar,
   faSun as fasSun,
   faTrash as fasTrash,
+  faCrown as fasCrown,
   faUnlock as fasUnlock,
   faUpRightAndDownLeftFromCenter,
   faUserGear,
@@ -231,4 +232,5 @@ export async function loadFontAwesome(app: any) {
   library.add(faLinkSlash)
   library.add(fasTerminal)
   library.add(faTable)
+  library.add(fasCrown)
 }

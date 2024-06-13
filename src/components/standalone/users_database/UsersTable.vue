@@ -30,8 +30,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   delete: [item: User]
   edit: [item: User]
-  set_admin: [item: User]
-  remove_admin: [item: User]
+  setAdmin: [item: User]
+  removeAdmin: [item: User]
 }>()
 
 const { t } = useI18n()
@@ -59,7 +59,7 @@ function getDropdownItems(item: User) {
           iconStyle: 'fas',
           icon: 'circle-minus',
           action: () => {
-            emit('remove_admin', item)
+            emit('removeAdmin', item)
           }
         }
       : {
@@ -68,7 +68,7 @@ function getDropdownItems(item: User) {
           iconStyle: 'fas',
           icon: 'crown',
           action: () => {
-            emit('set_admin', item)
+            emit('setAdmin', item)
           }
         }
   ]

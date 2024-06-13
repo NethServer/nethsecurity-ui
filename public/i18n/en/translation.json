@@ -330,7 +330,9 @@
     "cannot_remove_unit": "Cannot remove unit",
     "cannot_scan_network": "Cannot scan network",
     "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks",
-    "length_12_max": "Maximum 12 characters allowed"
+    "length_12_max": "Maximum 12 characters allowed",
+    "backup_passphrase_decryption_failed": "Decryption failed: passphrase may be incorrect",
+    "backup_passphrase_restore_failed": "Restore failed: passphrase may be required or backup file may be invalid"
   },
   "ne_text_input": {
     "show_password": "Show password",

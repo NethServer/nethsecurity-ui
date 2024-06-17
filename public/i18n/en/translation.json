@@ -882,7 +882,7 @@
       "source_port": "Source Port",
       "destination_address": "Destination Address",
       "destination_port": "Destination Port",
-      "ports_tooltip": "Enter a single port, multiple ports separated by a comma (e.g. '8686, 9090') and/or port ranges (e.g. '5500-5600')",
+      "ports_tooltip": "Enter a single port, multiple ports separated by a comma (e.g. '8686, 9090') or port ranges (e.g. '5500-5600')",
       "protocol": "Protocol",
       "edit_rule": "Edit {name} rule",
       "priority": "Priority {n}",

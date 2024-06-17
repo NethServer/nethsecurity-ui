@@ -330,7 +330,8 @@
     "cannot_remove_unit": "Cannot remove unit",
     "cannot_scan_network": "Cannot scan network",
     "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks",
-    "length_12_max": "Maximum 12 characters allowed"
+    "length_12_max": "Maximum 12 characters allowed",
+    "sticky_not_valid": "Invalid sticky value"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -565,7 +566,7 @@
         "restore_in_progress": "Restoring backup and rebooting the unit, please wait\n",
         "restore_backup": "Restore backup",
         "passphrase": "Passphrase",
-        "passphrase_helper": "Enter the passphrase used to encrypt the backup; if the passphrase is incorrect, it will not be possible to restore the backup.",
+        "passphrase_helper": "Enter the passphrase used to encrypt the backup, or leave empty if the backup is not encrypted. If the passphrase is incorrect, the backup cannot be restored.",
         "source": "Backup source",
         "backup": "Backup",
         "from_backup": "From last backups",
@@ -882,7 +883,10 @@
       "source_port": "Source Port",
       "destination_address": "Destination Address",
       "destination_port": "Destination Port",
+      "ports_tooltip": "Enter a single port, multiple ports separated by a comma (e.g. '8686, 9090') or port ranges (e.g. '5500-5600')",
       "protocol": "Protocol",
+      "sticky": "Sticky",
+      "sticky_tooltip": "Allow traffic from the same source IP address to use same WAN interface as prior session (default timeout: 10 minutes).",
       "edit_rule": "Edit {name} rule",
       "priority": "Priority {n}",
       "rules": "Rules",

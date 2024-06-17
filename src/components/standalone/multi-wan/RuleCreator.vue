@@ -4,7 +4,13 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  NeButton,
+  NeSideDrawer,
+  NeTextInput,
+  NeTooltip
+} from '@nethesis/vue-components'
 import { ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Policy } from '@/composables/useMwan'
@@ -142,7 +148,15 @@ function save() {
         :label="t('standalone.multi_wan.source_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="source_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
         v-model.trim="destinationAddress"
         :disabled="saving"
@@ -159,7 +173,15 @@ function save() {
         :label="t('standalone.multi_wan.destination_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" :kind="'secondary'" @click="close()">

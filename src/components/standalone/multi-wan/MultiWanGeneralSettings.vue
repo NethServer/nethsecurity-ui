@@ -178,7 +178,7 @@ onMounted(() => {
           <div v-for="index in data.track_ip.keys()" :key="index" class="flex items-center">
             <div class="grow">
               <NeTextInput
-                v-model="data.track_ip[index]"
+                v-model.trim="data.track_ip[index]"
                 :disabled="sending"
                 :invalid-message="messageBag.get(`track_ip.${index}`)?.[0]"
               />

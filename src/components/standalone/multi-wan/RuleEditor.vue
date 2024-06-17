@@ -100,7 +100,7 @@ function save() {
   >
     <div class="space-y-8">
       <NeTextInput
-        v-model="name"
+        v-model.trim="name"
         disabled
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.rule_name')"
@@ -138,7 +138,7 @@ function save() {
         :optionalLabel="t('common.optional')"
       />
       <NeTextInput
-        v-model="sourceAddress"
+        v-model.trim="sourceAddress"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_address'))"
         :label="t('standalone.multi_wan.source_address')"
@@ -147,15 +147,23 @@ function save() {
       />
       <NeTextInput
         v-if="protocol == 'tcp' || protocol == 'udp'"
-        v-model="sourcePort"
+        v-model.trim="sourcePort"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_port'))"
         :label="t('standalone.multi_wan.source_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="source_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
-        v-model="destinationAddress"
+        v-model.trim="destinationAddress"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_address'))"
         :label="t('standalone.multi_wan.destination_address')"
@@ -164,13 +172,21 @@ function save() {
       />
       <NeTextInput
         v-if="protocol == 'tcp' || protocol == 'udp'"
-        v-model="destinationPort"
+        v-model.trim="destinationPort"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_port'))"
         :label="t('standalone.multi_wan.destination_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeToggle
         v-model="sticky"
         :topLabel="t('standalone.multi_wan.sticky')"

@@ -150,7 +150,7 @@ function create() {
     <div v-else class="space-y-8">
       <NeTextInput
         ref="labelElement"
-        v-model="policyForm.label"
+        v-model.trim="policyForm.label"
         :disabled="createDefault"
         :invalid-message="t(messageBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.label_input_label')"

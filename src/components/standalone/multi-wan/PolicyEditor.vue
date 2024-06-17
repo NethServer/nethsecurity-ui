@@ -134,7 +134,7 @@ function submit() {
     <div v-else class="space-y-8">
       <NeTextInput
         ref="labelElement"
-        v-model="policyForm.label"
+        v-model.trim="policyForm.label"
         disabled
         :invalid-message="messageBag.getFirstI18nKeyFor('name')"
         :label="t('standalone.multi_wan.label_input_label')"

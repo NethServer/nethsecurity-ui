@@ -9,7 +9,8 @@ import {
   NeButton,
   NeSideDrawer,
   NeTextInput,
-  NeTooltip
+  NeTooltip,
+  NeToggle
 } from '@nethesis/vue-components'
 import { ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -40,6 +41,7 @@ const {
   sourcePort,
   destinationAddress,
   destinationPort,
+  sticky,
   validationErrors,
   isValid
 } = useRuleForm(toRef(() => props.policies))
@@ -72,7 +74,8 @@ function save() {
       source_address: sourceAddress.value,
       source_port: sourcePort.value,
       destination_address: destinationAddress.value,
-      destination_port: destinationPort.value
+      destination_port: destinationPort.value,
+      sticky: sticky.value
     })
       .then(() => emit('success'))
       .catch((reason: Error) => {
@@ -182,6 +185,19 @@ function save() {
           </NeTooltip>
         </template>
       </NeTextInput>
+      <NeToggle
+        v-model="sticky"
+        :topLabel="t('standalone.multi_wan.sticky')"
+        :label="sticky ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
+            <template #content>
+              {{ t('standalone.multi_wan.sticky_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" :kind="'secondary'" @click="close()">

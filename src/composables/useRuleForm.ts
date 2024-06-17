@@ -66,6 +66,7 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
         sourcePort.value = rule.value.source_port ?? ''
         destinationAddress.value = rule.value.destination_address ?? ''
         destinationPort.value = rule.value.destination_port ?? ''
+        sticky.value = rule.value.sticky
       }
     }
   )
@@ -77,6 +78,7 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
   const sourcePort = ref('')
   const destinationAddress = ref('')
   const destinationPort = ref('')
+  const sticky = ref(false)
 
   const validationErrors = ref(new MessageBag())
 
@@ -131,6 +133,7 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     destinationAddress,
     destinationPort,
     validationErrors,
+    sticky,
     isValid
   }
 }

@@ -1689,7 +1689,12 @@
       "unchanged": "Unchanged",
       "remote_database_added": "Remote database added",
       "remote_database_added_description": "{name} added successfully",
-      "add_remote_database_tooltip": "Remote users databases are available only with a subscription plan"
+      "add_remote_database_tooltip": "Remote users databases are available only with a subscription plan",
+      "administrator": "Administrator user",
+      "administrator_tooltip": "A user promoted to administrator can access the administration web interface and configure this unit.",
+      "remove_admin": "Remove from administrator users",
+      "set_admin": "Set as administrator user",
+      "administrator_table_tooltip": "Administrator user"
     },
     "logs": {
       "title": "Logs",

@@ -169,9 +169,13 @@ function save() {
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"
       />
-      <NeToggle v-model="sticky" :label="t('standalone.multi_wan.sticky')">
-        <template #tooltip>
-          <NeTooltip>
+      <NeToggle
+        v-model="sticky"
+        :topLabel="t('standalone.multi_wan.sticky')"
+        :label="sticky ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
             <template #content>
               {{ t('standalone.multi_wan.sticky_tooltip') }}
             </template>

@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
   NeCombobox,
   NeFileInput,
@@ -153,6 +153,28 @@ function clearErrors() {
     file: '',
     backup: ''
   }
+  errorRestoreBackup.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    notificationDetails: ''
+  }
+}
+
+function cleanForm() {
+  formRestore.value = {
+    passphrase: '',
+    file: undefined,
+    backup: ''
+  }
+  uploadedBackupFileName.value = ''
+  canRestoreBackupFile.value = false
+  uploadProgress.value = 0
+}
+
+function close() {
+  showRestoreDrawer.value = false
+  cleanForm()
+  clearErrors()
 }
 
 async function restoreBackup() {
@@ -186,9 +208,16 @@ async function restoreBackup() {
         errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
       }
     } catch (exception: any) {
-      errorPage.value.notificationTitle = t('error.cannot_restore_backup')
-      errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorPage.value.notificationDetails = exception.toString()
+      if (exception instanceof ValidationError) {
+        for (const [, value] of exception.errorBag) {
+          const errorMessage = value[0]
+          errorRestore.value.passphrase = t('error.backup_passphrase_' + errorMessage)
+        }
+      } else {
+        // this is an unknown error not expected
+        errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
+        errorRestoreBackup.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      }
     } finally {
       loadingRestore.value = false
     }
@@ -271,7 +300,7 @@ function setRestoreTimer() {
     <NeSideDrawer
       :is-shown="showRestoreDrawer"
       :title="t('standalone.backup_and_restore.restore.restore_backup')"
-      @close="showRestoreDrawer = false"
+      @close="close()"
     >
       <div class="space-y-8">
         <template v-if="isEnterprise">
@@ -342,11 +371,7 @@ function setRestoreTimer() {
           </template>
         </NeInlineNotification>
         <div class="flex justify-end gap-4">
-          <NeButton
-            :disabled="loadingRestore"
-            :kind="'tertiary'"
-            @click="showRestoreDrawer = false"
-          >
+          <NeButton :disabled="loadingRestore" :kind="'tertiary'" @click="close()">
             {{ t('common.cancel') }}
           </NeButton>
           <NeButton

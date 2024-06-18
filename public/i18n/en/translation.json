@@ -331,6 +331,8 @@
     "cannot_scan_network": "Cannot scan network",
     "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks",
     "length_12_max": "Maximum 12 characters allowed",
+    "backup_passphrase_decryption_failed": "Decryption failed: passphrase may be incorrect",
+    "backup_passphrase_restore_failed": "Restore failed: passphrase may be required or backup file may be invalid",
     "sticky_not_valid": "Invalid sticky value"
   },
   "ne_text_input": {

@@ -6,7 +6,14 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { ref, toRef } from 'vue'
-import { NeCombobox, NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
+import {
+  NeCombobox,
+  NeButton,
+  NeSideDrawer,
+  NeTextInput,
+  NeTooltip,
+  NeToggle
+} from '@nethesis/vue-components'
 import { MessageBag } from '@/lib/validation'
 import type { Policy, Rule } from '@/composables/useMwan'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
@@ -30,6 +37,7 @@ const {
   sourcePort,
   destinationAddress,
   destinationPort,
+  sticky,
   validationErrors,
   isValid
 } = useRuleForm(
@@ -68,7 +76,8 @@ function save() {
       source_address: sourceAddress.value,
       source_port: sourcePort.value,
       destination_address: destinationAddress.value,
-      destination_port: destinationPort.value
+      destination_port: destinationPort.value,
+      sticky: sticky.value
     })
       .then(() => emit('success'))
       .catch((reason: Error) => {
@@ -91,7 +100,7 @@ function save() {
   >
     <div class="space-y-8">
       <NeTextInput
-        v-model="name"
+        v-model.trim="name"
         disabled
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('name'))"
         :label="t('standalone.multi_wan.rule_name')"
@@ -129,7 +138,7 @@ function save() {
         :optionalLabel="t('common.optional')"
       />
       <NeTextInput
-        v-model="sourceAddress"
+        v-model.trim="sourceAddress"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_address'))"
         :label="t('standalone.multi_wan.source_address')"
@@ -138,15 +147,23 @@ function save() {
       />
       <NeTextInput
         v-if="protocol == 'tcp' || protocol == 'udp'"
-        v-model="sourcePort"
+        v-model.trim="sourcePort"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('source_port'))"
         :label="t('standalone.multi_wan.source_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="source_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
       <NeTextInput
-        v-model="destinationAddress"
+        v-model.trim="destinationAddress"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_address'))"
         :label="t('standalone.multi_wan.destination_address')"
@@ -155,13 +172,34 @@ function save() {
       />
       <NeTextInput
         v-if="protocol == 'tcp' || protocol == 'udp'"
-        v-model="destinationPort"
+        v-model.trim="destinationPort"
         :disabled="saving"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('destination_port'))"
         :label="t('standalone.multi_wan.destination_port')"
         :placeholder="t('standalone.multi_wan.any')"
         name="destination_port"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.multi_wan.ports_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeTextInput>
+      <NeToggle
+        v-model="sticky"
+        :topLabel="t('standalone.multi_wan.sticky')"
+        :label="sticky ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
+            <template #content>
+              {{ t('standalone.multi_wan.sticky_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" :kind="'secondary'" @click="close()">

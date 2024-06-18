@@ -17,7 +17,9 @@ import {
   NeButton,
   NeSideDrawer,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeTooltip,
+  NeToggle
 } from '@nethesis/vue-components'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { User } from './UsersDatabaseManager.vue'
@@ -45,16 +47,19 @@ const username = ref('')
 const displayName = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const admin = ref(false)
 
 async function resetForm() {
   if (props.itemToEdit) {
     id.value = props.itemToEdit.id
     username.value = props.itemToEdit.name
     displayName.value = props.itemToEdit.description
+    admin.value = props.itemToEdit.admin
   } else {
     id.value = ''
     username.value = ''
     displayName.value = ''
+    admin.value = false
   }
 
   password.value = ''
@@ -129,6 +134,11 @@ async function createOrEditUser() {
 
     if (validate()) {
       await ubusCall('ns.users', requestType, payload)
+      if (admin.value && !props.itemToEdit?.admin) {
+        await ubusCall('ns.users', 'set-admin', { name: payload.name, database: 'main' })
+      } else if (!admin.value && props.itemToEdit?.admin) {
+        await ubusCall('ns.users', 'remove-admin', { name: payload.name, database: 'main' })
+      }
       emit('add-edit-user')
       close()
     }
@@ -214,6 +224,19 @@ watch(
         :is-password="true"
         :placeholder="id ? t('standalone.users_database.unchanged') : ''"
       />
+      <NeToggle
+        v-model="admin"
+        :topLabel="t('standalone.users_database.administrator')"
+        :label="admin ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
+            <template #content>
+              {{ t('standalone.users_database.administrator_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>

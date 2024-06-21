@@ -5,13 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeEmptyState,
-  NeInlineNotification,
-  NeTextInput,
-  getAxiosErrorMessage
-} from '@nethesis/vue-components'
+import { NeButton, NeEmptyState, NeInlineNotification, NeTextInput } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -20,24 +14,20 @@ import HostSetsTable from './HostSetsTable.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
 import ObjectUsagesModal from './ObjectUsagesModal.vue'
 import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
-import { getHostSetIcon } from '@/lib/standalone/user_objects'
-
-export type HostSet = {
-  id: string
-  name: string
-  family?: IpVersion
-  ipaddr: string[]
-  singleton: boolean
-  subtype: string
-  used?: boolean
-  matches?: string[]
-}
-
-export type IpVersion = 'ipv4' | 'ipv6'
+import { useHostSets, type HostSet } from '@/composables/useHostSets'
 
 const { t } = useI18n()
+const {
+  hostSets,
+  listHostSets,
+  loadingListHostSets,
+  errorListHostSets,
+  errorListHostSetsDetails,
+  hostSetsComboboxOptions,
+  searchStringInHostSet
+} = useHostSets()
+
 const uciChangesStore = useUciPendingChangesStore()
-const hostSets = ref<HostSet[]>([])
 const currentHostSet = ref<HostSet | undefined>(undefined)
 const currentHostSetName = ref('')
 const currentUsageIds = ref<string[]>([])
@@ -46,32 +36,6 @@ const isShownDeleteHostSetModal = ref(false)
 const isShownUsagesModal = ref(false)
 const isShownCannotDeleteObjectModal = ref(false)
 const textFilter = ref('')
-
-const loading = ref({
-  listHostSets: false,
-  listStaticLeases: false,
-  listDnsRecords: false
-})
-
-const error = ref({
-  listHostSets: '',
-  listHostSetsDetails: '',
-  listStaticLeases: '',
-  listStaticLeasesDetails: '',
-  listDnsRecords: '',
-  listDnsRecordsDetails: ''
-})
-
-const hostSetsComboboxOptions = computed(() => {
-  return hostSets.value.map((hostSet) => {
-    return {
-      id: hostSet.id,
-      label: hostSet.name,
-      description: t(`standalone.objects.subtype_${hostSet.subtype}`),
-      icon: getHostSetIcon(hostSet.subtype)
-    }
-  })
-})
 
 const filteredHostSets = computed(() => {
   if (!textFilter.value) {
@@ -88,51 +52,8 @@ onMounted(() => {
 })
 
 function loadData() {
-  listHosts()
+  listHostSets()
   uciChangesStore.getChanges()
-}
-
-function searchStringInHostSet(hostSet: HostSet, queryText: string) {
-  const regex = /[^a-zA-Z0-9-]/g
-  queryText = queryText.replace(regex, '')
-  let found = false
-
-  // search in string attributes
-  found = ['name', 'subtype'].some((attrName) => {
-    const attrValue = hostSet[attrName as keyof HostSet] as string
-    return new RegExp(queryText, 'i').test(attrValue?.replace(regex, ''))
-  })
-
-  if (found) {
-    return true
-  }
-
-  // search in records (ipaddr attribute)
-  found = !!hostSet.ipaddr?.some((record) => {
-    return new RegExp(queryText, 'i').test(record?.replace(regex, ''))
-  })
-
-  if (found) {
-    return true
-  }
-}
-
-async function listHosts() {
-  loading.value.listHostSets = true
-  hostSets.value = []
-  error.value.listHostSets = ''
-  error.value.listHostSetsDetails = ''
-
-  try {
-    const res = await ubusCall('ns.objects', 'list-hosts')
-    hostSets.value = res.data.values as HostSet[]
-  } catch (err: any) {
-    console.error(err)
-    error.value.listHostSets = t(getAxiosErrorMessage(err))
-    error.value.listHostSetsDetails = err.toString()
-  } finally {
-    loading.value.listHostSets = false
-  }
 }
 
 function showCreateHostSetDrawer() {
@@ -171,12 +92,12 @@ function showUsagesModal(hostSet: HostSet) {
         {{ t('standalone.objects.host_sets_page_description') }}
       </div>
       <NeButton
-        v-if="loading.listHostSets || hostSets.length"
+        v-if="loadingListHostSets || hostSets.length"
         kind="secondary"
         size="lg"
         @click="showCreateHostSetDrawer"
         class="shrink-0"
-        :disabled="loading.listHostSets"
+        :disabled="loadingListHostSets"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -188,14 +109,14 @@ function showUsagesModal(hostSet: HostSet) {
     <div class="space-y-6">
       <!-- list host sets error notification -->
       <NeInlineNotification
-        v-if="error.listHostSets"
+        v-if="errorListHostSets"
         kind="error"
         :title="t('error.cannot_retrieve_host_sets')"
-        :description="error.listHostSets"
+        :description="errorListHostSets"
         class="mb-5"
       >
-        <template #details v-if="error.listHostSetsDetails">
-          {{ error.listHostSetsDetails }}
+        <template #details v-if="errorListHostSetsDetails">
+          {{ errorListHostSetsDetails }}
         </template>
       </NeInlineNotification>
       <!-- text filter -->
@@ -203,20 +124,20 @@ function showUsagesModal(hostSet: HostSet) {
         <NeTextInput
           :placeholder="t('standalone.objects.filter_host_sets')"
           v-model.trim="textFilter"
-          :disabled="loading.listHostSets"
+          :disabled="loadingListHostSets"
           class="max-w-xs"
         />
         <NeButton
           kind="tertiary"
           @click="textFilter = ''"
-          :disabled="loading.listHostSets || !textFilter"
+          :disabled="loadingListHostSets || !textFilter"
         >
           {{ t('common.clear_filter') }}
         </NeButton>
       </div>
       <!-- empty state -->
       <NeEmptyState
-        v-if="!hostSets.length && !loading.listHostSets"
+        v-if="!hostSets.length && !loadingListHostSets"
         :title="t('standalone.objects.no_host_sets')"
         :icon="['fas', 'circle-info']"
         class="mt-4"
@@ -226,7 +147,7 @@ function showUsagesModal(hostSet: HostSet) {
           size="lg"
           @click="showCreateHostSetDrawer"
           class="shrink-0"
-          :disabled="loading.listHostSets"
+          :disabled="loadingListHostSets"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -236,7 +157,7 @@ function showUsagesModal(hostSet: HostSet) {
       </NeEmptyState>
       <!-- no host set matching filter -->
       <NeEmptyState
-        v-else-if="!filteredHostSets.length && !loading.listHostSets"
+        v-else-if="!filteredHostSets.length && !loadingListHostSets"
         :title="t('standalone.objects.no_hosts_found')"
         :description="t('common.try_changing_search_filter')"
         :icon="['fas', 'circle-info']"
@@ -249,7 +170,7 @@ function showUsagesModal(hostSet: HostSet) {
       <!-- host sets table -->
       <HostSetsTable
         v-else
-        :loading="loading.listHostSets"
+        :loading="loadingListHostSets"
         :filteredHostSets="filteredHostSets"
         :allHostSets="hostSets"
         @editHostSet="showEditHostSetDrawer"

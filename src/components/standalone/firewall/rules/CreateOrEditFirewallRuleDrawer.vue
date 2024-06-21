@@ -14,9 +14,9 @@ import {
   NeRadioSelection,
   NeTextInput,
   getAxiosErrorMessage,
+  NeToggle,
   focusElement
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethesis/vue-components'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
@@ -34,8 +34,11 @@ import {
   validateIpCidr,
   validatePortListOrRange,
   validateRequired,
-  validateRequiredOption
+  validateRequiredOption,
+  validateAnyOf
 } from '@/lib/validation'
+import NeMultiTextInput from '../../NeMultiTextInput.vue'
+import { useObjects, type ObjectReference } from '@/composables/useObjects'
 
 const props = defineProps({
   ruleType: {
@@ -59,19 +62,27 @@ const props = defineProps({
 const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
+const { getObjectIcon } = useObjects()
+
 const firewallConfig = useFirewallStore()
 const isRuleEnabled = ref(true)
 const name = ref('')
 const nameRef = ref()
-const sourceAddresses = ref<NeComboboxOption[]>([])
-const sourceAddressesRef = ref()
-const destinationAddresses = ref<NeComboboxOption[]>([])
-const destinationAddressesRef = ref()
+const sourceType = ref<'source_address' | 'source_object' | 'source_any'>('source_address')
+const destinationType = ref<'destination_address' | 'destination_object' | 'destination_any'>(
+  'destination_address'
+)
+const sourceAddresses = ref<string[]>([''])
+const destinationAddresses = ref<string[]>([''])
+const sourceAddressObject = ref('')
+const destinationAddressObject = ref('')
+const sourceAddressObjectRef = ref()
+const destinationAddressObjectRef = ref()
 const sourceZone = ref('*')
 const sourceZoneRef = ref()
 const destinationZone = ref('*')
 const destinationZoneRef = ref()
-const addressOptions = ref<NeComboboxOption[]>([])
+const objectSuggestions = ref<ObjectReference[]>([])
 const service = ref('*')
 const serviceRef = ref()
 const serviceSuggestions = ref<NeComboboxOption[]>([])
@@ -86,6 +97,8 @@ const isExpandedAdvancedSettings = ref(false)
 const tags: Ref<NeComboboxOption[]> = ref([])
 const isLoggingEnabled = ref(false)
 const errorBag = ref(new MessageBag())
+const sourceAddressesErrors = ref<string[]>([])
+const destinationAddressesErrors = ref<string[]>([])
 
 const actionOptions = ref([
   {
@@ -113,9 +126,39 @@ const positionOptions = ref([
   }
 ])
 
+const sourceTypeOptions = ref([
+  {
+    id: 'source_address',
+    label: t('standalone.firewall_rules.enter_one_or_more_addresses')
+  },
+  {
+    id: 'source_object',
+    label: t('standalone.firewall_rules.select_an_object')
+  },
+  {
+    id: 'source_any',
+    label: t('standalone.firewall_rules.any_source_address')
+  }
+])
+
+const destinationTypeOptions = ref([
+  {
+    id: 'destination_address',
+    label: t('standalone.firewall_rules.enter_one_or_more_addresses')
+  },
+  {
+    id: 'destination_object',
+    label: t('standalone.firewall_rules.select_an_object')
+  },
+  {
+    id: 'destination_any',
+    label: t('standalone.firewall_rules.any_destination_address')
+  }
+])
+
 let loading = ref({
   listServiceSuggestions: false,
-  listHostSuggestions: false,
+  listObjectSuggestions: false,
   listProtocols: false,
   saveRule: false
 })
@@ -123,8 +166,8 @@ let loading = ref({
 let error = ref({
   listServiceSuggestions: '',
   listServiceSuggestionsDetails: '',
-  listHostSuggestions: '',
-  listHostSuggestionsDetails: '',
+  listObjectSuggestions: '',
+  listObjectSuggestionsDetails: '',
   listProtocols: '',
   listProtocolsDetails: '',
   saveRule: '',
@@ -194,6 +237,17 @@ const isTcpOrUdpProtocolSelected = computed(() => {
   })
 })
 
+const objectsComboboxOptions = computed(() => {
+  return objectSuggestions.value.map((obj) => {
+    return {
+      id: obj.id,
+      label: obj.name,
+      description: t(`standalone.objects.subtype_${obj.subtype}`),
+      icon: getObjectIcon(obj.subtype)
+    }
+  })
+})
+
 watch(
   () => props.isShown,
   () => {
@@ -205,14 +259,18 @@ watch(
         focusElement(nameRef)
       })
       listServiceSuggestions()
-      listHostSuggestions()
+      listObjectSuggestions()
 
       if (isCreatingRule.value) {
         // creating rule, reset form to defaults
         isRuleEnabled.value = true
         name.value = ''
-        sourceAddresses.value = []
-        destinationAddresses.value = []
+        sourceType.value = 'source_address'
+        destinationType.value = 'destination_address'
+        sourceAddresses.value = ['']
+        sourceAddressObject.value = ''
+        destinationAddresses.value = ['']
+        destinationAddressObject.value = ''
         sourceZone.value = '*'
         destinationZone.value = '*'
         service.value = '*'
@@ -226,7 +284,7 @@ watch(
       } else if (props.currentRule) {
         // editing or duplicating rule
         isRuleEnabled.value = props.currentRule.enabled || false
-        // source/destination addresses will be set inside listHostSuggestions
+        // source/destination addresses will be set inside listObjectSuggestions
         sourceZone.value = props.currentRule.src || '*'
         destinationZone.value = props.currentRule.dest || '*'
         service.value = '*'
@@ -273,24 +331,27 @@ function mapSourceAddressesToUi(rule: FirewallRule) {
   }
   const srcAddresses = []
 
-  for (const srcIp of rule.src_ip) {
-    const srcAddr = srcIp as RuleHost
-    const addrFound = addressOptions.value.find((addr: NeComboboxOption) => {
-      return addr.id === `${srcAddr.value} ${srcAddr.label} (${srcAddr.type})`
-    })
+  if (rule.ns_src) {
+    // source address is an object
+    sourceType.value = 'source_object'
+    sourceAddressObject.value = rule.ns_src
+  } else {
+    if (rule.src_ip.length) {
+      sourceType.value = 'source_address'
 
-    if (addrFound) {
-      srcAddresses.push(addrFound)
-    } else {
-      const userInputAddr: NeComboboxOption = {
-        id: srcAddr.value,
-        label: srcAddr.value
+      for (const srcIp of rule.src_ip) {
+        srcAddresses.push((srcIp as RuleHost).value)
       }
-      // add user input to selection
-      srcAddresses.push(userInputAddr)
+    } else {
+      sourceType.value = 'source_any'
     }
   }
-  return srcAddresses
+
+  if (srcAddresses.length) {
+    sourceAddresses.value = srcAddresses
+  } else {
+    sourceAddresses.value = ['']
+  }
 }
 
 function mapDestinationAddressesToUi(rule: FirewallRule) {
@@ -299,25 +360,27 @@ function mapDestinationAddressesToUi(rule: FirewallRule) {
   }
   const destAddresses = []
 
-  for (const destIp of rule.dest_ip) {
-    const destAddr = destIp as RuleHost
-    const addrFound = addressOptions.value.find((addr: NeComboboxOption) => {
-      return addr.id === `${destAddr.value} ${destAddr.label} (${destAddr.type})`
-    })
+  if (rule.ns_dst) {
+    // destination address is an object
+    destinationType.value = 'destination_object'
+    destinationAddressObject.value = rule.ns_dst
+  } else {
+    if (rule.dest_ip.length) {
+      destinationType.value = 'destination_address'
 
-    if (addrFound) {
-      destAddresses.push(addrFound)
-    } else {
-      const userInputAddr: NeComboboxOption = {
-        id: destAddr.value,
-        label: destAddr.value
+      for (const destIp of rule.dest_ip) {
+        destAddresses.push((destIp as RuleHost).value)
       }
-
-      // add user input to selection
-      destAddresses.push(userInputAddr)
+    } else {
+      destinationType.value = 'destination_any'
     }
   }
-  return destAddresses
+
+  if (destAddresses.length) {
+    destinationAddresses.value = destAddresses
+  } else {
+    destinationAddresses.value = ['']
+  }
 }
 
 function closeDrawer() {
@@ -336,32 +399,24 @@ function clearErrors() {
   }
 }
 
-async function listHostSuggestions() {
-  loading.value.listHostSuggestions = true
+async function listObjectSuggestions() {
+  loading.value.listObjectSuggestions = true
 
   try {
-    const res = await ubusCall('ns.firewall', 'list-host-suggestions')
-    addressOptions.value = res.data.hosts.map((host: RuleHost) => {
-      const description = `${host.label} (${host.type})`
-
-      return {
-        id: `${host.value} ${description}`,
-        label: host.value,
-        description
-      }
-    })
+    const res = await ubusCall('ns.firewall', 'list-object-suggestions')
+    objectSuggestions.value = res.data.objects
 
     if (props.currentRule) {
       // editing or duplicating rule
-      sourceAddresses.value = mapSourceAddressesToUi(props.currentRule)
-      destinationAddresses.value = mapDestinationAddressesToUi(props.currentRule)
+      mapSourceAddressesToUi(props.currentRule)
+      mapDestinationAddressesToUi(props.currentRule)
     }
   } catch (err: any) {
     console.error(err)
-    error.value.listHostSuggestions = t(getAxiosErrorMessage(err))
-    error.value.listHostSuggestionsDetails = err.toString()
+    error.value.listObjectSuggestions = t(getAxiosErrorMessage(err))
+    error.value.listObjectSuggestionsDetails = err.toString()
   } finally {
-    loading.value.listHostSuggestions = false
+    loading.value.listObjectSuggestions = false
   }
 }
 
@@ -455,6 +510,16 @@ async function listProtocols() {
 function validate() {
   clearErrors()
   errorBag.value.clear()
+
+  sourceAddressesErrors.value = []
+  sourceAddresses.value.forEach(() => {
+    sourceAddressesErrors.value.push('')
+  })
+
+  destinationAddressesErrors.value = []
+  destinationAddresses.value.forEach(() => {
+    destinationAddressesErrors.value.push('')
+  })
   let isValidationOk = true
 
   // rule name
@@ -462,40 +527,48 @@ function validate() {
   const ruleNameValidation = validateRequired(name.value)
   if (!ruleNameValidation.valid) {
     errorBag.value.set('name', [t(String(ruleNameValidation.errMessage))])
-    if (isValidationOk) {
-      isValidationOk = false
-      focusElement(nameRef)
-    }
+    isValidationOk = false
+    focusElement(nameRef)
   }
 
   // source addresses
 
   if (props.ruleType !== 'output') {
-    for (const sourceAddress of sourceAddresses.value) {
-      // check if it's an ip address
-      const ipAddressValidation = validateIpAddress(sourceAddress.label)
+    if (sourceType.value === 'source_address') {
+      for (let [index, sourceAddress] of sourceAddresses.value.entries()) {
+        // required
 
-      if (!ipAddressValidation.valid) {
-        //  check if it's a cidr
-        const ipCidrValidation = validateIpCidr(sourceAddress.label)
+        const sourceAddressRequiredValidation = validateRequired(sourceAddress)
+        if (!sourceAddressRequiredValidation.valid) {
+          sourceAddressesErrors.value[index] = t(
+            sourceAddressRequiredValidation.errMessage as string
+          )
+          isValidationOk = false
+        } else {
+          // ip, cidr or rage
 
-        if (!ipCidrValidation.valid) {
-          // check if it's an ipv4 or ipv6 address range
-          const ipRangeValidation = validateIpAddressRange(sourceAddress.label)
+          const sourceAddressValidation = validateAnyOf(
+            [validateIpAddress, validateIpCidr, validateIpAddressRange],
+            sourceAddress,
+            t('standalone.firewall_rules.invalid_source_address_value', {
+              value: sourceAddress
+            })
+          )
 
-          if (!ipRangeValidation.valid) {
-            errorBag.value.set('src_ip', [
-              t('standalone.firewall_rules.invalid_source_address_value', {
-                value: sourceAddress.label
-              })
-            ])
-            if (isValidationOk) {
-              isValidationOk = false
-              focusElement(sourceAddressesRef)
-            }
-            break
+          if (!sourceAddressValidation.valid) {
+            sourceAddressesErrors.value[index] = t(sourceAddressValidation.errMessage as string)
+            isValidationOk = false
           }
         }
+      }
+    } else if (sourceType.value === 'source_object') {
+      // required
+
+      const sourceObjectValidation = validateRequired(sourceAddressObject.value)
+      if (!sourceObjectValidation.valid) {
+        errorBag.value.set('ns_src', [t(String(sourceObjectValidation.errMessage))])
+        isValidationOk = false
+        focusElement(sourceAddressObjectRef)
       }
     }
 
@@ -504,41 +577,51 @@ function validate() {
     const sourceZoneValidation = validateRequired(sourceZone.value)
     if (!sourceZoneValidation.valid) {
       errorBag.value.set('src', [t(String(sourceZoneValidation.errMessage))])
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(sourceZoneRef)
-      }
+      isValidationOk = false
+      focusElement(sourceZoneRef)
     }
   }
 
   // destination addresses
 
   if (props.ruleType !== 'input') {
-    for (const destinationAddress of destinationAddresses.value) {
-      // check if it's an ip address
-      const ipAddressValidation = validateIpAddress(destinationAddress.label)
+    if (destinationType.value === 'destination_address') {
+      for (let [index, destinationAddress] of destinationAddresses.value.entries()) {
+        // required
 
-      if (!ipAddressValidation.valid) {
-        //  check if it's a cidr
-        const ipCidrValidation = validateIpCidr(destinationAddress.label)
+        const destinationAddressRequiredValidation = validateRequired(destinationAddress)
+        if (!destinationAddressRequiredValidation.valid) {
+          destinationAddressesErrors.value[index] = t(
+            destinationAddressRequiredValidation.errMessage as string
+          )
+          isValidationOk = false
+        } else {
+          // ip, cidr or rage
 
-        if (!ipCidrValidation.valid) {
-          // check if it's an ipv4 or ipv6 address range
-          const ipRangeValidation = validateIpAddressRange(destinationAddress.label)
+          const destinationAddressValidation = validateAnyOf(
+            [validateIpAddress, validateIpCidr, validateIpAddressRange],
+            destinationAddress,
+            t('standalone.firewall_rules.invalid_destination_address_value', {
+              value: destinationAddress
+            })
+          )
 
-          if (!ipRangeValidation.valid) {
-            errorBag.value.set('dest_ip', [
-              t('standalone.firewall_rules.invalid_destination_address_value', {
-                value: destinationAddress.label
-              })
-            ])
-            if (isValidationOk) {
-              isValidationOk = false
-              focusElement(destinationAddressesRef)
-            }
-            break
+          if (!destinationAddressValidation.valid) {
+            destinationAddressesErrors.value[index] = t(
+              destinationAddressValidation.errMessage as string
+            )
+            isValidationOk = false
           }
         }
+      }
+    } else if (destinationType.value === 'destination_object') {
+      // required
+
+      const destinationObjectValidation = validateRequired(destinationAddressObject.value)
+      if (!destinationObjectValidation.valid) {
+        errorBag.value.set('ns_dst', [t(String(destinationObjectValidation.errMessage))])
+        isValidationOk = false
+        focusElement(destinationAddressObjectRef)
       }
     }
 
@@ -547,10 +630,8 @@ function validate() {
     const destinationZoneValidation = validateRequired(destinationZone.value)
     if (!destinationZoneValidation.valid) {
       errorBag.value.set('dest', [t(String(destinationZoneValidation.errMessage))])
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(destinationZoneRef)
-      }
+      isValidationOk = false
+      focusElement(destinationZoneRef)
     }
   }
 
@@ -564,10 +645,8 @@ function validate() {
       errorBag.value.set('dest', [
         t('standalone.firewall_rules.source_and_destination_zones_must_be_different')
       ])
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(sourceZoneRef)
-      }
+      isValidationOk = false
+      focusElement(sourceZoneRef)
     }
   }
 
@@ -576,10 +655,8 @@ function validate() {
   const serviceValidation = validateRequired(service.value)
   if (!serviceValidation.valid) {
     errorBag.value.set('ns_service', [t(String(serviceValidation.errMessage))])
-    if (isValidationOk) {
-      isValidationOk = false
-      focusElement(serviceRef)
-    }
+    isValidationOk = false
+    focusElement(serviceRef)
   }
 
   if (service.value === 'custom') {
@@ -588,10 +665,8 @@ function validate() {
     let protocolsValidation = validateRequiredOption(protocols.value)
     if (!protocolsValidation.valid) {
       errorBag.value.set('proto', [t(String(protocolsValidation.errMessage))])
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(protocolsRef)
-      }
+      isValidationOk = false
+      focusElement(protocolsRef)
     }
 
     // ports
@@ -600,19 +675,15 @@ function validate() {
       let portsValidation = validateRequired(ports.value)
       if (!portsValidation.valid) {
         errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])
-        if (isValidationOk) {
-          isValidationOk = false
-          focusElement(portsRef)
-        }
+        isValidationOk = false
+        focusElement(portsRef)
       } else {
         // check ports syntax
         portsValidation = validatePortListOrRange(ports.value)
         if (!portsValidation.valid) {
           errorBag.value.set('dest_port', [t(String(portsValidation.errMessage))])
-          if (isValidationOk) {
-            isValidationOk = false
-            focusElement(portsRef)
-          }
+          isValidationOk = false
+          focusElement(portsRef)
         }
       }
     }
@@ -622,9 +693,11 @@ function validate() {
 
 async function saveRule() {
   const isValidationOk = validate()
+
   if (!isValidationOk) {
     return
   }
+
   error.value.saveRule = ''
   error.value.saveRuleDetails = ''
   loading.value.saveRule = true
@@ -633,8 +706,10 @@ async function saveRule() {
     name: name.value,
     enabled: isRuleEnabled.value,
     src_ip: [],
+    ns_src: '',
     src: '',
     dest_ip: [],
+    ns_dst: '',
     dest: '',
     ns_service: service.value,
     proto: [],
@@ -653,28 +728,38 @@ async function saveRule() {
   }
 
   if (props.ruleType !== 'output') {
-    // source addresses
-    ruleData.src_ip = [
-      ...new Set(
-        sourceAddresses.value.map((address) => {
-          return address.label
-        })
-      )
-    ]
+    if (sourceType.value === 'source_address') {
+      // source addresses
+      ruleData.src_ip = [
+        ...new Set(
+          sourceAddresses.value.map((address) => {
+            return address
+          })
+        )
+      ]
+    } else if (sourceType.value === 'source_object') {
+      // source address object
+      ruleData.ns_src = sourceAddressObject.value
+    }
 
     // source zone
     ruleData.src = sourceZone.value
   }
 
   if (props.ruleType !== 'input') {
-    // destination addresses
-    ruleData.dest_ip = [
-      ...new Set(
-        destinationAddresses.value.map((address) => {
-          return address.label
-        })
-      )
-    ]
+    if (destinationType.value === 'destination_address') {
+      // destination addresses
+      ruleData.dest_ip = [
+        ...new Set(
+          destinationAddresses.value.map((address) => {
+            return address
+          })
+        )
+      ]
+    } else if (destinationType.value === 'destination_object') {
+      // destination address object
+      ruleData.ns_dst = destinationAddressObject.value
+    }
 
     // destination zone
     ruleData.dest = destinationZone.value
@@ -743,15 +828,15 @@ async function saveRule() {
           :disabled="loading.saveRule"
           ref="nameRef"
         />
-        <!-- listHostSuggestions error notification -->
+        <!-- listObjectSuggestions error notification -->
         <NeInlineNotification
-          v-if="error.listHostSuggestions"
+          v-if="error.listObjectSuggestions"
           kind="error"
           :title="t('error.cannot_retrieve_host_suggestions')"
-          :description="error.listHostSuggestions"
+          :description="error.listObjectSuggestions"
         >
-          <template #details v-if="error.listHostSuggestionsDetails">
-            {{ error.listHostSuggestionsDetails }}
+          <template #details v-if="error.listObjectSuggestionsDetails">
+            {{ error.listObjectSuggestionsDetails }}
           </template></NeInlineNotification
         >
         <template v-if="ruleType === 'output'">
@@ -762,29 +847,24 @@ async function saveRule() {
           />
         </template>
         <template v-else>
+          <!-- source type -->
+          <NeRadioSelection
+            v-model="sourceType"
+            :disabled="loading.saveRule"
+            :label="t('standalone.firewall_rules.source_type')"
+            :options="sourceTypeOptions"
+          />
           <!-- source addresses -->
-          <NeCombobox
+          <NeMultiTextInput
+            v-show="sourceType === 'source_address'"
             v-model="sourceAddresses"
-            :disabled="loading.saveRule || loading.listServiceSuggestions"
-            :label="t('standalone.firewall_rules.source_addresses')"
-            :options="addressOptions"
-            :placeholder="
-              loading.listServiceSuggestions
-                ? t('common.loading')
-                : t('ne_combobox.choose_or_enter_multiple')
-            "
-            :helperText="t('standalone.firewall_rules.source_addresses_helper')"
-            :invalidMessage="errorBag.getFirstFor('src_ip')"
-            multiple
-            acceptUserInput
-            optional
+            :disable-inputs="loading.saveRule"
+            :title="t('standalone.firewall_rules.source_addresses')"
+            :add-item-label="t('standalone.firewall_rules.add_source_address')"
+            :invalid-messages="sourceAddressesErrors"
+            :general-invalid-message="t(errorBag.getFirstFor('src_ip'))"
+            required
             :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
-            :selected-label="t('ne_combobox.selected')"
-            :user-input-label="t('ne_combobox.user_input_label')"
-            ref="sourceAddressesRef"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -793,7 +873,26 @@ async function saveRule() {
                 }}</template>
               </NeTooltip>
             </template>
-          </NeCombobox>
+          </NeMultiTextInput>
+          <!-- source object -->
+          <NeCombobox
+            v-show="sourceType === 'source_object'"
+            v-model="sourceAddressObject"
+            :disabled="loading.saveRule || loading.listObjectSuggestions"
+            :label="t('standalone.firewall_rules.source_object')"
+            :options="objectsComboboxOptions"
+            :placeholder="
+              loading.listObjectSuggestions ? t('common.loading') : t('ne_combobox.choose')
+            "
+            :invalidMessage="errorBag.getFirstFor('ns_src')"
+            :optionalLabel="t('common.optional')"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            ref="sourceAddressObjectRef"
+          />
           <!-- source zone -->
           <NeCombobox
             v-model="sourceZone"
@@ -827,29 +926,24 @@ async function saveRule() {
           />
         </template>
         <template v-else>
+          <!-- destination type -->
+          <NeRadioSelection
+            v-model="destinationType"
+            :disabled="loading.saveRule"
+            :label="t('standalone.firewall_rules.destination_type')"
+            :options="destinationTypeOptions"
+          />
           <!-- destination addresses -->
-          <NeCombobox
+          <NeMultiTextInput
+            v-show="destinationType === 'destination_address'"
             v-model="destinationAddresses"
-            :disabled="loading.saveRule || loading.listServiceSuggestions"
-            :label="t('standalone.firewall_rules.destination_addresses')"
-            :options="addressOptions"
-            :placeholder="
-              loading.listServiceSuggestions
-                ? t('common.loading')
-                : t('ne_combobox.choose_or_enter_multiple')
-            "
-            :helperText="t('standalone.firewall_rules.destination_addresses_helper')"
-            :invalidMessage="errorBag.getFirstFor('dest_ip')"
-            multiple
-            acceptUserInput
-            optional
+            :disable-inputs="loading.saveRule"
+            :title="t('standalone.firewall_rules.destination_addresses')"
+            :add-item-label="t('standalone.firewall_rules.add_destination_address')"
+            :invalid-messages="destinationAddressesErrors"
+            :general-invalid-message="t(errorBag.getFirstFor('dest_ip'))"
+            required
             :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
-            :selected-label="t('ne_combobox.selected')"
-            :user-input-label="t('ne_combobox.user_input_label')"
-            ref="destinationAddressesRef"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -858,7 +952,26 @@ async function saveRule() {
                 }}</template>
               </NeTooltip>
             </template>
-          </NeCombobox>
+          </NeMultiTextInput>
+          <!-- destination object -->
+          <NeCombobox
+            v-show="destinationType === 'destination_object'"
+            v-model="destinationAddressObject"
+            :disabled="loading.saveRule || loading.listObjectSuggestions"
+            :label="t('standalone.firewall_rules.destination_object')"
+            :options="objectsComboboxOptions"
+            :placeholder="
+              loading.listObjectSuggestions ? t('common.loading') : t('ne_combobox.choose')
+            "
+            :invalidMessage="errorBag.getFirstFor('ns_dst')"
+            :optionalLabel="t('common.optional')"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            ref="destinationAddressObjectRef"
+          />
           <!-- destination zone -->
           <NeCombobox
             v-model="destinationZone"

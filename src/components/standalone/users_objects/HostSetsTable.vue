@@ -19,7 +19,6 @@ import {
   NeBadge
 } from '@nethesis/vue-components'
 import { ref, type PropType } from 'vue'
-import type { HostSet } from './HostSets.vue'
 import { library as faLibrary } from '@fortawesome/fontawesome-svg-core'
 import {
   faArrowsLeftRightToLine,
@@ -30,7 +29,8 @@ import {
 import HostSetRecords from './HostSetRecords.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
-import { getHostSetIcon } from '@/lib/standalone/user_objects'
+import { type HostSet } from '@/composables/useHostSets'
+import { useObjects } from '@/composables/useObjects'
 
 const props = defineProps({
   filteredHostSets: {
@@ -54,6 +54,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
+const { getObjectIcon } = useObjects()
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => props.filteredHostSets, {
@@ -110,9 +111,9 @@ function goToManagementPage(subtype: string) {
 function getManagementPageLabel(subtype: string) {
   switch (subtype) {
     case 'dhcp_static_lease':
-      return t('standalone.objects.go_to_static_leases')
+      return t('common.go_to_page', { page: t('standalone.dns_dhcp.tabs.static_leases') })
     case 'dns_record':
-      return t('standalone.objects.go_to_dns_records')
+      return t('common.go_to_page', { page: t('standalone.dns_dhcp.tabs.dns_records') })
     case 'vpn_user':
       return t('standalone.objects.go_to_rw_accounts')
   }
@@ -137,7 +138,7 @@ function getManagementPageLabel(subtype: string) {
         {{ t('standalone.objects.ip_version') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
-        {{ t('standalone.objects.record', 2) }}
+        {{ t('standalone.objects.records') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
         <!-- no header for actions -->
@@ -149,7 +150,7 @@ function getManagementPageLabel(subtype: string) {
         <NeTableCell :data-label="t('standalone.objects.name')">
           <div class="flex items-center gap-2">
             <font-awesome-icon
-              :icon="getHostSetIcon(item.subtype)"
+              :icon="getObjectIcon(item.subtype)"
               class="h-4 w-4"
               aria-hidden="true"
             />
@@ -174,7 +175,7 @@ function getManagementPageLabel(subtype: string) {
           <template v-else> - </template>
         </NeTableCell>
         <!-- records -->
-        <NeTableCell :data-label="t('standalone.objects.record', 2)">
+        <NeTableCell :data-label="t('standalone.objects.records')">
           <HostSetRecords :records="item.ipaddr" :allHostSets="allHostSets" />
         </NeTableCell>
         <!-- actions -->

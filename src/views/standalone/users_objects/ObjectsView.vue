@@ -23,6 +23,9 @@ const { tabs, selectedTab } = useTabs([
 <template>
   <div>
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.objects.title') }}</NeHeading>
+    <div class="mb-4 max-w-2xl text-gray-500 dark:text-gray-400">
+      {{ t('standalone.objects.page_description') }}
+    </div>
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"

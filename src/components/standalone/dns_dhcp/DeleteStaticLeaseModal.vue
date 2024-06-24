@@ -10,6 +10,7 @@ import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StaticLease } from './StaticLeases.vue'
+import CannotDeleteObjectModal from '../users_objects/CannotDeleteObjectModal.vue'
 
 const { t } = useI18n()
 
@@ -61,32 +62,45 @@ function close() {
 </script>
 
 <template>
-  <NeModal
-    :visible="visible"
-    kind="warning"
-    :title="t('standalone.dns_dhcp.delete_reservation')"
-    :primaryLabel="t('common.delete')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
-    :close-aria-label="t('common.close')"
-    @primaryClick="deleteStaticLease()"
-    @close="close()"
-  >
-    {{
-      t('standalone.dns_dhcp.delete_reservation_message', {
-        hostname: itemToDelete?.hostname ?? ''
-      })
-    }}
-    <NeInlineNotification
-      v-if="error.notificationDescription"
-      kind="error"
-      :title="t('error.cannot_delete_reservation')"
-      :description="error.notificationDescription"
+  <div>
+    <!-- cannot delete object modal -->
+    <CannotDeleteObjectModal
+      v-if="itemToDelete?.used"
+      :visible="visible"
+      :objectName="itemToDelete?.hostname"
+      :usageIds="itemToDelete?.matches"
+      :showGoToObjectsButton="true"
+      @close="close"
+    />
+    <!-- delete static lease modal -->
+    <NeModal
+      v-else
+      :visible="visible"
+      kind="warning"
+      :title="t('standalone.dns_dhcp.delete_reservation')"
+      :primaryLabel="t('common.delete')"
+      primaryButtonKind="danger"
+      :primaryButtonDisabled="isDeleting"
+      :primaryButtonLoading="isDeleting"
+      :close-aria-label="t('common.close')"
+      @primaryClick="deleteStaticLease()"
+      @close="close()"
     >
-      <template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
-  </NeModal>
+      {{
+        t('standalone.dns_dhcp.delete_reservation_message', {
+          hostname: itemToDelete?.hostname ?? ''
+        })
+      }}
+      <NeInlineNotification
+        v-if="error.notificationDescription"
+        kind="error"
+        :title="t('error.cannot_delete_reservation')"
+        :description="error.notificationDescription"
+      >
+        <template #details v-if="error.notificationDetails">
+          {{ error.notificationDetails }}
+        </template></NeInlineNotification
+      >
+    </NeModal>
+  </div>
 </template>

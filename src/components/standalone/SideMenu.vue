@@ -110,6 +110,21 @@ const navigation: Ref<MenuItem[]> = ref([
     ]
   },
   {
+    name: t('standalone.user_objects.title'),
+    to: 'users-objects',
+    icon: 'user-group',
+    children: [
+      {
+        name: t('standalone.users_database.title'),
+        to: 'users-objects/users-database'
+      },
+      {
+        name: t('standalone.objects.title'),
+        to: 'users-objects/objects'
+      }
+    ]
+  },
+  {
     name: t('standalone.firewall.title'),
     to: 'firewall',
     icon: 'block-brick-fire',
@@ -168,10 +183,6 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.ipsec_tunnel.title'),
         to: 'vpn/ipsec-tunnel'
-      },
-      {
-        name: t('standalone.users_database.title'),
-        to: 'vpn/users-database'
       }
     ]
   },

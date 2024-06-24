@@ -286,9 +286,7 @@ function mapSourceAddressesToUi(rule: FirewallRule) {
         id: srcAddr.value,
         label: srcAddr.value
       }
-
-      // add user input to addressOptions and selection
-      addressOptions.value.push(userInputAddr)
+      // add user input to selection
       srcAddresses.push(userInputAddr)
     }
   }
@@ -315,8 +313,7 @@ function mapDestinationAddressesToUi(rule: FirewallRule) {
         label: destAddr.value
       }
 
-      // add user input to addressOptions and selection
-      addressOptions.value.push(userInputAddr)
+      // add user input to selection
       destAddresses.push(userInputAddr)
     }
   }

@@ -41,6 +41,7 @@ type LDAPDatabasePayload = {
   description: string
   bind_dn: string
   bind_password: string
+  user_bind_dn: string
 }
 
 const props = defineProps<{
@@ -72,6 +73,7 @@ const ldapUri = ref('')
 const baseDn = ref('')
 const userDn = ref('')
 const userCn = ref('')
+const userBindDn = ref('')
 const userAttribute = ref('')
 const startTls = ref(false)
 const verifyTlsCertificate = ref(false)
@@ -103,6 +105,7 @@ async function resetForm() {
       baseDn.value = databaseData.base_dn
       userDn.value = databaseData.user_dn
       userCn.value = databaseData.user_cn
+      userBindDn.value = databaseData.user_bind_dn
       userAttribute.value = databaseData.user_attr
       startTls.value = databaseData.start_tls === '1'
       verifyTlsCertificate.value = databaseData.tls_reqcert === 'always'
@@ -123,6 +126,7 @@ async function resetForm() {
     baseDn.value = ''
     userDn.value = ''
     userCn.value = ''
+    userBindDn.value = ''
     userAttribute.value = ''
     startTls.value = false
     verifyTlsCertificate.value = false
@@ -281,7 +285,8 @@ async function createOrEditDatabase() {
         description: '',
         tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never',
         bind_dn: bindDn.value,
-        bind_password: bindPassword.value
+        bind_password: bindPassword.value,
+        user_bind_dn: userBindDn.value
       }
 
       await ubusCall('ns.users', requestType, payload)
@@ -418,6 +423,22 @@ watch(
           <NeTooltip>
             <template #content>
               {{ t('standalone.users_database.user_cn_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template></NeTextInput
+      >
+      <NeTextInput
+        v-model="userBindDn"
+        :disabled="isRetrievingDefaults"
+        :label="t('standalone.users_database.user_bind_dn')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_bind_dn'))"
+        :optional="true"
+        :optional-label="t('common.optional')"
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.users_database.user_bind_dn_tooltip') }}
             </template>
           </NeTooltip>
         </template></NeTextInput

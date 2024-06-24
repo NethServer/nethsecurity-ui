@@ -624,7 +624,7 @@ watch(
         <NeMultiTextInput
           v-model="customOptions"
           :title="t('standalone.openvpn_rw.custom_dhcp_options')"
-          :use-key-input="false"
+          :use-key-input="true"
           key-input-type="combobox"
           :add-item-label="t('standalone.openvpn_rw.add_option')"
           :optional="true"

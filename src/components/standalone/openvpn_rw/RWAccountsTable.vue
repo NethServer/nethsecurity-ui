@@ -153,7 +153,7 @@ function getCellClasses(item: RWAccount) {
               <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
               <router-link
                 class="text-primary-500 dark:text-primary-800"
-                to="/standalone/users-objects/users-database"
+                to="/standalone/vpn/users-database"
                 >{{ t('standalone.openvpn_rw.edit_user_database') }}</router-link
               >
             </div>

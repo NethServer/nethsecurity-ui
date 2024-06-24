@@ -11,7 +11,7 @@ import {
   validateUciName,
   type validationOutput
 } from '@/lib/validation'
-import type { UserDatabase } from '@/views/standalone/users_objects/UsersDatabaseView.vue'
+import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {

@@ -91,11 +91,6 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/network/QoSView.vue')
   },
   {
-    path: 'users-objects/objects',
-    name: 'Objects',
-    component: () => import('../views/standalone/users_objects/ObjectsView.vue')
-  },
-  {
     path: 'firewall/zones-and-policies',
     name: 'ZonesAndPolicies',
     component: () => import('../views/standalone/firewall/ZonesAndPolicies.vue')
@@ -151,9 +146,9 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/vpn/IPsecTunnelView.vue')
   },
   {
-    path: 'users-objects/users-database',
+    path: 'vpn/users-database',
     name: 'UsersDatabase',
-    component: () => import('../views/standalone/users_objects/UsersDatabaseView.vue')
+    component: () => import('../views/standalone/vpn/UsersDatabaseView.vue')
   },
   {
     path: 'logs',

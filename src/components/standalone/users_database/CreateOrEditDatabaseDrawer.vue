@@ -246,8 +246,6 @@ async function getLdapDefaults() {
       userDn.value = ldapDefaultsResponse.user_dn
       userAttribute.value = ldapDefaultsResponse.user_attr
       userCn.value = ldapDefaultsResponse.user_cn
-      bindDn.value = ldapDefaultsResponse.bind_dn
-      bindPassword.value = ldapDefaultsResponse.bind_password
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_ldap_defaults')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))

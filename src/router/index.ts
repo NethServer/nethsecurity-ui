@@ -111,6 +111,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/firewall/FirewallRulesView.vue')
   },
   {
+    path: 'firewall/conntrack',
+    name: 'Conntrack',
+    component: () => import('../views/standalone/firewall/ConntrackView.vue')
+  },
+  {
     path: 'security/flashstart',
     name: 'FlashStart',
     component: () => import('../views/standalone/security/FlashStartView.vue')

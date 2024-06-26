@@ -127,6 +127,10 @@ const navigation: Ref<MenuItem[]> = ref([
         to: 'firewall/rules'
       },
       {
+        name: t('standalone.conntrack.short_title'),
+        to: 'firewall/conntrack'
+      },
+      {
         name: t('standalone.zones_and_policies.title'),
         to: 'firewall/zones-and-policies'
       }

@@ -74,14 +74,15 @@ async function fetchConntrack(): Promise<ConntrackRecord[]> {
 }
 
 function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
+  const lowerCaseFilter = filter.toLowerCase()
   return records.filter(
     (ConntrackRecord) =>
-      ConntrackRecord.source.includes(filter) ||
-      ConntrackRecord.destination.includes(filter) ||
-      ConntrackRecord.protocol.includes(filter) ||
-      (ConntrackRecord.state ?? '').includes(filter) ||
-      (ConntrackRecord.source_port ?? '').includes(filter) ||
-      (ConntrackRecord.destination_port ?? '').includes(filter)
+      ConntrackRecord.source.toLowerCase().includes(lowerCaseFilter) ||
+      ConntrackRecord.destination.toLowerCase().includes(lowerCaseFilter) ||
+      ConntrackRecord.protocol.toLowerCase().includes(lowerCaseFilter) ||
+      (ConntrackRecord.state ?? '').toLowerCase().includes(lowerCaseFilter) ||
+      (ConntrackRecord.source_port ?? '').toLowerCase().includes(lowerCaseFilter) ||
+      (ConntrackRecord.destination_port ?? '').toLowerCase().includes(lowerCaseFilter)
   )
 }
 

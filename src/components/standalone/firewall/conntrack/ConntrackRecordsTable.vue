@@ -60,22 +60,22 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.source">
         <NeTableCell :data-label="t('standalone.conntrack.source')">
-          {{ item.source || '-' }}
+          {{ item.source }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.destination')">
-          {{ item.destination || '-' }}
+          {{ item.destination }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.protocol')">
-          {{ item.protocol || '-' }}
+          {{ item.protocol }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.statistics')">
-          {{ item.statistics || '-' }}
+          {{ item.statistics }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.state')">
           {{ item.state || '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.timeout')">
-          {{ item.timeout || '-' }}
+          {{ item.timeout }}
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center flex justify-end">

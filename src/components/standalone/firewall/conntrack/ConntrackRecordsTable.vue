@@ -17,19 +17,19 @@ import {
   useItemPagination
 } from '@nethesis/vue-components'
 import type { ConntrackRecord } from './ConntrackContent.vue'
-import { ref, type PropType } from 'vue'
+import { ref, withDefaults, defineProps } from 'vue'
 const { t } = useI18n()
 
-const props = defineProps({
-  conntrackRecords: {
-    type: Array as PropType<ConntrackRecord[]>,
-    required: true
-  },
-  loading: {
-    type: Boolean,
-    default: false
+const props = withDefaults(
+  defineProps<{
+    conntrackRecords: ConntrackRecord[]
+    loading?: boolean
+  }>(),
+  {
+    loading: false
   }
-})
+)
+
 const emit = defineEmits(['record-delete'])
 
 const pageSize = ref(10)

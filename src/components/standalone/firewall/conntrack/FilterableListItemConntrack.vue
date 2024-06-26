@@ -19,7 +19,6 @@ import {
 const props = defineProps<{
   fetchItemsFunction: () => Promise<T[]>
   applyFilterToItemsFunction: (itemsToFilter: T[], filter: string) => T[]
-  addItemButtonLabel?: string
   fetchErrorNotificationTitle: string
   noItemsFoundMessage: string
   noFilteredItemsFoundMessage: string

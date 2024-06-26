@@ -40,37 +40,35 @@ export type ConntrackRecord = {
 async function fetchConntrack(): Promise<ConntrackRecord[]> {
   const ConntrackRecordsResponse = await ubusCall('ns.conntrack', 'list')
   // Function to update source and destination properties
-  function updateConntrackRecords(records: ConntrackRecord[]) {
-    return records.map((record) => {
-      // ipv6 localhost is ::1, translate it to ipv4
-      if (record.destination == '::1') {
-        record.destination = '127.0.0.1'
-      }
-      if (record.source == '::1') {
-        record.source = '127.0.0.1'
-      }
-      // translate the source and destination with the port
-      if (record.source_port) {
-        record.source = record.source + ' : ' + record.source_port
-      }
-      if (record.destination_port) {
-        record.destination = record.destination + ' : ' + record.destination_port
-      }
-      // translate the timeout
-      if (record.timeout) {
-        record.timeout = record.timeout + ' s'
-      }
-      // translate statistics download and upload
-      record.statistics =
-        byteFormat1024(record.source_stats.bytes) +
-        ' / ' +
-        byteFormat1024(record.destination_stats.bytes)
-      return record
-    })
-  }
   ConntrackRecordsResponse.data = updateConntrackRecords(ConntrackRecordsResponse.data.data)
 
   return ConntrackRecordsResponse.data
+}
+
+function updateConntrackRecords(records: ConntrackRecord[]) {
+  return records.map((record) => {
+    // translate the source and destination with the port
+    if (record.source_port) {
+      record.source = record.source + ':' + record.source_port
+    }
+    if (record.destination_port) {
+      record.destination = record.destination + ':' + record.destination_port
+    }
+    // translate the timeout
+    if (record.timeout) {
+      record.timeout = record.timeout + 's'
+    }
+    // translate statistics download and upload
+    record.statistics =
+      byteFormat1024(record.source_stats.bytes) +
+      ' / ' +
+      byteFormat1024(record.destination_stats.bytes)
+    // translate the protocol
+    if (record.protocol) {
+      record.protocol = record.protocol.toUpperCase()
+    }
+    return record
+  })
 }
 
 function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {

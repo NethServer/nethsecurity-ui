@@ -10,7 +10,6 @@ import FilterableListItemConntrack from '@/components/standalone//firewall/connt
 import { ubusCall } from '@/lib/standalone/ubus'
 import ConntrackRecordsTable from '@/components/standalone/firewall/conntrack/ConntrackRecordsTable.vue'
 import DeleteConntrackRecordModal from '@/components/standalone/firewall/conntrack/DeleteConntrackRecordModal.vue'
-import DeleteConntrackAllModal from '@/components/standalone/firewall/conntrack/DeleteConntrackAllModal.vue'
 import { NeHeading } from '@nethesis/vue-components'
 import { byteFormat1024 } from '@nethesis/vue-components'
 
@@ -109,13 +108,6 @@ async function getUciChanges() {
         @close="closeModal()"
         @record-deleted="reloadItems()"
         :item-to-delete="itemToDelete"
-      />
-    </template>
-    <template #delete-item-all-modal="{ isDeleteAllModalShown, closeModal, reloadItems }">
-      <DeleteConntrackAllModal
-        :visible="isDeleteAllModalShown"
-        @close="closeModal()"
-        @record-deleted="reloadItems()"
       />
     </template>
   </FilterableListItemConntrack>

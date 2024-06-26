@@ -34,9 +34,13 @@ async function deleteConntrackRecord() {
     }
     isDeleting.value = true
     try {
-      await ubusCall('ns.conntrack', 'drop', {
-        id: props.itemToDelete.id
-      })
+      if (props.itemToDelete.id !== 'all') {
+        await ubusCall('ns.conntrack', 'drop', {
+          id: props.itemToDelete.id
+        })
+      } else {
+        await ubusCall('ns.conntrack', 'drop_all', {})
+      }
       emit('record-deleted')
       emit('close')
     } catch (err: any) {
@@ -69,12 +73,17 @@ function close() {
     @primaryClick="deleteConntrackRecord()"
     @close="close()"
   >
-    {{
-      t('standalone.conntrack.delete_conntrack_record_message', {
-        source: itemToDelete?.destination ?? '',
-        destination: itemToDelete?.source ?? ''
-      })
-    }}
+    <span v-if="itemToDelete?.id !== 'all'">
+      {{
+        t('standalone.conntrack.delete_conntrack_record_message', {
+          source: itemToDelete?.destination ?? '',
+          destination: itemToDelete?.source ?? ''
+        })
+      }}
+    </span>
+    <span v-else>
+      {{ t('standalone.conntrack.delete_all_record_message') }}
+    </span>
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"

@@ -61,7 +61,8 @@ async function fetchItems() {
 }
 
 function delete_all() {
-  showDeleteModalAll.value = true
+  selectedItem.value = { id: 'all' } as T
+  showDeleteModal.value = true
 }
 
 function closeDeleteModalAll() {

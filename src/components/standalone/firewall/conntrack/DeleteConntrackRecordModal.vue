@@ -67,6 +67,7 @@ function close() {
     kind="warning"
     :title="t('standalone.conntrack.delete_conntrack_record')"
     :primaryLabel="t('common.delete')"
+    primaryButtonKind="danger"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     :close-aria-label="t('common.close')"

@@ -12,6 +12,7 @@ import ConntrackRecordsTable from '@/components/standalone/firewall/conntrack/Co
 import DeleteConntrackRecordModal from '@/components/standalone/firewall/conntrack/DeleteConntrackRecordModal.vue'
 import { NeHeading } from '@nethesis/vue-components'
 import { byteFormat1024 } from '@nethesis/vue-components'
+import { onMounted } from 'vue'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -35,6 +36,10 @@ export type ConntrackRecord = {
   timeout: string
   statistics?: string
 }
+
+onMounted(() => {
+ fetchConntrack()
+})
 
 async function fetchConntrack(): Promise<ConntrackRecord[]> {
   const ConntrackRecordsResponse = await ubusCall('ns.conntrack', 'list')

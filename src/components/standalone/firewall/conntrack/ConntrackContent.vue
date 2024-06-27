@@ -42,7 +42,7 @@ export type ConntrackRecord = {
 }
 
 const isloading = ref(false)
-const ConntrackRecordsResponse = ref<ConntrackRecord[]>([])
+const conntrackRecords = ref<ConntrackRecord[]>([])
 const error = ref({
   notificationDescription: '',
   notificationDetails: '',
@@ -62,7 +62,7 @@ async function fetchConntrack() {
   error.value.notificationDetails = ''
   try {
     isloading.value = true
-    ConntrackRecordsResponse.value = (await ubusCall('ns.conntrack', 'list')).data.data
+    conntrackRecords.value = (await ubusCall('ns.conntrack', 'list')).data.data
   } catch (err: any) {
     if (!(err instanceof CanceledError)) {
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -112,8 +112,8 @@ async function reloadItems() {
 
 const filteredItems = computed(() => {
   return filter.value === ''
-    ? ConntrackRecordsResponse.value
-    : applyFilterToConntrackRecords(ConntrackRecordsResponse.value, filter.value)
+    ? conntrackRecords.value
+    : applyFilterToConntrackRecords(conntrackRecords.value, filter.value)
 })
 </script>
 
@@ -126,7 +126,7 @@ const filteredItems = computed(() => {
       </p>
       <div class="ml-2 shrink-0">
         <NeButton
-          v-if="ConntrackRecordsResponse.length > 0"
+          v-if="conntrackRecords.length > 0"
           kind="secondary"
           size="lg"
           @click="deleteAll()"
@@ -164,7 +164,7 @@ const filteredItems = computed(() => {
     <NeSkeleton v-if="isloading" :lines="20" />
     <template v-else>
       <NeEmptyState
-        v-if="ConntrackRecordsResponse.length == 0"
+        v-if="conntrackRecords.length == 0"
         :title="t('standalone.conntrack.no_connection_found')"
         :icon="['fas', 'chain']"
       >

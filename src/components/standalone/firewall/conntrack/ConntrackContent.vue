@@ -120,10 +120,10 @@ const filteredItems = computed(() => {
       <div class="ml-2 shrink-0">
         <NeButton
           v-if="conntrackRecords.length > 0"
-          kind="secondary"
+          kind="tertiary"
           size="lg"
           @click="deleteAll()"
-          class="mr-4 shrink-0"
+          class="ml-4 shrink-0"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />

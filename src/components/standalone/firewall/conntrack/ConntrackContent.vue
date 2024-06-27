@@ -85,7 +85,7 @@ function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: strin
   )
 }
 
-function delete_all() {
+function deleteAll() {
   selectedItem.value = {
     id: 'all',
     destination: '',
@@ -129,7 +129,7 @@ const filteredItems = computed(() => {
           v-if="ConntrackRecordsResponse.length > 0"
           kind="secondary"
           size="lg"
-          @click="delete_all()"
+          @click="deleteAll()"
           class="mr-4 shrink-0"
         >
           <template #prefix>

@@ -18,7 +18,6 @@ import {
 } from '@nethesis/vue-components'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
-import { CanceledError } from 'axios'
 
 const { t } = useI18n()
 
@@ -64,10 +63,8 @@ async function fetchConntrack() {
     isloading.value = true
     conntrackRecords.value = (await ubusCall('ns.conntrack', 'list')).data.data
   } catch (err: any) {
-    if (!(err instanceof CanceledError)) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
-    }
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
   } finally {
     isloading.value = false
   }

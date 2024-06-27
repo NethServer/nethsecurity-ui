@@ -161,7 +161,7 @@ const filteredItems = computed(() => {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="isloading" :lines="10" />
+    <NeSkeleton v-if="isloading" :lines="20" />
     <template v-else>
       <NeEmptyState
         v-if="ConntrackRecordsResponse.length == 0"
@@ -182,13 +182,13 @@ const filteredItems = computed(() => {
       >
         <NeButton kind="tertiary" @click="filter = ''"> {{ t('common.clear_filter') }}</NeButton>
       </NeEmptyState>
+      <ConntrackRecordsTable
+        v-if="filteredItems.length > 0"
+        :conntrack-records="filteredItems"
+        @record-delete="openDeleteModal"
+      />
     </template>
   </div>
-  <ConntrackRecordsTable
-    v-if="filteredItems.length > 0"
-    :conntrack-records="filteredItems"
-    @record-delete="openDeleteModal"
-  />
   <DeleteConntrackRecordModal
     :visible="showDeleteModal"
     @close="closeDeleteModal"

@@ -67,12 +67,15 @@ function close() {
     kind="warning"
     :title="t('standalone.conntrack.delete_conntrack_record')"
     :primaryLabel="t('common.delete')"
+    :secondaryLabel="t('common.cancel')"
     primaryButtonKind="danger"
+    secondaryButtonKind="tertiary"
     :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     :close-aria-label="t('common.close')"
     @primaryClick="deleteConntrackRecord()"
     @close="close()"
+    @secondaryClick="close()"
   >
     <span v-if="itemToDelete?.id !== 'all'">
       {{

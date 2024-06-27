@@ -103,10 +103,6 @@ function closeDeleteModal() {
   showDeleteModal.value = false
 }
 
-async function reloadItems() {
-  await fetchConntrack()
-}
-
 const filteredItems = computed(() => {
   return filter.value === ''
     ? conntrackRecords.value
@@ -134,7 +130,7 @@ const filteredItems = computed(() => {
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="reloadItems()" class="shrink-0">
+        <NeButton kind="secondary" size="lg" @click="fetchConntrack()" class="shrink-0">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
           </template>
@@ -165,7 +161,7 @@ const filteredItems = computed(() => {
         :title="t('standalone.conntrack.no_connection_found')"
         :icon="['fas', 'chain']"
       >
-        <NeButton kind="tertiary" @click="reloadItems">
+        <NeButton kind="tertiary" @click="fetchConntrack">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" /> </template
           >{{ t('standalone.conntrack.refresh_page') }}</NeButton
@@ -189,7 +185,7 @@ const filteredItems = computed(() => {
   <DeleteConntrackRecordModal
     :visible="showDeleteModal"
     @close="closeDeleteModal"
-    @record-deleted="reloadItems"
+    @record-deleted="fetchConntrack"
     :item-to-delete="selectedItem"
   />
 </template>

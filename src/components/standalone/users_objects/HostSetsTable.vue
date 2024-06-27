@@ -67,25 +67,30 @@ faLibrary.add(faDesktop)
 faLibrary.add(faBoxArchive)
 
 function getKebabMenuItems(hostSet: HostSet) {
-  return [
+  const kebabItems = [
     {
       id: 'showUsagesHostSet',
       label: t('standalone.objects.show_usages'),
       icon: 'magnifying-glass-plus',
       iconStyle: 'fas',
       action: () => emit('showUsagesHostSet', hostSet),
-      disabled: !hostSet.used
-    },
-    {
+      disabled: !hostSet.used,
+      danger: false
+    }
+  ]
+
+  if (isHostSetEditable(hostSet)) {
+    kebabItems.push({
       id: 'deleteHostSet',
       label: t('common.delete'),
       icon: 'trash',
       iconStyle: 'fas',
       danger: true,
-      disabled: !isHostSetEditable(hostSet),
-      action: () => emit('deleteHostSet', hostSet)
-    }
-  ]
+      action: () => emit('deleteHostSet', hostSet),
+      disabled: false
+    })
+  }
+  return kebabItems
 }
 
 function isHostSetEditable(hostSet: HostSet) {

@@ -17,18 +17,14 @@ import {
   useItemPagination
 } from '@nethesis/vue-components'
 import type { ConntrackRecord } from './ConntrackContent.vue'
-import { ref, withDefaults, defineProps } from 'vue'
+import { ref, defineProps } from 'vue'
+import { byteFormat1024 } from '@nethesis/vue-components'
 const { t } = useI18n()
 
-const props = withDefaults(
-  defineProps<{
-    conntrackRecords: ConntrackRecord[]
-    loading?: boolean
-  }>(),
-  {
-    loading: false
-  }
-)
+const props = defineProps<{
+  conntrackRecords: ConntrackRecord[]
+  loading?: boolean
+}>()
 
 const emit = defineEmits(['record-delete'])
 
@@ -58,24 +54,25 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
       </NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
-      <NeTableRow v-for="item in paginatedItems" :key="item.source">
+      <NeTableRow v-for="item in paginatedItems" :key="item.source_port">
         <NeTableCell :data-label="t('standalone.conntrack.source')">
-          {{ item.source }}
+          {{ item.source }}:{{ item.source_port }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.destination')">
-          {{ item.destination }}
+          {{ item.destination }}:{{ item.destination_port }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.protocol')">
-          {{ item.protocol }}
+          {{ item.protocol.toUpperCase() }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.statistics')">
-          {{ item.statistics }}
+          {{ byteFormat1024(item.source_stats.bytes) }} /
+          {{ byteFormat1024(item.destination_stats.bytes) }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.state')">
           {{ item.state || '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.timeout')">
-          {{ item.timeout }}
+          {{ item.timeout }}s
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center flex justify-end">

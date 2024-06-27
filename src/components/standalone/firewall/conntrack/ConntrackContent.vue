@@ -4,18 +4,23 @@
 -->
 
 <script setup lang="ts">
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { useI18n } from 'vue-i18n'
-import FilterableListItemConntrack from '@/components/standalone//firewall/conntrack/FilterableListItemConntrack.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import ConntrackRecordsTable from '@/components/standalone/firewall/conntrack/ConntrackRecordsTable.vue'
 import DeleteConntrackRecordModal from '@/components/standalone/firewall/conntrack/DeleteConntrackRecordModal.vue'
-import { NeHeading } from '@nethesis/vue-components'
-import { byteFormat1024 } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import {
+  NeHeading,
+  NeInlineNotification,
+  NeButton,
+  NeSkeleton,
+  NeEmptyState,
+  NeTextInput
+} from '@nethesis/vue-components'
+import { getAxiosErrorMessage } from '@nethesis/vue-components'
+import { onMounted, ref, computed } from 'vue'
+import { CanceledError } from 'axios'
 
 const { t } = useI18n()
-const uciChangesStore = useUciPendingChangesStore()
 
 export type ConntrackRecord = {
   destination: string
@@ -34,47 +39,39 @@ export type ConntrackRecord = {
   }
   state?: string
   timeout: string
-  statistics?: string
 }
+
+const isloading = ref(false)
+const ConntrackRecordsResponse = ref<ConntrackRecord[]>([])
+const error = ref({
+  notificationDescription: '',
+  notificationDetails: '',
+  notificationTitle: ''
+})
+const filter = ref('')
+const showDeleteModal = ref(false)
 
 onMounted(() => {
- fetchConntrack()
+  fetchConntrack()
 })
 
-async function fetchConntrack(): Promise<ConntrackRecord[]> {
-  const ConntrackRecordsResponse = await ubusCall('ns.conntrack', 'list')
-  // Function to update source and destination properties
-  ConntrackRecordsResponse.data = updateConntrackRecords(ConntrackRecordsResponse.data.data)
+const selectedItem = ref<ConntrackRecord>()
 
-  return ConntrackRecordsResponse.data
+async function fetchConntrack() {
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  try {
+    isloading.value = true
+    ConntrackRecordsResponse.value = (await ubusCall('ns.conntrack', 'list')).data.data
+  } catch (err: any) {
+    if (!(err instanceof CanceledError)) {
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
+  } finally {
+    isloading.value = false
+  }
 }
-
-function updateConntrackRecords(records: ConntrackRecord[]) {
-  return records.map((record) => {
-    // translate the source and destination with the port
-    if (record.source_port) {
-      record.source = record.source + ':' + record.source_port
-    }
-    if (record.destination_port) {
-      record.destination = record.destination + ':' + record.destination_port
-    }
-    // translate the timeout
-    if (record.timeout) {
-      record.timeout = record.timeout + 's'
-    }
-    // translate statistics download and upload
-    record.statistics =
-      byteFormat1024(record.source_stats.bytes) +
-      ' / ' +
-      byteFormat1024(record.destination_stats.bytes)
-    // translate the protocol
-    if (record.protocol) {
-      record.protocol = record.protocol.toUpperCase()
-    }
-    return record
-  })
-}
-
 function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
   const lowerCaseFilter = filter.toLowerCase()
   return records.filter(
@@ -88,32 +85,114 @@ function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: strin
   )
 }
 
-async function getUciChanges() {
-  await uciChangesStore.getChanges()
+function delete_all() {
+  selectedItem.value = {
+    id: 'all',
+    destination: '',
+    destination_stats: { bytes: '', packets: '' },
+    protocol: '',
+    source: '',
+    source_stats: { bytes: '', packets: '' },
+    timeout: ''
+  }
+  showDeleteModal.value = true
 }
+
+function openDeleteModal(itemToDelete: ConntrackRecord) {
+  selectedItem.value = itemToDelete
+  showDeleteModal.value = true
+}
+function closeDeleteModal() {
+  showDeleteModal.value = false
+}
+
+async function reloadItems() {
+  await fetchConntrack()
+}
+
+const filteredItems = computed(() => {
+  return filter.value === ''
+    ? ConntrackRecordsResponse.value
+    : applyFilterToConntrackRecords(ConntrackRecordsResponse.value, filter.value)
+})
 </script>
 
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.conntrack.title') }}</NeHeading>
-  <FilterableListItemConntrack
-    :fetch-items-function="fetchConntrack"
-    :fetch-error-notification-title="t('error.cannot_retrieve_conntrack_records')"
-    :apply-filter-to-items-function="applyFilterToConntrackRecords"
-    :no-items-found-message="t('standalone.conntrack.no_connection_found')"
-    :no-filtered-items-found-message="t('standalone.conntrack.no_connection_found')"
-    :no-filtered-items-found-description="t('standalone.conntrack.filter_change_suggestion')"
-    @reload-items="getUciChanges()"
-  >
-    <template #item-list-view="{ items, openDeleteModal }">
-      <ConntrackRecordsTable :conntrack-records="items" @record-delete="openDeleteModal" />
+  <div class="flex flex-col gap-y-6">
+    <div class="flex flex-row items-center justify-between">
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.conntrack.conntrack_description') }}
+      </p>
+      <div class="ml-2 shrink-0">
+        <NeButton
+          v-if="ConntrackRecordsResponse.length > 0"
+          kind="secondary"
+          size="lg"
+          @click="delete_all()"
+          class="mr-4 shrink-0"
+        >
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />
+          </template>
+          {{ t('standalone.conntrack.delete_all') }}
+        </NeButton>
+        <NeButton kind="secondary" size="lg" @click="reloadItems()" class="shrink-0">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
+          </template>
+          {{ t('standalone.conntrack.refresh_page') }}</NeButton
+        >
+      </div>
+    </div>
+    <div class="mb-5 flex items-center gap-4">
+      <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+      <NeButton kind="tertiary" @click="filter = ''" :disabled="isloading || !filter">
+        {{ t('common.clear_filter') }}
+      </NeButton>
+    </div>
+    <NeInlineNotification
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      v-if="error.notificationDescription"
+    >
+      <template #details v-if="error.notificationDetails">
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
+    <NeSkeleton v-if="isloading" :lines="10" />
+    <template v-else>
+      <NeEmptyState
+        v-if="ConntrackRecordsResponse.length == 0"
+        :title="t('standalone.conntrack.no_connection_found')"
+        :icon="['fas', 'chain']"
+      >
+        <NeButton kind="tertiary" @click="reloadItems">
+          <template #prefix>
+            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" /> </template
+          >{{ t('standalone.conntrack.refresh_page') }}</NeButton
+        >
+      </NeEmptyState>
+      <NeEmptyState
+        v-else-if="filteredItems.length == 0"
+        :title="t('standalone.conntrack.no_connection_found')"
+        :description="t('standalone.conntrack.filter_change_suggestion')"
+        :icon="['fas', 'chain']"
+      >
+        <NeButton kind="tertiary" @click="filter = ''"> {{ t('common.clear_filter') }}</NeButton>
+      </NeEmptyState>
     </template>
-    <template #delete-item-modal="{ isModalShown, closeModal, itemToDelete, reloadItems }">
-      <DeleteConntrackRecordModal
-        :visible="isModalShown"
-        @close="closeModal()"
-        @record-deleted="reloadItems()"
-        :item-to-delete="itemToDelete"
-      />
-    </template>
-  </FilterableListItemConntrack>
+  </div>
+  <ConntrackRecordsTable
+    v-if="filteredItems.length > 0"
+    :conntrack-records="filteredItems"
+    @record-delete="openDeleteModal"
+  />
+  <DeleteConntrackRecordModal
+    :visible="showDeleteModal"
+    @close="closeDeleteModal"
+    @record-deleted="reloadItems"
+    :item-to-delete="selectedItem"
+  />
 </template>

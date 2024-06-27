@@ -27,6 +27,10 @@ const props = defineProps({
   usageIds: {
     type: Array<String>,
     required: true
+  },
+  showGoToObjectsButton: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -79,6 +83,8 @@ function getManagementPageLabel(category: string) {
   switch (category) {
     case 'firewall':
       return t('common.go_to_page', { page: t('standalone.firewall_rules.title') })
+    case 'objects':
+      return t('common.go_to_page', { page: t('standalone.objects.title') })
     //// add other pages
   }
 }
@@ -90,6 +96,8 @@ function goToManagementPage(subtype: string) {
     case 'firewall':
       path = 'firewall/rules'
       break
+    case 'objects':
+      path = 'users-objects/objects'
     //// add other pages
   }
   router.push(`${getStandaloneRoutePrefix(route)}/${path}`)
@@ -117,7 +125,7 @@ function goToManagementPage(subtype: string) {
             {{ t(`standalone.objects.database_${categoryName}`) }}
           </div>
           <NeButton
-            v-if="categoryName !== 'objects'"
+            v-if="showGoToObjectsButton"
             size="sm"
             kind="tertiary"
             @click="goToManagementPage(categoryName)"

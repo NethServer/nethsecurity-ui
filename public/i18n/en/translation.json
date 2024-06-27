@@ -1496,7 +1496,7 @@
       "expired": "Expired",
       "not_expired": "Not expired",
       "delete_account": "Delete account",
-      "delete_account_message": "This action will also delete the certificate, if present.",
+      "delete_account_message": "Delete account {name}? Its certificate will be deleted too, if present.",
       "user": "User",
       "certificate_expiration_days": "Certificate expiration (days)",
       "edit_account": "Edit account",

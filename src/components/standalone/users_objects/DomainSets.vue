@@ -208,6 +208,7 @@ function showUsagesModal(domainSet: DomainSet) {
       :visible="isShownCannotDeleteObjectModal"
       :objectName="currentDomainSetName"
       :usageIds="currentUsageIds"
+      :showGoToObjectsButton="false"
       @close="isShownCannotDeleteObjectModal = false"
     />
     <!-- usages modal -->
@@ -215,6 +216,7 @@ function showUsagesModal(domainSet: DomainSet) {
       :visible="isShownUsagesModal"
       :objectName="currentDomainSetName"
       :usageIds="currentUsageIds"
+      :showGoToObjectsButton="false"
       @close="isShownUsagesModal = false"
     />
   </div>

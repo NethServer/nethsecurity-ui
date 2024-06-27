@@ -21,6 +21,10 @@ defineProps({
   usageIds: {
     type: Array<String>,
     required: true
+  },
+  showGoToObjectsButton: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -56,7 +60,7 @@ function closeModal() {
         :isExpanded="isExpandedShowUsages"
         @setExpanded="(ev: boolean) => (isExpandedShowUsages = ev)"
       >
-        <ObjectUsages :usageIds="usageIds" />
+        <ObjectUsages :usageIds="usageIds" :showGoToObjectsButton="showGoToObjectsButton" />
       </NeExpandable>
     </div>
   </NeModal>

@@ -42,7 +42,6 @@ async function deleteConntrackRecord() {
         await ubusCall('ns.conntrack', 'drop_all', {})
       }
       emit('record-deleted')
-      emit('close')
     } catch (err: any) {
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()

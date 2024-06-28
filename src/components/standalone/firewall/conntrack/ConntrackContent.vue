@@ -59,6 +59,7 @@ const selectedItem = ref<ConntrackRecord>()
 async function fetchConntrack() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
+  closeDeleteModal()
   try {
     isLoading.value = true
     conntrackRecords.value = (await ubusCall('ns.conntrack', 'list')).data.data

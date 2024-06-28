@@ -6,11 +6,12 @@
 <script lang="ts" setup>
 import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ReportContent from '@/components/standalone/report/ReportContent.vue'
 import PingContent from '@/components/standalone/report/PingContent.vue'
 import { useTabs } from '@/composables/useTabs'
+import NeFilter from '@/components/NeFilter.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -24,6 +25,14 @@ const { tabs, selectedTab } = useTabs([
     name: 'tab-ping',
     label: t('standalone.report.tabs.ping_latency_monitor')
   }
+])
+
+////
+const filterOptions = ref([
+  { id: 'all', label: 'All', disabled: false },
+  { id: 'today', label: 'Today', disabled: false },
+  { id: 'yesterday', label: 'Yesterday', disabled: true },
+  { id: 'last_7_days', label: 'Last 7 days', disabled: false }
 ])
 
 onMounted(() => {
@@ -49,4 +58,12 @@ watch(selectedTab, () => {
     <ReportContent v-if="selectedTab == 'tab-report'" />
     <PingContent v-if="selectedTab == 'tab-ping'" />
   </div>
+
+  <!-- //// delete -->
+  <NeFilter
+    label="Filter"
+    kind="radio"
+    :options="filterOptions"
+    openMenuAriaLabel="Open test filter"
+  />
 </template>

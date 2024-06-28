@@ -40,7 +40,7 @@ export type ConntrackRecord = {
   timeout: string
 }
 
-const isloading = ref(false)
+const isLoading = ref(false)
 const conntrackRecords = ref<ConntrackRecord[]>([])
 const error = ref({
   notificationDescription: '',
@@ -60,13 +60,13 @@ async function fetchConntrack() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
   try {
-    isloading.value = true
+    isLoading.value = true
     conntrackRecords.value = (await ubusCall('ns.conntrack', 'list')).data.data
   } catch (err: any) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {
-    isloading.value = false
+    isLoading.value = false
   }
 }
 function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
@@ -140,7 +140,7 @@ const filteredItems = computed(() => {
     </div>
     <div class="flex items-center gap-4">
       <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
-      <NeButton kind="tertiary" @click="filter = ''" :disabled="isloading || !filter">
+      <NeButton kind="tertiary" @click="filter = ''" :disabled="isLoading || !filter">
         {{ t('common.clear_filter') }}
       </NeButton>
     </div>
@@ -154,7 +154,7 @@ const filteredItems = computed(() => {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="isloading" :lines="10" size="lg" />
+    <NeSkeleton v-if="isLoading" :lines="10" size="lg" />
     <template v-else>
       <NeEmptyState
         v-if="conntrackRecords.length == 0"

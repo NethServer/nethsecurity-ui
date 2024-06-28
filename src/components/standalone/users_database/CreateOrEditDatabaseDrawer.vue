@@ -26,7 +26,6 @@ import {
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { debounce } from 'lodash-es'
 
 type LDAPDatabasePayload = {
   name: string
@@ -63,7 +62,6 @@ const validationErrorBag = ref(new MessageBag())
 const loading = ref(false)
 const isTestingConfiguration = ref(false)
 const testUserResults = ref<{ name: string; description: string }[] | null>(null)
-const isRetrievingDefaults = ref(false)
 
 // Form fields
 const isEditing = ref(false)
@@ -230,36 +228,6 @@ async function testDatabaseConfiguration() {
   }
 }
 
-async function getLdapDefaults() {
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  validationErrorBag.value.delete('uri')
-
-  if (validateUri(false)) {
-    try {
-      isRetrievingDefaults.value = true
-      const ldapDefaultsResponse = (
-        await ubusCall('ns.users', 'get-ldap-defaults', { uri: ldapUri.value, schema: type.value })
-      ).data.defaults
-      baseDn.value = ldapDefaultsResponse.base_dn
-      userDn.value = ldapDefaultsResponse.user_dn
-      userAttribute.value = ldapDefaultsResponse.user_attr
-      userCn.value = ldapDefaultsResponse.user_cn
-    } catch (err: any) {
-      error.value.notificationTitle = t('error.cannot_retrieve_ldap_defaults')
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
-    } finally {
-      isRetrievingDefaults.value = false
-    }
-  }
-}
-
-const debouncedGetLdapDefaults = debounce(() => {
-  getLdapDefaults()
-}, 500)
-
 async function createOrEditDatabase() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
@@ -352,11 +320,6 @@ watch(
       />
       <NeTextInput
         v-model="ldapUri"
-        @update:model-value="
-          () => {
-            debouncedGetLdapDefaults()
-          }
-        "
         :label="t('standalone.users_database.ldap_uri')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('uri'))"
         placeholder="ldaps://192.168.100.234"
@@ -372,7 +335,6 @@ watch(
       <NeTextInput
         v-model="baseDn"
         :label="t('standalone.users_database.base_dn')"
-        :disabled="isRetrievingDefaults"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('base_dn'))"
       >
         <template #tooltip>
@@ -385,7 +347,6 @@ watch(
       </NeTextInput>
       <NeTextInput
         v-model="userDn"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_dn'))"
       >
@@ -399,7 +360,6 @@ watch(
       </NeTextInput>
       <NeTextInput
         v-model="userAttribute"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_attribute')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_attr'))"
       >
@@ -413,7 +373,6 @@ watch(
       >
       <NeTextInput
         v-model="userCn"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_cn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_cn'))"
       >
@@ -427,7 +386,6 @@ watch(
       >
       <NeTextInput
         v-model="userBindDn"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.user_bind_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_bind_dn'))"
         :optional="true"
@@ -443,7 +401,6 @@ watch(
       >
       <NeTextInput
         v-model="bindDn"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.bind_dn')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('bind_dn'))"
         :optional="true"
@@ -459,7 +416,6 @@ watch(
       >
       <NeTextInput
         v-model="bindPassword"
-        :disabled="isRetrievingDefaults"
         :label="t('standalone.users_database.bind_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('bind_password'))"
         :optional="true"

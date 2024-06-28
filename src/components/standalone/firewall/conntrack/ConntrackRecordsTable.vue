@@ -25,7 +25,9 @@ const props = defineProps<{
   conntrackRecords: ConntrackRecord[]
 }>()
 
-const emit = defineEmits(['record-delete'])
+const emit = defineEmits<{
+  delete: [item: ConntrackRecord]
+}>()
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackRecords, {
@@ -73,8 +75,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
           {{ item.timeout }} s
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
-          <div class="align-center -ml-2.5 xl:ml-0 flex xl:justify-end">
-            <NeButton kind="tertiary" @click="emit('record-delete', item)">
+          <div class="align-center -ml-2.5 flex xl:ml-0 xl:justify-end">
+            <NeButton kind="tertiary" @click="emit('delete', item)">
               <template #prefix>
                 <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />
               </template>

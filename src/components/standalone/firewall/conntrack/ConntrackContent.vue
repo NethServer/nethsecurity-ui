@@ -179,7 +179,7 @@ const filteredItems = computed(() => {
       <ConntrackRecordsTable
         v-if="filteredItems.length > 0"
         :conntrack-records="filteredItems"
-        @record-delete="openDeleteModal"
+        @delete="openDeleteModal"
       />
     </template>
   </div>

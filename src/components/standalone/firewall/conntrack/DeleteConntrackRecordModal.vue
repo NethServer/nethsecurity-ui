@@ -27,27 +27,25 @@ const error = ref({
 const isDeleting = ref(false)
 
 async function deleteConntrackRecord() {
-  if (props.itemToDelete) {
-    error.value = {
-      notificationDescription: '',
-      notificationDetails: ''
+  error.value = {
+    notificationDescription: '',
+    notificationDetails: ''
+  }
+  isDeleting.value = true
+  try {
+    if (props.itemToDelete !== undefined) {
+      await ubusCall('ns.conntrack', 'drop', {
+        id: props.itemToDelete.id
+      })
+    } else {
+      await ubusCall('ns.conntrack', 'drop_all', {})
     }
-    isDeleting.value = true
-    try {
-      if (props.itemToDelete.id !== 'all') {
-        await ubusCall('ns.conntrack', 'drop', {
-          id: props.itemToDelete.id
-        })
-      } else {
-        await ubusCall('ns.conntrack', 'drop_all', {})
-      }
-      emit('record-deleted')
-    } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
-    } finally {
-      isDeleting.value = false
-    }
+    emit('record-deleted')
+  } catch (err: any) {
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -76,7 +74,7 @@ function close() {
     @close="close()"
     @secondaryClick="close()"
   >
-    <span v-if="itemToDelete?.id !== 'all'">
+    <span v-if="itemToDelete !== undefined">
       {{
         t('standalone.conntrack.delete_conntrack_record_message', {
           source: itemToDelete?.destination + ':' + itemToDelete?.destination_port ?? '',

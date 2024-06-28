@@ -84,15 +84,7 @@ function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: strin
 }
 
 function deleteAll() {
-  selectedItem.value = {
-    id: 'all',
-    destination: '',
-    destination_stats: { bytes: '', packets: '' },
-    protocol: '',
-    source: '',
-    source_stats: { bytes: '', packets: '' },
-    timeout: ''
-  }
+  selectedItem.value = undefined
   showDeleteModal.value = true
 }
 

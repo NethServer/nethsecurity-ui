@@ -114,7 +114,7 @@ const filteredItems = computed(() => {
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.conntrack.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
-    <div class="flex flex-row justify-between mb-4">
+    <div class="mb-4 flex flex-row justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.conntrack.conntrack_description') }}
       </p>

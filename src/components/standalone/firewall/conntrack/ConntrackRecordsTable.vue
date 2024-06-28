@@ -72,7 +72,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
           {{ item.state || '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.timeout')">
-          {{ item.timeout }}s
+          {{ item.timeout }} s
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center -ml-2.5 xl:ml-0 flex xl:justify-end">

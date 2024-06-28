@@ -23,7 +23,6 @@ const { t } = useI18n()
 
 const props = defineProps<{
   conntrackRecords: ConntrackRecord[]
-  loading?: boolean
 }>()
 
 const emit = defineEmits(['record-delete'])
@@ -38,7 +37,6 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
   <NeTable
     :ariaLabel="t('standalone.dns_dhcp.scan_conntrackRecords')"
     cardBreakpoint="xl"
-    :loading="loading"
     :skeletonColumns="5"
     :skeletonRows="5"
   >

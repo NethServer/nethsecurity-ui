@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import type { UserDatabase } from '@/views/standalone/vpn/UsersDatabaseView.vue'
+import type { UserDatabase } from '@/views/standalone/users_objects/UsersDatabaseView.vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'

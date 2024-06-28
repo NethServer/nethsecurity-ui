@@ -5,14 +5,16 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeButton } from '@nethesis/vue-components'
+import { NeButton, NeInlineNotification, NeLink } from '@nethesis/vue-components'
 import { NeSkeleton, NeTooltip, NeDropdown } from '@nethesis/vue-components'
-import { ref, type PropType, watch, computed } from 'vue'
+import { ref, type PropType, watch, computed, onMounted } from 'vue'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { isEmpty } from 'lodash-es'
 import { type FirewallRule, type RuleType } from '@/stores/standalone/firewall'
 import SourceOrDestinationRuleColumn from './SourceOrDestinationRuleColumn.vue'
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import { useHostSets } from '@/composables/useHostSets'
+import { useDomainSets } from '@/composables/useDomainSets'
 
 const props = defineProps({
   rules: {
@@ -43,6 +45,16 @@ const emit = defineEmits([
 ])
 
 const { t } = useI18n()
+const { hostSets, listHostSets, loadingListHostSets, errorListHostSets, errorListHostSetsDetails } =
+  useHostSets()
+const {
+  domainSets,
+  listDomainSets,
+  loadingListDomainSets,
+  errorListDomainSets,
+  errorListDomainSetsDetails
+} = useDomainSets()
+
 const internalRules = ref<FirewallRule[]>([])
 
 const headers = [
@@ -91,6 +103,11 @@ watch(
     internalRules.value = props.rules
   }
 )
+
+onMounted(() => {
+  listHostSets()
+  listDomainSets()
+})
 
 function drop(index: number): void {
   indexOver.value = undefined
@@ -232,6 +249,30 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
 
 <template>
   <div>
+    <!-- list host sets error notification -->
+    <NeInlineNotification
+      v-if="errorListHostSets"
+      kind="error"
+      :title="t('error.cannot_retrieve_host_sets')"
+      :description="errorListHostSets"
+      class="mb-5"
+    >
+      <template #details v-if="errorListHostSetsDetails">
+        {{ errorListHostSetsDetails }}
+      </template>
+    </NeInlineNotification>
+    <!-- list domain sets error notification -->
+    <NeInlineNotification
+      v-if="errorListDomainSets"
+      kind="error"
+      :title="t('error.cannot_retrieve_domain_sets')"
+      :description="errorListDomainSets"
+      class="mb-5"
+    >
+      <template #details v-if="errorListDomainSetsDetails">
+        {{ errorListDomainSetsDetails }}
+      </template>
+    </NeInlineNotification>
     <!-- rules table -->
     <NeTable
       v-if="loadingRules || !isEmpty(filteredRules)"
@@ -250,7 +291,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
             </tr>
           </template>
           <template v-else>
-            <template v-for="(rule, index) in filteredRules" :key="rule.key">
+            <template v-for="(rule, index) in filteredRules" :key="rule.id">
               <!-- drop target -->
               <tr
                 v-if="!textFilter"
@@ -322,10 +363,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     <!-- show details icon -->
                     <NeTooltip>
                       <template #trigger>
-                        <FontAwesomeIcon
-                          :icon="['fas', 'magnifying-glass-plus']"
-                          class="text-primary-700 dark:text-primary-500"
-                        />
+                        <NeLink>
+                          <FontAwesomeIcon :icon="['fas', 'magnifying-glass-plus']" />
+                        </NeLink>
                       </template>
                       <template #content>
                         <div>
@@ -347,6 +387,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     columnType="source"
                     :rulesType="rulesType"
                     :enabled="rule.enabled"
+                    :hostSets="hostSets"
+                    :domainSets="domainSets"
+                    :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- destination -->
@@ -356,6 +399,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     columnType="destination"
                     :rulesType="rulesType"
                     :enabled="rule.enabled"
+                    :hostSets="hostSets"
+                    :domainSets="domainSets"
+                    :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- service -->
@@ -376,7 +422,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 </td>
                 <td :class="!rule.enabled ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->
-                  <div class="flex justify-end">
+                  <div class="flex justify-end gap-2">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">
                       <template #prefix>
                         <font-awesome-icon

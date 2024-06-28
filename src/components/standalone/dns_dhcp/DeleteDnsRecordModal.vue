@@ -10,6 +10,7 @@ import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DnsRecord } from './DnsRecords.vue'
+import CannotDeleteObjectModal from '../users_objects/CannotDeleteObjectModal.vue'
 
 const { t } = useI18n()
 
@@ -61,31 +62,44 @@ function close() {
 </script>
 
 <template>
-  <NeModal
-    :visible="visible"
-    kind="warning"
-    :title="t('standalone.dns_dhcp.delete_dns_record')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
-    :close-aria-label="t('common.close')"
-    @primaryClick="deleteDnsRecord()"
-    @close="close()"
-  >
-    {{
-      t('standalone.dns_dhcp.delete_dns_record_message', {
-        name: itemToDelete?.name ?? ''
-      })
-    }}
-    <NeInlineNotification
-      v-if="error.notificationDescription"
-      kind="error"
-      :title="t('error.cannot_delete_dns_record')"
-      :description="error.notificationDescription"
+  <div>
+    <!-- cannot delete object modal -->
+    <CannotDeleteObjectModal
+      v-if="itemToDelete?.used"
+      :visible="visible"
+      :objectName="itemToDelete?.name"
+      :usageIds="itemToDelete?.matches"
+      :showGoToObjectsButton="true"
+      @close="close"
+    />
+    <!-- delete dn record modal -->
+    <NeModal
+      v-else
+      :visible="visible"
+      kind="warning"
+      :title="t('standalone.dns_dhcp.delete_dns_record')"
+      :primaryLabel="t('common.delete')"
+      :primaryButtonDisabled="isDeleting"
+      :primaryButtonLoading="isDeleting"
+      :close-aria-label="t('common.close')"
+      @primaryClick="deleteDnsRecord()"
+      @close="close()"
     >
-      <template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
-  </NeModal>
+      {{
+        t('standalone.dns_dhcp.delete_dns_record_message', {
+          name: itemToDelete?.name ?? ''
+        })
+      }}
+      <NeInlineNotification
+        v-if="error.notificationDescription"
+        kind="error"
+        :title="t('error.cannot_delete_dns_record')"
+        :description="error.notificationDescription"
+      >
+        <template #details v-if="error.notificationDetails">
+          {{ error.notificationDetails }}
+        </template></NeInlineNotification
+      >
+    </NeModal>
+  </div>
 </template>

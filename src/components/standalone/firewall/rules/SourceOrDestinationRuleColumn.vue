@@ -5,10 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeTooltip, NeBadge } from '@nethesis/vue-components'
+import { NeTooltip, NeBadge, NeSkeleton } from '@nethesis/vue-components'
 import { type FirewallRule, type RuleHost, type RuleType } from '@/stores/standalone/firewall'
 import { computed, type PropType } from 'vue'
 import { getZoneColorClasses } from '@/lib/standalone/network'
+import type { HostSet } from '@/composables/useHostSets'
+import HostSetTooltip from '../../users_objects/HostSetTooltip.vue'
+import DomainSetTooltip from '../../users_objects/DomainSetTooltip.vue'
+import type { DomainSet } from '@/composables/useDomainSets'
 
 const props = defineProps({
   rule: {
@@ -26,10 +30,38 @@ const props = defineProps({
   enabled: {
     type: Boolean,
     default: true
+  },
+  loadingObjects: {
+    type: Boolean,
+    default: false
+  },
+  hostSets: {
+    type: Array as PropType<HostSet[]>,
+    required: true
+  },
+  domainSets: {
+    type: Array as PropType<DomainSet[]>,
+    required: true
   }
 })
 
 const { t } = useI18n()
+
+const hostSetObject = computed(() => {
+  if (props.columnType === 'source') {
+    return props.hostSets.find((hostSet) => hostSet.id === props.rule.ns_src)
+  } else {
+    return props.hostSets.find((hostSet) => hostSet.id === props.rule.ns_dst)
+  }
+})
+
+const domainSetObject = computed(() => {
+  if (props.columnType === 'source') {
+    return props.domainSets.find((domainSet) => `objects/${domainSet.id}` === props.rule.ns_src)
+  } else {
+    return props.domainSets.find((domainSet) => `objects/${domainSet.id}` === props.rule.ns_dst)
+  }
+})
 
 const addresses = computed(() => {
   if (props.columnType === 'source') {
@@ -63,6 +95,16 @@ const zone = computed(() => {
         :text="t('standalone.firewall_rules.firewall')"
         :kind="enabled ? 'tertiary' : 'secondary'"
       />
+    </template>
+    <!-- host set object -->
+    <template v-else-if="hostSetObject">
+      <NeSkeleton v-if="loadingObjects" />
+      <HostSetTooltip :hostSetId="hostSetObject.id" :allHostSets="hostSets" />
+    </template>
+    <!-- domain set object -->
+    <template v-else-if="domainSetObject">
+      <NeSkeleton v-if="loadingObjects" />
+      <DomainSetTooltip :domainSetId="domainSetObject.id" :allDomainSets="domainSets" />
     </template>
     <template v-else-if="addresses.length">
       <!-- show addresses -->

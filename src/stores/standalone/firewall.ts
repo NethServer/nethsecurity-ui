@@ -57,8 +57,10 @@ export interface FirewallRule {
   name: string // rule name
   src?: string // source zone
   src_ip?: string[] | RuleHost[] // source addresses
+  ns_src?: string // source address object
   dest?: string // destination zone
   dest_ip?: string[] | RuleHost[] // destination addresses
+  ns_dst?: string // destination address object
   proto: string[] // service protocols
   dest_port: string[] // service ports
   target: FirewallRuleAction // 'DROP' | 'REJECT' | 'ACCEPT'

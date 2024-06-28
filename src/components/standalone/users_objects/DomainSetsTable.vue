@@ -21,7 +21,7 @@ import {
 import { ref, type PropType } from 'vue'
 import { library as faLibrary } from '@fortawesome/fontawesome-svg-core'
 import { faCloud } from '@fortawesome/free-solid-svg-icons'
-import type { DomainSet } from './DomainSets.vue'
+import type { DomainSet } from '@/composables/useDomainSets'
 
 const props = defineProps({
   filteredDomainSets: {

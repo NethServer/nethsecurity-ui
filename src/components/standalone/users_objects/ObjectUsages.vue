@@ -4,10 +4,17 @@
 -->
 
 <script setup lang="ts">
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeInlineNotification, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-components'
+import {
+  NeButton,
+  NeInlineNotification,
+  NeSkeleton,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 type ObjectInfo = {
   id: string
@@ -20,10 +27,16 @@ const props = defineProps({
   usageIds: {
     type: Array<String>,
     required: true
+  },
+  showGoToObjectsButton: {
+    type: Boolean,
+    required: true
   }
 })
 
 const { t } = useI18n()
+const router = useRouter()
+const route = useRoute()
 
 const usages = ref<Record<string, ObjectInfo[]>>({})
 
@@ -65,6 +78,30 @@ async function getInfo() {
     loading.value.getInfo = false
   }
 }
+
+function getManagementPageLabel(category: string) {
+  switch (category) {
+    case 'firewall':
+      return t('common.go_to_page', { page: t('standalone.firewall_rules.title') })
+    case 'objects':
+      return t('common.go_to_page', { page: t('standalone.objects.title') })
+    //// add other pages
+  }
+}
+
+function goToManagementPage(subtype: string) {
+  let path = ''
+
+  switch (subtype) {
+    case 'firewall':
+      path = 'firewall/rules'
+      break
+    case 'objects':
+      path = 'users-objects/objects'
+    //// add other pages
+  }
+  router.push(`${getStandaloneRoutePrefix(route)}/${path}`)
+}
 </script>
 
 <template>
@@ -81,11 +118,30 @@ async function getInfo() {
       </template>
     </NeInlineNotification>
     <NeSkeleton v-else-if="loading.getInfo" :lines="3" size="lg" />
-    <div v-else class="space-y-4">
+    <div v-else class="space-y-5">
       <div v-for="categoryName in Object.keys(usages)" :key="categoryName">
-        <div class="font-medium">
-          {{ t(`standalone.objects.database_${categoryName}`) }}
+        <div class="flex items-center justify-between">
+          <div class="font-medium">
+            {{ t(`standalone.objects.database_${categoryName}`) }}
+          </div>
+          <NeButton
+            v-if="showGoToObjectsButton"
+            size="sm"
+            kind="tertiary"
+            @click="goToManagementPage(categoryName)"
+            class="shrink-0"
+          >
+            <template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'arrow-right']"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </template>
+            {{ getManagementPageLabel(categoryName) }}
+          </NeButton>
         </div>
+        <hr class="mb-2 mt-1" />
         <ul>
           <li
             v-for="objectInfo in usages[categoryName]"

@@ -5,36 +5,28 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeEmptyState,
-  NeInlineNotification,
-  NeTextInput,
-  getAxiosErrorMessage
-} from '@nethesis/vue-components'
+import { NeButton, NeEmptyState, NeInlineNotification, NeTextInput } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CreateOrEditDomainSetDrawer from './CreateOrEditDomainSetDrawer.vue'
 import DomainSetsTable from './DomainSetsTable.vue'
-import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
 import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
 import ObjectUsagesModal from './ObjectUsagesModal.vue'
-
-export type DomainSet = {
-  id: string
-  name: string
-  family?: IpVersion
-  domain: string[]
-  timeout: string
-  used?: boolean
-  matches?: string[]
-}
+import { useDomainSets, type DomainSet } from '@/composables/useDomainSets'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
-const domainSets = ref<DomainSet[]>([])
+const {
+  domainSets,
+  listDomainSets,
+  loadingListDomainSets,
+  errorListDomainSets,
+  errorListDomainSetsDetails,
+  searchStringInDomainSet
+} = useDomainSets()
+
 const currentDomainSet = ref<DomainSet | undefined>(undefined)
 const currentDomainSetName = ref('')
 const currentUsageIds = ref<string[]>([])
@@ -43,15 +35,6 @@ const isShownDeleteDomainSetModal = ref(false)
 const isShownUsagesModal = ref(false)
 const isShownCannotDeleteObjectModal = ref(false)
 const textFilter = ref('')
-
-const loading = ref({
-  listDomainSets: false
-})
-
-const error = ref({
-  listDomainSets: '',
-  listDomainSetsDetails: ''
-})
 
 const filteredDomainSets = computed(() => {
   if (!textFilter.value) {
@@ -72,49 +55,6 @@ onMounted(() => {
 function loadData() {
   listDomainSets()
   uciChangesStore.getChanges()
-}
-
-function searchStringInDomainSet(domainSet: DomainSet, queryText: string) {
-  const regex = /[^a-zA-Z0-9-]/g
-  queryText = queryText.replace(regex, '')
-  let found = false
-
-  // search in string attributes
-  found = ['name'].some((attrName) => {
-    const attrValue = domainSet[attrName as keyof DomainSet] as string
-    return new RegExp(queryText, 'i').test(attrValue?.replace(regex, ''))
-  })
-
-  if (found) {
-    return true
-  }
-
-  // search in records (domain attribute)
-  found = !!domainSet.domain?.some((record) => {
-    return new RegExp(queryText, 'i').test(record?.replace(regex, ''))
-  })
-
-  if (found) {
-    return true
-  }
-}
-
-async function listDomainSets() {
-  loading.value.listDomainSets = true
-  domainSets.value = []
-  error.value.listDomainSets = ''
-  error.value.listDomainSetsDetails = ''
-
-  try {
-    const res = await ubusCall('ns.objects', 'list-domain-sets')
-    domainSets.value = res.data.values as DomainSet[]
-  } catch (err: any) {
-    console.error(err)
-    error.value.listDomainSets = t(getAxiosErrorMessage(err))
-    error.value.listDomainSetsDetails = err.toString()
-  } finally {
-    loading.value.listDomainSets = false
-  }
 }
 
 function showCreateDomainSetDrawer() {
@@ -153,11 +93,11 @@ function showUsagesModal(domainSet: DomainSet) {
         {{ t('standalone.objects.domain_sets_page_description') }}
       </div>
       <NeButton
-        v-if="loading.listDomainSets || domainSets.length"
+        v-if="loadingListDomainSets || domainSets.length"
         kind="secondary"
         size="lg"
         @click="showCreateDomainSetDrawer"
-        :disabled="loading.listDomainSets"
+        :disabled="loadingListDomainSets"
         class="shrink-0"
       >
         <template #prefix>
@@ -170,14 +110,14 @@ function showUsagesModal(domainSet: DomainSet) {
     <div class="space-y-6">
       <!-- list domain sets error notification -->
       <NeInlineNotification
-        v-if="error.listDomainSets"
+        v-if="errorListDomainSets"
         kind="error"
         :title="t('error.cannot_retrieve_domain_sets')"
-        :description="error.listDomainSets"
+        :description="errorListDomainSets"
         class="mb-5"
       >
-        <template #details v-if="error.listDomainSetsDetails">
-          {{ error.listDomainSetsDetails }}
+        <template #details v-if="errorListDomainSetsDetails">
+          {{ errorListDomainSetsDetails }}
         </template>
       </NeInlineNotification>
       <!-- text filter -->
@@ -185,20 +125,20 @@ function showUsagesModal(domainSet: DomainSet) {
         <NeTextInput
           :placeholder="t('standalone.objects.filter_domain_sets')"
           v-model.trim="textFilter"
-          :disabled="loading.listDomainSets"
+          :disabled="loadingListDomainSets"
           class="max-w-xs"
         />
         <NeButton
           kind="tertiary"
           @click="textFilter = ''"
-          :disabled="loading.listDomainSets || !textFilter"
+          :disabled="loadingListDomainSets || !textFilter"
         >
           {{ t('common.clear_filter') }}
         </NeButton>
       </div>
       <!-- empty state -->
       <NeEmptyState
-        v-if="!domainSets.length && !loading.listDomainSets"
+        v-if="!domainSets.length && !loadingListDomainSets"
         :title="t('standalone.objects.no_domain_sets')"
         :icon="['fas', 'circle-info']"
         class="mt-4"
@@ -208,7 +148,7 @@ function showUsagesModal(domainSet: DomainSet) {
           size="lg"
           @click="showCreateDomainSetDrawer"
           class="shrink-0"
-          :disabled="loading.listDomainSets"
+          :disabled="loadingListDomainSets"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -218,7 +158,7 @@ function showUsagesModal(domainSet: DomainSet) {
       </NeEmptyState>
       <!-- no domain set matching filter -->
       <NeEmptyState
-        v-else-if="!filteredDomainSets.length && !loading.listDomainSets"
+        v-else-if="!filteredDomainSets.length && !loadingListDomainSets"
         :title="t('standalone.objects.no_domain_sets_found')"
         :description="t('common.try_changing_search_filter')"
         :icon="['fas', 'circle-info']"
@@ -231,7 +171,7 @@ function showUsagesModal(domainSet: DomainSet) {
       <!-- domain sets table -->
       <DomainSetsTable
         v-else
-        :loading="loading.listDomainSets"
+        :loading="loadingListDomainSets"
         :filteredDomainSets="filteredDomainSets"
         @editDomainSet="showEditDomainSetDrawer"
         @deleteDomainSet="showDeleteDomainSetModal"
@@ -242,7 +182,7 @@ function showUsagesModal(domainSet: DomainSet) {
     <CreateOrEditDomainSetDrawer
       :isShown="isShownCreateOrEditDomainSetDrawer"
       :currentDomainSet="currentDomainSet"
-      :recordOptions="domainSets"
+      :allDomainSets="domainSets"
       @close="isShownCreateOrEditDomainSetDrawer = false"
       @reloadData="loadData"
     />
@@ -268,6 +208,7 @@ function showUsagesModal(domainSet: DomainSet) {
       :visible="isShownCannotDeleteObjectModal"
       :objectName="currentDomainSetName"
       :usageIds="currentUsageIds"
+      :showGoToObjectsButton="false"
       @close="isShownCannotDeleteObjectModal = false"
     />
     <!-- usages modal -->
@@ -275,6 +216,7 @@ function showUsagesModal(domainSet: DomainSet) {
       :visible="isShownUsagesModal"
       :objectName="currentDomainSetName"
       :usageIds="currentUsageIds"
+      :showGoToObjectsButton="false"
       @close="isShownUsagesModal = false"
     />
   </div>

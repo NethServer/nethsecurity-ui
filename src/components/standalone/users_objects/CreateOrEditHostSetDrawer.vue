@@ -21,8 +21,8 @@ import {
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
-import type { HostSet } from './HostSets.vue'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
+import type { HostSet } from '@/composables/useHostSets'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false },
@@ -72,6 +72,10 @@ const ipVersionOptions = ref([
 
 const recordOptionsButCurrent = computed(() => {
   return props.recordOptions?.filter((option) => option.id !== props.currentHostSet?.id)
+})
+
+const allObjectsButCurrent = computed(() => {
+  return props.allObjects?.filter((obj) => obj.id !== props.currentHostSet?.id)
 })
 
 watch(
@@ -125,7 +129,7 @@ function runFieldValidators(
 }
 
 function validateHostSetNotExists(value: string) {
-  if (props.allObjects?.find((obj) => obj.name === value && obj.subtype === 'host_set')) {
+  if (allObjectsButCurrent.value?.find((obj) => obj.name === value && obj.subtype === 'host_set')) {
     return {
       valid: false,
       errMessage: 'standalone.objects.host_set_already_exists'
@@ -234,11 +238,17 @@ function deleteRecord(index: number) {
           :disabled="loading.saveHostSet"
           :label="t('standalone.objects.ip_version')"
           :options="ipVersionOptions"
-        />
+        >
+          <template #tooltip>
+            <NeTooltip placement="top-start">
+              <template #content>{{ t('standalone.objects.ip_family_host_set_tooltip') }}</template>
+            </NeTooltip>
+          </template>
+        </NeRadioSelection>
         <!-- records -->
         <div>
           <NeFormItemLabel>
-            {{ t('standalone.objects.record', 2) }}
+            {{ t('standalone.objects.records') }}
             <NeTooltip class="ml-1">
               <template #content>{{ t('standalone.objects.host_set_records_tooltip') }}</template>
             </NeTooltip>

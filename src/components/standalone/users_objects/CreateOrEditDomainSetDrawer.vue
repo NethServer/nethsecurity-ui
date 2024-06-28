@@ -12,20 +12,24 @@ import {
   NeSideDrawer,
   NeTextInput,
   NeRadioSelection,
-  NeTooltip,
-  focusElement
+  focusElement,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { ref, type PropType, watch, type Ref } from 'vue'
+import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
-import type { DomainSet } from './DomainSets.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
+import type { DomainSet } from '@/composables/useDomainSets'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false },
   currentDomainSet: {
     type: Object as PropType<DomainSet>
+  },
+  allDomainSets: {
+    type: Array as PropType<DomainSet[]>,
+    required: true
   }
 })
 
@@ -60,6 +64,10 @@ const ipVersionOptions = ref([
     label: 'IPv6'
   }
 ])
+
+const allObjectsButCurrent = computed(() => {
+  return props.allDomainSets?.filter((domainSet) => domainSet.id !== props.currentDomainSet?.id)
+})
 
 watch(
   () => props.isShown,
@@ -120,10 +128,22 @@ function validateRecordsRequired() {
   return { valid: true }
 }
 
+function validateDomainSetNotExists(value: string) {
+  if (allObjectsButCurrent.value?.find((obj) => obj.name === value)) {
+    return {
+      valid: false,
+      errMessage: 'standalone.objects.domain_set_already_exists'
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
 function validate() {
   const allValidators: [validationOutput[], string, Ref<any>][] = [
     // name
-    [[validateRequired(name.value)], 'name', nameRef],
+    [[validateRequired(name.value), validateDomainSetNotExists(name.value)], 'name', nameRef],
     // records
     [[validateRecordsRequired()], 'ipaddr', recordRef]
   ]
@@ -203,6 +223,7 @@ async function saveDomainSet() {
           :invalidMessage="t(errorBag.getFirstI18nKeyFor('name'))"
           :helperText="t('standalone.objects.name_helper')"
           :disabled="loading.saveDomainSet"
+          maxlength="16"
           ref="nameRef"
         />
         <!-- ip version -->
@@ -211,22 +232,24 @@ async function saveDomainSet() {
           :disabled="loading.saveDomainSet"
           :label="t('standalone.objects.ip_version')"
           :options="ipVersionOptions"
-        />
-        <!-- records -->
+        >
+          <template #tooltip>
+            <NeTooltip placement="top-start">
+              <template #content>{{
+                t('standalone.objects.ip_family_domain_set_tooltip')
+              }}</template>
+            </NeTooltip>
+          </template>
+        </NeRadioSelection>
+        <!-- domains -->
         <NeMultiTextInput
-          :title="t('standalone.objects.record', 2)"
-          :add-item-label="t('standalone.objects.add_record')"
+          :title="t('standalone.objects.domains')"
+          :add-item-label="t('standalone.objects.add_domain')"
           :disable-inputs="loading.saveDomainSet"
           :disable-add-button="loading.saveDomainSet"
           v-model="records"
           required
-        >
-          <template #tooltip>
-            <NeTooltip placement="top-start">
-              <template #content>{{ t('standalone.objects.domain_set_records_tooltip') }}</template>
-            </NeTooltip>
-          </template>
-        </NeMultiTextInput>
+        />
         <!-- records invalid message -->
         <p
           v-if="errorBag.getFirstI18nKeyFor('ipaddr')"

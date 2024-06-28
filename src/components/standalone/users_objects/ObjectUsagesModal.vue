@@ -20,6 +20,10 @@ defineProps({
   usageIds: {
     type: Array<String>,
     required: true
+  },
+  showGoToObjectsButton: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -39,6 +43,6 @@ const { t } = useI18n()
     @close="emit('close')"
     @primaryClick="emit('close')"
   >
-    <ObjectUsages :usageIds="usageIds" />
+    <ObjectUsages :usageIds="usageIds" :showGoToObjectsButton="showGoToObjectsButton" />
   </NeModal>
 </template>

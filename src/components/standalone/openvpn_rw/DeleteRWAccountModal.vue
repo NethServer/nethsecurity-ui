@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import type { RWAccount } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import CannotDeleteObjectModal from '../users_objects/CannotDeleteObjectModal.vue'
 
 const props = defineProps<{
   visible: boolean
@@ -56,28 +57,41 @@ function close() {
 </script>
 
 <template>
-  <NeModal
-    :visible="visible"
-    kind="warning"
-    :title="t('standalone.openvpn_rw.delete_account')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
-    primary-button-kind="danger"
-    :close-aria-label="t('common.close')"
-    @primaryClick="deleteAccount()"
-    @close="close()"
-  >
-    {{ t('standalone.openvpn_rw.delete_account_message') }}
-    <NeInlineNotification
-      v-if="error.notificationDescription"
-      kind="error"
-      :title="t('error.cannot_delete_account')"
-      :description="error.notificationDescription"
-      class="my-2"
-      ><template #details v-if="error.notificationDetails">
-        {{ error.notificationDetails }}
-      </template></NeInlineNotification
+  <div>
+    <!-- cannot delete object modal -->
+    <CannotDeleteObjectModal
+      v-if="account?.used"
+      :visible="visible"
+      :objectName="account?.name"
+      :usageIds="account?.matches"
+      :showGoToObjectsButton="true"
+      @close="close"
+    />
+    <!-- delete rw account modal -->
+    <NeModal
+      v-else
+      :visible="visible"
+      kind="warning"
+      :title="t('standalone.openvpn_rw.delete_account')"
+      :primaryLabel="t('common.delete')"
+      :primaryButtonDisabled="isDeleting"
+      :primaryButtonLoading="isDeleting"
+      primary-button-kind="danger"
+      :close-aria-label="t('common.close')"
+      @primaryClick="deleteAccount()"
+      @close="close()"
     >
-  </NeModal>
+      {{ t('standalone.openvpn_rw.delete_account_message', { name: account?.name }) }}
+      <NeInlineNotification
+        v-if="error.notificationDescription"
+        kind="error"
+        :title="t('error.cannot_delete_account')"
+        :description="error.notificationDescription"
+        class="my-2"
+        ><template #details v-if="error.notificationDetails">
+          {{ error.notificationDetails }}
+        </template></NeInlineNotification
+      >
+    </NeModal>
+  </div>
 </template>

@@ -72,6 +72,8 @@ export type RWAccount = {
   bytes_received?: string
   bytes_sent?: string
   since?: number
+  used: boolean
+  matches: string[]
 }
 
 const { t } = useI18n()

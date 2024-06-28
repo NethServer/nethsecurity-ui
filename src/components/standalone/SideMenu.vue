@@ -26,6 +26,7 @@ const loginStore = useLoginStore()
 const menuExpanded: any = ref({
   system: false,
   network: false,
+  'users-objects': false,
   firewall: false,
   security: false,
   vpn: false

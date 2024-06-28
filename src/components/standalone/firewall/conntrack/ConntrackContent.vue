@@ -113,11 +113,11 @@ const filteredItems = computed(() => {
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.conntrack.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
-    <div class="flex flex-row items-center justify-between">
+    <div class="flex flex-row justify-between mb-4">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.conntrack.conntrack_description') }}
       </p>
-      <div class="ml-2 shrink-0">
+      <div class="shrink-0">
         <NeButton
           v-if="conntrackRecords.length > 0"
           kind="tertiary"
@@ -130,7 +130,7 @@ const filteredItems = computed(() => {
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="fetchConntrack()" class="shrink-0">
+        <NeButton kind="secondary" size="lg" @click="fetchConntrack()" class="ml-2 shrink-0">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
           </template>
@@ -138,7 +138,7 @@ const filteredItems = computed(() => {
         >
       </div>
     </div>
-    <div class="mb-5 flex items-center gap-4">
+    <div class="flex items-center gap-4">
       <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
       <NeButton kind="tertiary" @click="filter = ''" :disabled="isloading || !filter">
         {{ t('common.clear_filter') }}
@@ -154,7 +154,7 @@ const filteredItems = computed(() => {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="isloading" :lines="20" />
+    <NeSkeleton v-if="isloading" :lines="10" size="lg" />
     <template v-else>
       <NeEmptyState
         v-if="conntrackRecords.length == 0"

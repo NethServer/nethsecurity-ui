@@ -75,7 +75,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
           {{ item.timeout }}s
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
-          <div class="align-center -ml-2.5 flex xl:justify-end">
+          <div class="align-center -ml-2.5 xl:ml-0 flex xl:justify-end">
             <NeButton kind="tertiary" @click="emit('record-delete', item)">
               <template #prefix>
                 <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />

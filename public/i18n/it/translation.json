@@ -2,8 +2,6 @@
   "common": {
     "save": "Salva",
     "cancel": "Annulla",
-    "show_password": "Mostra password",
-    "hide_password": "Nascondi password",
     "search": "Ricerca",
     "help": "Aiuto",
     "optional": "Opzionale",
@@ -44,7 +42,8 @@
     },
     "try_changing_search_filter": "Prova a cambiare il filtro di ricerca",
     "dont_show_again": "Non mostrare più",
-    "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi"
+    "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
+    "actions": "Actions"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -55,7 +54,6 @@
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
     "required": "Richiesto",
-    "incorrect_username_or_password": "Nome utente o password errati",
     "invalid_hostname": "Nome host non valido",
     "hostname_is_too_long": "Il nome host ha troppi caratteri",
     "cannot_save_configuration": "Impossibile salvare la configurazione",
@@ -103,7 +101,6 @@
     "cannot_duplicate_port_forward": "Impossibile duplicare il port forward",
     "cannot_edit_port_forward": "Impossibile modificare il port forward",
     "cannot_delete_port_forward": "Impossibile eliminare il port forward",
-    "cannot_retrive_interfaces": "Impossibile recuperare le interfacce",
     "cannot_retrieve_interfaces": "Impossibile recuperare le interfacce",
     "invalid_metric": "Inserire un numero intero maggiore o uguale a 0",
     "cannot_edit_route": "Impossibile modificare la rotta",
@@ -331,7 +328,12 @@
     "cannot_retrieve_unit_ssh_keys": "Impossibile recuperare la chiave SSH dell'unità",
     "cannot_remove_unit": "Impossibile rimuovere l'unità",
     "cannot_open_unit": "Impossibile aprire l'unità",
-    "cannot_scan_network": "Impossibile scansionare la rete"
+    "cannot_scan_network": "Impossibile scansionare la rete",
+    "length_12_max": "Maximum 12 characters allowed",
+    "backup_passphrase_decryption_failed": "Decryption failed: passphrase may be incorrect",
+    "sticky_not_valid": "Invalid sticky value",
+    "backup_passphrase_restore_failed": "Restore failed: passphrase may be required or backup file may be invalid",
+    "cannot_retrieve_vpn_networks": "Cannot retrieve VPN networks"
   },
   "login": {
     "sign_in": "Accedi",
@@ -345,7 +347,9 @@
     "password": "Password",
     "remember_me": "Ricordami",
     "need_help": "Serve aiuto?",
-    "privacy_policy": "Privacy policy"
+    "privacy_policy": "Privacy policy",
+    "please_sign_in_again": "Please sign in again",
+    "session_has_expired": "Session has expired"
   },
   "standalone": {
     "ssh": {
@@ -396,7 +400,6 @@
         "source": "Sorgente backup",
         "backup": "Backup",
         "restore_in_progress": "Ripristino del backup e riavvio dell'unità in corso, attendere...\n",
-        "upload_file_description": "Trascina e rilascia o scegli il file",
         "restore": "Ripristina"
       },
       "migration": {
@@ -410,8 +413,7 @@
         "description": "La migrazione è il processo per convertire una macchina NethServer 7 in un'unità NethSecurity. Per avviare il processo, accedere alla macchina NethServer 7 e creare un archivio di migrazione, che dovrà poi essere caricato in questa pagina. A seguito del caricamento, assicurarsi il corretto remapping delle vecchie interfacce di rete su quelle dell'hardware che ospita NethSecurity.",
         "migration_in_progress": "Migrazione in corso, attendere... Al termine la unità sarà raggiungibile ai seguenti IP:",
         "input_upload_file": "Carica file (*.tar.gz)",
-        "migrate": "Migra",
-        "input_upload_file_description": "Trascina e rilascia o scegli il file"
+        "migrate": "Migra"
       },
       "backup": {
         "run_backup_description": "Sei sicuro di voler avviare il backup '{name}'?",
@@ -429,7 +431,9 @@
         "passphrase_drawer_title": "Configura passphrase",
         "passphrase": "Passphrase",
         "passphrase_reser_helper": "Inserisci una stringa vuota per rimuovere la passphrase",
-        "download": "Scarica"
+        "download": "Scarica",
+        "date": "Date",
+        "backups": "Backups"
       },
       "tabs": {
         "migration": "Migrazione",
@@ -490,24 +494,11 @@
         "description": "Lo strumento di monitoraggio offre un'analisi approfondita delle prestazioni del sistema e delle applicazioni, presentando metriche e visualizzazioni dettagliate. Queste metriche vengono memorizzate in RAM e reimpostate al riavvio della macchina, tranne quando l'unità è collegata a un controller remoto. In questo caso, le metriche vengono salvate nel controller e persistono al riavvio."
       }
     },
-    "shell": {
-      "sign_out": "Esci",
-      "open_sidebar": "Apri la barra laterale",
-      "close_sidebar": "Chiudi la barra laterale",
-      "toggle_theme": "Cambia tema",
-      "show_notifications": "Mostra notifiche",
-      "open_user_menu": "Apri il menu utente",
-      "close_side_drawer": "Chiudi il cassetto laterale",
-      "account": "Account",
-      "account_settings": "Impostazioni account"
-    },
     "dashboard": {
       "title": "Dashboard",
       "storage_usage": "Data",
       "known_hosts": "Host conosciuti",
       "today_top_applications": "Applicazioni",
-      "ban_ip": "BanIP",
-      "adblock_dns": "Adblock DNS",
       "active": "Attivo",
       "unknown": "Sconosciuto",
       "today_top_applications_description": "Applicazioni che oggi hanno generato più traffico",
@@ -526,7 +517,6 @@
       "internet_connection": "Connessione Internet",
       "tmpfs_usage": "Tmpfs",
       "today_top_hosts": "Host",
-      "thread_shield_dns": "Threat Shield DNS",
       "warning": "Attenzione",
       "no_wan_interfaces": "Nessuna interfaccia WAN",
       "operating_system": "Versione sistema operativo",
@@ -538,14 +528,19 @@
       "upload": "Upload",
       "host": "Host",
       "dpi_core": "DPI-core",
-      "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
       "no_protocols": "Nessun protocollo",
       "no_hosts": "Nessun host",
       "usage_free_of_total": "{free} liberi di {total}",
       "no_applications": "Nessuna applicazione",
       "openvpn_rw": "OpenVPN RW",
       "hotspot": "Hotspot",
-      "default_hostname_warning": "Non è consigliabile utilizzare il nome host predefinito 'NethSec'. Cambialo in {systemSettingsLink} e applica la modifica."
+      "default_hostname_warning": "Non è consigliabile utilizzare il nome host predefinito 'NethSec'. Cambialo in {systemSettingsLink} e applica la modifica.",
+      "dns_not_configured_tooltip": "You're using one or more WANs with a static IP: make sure to configure at least one DNS forwarder. Go to {dnsLink}",
+      "blocked_ips_last_hour": "IPs blocked in the last hour",
+      "clients_connected": "clients connected",
+      "tunnels_connected": "tunnel connected | tunnels connected",
+      "check_dns_configuration": "Check DNS",
+      "tunnels_enabled": "tunnel enabled | tunnels enabled"
     },
     "subscription": {
       "title": "Sottoscrizione",
@@ -568,7 +563,15 @@
       "cancel_registration": "Annulla registrazione",
       "inactive": "Inattivo",
       "system_id": "ID sistema",
-      "start_session": "Avvia sessione"
+      "start_session": "Avvia sessione",
+      "dpi_filter": "1800+ applications for DPI filter",
+      "confirm_cancel_subscription": "If you cancel the unit subscription you will lose access to the extra features included in your plan. These may include",
+      "automatic_updates": "Automatic updates",
+      "remote_vpn_users_databases": "Remote VPN users databases",
+      "remote_backup": "Remote backup",
+      "monitoring_service": "Monitoring service",
+      "unlimited_controlled_units": "Unlimited units to be managed from a registered controller",
+      "threat_shield": "Advanced Threat shield blocklists"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",
@@ -582,7 +585,6 @@
       "logs_settings": "Impostazioni log",
       "time_synchronization": "Sincronizzazione dell'orario",
       "timezone": "Fuso orario",
-      "sync_with_browser": "Sincronizza con il browser",
       "sync_with_ntp_server": "Sincronizza con il server NTP",
       "enable_ntp_client": "Abilita il client NTP",
       "provide_ntp_server": "Fornire un server NTP",
@@ -605,29 +607,6 @@
       "revert": "Scarta le modifiche"
     },
     "system": {
-      "system_settings": {
-        "use_dhcp_advertised_servers": "Utilizza i server DHCP pubblicizzati",
-        "all_interfaces": "Tutte le interfacce",
-        "settings": "Impostazioni",
-        "ntp_server_candidates": "Server NTP",
-        "add_ntp_server": "Aggiungi server NTP",
-        "title": "Impostazioni di sistema",
-        "general_settings": "Impostazioni generali",
-        "logs_settings": "Impostazioni dei log",
-        "time_synchronization": "Sincronizzazione temporale",
-        "hostname": "Nome host",
-        "short_description": "Breve descrizione",
-        "short_description_placeholder": "Breve descrizione di questa unit",
-        "notes": "Note",
-        "notes_placeholder": "Note su questa unit",
-        "local_time": "Ora locale",
-        "timezone": "Fuso orario",
-        "sync_with_browser": "Sincronizzazione con il browser",
-        "sync_with_ntp_server": "Sincronizzazione con server NTP",
-        "enable_ntp_client": "Abilita client NTP",
-        "provide_ntp_server": "Offri server NTP",
-        "provide_ntp_server_to_interface": "Offri server NTP ad un'interfaccia"
-      },
       "title": "Sistema"
     },
     "interfaces_and_devices": {
@@ -704,7 +683,6 @@
       "cannot_delete_device": "Impossibile eliminare il dispositivo",
       "zone_label_lan": "LAN (Green)",
       "zone_label_wan": "WAN (Red)",
-      "zone_label_openvpnrw": "VPN (OpenVPN RW)",
       "zone_label_dmz": "DMZ (Orange)",
       "create_logical_interface": "Configura interfaccia logica",
       "zone_label_unassigned": "Non assegnata",
@@ -743,7 +721,8 @@
       "create_bond": "Crea bond",
       "configure_bond": "Configura bond",
       "configure_bond_name": "Configura bond {name}",
-      "management_ipv4_address_cidr_tooltip": "Questo indirizzo IP è solamente per uso interno e non sarà l'indirizzo principale del bond. Assicurati che non sia già in uso nella tua rete"
+      "management_ipv4_address_cidr_tooltip": "Questo indirizzo IP è solamente per uso interno e non sarà l'indirizzo principale del bond. Assicurati che non sia già in uso nella tua rete",
+      "clients_network": "Clients network"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -818,7 +797,10 @@
       "all": "Tutti",
       "source_port": "Porta sorgente",
       "any": "Qualsiasi",
-      "select_policy": "Seleziona la policy"
+      "select_policy": "Seleziona la policy",
+      "ports_tooltip": "Enter a single port, multiple ports separated by a comma (e.g. '8686, 9090') or port ranges (e.g. '5500-5600')",
+      "sticky": "Sticky",
+      "sticky_tooltip": "Allow traffic from the same source IP address to use same WAN interface as prior session (default timeout: 10 minutes)."
     },
     "zones_and_policies": {
       "allow_forwards_to": "Consenti forward a",
@@ -834,7 +816,6 @@
       "subnet": "Sottorete | Sottoreti",
       "zone": "Zona",
       "no_subnets_set": "Nessuna sottorete impostata",
-      "covered_subnets": "Sottoreti coperte",
       "advanced_settings": "Impostazioni avanzate",
       "add_zone": "Aggiungi zona",
       "delete_zone": "Eliminare \"{0}\"?",
@@ -842,7 +823,7 @@
       "traffic_to_firewall": "Traffico verso firewall",
       "limit_log_messages": "Limita i messaggi di log",
       "edit_zone_name": "Modifica zona {name}",
-      "zone_already_exists": "Zona esistente"
+      "firewall_zones": "Firewall zones"
     },
     "port_forward": {
       "disable": "Disabilita",
@@ -860,10 +841,8 @@
       "destination": "Destinazione",
       "copy": "Copia",
       "delete_port_forward": "Elimina port forward",
-      "any": "Qualsiasi",
       "hairpin_nat": "Hairpin NAT",
       "name": "Nome",
-      "any_zone": "Qualsiasi zona",
       "delete_port_forward_message": "Stai per eliminare il port forward '{name}'",
       "source_port": "Porta sorgente",
       "filter_change_suggestion": "Prova a modificare il filtro",
@@ -895,7 +874,6 @@
       "route_status_enabled": "Attivato",
       "route_metric": "Metrica",
       "route_status": "Stato",
-      "interface_unspecified": "Non specificata",
       "route_gateway": "Gateway",
       "title": "Rotte",
       "route_status_table": "Stato",
@@ -926,7 +904,8 @@
       "delete_route_ipv4": "Elimina rotta IPv4",
       "network_address_ip4_tooltip": "Inserisci l'indirizzo di rete nella notazione CIDR o \"0.0.0./0\" per instradare tutto il traffico",
       "network_address_ip6_tooltip": "Inserisci l'indirizzo di rete nella notazione CIDR o \"::/0\" per instradare tutto il traffico",
-      "route_network_address_cidr": "Indirizzo di rete (notazione CIDR)"
+      "route_network_address_cidr": "Indirizzo di rete (notazione CIDR)",
+      "delete_route": "Delete route"
     },
     "dns_dhcp": {
       "active": "Attivo",
@@ -949,7 +928,6 @@
       "domain": "Dominio",
       "filter_change_suggestion": "Prova a modificare il filtro",
       "add_domain": "Aggiungi dominio",
-      "not_active": "Inattivo",
       "disabled": "Disabilitato",
       "enabled": "Abilitato",
       "hostname": "Nome host",
@@ -1078,19 +1056,15 @@
         "configuration_network_address": "Indirizzo di rete",
         "configuration_max_client_allowed": "Numero massimo di clienti permessi:",
         "configuration_unit_name": "Nome unità hotspot",
-        "configuration_dhcp_range_end": "Fine gamma DHCP",
         "configuration": "Configurazione hotspot",
         "configuration_save_info": "Salva e commita",
         "configuration_parent_hotspot_placeholder": "nomeDiEsempio-office",
         "configuration_save_info_description": "Tutte le modifiche in sospeso alle configurazioni di firewall e network saranno committate.",
-        "configuration_dhcp_range_start_helper": "L'indirizzo iniziale all'interno della gamma DHCP; inserire un indirizzo IP all'interno della rete hotspot scelta. Tienilo invariato se sei incerto.",
-        "configuration_dhcp_range_start": "Inizio gamma DHCP",
         "unregister_unit_modal_description": "L'unità hotspot sarà scollegata dall'hotspot manager remoto. Le configurazioni locali di firewall e network non saranno modificate.",
         "configuration_unit_description_placeholder": "Descrizione unità hotspot",
         "configuration_use_default_dhcp_range": "Utilizza l'intervallo DHCP predefinito",
         "login_description": "Esegui il login per modificare la configurazione dell'hotspot o deregistrare l'hotspot.",
         "configuration_network_device_helper": "Scegli un dispositivo di rete: l'hotspot intercetterà tutte le connessioni su questa interfaccia di rete e richiederà l'autenticazione ai client connessi.",
-        "configuration_dhcp_range_end_helper": "L'ultimo indirizzo della gamma DHCP; inserire un indirizzo superiore a quello impostato come l'inizio della gamma.",
         "login_helper_username": "Inserisci il nome utente utilizzato per accedere all'istanza del hotspot manager.",
         "unregister_unit": "Rimuovi registrazione unità hotspot",
         "configuration_network_address_helper": "Scegli un indirizzo di rete disponibile; ai dispositivi collegati al hotspot sarà assegnato un indirizzo IP all'interno di questa rete.",
@@ -1299,7 +1273,9 @@
       "status": "Stato",
       "enabled": "Abilitato",
       "remote_networks": "Reti remote",
-      "ipsec_network_already_used_in_local_networks": "Rete già utilizzata nelle reti locali"
+      "ipsec_network_already_used_in_local_networks": "Rete già utilizzata nelle reti locali",
+      "diffie_hellman_group_tooltip": "Select a key exchange method to enable Perfect Forward Secrecy (PFS)",
+      "diffie_hellman_group_pfs": "Diffie-Hellman group (PFS)"
     },
     "update": {
       "system_update_description": "Le nuove funzionalità vengono rilasciate attraverso file immagine. Se è disponibile una nuova immagine è possibile aggiornare il sistema a una nuova versione. In alternativa è possibile caricare un'immagine firmware compatibile.",
@@ -1417,7 +1393,6 @@
       "add_database": "Aggiungi database",
       "no_database_found": "Nessun database trovato",
       "title": "Database utenti",
-      "edit_database": "Modifica database",
       "ldap_uri": "LDAP URI",
       "configure_users_database": "Configura database utenti",
       "starttls": "StartTLS",
@@ -1438,7 +1413,17 @@
       "bind_password": "Password di bind",
       "bind_dn_tooltip": "Distinguished Name (DN) utilizzato per collegarsi alla directory LDAP. Il DN viene utilizzato per autenticare la connessione al server LDAP. Esempio: 'cn=Administrator,cn=Users,dc=secureexample,dc=com' for Active Directory or 'cn=ldapservice,dc=directory,dc=nh' per NethServer OpenLDAP",
       "bind_password_tooltip": "Password per Bind DN, usato per autenticare la connessione al server LDAP",
-      "bind_dn": "Bind DN"
+      "bind_dn": "Bind DN",
+      "administrator": "Administrator user",
+      "set_admin": "Set as administrator user",
+      "remove_admin": "Remove from administrator users",
+      "administrator_table_tooltip": "Administrator user",
+      "add_remote_database_tooltip": "Remote users databases are available only with a subscription plan",
+      "administrator_tooltip": "A user promoted to administrator can access the administration web interface and configure this unit.",
+      "user_bind_dn": "Custom user bind DN",
+      "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Use it when authenticating against an Active Directory. It can contain a '%u' variable that will be expanded to the user name. Example: '%u@secrexample.com', 'SECRETEXAMPLE\\%u'",
+      "add_remote_database": "Add remote database",
+      "edit_remote_database": "Edit remote database"
     },
     "openvpn_rw": {
       "digest": "Digest",
@@ -1573,9 +1558,6 @@
       "add_rule": "Aggiungi regola",
       "save_rule": "Salva regola",
       "choose_action": "Scegli azione",
-      "drop": "Drop",
-      "accept": "Accept",
-      "reject": "Reject",
       "protocols": "Protocolli",
       "tags": "Tag",
       "logging": "Log",
@@ -1806,15 +1788,6 @@
     }
   },
   "controller": {
-    "dashboard": {
-      "title": "Dashboard"
-    },
-    "settings": {
-      "title": "Impostazioni"
-    },
-    "logs": {
-      "title": "Log"
-    },
     "units": {
       "page_description": "Questa pagina elenca le unità configurate nel controller. Qui è possibile accedere al terminale SSH, alle metriche e ai log delle unità. Lo stato di connessione delle unità viene aggiornato ogni 10 secondi; la versione installata e le informazioni sull'abbonamento vengono aggiornate ogni ora, ma puoi fare clic su 'Forza aggiornamento dati' per aggiornarli immediatamente.",
       "add_unit": "Aggiungi unità",
@@ -1976,27 +1949,20 @@
     "open_menu": "Apri menu"
   },
   "ne_table": {
-    "no_items": "Nessun elemento"
+    "no_items": "Nessun elemento",
+    "of": "of",
+    "pagination": "Table pagination",
+    "show": "Show",
+    "go_to_previous_page": "Go to previous page",
+    "go_to_next_page": "Go to next page"
   },
   "ne_file_input": {
     "dropzone_label": "Trascina un file o clicca per eseguire l'upload"
   },
   "notifications": {
     "title": "Notifiche",
-    "response": "Risposta",
     "show_details": "Mostra dettagli",
-    "request": "Richiesta",
-    "status": "Stato",
-    "copy_curl": "Copia cURL",
-    "no_notification": "Nessuna notifica",
-    "api_call_failed": "Chiamata API fallita",
-    "no_payload": "Nessun payload",
-    "request_body": "Contenuto della richiesta",
-    "ubus_call_failed": "Chiamata Ubus fallita",
-    "axios_message": "Messaggio Axios",
-    "copy_command": "Copia comando",
-    "response_message": "Messaggio della risposta",
-    "request_url": "URL della richiesta"
+    "no_notification": "Nessuna notifica"
   },
   "error_modal": {
     "ubus_request_failed": "Richiesta Ubus fallita",

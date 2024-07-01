@@ -16,6 +16,9 @@ import {
   NeEmptyState,
   NeTextInput
 } from '@nethesis/vue-components'
+import { useNotificationsStore } from '@/stores/notifications'
+const notificationsStore = useNotificationsStore()
+
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
 
@@ -103,6 +106,24 @@ const filteredItems = computed(() => {
 })
 
 function onRecordDeleted() {
+  if (selectedItem.value) {
+    // show toast notification
+    setTimeout(() => {
+      notificationsStore.createNotification({
+        title: t('standalone.conntrack.conntrack_record_removed'),
+        kind: 'success'
+      })
+    }, 500)
+  } else {
+    // show toast notification
+    setTimeout(() => {
+      notificationsStore.createNotification({
+        title: t('standalone.conntrack.conntrack_record_all_removed'),
+        kind: 'success'
+      })
+    }, 500)
+  }
+
   closeDeleteModal()
   fetchConntrack()
 }

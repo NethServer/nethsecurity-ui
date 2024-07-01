@@ -1837,7 +1837,9 @@
       "delete_conntrack_record": "Delete connection",
       "delete_conntrack_record_message": "The connection between hosts {source} and {destination} will be dropped.",
       "delete_all_record_message": "All connections will be dropped.",
-      "filter_change_suggestion": "Try changing your search filter"
+      "filter_change_suggestion": "Try changing your search filter",
+      "conntrack_record_removed": "Connection deleted successfully",
+      "conntrack_record_all_removed": "Connections deleted successfully"
     }
   },
   "controller": {

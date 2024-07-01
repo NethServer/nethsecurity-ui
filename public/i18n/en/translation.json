@@ -333,7 +333,10 @@
     "length_12_max": "Maximum 12 characters allowed",
     "backup_passphrase_decryption_failed": "Decryption failed: passphrase may be incorrect",
     "backup_passphrase_restore_failed": "Restore failed: passphrase may be required or backup file may be invalid",
-    "sticky_not_valid": "Invalid sticky value"
+    "sticky_not_valid": "Invalid sticky value",
+    "cannot_retrieve_conntrack_records": "Cannot retrieve conntrack records",
+    "cannot_delete_all_conntrack_records": "Cannot delete all conntrack records",
+    "cannot_delete_conntrack_record": "Cannot delete conntrack record"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1818,6 +1821,27 @@
       "destination_netmap": "Destination NETMAP",
       "delete_netmap": "Delete NETMAP",
       "confirm_delete_rule": "You are about to delete NETMAP '{name}'"
+    },
+    "conntrack": {
+      "title": "Connections",
+      "short_title": "Connections",
+      "conntrack_description": "Connection tracking (conntrack) is a core feature of the Linux kernel's networking stack. It provides a full connection tracking system that enables you to track the state of all connections and helps you to manage network traffic. Here you can view and manage the connection tracking table.",
+      "no_connection_found": "No connections found",
+      "refresh_page": "Refresh page",
+      "delete_all": "Delete all connections",
+      "source": "Source",
+      "destination": "Destination",
+      "protocol": "Protocol",
+      "statistics": "Statistics",
+      "state": "State",
+      "timeout": "Timeout",
+      "seconds": "seconds",
+      "delete_conntrack_record": "Delete connection",
+      "delete_conntrack_record_message": "The connection between hosts {source} and {destination} will be dropped.",
+      "delete_all_record_message": "All connections will be dropped.",
+      "filter_change_suggestion": "Try changing your search filter",
+      "conntrack_record_removed": "Connection deleted successfully",
+      "conntrack_record_all_removed": "Connections deleted successfully"
     }
   },
   "controller": {

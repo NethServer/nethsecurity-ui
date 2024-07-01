@@ -59,7 +59,6 @@ const selectedItem = ref<ConntrackRecord>()
 async function fetchConntrack() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
-  closeDeleteModal()
   try {
     isLoading.value = true
     conntrackRecords.value = (await ubusCall('ns.conntrack', 'list')).data.data
@@ -92,6 +91,7 @@ function openDeleteModal(itemToDelete: ConntrackRecord) {
   selectedItem.value = itemToDelete
   showDeleteModal.value = true
 }
+
 function closeDeleteModal() {
   showDeleteModal.value = false
 }
@@ -101,6 +101,11 @@ const filteredItems = computed(() => {
     ? conntrackRecords.value
     : applyFilterToConntrackRecords(conntrackRecords.value, filter.value)
 })
+
+function onRecordDeleted() {
+  closeDeleteModal()
+  fetchConntrack()
+}
 </script>
 
 <template>
@@ -178,7 +183,7 @@ const filteredItems = computed(() => {
   <DeleteConntrackRecordModal
     :visible="showDeleteModal"
     @close="closeDeleteModal"
-    @record-deleted="fetchConntrack"
+    @record-deleted="onRecordDeleted"
     :item-to-delete="selectedItem"
   />
 </template>

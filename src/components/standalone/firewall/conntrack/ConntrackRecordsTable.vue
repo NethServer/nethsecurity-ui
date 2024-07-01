@@ -17,7 +17,7 @@ import {
   useItemPagination
 } from '@nethesis/vue-components'
 import type { ConntrackRecord } from './ConntrackContent.vue'
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 import { byteFormat1024 } from '@nethesis/vue-components'
 const { t } = useI18n()
 

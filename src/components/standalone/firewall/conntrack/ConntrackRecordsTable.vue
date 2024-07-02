@@ -46,7 +46,10 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
       <NeTableHeadCell>{{ t('standalone.conntrack.source') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.conntrack.destination') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.conntrack.protocol') }}</NeTableHeadCell>
-      <NeTableHeadCell>{{ t('standalone.conntrack.statistics') }}</NeTableHeadCell>
+      <NeTableHeadCell
+        >{{ t('standalone.conntrack.download') }} /
+        {{ t('standalone.conntrack.upload') }}</NeTableHeadCell
+      >
       <NeTableHeadCell>{{ t('standalone.conntrack.state') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.conntrack.timeout') }}</NeTableHeadCell>
       <NeTableHeadCell>
@@ -64,7 +67,11 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
         <NeTableCell :data-label="t('standalone.conntrack.protocol')">
           {{ item.protocol.toUpperCase() }}
         </NeTableCell>
-        <NeTableCell :data-label="t('standalone.conntrack.statistics')">
+        <NeTableCell
+          :data-label="`${t('standalone.conntrack.download')} / ${t(
+            'standalone.conntrack.upload'
+          )}`"
+        >
           {{ byteFormat1024(item.source_stats.bytes) }} /
           {{ byteFormat1024(item.destination_stats.bytes) }}
         </NeTableCell>

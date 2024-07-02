@@ -1670,7 +1670,7 @@
       "user_bind_dn": "Custom user bind DN",
       "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Use it when authenticating against an Active Directory. It can contain a '%u' variable that will be expanded to the user name. Example: '%u{'@'}secretexample.com', 'SECRETEXAMPLE\\%u'",
       "user_attribute": "User attribute field",
-      "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Example: 'uid' for OpenLDAP or 'cn' for Active Directory",
+      "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Example: 'uid' for OpenLDAP or 'sAMAccountName' for Active Directory",
       "starttls": "StartTLS",
       "verify_tls_certificate": "Verify TLS certificate",
       "connection_verified": "Connection verified",

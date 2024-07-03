@@ -34,7 +34,7 @@ type LDAPDatabasePayload = {
   base_dn: string
   user_dn: string
   user_attr: string
-  user_cn: string
+  user_display_attr: string
   start_tls: string | boolean
   tls_reqcert: string
   description: string
@@ -70,7 +70,7 @@ const type = ref('rfc2307')
 const ldapUri = ref('')
 const baseDn = ref('')
 const userDn = ref('')
-const userCn = ref('')
+const userDisplayAttr = ref('')
 const userBindDn = ref('')
 const userAttribute = ref('')
 const startTls = ref(false)
@@ -102,7 +102,7 @@ async function resetForm() {
       ldapUri.value = databaseData.uri
       baseDn.value = databaseData.base_dn
       userDn.value = databaseData.user_dn
-      userCn.value = databaseData.user_cn
+      userDisplayAttr.value = databaseData.user_display_attr
       userBindDn.value = databaseData.user_bind_dn
       userAttribute.value = databaseData.user_attr
       startTls.value = databaseData.start_tls === '1'
@@ -123,7 +123,7 @@ async function resetForm() {
     ldapUri.value = ''
     baseDn.value = ''
     userDn.value = ''
-    userCn.value = ''
+    userDisplayAttr.value = ''
     userBindDn.value = ''
     userAttribute.value = ''
     startTls.value = false
@@ -182,7 +182,7 @@ function validate() {
     [[validateRequired(baseDn.value)], 'base_dn'],
     [[validateRequired(userDn.value)], 'user_dn'],
     [[validateRequired(userAttribute.value)], 'user_attr'],
-    [[validateRequired(userCn.value)], 'user_cn']
+    [[validateRequired(userDisplayAttr.value)], 'user_display_attr']
   ]
 
   const validateUriResult = validateUri(true)
@@ -210,7 +210,7 @@ async function testDatabaseConfiguration() {
         user_dn: userDn.value,
         user_attr: userAttribute.value,
         start_tls: startTls.value,
-        user_cn: 'cn',
+        user_display_attr: userDisplayAttr.value,
         description: '',
         tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never',
         bind_dn: bindDn.value,
@@ -247,7 +247,7 @@ async function createOrEditDatabase() {
         user_dn: userDn.value,
         user_attr: userAttribute.value,
         start_tls: startTls.value,
-        user_cn: 'cn',
+        user_display_attr: userDisplayAttr.value,
         description: '',
         tls_reqcert: verifyTlsCertificate.value ? 'always' : 'never',
         bind_dn: bindDn.value,
@@ -372,14 +372,14 @@ watch(
         </template></NeTextInput
       >
       <NeTextInput
-        v-model="userCn"
-        :label="t('standalone.users_database.user_cn')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_cn'))"
+        v-model="userDisplayAttr"
+        :label="t('standalone.users_database.user_display_attribute')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('user_display_attr'))"
       >
         <template #tooltip>
           <NeTooltip>
             <template #content>
-              {{ t('standalone.users_database.user_cn_tooltip') }}
+              {{ t('standalone.users_database.user_display_attribute_tooltip') }}
             </template>
           </NeTooltip>
         </template></NeTextInput

@@ -1688,7 +1688,7 @@
       "bind_password": "Bind password",
       "bind_password_tooltip": "Password for Bind DN, used to authenticate the connection to the LDAP server",
       "user_bind_dn": "Custom user bind DN",
-      "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Use it when authenticating against an Active Directory. It can contain a '%u' variable that will be expanded to the user name. Suggestion: use '%u{'@'}secretexample.com' or leave blank for NethServer OpenLDAP",
+      "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Active Directory typically uses '%u@domain', which appends '@domain' to the username. For OpenLDAP, leave this field blank",
       "user_attribute": "User attribute field",
       "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Suggestion: use 'uid' for OpenLDAP or 'sAMAccountName' for Active Directory",
       "starttls": "StartTLS",

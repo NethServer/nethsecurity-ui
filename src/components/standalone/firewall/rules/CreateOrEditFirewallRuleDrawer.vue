@@ -619,7 +619,7 @@ function validate() {
 
       const destinationObjectValidation = validateRequired(destinationAddressObject.value)
       if (!destinationObjectValidation.valid) {
-        errorBag.value.set('ns_dst', [t(String(destinationObjectValidation.errMessage))])
+        errorBag.value.set('ns_dst', [destinationObjectValidation.errMessage as string])
         isValidationOk = false
         focusElement(destinationAddressObjectRef)
       }
@@ -963,7 +963,7 @@ async function saveRule() {
             :placeholder="
               loading.listObjectSuggestions ? t('common.loading') : t('ne_combobox.choose')
             "
-            :invalidMessage="errorBag.getFirstFor('ns_dst')"
+            :invalidMessage="t(errorBag.getFirstI18nKeyFor('ns_dst'))"
             :optionalLabel="t('common.optional')"
             :noResultsLabel="t('ne_combobox.no_results')"
             :limitedOptionsLabel="t('ne_combobox.limited_options_label')"

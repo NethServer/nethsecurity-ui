@@ -21,6 +21,8 @@ export type DnsRecord = {
   name: string
   description: string
   wildcard: boolean
+  used: boolean
+  matches: string[]
 }
 
 async function fetchDnsRecords(): Promise<DnsRecord[]> {

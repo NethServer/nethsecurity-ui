@@ -23,6 +23,8 @@ export type StaticLease = {
   interface: string
   device: string
   description: string
+  used: boolean
+  matches: string[]
 }
 
 async function fetchStaticLeases(): Promise<StaticLease[]> {

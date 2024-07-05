@@ -1668,7 +1668,7 @@
       "bind_password": "Bind password",
       "bind_password_tooltip": "Password for Bind DN, used to authenticate the connection to the LDAP server",
       "user_bind_dn": "Custom user bind DN",
-      "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Typical configuration is: For Active Directory: '%u@domain', which appends '@domain' to the username. For OpenLDAP: leave this field blank",
+      "user_bind_dn_tooltip": "Distinguished Name (DN) used to bind to the LDAP directory. This overrides the calculated user bind DN. Active Directory usually uses '%u@domain', which appends '@domain' to the username. For OpenLDAP, leave this field blank",
       "user_attribute": "User attribute field",
       "user_attribute_tooltip": "LDAP attribute that corresponds to the user's identity. This attribute is used to uniquely identify users within the LDAP directory. Suggestion: use 'uid' for OpenLDAP or 'sAMAccountName' for Active Directory",
       "starttls": "StartTLS",

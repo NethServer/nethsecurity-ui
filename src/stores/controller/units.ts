@@ -57,14 +57,13 @@ export const useUnitsStore = defineStore('units', () => {
   const errorListUnits = ref('')
   const errorListUnitsDetails = ref('')
 
-  const getUnits = async (useCache = true) => {
+  const getUnits = async () => {
     loadingListUnits.value = true
     try {
       const res = await axios.get(`${getControllerApiEndpoint()}/units`, {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`
-        },
-        params: { cache: useCache }
+        }
       })
 
       const unitsList = (res.data.data || []) as Unit[]

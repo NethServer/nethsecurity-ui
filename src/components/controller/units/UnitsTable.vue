@@ -77,7 +77,52 @@ async function openUnit(unitId: string) {
 }
 
 function getKebabMenuItems(unit: Unit) {
-  const commonMenuItems = [
+  const menuItems: Array<any> = []
+  if (unit.registered) {
+    menuItems.push(
+      {
+        id: 'openMetrics',
+        label: t('controller.units.open_metrics'),
+        icon: 'arrow-up-right-from-square',
+        iconStyle: 'fas',
+        action: () => openMetrics(unit)
+      },
+      {
+        id: 'openLogs',
+        label: t('controller.units.open_logs'),
+        icon: 'arrow-up-right-from-square',
+        iconStyle: 'fas',
+        action: () => openLogs(unit),
+        disabled: !unit.info.fqdn
+      },
+      {
+        id: 'openSsh',
+        label: t('controller.units.open_ssh_terminal'),
+        icon: 'terminal',
+        iconStyle: 'fas',
+        action: () => emit('openSshModal', unit),
+        disabled: !unit.connected
+      }
+    )
+  } else {
+    menuItems.push({
+      id: 'copyJoinCode',
+      label: t('controller.units.copy_join_code'),
+      icon: 'copy',
+      iconStyle: 'fas',
+      action: () => copyJoinCode(unit)
+    })
+  }
+  // apply common menu items
+  menuItems.push(
+    {
+      id: 'refreshUnitInfo',
+      label: t('controller.units.refresh_unit_info'),
+      icon: 'rotate',
+      iconStyle: 'fas',
+      action: () => refreshUnitInfo(unit),
+      disabled: !unit.connected
+    },
     {
       id: 'divider1'
     },
@@ -89,49 +134,13 @@ function getKebabMenuItems(unit: Unit) {
       action: () => maybeShowRemoveUnitModal(unit),
       danger: true
     }
-  ]
+  )
+  return menuItems
+}
 
-  const unregisteredUnitMenuItems = [
-    {
-      id: 'copyJoinCode',
-      label: t('controller.units.copy_join_code'),
-      icon: 'copy',
-      iconStyle: 'fas',
-      action: () => copyJoinCode(unit)
-    }
-  ]
-
-  const registeredUnitMenuItems = [
-    {
-      id: 'openMetrics',
-      label: t('controller.units.open_metrics'),
-      icon: 'arrow-up-right-from-square',
-      iconStyle: 'fas',
-      action: () => openMetrics(unit)
-    },
-    {
-      id: 'openLogs',
-      label: t('controller.units.open_logs'),
-      icon: 'arrow-up-right-from-square',
-      iconStyle: 'fas',
-      action: () => openLogs(unit),
-      disabled: !unit.info.fqdn
-    },
-    {
-      id: 'openSsh',
-      label: t('controller.units.open_ssh_terminal'),
-      icon: 'terminal',
-      iconStyle: 'fas',
-      action: () => emit('openSshModal', unit),
-      disabled: !unit.connected
-    }
-  ]
-
-  if (unit.registered) {
-    return [...registeredUnitMenuItems, ...commonMenuItems]
-  } else {
-    return [...unregisteredUnitMenuItems, ...commonMenuItems]
-  }
+async function refreshUnitInfo(unit: Unit) {
+  await unitsStore.getUnitInfo(unit.id)
+  emit('reloadData')
 }
 
 function copyJoinCode(unit: Unit) {

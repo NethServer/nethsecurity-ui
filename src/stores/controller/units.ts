@@ -198,6 +198,14 @@ export const useUnitsStore = defineStore('units', () => {
     })
   }
 
+  const getUnitInfo = async (unitId: string) => {
+    await axios.get(`${getControllerApiEndpoint()}/units/${unitId}/info`, {
+      headers: {
+        Authorization: `Bearer ${controllerLoginStore.token}`
+      }
+    })
+  }
+
   return {
     units,
     getUnits,
@@ -209,6 +217,7 @@ export const useUnitsStore = defineStore('units', () => {
     removeUnit,
     loadingListUnits,
     errorListUnits,
-    errorListUnitsDetails
+    errorListUnitsDetails,
+    getUnitInfo
   }
 })

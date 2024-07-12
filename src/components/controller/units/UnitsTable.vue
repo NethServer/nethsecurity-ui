@@ -373,7 +373,18 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
           <!-- installed version -->
           <NeTableCell :data-label="t('controller.units.installed_version')">
-            {{ item.info.version || '-' }}
+            <template v-if="item.info.version">
+              <span>{{ item.info.version }}</span>
+            </template>
+            <template v-else-if="item.connected">
+              <div class="space-x-2">
+                <span>{{ t('controller.units.syncing_data') }}</span>
+                <NeTooltip>
+                  <template #content>{{ t('controller.units.syncing_data_description') }}</template>
+                </NeTooltip>
+              </div>
+            </template>
+            <template v-else>-</template>
           </NeTableCell>
           <!-- actions -->
           <NeTableCell :data-label="t('common.actions')">

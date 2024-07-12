@@ -117,7 +117,7 @@ function getKebabMenuItems(unit: Unit) {
   menuItems.push(
     {
       id: 'refreshUnitInfo',
-      label: t('controller.units.refresh_unit_info'),
+      label: t('controller.units.sync_unit_info'),
       icon: 'rotate',
       iconStyle: 'fas',
       action: () => refreshUnitInfo(unit),

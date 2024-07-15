@@ -1994,7 +1994,10 @@
       "confirm_remove_unit": "You are about to remove unit '{name}'. The unit will continue to operate normally, but it will no longer be managed by this Controller.",
       "unit_name_removed": "Unit '{name}' removed",
       "num_units_left": "No units left | {num} unit left | {num} units left",
-      "num_units_left_tooltip": "You have configured {num} of {max} units. Upgrade to a subscription plan to manage more units."
+      "num_units_left_tooltip": "You have configured {num} of {max} units. Upgrade to a subscription plan to manage more units.",
+      "sync_unit_info": "Sync unit info",
+      "syncing_data": "Syncing data...",
+      "syncing_data_description": "Unit data hasn't been synced yet. You can do it now by clicking the three dots menu and then '@:controller.units.sync_unit_info'."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

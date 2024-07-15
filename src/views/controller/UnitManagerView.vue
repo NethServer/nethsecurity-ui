@@ -107,12 +107,6 @@ async function loadData() {
   isUnitsSkeletonEnabled.value = false
 }
 
-async function forceReloadUnitsData() {
-  isUnitsSkeletonEnabled.value = true
-  await unitsStore.getUnits(false)
-  isUnitsSkeletonEnabled.value = false
-}
-
 function showOpenSshModal(unit: Unit) {
   currentUnit.value = unit
   isShownOpenSshModal.value = true
@@ -231,12 +225,6 @@ function getBulkActionsKebabMenuItems() {
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
             </template>
             {{ t('controller.units.add_unit') }}
-          </NeButton>
-          <NeButton kind="tertiary" size="lg" @click="forceReloadUnitsData" class="shrink-0">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
-            </template>
-            {{ t('controller.units.force_data_reload') }}
           </NeButton>
           <!-- bulk actions -->
           <NeDropdown

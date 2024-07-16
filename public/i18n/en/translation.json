@@ -1397,7 +1397,7 @@
       "threat_shield_status_description": "When enabled, Threat shield blocks all new connections to and from malicious IP addresses. Blocked connections are logged with the tag 'banIP/{'<'}direction{'>'}-{'<'}zone{'>'}/{'<'}action{'>'}/{'<'}blocklist{'>'}'.",
       "status": "Status",
       "blocklist_description": "Threat shield keeps you safe by blocking attacks from known malicious IP addresses. These addresses are compiled into blocklists, each with a clear name that tells you its purpose and who maintains it. The confidence score is a value from 1 to 10 that indicates the quality of the list. A higher number means a lower chance of false positives. This score is not available for 'Community' lists.",
-      "blocklist_subscription_description": "Nethesis and Yoroi blocklists are available only if the machine has a valid Enterprise subscription that includes Threat shield service.",
+      "blocklist_subscription_description": "Nethesis and Yoroi blocklists are available only if {product} has a valid subscription that includes Threat shield service.",
       "threat_shield_enabled": "Threat shield enabled",
       "threat_shield_disabled": "Threat shield disabled",
       "name": "Name",

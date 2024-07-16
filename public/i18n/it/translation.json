@@ -1681,7 +1681,7 @@
     },
     "threat_shield": {
       "status": "Stato",
-      "blocklist_subscription_description": "Le blocklist Nethesis e Yoroi sono disponibili solo se le macchine hanno una valida subscription Enterprise che include il servizio Threat shield.",
+      "blocklist_subscription_description": "Le blocklist Nethesis e Yoroi sono disponibili solo se l'unità ha una subscription valida che include il servizio Threat shield.",
       "threat_shield_disabled": "Threat shield disabilitato",
       "type": "Tipo",
       "confidence": "Confidenza",

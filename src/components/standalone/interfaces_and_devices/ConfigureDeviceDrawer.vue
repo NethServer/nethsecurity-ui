@@ -652,8 +652,8 @@ function validate() {
       }
     } else {
       // check syntax
-      {
-        let maxLen = 15
+      if (isConfiguringFromScratch.value) {
+        let maxLen = 13
         if (logicalIfaceType.value == 'bond') {
           maxLen = 10
         }

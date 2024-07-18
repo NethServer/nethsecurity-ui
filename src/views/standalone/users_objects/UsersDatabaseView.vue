@@ -84,7 +84,7 @@ async function fetchSubscriptionInfo() {
   try {
     const res = await ubusCall('ns.subscription', 'info')
 
-    activeSubscription.value = res.data.active || false
+    activeSubscription.value = (res.data?.systemd_id && res.data?.active) || false
   } catch (err: any) {
     error.value.getSubscriptionInfo = t(getAxiosErrorMessage(err))
     error.value.getSubscriptionInfoDetails = err.toString()

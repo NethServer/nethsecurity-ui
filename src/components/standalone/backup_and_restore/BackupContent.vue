@@ -60,7 +60,7 @@ async function getSubscription() {
   try {
     let res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.systemd_id && res?.data?.active) {
-      isEnterprise.value = res?.data.type === 'enterprise'
+      isEnterprise.value = res.data.type === 'enterprise'
       await getBackups()
     }
   } catch (exception: any) {

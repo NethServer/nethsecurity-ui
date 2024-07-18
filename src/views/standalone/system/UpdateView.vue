@@ -60,7 +60,7 @@ const isApplyingSystemUpdate = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
 const automaticUpdatesEnabled = ref(false)
-const isSubscriptionPresent = ref(false)
+const isSubscriptionActive = ref(false)
 const isChangingAutomaticUpdatesSetting = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
@@ -93,7 +93,8 @@ async function fetchUpdatesStatus() {
     }
 
     const subscriptionResponse = await ubusCall('ns.subscription', 'info')
-    isSubscriptionPresent.value = subscriptionResponse.data.systemd_id != ''
+    isSubscriptionActive.value =
+      subscriptionResponse.data.systemd_id != '' && subscriptionResponse.data.active
 
     automaticUpdatesEnabled.value = (
       await ubusCall('ns.update', 'get-automatic-updates-status')
@@ -234,7 +235,7 @@ onMounted(() => {
       <div class="mt-6">
         <NeToggle
           v-model="automaticUpdatesEnabled"
-          :disabled="!isSubscriptionPresent || isChangingAutomaticUpdatesSetting"
+          :disabled="!isSubscriptionActive || isChangingAutomaticUpdatesSetting"
           @update:model-value="handleAutomaticUpdatesToggle"
           :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
           :top-label="t('standalone.update.automatic_updates')"

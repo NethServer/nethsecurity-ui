@@ -560,7 +560,7 @@
       },
       "backup": {
         "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
-        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 3 backups. Configure a passphrase to increase the security of your data",
+        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 10 backups. Configure a passphrase to increase the security of your data",
         "download": "Download",
         "download_backup": "Download backup",
         "modal_download_title": "Downloaded backup",
@@ -576,7 +576,12 @@
         "success_run_backup": "Backup performed successfully",
         "success_download": "Backup downloaded successfully",
         "date": "Date",
-        "backups": "Backups"
+        "backups": "Backups",
+        "octet-stream": "Encrypted",
+        "gzip": "Not encrypted",
+        "pgp-encrypted": "Encrypted",
+        "size": "Size",
+        "mimetype": "Type"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

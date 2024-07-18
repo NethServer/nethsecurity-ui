@@ -20,13 +20,15 @@ import {
   NeTableRow,
   NeTableCell,
   byteFormat1024,
-  formatDateLoc
+  formatDateLoc,
+  NeDropdown
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
 import SetPassphraseDrawer from '@/components/standalone/backup_and_restore/SetPassphraseDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import ModalDeleteBackup from '@/components/standalone/backup_and_restore/ModalDeleteBackup.vue'
 
 const { t } = useI18n()
 
@@ -43,12 +45,16 @@ const loadingPassphrase = ref(true)
 const isValidSubscription = ref(false)
 const isSetPassphrase = ref(false)
 const showDownloadModal = ref(false)
+const showDeleteModal = ref(false)
 const showPassphraseDrawer = ref(false)
 const showRunBackupModal = ref(false)
 const successNotificationRunBackup = ref(false)
 const unitName = ref('')
 const seletedBackup = ref('')
+const selectedBackupId = ref('')
+const selectedBackupLabel = ref('')
 const listBackups = ref<Backup[]>([])
+const emit = defineEmits(['backup-delete'])
 
 let errorPage = ref({
   notificationTitle: '',
@@ -122,6 +128,12 @@ function openDownloadEnterprise(file: string) {
   seletedBackup.value = file
 }
 
+function openDeleteBackup(id: string, label: string) {
+  showDeleteModal.value = true
+  selectedBackupId.value = id
+  selectedBackupLabel.value = label
+}
+
 function successRunBackup() {
   showRunBackupModal.value = false
   getBackups()
@@ -147,6 +159,32 @@ function getMimetypeIcon(mimetype: string) {
   } else {
     return ['fa', 'unlock']
   }
+}
+
+function getDropdownItems(item: Backup) {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      iconStyle: 'fas',
+      icon: 'trash',
+      danger: true,
+      action: () => {
+        openDeleteBackup(
+          item.id,
+          formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+            ' (' +
+            byteFormat1024(item.size) +
+            ')'
+        )
+      }
+    }
+  ]
+}
+
+function successDeleteBackup() {
+  showDeleteModal.value = false
+  getBackups()
 }
 </script>
 
@@ -274,6 +312,7 @@ function getMimetypeIcon(mimetype: string) {
                   </template>
                   {{ t('standalone.backup_and_restore.backup.download') }}
                 </NeButton>
+                <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
               </div>
             </NeTableCell>
           </NeTableRow>
@@ -298,5 +337,11 @@ function getMimetypeIcon(mimetype: string) {
     :showPassphraseDrawer="showPassphraseDrawer"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
+  />
+  <ModalDeleteBackup
+    :showDeleteModal="showDeleteModal"
+    :selectedBackupId="selectedBackupId"
+    :selectedBackupLabel="selectedBackupLabel"
+    @close="successDeleteBackup()"
   />
 </template>

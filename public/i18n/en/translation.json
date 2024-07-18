@@ -349,7 +349,8 @@
     "cannot_retrieve_usages": "Cannot retrieve usages",
     "invalid_name": "Invalid name",
     "domain_set_conflict": "Domain set cannot be used as both source and destination",
-    "certificate_already_requested": "A certificate for this domain has been already requested"
+    "certificate_already_requested": "A certificate for this domain has been already requested",
+    "cannot_delete_backup": "Cannot delete remote backup"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -581,7 +582,10 @@
         "gzip": "Not encrypted",
         "pgp-encrypted": "Encrypted",
         "size": "Size",
-        "mimetype": "Type"
+        "mimetype": "Type",
+        "delete": "Delete",
+        "modal_delete_title": "Delete remote backup",
+        "modal_delete_description": "Are you sure you want to delete '{name}' backup?"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

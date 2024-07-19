@@ -348,7 +348,8 @@
     "loop_detected": "Loop detected: a host set cannot contain itself",
     "cannot_retrieve_usages": "Cannot retrieve usages",
     "invalid_name": "Invalid name",
-    "domain_set_conflict": "Domain set cannot be used as both source and destination"
+    "domain_set_conflict": "Domain set cannot be used as both source and destination",
+    "certificate_already_requested": "A certificate for this domain has been already requested"
   },
   "ne_text_input": {
     "show_password": "Show password",

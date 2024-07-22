@@ -18,32 +18,43 @@ import {
   NeTableHeadCell,
   NeTableBody,
   NeTableRow,
-  NeTableCell
+  NeTableCell,
+  byteFormat1024,
+  formatDateLoc,
+  NeDropdown
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
 import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
 import SetPassphraseDrawer from '@/components/standalone/backup_and_restore/SetPassphraseDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import ModalDeleteBackup from '@/components/standalone/backup_and_restore/ModalDeleteBackup.vue'
 
 const { t } = useI18n()
 
 interface Backup {
-  file: string
+  id: string
   name: string
+  created: BigInteger
+  size: BigInteger
+  mimetype: string
 }
 
 const loading = ref(true)
 const loadingPassphrase = ref(true)
-const isEnterprise = ref(false)
+const isValidSubscription = ref(false)
 const isSetPassphrase = ref(false)
 const showDownloadModal = ref(false)
+const showDeleteModal = ref(false)
 const showPassphraseDrawer = ref(false)
 const showRunBackupModal = ref(false)
 const successNotificationRunBackup = ref(false)
 const unitName = ref('')
 const seletedBackup = ref('')
+const selectedBackupId = ref('')
+const selectedBackupLabel = ref('')
 const listBackups = ref<Backup[]>([])
+const emit = defineEmits(['backup-delete'])
 
 let errorPage = ref({
   notificationTitle: '',
@@ -59,8 +70,8 @@ onMounted(() => {
 async function getSubscription() {
   try {
     let res = await ubusCall('ns.subscription', 'info', {})
-    if (res?.data?.systemd_id && res?.data?.active) {
-      isEnterprise.value = res.data.type === 'enterprise'
+    if (res?.data?.active) {
+      isValidSubscription.value = res?.data?.active
       await getBackups()
     }
   } catch (exception: any) {
@@ -97,11 +108,13 @@ async function getIsPassphrase() {
 }
 
 async function getBackups() {
-  if (isEnterprise.value) {
+  if (isValidSubscription.value) {
     try {
       let res = await ubusCall('ns.backup', 'registered-list-backups')
-      if (res?.data?.values?.length) {
-        listBackups.value = res.data.values
+      if (res?.data?.values?.backups?.length) {
+        listBackups.value = res.data.values.backups
+        // sort by created date in unix timestamp
+        listBackups.value.sort((a, b) => Number(b.created) - Number(a.created))
       }
     } catch (exception: any) {
       errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
@@ -113,6 +126,12 @@ async function getBackups() {
 function openDownloadEnterprise(file: string) {
   showDownloadModal.value = true
   seletedBackup.value = file
+}
+
+function openDeleteBackup(id: string, label: string) {
+  showDeleteModal.value = true
+  selectedBackupId.value = id
+  selectedBackupLabel.value = label
 }
 
 function successRunBackup() {
@@ -127,6 +146,45 @@ function successRunBackup() {
 function successSetPassphrase() {
   showPassphraseDrawer.value = false
   getIsPassphrase()
+}
+
+function getMimetypeDescription(mimetype: string) {
+  // mimetype: remove application/ prefix
+  return mimetype.replace('application/', '')
+}
+
+function getMimetypeIcon(mimetype: string) {
+  if (mimetype == 'application/pgp-encrypted' || mimetype == 'application/octet-stream') {
+    return ['fa', 'lock']
+  } else {
+    return ['fa', 'unlock']
+  }
+}
+
+function getDropdownItems(item: Backup) {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      iconStyle: 'fas',
+      icon: 'trash',
+      danger: true,
+      action: () => {
+        openDeleteBackup(
+          item.id,
+          formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+            ' (' +
+            byteFormat1024(item.size) +
+            ')'
+        )
+      }
+    }
+  ]
+}
+
+function successDeleteBackup() {
+  showDeleteModal.value = false
+  getBackups()
 }
 </script>
 
@@ -149,14 +207,14 @@ function successSetPassphrase() {
     <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
       <FormLayout
         :description="
-          isEnterprise
+          isValidSubscription
             ? t('standalone.backup_and_restore.backup.description_entrprise')
             : t('standalone.backup_and_restore.backup.description')
         "
         class="max-w-12xl"
       >
         <div class="flex">
-          <template v-if="isEnterprise">
+          <template v-if="isValidSubscription">
             <div v-if="listBackups.length" class="ml-auto self-start">
               <NeButton class="mr-2" kind="tertiary" @click="showPassphraseDrawer = true">
                 {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
@@ -191,7 +249,7 @@ function successSetPassphrase() {
         </div>
       </FormLayout>
     </template>
-    <div v-if="!loading && isEnterprise && !errorPage.notificationTitle" class="mt-5">
+    <div v-if="!loading && isValidSubscription && !errorPage.notificationTitle" class="mt-5">
       <NeEmptyState
         v-if="!listBackups.length"
         :title="t('standalone.backup_and_restore.backup.no_backups_found')"
@@ -217,6 +275,10 @@ function successSetPassphrase() {
       >
         <NeTableHead>
           <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.date') }}</NeTableHeadCell>
+          <NeTableHeadCell>{{
+            t('standalone.backup_and_restore.backup.mimetype')
+          }}</NeTableHeadCell>
+          <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.size') }}</NeTableHeadCell>
           <NeTableHeadCell>
             <!-- no header for actions -->
           </NeTableHeadCell>
@@ -226,17 +288,31 @@ function successSetPassphrase() {
             <NeTableCell :data-label="t('standalone.backup_and_restore.backup.date')">
               <div>
                 <FontAwesomeIcon :icon="['fa', 'clock']" class="mr-2" />
-                {{ item.name }}
+                {{ formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') }}
+              </div>
+            </NeTableCell>
+            <NeTableCell>
+              <div>
+                <FontAwesomeIcon :icon="getMimetypeIcon(item.mimetype)" class="mr-2" />
+                {{
+                  t('standalone.backup_and_restore.backup.' + getMimetypeDescription(item.mimetype))
+                }}
+              </div>
+            </NeTableCell>
+            <NeTableCell>
+              <div>
+                {{ byteFormat1024(item.size) }}
               </div>
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
               <div class="-ml-2.5 flex items-center md:justify-end xl:ml-0">
-                <NeButton :kind="'tertiary'" @click="openDownloadEnterprise(item.file)">
+                <NeButton :kind="'tertiary'" @click="openDownloadEnterprise(item.id)">
                   <template #prefix>
                     <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
                   </template>
                   {{ t('standalone.backup_and_restore.backup.download') }}
                 </NeButton>
+                <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
               </div>
             </NeTableCell>
           </NeTableRow>
@@ -261,5 +337,11 @@ function successSetPassphrase() {
     :showPassphraseDrawer="showPassphraseDrawer"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
+  />
+  <ModalDeleteBackup
+    :showDeleteModal="showDeleteModal"
+    :selectedBackupId="selectedBackupId"
+    :selectedBackupLabel="selectedBackupLabel"
+    @close="successDeleteBackup()"
   />
 </template>

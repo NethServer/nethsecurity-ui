@@ -19,7 +19,9 @@ import {
   NeRadioSelection,
   NeTextInput,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  byteFormat1024,
+  formatDateLoc
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -38,7 +40,7 @@ const formRestore = ref({
 
 const loading = ref(true)
 const loadingRestore = ref(false)
-const isEnterprise = ref(false)
+const isValidSubscription = ref(false)
 const showRestoreDrawer = ref(false)
 const typeRestore = ref('upload_file')
 const listBackups: any = ref([])
@@ -89,8 +91,8 @@ async function getSubscription() {
   try {
     let res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.systemd_id && res?.data?.active) {
-      isEnterprise.value = res.data.type === 'enterprise'
-      typeRestore.value = isEnterprise.value ? 'from_backup' : 'upload_file'
+      isValidSubscription.value = true
+      typeRestore.value = isValidSubscription.value ? 'from_backup' : 'upload_file'
       await getBackups()
     }
   } catch (exception: any) {
@@ -103,13 +105,17 @@ async function getSubscription() {
 }
 
 async function getBackups() {
-  if (isEnterprise.value) {
+  if (isValidSubscription.value) {
     try {
       let res = await ubusCall('ns.backup', 'registered-list-backups')
-      if (res?.data?.values?.length) {
-        listBackups.value = res.data.values.map((item: any) => ({
-          id: item.file,
-          label: item.name
+      if (res?.data?.values?.backups?.length) {
+        listBackups.value = res.data.values.backups?.map((item: any) => ({
+          id: item.id,
+          label:
+            formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+            ' (' +
+            byteFormat1024(item.size) +
+            ')'
         }))
       }
     } catch (exception: any) {
@@ -132,7 +138,7 @@ function validateRestore(): boolean {
       errorRestore.value.file = t(errMessage as string)
       isValidationOk = false
     }
-  } else if (isEnterprise.value && typeRestore.value === 'from_backup') {
+  } else if (isValidSubscription.value && typeRestore.value === 'from_backup') {
     let { valid, errMessage } = validateRequired(formRestore.value.backup)
     if (!valid) {
       errorRestore.value.backup = t(errMessage as string)
@@ -190,7 +196,7 @@ async function restoreBackup() {
         Object.assign(payload, { passphrase: formRestore.value.passphrase })
       }
 
-      if (isEnterprise.value && typeRestore.value === 'from_backup') {
+      if (isValidSubscription.value && typeRestore.value === 'from_backup') {
         methodCall = 'registered-restore'
         Object.assign(payload, { file: formRestore.value.backup })
       } else {
@@ -303,7 +309,7 @@ function setRestoreTimer() {
       @close="close()"
     >
       <div class="space-y-8">
-        <template v-if="isEnterprise">
+        <template v-if="isValidSubscription">
           <NeRadioSelection
             v-model="typeRestore"
             :label="t('standalone.backup_and_restore.restore.source')"
@@ -377,7 +383,7 @@ function setRestoreTimer() {
           <NeButton
             :disabled="
               loadingRestore ||
-              ((!isEnterprise || typeRestore === 'upload_file') && !canRestoreBackupFile)
+              ((!isValidSubscription || typeRestore === 'upload_file') && !canRestoreBackupFile)
             "
             :kind="'primary'"
             :loading="loadingRestore"

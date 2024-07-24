@@ -7,7 +7,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeInlineNotification, getAxiosErrorMessage, formatDateLoc } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { downloadFile } from '@/lib/standalone/fileUpload'
 import { deleteFile } from '@/lib/standalone/fileUpload'
@@ -29,6 +29,9 @@ const props = defineProps({
   selectedBackupType: {
     type: String
   },
+  selectedBackupTime: {
+    type: String
+  },
   isValidSubscription: {
     type: Boolean,
     required: true
@@ -48,6 +51,14 @@ let objNotification = {
 }
 
 let errorDownloadBackup = ref({ ...objNotification })
+
+function getBackupName() {
+  if (props.selectedBackupTime) {
+    return formatDateLoc(new Date(Number(props.selectedBackupTime) * 1000), 'PPpp')
+  } else {
+    return props.unitName
+  }
+}
 
 async function downloadBackup() {
   try {
@@ -84,7 +95,11 @@ async function downloadBackup() {
       }
       let link = document.createElement('a')
       link.href = fileURL
-      link.download = 'backup' + extension
+      if (props.selectedBackupTime) {
+        link.download = 'backup-' + props.unitName + '-' + props.selectedBackupTime + extension
+      } else {
+        link.download = 'backup-' + props.unitName + '-' + Date.now().toString() + extension
+      }
       link.click()
 
       await deleteFile(res.data.backup)
@@ -115,7 +130,11 @@ async function downloadBackup() {
     @primary-click="downloadBackup()"
   >
     <div>
-      {{ t('standalone.backup_and_restore.backup.modal_download_description', { name: unitName }) }}
+      {{
+        t('standalone.backup_and_restore.backup.modal_download_description', {
+          name: getBackupName()
+        })
+      }}
     </div>
     <NeInlineNotification
       v-if="errorDownloadBackup.notificationTitle"

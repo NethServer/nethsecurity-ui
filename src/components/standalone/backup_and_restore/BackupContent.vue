@@ -21,7 +21,8 @@ import {
   NeTableCell,
   byteFormat1024,
   formatDateLoc,
-  NeDropdown
+  NeDropdown,
+  NeBadge
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
@@ -250,6 +251,12 @@ function successDeleteBackup() {
           </template>
         </div>
       </FormLayout>
+      <NeBadge
+        v-if="isSetPassphrase"
+        :icon="['fas', 'check']"
+        :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
+        kind="success"
+      />
     </template>
     <div v-if="!loading && isValidSubscription && !errorPage.notificationTitle" class="mt-5">
       <NeEmptyState

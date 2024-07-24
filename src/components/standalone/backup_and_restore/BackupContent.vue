@@ -50,7 +50,8 @@ const showPassphraseDrawer = ref(false)
 const showRunBackupModal = ref(false)
 const successNotificationRunBackup = ref(false)
 const unitName = ref('')
-const seletedBackup = ref('')
+const selectedBackup = ref('')
+const selectedBackupType = ref('')
 const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const listBackups = ref<Backup[]>([])
@@ -123,9 +124,10 @@ async function getBackups() {
   }
 }
 
-function openDownloadEnterprise(file: string) {
+function openDownloadEnterprise(file: string, type: string) {
   showDownloadModal.value = true
-  seletedBackup.value = file
+  selectedBackup.value = file
+  selectedBackupType.value = type
 }
 
 function openDeleteBackup(id: string, label: string) {
@@ -306,7 +308,10 @@ function successDeleteBackup() {
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
               <div class="-ml-2.5 flex items-center md:justify-end xl:ml-0">
-                <NeButton :kind="'tertiary'" @click="openDownloadEnterprise(item.id)">
+                <NeButton
+                  :kind="'tertiary'"
+                  @click="openDownloadEnterprise(item.id, item.mimetype)"
+                >
                   <template #prefix>
                     <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
                   </template>
@@ -323,7 +328,9 @@ function successDeleteBackup() {
   <ModalDownloadBackup
     :showDownloadModal="showDownloadModal"
     :isSetPassphrase="isSetPassphrase"
-    :seletedBackup="seletedBackup"
+    :isValidSubscription="isValidSubscription"
+    :selectedBackupType="selectedBackupType"
+    :selectedBackup="selectedBackup"
     :unitName="unitName"
     @close="showDownloadModal = false"
   />

@@ -55,6 +55,7 @@ const selectedBackup = ref('')
 const selectedBackupType = ref('')
 const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
+const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
 const emit = defineEmits(['backup-delete'])
 
@@ -125,10 +126,11 @@ async function getBackups() {
   }
 }
 
-function openDownloadEnterprise(file: string, type: string) {
+function openDownloadEnterprise(file: string, type: string, time: string) {
   showDownloadModal.value = true
   selectedBackup.value = file
   selectedBackupType.value = type
+  selectedBackupTime.value = time
 }
 
 function openDeleteBackup(id: string, label: string) {
@@ -317,7 +319,7 @@ function successDeleteBackup() {
               <div class="-ml-2.5 flex items-center md:justify-end xl:ml-0">
                 <NeButton
                   :kind="'tertiary'"
-                  @click="openDownloadEnterprise(item.id, item.mimetype)"
+                  @click="openDownloadEnterprise(item.id, item.mimetype, item.created.toString())"
                 >
                   <template #prefix>
                     <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
@@ -338,6 +340,7 @@ function successDeleteBackup() {
     :isValidSubscription="isValidSubscription"
     :selectedBackupType="selectedBackupType"
     :selectedBackup="selectedBackup"
+    :selectedBackupTime="selectedBackupTime"
     :unitName="unitName"
     @close="showDownloadModal = false"
   />

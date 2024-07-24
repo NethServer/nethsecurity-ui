@@ -585,7 +585,8 @@
         "mimetype": "Type",
         "delete": "Delete",
         "modal_delete_title": "Delete remote backup",
-        "modal_delete_description": "Are you sure you want to delete '{name}' backup?"
+        "modal_delete_description": "Are you sure you want to delete '{name}' backup?",
+        "unchanged": "Unchanged"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

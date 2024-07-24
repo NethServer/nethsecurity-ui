@@ -23,6 +23,10 @@ const props = defineProps({
   showPassphraseDrawer: {
     type: Boolean,
     required: true
+  },
+  isSetPassphrase: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -71,6 +75,7 @@ async function setPassphrase() {
     })
     .finally(() => {
       loading.value = false
+      formPassphrase.value.passphrase = ''
     })
 }
 </script>
@@ -87,6 +92,7 @@ async function setPassphrase() {
         :label="t('standalone.backup_and_restore.backup.passphrase')"
         isPassword
         :helperText="t('standalone.backup_and_restore.backup.passphrase_reser_helper')"
+        :placeholder="isSetPassphrase ? t('standalone.backup_and_restore.backup.unchanged') : ''"
       >
         <template #tooltip>
           <NeTooltip>

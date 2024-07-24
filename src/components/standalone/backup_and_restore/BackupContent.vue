@@ -342,6 +342,7 @@ function successDeleteBackup() {
   />
   <SetPassphraseDrawer
     :showPassphraseDrawer="showPassphraseDrawer"
+    :isSetPassphrase="isSetPassphrase"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
   />

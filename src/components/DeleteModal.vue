@@ -24,7 +24,7 @@ const props = defineProps({
     type: String,
     required: true
   },
-  // title of the error notifciation, e.g. "Cannot delete user"
+  // title of the error notification, e.g. "Cannot delete user"
   errorNotificationTitle: {
     type: String,
     required: true

@@ -81,7 +81,7 @@ const zone = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div class="flex items-center gap-4">
     <template v-if="rulesType === 'input' && props.columnType === 'destination'">
       <NeBadge
         :class="{ 'opacity-50': !enabled }"
@@ -160,20 +160,17 @@ const zone = computed(() => {
         </p>
       </template>
     </template>
-    <template v-else>
+    <template v-else-if="zone === '*'">
       <div :class="{ 'opacity-50': !enabled }">
         <!-- show zone -->
-        <span v-if="zone === '*'">
-          {{ t('common.any') }}
-        </span>
-        <span v-else-if="zone">
-          <NeBadge
-            :text="zone.toUpperCase()"
-            :kind="enabled ? 'custom' : 'secondary'"
-            :customColorClasses="getZoneColorClasses(zone)"
-          />
-        </span>
+        {{ t('common.any') }}
       </div>
     </template>
+    <NeBadge
+      v-if="zone && zone !== '*'"
+      :text="zone.toUpperCase()"
+      :kind="enabled ? 'custom' : 'secondary'"
+      :customColorClasses="getZoneColorClasses(zone)"
+    />
   </div>
 </template>

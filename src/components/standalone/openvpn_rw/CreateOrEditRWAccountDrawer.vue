@@ -80,7 +80,7 @@ async function fetchOptions() {
 
 async function resetForm() {
   enabled.value = props.itemToEdit ? props.itemToEdit.openvpn_enabled === '1' : true
-  username.value = props.itemToEdit?.name ?? usernameOptions.value?.[0].id ?? ''
+  username.value = props.itemToEdit?.name ?? usernameOptions.value?.[0]?.id ?? ''
   reservedIp.value = props.itemToEdit?.openvpn_ipaddr ?? ''
   certificateExpiration.value = props.itemToEdit ? '' : '3650'
 }
@@ -242,6 +242,13 @@ watch(
       <NeTextInput
         v-model="reservedIp"
         :label="t('standalone.openvpn_rw.reserved_ip')"
+        :helperText="
+          t('standalone.openvpn_rw.reserved_ip_helper', {
+            range: instanceData.ifconfig_pool
+              ? `${instanceData.ifconfig_pool[0]}-${instanceData.ifconfig_pool[1]}`
+              : ''
+          })
+        "
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ipaddr'))"
         :optional="true"
         :optional-label="t('common.optional')"

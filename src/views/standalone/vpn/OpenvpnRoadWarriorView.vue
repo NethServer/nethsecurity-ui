@@ -51,6 +51,7 @@ export type RWServer = {
   ns_user_db: string
   compress?: string
   ns_description: string
+  ifconfig_pool?: string[]
 }
 
 export type RWAccount = {

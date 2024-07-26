@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import {
   MessageBag,
   validateIp4Cidr,
@@ -12,7 +12,8 @@ import {
   validateIpAddressOrFQDN,
   validatePort,
   validateRequired,
-  type validationOutput
+  type validationOutput,
+  validateIp4Address
 } from '@/lib/validation'
 import {
   NeInlineNotification,
@@ -25,7 +26,8 @@ import {
   NeFormItemLabel,
   NeRadioSelection,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  focusElement
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
@@ -59,14 +61,18 @@ const showAdvancedSettings = ref(false)
 // form fields
 const enabled = ref(true)
 const name = ref('')
+const nameRef = ref()
 const userDatabase = ref('main')
+const userDatabaseRef = ref()
 const createAccountForAllUsers = ref(false)
 const authMode = ref('username_password')
 const mode = ref('routed')
 const vpnNetwork = ref('')
+const vpnNetworkRef = ref()
 const publicIpOrHostname = ref<string[]>([])
 const protocol = ref('udp')
 const port = ref('')
+const portRef = ref()
 const routeTrafficThroughVpn = ref(false)
 const pushCustomNetworkRoutes = ref<string[]>([])
 const clientToClientNetworkTraffic = ref(false)
@@ -75,8 +81,15 @@ const digest = ref('auto')
 const cipher = ref('auto')
 const minimumTLSVersion = ref('auto')
 const bridge = ref('')
+const bridgeRef = ref()
 const rangeIpStart = ref('')
+const rangeIpStartRef = ref()
 const rangeIpEnd = ref('')
+const rangeIpEndRef = ref()
+const dynamicRangeIpStart = ref('')
+const dynamicRangeIpStartRef = ref()
+const dynamicRangeIpEnd = ref('')
+const dynamicRangeIpEndRef = ref()
 
 const customOptions = ref<KeyValueItem[]>([])
 const digestOptions = ref<NeComboboxOption[]>([])
@@ -137,6 +150,9 @@ const tlsOptions = [
     label: '1.2'
   }
 ]
+
+// contains the first invalid field ref
+const firstErrorRef = ref()
 
 async function fetchOptions() {
   try {
@@ -202,6 +218,7 @@ async function fetchOptions() {
       })
     )
     loading.value = false
+    focusElement(nameRef)
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_server_options')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -215,7 +232,7 @@ function cleanValidationErrors() {
   pushCustomNetworkRoutesValidationErrors.value = []
 }
 
-async function resetForm() {
+function resetForm() {
   const serverData = props.itemToEdit
 
   name.value = serverData?.ns_description ?? ''
@@ -224,6 +241,8 @@ async function resetForm() {
   authMode.value = serverData?.ns_auth_mode ?? 'username_password'
   mode.value = serverData?.dev_type === 'tun' ? 'routed' : 'bridged'
   vpnNetwork.value = serverData?.server ?? ''
+  dynamicRangeIpStart.value = serverData?.ifconfig_pool ? serverData.ifconfig_pool[0] : ''
+  dynamicRangeIpEnd.value = serverData?.ifconfig_pool ? serverData.ifconfig_pool[1] : ''
   publicIpOrHostname.value = serverData?.ns_public_ip ?? []
   protocol.value = serverData?.proto ?? 'udp'
   port.value = serverData?.port ?? ''
@@ -249,10 +268,19 @@ async function resetForm() {
   }
 }
 
-function runValidators(validators: validationOutput[], label: string): boolean {
+function runFieldValidators(
+  validators: validationOutput[],
+  fieldName: string,
+  fieldRef: Ref<any>
+): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [validator.errMessage as string])
+      validationErrorBag.value.set(fieldName, [validator.errMessage as string])
+
+      // remember the first field with error for focus management
+      if (!firstErrorRef.value) {
+        firstErrorRef.value = fieldRef
+      }
     }
   }
 
@@ -306,33 +334,61 @@ function validate() {
     (x) => x === ''
   )
 
-  const bridgedServerValidators: [validationOutput[], string][] = [
+  const bridgedServerValidators: [validationOutput[], string, Ref<any>][] = [
     [
       [validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)],
-      'ns_pool_start'
+      'ns_pool_start',
+      rangeIpStartRef
     ],
-    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'ns_pool_end'],
-    [[validateRequired(bridge.value)], 'ns_bridge']
+    [
+      [validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)],
+      'ns_pool_end',
+      rangeIpEndRef
+    ],
+    [[validateRequired(bridge.value)], 'ns_bridge', bridgeRef]
   ]
 
-  const routedServerValidators: [validationOutput[], string][] = [
-    [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'server']
+  const routedServerValidators: [validationOutput[], string, Ref<any>][] = [
+    [
+      [validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)],
+      'server',
+      vpnNetworkRef
+    ],
+    [
+      [validateRequired(dynamicRangeIpStart.value), validateIp4Address(dynamicRangeIpStart.value)],
+      'ifconfig_pool_start',
+      dynamicRangeIpStartRef
+    ],
+    [
+      [validateRequired(dynamicRangeIpEnd.value), validateIp4Address(dynamicRangeIpEnd.value)],
+      'ifconfig_pool_end',
+      dynamicRangeIpEndRef
+    ]
   ]
 
-  const validators: [validationOutput[], string][] = [
-    [[validateRequired(name.value)], 'ns_description'],
-    [[validateRequired(userDatabase.value)], 'ns_user_db'],
-    [[validateRequired(port.value), validatePort(port.value)], 'port'],
+  const validators: [validationOutput[], string, Ref<any>][] = [
+    [[validateRequired(name.value)], 'ns_description', nameRef],
+    [[validateRequired(userDatabase.value)], 'ns_user_db', userDatabaseRef],
+    [[validateRequired(port.value), validatePort(port.value)], 'port', portRef],
     ...(mode.value === 'bridged' ? bridgedServerValidators : routedServerValidators)
   ]
 
-  return (
+  // reset firstErrorRef for focus management
+  firstErrorRef.value = undefined
+
+  const isValidationOk =
     validators
-      .map(([validator, label]) => runValidators(validator, label))
+      .map(([validators, fieldName, fieldRef]) =>
+        runFieldValidators(validators, fieldName, fieldRef)
+      )
       .every((result) => result) &&
     validPublicIpOrHostname &&
     validPushCustomNetworkRoutes
-  )
+
+  if (firstErrorRef.value) {
+    focusElement(firstErrorRef.value)
+  }
+  return isValidationOk
 }
 
 async function createOrEditServer() {
@@ -348,6 +404,7 @@ async function createOrEditServer() {
   isSavingChanges.value = true
 
   // set new configuration for openvpn rw instance
+
   try {
     await ubusCall('ns.ovpnrw', 'set-configuration', {
       instance: props.instanceName,
@@ -361,6 +418,8 @@ async function createOrEditServer() {
       ns_pool_start: mode.value === 'bridged' ? rangeIpStart.value : '',
       ns_pool_end: mode.value === 'bridged' ? rangeIpEnd.value : '',
       proto: protocol.value,
+      ifconfig_pool:
+        mode.value === 'routed' ? [dynamicRangeIpStart.value, dynamicRangeIpEnd.value] : [],
       ns_public_ip: publicIpOrHostname.value,
       port: port.value,
       ns_local: pushCustomNetworkRoutes.value,
@@ -464,6 +523,7 @@ watch(
         v-model="name"
         :label="t('standalone.openvpn_rw.server_name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_description'))"
+        ref="nameRef"
       />
       <NeCombobox
         :label="t('standalone.openvpn_rw.user_database')"
@@ -474,6 +534,7 @@ watch(
         :optionalLabel="t('common.optional')"
         v-model="userDatabase"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_user_db'))"
+        ref="userDatabaseRef"
       />
       <div v-if="!itemToEdit?.ns_description">
         <NeFormItemLabel
@@ -510,31 +571,66 @@ watch(
           :no-results-label="t('ne_combobox.no_results')"
           :optionalLabel="t('common.optional')"
           v-model="bridge"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_bridge'))"
+          ref="bridgeRef"
         />
         <NeTextInput
           v-model="rangeIpStart"
           :label="t('standalone.openvpn_rw.range_ip_start')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_pool_start'))"
+          ref="rangeIpStartRef"
         />
         <NeTextInput
           v-model="rangeIpEnd"
           :label="t('standalone.openvpn_rw.range_ip_end')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_pool_end'))"
+          ref="rangeIpEndRef"
         />
       </template>
-      <NeTextInput
-        v-else
-        v-model="vpnNetwork"
-        :label="t('standalone.openvpn_rw.vpn_network')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('server'))"
-        ><template #tooltip>
-          <NeTooltip
-            ><template #content>{{
-              t('standalone.openvpn_rw.vpn_network_tooltip')
-            }}</template></NeTooltip
-          >
-        </template></NeTextInput
-      >
+      <template v-else>
+        <!-- routed mode -->
+        <NeTextInput
+          v-model="vpnNetwork"
+          :label="t('standalone.openvpn_rw.vpn_network')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('server'))"
+          ref="vpnNetworkRef"
+          ><template #tooltip>
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_rw.vpn_network_tooltip')
+              }}</template></NeTooltip
+            >
+          </template></NeTextInput
+        >
+        <NeInlineNotification
+          kind="info"
+          :title="t('standalone.openvpn_rw.dynamic_range_ip')"
+          :description="t('standalone.openvpn_rw.dynamic_range_ip_message')"
+          :closeAriaLabel="t('common.close')"
+          class="mt-2"
+        />
+        <NeTextInput
+          v-model="dynamicRangeIpStart"
+          :label="t('standalone.openvpn_rw.dynamic_range_ip_start')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ifconfig_pool_start'))"
+          ref="dynamicRangeIpStartRef"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.openvpn_rw.dynamic_range_ip_start_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="dynamicRangeIpEnd"
+          :label="t('standalone.openvpn_rw.dynamic_range_ip_end')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ifconfig_pool_end'))"
+          ref="dynamicRangeIpEndRef"
+        >
+        </NeTextInput>
+      </template>
       <NeMultiTextInput
         v-model="publicIpOrHostname"
         :add-item-label="t('standalone.openvpn_rw.add_public_ip_host')"
@@ -564,6 +660,7 @@ watch(
           v-model="port"
           :label="t('standalone.openvpn_rw.port')"
           :invalid-message="t(validationErrorBag.getFirstFor('port'))"
+          ref="portRef"
         />
         <div>
           <NeFormItemLabel>{{

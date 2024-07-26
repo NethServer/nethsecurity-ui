@@ -160,7 +160,7 @@ const zone = computed(() => {
         </p>
       </template>
     </template>
-    <template v-else-if="zone === '*'">
+    <template v-else-if="zone == '*'">
       <div :class="{ 'opacity-50': !enabled }">
         <!-- show zone -->
         {{ t('common.any') }}

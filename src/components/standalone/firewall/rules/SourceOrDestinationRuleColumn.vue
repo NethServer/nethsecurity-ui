@@ -167,7 +167,7 @@ const zone = computed(() => {
       </div>
     </template>
     <NeBadge
-      v-if="zone && zone !== '*'"
+      v-if="zone && zone != '*'"
       :text="zone.toUpperCase()"
       :kind="enabled ? 'custom' : 'secondary'"
       :customColorClasses="getZoneColorClasses(zone)"

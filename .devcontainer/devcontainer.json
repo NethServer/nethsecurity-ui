@@ -28,7 +28,8 @@
         "dbaeumer.vscode-eslint",
         "GitHub.vscode-github-actions",
         "ms-azuretools.vscode-docker",
-        "timonwong.shellcheck"
+        "timonwong.shellcheck",
+        "Vue.volar"
       ]
     }
   }

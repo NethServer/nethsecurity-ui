@@ -4,6 +4,10 @@
 -->
 
 <script setup lang="ts">
+/**
+ * @deprecated
+ * @see ObjectTooltip.
+ */
 import { type PropType } from 'vue'
 import { NeTooltip, NeLink } from '@nethesis/vue-components'
 import type { HostSet } from '@/composables/useHostSets'

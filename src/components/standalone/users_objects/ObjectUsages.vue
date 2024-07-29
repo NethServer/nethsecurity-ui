@@ -85,7 +85,8 @@ function getManagementPageLabel(category: string) {
       return t('common.go_to_page', { page: t('standalone.firewall_rules.title') })
     case 'objects':
       return t('common.go_to_page', { page: t('standalone.objects.title') })
-    //// add other pages
+    case 'mwan3':
+      return t('common.go_to_page', { page: t('standalone.multi_wan.title') })
   }
 }
 
@@ -98,7 +99,9 @@ function goToManagementPage(subtype: string) {
       break
     case 'objects':
       path = 'users-objects/objects'
-    //// add other pages
+      break
+    case 'mwan3':
+      path = 'network/multi-wan'
   }
   router.push(`${getStandaloneRoutePrefix(route)}/${path}`)
 }

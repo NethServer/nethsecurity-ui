@@ -962,7 +962,18 @@
         "button": "@:common.delete"
       },
       "any": "any",
-      "all": "all"
+      "all": "all",
+      "address_options": {
+        "any": "Any",
+        "address": "Address",
+        "object": "Object"
+      },
+      "source_type": "Source type",
+      "destination_type": "Destination type",
+      "source_object": "Source object",
+      "enter_address": "Enter address",
+      "select_an_object": "Select an object",
+      "destination_object": "Destination object"
     },
     "dns_dhcp": {
       "title": "DNS and DHCP",

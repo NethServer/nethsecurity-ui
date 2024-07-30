@@ -57,7 +57,6 @@ const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
-const emit = defineEmits(['backup-delete'])
 
 let errorPage = ref({
   notificationTitle: '',

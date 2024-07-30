@@ -165,24 +165,6 @@ onMounted(() => {
           ></template
         >
       </NeTextInput>
-      <!--<NeToggle :label="t('standalone.dns_dhcp.rebind_protection')" v-model="rebindProtection">
-        <template #tooltip
-          ><NeTooltip
-            ><template #content>{{
-              t('standalone.dns_dhcp.rebind_protection_tooltip')
-            }}</template></NeTooltip
-          ></template
-        >
-      </NeToggle>-->
-      <!--<NeToggle
-        :label="t('standalone.dns_dhcp.exclude_localhost_rebinding_checks')"
-        v-model="excludeLocalhostRebinding"
-      />-->
-      <!--<NeMultiTextInput
-        v-model="domainWhitelist"
-        :add-item-label="t('standalone.dns_dhcp.add_domain')"
-        :title="t('standalone.dns_dhcp.domain_whitelist')"
-      />-->
       <NeToggle :label="t('standalone.dns_dhcp.log_dns_queries')" v-model="logDnsQueries" />
       <hr />
       <div class="flex justify-end">

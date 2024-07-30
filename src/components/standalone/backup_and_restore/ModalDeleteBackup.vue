@@ -10,11 +10,6 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 
-interface Backup {
-  id: string
-  name: string
-}
-
 const { t } = useI18n()
 const props = defineProps({
   showDeleteModal: {

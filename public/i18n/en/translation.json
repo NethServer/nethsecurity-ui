@@ -191,8 +191,8 @@
     "db_already_exists": "Database already exists",
     "user_db_not_found": "User database not found",
     "bridge_not_found": "Bridge not found",
-    "start_not_in_network": "Start not in network",
-    "end_not_in_network": "End not in network",
+    "start_not_in_network": "IP start not in network",
+    "end_not_in_network": "IP end not in network",
     "ip_already_used": "IP is already used",
     "start_must_be_greater_then_end": "Start must be greater than end",
     "cannot_delete_rule": "Cannot delete rule",
@@ -350,7 +350,9 @@
     "invalid_name": "Invalid name",
     "domain_set_conflict": "Domain set cannot be used as both source and destination",
     "certificate_already_requested": "A certificate for this domain has been already requested",
-    "cannot_delete_backup": "Cannot delete remote backup"
+    "cannot_delete_backup": "Cannot delete remote backup",
+    "end_must_be_greater_then_start": "IP end must be greater than start",
+    "start_reserved": "First IP of network is reserved"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1496,6 +1498,7 @@
       "username": "Username",
       "expiration": "Expiration",
       "reserved_ip": "Reserved IP",
+      "reserved_ip_helper": "Reserve an IP address outside the range {range}",
       "connection": "Connection",
       "connected": "Connected",
       "not_connected": "Not connected",
@@ -1536,7 +1539,12 @@
       "sent": "sent",
       "received": "received",
       "disable_account": "Disable account",
-      "disable_account_message": "The user is currently connected via VPN. Disabling the user will terminate the current VPN session."
+      "disable_account_message": "The user is currently connected via VPN. Disabling the user will terminate the current VPN session.",
+      "dynamic_range_ip": "Dynamic range IP",
+      "dynamic_range_ip_message": "You can reserve IP addresses to OpenVPN accounts outside the following range.",
+      "dynamic_range_ip_start": "Dynamic range IP start",
+      "dynamic_range_ip_end": "Dynamic range IP end",
+      "dynamic_range_ip_start_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

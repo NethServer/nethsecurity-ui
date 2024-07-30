@@ -57,9 +57,9 @@ const hostSetObject = computed(() => {
 
 const domainSetObject = computed(() => {
   if (props.columnType === 'source') {
-    return props.domainSets.find((domainSet) => `objects/${domainSet.id}` === props.rule.ns_src)
+    return props.domainSets.find((domainSet) => domainSet.id === props.rule.ns_src)
   } else {
-    return props.domainSets.find((domainSet) => `objects/${domainSet.id}` === props.rule.ns_dst)
+    return props.domainSets.find((domainSet) => domainSet.id === props.rule.ns_dst)
   }
 })
 

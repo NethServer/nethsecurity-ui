@@ -27,6 +27,8 @@ export type ObjectReference = {
 
 /**
  * Composable that handles domain sets. They are managed in Users and object > Objects > Domain sets
+ * @deprecated
+ * @see objects.ts
  */
 export function useObjects() {
   library.add(faDesktop)

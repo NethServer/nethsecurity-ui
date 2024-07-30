@@ -21,6 +21,7 @@ import type { Rule } from '@/composables/useMwan'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosError } from 'axios'
 import HorizontalCard from '@/components/standalone/HorizontalCard.vue'
+import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
 
 const { t } = useI18n()
 
@@ -167,10 +168,16 @@ function saveState(): void {
               <td>
                 {{ item.policy.label ?? item.policy.name }}
               </td>
-              <td>
+              <td v-if="item.ns_src">
+                <ObjectTooltip :object-id="item.ns_src" />
+              </td>
+              <td v-else>
                 {{ item.source_address ?? t('standalone.multi_wan.any') }}
               </td>
-              <td>
+              <td v-if="item.ns_dst">
+                <ObjectTooltip :object-id="item.ns_dst" />
+              </td>
+              <td v-else>
                 {{ item.destination_address ?? t('standalone.multi_wan.any') }}
               </td>
               <td>

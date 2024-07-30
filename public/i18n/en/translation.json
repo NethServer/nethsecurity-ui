@@ -964,7 +964,18 @@
         "button": "@:common.delete"
       },
       "any": "any",
-      "all": "all"
+      "all": "all",
+      "address_options": {
+        "any": "Any",
+        "address": "Address",
+        "object": "Object"
+      },
+      "source_type": "Source type",
+      "destination_type": "Destination type",
+      "source_object": "Source object",
+      "enter_address": "Enter address",
+      "select_an_object": "Select an object",
+      "destination_object": "Destination object"
     },
     "dns_dhcp": {
       "title": "DNS and DHCP",
@@ -1943,7 +1954,8 @@
       "go_to_rw_accounts": "Go to RW accounts",
       "host_set_already_exists": "Host set already exists",
       "domain_set_already_exists": "Domain set already exists",
-      "delete_domain_set": "Delete domain set"
+      "delete_domain_set": "Delete domain set",
+      "database_mwan3": "MultiWAN"
     }
   },
   "controller": {

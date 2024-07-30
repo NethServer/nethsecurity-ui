@@ -35,6 +35,8 @@ export interface Rule {
   destination_address?: string
   destination_port?: string
   sticky: boolean
+  ns_src?: string
+  ns_dst?: string
 }
 
 interface ApiResponse<T> {

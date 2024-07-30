@@ -12,6 +12,9 @@ import {
   validatePortRangeForMwan,
   validateRequired
 } from '@/lib/validation'
+import { type ObjectReference, useObjects } from '@/composables/useObjects'
+import { ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
 
 export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined>) {
   const { t } = useI18n()
@@ -67,6 +70,22 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
         destinationAddress.value = rule.value.destination_address ?? ''
         destinationPort.value = rule.value.destination_port ?? ''
         sticky.value = rule.value.sticky
+        srcObject.value = rule.value.ns_src
+        dstObject.value = rule.value.ns_dst
+        if (srcObject.value != undefined) {
+          srcType.value = 'object'
+        } else if (sourceAddress.value != '') {
+          srcType.value = 'address'
+        } else {
+          srcType.value = 'any'
+        }
+        if (dstObject.value != undefined) {
+          dstType.value = 'object'
+        } else if (destinationAddress.value != '') {
+          dstType.value = 'address'
+        } else {
+          dstType.value = 'any'
+        }
       }
     }
   )
@@ -79,6 +98,60 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
   const destinationAddress = ref('')
   const destinationPort = ref('')
   const sticky = ref(false)
+
+  type AddressType = 'any' | 'address' | 'object'
+
+  const addressOptions: { id: AddressType; label: string }[] = [
+    { id: 'any', label: t('standalone.multi_wan.address_options.any') },
+    { id: 'address', label: t('standalone.multi_wan.address_options.address') },
+    { id: 'object', label: t('standalone.multi_wan.address_options.object') }
+  ]
+
+  const srcType = ref<AddressType>('any')
+  const dstType = ref<AddressType>('any')
+
+  type ObjectResponse = {
+    objects: {
+      ns_dst: ObjectReference[]
+      ns_src: ObjectReference[]
+    }
+  }
+
+  const srcObject = ref<string>()
+  const dstObject = ref<string>()
+  const objectsError = ref<Error>()
+  const objectsLoading = ref(true)
+  const srcObjectOptions = ref<NeComboboxOption[]>([])
+  const dstObjectOptions = ref<NeComboboxOption[]>([])
+
+  const { getObjectIcon } = useObjects()
+
+  // fetching objects
+  ubusCall('ns.mwan', 'list_object_suggestions')
+    .then((response: AxiosResponse<ObjectResponse>) => {
+      srcObjectOptions.value = response.data.objects.ns_src.map((item) => {
+        return {
+          id: item.id,
+          label: item.name,
+          description: t(`standalone.objects.subtype_${item.subtype}`),
+          icon: getObjectIcon(item.subtype)
+        }
+      })
+      dstObjectOptions.value = response.data.objects.ns_dst.map((item) => {
+        return {
+          id: item.id,
+          label: item.name,
+          description: t(`standalone.objects.subtype_${item.subtype}`),
+          icon: getObjectIcon(item.subtype)
+        }
+      })
+    })
+    .catch(() => {
+      objectsError.value = Error('standalone.multi_wan.error_fetching_objects')
+    })
+    .finally(() => {
+      objectsLoading.value = false
+    })
 
   const validationErrors = ref(new MessageBag())
 
@@ -134,6 +207,15 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     destinationPort,
     validationErrors,
     sticky,
-    isValid
+    isValid,
+    srcType,
+    dstType,
+    addressOptions,
+    objectsLoading,
+    objectsError,
+    srcObject,
+    srcObjectOptions,
+    dstObject,
+    dstObjectOptions
   }
 }

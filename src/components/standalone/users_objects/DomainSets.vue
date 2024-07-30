@@ -15,6 +15,7 @@ import DeleteModal from '@/components/DeleteModal.vue'
 import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
 import ObjectUsagesModal from './ObjectUsagesModal.vue'
 import { useDomainSets, type DomainSet } from '@/composables/useDomainSets'
+import { useObjectStore } from '@/stores/standalone/objects'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -26,6 +27,8 @@ const {
   errorListDomainSetsDetails,
   searchStringInDomainSet
 } = useDomainSets()
+
+const objects = useObjectStore()
 
 const currentDomainSet = ref<DomainSet | undefined>(undefined)
 const currentDomainSetName = ref('')
@@ -54,6 +57,7 @@ onMounted(() => {
 
 function loadData() {
   listDomainSets()
+  objects.load()
   uciChangesStore.getChanges()
 }
 

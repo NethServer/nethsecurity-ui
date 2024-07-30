@@ -15,6 +15,7 @@ import DeleteModal from '@/components/DeleteModal.vue'
 import ObjectUsagesModal from './ObjectUsagesModal.vue'
 import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
 import { useHostSets, type HostSet } from '@/composables/useHostSets'
+import { useObjectStore } from '@/stores/standalone/objects'
 
 const { t } = useI18n()
 const {
@@ -26,6 +27,8 @@ const {
   hostSetsComboboxOptions,
   searchStringInHostSet
 } = useHostSets()
+
+const objects = useObjectStore()
 
 const uciChangesStore = useUciPendingChangesStore()
 const currentHostSet = ref<HostSet | undefined>(undefined)
@@ -53,6 +56,7 @@ onMounted(() => {
 
 function loadData() {
   listHostSets()
+  objects.load()
   uciChangesStore.getChanges()
 }
 

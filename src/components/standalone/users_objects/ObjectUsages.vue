@@ -87,6 +87,7 @@ function getManagementPageLabel(category: string) {
       return t('common.go_to_page', { page: t('standalone.objects.title') })
     case 'mwan3':
       return t('common.go_to_page', { page: t('standalone.multi_wan.title') })
+    // TODO: add port forward case
   }
 }
 
@@ -102,6 +103,7 @@ function goToManagementPage(subtype: string) {
       break
     case 'mwan3':
       path = 'network/multi-wan'
+    // TODO: add port forward case
   }
   router.push(`${getStandaloneRoutePrefix(route)}/${path}`)
 }

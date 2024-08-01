@@ -1282,7 +1282,8 @@
       "enter_restricted_addresses": "Enter restricted addresses",
       "restricted_addresses": "Restricted addresses",
       "restricted_object": "Restricted object",
-      "no_object": "No object"
+      "no_object": "No object",
+      "port_forwards_for_destination_name": "Port forwards for destination '{name}'"
     },
     "firewall_rules": {
       "title": "Firewall rules",

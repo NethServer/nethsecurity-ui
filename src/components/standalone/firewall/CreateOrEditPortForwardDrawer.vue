@@ -15,6 +15,8 @@ import {
   NeTooltip,
   NeFormItemLabel,
   NeTextInput,
+  NeRadioSelection,
+  NeExpandable,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
@@ -456,95 +458,91 @@ async function createOrEditPortForward() {
           ></template
         >
       </NeTextInput>
-      <div>
-        <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
-          {{ t('standalone.port_forward.advanced_settings') }}
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
-          </template>
-        </NeButton>
-      </div>
-      <template v-if="showAdvancedSettings">
-        <NeCombobox
-          :label="t('standalone.port_forward.destination_zone')"
-          :placeholder="t('standalone.port_forward.choose_zone')"
-          :options="supportedDestinationZones"
-          v-model="destinationZone"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
-        />
-        <NeCombobox
-          :label="t('standalone.port_forward.wan_ip')"
-          :options="wanInterfaces"
-          v-model="wan"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
-        />
-        <NeMultiTextInput
-          :title="t('standalone.port_forward.restrict_access_from')"
-          :optional="true"
-          :optional-label="t('common.optional')"
-          :add-item-label="t('standalone.port_forward.add_ip_address')"
-          :invalid-messages="restrictIPValidationErrors"
-          v-model="restrict"
-          @delete-item="resetRestrictIPValidationErrors"
-        >
-          <template #tooltip>
-            <NeTooltip
-              ><template #content>{{
-                t('standalone.port_forward.restrict_access_from_tooltip')
-              }}</template></NeTooltip
-            >
-          </template>
-        </NeMultiTextInput>
-        <div>
-          <NeFormItemLabel>{{ t('standalone.port_forward.log') }}</NeFormItemLabel>
+      <!-- advanced settings -->
+      <NeExpandable
+        :label="t('common.advanced_settings')"
+        :isExpanded="showAdvancedSettings"
+        @setExpanded="(ev: boolean) => (showAdvancedSettings = ev)"
+      >
+        <div class="space-y-6">
+          <NeCombobox
+            :label="t('standalone.port_forward.destination_zone')"
+            :placeholder="t('standalone.port_forward.choose_zone')"
+            :options="supportedDestinationZones"
+            v-model="destinationZone"
+            :disabled="isSubmittingRequest"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
+          />
+          <NeCombobox
+            :label="t('standalone.port_forward.wan_ip')"
+            :options="wanInterfaces"
+            v-model="wan"
+            :disabled="isSubmittingRequest"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
+          />
+          <NeMultiTextInput
+            :title="t('standalone.port_forward.restrict_access_from')"
+            :optional="true"
+            :optional-label="t('common.optional')"
+            :add-item-label="t('standalone.port_forward.add_ip_address')"
+            :invalid-messages="restrictIPValidationErrors"
+            v-model="restrict"
+            :disabled="isSubmittingRequest"
+            @delete-item="resetRestrictIPValidationErrors"
+          >
+            <template #tooltip>
+              <NeTooltip
+                ><template #content>{{
+                  t('standalone.port_forward.restrict_access_from_tooltip')
+                }}</template></NeTooltip
+              >
+            </template>
+          </NeMultiTextInput>
           <NeToggle
+            :topLabel="t('standalone.port_forward.log')"
             :label="
               log ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
             "
             v-model="log"
+            :disabled="isSubmittingRequest"
           />
-        </div>
-        <div>
-          <NeFormItemLabel>{{ t('standalone.port_forward.hairpin_nat') }}</NeFormItemLabel>
           <NeToggle
+            :topLabel="t('standalone.port_forward.hairpin_nat')"
             :label="
               reflection
                 ? t('standalone.port_forward.enabled')
                 : t('standalone.port_forward.disabled')
             "
             v-model="reflection"
+            :disabled="isSubmittingRequest"
+          />
+          <NeCombobox
+            v-if="reflection"
+            :label="t('standalone.port_forward.hairpin_nat_zones')"
+            :placeholder="t('standalone.port_forward.choose_zone')"
+            :options="supportedReflectionZones"
+            v-model="reflectionZones"
+            :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
+            :multiple="true"
+            :noResultsLabel="t('ne_combobox.no_results')"
+            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            :optionalLabel="t('common.optional')"
           />
         </div>
-        <NeCombobox
-          v-if="reflection"
-          :label="t('standalone.port_forward.hairpin_nat_zones')"
-          :placeholder="t('standalone.port_forward.choose_zone')"
-          :options="supportedReflectionZones"
-          v-model="reflectionZones"
-          :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
-          :multiple="true"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
-        />
-      </template>
+      </NeExpandable>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>

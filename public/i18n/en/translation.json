@@ -1257,7 +1257,6 @@
       "edit_port_forward": "Edit port forward",
       "destination_address": "Destination address",
       "destination_zone": "Destination zone",
-      "advanced_settings": "Advanced settings",
       "add_ip_address": "Add IP address",
       "log": "Log",
       "hairpin_nat": "Hairpin NAT",

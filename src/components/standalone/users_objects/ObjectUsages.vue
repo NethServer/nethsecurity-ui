@@ -62,13 +62,13 @@ async function getInfo() {
   try {
     const res = await ubusCall('ns.objects', 'get-info', { ids: props.usageIds })
 
-    // categorize usages by database
+    // categorize usages by database and type
 
     for (const objectInfo of Object.values(res.data.info) as ObjectInfo[]) {
-      const categoryName = objectInfo.database
-      const category = usages.value[categoryName] || []
-      category.push(objectInfo)
-      usages.value[categoryName] = category
+      const kindName = `${objectInfo.database}_${objectInfo.type}`
+      const kind = usages.value[kindName] || []
+      kind.push(objectInfo)
+      usages.value[kindName] = kind
     }
   } catch (err: any) {
     console.error(err)
@@ -79,15 +79,17 @@ async function getInfo() {
   }
 }
 
-function getManagementPageLabel(category: string) {
-  switch (category) {
-    case 'firewall':
+function getManagementPageLabel(kind: string) {
+  switch (kind) {
+    case 'firewall_rule':
       return t('common.go_to_page', { page: t('standalone.firewall_rules.title') })
-    case 'objects':
+    case 'objects_host':
+    case 'objects_domain_set':
       return t('common.go_to_page', { page: t('standalone.objects.title') })
-    case 'mwan3':
+    case 'mwan3_rule':
       return t('common.go_to_page', { page: t('standalone.multi_wan.title') })
-    // TODO: add port forward case
+    case 'firewall_redirect':
+      return t('common.go_to_page', { page: t('standalone.port_forward.title') })
   }
 }
 
@@ -95,15 +97,19 @@ function goToManagementPage(subtype: string) {
   let path = ''
 
   switch (subtype) {
-    case 'firewall':
+    case 'firewall_rule':
       path = 'firewall/rules'
       break
-    case 'objects':
+    case 'objects_host':
+    case 'objects_domain_set':
       path = 'users-objects/objects'
       break
-    case 'mwan3':
+    case 'mwan3_rule':
       path = 'network/multi-wan'
-    // TODO: add port forward case
+      break
+    case 'firewall_redirect':
+      path = 'firewall/port-forward'
+      break
   }
   router.push(`${getStandaloneRoutePrefix(route)}/${path}`)
 }
@@ -124,16 +130,19 @@ function goToManagementPage(subtype: string) {
     </NeInlineNotification>
     <NeSkeleton v-else-if="loading.getInfo" :lines="3" size="lg" />
     <div v-else class="space-y-5">
-      <div v-for="categoryName in Object.keys(usages)" :key="categoryName">
+      <div v-for="kindName in Object.keys(usages)" :key="kindName">
         <div class="flex items-center justify-between">
           <div class="font-medium">
-            {{ t(`standalone.objects.database_${categoryName}`) }}
+            {{ t(`standalone.objects.type_${kindName}`) }}
           </div>
           <NeButton
-            v-if="showGoToObjectsButton"
+            v-if="
+              showGoToObjectsButton ||
+              (kindName !== 'objects_host' && kindName !== 'objects_domain_set')
+            "
             size="sm"
-            kind="tertiary"
-            @click="goToManagementPage(categoryName)"
+            kindName="tertiary"
+            @click="goToManagementPage(kindName)"
             class="shrink-0"
           >
             <template #prefix>
@@ -143,22 +152,17 @@ function goToManagementPage(subtype: string) {
                 aria-hidden="true"
               />
             </template>
-            {{ getManagementPageLabel(categoryName) }}
+            {{ getManagementPageLabel(kindName) }}
           </NeButton>
         </div>
         <hr class="mb-2 mt-1" />
         <ul>
           <li
-            v-for="objectInfo in usages[categoryName]"
+            v-for="objectInfo in usages[kindName]"
             :key="objectInfo.id"
             class="list-inside list-disc"
           >
-            <span>
-              {{ objectInfo.name }}
-            </span>
-            <span v-if="objectInfo.type" class="ml-2 text-gray-500 dark:text-gray-400">
-              {{ t(`standalone.objects.type_${objectInfo.type}`) }}
-            </span>
+            {{ objectInfo.name }}
           </li>
         </ul>
       </div>

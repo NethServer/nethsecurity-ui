@@ -757,7 +757,11 @@ async function createOrEditPortForward() {
           @click="createOrEditPortForward()"
           :disabled="isSubmittingRequest"
           :loading="isSubmittingRequest"
-          >{{ id ? t('common.save') : t('standalone.port_forward.add_port_forward') }}</NeButton
+          >{{
+            id
+              ? t('standalone.port_forward.save_port_forward')
+              : t('standalone.port_forward.add_port_forward')
+          }}</NeButton
         >
       </div>
     </div>

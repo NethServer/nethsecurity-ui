@@ -1237,6 +1237,7 @@
       "title": "Port forward",
       "description": "Port forwarding redirects incoming network traffic from the public IP address of the firewall to a device on a local network, enabling access to services or applications hosted on that device.",
       "add_port_forward": "Add port forward",
+      "save_port_forward": "Save port forward",
       "name": "Name",
       "source_port": "Source port",
       "source_port_tooltip": "Enter a single port or a a port range (e.g. '5500-5600'). Source port is required if a destination port is specified",

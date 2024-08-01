@@ -19,9 +19,9 @@ import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditPortForwardDrawer from '@/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue'
-import DeletePortForwardModal from '@/components/standalone/firewall/DeletePortForwardModal.vue'
 import { computed } from 'vue'
 import { type ObjectReference } from '@/composables/useObjects'
+import DeleteModal from '@/components/DeleteModal.vue'
 
 const { t } = useI18n()
 
@@ -321,10 +321,21 @@ onMounted(() => {
     @close="closeCreateEditDrawer()"
     @add-edit-port-forward="loadData"
   />
-  <DeletePortForwardModal
+  <!-- delete port forward modal -->
+  <DeleteModal
     :visible="showDeleteModal"
+    :title="t('standalone.port_forward.delete_port_forward')"
+    :deleteButtonLabel="t('standalone.port_forward.delete_port_forward')"
+    :errorNotificationTitle="t('error.cannot_delete_port_forward')"
+    :deleteFunction="
+      () =>
+        ubusCall('ns.redirects', 'delete-redirect', {
+          id: selectedItem?.id
+        })
+    "
     @close="closeDeleteModal()"
-    @port-forward-deleted="loadData"
-    :item-to-delete="selectedItem"
-  />
+    @reloadData="loadData"
+  >
+    {{ t('standalone.port_forward.delete_port_forward_message', { name: selectedItem?.name }) }}
+  </DeleteModal>
 </template>

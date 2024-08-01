@@ -98,7 +98,9 @@ const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
                 el.destination_port.includes(filter.value) ||
                 el.protocol.filter((prot) => prot.includes(filter.value)).length > 0 ||
                 el.wan.includes(filter.value) ||
-                el.restrict.filter((rs) => rs.includes(filter.value)).length > 0
+                el.dest_ip.includes(filter.value) ||
+                (el.restrict instanceof Array &&
+                  el.restrict.filter((rs) => rs.includes(filter.value)).length > 0)
             )
           ])
           .filter(([, v]) => v.length > 0)

@@ -352,7 +352,8 @@
     "certificate_already_requested": "A certificate for this domain has been already requested",
     "cannot_delete_backup": "Cannot delete remote backup",
     "end_must_be_greater_then_start": "IP end must be greater than start",
-    "start_reserved": "First IP of network is reserved"
+    "start_reserved": "First IP of network is reserved",
+    "cannot_retrieve_object_suggestions": "Cannot retrieve object suggestions"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1272,7 +1273,11 @@
       "restrict_access_from_tooltip": "By default, the port forward access is granted to anyone. Add IPs or CIDRs to restrict the access only from the given networks.",
       "no_port_forward_found": "No port forward found",
       "filter_change_suggestion": "Try changing filter value",
-      "copy": "Copy"
+      "copy": "Copy",
+      "destination_address_type": "Destination address type",
+      "enter_destination_address": "Enter destination address",
+      "select_an_object": "Select an object",
+      "destination_object": "Destination object"
     },
     "firewall_rules": {
       "title": "Firewall rules",

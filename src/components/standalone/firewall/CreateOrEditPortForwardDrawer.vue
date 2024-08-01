@@ -41,24 +41,37 @@ import {
   validateAnyOf,
   validatePort
 } from '@/lib/validation'
+import { useObjects, type ObjectReference } from '@/composables/useObjects'
 
 const props = defineProps<{
   isShown: boolean
   initialItem: PortForward | null
+  destinationObjectSuggestions: ObjectReference[]
+  restrictObjectSuggestions: ObjectReference[]
 }>()
+
+const { t } = useI18n()
+const firewallConfig = useFirewallStore()
+const { getObjectIcon } = useObjects()
+
 const { isShown } = toRefs(props)
 
 const emit = defineEmits(['close', 'add-edit-port-forward'])
 
-const firewallConfig = useFirewallStore()
-
 const showAdvancedSettings = ref(false)
-const loading = ref(true)
+
+const loading = ref({
+  listProtocolsAndZones: false,
+  listObjectSuggestions: false
+})
+
 const isSubmittingRequest = ref(false)
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
-  notificationDetails: ''
+  notificationDetails: '',
+  listObjectSuggestions: '',
+  listObjectSuggestionsDetails: ''
 })
 const validationErrorBag = ref(new MessageBag())
 const restrictIPValidationErrors = ref<string[]>([])
@@ -100,6 +113,41 @@ const log = ref(false)
 const reflection = ref(false)
 const reflectionZones = ref<NeComboboxOption[]>([])
 const destinationZone = ref('')
+const destinationAddressType = ref<'address' | 'object'>('address')
+const destinationAddressObject = ref('')
+
+const destinationAddressOptions = ref([
+  {
+    id: 'address',
+    label: t('standalone.port_forward.enter_destination_address')
+  },
+  {
+    id: 'object',
+    label: t('standalone.port_forward.select_an_object')
+  }
+])
+
+const destinationObjectsComboboxOptions = computed(() => {
+  return props.destinationObjectSuggestions.map((obj) => {
+    return {
+      id: obj.id,
+      label: obj.name,
+      description: t(`standalone.objects.subtype_${obj.subtype}`),
+      icon: getObjectIcon(obj.subtype)
+    }
+  })
+})
+
+const restrictObjectsComboboxOptions = computed(() => {
+  return props.restrictObjectSuggestions.map((obj) => {
+    return {
+      id: obj.id,
+      label: obj.name,
+      description: t(`standalone.objects.subtype_${obj.subtype}`),
+      icon: getObjectIcon(obj.subtype)
+    }
+  })
+})
 
 const anyProtocolSelected = computed(() => protocols.value.length == 0)
 
@@ -109,7 +157,27 @@ function resetForm() {
   id.value = props.initialItem?.id ?? ''
   name.value = props.initialItem?.name ?? ''
   sourcePort.value = props.initialItem?.source_port ?? ''
-  destinationIP.value = props.initialItem?.dest_ip ?? ''
+
+  // destination address / object
+  if (props.initialItem) {
+    // editing port forward
+    if (props.initialItem.ns_dst) {
+      // destination address is an object
+      destinationAddressType.value = 'object'
+      destinationIP.value = ''
+      destinationAddressObject.value = props.initialItem.ns_dst
+    } else {
+      // destination address is an IP address
+      destinationAddressType.value = 'address'
+      destinationIP.value = props.initialItem.dest_ip
+      destinationAddressObject.value = ''
+    }
+  } else {
+    // creating new port forward
+    destinationAddressType.value = 'address'
+    destinationIP.value = ''
+    destinationAddressObject.value = ''
+  }
   destinationPort.value = props.initialItem?.destination_port ?? ''
   wan.value = props.initialItem?.wan ?? 'any'
   enabled.value = props.initialItem?.enabled ?? true
@@ -137,10 +205,9 @@ function resetForm() {
   destinationZone.value = props.initialItem?.dest ?? 'any'
 }
 
-const { t } = useI18n()
-
 async function fetchOptions() {
-  loading.value = true
+  loading.value.listProtocolsAndZones = true
+
   try {
     supportedProtocols.value = (
       await ubusCall('ns.redirects', 'list-protocols')
@@ -186,7 +253,7 @@ async function fetchOptions() {
     error.value.notificationDetails = err.toString()
     return
   }
-  loading.value = false
+  loading.value.listProtocolsAndZones = false
 }
 
 watchEffect(() => {
@@ -287,10 +354,12 @@ function validate(): boolean {
   let validators: [validationOutput[], string][] = [
     [[validateRequired(name.value)], 'name'],
     ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
-    [
-      [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
-      'destinationIP'
-    ],
+    destinationAddressType.value === 'address'
+      ? [
+          [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
+          'destinationIP'
+        ]
+      : [[validateRequired(destinationAddressObject.value)], 'destinationAddressObject'],
     [reflection.value ? [validateRequiredOption(reflectionZones.value)] : [], 'reflectionZones']
   ]
 
@@ -313,7 +382,8 @@ async function createOrEditPortForward() {
 
     if (validate()) {
       const payload: CreateEditPortForwardPayload = {
-        dest_ip: destinationIP.value,
+        dest_ip: '',
+        ns_dst: '',
         proto: anyProtocolSelected.value ? ['all'] : protocols.value.map((protoObj) => protoObj.id),
         src_dport: anyProtocolSelected.value ? '' : sourcePort.value,
         dest_port: anyProtocolSelected.value ? '' : destinationPort.value,
@@ -330,6 +400,16 @@ async function createOrEditPortForward() {
       if (isEditing) {
         payload.id = id.value
       }
+
+      if (destinationAddressType.value === 'address') {
+        // destination address
+        payload.dest_ip = destinationIP.value
+      } else {
+        // destination object
+        payload.ns_dst = destinationAddressObject.value
+      }
+
+      //// handle restrict object
 
       await ubusCall('ns.redirects', requestType, payload)
       emit('add-edit-port-forward')
@@ -374,7 +454,13 @@ async function createOrEditPortForward() {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
+    <NeSkeleton
+      v-if="
+        loading.listProtocolsAndZones || loading.listObjectSuggestions || firewallConfig.loading
+      "
+      size="lg"
+      :lines="10"
+    />
     <div v-else-if="!firewallConfig.error" class="flex flex-col gap-y-6">
       <div>
         <NeFormItemLabel>{{ t('standalone.port_forward.status') }}</NeFormItemLabel>
@@ -388,6 +474,7 @@ async function createOrEditPortForward() {
       <NeTextInput
         :label="t('standalone.port_forward.name')"
         v-model="name"
+        :disabled="isSubmittingRequest"
         :invalid-message="validationErrorBag.getFirstFor('name')"
       />
       <NeCombobox
@@ -398,6 +485,7 @@ async function createOrEditPortForward() {
         v-model="protocols"
         :placeholder="t('standalone.port_forward.choose_protocol')"
         :invalid-message="validationErrorBag.getFirstFor('protocols')"
+        :disabled="isSubmittingRequest"
         :noResultsLabel="t('ne_combobox.no_results')"
         :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
         :noOptionsLabel="t('ne_combobox.no_options_label')"
@@ -417,6 +505,7 @@ async function createOrEditPortForward() {
         v-model="sourcePort"
         :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
         :optional="true"
+        :disabled="isSubmittingRequest"
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
       >
@@ -428,19 +517,56 @@ async function createOrEditPortForward() {
           </NeTooltip>
         </template>
       </NeTextInput>
+      <!-- listObjectSuggestions error notification -->
+      <NeInlineNotification
+        v-if="error.listObjectSuggestions"
+        kind="error"
+        :title="t('error.cannot_retrieve_object_suggestions')"
+        :description="error.listObjectSuggestions"
+      >
+        <template #details v-if="error.listObjectSuggestionsDetails">
+          {{ error.listObjectSuggestionsDetails }}
+        </template>
+      </NeInlineNotification>
+      <!-- destination address type -->
+      <NeRadioSelection
+        v-model="destinationAddressType"
+        :label="t('standalone.port_forward.destination_address_type')"
+        :options="destinationAddressOptions"
+        :disabled="isSubmittingRequest"
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.port_forward.destination_address_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeRadioSelection>
+      <!-- destination address -->
       <NeTextInput
+        v-show="destinationAddressType === 'address'"
         :label="t('standalone.port_forward.destination_address')"
         v-model="destinationIP"
         :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
-      >
-        <template #tooltip
-          ><NeTooltip
-            ><template #content>{{
-              t('standalone.port_forward.destination_address_tooltip')
-            }}</template></NeTooltip
-          ></template
-        >
-      </NeTextInput>
+        :disabled="isSubmittingRequest"
+      />
+      <!-- destination object -->
+      <NeCombobox
+        v-show="destinationAddressType === 'object'"
+        v-model="destinationAddressObject"
+        :disabled="isSubmittingRequest"
+        :label="t('standalone.port_forward.destination_object')"
+        :options="destinationObjectsComboboxOptions"
+        :invalid-message="validationErrorBag.getFirstFor('destinationAddressObject')"
+        :placeholder="t('ne_combobox.choose')"
+        :optionalLabel="t('common.optional')"
+        :noResultsLabel="t('ne_combobox.no_results')"
+        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
+      />
       <NeTextInput
         v-if="!anyProtocolSelected"
         :label="t('standalone.port_forward.destination_port')"
@@ -449,6 +575,7 @@ async function createOrEditPortForward() {
         :optional="true"
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
+        :disabled="isSubmittingRequest"
       >
         <template #tooltip
           ><NeTooltip

@@ -10,6 +10,7 @@ import { toRefs } from 'vue'
 import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
+import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
 
 const { t } = useI18n()
 
@@ -139,7 +140,10 @@ function getCellClasses(item: PortForward) {
         </p>
       </template>
       <template #restrict="{ item }: { item: PortForward }">
-        <template v-if="item.restrict.length > 0">
+        <template v-if="item.ns_src">
+          <ObjectTooltip :object-id="item.ns_src" />
+        </template>
+        <template v-else-if="item.restrict.length > 0">
           <p
             v-for="(restrictIP, idx) in item.restrict.slice(0, 2)"
             :key="restrictIP"

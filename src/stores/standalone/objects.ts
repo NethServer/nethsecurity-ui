@@ -52,7 +52,12 @@ export const useObjectStore = defineStore('objects', () => {
       // fetch domain sets
       ubusCall('ns.objects', 'list-domain-sets').then(
         (res: AxiosResponse<{ values: DomainSet[] }>) => {
-          domainSets.value = res.data.values
+          domainSets.value = res.data.values.map((domainSet) => {
+            return {
+              ...domainSet,
+              id: `objects/${domainSet.id}`
+            }
+          })
         }
       )
     ])

@@ -26,19 +26,19 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     },
     {
       id: 'tcp',
-      label: 'tcp'
+      label: 'TCP'
     },
     {
       id: 'udp',
-      label: 'udp'
+      label: 'UDP'
     },
     {
       id: 'icmp',
-      label: 'icmp'
+      label: 'ICMP'
     },
     {
       id: 'esp',
-      label: 'esp'
+      label: 'ESP'
     }
   ]
 

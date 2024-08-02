@@ -10,12 +10,13 @@ export type NsObject = {
   family?: IpVersion
   used?: boolean
   matches?: string[]
+  type: string
+  subtype: string
 }
 
 export type HostSet = NsObject & {
   ipaddr: string[]
   singleton: boolean
-  subtype: string
   children?: HostSet[]
 }
 

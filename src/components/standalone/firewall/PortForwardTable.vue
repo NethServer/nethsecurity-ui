@@ -130,12 +130,9 @@ function getCellClasses(item: PortForward) {
             </p>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.protocols')">
-            <p
-              v-for="(prot, idx) in item.protocol.slice(0, 2)"
-              :key="prot"
-              :class="[...getCellClasses(item)]"
-            >
-              {{ prot.toUpperCase() }}{{ item.protocol.length > 2 && idx == 1 ? '...' : '' }}
+            <p :class="[...getCellClasses(item), 'uppercase']">
+              {{ item.protocol.slice(0, 3).join(', ')
+              }}<span v-if="item.protocol.length > 3">...</span>
             </p>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.wan_ip')">
@@ -148,12 +145,9 @@ function getCellClasses(item: PortForward) {
               <ObjectTooltip :object-id="item.ns_src" />
             </template>
             <template v-else-if="item.restrict.length > 0">
-              <p
-                v-for="(restrictIP, idx) in item.restrict.slice(0, 2)"
-                :key="restrictIP"
-                :class="[...getCellClasses(item)]"
-              >
-                {{ restrictIP }}{{ item.restrict.length > 2 && idx == 1 ? '...' : '' }}
+              <p :class="[...getCellClasses(item)]">
+                {{ item.restrict.slice(0, 2).join(', ')
+                }}<span v-if="item.restrict.length > 2">...</span>
               </p>
             </template>
             <p :class="[...getCellClasses(item)]" v-else>-</p>

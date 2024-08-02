@@ -216,7 +216,9 @@ function resetForm() {
       // restrict address is an IP address
       restrictType.value = 'address'
       restrict.value =
-        props.initialItem.restrict.length > 0 ? props.initialItem.restrict.map((x) => x) : ['']
+        props.initialItem.restrict instanceof Array && props.initialItem.restrict.length > 0
+          ? props.initialItem.restrict.map((x) => x)
+          : ['']
       restrictObject.value = ''
     }
   } else {

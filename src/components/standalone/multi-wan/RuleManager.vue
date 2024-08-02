@@ -181,7 +181,11 @@ function saveState(): void {
                 {{ item.destination_address ?? t('standalone.multi_wan.any') }}
               </td>
               <td>
-                {{ item.protocol ?? t('standalone.multi_wan.all') }}
+                {{
+                  item.protocol
+                    ? t(`standalone.multi_wan.protocol_${item.protocol}`)
+                    : t('standalone.multi_wan.all')
+                }}
               </td>
               <td>
                 <div class="flex justify-start gap-2">

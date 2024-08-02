@@ -175,8 +175,8 @@ const restrictObjectsComboboxOptions = computed(() => {
     return {
       id: obj.id,
       label: obj.name,
-      description: t(`standalone.objects.subtype_domain_set`),
-      icon: getObjectIcon('domain_set')
+      description: t(`standalone.objects.subtype_${obj.subtype}`),
+      icon: getObjectIcon(obj.subtype)
     }
   })
 

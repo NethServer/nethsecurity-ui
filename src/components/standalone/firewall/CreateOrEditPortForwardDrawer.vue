@@ -21,7 +21,7 @@ import {
   focusElement
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
-import { toRefs, ref, watch } from 'vue'
+import { toRefs, ref, watch, type Ref } from 'vue'
 import type {
   CreateEditPortForwardPayload,
   PortForward
@@ -76,6 +76,8 @@ const error = ref({
 })
 const validationErrorBag = ref(new MessageBag())
 const restrictIPValidationErrors = ref<string[]>([])
+// contains the first invalid field ref
+const firstErrorRef = ref()
 
 // Options
 const supportedProtocols = ref<NeComboboxOption[]>([])
@@ -102,23 +104,33 @@ const id = ref('')
 const name = ref('')
 const nameRef = ref()
 const sourcePort = ref('')
+const sourcePortRef = ref()
 const destinationIP = ref('')
+const destinationIpRef = ref()
 const destinationPort = ref('')
+const destinationPortRef = ref()
 const wan = ref('')
+const wanRef = ref()
 const enabled = ref(true)
 const restrict = ref<string[]>([''])
+const restrictRef = ref()
 const protocols = ref<NeComboboxOption[]>([
   { id: 'tcp', label: 'TCP' },
   { id: 'udp', label: 'UDP' }
 ])
+const protocolsRef = ref()
 const log = ref(false)
 const reflection = ref(false)
 const reflectionZones = ref<NeComboboxOption[]>([])
+const reflectionZonesRef = ref()
 const destinationZone = ref('')
+const destinationZoneRef = ref()
 const destinationAddressType = ref<'address' | 'object'>('address')
 const destinationAddressObject = ref('')
+const destinationObjectRef = ref()
 const restrictType = ref<'address' | 'object'>('address')
 const restrictObject = ref('')
+const restrictObjectRef = ref()
 
 const destinationAddressOptions = ref([
   {
@@ -331,13 +343,21 @@ function resetRestrictIPValidationErrors() {
   restrictIPValidationErrors.value = []
 }
 
-function runValidators(validators: validationOutput[], label: string): boolean {
+function runFieldValidators(
+  validators: validationOutput[],
+  fieldName: string,
+  fieldRef: Ref
+): boolean {
   for (let validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      validationErrorBag.value.set(fieldName, [t(validator.errMessage as string)])
+
+      // remember the first field with error for focus management
+      if (!firstErrorRef.value) {
+        firstErrorRef.value = fieldRef
+      }
     }
   }
-
   return validators.every((validator) => validator.valid)
 }
 
@@ -349,6 +369,9 @@ function validate(): boolean {
     restrictIPValidationErrors.value.push('')
   })
 
+  // reset firstErrorRef for focus management
+  firstErrorRef.value = undefined
+
   let validRestrict = true
 
   if (restrictType.value === 'address') {
@@ -359,6 +382,7 @@ function validate(): boolean {
         if (!validator.valid) {
           restrictIPValidationErrors.value[index] = t(validator.errMessage as string)
           validRestrict = false
+          firstErrorRef.value = restrictRef
           break
         }
       }
@@ -369,7 +393,7 @@ function validate(): boolean {
     showAdvancedSettings.value = true
   }
 
-  const sourceDestinationPortValidators: [validationOutput[], string][] = [
+  const sourceDestinationPortValidators: [validationOutput[], string, Ref][] = [
     [
       [
         // if destination port is present, source port is required
@@ -382,7 +406,8 @@ function validate(): boolean {
             )
           : { valid: true }
       ],
-      'sourcePort'
+      'sourcePort',
+      sourcePortRef
     ],
     [
       [
@@ -394,27 +419,40 @@ function validate(): boolean {
             )
           : { valid: true }
       ],
-      'destinationPort'
+      'destinationPort',
+      destinationPortRef
     ]
   ]
 
-  let validators: [validationOutput[], string][] = [
-    [[validateRequired(name.value)], 'name'],
+  let validators: [validationOutput[], string, Ref][] = [
+    [[validateRequired(name.value)], 'name', nameRef],
     ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
     destinationAddressType.value === 'address'
       ? [
           [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
-          'destinationIP'
+          'destinationIP',
+          destinationIpRef
         ]
-      : [[validateRequired(destinationAddressObject.value)], 'destinationAddressObject'],
-    [reflection.value ? [validateRequiredOption(reflectionZones.value)] : [], 'reflectionZones']
+      : [
+          [validateRequired(destinationAddressObject.value)],
+          'destinationAddressObject',
+          destinationObjectRef
+        ],
+    [
+      reflection.value ? [validateRequiredOption(reflectionZones.value)] : [],
+      'reflectionZones',
+      reflectionZonesRef
+    ]
   ]
 
-  return (
-    validators
-      .map(([validator, label]) => runValidators(validator, label))
-      .every((result) => result) && validRestrict
-  )
+  const isValidationOk = validators
+    .map(([validators, fieldName, fieldRef]) => runFieldValidators(validators, fieldName, fieldRef))
+    .every((result) => result)
+
+  if (firstErrorRef.value) {
+    focusElement(firstErrorRef.value)
+  }
+  return validRestrict && isValidationOk
 }
 
 async function createOrEditPortForward() {
@@ -431,7 +469,9 @@ async function createOrEditPortForward() {
       const payload: CreateEditPortForwardPayload = {
         dest_ip: '',
         ns_dst: '',
-        proto: anyProtocolSelected.value ? ['all'] : protocols.value.map((protoObj) => protoObj.id),
+        proto: anyProtocolSelected.value
+          ? ['all']
+          : protocols.value.map((protoObj: NeComboboxOption) => protoObj.id),
         src_dport: anyProtocolSelected.value ? '' : sourcePort.value,
         dest_port: anyProtocolSelected.value ? '' : destinationPort.value,
         name: name.value,
@@ -442,7 +482,9 @@ async function createOrEditPortForward() {
         restrict: [''],
         ns_src: '',
         dest: destinationZone.value === 'any' ? '' : destinationZone.value,
-        reflection_zone: reflectionZones.value.map((reflectionZone) => reflectionZone.id)
+        reflection_zone: reflectionZones.value.map(
+          (reflectionZone: NeComboboxOption) => reflectionZone.id
+        )
       }
 
       if (isEditing) {
@@ -547,6 +589,7 @@ async function createOrEditPortForward() {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optionalLabel="t('common.optional')"
+        ref="protocolsRef"
       />
       <NeInlineNotification
         kind="info"
@@ -563,6 +606,7 @@ async function createOrEditPortForward() {
         :disabled="isSubmittingRequest"
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
+        ref="sourcePortRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -605,6 +649,7 @@ async function createOrEditPortForward() {
         v-model="destinationIP"
         :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
         :disabled="isSubmittingRequest"
+        ref="destinationIpRef"
       />
       <!-- destination object -->
       <NeCombobox
@@ -621,6 +666,7 @@ async function createOrEditPortForward() {
         :noOptionsLabel="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
+        ref="destinationObjectRef"
       />
       <NeTextInput
         v-if="!anyProtocolSelected"
@@ -631,6 +677,7 @@ async function createOrEditPortForward() {
         :optionalLabel="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
         :disabled="isSubmittingRequest"
+        ref="destinationPortRef"
       >
         <template #tooltip
           ><NeTooltip
@@ -659,6 +706,7 @@ async function createOrEditPortForward() {
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
             :optionalLabel="t('common.optional')"
+            ref="destinationZoneRef"
           />
           <NeCombobox
             :label="t('standalone.port_forward.wan_ip')"
@@ -671,6 +719,7 @@ async function createOrEditPortForward() {
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
             :optionalLabel="t('common.optional')"
+            ref="wanRef"
           />
           <!-- restrict type -->
           <NeRadioSelection
@@ -698,6 +747,7 @@ async function createOrEditPortForward() {
             v-model="restrict"
             :disabled="isSubmittingRequest"
             @delete-item="resetRestrictIPValidationErrors"
+            ref="restrictRef"
           />
           <!-- restrict object -->
           <NeCombobox
@@ -715,6 +765,7 @@ async function createOrEditPortForward() {
             :noOptionsLabel="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+            ref="restrictObjectRef"
           />
           <NeToggle
             :topLabel="t('standalone.port_forward.log')"
@@ -748,6 +799,7 @@ async function createOrEditPortForward() {
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
             :optionalLabel="t('common.optional')"
+            ref="reflectionZonesRef"
           />
         </div>
       </NeExpandable>

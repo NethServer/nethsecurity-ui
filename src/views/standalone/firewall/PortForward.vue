@@ -19,13 +19,16 @@ import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditPortForwardDrawer from '@/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue'
-import DeletePortForwardModal from '@/components/standalone/firewall/DeletePortForwardModal.vue'
 import { computed } from 'vue'
+import { type ObjectReference } from '@/composables/useObjects'
+import DeleteModal from '@/components/DeleteModal.vue'
+import type { DomainSet } from '@/composables/useDomainSets'
 
 const { t } = useI18n()
 
 export type PortForward = {
   dest_ip: string
+  ns_dst?: string
   protocol: string[]
   source_port: string
   source_port_name: string
@@ -35,6 +38,7 @@ export type PortForward = {
   enabled: boolean
   id: string
   restrict: string[]
+  ns_src?: string
   log: boolean
   reflection: boolean
   reflection_zone: string[]
@@ -43,6 +47,7 @@ export type PortForward = {
 
 export type CreateEditPortForwardPayload = {
   dest_ip: string
+  ns_dst?: string
   proto: string[]
   src_dport: string
   dest_port: string
@@ -51,6 +56,7 @@ export type CreateEditPortForwardPayload = {
   enabled: '0' | '1'
   id?: string
   restrict: string[]
+  ns_src?: string
   log: '0' | '1'
   reflection: '0' | '1'
   reflection_zone: string[]
@@ -58,12 +64,20 @@ export type CreateEditPortForwardPayload = {
 }
 
 const uciChangesStore = useUciPendingChangesStore()
+const destinationObjectSuggestions = ref<ObjectReference[]>([])
+const restrictObjectSuggestions = ref<ObjectReference[]>([])
 
-const loading = ref(false)
+const loading = ref({
+  listRedirects: false,
+  listObjectSuggestions: false
+})
+
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
-  notificationDetails: ''
+  notificationDetails: '',
+  listObjectSuggestions: '',
+  listObjectSuggestionsDetails: ''
 })
 const portForwards = ref<Record<string, PortForward[]>>({})
 const filter = ref('')
@@ -85,7 +99,9 @@ const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
                 el.destination_port.includes(filter.value) ||
                 el.protocol.filter((prot) => prot.includes(filter.value)).length > 0 ||
                 el.wan.includes(filter.value) ||
-                el.restrict.filter((rs) => rs.includes(filter.value)).length > 0
+                el.dest_ip.includes(filter.value) ||
+                (el.restrict instanceof Array &&
+                  el.restrict.filter((rs) => rs.includes(filter.value)).length > 0)
             )
           ])
           .filter(([, v]) => v.length > 0)
@@ -96,27 +112,52 @@ function cleanError() {
   error.value = {
     notificationTitle: '',
     notificationDescription: '',
-    notificationDetails: ''
+    notificationDetails: '',
+    listObjectSuggestions: '',
+    listObjectSuggestionsDetails: ''
   }
 }
 
-async function fetchPortForwards() {
+async function listRedirects() {
   try {
     cleanError()
-    loading.value = true
+    loading.value.listRedirects = true
     const response = await ubusCall('ns.redirects', 'list-redirects')
     portForwards.value = response.data.redirects
-    loading.value = false
   } catch (err: any) {
     error.value.notificationTitle = t('error.generic_error')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  } finally {
+    loading.value.listRedirects = false
   }
 }
 
-async function reloadPortForwards() {
-  await uciChangesStore.getChanges()
-  await fetchPortForwards()
+function loadData() {
+  uciChangesStore.getChanges()
+  listRedirects()
+  listObjectSuggestions()
+}
+
+async function listObjectSuggestions() {
+  loading.value.listObjectSuggestions = true
+
+  try {
+    const res = await ubusCall('ns.redirects', 'list-object-suggestions')
+    destinationObjectSuggestions.value = res.data.objects.ns_dst
+    restrictObjectSuggestions.value = res.data.objects.ns_src.map((domainSet: DomainSet) => {
+      return {
+        ...domainSet,
+        id: `objects/${domainSet.id}`
+      }
+    })
+  } catch (err: any) {
+    console.error(err)
+    error.value.listObjectSuggestions = t(getAxiosErrorMessage(err))
+    error.value.listObjectSuggestionsDetails = err.toString()
+  } finally {
+    loading.value.listObjectSuggestions = false
+  }
 }
 
 async function toggleEnablePortForward(item: PortForward) {
@@ -125,7 +166,7 @@ async function toggleEnablePortForward(item: PortForward) {
     await ubusCall('ns.redirects', item.enabled ? 'disable-redirect' : 'enable-redirect', {
       id: item.id
     })
-    await reloadPortForwards()
+    loadData()
   } catch (err: any) {
     error.value.notificationTitle = t(
       item.enabled ? 'error.cannot_disable_port_forward' : 'error.cannot_enable_port_forward'
@@ -140,6 +181,7 @@ async function duplicatePortForward(item: PortForward) {
     cleanError()
     let payload: CreateEditPortForwardPayload = {
       dest_ip: item.dest_ip,
+      ns_dst: item.ns_dst,
       proto: item.protocol,
       src_dport: item.source_port,
       src_dip: item.wan,
@@ -148,12 +190,13 @@ async function duplicatePortForward(item: PortForward) {
       enabled: item.enabled ? '1' : '0',
       log: item.log ? '1' : '0',
       restrict: item.restrict,
+      ns_src: item.ns_src,
       reflection: item.reflection ? '1' : '0',
       reflection_zone: item.reflection_zone,
       dest: item.dest
     }
     await ubusCall('ns.redirects', 'add-redirect', payload)
-    await reloadPortForwards()
+    loadData()
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_duplicate_port_forward')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -181,8 +224,26 @@ function closeDeleteModal() {
   showDeleteModal.value = false
 }
 
+function getPortForwardHeader(portForwards: PortForward[], key: string) {
+  const firstPortForward = portForwards[0]
+
+  if (!firstPortForward.ns_dst) {
+    return key
+  } else {
+    const objectFound = destinationObjectSuggestions.value.find(
+      (o) => o.id === firstPortForward.ns_dst
+    )
+
+    if (objectFound) {
+      return `${objectFound.name} (${key})`
+    } else {
+      return key
+    }
+  }
+}
+
 onMounted(() => {
-  fetchPortForwards()
+  loadData()
 })
 </script>
 
@@ -221,7 +282,11 @@ onMounted(() => {
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton v-if="loading" :lines="10" />
+    <NeSkeleton
+      v-if="loading.listRedirects || loading.listObjectSuggestions"
+      :lines="10"
+      size="lg"
+    />
     <template v-else>
       <NeEmptyState
         :title="t('standalone.port_forward.no_port_forward_found')"
@@ -248,7 +313,7 @@ onMounted(() => {
         v-for="(portForward, key) in filteredPortForwards"
         :key="key"
         :port-forwards="portForward"
-        :header="key"
+        :header="getPortForwardHeader(portForward, key)"
         @port-forward-delete="openDeleteModal"
         @port-forward-duplicate="duplicatePortForward"
         @port-forward-edit="openCreateEditDrawer"
@@ -259,13 +324,26 @@ onMounted(() => {
   <CreateOrEditPortForwardDrawer
     :is-shown="showCreateEditDrawer"
     :initial-item="selectedItem"
+    :destination-object-suggestions="destinationObjectSuggestions"
+    :restrict-object-suggestions="restrictObjectSuggestions"
     @close="closeCreateEditDrawer()"
-    @add-edit-port-forward="reloadPortForwards()"
+    @add-edit-port-forward="loadData"
   />
-  <DeletePortForwardModal
+  <!-- delete port forward modal -->
+  <DeleteModal
     :visible="showDeleteModal"
+    :title="t('standalone.port_forward.delete_port_forward')"
+    :deleteButtonLabel="t('standalone.port_forward.delete_port_forward')"
+    :errorNotificationTitle="t('error.cannot_delete_port_forward')"
+    :deleteFunction="
+      () =>
+        ubusCall('ns.redirects', 'delete-redirect', {
+          id: selectedItem?.id
+        })
+    "
     @close="closeDeleteModal()"
-    @port-forward-deleted="reloadPortForwards()"
-    :item-to-delete="selectedItem"
-  />
+    @reloadData="loadData"
+  >
+    {{ t('standalone.port_forward.delete_port_forward_message', { name: selectedItem?.name }) }}
+  </DeleteModal>
 </template>

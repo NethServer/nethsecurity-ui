@@ -115,7 +115,7 @@ function getKebabMenuItems(domainSet: DomainSet) {
         </NeTableCell>
         <!-- domains -->
         <NeTableCell :data-label="t('standalone.objects.domains')">
-          {{ item.domain.join(', ') }}
+          {{ item.domain?.join(', ') }}
         </NeTableCell>
         <!-- actions -->
         <NeTableCell :data-label="t('common.actions')">

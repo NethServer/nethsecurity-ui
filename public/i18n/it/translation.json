@@ -843,7 +843,6 @@
     "port_forward": {
       "disable": "Disabilita",
       "restrict_access_from": "Limitare l'accesso a",
-      "advanced_settings": "Impostazioni avanzate",
       "edit_port_forward": "Modifica port forward",
       "protocols": "Protocolli",
       "enabled": "Abilitato",
@@ -1840,9 +1839,6 @@
       "subtype_host": "Host",
       "add_domain": "Aggiungi dominio",
       "domains": "Domini",
-      "type_rule": "Regola",
-      "database_objects": "Oggetti",
-      "database_firewall": "Regole firewall",
       "subtype_cidr": "Rete CIDR",
       "no_hosts_found": "Nessun host trovato",
       "add_record": "Aggiungi record",
@@ -1883,8 +1879,6 @@
       "no_domain_sets_found": "Nessun domain set trovato",
       "filter_host_sets": "Filtra host set",
       "filter_domain_sets": "Filtra domain set",
-      "type_host": "Host set",
-      "type_domain_set": "Domain set",
       "host_set_already_exists": "Host set già esistente",
       "domain_set_already_exists": "Domain set già esistente",
       "delete_domain_set": "Elimina domain set"

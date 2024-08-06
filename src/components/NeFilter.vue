@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { type PropType, ref, watch, computed } from 'vue'
+import { type PropType, ref, watch, computed, type Ref, type ModelRef } from 'vue'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -17,7 +17,7 @@ export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
 
-type FilterOption = {
+export type FilterOption = {
   id: string
   label: string
   description?: string
@@ -69,13 +69,15 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits<{
-  select: [options: FilterOption[]]
-}>()
+// const emit = defineEmits<{ ////
+//   'update:modelValue': [options: FilterOption[]]
+// }>()
 
 library.add(faChevronDown)
 
-const internalSelectedOptions = ref<FilterOption[]>([])
+// const model: ModelRef<FilterOption[] | undefined, string> = defineModel() ////
+const model = defineModel<FilterOption[]>()
+// const internalSelectedOptions = ref<FilterOption[]>([]) ////
 const top = ref(0)
 const left = ref(0)
 const right = ref(0)
@@ -83,6 +85,8 @@ const buttonRef = ref()
 
 //// remove
 const componentId = computed(() => (props.id ? props.id : 'todo'))
+
+const modelIds = computed(() => model.value?.map((option: FilterOption) => option.id))
 
 //// uncomment
 // const componentId = computed(() => (props.id ? props.id : uuidv4()))
@@ -99,20 +103,27 @@ watch(
 )
 
 function select(option: FilterOption) {
-  if (props.kind === 'radio') {
-    internalSelectedOptions.value = [option]
-  } else {
-    //// review
-    if (internalSelectedOptions.value.includes(option)) {
-      internalSelectedOptions.value = internalSelectedOptions.value.filter(
-        (selectedOption) => selectedOption !== option
-      )
+  console.log('select, option', option) ////
+  // console.log('select, current model', model.value) ////
+
+  if (model.value) {
+    if (props.kind === 'radio') {
+      model.value = [option]
+
+      console.log('model.value', model.value) ////
     } else {
-      internalSelectedOptions.value = [...internalSelectedOptions.value, option]
+      //// review
+      if (model.value.includes(option)) {
+        model.value = model.value.filter(
+          (selectedOption: FilterOption) => selectedOption !== option
+        )
+      } else {
+        model.value = [...model.value, option]
+      }
     }
+    // emit('select', internalSelectedOptions.value) ////
+    // console.log('emitted select ', internalSelectedOptions.value) ////
   }
-  emit('select', internalSelectedOptions.value)
-  console.log('emitted select ', internalSelectedOptions.value) ////
 }
 
 function calculatePosition() {
@@ -182,7 +193,7 @@ function calculatePosition() {
                 type="radio"
                 :id="`${componentId}-${option.id}`"
                 :name="componentId"
-                :checked="option.id in internalSelectedOptions"
+                :checked="option.id in (modelIds || [])"
                 :value="option.id"
                 :aria-describedby="`${componentId}-${option.id}-description`"
                 class="peer border-gray-300 text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-950 dark:text-primary-500 checked:dark:bg-primary-500 dark:focus:ring-primary-300 focus:dark:ring-primary-200 focus:dark:ring-offset-gray-900"
@@ -210,6 +221,7 @@ function calculatePosition() {
                 <input
                   type="checkbox"
                   :id="`${componentId}-${option.id}`"
+                  :checked="option.id in (modelIds || [])"
                   :aria-describedby="`${componentId}-${option.id}-description`"
                   :disabled="option.disabled || disabled"
                   class="h-5 w-5 rounded border-gray-300 text-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-500 dark:text-primary-500 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950 sm:h-4 sm:w-4"

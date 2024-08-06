@@ -11,7 +11,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ReportContent from '@/components/standalone/report/ReportContent.vue'
 import PingContent from '@/components/standalone/report/PingContent.vue'
 import { useTabs } from '@/composables/useTabs'
-import NeFilter from '@/components/NeFilter.vue'
+import NeFilter, { type FilterOption } from '@/components/NeFilter.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -34,6 +34,8 @@ const filterOptions = ref([
   { id: 'yesterday', label: 'Yesterday', disabled: true, description: 'Description' },
   { id: 'last_7_days', label: 'Last 7 days', disabled: false }
 ])
+
+const filterModel = ref<FilterOption[]>([])
 
 onMounted(() => {
   selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
@@ -61,9 +63,11 @@ watch(selectedTab, () => {
 
   <!-- //// delete -->
   <NeFilter
+    v-model="filterModel"
     label="Filter"
-    kind="checkbox"
+    kind="radio"
     :options="filterOptions"
     openMenuAriaLabel="Open test filter"
   />
+  filterModel {{ filterModel }}
 </template>

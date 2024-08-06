@@ -20,7 +20,8 @@ export type FilterKind = 'radio' | 'checkbox'
 type FilterOption = {
   id: string
   label: string
-  disabled: boolean
+  description?: string
+  disabled?: boolean
 }
 
 const sizeStyle: { [index: string]: string } = {
@@ -30,6 +31,8 @@ const sizeStyle: { [index: string]: string } = {
   lg: 'rounded-md px-3 py-2 text-sm',
   xl: 'rounded-md px-3.5 py-2.5 text-sm'
 }
+
+//// new syntax for props
 
 const props = defineProps({
   label: {
@@ -66,9 +69,13 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits<{
+  select: [options: FilterOption[]]
+}>()
+
 library.add(faChevronDown)
 
-const selectedOptions = ref<FilterOption[]>([])
+const internalSelectedOptions = ref<FilterOption[]>([])
 const top = ref(0)
 const left = ref(0)
 const right = ref(0)
@@ -80,12 +87,33 @@ const componentId = computed(() => (props.id ? props.id : 'todo'))
 //// uncomment
 // const componentId = computed(() => (props.id ? props.id : uuidv4()))
 
+//// todo watch selected prop
+
+//// todo onmounted set internalSelectedOptions
+
 watch(
   () => props.alignToRight,
   () => {
     calculatePosition()
   }
 )
+
+function select(option: FilterOption) {
+  if (props.kind === 'radio') {
+    internalSelectedOptions.value = [option]
+  } else {
+    //// review
+    if (internalSelectedOptions.value.includes(option)) {
+      internalSelectedOptions.value = internalSelectedOptions.value.filter(
+        (selectedOption) => selectedOption !== option
+      )
+    } else {
+      internalSelectedOptions.value = [...internalSelectedOptions.value, option]
+    }
+  }
+  emit('select', internalSelectedOptions.value)
+  console.log('emitted select ', internalSelectedOptions.value) ////
+}
 
 function calculatePosition() {
   top.value = buttonRef.value?.$el.getBoundingClientRect().bottom + window.scrollY
@@ -148,15 +176,18 @@ function calculatePosition() {
               class="my-1 border-gray-200 dark:border-gray-700"
             />
             <!-- filter option -->
-            <div v-if="kind === 'radio'" class="flex py-2" @click.stop>
+            <div v-if="kind === 'radio'" class="flex items-center py-2" @click.stop>
+              <!-- radio button -->
               <input
+                type="radio"
                 :id="`${componentId}-${option.id}`"
                 :name="componentId"
-                :checked="option.id in selectedOptions"
+                :checked="option.id in internalSelectedOptions"
                 :value="option.id"
+                :aria-describedby="`${componentId}-${option.id}-description`"
                 class="peer border-gray-300 text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-950 dark:text-primary-500 checked:dark:bg-primary-500 dark:focus:ring-primary-300 focus:dark:ring-primary-200 focus:dark:ring-offset-gray-900"
-                type="radio"
                 :disabled="option.disabled || disabled"
+                @change="select(option)"
               />
               <label
                 :for="`${componentId}-${option.id}`"
@@ -164,7 +195,45 @@ function calculatePosition() {
                 class="ms-2 text-gray-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 dark:text-gray-50"
               >
                 <div>{{ option.label }}</div>
+                <div
+                  v-if="option.description"
+                  :id="`${componentId}-${option.id}-description`"
+                  class="text-gray-500 dark:text-gray-400"
+                >
+                  {{ option.description }}
+                </div>
               </label>
+            </div>
+            <div v-else-if="kind === 'checkbox'" class="flex items-center py-2" @click.stop>
+              <!-- checkbox -->
+              <div class="flex h-6 items-center">
+                <input
+                  type="checkbox"
+                  :id="`${componentId}-${option.id}`"
+                  :aria-describedby="`${componentId}-${option.id}-description`"
+                  :disabled="option.disabled || disabled"
+                  class="h-5 w-5 rounded border-gray-300 text-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-500 dark:text-primary-500 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950 sm:h-4 sm:w-4"
+                />
+              </div>
+              <div class="ml-3 text-sm leading-6">
+                <!-- show label prop or default slot -->
+                <label
+                  :class="[
+                    'font-medium text-gray-700 dark:text-gray-50',
+                    { 'cursor-not-allowed opacity-50': disabled }
+                  ]"
+                  :for="`${componentId}-${option.id}`"
+                >
+                  <div>{{ option.label }}</div>
+                  <div
+                    v-if="option.description"
+                    :id="`${componentId}-${option.id}-description`"
+                    class="text-gray-500 dark:text-gray-400"
+                  >
+                    {{ option.description }}
+                  </div>
+                </label>
+              </div>
             </div>
           </MenuItem>
         </MenuItems>

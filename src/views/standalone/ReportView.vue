@@ -29,9 +29,9 @@ const { tabs, selectedTab } = useTabs([
 
 ////
 const filterOptions = ref([
-  { id: 'all', label: 'All', disabled: false },
+  { id: 'all', label: 'All', disabled: false, description: 'Useful description' },
   { id: 'today', label: 'Today', disabled: false },
-  { id: 'yesterday', label: 'Yesterday', disabled: true },
+  { id: 'yesterday', label: 'Yesterday', disabled: true, description: 'Description' },
   { id: 'last_7_days', label: 'Last 7 days', disabled: false }
 ])
 
@@ -62,7 +62,7 @@ watch(selectedTab, () => {
   <!-- //// delete -->
   <NeFilter
     label="Filter"
-    kind="radio"
+    kind="checkbox"
     :options="filterOptions"
     openMenuAriaLabel="Open test filter"
   />

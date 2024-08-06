@@ -71,6 +71,11 @@ function cleanForm() {
   destinationAddress.value = ''
   destinationPort.value = ''
   validationErrors.value.clear()
+  sticky.value = false
+  srcType.value = 'any'
+  dstType.value = 'any'
+  srcObject.value = ''
+  dstObject.value = ''
 }
 
 type Payload = {
@@ -128,7 +133,10 @@ function save() {
           error.value = reason
         }
       })
-      .finally(() => (saving.value = false))
+      .finally(() => {
+        saving.value = false
+        cleanForm()
+      })
   }
 }
 </script>

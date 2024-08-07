@@ -11,7 +11,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ReportContent from '@/components/standalone/report/ReportContent.vue'
 import PingContent from '@/components/standalone/report/PingContent.vue'
 import { useTabs } from '@/composables/useTabs'
-import NeFilter, { type FilterOption } from '@/components/NeFilter.vue'
+import NeFilter from '@/components/NeFilter.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -35,7 +35,6 @@ const filterOptions = ref([
   { id: 'last_7_days', label: 'Last 7 days', disabled: false }
 ])
 
-// const filterModel = ref<FilterOption[]>([]) ////
 const filterModel = ref<string[]>(['today', 'last_7_days']) ////
 
 onMounted(() => {
@@ -68,7 +67,7 @@ watch(selectedTab, () => {
     label="Filter"
     kind="radio"
     :options="filterOptions"
-    allLabel="All"
+    clearFilterLabel="Clear filter"
     openMenuAriaLabel="Open test filter"
   />
 

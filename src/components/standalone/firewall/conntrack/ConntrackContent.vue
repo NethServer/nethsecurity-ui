@@ -17,6 +17,8 @@ import {
   NeTextInput
 } from '@nethesis/vue-components'
 import { useNotificationsStore } from '@/stores/notifications'
+import NeFilter, { type FilterOption } from '@/components/NeFilter.vue'
+
 const notificationsStore = useNotificationsStore()
 
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
@@ -51,7 +53,35 @@ const error = ref({
   notificationTitle: ''
 })
 const filter = ref('')
+const protocolFilter = ref<string[]>([])
 const showDeleteModal = ref(false)
+
+const protocolFilterOptions: FilterOption[] = [
+  { id: 'tcp', label: 'TCP' },
+  { id: 'udp', label: 'UDP' },
+  { id: 'icmp', label: 'ICMP' }
+  // { id: 'test1', label: 'Test 1' },
+  // { id: 'test2', label: 'Test 2' },
+  // { id: 'test3', label: 'Test 3' },
+  // { id: 'test4', label: 'Test 4' },
+  // { id: 'test5', label: 'Test 5' },
+  // { id: 'test6', label: 'Test 6' },
+  // { id: 'test7', label: 'Test 7' },
+  // { id: 'test8', label: 'Test 8' },
+  // { id: 'test9', label: 'Test 9' },
+  // { id: 'test10', label: 'Test 10' },
+  // { id: 'test11', label: 'Test 11' },
+  // { id: 'test12', label: 'Test 12' },
+  // { id: 'test13', label: 'Test 13' },
+  // { id: 'test14', label: 'Test 14' },
+  // { id: 'test15', label: 'Test 15' },
+  // { id: 'test16', label: 'Test 16' },
+  // { id: 'test17', label: 'Test 17' },
+  // { id: 'test18', label: 'Test 18' },
+  // { id: 'test19', label: 'Test 19' },
+  // { id: 'test20', label: 'Test 20' },
+  // { id: 'test99999999', label: 'Test 99999999999912345' }
+]
 
 onMounted(() => {
   fetchConntrack()
@@ -72,9 +102,9 @@ async function fetchConntrack() {
     isLoading.value = false
   }
 }
-function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
-  const lowerCaseFilter = filter.toLowerCase()
-  return records.filter(
+function applyFilterToConntrackRecords() {
+  const lowerCaseFilter = filter.value.toLowerCase()
+  const textFiltered = conntrackRecords.value.filter(
     (ConntrackRecord) =>
       ConntrackRecord.source.toLowerCase().includes(lowerCaseFilter) ||
       ConntrackRecord.destination.toLowerCase().includes(lowerCaseFilter) ||
@@ -82,6 +112,10 @@ function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: strin
       (ConntrackRecord.state ?? '').toLowerCase().includes(lowerCaseFilter) ||
       (ConntrackRecord.source_port ?? '').toLowerCase().includes(lowerCaseFilter) ||
       (ConntrackRecord.destination_port ?? '').toLowerCase().includes(lowerCaseFilter)
+  )
+
+  return textFiltered.filter(
+    (record) => !protocolFilter.value.length || protocolFilter.value.includes(record.protocol)
   )
 }
 
@@ -100,9 +134,7 @@ function closeDeleteModal() {
 }
 
 const filteredItems = computed(() => {
-  return filter.value === ''
-    ? conntrackRecords.value
-    : applyFilterToConntrackRecords(conntrackRecords.value, filter.value)
+  return applyFilterToConntrackRecords()
 })
 
 function onRecordDeleted() {
@@ -159,6 +191,14 @@ function onRecordDeleted() {
     </div>
     <div class="flex items-center gap-4">
       <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+      <NeFilter
+        v-model="protocolFilter"
+        label="Protocol"
+        kind="checkbox"
+        :options="protocolFilterOptions"
+        clearFilterLabel="Clear filter"
+        openMenuAriaLabel="Open protocol filter"
+      />
       <NeButton kind="tertiary" @click="filter = ''" :disabled="isLoading || !filter">
         {{ t('common.clear_filter') }}
       </NeButton>

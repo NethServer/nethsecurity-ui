@@ -10,7 +10,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { isEqual } from 'lodash-es'
 import { v4 as uuid } from '@lukeed/uuid'
-import { NeBadge } from '@nethesis/vue-components'
+import { NeBadge, NeLink } from '@nethesis/vue-components'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -34,8 +34,9 @@ export interface Props {
   label: string
   options: FilterOption[]
   kind: FilterKind
-  allLabel: string
+  clearFilterLabel: string
   openMenuAriaLabel: string
+  showClearFilter?: boolean
   showSelectionCount?: boolean
   alignToRight?: boolean
   size?: ButtonSize
@@ -44,6 +45,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  showClearFilter: true,
   showSelectionCount: true,
   alignToRight: true,
   size: 'md',
@@ -63,11 +65,9 @@ const buttonRef = ref()
 
 const componentId = computed(() => (props.id ? props.id : uuid()))
 
-const badgeText = computed(() =>
-  checkboxModel.value.length == props.options.length
-    ? props.allLabel
-    : checkboxModel.value.length.toString()
-)
+const isSelectionCountShown = computed(() => {
+  return props.showSelectionCount && props.kind === 'checkbox' && checkboxModel.value.length > 0
+})
 
 watch(
   () => props.alignToRight,
@@ -136,7 +136,7 @@ function calculatePosition() {
       <slot name="button">
         <!-- default button -->
         <button
-          class="font-semibold text-gray-700 shadow-sm ring-1 ring-gray-300 transition-colors duration-200 hover:bg-gray-200/70 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-100 dark:ring-gray-500 dark:hover:bg-gray-600/30 dark:hover:text-gray-50 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950"
+          class="font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 transition-colors duration-200 hover:bg-gray-200/70 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-100 dark:ring-gray-500 dark:hover:bg-gray-600/30 dark:hover:text-gray-50 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950"
           :class="sizeStyle[props.size]"
           :disabled="disabled"
           type="button"
@@ -145,8 +145,8 @@ function calculatePosition() {
             <slot v-if="$slots.label" name="label"></slot>
             <span v-else>{{ label }}</span>
             <NeBadge
-              v-if="kind === 'checkbox' && showSelectionCount"
-              :text="badgeText"
+              v-if="isSelectionCountShown"
+              :text="checkboxModel.length.toString()"
               size="xs"
               class="ml-2"
             />
@@ -173,8 +173,13 @@ function calculatePosition() {
             { top: top + 'px' },
             alignToRight ? { right: right + 'px' } : { left: left + 'px' }
           ]"
-          class="absolute z-50 mt-2.5 min-w-[10rem] rounded-md bg-white px-4 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none dark:bg-gray-950 dark:ring-gray-500/50"
+          class="absolute z-50 mt-2.5 max-h-[16.5rem] min-w-[10rem] overflow-y-auto rounded-md bg-white px-4 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none dark:bg-gray-950 dark:ring-gray-500/50"
         >
+          <MenuItem as="div" v-if="showClearFilter" class="py-2">
+            <NeLink @click.stop="checkboxModel = []">
+              {{ clearFilterLabel }}
+            </NeLink>
+          </MenuItem>
           <MenuItem as="div" v-for="option in options" :key="option.id" :disabled="option.disabled">
             <!-- divider -->
             <hr

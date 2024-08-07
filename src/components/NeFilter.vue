@@ -9,11 +9,9 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { isEqual } from 'lodash-es'
+import { v4 as uuidv4 } from 'uuid'
 
 //// review
-
-//// delete
-// export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -73,18 +71,14 @@ const props = defineProps({
 library.add(faChevronDown)
 
 const model = defineModel<string[]>()
+const radioModel = ref('')
+const checkboxModel = ref<string[]>([])
 const top = ref(0)
 const left = ref(0)
 const right = ref(0)
 const buttonRef = ref()
 
-//// remove
-const componentId = computed(() => (props.id ? props.id : 'todo'))
-//// uncomment
-// const componentId = computed(() => (props.id ? props.id : uuidv4()))
-
-const radioModel = ref('')
-const checkboxModel = ref<string[]>([])
+const componentId = computed(() => (props.id ? props.id : uuidv4()))
 
 watch(
   () => props.alignToRight,

@@ -67,6 +67,7 @@ watch(selectedTab, () => {
     v-model="filterModel"
     label="Filter"
     kind="checkbox"
+    id="test"
     :options="filterOptions"
     openMenuAriaLabel="Open test filter"
   />

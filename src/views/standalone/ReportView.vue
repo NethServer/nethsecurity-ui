@@ -68,6 +68,7 @@ watch(selectedTab, () => {
     label="Filter"
     kind="radio"
     :options="filterOptions"
+    allLabel="All"
     openMenuAriaLabel="Open test filter"
   />
 

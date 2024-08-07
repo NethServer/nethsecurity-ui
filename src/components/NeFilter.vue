@@ -10,6 +10,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { isEqual } from 'lodash-es'
 import { v4 as uuid } from '@lukeed/uuid'
+import { NeBadge } from '@nethesis/vue-components'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -33,7 +34,9 @@ export interface Props {
   label: string
   options: FilterOption[]
   kind: FilterKind
+  allLabel: string
   openMenuAriaLabel: string
+  showSelectionCount?: boolean
   alignToRight?: boolean
   size?: ButtonSize
   disabled?: boolean
@@ -41,6 +44,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  showSelectionCount: true,
   alignToRight: true,
   size: 'md',
   disabled: false,
@@ -58,6 +62,12 @@ const right = ref(0)
 const buttonRef = ref()
 
 const componentId = computed(() => (props.id ? props.id : uuid()))
+
+const badgeText = computed(() =>
+  checkboxModel.value.length == props.options.length
+    ? props.allLabel
+    : checkboxModel.value.length.toString()
+)
 
 watch(
   () => props.alignToRight,
@@ -134,6 +144,12 @@ function calculatePosition() {
           <div class="flex items-center justify-center">
             <slot v-if="$slots.label" name="label"></slot>
             <span v-else>{{ label }}</span>
+            <NeBadge
+              v-if="kind === 'checkbox' && showSelectionCount"
+              :text="badgeText"
+              size="xs"
+              class="ml-2"
+            />
             <font-awesome-icon
               :icon="['fas', 'chevron-down']"
               class="ml-2 h-3 w-3"

@@ -4,14 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { type PropType, ref, watch, computed, onMounted } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { isEqual } from 'lodash-es'
 import { v4 as uuidv4 } from 'uuid'
-
-//// review
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -31,41 +29,22 @@ const sizeStyle: { [index: string]: string } = {
   xl: 'rounded-md px-3.5 py-2.5 text-sm'
 }
 
-//// new syntax for props
+export interface Props {
+  label: string
+  options: FilterOption[]
+  kind: FilterKind
+  openMenuAriaLabel: string
+  alignToRight?: boolean
+  size?: ButtonSize
+  disabled?: boolean
+  id?: string
+}
 
-const props = defineProps({
-  label: {
-    type: String,
-    default: ''
-  },
-  options: {
-    type: Array as PropType<FilterOption[]>,
-    required: true
-  },
-  alignToRight: {
-    type: Boolean,
-    default: true
-  },
-  kind: {
-    type: String as PropType<FilterKind>,
-    required: true
-  },
-  size: {
-    type: String as PropType<ButtonSize>,
-    default: 'md'
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  id: {
-    type: String,
-    default: ''
-  },
-  openMenuAriaLabel: {
-    type: String,
-    required: true
-  }
+const props = withDefaults(defineProps<Props>(), {
+  alignToRight: true,
+  size: 'md',
+  disabled: false,
+  id: ''
 })
 
 library.add(faChevronDown)
@@ -137,10 +116,6 @@ function calculatePosition() {
 </script>
 
 <template>
-  ////
-  <div>radioModel {{ radioModel }}</div>
-  <div>checkboxModel {{ checkboxModel }}</div>
-
   <Menu as="div" class="relative inline-block text-left">
     <MenuButton
       ref="buttonRef"
@@ -256,24 +231,4 @@ function calculatePosition() {
       </transition>
     </Teleport>
   </Menu>
-  <!-- <NeDropdown :items="options" :openMenuAriaLabel="openMenuAriaLabel" :alignToRight="alignToRight"> //// 
-    <template #button>
-      <button
-        class="font-semibold text-gray-700 shadow-sm ring-1 ring-gray-300 transition-colors duration-200 hover:bg-gray-200/70 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-100 dark:ring-gray-500 dark:hover:bg-gray-600/30 dark:hover:text-gray-50 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950"
-        :class="sizeStyle[props.size]"
-        :disabled="disabled"
-        type="button"
-      >
-        <div class="flex items-center justify-center">
-          <slot v-if="$slots.label" name="label"></slot>
-          <span v-else>{{ label }}</span>
-          <font-awesome-icon
-            :icon="['fas', 'chevron-down']"
-            class="ml-2 h-3 w-3"
-            aria-hidden="true"
-          />
-        </div>
-      </button>
-    </template>
-  </NeDropdown> -->
 </template>

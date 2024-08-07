@@ -66,7 +66,7 @@ watch(selectedTab, () => {
   <NeFilter
     v-model="filterModel"
     label="Filter"
-    kind="checkbox"
+    kind="radio"
     id="test"
     :options="filterOptions"
     openMenuAriaLabel="Open test filter"

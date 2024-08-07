@@ -4,10 +4,22 @@
 -->
 
 <script setup lang="ts">
-import { type PropType, ref, watch, computed, type Ref, type ModelRef } from 'vue'
+import {
+  type PropType,
+  ref,
+  watch,
+  computed,
+  type Ref,
+  type ModelRef,
+  onMounted,
+  unref,
+  toRaw,
+  isProxy
+} from 'vue'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { isEqual } from 'lodash-es'
 
 //// review
 
@@ -69,15 +81,9 @@ const props = defineProps({
   }
 })
 
-// const emit = defineEmits<{ ////
-//   'update:modelValue': [options: FilterOption[]]
-// }>()
-
 library.add(faChevronDown)
 
-// const model: ModelRef<FilterOption[] | undefined, string> = defineModel() ////
 const model = defineModel<FilterOption[]>()
-// const internalSelectedOptions = ref<FilterOption[]>([]) ////
 const top = ref(0)
 const left = ref(0)
 const right = ref(0)
@@ -86,14 +92,13 @@ const buttonRef = ref()
 //// remove
 const componentId = computed(() => (props.id ? props.id : 'todo'))
 
+const radioModel = ref('')
+const checkboxModel = ref<string[]>([])
+
 const modelIds = computed(() => model.value?.map((option: FilterOption) => option.id))
 
 //// uncomment
 // const componentId = computed(() => (props.id ? props.id : uuidv4()))
-
-//// todo watch selected prop
-
-//// todo onmounted set internalSelectedOptions
 
 watch(
   () => props.alignToRight,
@@ -102,27 +107,52 @@ watch(
   }
 )
 
-function select(option: FilterOption) {
-  console.log('select, option', option) ////
-  // console.log('select, current model', model.value) ////
+watch(
+  () => radioModel.value,
+  () => {
+    const optionFound = props.options.find((option: FilterOption) => option.id === radioModel.value)
 
-  if (model.value) {
-    if (props.kind === 'radio') {
-      model.value = [option]
-
-      console.log('model.value', model.value) ////
-    } else {
-      //// review
-      if (model.value.includes(option)) {
-        model.value = model.value.filter(
-          (selectedOption: FilterOption) => selectedOption !== option
-        )
-      } else {
-        model.value = [...model.value, option]
-      }
+    if (optionFound) {
+      model.value = [optionFound]
     }
-    // emit('select', internalSelectedOptions.value) ////
-    // console.log('emitted select ', internalSelectedOptions.value) ////
+  }
+)
+
+watch(
+  () => checkboxModel.value,
+  () => {
+    model.value = props.options.filter((option: FilterOption) =>
+      checkboxModel.value.includes(option.id)
+    )
+  }
+)
+
+watch(
+  () => model.value,
+  () => {
+    updateInternalModel()
+  }
+)
+
+onMounted(() => {
+  updateInternalModel()
+})
+
+function updateInternalModel() {
+  if (props.kind === 'radio') {
+    const newValue = model.value?.[0]?.id || ''
+
+    // update only if the value is different to avoid "Maximum recursive updates exceeded" error
+    if (radioModel.value != newValue) {
+      radioModel.value = newValue
+    }
+  } else if (props.kind === 'checkbox') {
+    const newValue = model.value?.map((option: FilterOption) => option.id) || []
+
+    // update only if the value is different to avoid "Maximum recursive updates exceeded" error
+    if (!isEqual(checkboxModel.value, newValue)) {
+      checkboxModel.value = newValue
+    }
   }
 }
 
@@ -137,6 +167,11 @@ function calculatePosition() {
 </script>
 
 <template>
+  ////
+  <div>radioModel {{ radioModel }}</div>
+  <div>checkboxModel {{ checkboxModel }}</div>
+  <div>modelIds {{ modelIds }}</div>
+
   <Menu as="div" class="relative inline-block text-left">
     <MenuButton
       ref="buttonRef"
@@ -193,12 +228,11 @@ function calculatePosition() {
                 type="radio"
                 :id="`${componentId}-${option.id}`"
                 :name="componentId"
-                :checked="option.id in (modelIds || [])"
+                v-model="radioModel"
                 :value="option.id"
                 :aria-describedby="`${componentId}-${option.id}-description`"
                 class="peer border-gray-300 text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-950 dark:text-primary-500 checked:dark:bg-primary-500 dark:focus:ring-primary-300 focus:dark:ring-primary-200 focus:dark:ring-offset-gray-900"
                 :disabled="option.disabled || disabled"
-                @change="select(option)"
               />
               <label
                 :for="`${componentId}-${option.id}`"
@@ -221,7 +255,8 @@ function calculatePosition() {
                 <input
                   type="checkbox"
                   :id="`${componentId}-${option.id}`"
-                  :checked="option.id in (modelIds || [])"
+                  v-model="checkboxModel"
+                  :value="option.id"
                   :aria-describedby="`${componentId}-${option.id}-description`"
                   :disabled="option.disabled || disabled"
                   class="h-5 w-5 rounded border-gray-300 text-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-500 dark:text-primary-500 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950 sm:h-4 sm:w-4"

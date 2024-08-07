@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { NeHeading, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeTabs, NeButton } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -35,7 +35,8 @@ const filterOptions = ref([
   { id: 'last_7_days', label: 'Last 7 days', disabled: false }
 ])
 
-const filterModel = ref<FilterOption[]>([])
+// const filterModel = ref<FilterOption[]>([]) ////
+const filterModel = ref<FilterOption[]>([{ id: 'today', label: 'Today', disabled: false }])
 
 onMounted(() => {
   selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
@@ -65,9 +66,11 @@ watch(selectedTab, () => {
   <NeFilter
     v-model="filterModel"
     label="Filter"
-    kind="radio"
+    kind="checkbox"
     :options="filterOptions"
     openMenuAriaLabel="Open test filter"
   />
-  filterModel {{ filterModel }}
+
+  <div>filterModel {{ filterModel }}</div>
+  <NeButton @click="filterModel = [filterOptions[0]]">Set all</NeButton>
 </template>

@@ -36,7 +36,7 @@ const filterOptions = ref([
 ])
 
 // const filterModel = ref<FilterOption[]>([]) ////
-const filterModel = ref<FilterOption[]>([{ id: 'today', label: 'Today', disabled: false }])
+const filterModel = ref<string[]>(['today', 'last_7_days']) ////
 
 onMounted(() => {
   selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
@@ -72,5 +72,5 @@ watch(selectedTab, () => {
   />
 
   <div>filterModel {{ filterModel }}</div>
-  <NeButton @click="filterModel = [filterOptions[0]]">Set all</NeButton>
+  <NeButton @click="filterModel = ['all']">Set all</NeButton>
 </template>

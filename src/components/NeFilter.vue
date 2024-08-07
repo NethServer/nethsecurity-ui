@@ -4,18 +4,7 @@
 -->
 
 <script setup lang="ts">
-import {
-  type PropType,
-  ref,
-  watch,
-  computed,
-  type Ref,
-  type ModelRef,
-  onMounted,
-  unref,
-  toRaw,
-  isProxy
-} from 'vue'
+import { type PropType, ref, watch, computed, onMounted } from 'vue'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -24,7 +13,7 @@ import { isEqual } from 'lodash-es'
 //// review
 
 //// delete
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger'
+// export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'danger'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -83,7 +72,7 @@ const props = defineProps({
 
 library.add(faChevronDown)
 
-const model = defineModel<FilterOption[]>()
+const model = defineModel<string[]>()
 const top = ref(0)
 const left = ref(0)
 const right = ref(0)
@@ -91,14 +80,11 @@ const buttonRef = ref()
 
 //// remove
 const componentId = computed(() => (props.id ? props.id : 'todo'))
+//// uncomment
+// const componentId = computed(() => (props.id ? props.id : uuidv4()))
 
 const radioModel = ref('')
 const checkboxModel = ref<string[]>([])
-
-const modelIds = computed(() => model.value?.map((option: FilterOption) => option.id))
-
-//// uncomment
-// const componentId = computed(() => (props.id ? props.id : uuidv4()))
 
 watch(
   () => props.alignToRight,
@@ -110,20 +96,14 @@ watch(
 watch(
   () => radioModel.value,
   () => {
-    const optionFound = props.options.find((option: FilterOption) => option.id === radioModel.value)
-
-    if (optionFound) {
-      model.value = [optionFound]
-    }
+    model.value = [radioModel.value]
   }
 )
 
 watch(
   () => checkboxModel.value,
   () => {
-    model.value = props.options.filter((option: FilterOption) =>
-      checkboxModel.value.includes(option.id)
-    )
+    model.value = checkboxModel.value
   }
 )
 
@@ -140,18 +120,14 @@ onMounted(() => {
 
 function updateInternalModel() {
   if (props.kind === 'radio') {
-    const newValue = model.value?.[0]?.id || ''
-
     // update only if the value is different to avoid "Maximum recursive updates exceeded" error
-    if (radioModel.value != newValue) {
-      radioModel.value = newValue
+    if (model.value && radioModel.value !== model.value[0]) {
+      radioModel.value = model.value[0]
     }
   } else if (props.kind === 'checkbox') {
-    const newValue = model.value?.map((option: FilterOption) => option.id) || []
-
     // update only if the value is different to avoid "Maximum recursive updates exceeded" error
-    if (!isEqual(checkboxModel.value, newValue)) {
-      checkboxModel.value = newValue
+    if (model.value && !isEqual(checkboxModel.value, model.value)) {
+      checkboxModel.value = model.value
     }
   }
 }
@@ -170,7 +146,6 @@ function calculatePosition() {
   ////
   <div>radioModel {{ radioModel }}</div>
   <div>checkboxModel {{ checkboxModel }}</div>
-  <div>modelIds {{ modelIds }}</div>
 
   <Menu as="div" class="relative inline-block text-left">
     <MenuButton

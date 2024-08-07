@@ -9,7 +9,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { isEqual } from 'lodash-es'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuid } from '@lukeed/uuid'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FilterKind = 'radio' | 'checkbox'
@@ -57,7 +57,7 @@ const left = ref(0)
 const right = ref(0)
 const buttonRef = ref()
 
-const componentId = computed(() => (props.id ? props.id : uuidv4()))
+const componentId = computed(() => (props.id ? props.id : uuid()))
 
 watch(
   () => props.alignToRight,

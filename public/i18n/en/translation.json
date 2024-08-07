@@ -970,16 +970,14 @@
       "protocol_udp": "UDP",
       "protocol_icmp": "ICMP",
       "protocol_all": "All",
-      "address_options": {
-        "any": "Any",
-        "address": "Address",
-        "object": "Object"
-      },
+      "address_options_address": "Enter an address",
+      "address_options_object": "Select an object",
+      "address_options_any_src": "Any source address",
+      "address_options_any_dst": "Any destination address",
       "source_type": "Source type",
       "destination_type": "Destination type",
       "source_object": "Source object",
       "enter_address": "Enter an address",
-      "select_an_object": "Select an object",
       "destination_object": "Destination object"
     },
     "dns_dhcp": {

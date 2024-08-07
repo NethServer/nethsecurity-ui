@@ -101,14 +101,20 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
 
   type AddressType = 'any' | 'address' | 'object'
 
-  const addressOptions: { id: AddressType; label: string }[] = [
-    { id: 'any', label: t('standalone.multi_wan.address_options.any') },
-    { id: 'address', label: t('standalone.multi_wan.address_options.address') },
-    { id: 'object', label: t('standalone.multi_wan.address_options.object') }
+  const srcAddressOptions: { id: AddressType; label: string }[] = [
+    { id: 'address', label: t('standalone.multi_wan.address_options_address') },
+    { id: 'any', label: t('standalone.multi_wan.address_options_any_src') },
+    { id: 'object', label: t('standalone.multi_wan.address_options_object') }
   ]
 
-  const srcType = ref<AddressType>('any')
-  const dstType = ref<AddressType>('any')
+  const dstAddressOptions: { id: AddressType; label: string }[] = [
+    { id: 'address', label: t('standalone.multi_wan.address_options_address') },
+    { id: 'any', label: t('standalone.multi_wan.address_options_any_dst') },
+    { id: 'object', label: t('standalone.multi_wan.address_options_object') }
+  ]
+
+  const srcType = ref<AddressType>('address')
+  const dstType = ref<AddressType>('address')
 
   type ObjectResponse = {
     objects: {
@@ -210,7 +216,8 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     isValid,
     srcType,
     dstType,
-    addressOptions,
+    srcAddressOptions,
+    dstAddressOptions,
     objectsLoading,
     objectsError,
     srcObject,

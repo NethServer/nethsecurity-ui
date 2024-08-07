@@ -41,7 +41,8 @@ const {
   sticky,
   validationErrors,
   isValid,
-  addressOptions,
+  srcAddressOptions,
+  dstAddressOptions,
   srcType,
   dstType,
   objectsLoading,
@@ -134,7 +135,10 @@ function save() {
           error.value = reason
         }
       })
-      .finally(() => (saving.value = false))
+      .finally(() => {
+        saving.value = false
+        cleanForm()
+      })
   }
 }
 </script>
@@ -188,7 +192,7 @@ function save() {
         v-model="srcType"
         :disabled="saving"
         :label="t('standalone.multi_wan.source_type')"
-        :options="addressOptions"
+        :options="srcAddressOptions"
       />
       <NeTextInput
         v-if="srcType == 'address'"
@@ -235,7 +239,7 @@ function save() {
         v-model="dstType"
         :disabled="saving"
         :label="t('standalone.multi_wan.destination_type')"
-        :options="addressOptions"
+        :options="dstAddressOptions"
       />
       <NeTextInput
         v-if="dstType == 'address'"

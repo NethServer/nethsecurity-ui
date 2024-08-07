@@ -45,7 +45,8 @@ const {
   sticky,
   validationErrors,
   isValid,
-  addressOptions,
+  srcAddressOptions,
+  dstAddressOptions,
   srcType,
   dstType,
   objectsLoading,
@@ -71,6 +72,11 @@ function cleanForm() {
   destinationAddress.value = ''
   destinationPort.value = ''
   validationErrors.value.clear()
+  sticky.value = false
+  srcType.value = 'address'
+  dstType.value = 'address'
+  srcObject.value = ''
+  dstObject.value = ''
 }
 
 type Payload = {
@@ -128,7 +134,10 @@ function save() {
           error.value = reason
         }
       })
-      .finally(() => (saving.value = false))
+      .finally(() => {
+        saving.value = false
+        cleanForm()
+      })
   }
 }
 </script>
@@ -182,7 +191,7 @@ function save() {
         v-model="srcType"
         :disabled="saving"
         :label="t('standalone.multi_wan.source_type')"
-        :options="addressOptions"
+        :options="srcAddressOptions"
       />
       <NeTextInput
         v-if="srcType == 'address'"
@@ -196,7 +205,7 @@ function save() {
         v-if="srcType == 'object'"
         v-model="srcObject"
         :disabled="saving"
-        :label="t('standalone.multi_wan.select_an_object')"
+        :label="t('standalone.multi_wan.source_object')"
         :options="srcObjectOptions"
         :placeholder="objectsLoading ? t('common.loading') : t('ne_combobox.choose')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ns_src'))"
@@ -228,7 +237,7 @@ function save() {
         v-model="dstType"
         :disabled="saving"
         :label="t('standalone.multi_wan.destination_type')"
-        :options="addressOptions"
+        :options="dstAddressOptions"
       />
       <NeTextInput
         v-if="dstType == 'address'"
@@ -242,7 +251,7 @@ function save() {
         v-if="dstType == 'object'"
         v-model="dstObject"
         :disabled="saving"
-        :label="t('standalone.multi_wan.select_an_object')"
+        :label="t('standalone.multi_wan.destination_object')"
         :options="dstObjectOptions"
         :placeholder="objectsLoading ? t('common.loading') : t('ne_combobox.choose')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ns_dst'))"

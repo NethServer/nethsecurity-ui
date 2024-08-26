@@ -181,7 +181,7 @@ async function listHostSuggestions() {
 
       // check if sourceAddress is in the list of suggestions
       const sourceAddressFound = hostSuggestions.value.find(
-        (addr) => addr.id === props.currentRule?.src_ip
+        (addr: NeComboboxOption) => addr.id === props.currentRule?.src_ip
       )
 
       if (!sourceAddressFound) {
@@ -195,7 +195,7 @@ async function listHostSuggestions() {
 
       // check if destinationAddress is in the list of suggestions
       const destinationAddressFound = hostSuggestions.value.find(
-        (addr) => addr.id === props.currentRule?.dest_ip
+        (addr: NeComboboxOption) => addr.id === props.currentRule?.dest_ip
       )
 
       if (!destinationAddressFound) {

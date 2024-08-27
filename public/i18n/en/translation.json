@@ -39,6 +39,7 @@
     "eg_value": "e.g. {value}",
     "name": "Name",
     "clear_filter": "Clear filter",
+    "clear_filters": "Clear filters",
     "try_changing_search_filter": "Try changing your search filter",
     "dont_show_again": "Don't show again",
     "more_info": "More info",
@@ -387,6 +388,10 @@
   },
   "ne_file_input": {
     "dropzone_label": "Drag and drop or click to upload"
+  },
+  "ne_dropdown_filter": {
+    "clear_filter": "Clear filter",
+    "open_filter": "Open filter"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -1533,8 +1538,6 @@
       "password_not_configured": "Password not configured",
       "edit_user_database": "Edit user database",
       "no_users_found": "No accounts found",
-      "all_connections": "All connections",
-      "any_expiration": "Any expiration",
       "expired": "Expired",
       "not_expired": "Not expired",
       "delete_account": "Delete account",

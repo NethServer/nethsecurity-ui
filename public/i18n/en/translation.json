@@ -41,6 +41,7 @@
     "clear_filter": "Clear filter",
     "clear_filters": "Clear filters",
     "try_changing_search_filter": "Try changing your search filter",
+    "try_changing_search_filters": "Try changing your search filters",
     "dont_show_again": "Don't show again",
     "more_info": "More info",
     "data_updated_every_seconds": "Data updated every {seconds} seconds",

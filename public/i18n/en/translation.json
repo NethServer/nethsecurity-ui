@@ -564,7 +564,7 @@
       },
       "backup": {
         "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
-        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 10 backups. Configure a passphrase to increase the security of your data.",
+        "description_subscription": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 10 backups. Configure a passphrase to increase the security of your data.",
         "download": "Download",
         "download_backup": "Download backup",
         "modal_download_description": "Download backup '{name}'?",

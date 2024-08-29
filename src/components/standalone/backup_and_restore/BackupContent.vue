@@ -209,47 +209,40 @@ function successDeleteBackup() {
       :title="t('standalone.backup_and_restore.backup.success_run_backup')"
     />
     <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
+      <div
+        v-if="isValidSubscription"
+        class="flex flex-col items-start justify-between gap-4 xl:flex-row"
+      >
+        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.backup_and_restore.backup.description_subscription') }}
+        </p>
+        <div v-if="listBackups.length" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
+          <NeButton kind="tertiary" @click="showPassphraseDrawer = true">
+            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+          </NeButton>
+          <NeButton kind="secondary" @click="showRunBackupModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
+            </template>
+            {{ t('standalone.backup_and_restore.backup.run_backup') }}
+          </NeButton>
+        </div>
+      </div>
       <FormLayout
-        :description="
-          isValidSubscription
-            ? t('standalone.backup_and_restore.backup.description_entrprise')
-            : t('standalone.backup_and_restore.backup.description')
-        "
+        v-else
+        :description="t('standalone.backup_and_restore.backup.description')"
         class="max-w-12xl"
       >
-        <div class="flex">
-          <template v-if="isValidSubscription">
-            <div v-if="listBackups.length" class="ml-auto self-start">
-              <NeButton class="mr-2" kind="tertiary" @click="showPassphraseDrawer = true">
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </NeButton>
-              <NeButton kind="secondary" @click="showRunBackupModal = true">
-                <template #prefix>
-                  <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
-                </template>
-                {{ t('standalone.backup_and_restore.backup.run_backup') }}
-              </NeButton>
-            </div>
-          </template>
-          <template v-else>
-            <div class="mr-auto self-start">
-              <NeButton
-                class="mr-2"
-                kind="secondary"
-                size="lg"
-                type="submit"
-                @click="showDownloadModal = true"
-              >
-                <template #prefix>
-                  <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
-                </template>
-                {{ t('standalone.backup_and_restore.backup.download_backup') }}
-              </NeButton>
-              <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </NeButton>
-            </div>
-          </template>
+        <div class="flex gap-4">
+          <NeButton kind="secondary" size="lg" type="submit" @click="showDownloadModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
+            </template>
+            {{ t('standalone.backup_and_restore.backup.download_backup') }}
+          </NeButton>
+          <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
+            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+          </NeButton>
         </div>
       </FormLayout>
       <NeBadge

@@ -564,11 +564,10 @@
       },
       "backup": {
         "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
-        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 10 backups. Configure a passphrase to increase the security of your data",
+        "description_entrprise": "Run a backup to download current settings and data of your unit. The system runs autonomously and keeps up to 10 backups. Configure a passphrase to increase the security of your data.",
         "download": "Download",
         "download_backup": "Download backup",
-        "modal_download_title": "Downloaded backup",
-        "modal_download_description": "Are you sure you want to download '{name}' backup?",
+        "modal_download_description": "Download backup '{name}'?",
         "passphrase_drawer_title": "Configure passphrase",
         "passphrase": "Passphrase",
         "passphrase_helper": "Enter a passphrase if you want to encrypt the backup with GPG; if the passphrase is empty, the backup will be saved in plain text. Warning: if you lose the passphrase, you won't be able to use the encrypted backup.",

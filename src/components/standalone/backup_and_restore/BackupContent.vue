@@ -194,7 +194,7 @@ function successDeleteBackup() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading || loadingPassphrase" :lines="10" />
+    <NeSkeleton v-if="loading || loadingPassphrase" :lines="7" size="lg" />
     <NeInlineNotification
       v-if="!loading && !loadingPassphrase && errorPage.notificationTitle"
       class="my-4"
@@ -259,7 +259,10 @@ function successDeleteBackup() {
         kind="success"
       />
     </template>
-    <div v-if="!loading && isValidSubscription && !errorPage.notificationTitle" class="mt-5">
+    <div
+      v-if="!loading && !loadingPassphrase && isValidSubscription && !errorPage.notificationTitle"
+      class="mt-5"
+    >
       <NeEmptyState
         v-if="!listBackups.length"
         :title="t('standalone.backup_and_restore.backup.no_backups_found')"
@@ -281,6 +284,7 @@ function successDeleteBackup() {
       </NeEmptyState>
       <NeTable
         v-if="listBackups.length"
+        cardBreakpoint="xl"
         :ariaLabel="t('standalone.backup_and_restore.backup.backups')"
       >
         <NeTableHead>
@@ -301,7 +305,7 @@ function successDeleteBackup() {
                 {{ formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') }}
               </div>
             </NeTableCell>
-            <NeTableCell>
+            <NeTableCell :data-label="t('standalone.backup_and_restore.backup.mimetype')">
               <div>
                 <FontAwesomeIcon :icon="getMimetypeIcon(item.mimetype)" class="mr-2" />
                 {{
@@ -309,13 +313,13 @@ function successDeleteBackup() {
                 }}
               </div>
             </NeTableCell>
-            <NeTableCell>
+            <NeTableCell :data-label="t('standalone.backup_and_restore.backup.size')">
               <div>
                 {{ byteFormat1024(item.size) }}
               </div>
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
-              <div class="-ml-2.5 flex items-center md:justify-end xl:ml-0">
+              <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
                 <NeButton
                   :kind="'tertiary'"
                   @click="openDownloadEnterprise(item.id, item.mimetype, item.created.toString())"

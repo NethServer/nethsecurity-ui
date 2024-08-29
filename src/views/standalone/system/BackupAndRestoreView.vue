@@ -30,7 +30,7 @@ const { tabs, selectedTab } = useTabs([
 </script>
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.backup_and_restore.title') }}</NeHeading>
-  <div class="flex flex-col gap-y-6">
+  <div class="flex flex-col">
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

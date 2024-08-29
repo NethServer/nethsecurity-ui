@@ -25,11 +25,11 @@ import {
   NeBadge
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import ModalDownloadBackup from '@/components/standalone/backup_and_restore/ModalDownloadBackup.vue'
-import ModalRunBackup from '@/components/standalone/backup_and_restore/ModalRunBackup.vue'
+import DownloadBackupModal from '@/components/standalone/backup_and_restore/DownloadBackupModal.vue'
+import RunBackupModal from '@/components/standalone/backup_and_restore/RunBackupModal.vue'
 import SetPassphraseDrawer from '@/components/standalone/backup_and_restore/SetPassphraseDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import ModalDeleteBackup from '@/components/standalone/backup_and_restore/ModalDeleteBackup.vue'
+import DeleteBackupModal from '@/components/standalone/backup_and_restore/DeleteBackupModal.vue'
 
 const { t } = useI18n()
 
@@ -337,7 +337,7 @@ function successDeleteBackup() {
       </NeTable>
     </div>
   </div>
-  <ModalDownloadBackup
+  <DownloadBackupModal
     :showDownloadModal="showDownloadModal"
     :isSetPassphrase="isSetPassphrase"
     :isValidSubscription="isValidSubscription"
@@ -347,7 +347,7 @@ function successDeleteBackup() {
     :unitName="unitName"
     @close="showDownloadModal = false"
   />
-  <ModalRunBackup
+  <RunBackupModal
     :showRunBackupModal="showRunBackupModal"
     :unitName="unitName"
     @success="successRunBackup()"
@@ -359,7 +359,7 @@ function successDeleteBackup() {
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
   />
-  <ModalDeleteBackup
+  <DeleteBackupModal
     :showDeleteModal="showDeleteModal"
     :selectedBackupId="selectedBackupId"
     :selectedBackupLabel="selectedBackupLabel"

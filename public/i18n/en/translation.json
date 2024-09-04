@@ -1787,7 +1787,8 @@
       },
       "real_time_report": {
         "description": "The monitoring tool offers in-depth analysis of system and application performance, presenting detailed metrics and visualizations. These metrics are stored in RAM and reset upon machine reboot, except when the unit is linked to a remote controller. In such cases, metrics are saved in the controller and persist through reboots.",
-        "open_report": "Open report"
+        "open_report": "Open report",
+        "cannot_open_report_from_controller": "Cannot open report from a controlled unit. You can open the report by accessing the unit UI directly, or by accessing the controller UI, going to 'Unit manager' page, clicking the three dots menu of the unit and selecting 'Open metrics'."
       },
       "ping_latency_monitor": {
         "description": "Set up the monitoring tool to assess round-trip time and packet loss by sending ping messages to network hosts. This tool is used for monitoring network connectivity quality. You can add one or more hosts to monitor. It's also possible to add IP addresses in a VPN to assess tunnel quality.",
@@ -2041,7 +2042,7 @@
       "num_units_left_tooltip": "You have configured {num} of {max} units. Upgrade to a subscription plan to manage more units.",
       "sync_unit_info": "Sync unit info",
       "syncing_data": "Syncing data...",
-      "syncing_data_description": "Unit data hasn't been synced yet. You can do it now by clicking the three dots menu and then '@:controller.units.sync_unit_info'."
+      "syncing_data_description": "Unit data hasn't been synced yet. You can do it now by clicking the three dots menu and then '@:controller.units.sync_unit_info '."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

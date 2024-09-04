@@ -94,12 +94,6 @@ const actionOptions = ref([
   }
 ])
 
-const anyAddress = ref({
-  id: '0.0.0.0/0',
-  label: '0.0.0.0/0',
-  description: t('standalone.nat.any_address')
-})
-
 const isCreatingRule = computed(() => {
   return !props.currentRule
 })
@@ -183,7 +177,13 @@ async function listHostSuggestions() {
       }
     })
     sourceAddressOptions.value = hostSuggestions
-    destinationAddressOptions.value = [anyAddress.value, ...hostSuggestions]
+
+    const anyAddress = {
+      id: '0.0.0.0/0',
+      label: '0.0.0.0/0',
+      description: t('standalone.nat.any_address')
+    }
+    destinationAddressOptions.value = [anyAddress, ...hostSuggestions]
 
     if (props.currentRule) {
       // editing rule

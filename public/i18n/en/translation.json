@@ -1569,8 +1569,7 @@
       "dynamic_range_ip": "Dynamic range IP",
       "dynamic_range_ip_message": "You can reserve IP addresses to OpenVPN accounts outside the following range.",
       "dynamic_range_ip_start": "Dynamic range IP start",
-      "dynamic_range_ip_end": "Dynamic range IP end",
-      "dynamic_range_ip_start_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      "dynamic_range_ip_end": "Dynamic range IP end"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

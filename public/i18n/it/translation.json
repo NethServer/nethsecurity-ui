@@ -348,7 +348,12 @@
     "cannot_save_host_set": "Impossibile salvare l'host set",
     "cannot_save_domain_set": "Impossibile salvare il domain set",
     "cannot_retrieve_host_sets": "Impossibile caricare gli host set",
-    "cannot_retrieve_domain_sets": "Impossibile caricare i domain set"
+    "cannot_retrieve_domain_sets": "Impossibile caricare i domain set",
+    "certificate_already_requested": "È già stato richiesto un certificato per questo dominio",
+    "cannot_delete_backup": "Impossibile eliminare il backup remoto",
+    "end_must_be_greater_then_start": "L'IP finale deve essere maggiore dell'IP iniziale",
+    "start_reserved": "Il primo IP della rete è riservato",
+    "cannot_retrieve_object_suggestions": "Impossibile recuperare i suggerimenti sugli oggetti"
   },
   "login": {
     "sign_in": "Accedi",
@@ -438,9 +443,7 @@
         "configure_passphrase": "Configura passphrase",
         "modal_download_description": "Sei sicuro di voler scaricare il backup '{name}'?",
         "success_run_backup": "Backup eseguito con successo",
-        "description_entrprise": "Esegui un backup per scaricare le impostazioni e i dati correnti dell'unità. Il sistema funziona autonomamente e mantiene fino a 3 backup. Configura una passphrase per aumentare la sicurezza dei tuoi dati",
         "run_backup": "Esegui backup",
-        "modal_download_title": "Backup scaricato",
         "description": "Scarica le impostazioni e i dati correnti dell'unità. Questo proteggerà contro potenziali perdite di dati o guasti di sistema. Configura una passphrase per aumentare la sicurezza dei tuoi dati.",
         "download_backup": "Scarica backup",
         "passphrase_drawer_title": "Configura passphrase",
@@ -448,7 +451,17 @@
         "passphrase_reser_helper": "Inserisci una stringa vuota per rimuovere la passphrase",
         "download": "Scarica",
         "date": "Data",
-        "backups": "Backup"
+        "backups": "Backup",
+        "delete": "Elimina",
+        "modal_delete_title": "Elimina il backup remoto",
+        "modal_delete_description": "Vuoi davvero eliminare il backup di '{name}'?",
+        "unchanged": "Invariato",
+        "octet-stream": "Criptato",
+        "gzip": "Non criptato",
+        "pgp-encrypted": "Criptato",
+        "size": "Dimensione",
+        "mimetype": "Tipo",
+        "passphrase_is_set": "Passphrase configurata: crittografia abilitata"
       },
       "tabs": {
         "migration": "Migrazione",
@@ -758,7 +771,7 @@
         "custom": "Personalizzata (3+ gateways)",
         "balance": "Bilanciamento",
         "backup": "Backup",
-        "choose_behaviour_sr": "Comportamento policy"
+        "choose_behaviour_sr": "Politica di comportamento"
       },
       "gateways_in_balance": "Gateway in bilanciamento",
       "add_gateway": "Aggiungi gateway",
@@ -815,7 +828,20 @@
       "select_policy": "Seleziona la policy",
       "ports_tooltip": "Inserire una singola porta, più porte separate da una virgola (ad esempio '8686, 9090') o intervalli di porte (ad esempio '5500-5600')",
       "sticky": "Sticky",
-      "sticky_tooltip": "Consenti al traffico dallo stesso indirizzo IP sorgente di utilizzare la stessa interfaccia WAN come nella sessione precedente (tempo di default: 10 minuti)."
+      "sticky_tooltip": "Consenti al traffico dallo stesso indirizzo IP sorgente di utilizzare la stessa interfaccia WAN come nella sessione precedente (tempo di default: 10 minuti).",
+      "destination_object": "Oggetto di destinazione",
+      "enter_address": "Inserisci un indirizzo",
+      "protocol_tcp": "TCP",
+      "protocol_udp": "UDP",
+      "protocol_icmp": "ICMP",
+      "protocol_all": "Tutto",
+      "source_type": "Tipo di sorgente",
+      "address_options_address": "Inserisci un indirizzo",
+      "address_options_object": "Seleziona un oggetto",
+      "address_options_any_src": "Qualsiasi indirizzo sorgente",
+      "address_options_any_dst": "Qualsiasi indirizzo di destinazione",
+      "destination_type": "Tipo di destinazione",
+      "source_object": "Oggetto sorgente"
     },
     "zones_and_policies": {
       "allow_forwards_to": "Consenti forward a",
@@ -880,7 +906,17 @@
       "protocol_helper": "Lasciare senza selezione per permettere tutti i protocolli in entrata",
       "any_protocol_message": "È stato selezionato 'qualunque' protocollo, questo significa che TUTTO il traffico verrà ridirezionato. Sii sicuro di quello che comporta",
       "source_port_tooltip": "Inserire una singola porta o un range di porte (ad esempio '5500-5600'). La porta sorgente è obbligatoria se è specificata una porta di destinazione",
-      "automatic": "Automatico"
+      "automatic": "Automatico",
+      "destination_address_type": "Tipo di indirizzo di destinazione",
+      "enter_destination_address": "Inserisci l'indirizzo di destinazione",
+      "select_an_object": "Seleziona un oggetto",
+      "enter_restricted_addresses": "Inserisci indirizzi con restrizioni",
+      "restricted_addresses": "Indirizzi limitati",
+      "restricted_object": "Oggetto limitato",
+      "no_object": "Nessun oggetto",
+      "port_forwards_for_destination_name": "Port forward per la destinazione '{name}'",
+      "save_port_forward": "Salva port forward",
+      "destination_object": "Oggetto di destinazione"
     },
     "routes": {
       "route_type": "Tipo di rotta",
@@ -1479,7 +1515,6 @@
       "regenerate_certificate": "Rigenera certificato",
       "not_connected": "Non connesso",
       "username": "Nome utente",
-      "all_connections": "Tutte le connessioni",
       "expired": "Scaduto",
       "connected": "Connesso",
       "renew_certificate": "Rinnova certificato",
@@ -1517,7 +1552,6 @@
       "edit_user_database": "Modifica database utenti",
       "certificate_expiration_days": "Scadenza certificato (giorni)",
       "account_edited": "Account modificato",
-      "any_expiration": "Qualsiasi scadenza",
       "certificate_expired": "Certificato scaduto",
       "username_password_certificate": "Utente, password e certificato",
       "certificate_expired_message": "Questo account ha un certificato scaduto",
@@ -1539,7 +1573,13 @@
       "title": "OpenVPN Road Warrior",
       "public_ip_hostname_unit": "Indirizzo IP/hostname pubblico di questa unità",
       "add_public_ip_host": "Aggiungi indirizzo IP/host",
-      "vpn_network_tooltip": "La rete VPN è una rete virtuale utilizzata dai client; selezionare una rete non utilizzata in altre configurazioni del firewall."
+      "vpn_network_tooltip": "La rete VPN è una rete virtuale utilizzata dai client; selezionare una rete non utilizzata in altre configurazioni del firewall.",
+      "dynamic_range_ip_start_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "dynamic_range_ip_end": "Fine intervallo IP dinamico",
+      "reserved_ip_helper": "Riserva un indirizzo IP al di fuori dell'intervallo {range}",
+      "dynamic_range_ip_message": "È possibile riservare indirizzi IP ad account OpenVPN al di fuori dell'intervallo seguente.",
+      "dynamic_range_ip": "Intervallo IP dinamico",
+      "dynamic_range_ip_start": "Inizio intervallo IP dinamico"
     },
     "qos": {
       "interface": "Interfaccia",
@@ -1881,7 +1921,13 @@
       "filter_domain_sets": "Filtra domain set",
       "host_set_already_exists": "Host set già esistente",
       "domain_set_already_exists": "Domain set già esistente",
-      "delete_domain_set": "Elimina domain set"
+      "delete_domain_set": "Elimina domain set",
+      "type_objects_host": "Host set",
+      "type_objects_domain_set": "Domain set",
+      "type_firewall_rule": "Regole del firewall",
+      "type_mwan3_rule": "Regole MultiWAN",
+      "type_firewall_redirect": "Port forward",
+      "database_mwan3": "MultiWAN"
     },
     "user_objects": {
       "title": "Utenti e oggetti"

@@ -614,15 +614,7 @@ watch(
           :label="t('standalone.openvpn_rw.dynamic_range_ip_start')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ifconfig_pool_start'))"
           ref="dynamicRangeIpStartRef"
-        >
-          <template #tooltip>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.openvpn_rw.dynamic_range_ip_start_tooltip') }}
-              </template>
-            </NeTooltip>
-          </template>
-        </NeTextInput>
+        />
         <NeTextInput
           v-model="dynamicRangeIpEnd"
           :label="t('standalone.openvpn_rw.dynamic_range_ip_end')"

@@ -268,7 +268,7 @@ function setRestoreTimer() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="10" />
+    <NeSkeleton v-if="loading" :lines="4" size="lg" />
     <NeInlineNotification
       v-if="!loading && errorPage.notificationTitle"
       class="my-4"

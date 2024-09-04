@@ -57,7 +57,8 @@ const outboundZoneRef = ref()
 const action: Ref<NatRuleAction> = ref('SNAT')
 const rewriteIpAddress = ref('')
 const rewriteIpAddressRef = ref()
-const hostSuggestions = ref<NeComboboxOption[]>([])
+const sourceAddressOptions = ref<NeComboboxOption[]>([])
+const destinationAddressOptions = ref<NeComboboxOption[]>([])
 const errorBag = ref(new MessageBag())
 // contains the first invalid field ref
 const firstErrorRef = ref()
@@ -166,7 +167,7 @@ async function listHostSuggestions() {
 
   try {
     const res = await ubusCall('ns.firewall', 'list-host-suggestions')
-    hostSuggestions.value = res.data.hosts.map((host: RuleHost) => {
+    const hostSuggestions = res.data.hosts.map((host: RuleHost) => {
       const description = `${host.label} (${host.type})`
 
       return {
@@ -175,18 +176,26 @@ async function listHostSuggestions() {
         description
       }
     })
+    sourceAddressOptions.value = hostSuggestions
+
+    const anyAddress = {
+      id: '0.0.0.0/0',
+      label: '0.0.0.0/0',
+      description: t('standalone.nat.any_address')
+    }
+    destinationAddressOptions.value = [anyAddress, ...hostSuggestions]
 
     if (props.currentRule) {
       // editing rule
 
       // check if sourceAddress is in the list of suggestions
-      const sourceAddressFound = hostSuggestions.value.find(
-        (addr) => addr.id === props.currentRule?.src_ip
+      const sourceAddressFound = sourceAddressOptions.value.find(
+        (addr: NeComboboxOption) => addr.id === props.currentRule?.src_ip
       )
 
       if (!sourceAddressFound) {
         // add address to the list of suggestions
-        hostSuggestions.value.push({
+        sourceAddressOptions.value.push({
           id: props.currentRule.src_ip,
           label: props.currentRule.src_ip
         })
@@ -194,13 +203,13 @@ async function listHostSuggestions() {
       sourceAddress.value = props.currentRule.src_ip
 
       // check if destinationAddress is in the list of suggestions
-      const destinationAddressFound = hostSuggestions.value.find(
-        (addr) => addr.id === props.currentRule?.dest_ip
+      const destinationAddressFound = destinationAddressOptions.value.find(
+        (addr: NeComboboxOption) => addr.id === props.currentRule?.dest_ip
       )
 
       if (!destinationAddressFound) {
         // add address to the list of suggestions
-        hostSuggestions.value.push({
+        destinationAddressOptions.value.push({
           id: props.currentRule.dest_ip,
           label: props.currentRule.dest_ip
         })
@@ -369,7 +378,7 @@ async function saveRule() {
           v-model="sourceAddress"
           :disabled="loading.saveRule || loading.listHostSuggestions"
           :label="t('standalone.nat.source_address')"
-          :options="hostSuggestions"
+          :options="sourceAddressOptions"
           :placeholder="
             loading.listHostSuggestions ? t('common.loading') : t('ne_combobox.choose_or_enter')
           "
@@ -411,7 +420,7 @@ async function saveRule() {
           :disabled="loading.saveRule || loading.listHostSuggestions"
           :label="t('standalone.nat.destination_address')"
           :helperText="t('standalone.nat.address_helper')"
-          :options="hostSuggestions"
+          :options="destinationAddressOptions"
           :placeholder="
             loading.listHostSuggestions ? t('common.loading') : t('ne_combobox.choose_or_enter')
           "

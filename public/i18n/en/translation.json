@@ -1864,7 +1864,8 @@
       "rewrite_ip_address": "Rewrite IP address",
       "rewrite_ip": "Rewrite IP",
       "delete_nat_rule": "Delete NAT rule",
-      "confirm_delete_rule": "You are about to delete NAT rule '{name}'"
+      "confirm_delete_rule": "You are about to delete NAT rule '{name}'",
+      "any_address": "Any address"
     },
     "netmap": {
       "title": "NETMAP",

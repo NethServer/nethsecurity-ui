@@ -11,6 +11,7 @@ import HostSets from '@/components/standalone/users_objects/HostSets.vue'
 import DomainSets from '@/components/standalone/users_objects/DomainSets.vue'
 
 export type IpVersion = 'ipv4' | 'ipv6'
+export type IpVersionFilter = 'any' | 'ipv4' | 'ipv6'
 
 const { t } = useI18n()
 

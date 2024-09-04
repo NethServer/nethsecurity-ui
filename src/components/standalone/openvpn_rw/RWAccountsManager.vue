@@ -9,12 +9,12 @@ import {
   NeHeading,
   NeInlineNotification,
   NeEmptyState,
-  NeCombobox,
   NeButton,
   NeSkeleton,
-  type NeComboboxOption,
+  type FilterOption,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeDropdownFilter
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { computed } from 'vue'
@@ -27,6 +27,9 @@ import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 
+type ConnectionFilter = 'all' | 'connected' | 'not_connected'
+type ExpirationFilter = 'all' | 'expired' | 'not_expired'
+
 const props = defineProps<{
   users: RWAccount[]
   server: RWServer
@@ -38,9 +41,9 @@ const emit = defineEmits(['update-users'])
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
 
-const filter = ref('')
-const connectionFilter = ref<'all' | 'connected' | 'not_connected'>('all')
-const expirationFilter = ref<'all' | 'expired' | 'not_expired'>('all')
+const textFilter = ref('')
+const connectionFilter = ref<ConnectionFilter[]>(['all'])
+const expirationFilter = ref<ExpirationFilter[]>(['all'])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -165,10 +168,10 @@ async function downloadQrCode(account: RWAccount) {
   }
 }
 
-const connectionFilterOptions = ref<NeComboboxOption[]>([
+const connectionFilterOptions = ref<FilterOption[]>([
   {
     id: 'all',
-    label: t('standalone.openvpn_rw.all_connections')
+    label: t('common.any')
   },
   {
     id: 'connected',
@@ -180,10 +183,10 @@ const connectionFilterOptions = ref<NeComboboxOption[]>([
   }
 ])
 
-const expirationFilterOptions = ref<NeComboboxOption[]>([
+const expirationFilterOptions = ref<FilterOption[]>([
   {
     id: 'all',
-    label: t('standalone.openvpn_rw.any_expiration')
+    label: t('common.any')
   },
   {
     id: 'expired',
@@ -198,25 +201,31 @@ const expirationFilterOptions = ref<NeComboboxOption[]>([
 const filteredUsers = computed(() => {
   return props.users.filter((user) => {
     let result = true
-    if (filter.value) {
-      result = user.name.includes(filter.value)
+    if (textFilter.value) {
+      result = user.name.includes(textFilter.value)
     }
 
-    if (connectionFilter.value === 'connected') {
+    if (connectionFilter.value[0] === 'connected') {
       result = result && user.connected
-    } else if (connectionFilter.value === 'not_connected') {
+    } else if (connectionFilter.value[0] === 'not_connected') {
       result = result && !user.connected
     }
 
-    if (expirationFilter.value === 'expired') {
+    if (expirationFilter.value[0] === 'expired') {
       result = result && user.expired
-    } else if (expirationFilter.value === 'not_expired') {
+    } else if (expirationFilter.value[0] === 'not_expired') {
       result = result && !user.expired
     }
 
     return result
   })
 })
+
+function clearFilters() {
+  textFilter.value = ''
+  connectionFilter.value = ['all']
+  expirationFilter.value = ['all']
+}
 </script>
 
 <template>
@@ -251,33 +260,32 @@ const filteredUsers = computed(() => {
     </NeEmptyState>
   </template>
   <template v-else>
-    <div class="flex flex-row items-center justify-between">
+    <div
+      class="flex flex-col-reverse items-start justify-between gap-8 xl:flex-row xl:items-center"
+    >
       <div class="flex flex-row gap-x-3">
-        <NeTextInput v-model="filter" placeholder="Filter" />
-        <NeCombobox
-          class="max-w-[12rem]"
-          v-model="connectionFilter"
-          :options="connectionFilterOptions"
-          :optionalLabel="t('common.optional')"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
-        />
-        <NeCombobox
-          class="max-w-[12rem]"
+        <NeTextInput v-model="textFilter" :placeholder="t('common.filter')" />
+        <NeDropdownFilter
           v-model="expirationFilter"
+          kind="radio"
+          :label="t('standalone.openvpn_rw.expiration')"
           :options="expirationFilterOptions"
-          :optionalLabel="t('common.optional')"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
+          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
+          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
         />
+        <NeDropdownFilter
+          v-model="connectionFilter"
+          kind="radio"
+          :label="t('standalone.openvpn_rw.connection')"
+          :options="connectionFilterOptions"
+          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
+          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+        />
+        <NeButton kind="tertiary" @click="clearFilters">
+          {{ t('common.clear_filters') }}
+        </NeButton>
       </div>
-      <NeButton kind="secondary" @click="openCreateEditDrawer()" class="ml-2">
+      <NeButton kind="secondary" @click="openCreateEditDrawer()">
         <template #prefix>
           <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
         </template>

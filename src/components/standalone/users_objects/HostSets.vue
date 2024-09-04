@@ -5,7 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeButton, NeEmptyState, NeInlineNotification, NeTextInput } from '@nethesis/vue-components'
+import {
+  NeButton,
+  NeDropdownFilter,
+  NeEmptyState,
+  NeInlineNotification,
+  NeTextInput,
+  type FilterOption
+} from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -16,6 +23,17 @@ import ObjectUsagesModal from './ObjectUsagesModal.vue'
 import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
 import { useHostSets, type HostSet } from '@/composables/useHostSets'
 import { useObjectStore } from '@/stores/standalone/objects'
+import type { IpVersionFilter } from '@/views/standalone/users_objects/ObjectsView.vue'
+
+type ObjectTypeFilter =
+  | 'host'
+  | 'cidr'
+  | 'range'
+  | 'dhcp_static_lease'
+  | 'dns_record'
+  | 'host_set'
+  | 'vpn_user'
+  | 'domain_set'
 
 const { t } = useI18n()
 const {
@@ -39,15 +57,70 @@ const isShownDeleteHostSetModal = ref(false)
 const isShownUsagesModal = ref(false)
 const isShownCannotDeleteObjectModal = ref(false)
 const textFilter = ref('')
+const objectTypeFilter = ref<ObjectTypeFilter[]>([])
+const ipVersionFilter = ref<IpVersionFilter[]>(['any'])
+
+const objectTypeFilterOptions = ref<FilterOption[]>([
+  {
+    id: 'host',
+    label: t('standalone.objects.subtype_host')
+  },
+  {
+    id: 'cidr',
+    label: t('standalone.objects.subtype_cidr')
+  },
+  {
+    id: 'range',
+    label: t('standalone.objects.subtype_range')
+  },
+  {
+    id: 'dhcp_static_lease',
+    label: t('standalone.objects.subtype_dhcp_static_lease')
+  },
+  {
+    id: 'dns_record',
+    label: t('standalone.objects.subtype_dns_record')
+  },
+  {
+    id: 'host_set',
+    label: t('standalone.objects.subtype_host_set')
+  },
+  {
+    id: 'vpn_user',
+    label: t('standalone.objects.subtype_vpn_user')
+  },
+  {
+    id: 'domain_set',
+    label: t('standalone.objects.subtype_domain_set')
+  }
+])
+
+const ipVersionFilterOptions = ref<FilterOption[]>([
+  {
+    id: 'any',
+    label: t('common.any')
+  },
+  {
+    id: 'ipv4',
+    label: 'IPv4'
+  },
+  {
+    id: 'ipv6',
+    label: 'IPv6'
+  }
+])
 
 const filteredHostSets = computed(() => {
-  if (!textFilter.value) {
-    // no filter
-    return hostSets.value
-  } else {
-    // filter units
-    return hostSets.value.filter((hostSet) => searchStringInHostSet(hostSet, textFilter.value))
-  }
+  return hostSets.value.filter((hostSet) => {
+    const matchesTextFilter = !textFilter.value || searchStringInHostSet(hostSet, textFilter.value)
+    const matchesObjectTypeFilter =
+      !objectTypeFilter.value.length ||
+      objectTypeFilter.value.includes(hostSet.subtype as ObjectTypeFilter)
+    const matchesIpVersionFilter =
+      ipVersionFilter.value[0] == 'any' ||
+      ipVersionFilter.value.includes(hostSet.family as IpVersionFilter)
+    return matchesTextFilter && matchesObjectTypeFilter && matchesIpVersionFilter
+  })
 })
 
 onMounted(() => {
@@ -86,6 +159,12 @@ function showUsagesModal(hostSet: HostSet) {
   currentUsageIds.value = hostSet.matches || []
   currentHostSetName.value = hostSet.name
   isShownUsagesModal.value = true
+}
+
+function clearFilters() {
+  textFilter.value = ''
+  objectTypeFilter.value = []
+  ipVersionFilter.value = ['any']
 }
 </script>
 
@@ -131,12 +210,24 @@ function showUsagesModal(hostSet: HostSet) {
           :disabled="loadingListHostSets"
           class="max-w-xs"
         />
-        <NeButton
-          kind="tertiary"
-          @click="textFilter = ''"
-          :disabled="loadingListHostSets || !textFilter"
-        >
-          {{ t('common.clear_filter') }}
+        <NeDropdownFilter
+          v-model="objectTypeFilter"
+          kind="checkbox"
+          :label="t('standalone.objects.type')"
+          :options="objectTypeFilterOptions"
+          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
+          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+        />
+        <NeDropdownFilter
+          v-model="ipVersionFilter"
+          kind="radio"
+          :label="t('standalone.objects.ip_version')"
+          :options="ipVersionFilterOptions"
+          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
+          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+        />
+        <NeButton kind="tertiary" @click="clearFilters" :disabled="loadingListHostSets">
+          {{ t('common.clear_filters') }}
         </NeButton>
       </div>
       <!-- empty state -->
@@ -163,13 +254,11 @@ function showUsagesModal(hostSet: HostSet) {
       <NeEmptyState
         v-else-if="!filteredHostSets.length && !loadingListHostSets"
         :title="t('standalone.objects.no_hosts_found')"
-        :description="t('common.try_changing_search_filter')"
+        :description="t('common.try_changing_search_filters')"
         :icon="['fas', 'circle-info']"
         class="mt-4"
       >
-        <NeButton kind="tertiary" @click="textFilter = ''">
-          {{ t('common.clear_filter') }}</NeButton
-        >
+        <NeButton kind="tertiary" @click="clearFilters"> {{ t('common.clear_filters') }}</NeButton>
       </NeEmptyState>
       <!-- host sets table -->
       <HostSetsTable

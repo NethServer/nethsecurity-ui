@@ -27,6 +27,13 @@ and that's all you need, if build passes you'll find the build in `./dist`, plac
 
 Alternatively, you can fetch the latests builds from the "Artifacts" section of the [GitHub builds](https://github.com/NethServer/nethsecurity-ui/actions/workflows/build.yml).
 
+## Release
+
+Release is a process handled automatically by release please, ran by GitHub Actions.
+A PR that writes the changelog and bumps the version is awaiting to be merged at every commit on main.
+Once merged, the release will be automatically created. To fill the release notes, please refer to
+the [contributing guide](CONTRIBUTING.md).
+
 ## License
 
 All the repo is licensed under [GPL 3.0 or later](LICENSE) license.

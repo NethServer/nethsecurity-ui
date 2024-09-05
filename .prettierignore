@@ -31,3 +31,5 @@ coverage
 .env*
 !.env.production
 !.env.development.sample
+
+CHANGELOG.md

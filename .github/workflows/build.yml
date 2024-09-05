@@ -12,11 +12,11 @@ jobs:
     name: CI/CD
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           ./build.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         id: dist-artifact
         with:
           name: dist-${{ github.sha }}

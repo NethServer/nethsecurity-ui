@@ -181,16 +181,16 @@ async function duplicatePortForward(item: PortForward) {
     cleanError()
     let payload: CreateEditPortForwardPayload = {
       dest_ip: item.dest_ip,
-      ns_dst: item.ns_dst,
+      ns_dst: item.ns_dst || '',
       proto: item.protocol,
       src_dport: item.source_port,
-      src_dip: item.wan,
+      src_dip: item.wan === 'any' ? '' : item.wan,
       dest_port: item.destination_port,
       name: `${item.name} (${t('standalone.port_forward.copy')})`,
       enabled: item.enabled ? '1' : '0',
       log: item.log ? '1' : '0',
       restrict: item.restrict,
-      ns_src: item.ns_src,
+      ns_src: item.ns_src || '',
       reflection: item.reflection ? '1' : '0',
       reflection_zone: item.reflection_zone,
       dest: item.dest

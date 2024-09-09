@@ -32,6 +32,7 @@ interface UnitInfo {
   unit_id: string
   unit_name: string
   version: string
+  api_version: string
 }
 
 interface UnitVpnData {

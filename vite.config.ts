@@ -12,6 +12,7 @@ export default defineConfig({
     }
   },
   define: {
-    UI_VERSION: process.env.npm_package_version
+    UI_VERSION: JSON.stringify(process.env.npm_package_version),
+    REQUIRED_API_VERSION: JSON.stringify(process.env.npm_package_config_requiredApiVersion)
   }
 })

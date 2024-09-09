@@ -2,7 +2,7 @@
   "name": "nethsecurity-ui",
   "version": "1.1.0",
   "config": {
-    "requiredApiVersion": "^1.0.0"
+    "requiredApiVersion": "~1.0.0"
   },
   "private": true,
   "scripts": {
@@ -67,6 +67,7 @@
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.4.1",
+    "semver": "^7.6.3",
     "tailwindcss": "^3.3.2",
     "typescript": "~5.0.4",
     "vite": "^4.3.5",

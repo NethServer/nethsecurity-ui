@@ -6,32 +6,34 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
+  byteFormat1024,
+  deleteFromStorage,
+  formatDateLoc,
+  getAxiosErrorMessage,
+  getPreference,
   NeButton,
   NeDropdown,
   NeInlineNotification,
   NeLink,
-  NeTooltip,
+  NeModal,
+  NePaginator,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
-  getAxiosErrorMessage,
-  getPreference,
+  NeTooltip,
   savePreference,
-  byteFormat1024,
-  formatDateLoc,
-  deleteFromStorage,
   useItemPagination
 } from '@nethesis/vue-components'
-import { useUnitsStore, type Unit } from '@/stores/controller/units'
+import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
 import router from '@/router'
-import { onMounted, ref, type PropType } from 'vue'
+import { onMounted, type PropType, ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
+import { outside, satisfies } from 'semver'
 
 const props = defineProps({
   filteredUnits: {
@@ -54,6 +56,9 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredUn
 const hideOpenUnitPopupsTooltip = ref(false)
 const currentUnit = ref<Unit>()
 const isShownRemoveUnitModal = ref(false)
+const loadingOpenUnit = ref(false)
+const showObsoleteApiModal = ref(false)
+const showGreaterApiModal = ref(false)
 
 let error = ref({
   openUnit: ''
@@ -63,16 +68,38 @@ onMounted(() => {
   hideOpenUnitPopupsTooltip.value = getPreference('hideOpenUnitPopupsTooltip', loginStore.username)
 })
 
-async function openUnit(unitId: string) {
+async function openUnit(unit: Unit, versionCheck = true) {
   error.value.openUnit = ''
+  currentUnit.value = unit
+  loadingOpenUnit.value = true
 
   try {
-    await unitsStore.checkUnitToken(unitId)
-    const routeData = router.resolve({ path: `/controller/manage/${unitId}/dashboard` })
-    window.open(routeData.href, '_blank')
+    await unitsStore.getUnitInfo(currentUnit.value.id)
+    await unitsStore.getUnits()
+    // Find the now updated unit, as the currentUnit might have changed
+    currentUnit.value = unitsStore.units.find((u) => u.id == unit.id)!
+    // Logic on which message is shown is inside the ObsoleteApiModal component
+    let version = currentUnit.value?.info.api_version
+    if (version == '') {
+      version = '0.0.0'
+    }
+    if (versionCheck && !satisfies(version, REQUIRED_API_VERSION)) {
+      if (outside(version, REQUIRED_API_VERSION, '>')) {
+        showGreaterApiModal.value = true
+      } else {
+        showObsoleteApiModal.value = true
+      }
+    } else {
+      await unitsStore.checkUnitToken(unit.id)
+      const routeData = router.resolve({ path: `/controller/manage/${unit.id}/dashboard` })
+      window.open(routeData.href, '_blank')
+      showGreaterApiModal.value = false
+    }
   } catch (err: any) {
     console.error(err)
     error.value.openUnit = t(getAxiosErrorMessage(err))
+  } finally {
+    loadingOpenUnit.value = false
   }
 }
 
@@ -393,8 +420,10 @@ function showRemoveUnitModal(unit: Unit) {
               <template v-if="item.connected">
                 <NeButton
                   v-if="hideOpenUnitPopupsTooltip"
+                  :disabled="loadingOpenUnit && currentUnit?.id == item.id"
+                  :loading="loadingOpenUnit && currentUnit?.id == item.id"
                   kind="tertiary"
-                  @click="openUnit(item.id)"
+                  @click="openUnit(item)"
                   class="shrink-0"
                 >
                   <template #prefix>
@@ -469,5 +498,32 @@ function showRemoveUnitModal(unit: Unit) {
       @close="isShownRemoveUnitModal = false"
       @reloadData="emit('reloadData')"
     />
+    <!-- Modal that forbids opening units with obsolete API -->
+    <NeModal
+      :primaryLabel="t('common.close')"
+      :closeAriaLabel="t('common.close')"
+      :title="t('controller.units.cannot_open_unit')"
+      :visible="showObsoleteApiModal"
+      kind="info"
+      @close="showObsoleteApiModal = false"
+      @primaryClick="showObsoleteApiModal = false"
+    >
+      {{
+        t('controller.units.cannot_open_unit_description', { name: currentUnit?.info.unit_name })
+      }}
+    </NeModal>
+    <!-- Modal that shows a warning if the API version is newer than the required one -->
+    <NeModal
+      :primaryLabel="t('controller.units.open_anyway')"
+      :cancelLabel="t('common.close')"
+      :closeAriaLabel="t('common.close')"
+      :title="t('controller.units.warning_open_unit')"
+      :visible="showGreaterApiModal"
+      kind="warning"
+      @close="showGreaterApiModal = false"
+      @primaryClick="openUnit(currentUnit!, false)"
+    >
+      {{ t('controller.units.warning_open_unit_description') }}
+    </NeModal>
   </div>
 </template>

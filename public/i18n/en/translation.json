@@ -2045,7 +2045,12 @@
       "num_units_left_tooltip": "You have configured {num} of {max} units. Upgrade to a subscription plan to manage more units.",
       "sync_unit_info": "Sync unit info",
       "syncing_data": "Syncing data...",
-      "syncing_data_description": "Unit data hasn't been synced yet. You can do it now by clicking the three dots menu and then '@:controller.units.sync_unit_info '."
+      "syncing_data_description": "Unit data hasn't been synced yet. You can do it now by clicking the three dots menu and then '@:controller.units.sync_unit_info '.",
+      "cannot_open_unit": "Cannot open unit",
+      "cannot_open_unit_description": "The unit {name} must be updated before opening it. Access the unit UI directly and go to System > Updates page.",
+      "open_anyway": "Open anyway",
+      "warning_open_unit": "Controller is not up-to-date",
+      "warning_open_unit_description": "It appears that the controller is not up-to-date. It's recommended to update the controller instance on your NethServer 8 cluster before opening this unit to avoid compatibility issues."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

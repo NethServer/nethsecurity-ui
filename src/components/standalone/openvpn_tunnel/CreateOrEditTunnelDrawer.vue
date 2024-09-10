@@ -539,7 +539,7 @@ async function createOrEditTunnel() {
                   : {})
               }
             : {}),
-          dev_type: mode.value == 'bridged' ? 'tun' : 'tap',
+          dev_type: mode.value == 'bridged' ? 'tap' : 'tun',
           remote: remoteHosts.value,
           route: remoteNetworks.value.filter(Boolean)
         }

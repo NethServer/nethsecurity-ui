@@ -443,7 +443,7 @@ function showRemoveUnitModal(unit: Unit) {
                   class="shrink-0"
                 >
                   <template #trigger>
-                    <NeButton kind="tertiary" @click="openUnit(item.id)">
+                    <NeButton kind="tertiary" @click="openUnit(item)">
                       <template #prefix>
                         <font-awesome-icon
                           :icon="['fas', 'arrow-up-right-from-square']"

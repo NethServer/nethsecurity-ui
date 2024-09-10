@@ -241,8 +241,8 @@ function resetForm() {
   authMode.value = serverData?.ns_auth_mode ?? 'username_password'
   mode.value = serverData?.dev_type === 'tun' ? 'routed' : 'bridged'
   vpnNetwork.value = serverData?.server ?? ''
-  dynamicRangeIpStart.value = serverData?.ifconfig_pool ? serverData.ifconfig_pool[0] : ''
-  dynamicRangeIpEnd.value = serverData?.ifconfig_pool ? serverData.ifconfig_pool[1] : ''
+  dynamicRangeIpStart.value = serverData?.ifconfig_pool?.length ? serverData.ifconfig_pool[0] : ''
+  dynamicRangeIpEnd.value = serverData?.ifconfig_pool?.length ? serverData.ifconfig_pool[1] : ''
   publicIpOrHostname.value = serverData?.ns_public_ip ?? []
   protocol.value = serverData?.proto ?? 'udp'
   port.value = serverData?.port ?? ''

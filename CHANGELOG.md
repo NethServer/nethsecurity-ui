@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/NethServer/nethsecurity-ui/compare/1.2.0...1.2.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* leases table pagination ([#351](https://github.com/NethServer/nethsecurity-ui/issues/351)) ([953f36c](https://github.com/NethServer/nethsecurity-ui/commit/953f36cbaa0023ee00fff583d3de52608c1752b6))
+
 ## [1.2.0](https://github.com/NethServer/nethsecurity-ui/compare/v1.1.0...v1.2.0) (2024-09-09)
 
 

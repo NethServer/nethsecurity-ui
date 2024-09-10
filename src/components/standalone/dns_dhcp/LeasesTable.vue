@@ -19,6 +19,7 @@ import {
 } from '@nethesis/vue-components'
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
+import { ref } from 'vue'
 
 const { t } = useI18n()
 
@@ -29,8 +30,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['lease-delete', 'lease-edit', 'create-static-lease-from-dynamic'])
 
-const { currentPage, pageSize, paginatedItems } = useItemPagination(() => props.leases, {
-  itemsPerPage: 10
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(() => props.leases, {
+  itemsPerPage: pageSize
 })
 
 function getDropdownItems(item: StaticLease) {

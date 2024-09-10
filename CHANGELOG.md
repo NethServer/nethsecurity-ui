@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/NethServer/nethsecurity-ui/compare/1.2.1...1.2.2) (2024-09-10)
+
+
+### Bug Fixes
+
+* **controller:** fixed issue with opening unit with tooltip available ([#355](https://github.com/NethServer/nethsecurity-ui/issues/355)) ([4bf864a](https://github.com/NethServer/nethsecurity-ui/commit/4bf864ace4d5a07bda2fa923ec3388f98cbe8483))
+* openvpn rw ip pool ([#354](https://github.com/NethServer/nethsecurity-ui/issues/354)) ([b1e2607](https://github.com/NethServer/nethsecurity-ui/commit/b1e2607aa66c27bb3c7eec9ea06e91194879baab))
+
 ## [1.2.1](https://github.com/NethServer/nethsecurity-ui/compare/1.2.0...1.2.1) (2024-09-10)
 
 

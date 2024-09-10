@@ -1,0 +1,4 @@
+{
+  "include-v-in-tag": false,
+  "release-type": "node"
+}

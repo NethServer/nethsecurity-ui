@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/NethServer/nethsecurity-ui/compare/1.2.2...1.3.0) (2024-09-11)
+
+
+### Features
+
+* netmap ui ([#352](https://github.com/NethServer/nethsecurity-ui/issues/352)) ([2117b27](https://github.com/NethServer/nethsecurity-ui/commit/2117b27791c835eb55df5eb281f8760ac3ae541e))
+
+
+### Bug Fixes
+
+* **openvpn:** solved wrong mode when editing client tunnel ([#357](https://github.com/NethServer/nethsecurity-ui/issues/357)) ([6ec1700](https://github.com/NethServer/nethsecurity-ui/commit/6ec1700c82079142407a58f72559c2057a15fa96))
+
 ## [1.2.2](https://github.com/NethServer/nethsecurity-ui/compare/1.2.1...1.2.2) (2024-09-10)
 
 

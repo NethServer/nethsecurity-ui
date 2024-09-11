@@ -355,7 +355,9 @@
     "cannot_delete_backup": "Cannot delete remote backup",
     "end_must_be_greater_then_start": "IP end must be greater than start",
     "start_reserved": "First IP of network is reserved",
-    "cannot_retrieve_object_suggestions": "Cannot retrieve object suggestions"
+    "cannot_retrieve_object_suggestions": "Cannot retrieve object suggestions",
+    "cannot_retrieve_nat_helpers": "Cannot retrieve NAT helpers",
+    "cannot_save_nat_helper": "Cannot save NAT helper"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1864,7 +1866,8 @@
       "rewrite_ip": "Rewrite IP",
       "delete_nat_rule": "Delete NAT rule",
       "confirm_delete_rule": "You are about to delete NAT rule '{name}'",
-      "any_address": "Any address"
+      "any_address": "Any address",
+      "rules_and_netmap": "Rules and NETMAP"
     },
     "netmap": {
       "title": "NETMAP",
@@ -1888,6 +1891,23 @@
       "destination_netmap": "Destination NETMAP",
       "delete_netmap": "Delete NETMAP",
       "confirm_delete_rule": "You are about to delete NETMAP '{name}'"
+    },
+    "nat_helpers": {
+      "title": "NAT helpers",
+      "nat_helpers_description": "NAT helpers are used to automatically modify the payload of specific protocols to allow them to pass through NAT.",
+      "module": "Module",
+      "status": "Status",
+      "loaded_on_kernel": "Loaded on kernel",
+      "loaded": "Loaded",
+      "not_loaded": "Not loaded",
+      "enabled_but_not_loaded_tooltip": "The module is enabled but not loaded on the kernel.",
+      "disabled_but_loaded_tooltip": "This module is disabled but currently loaded on the kernel: you might need to reboot the unit to unload it.",
+      "filter_nat_helpers": "Filter NAT helpers",
+      "no_nat_helpers_found": "No NAT helpers found",
+      "edit_nat_helper": "Edit NAT helper",
+      "reboot_to_apply_changes": "Reboot to apply NAT helper changes",
+      "reboot_to_apply_changes_description": "Reboot the unit to apply the changes to module '{module}'",
+      "nat_helper_name_saved": "NAT helper '{module}' saved"
     },
     "conntrack": {
       "title": "Connections",

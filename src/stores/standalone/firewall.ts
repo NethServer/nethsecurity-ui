@@ -100,6 +100,13 @@ export interface NetmapDevice {
 
 export type NetmapType = 'src' | 'dest'
 
+export interface NatHelper {
+  name: string
+  enabled: boolean
+  loaded: boolean
+  params?: Record<string, string>
+}
+
 export interface RuleService {
   id: string
   proto: string[]

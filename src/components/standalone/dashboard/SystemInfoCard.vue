@@ -169,7 +169,7 @@ async function getUpdatesStatus() {
       <div>{{ systemInfo?.hardware || '-' }}</div>
     </div>
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
-      <div class="py-2">
+      <div class="py-3">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.hostname') }}</span>
         <div class="inline-flex items-center gap-1">
           <span>{{ systemInfo?.hostname || '-' }}</span>
@@ -198,7 +198,7 @@ async function getUpdatesStatus() {
           </NeTooltip>
         </div>
       </div>
-      <div class="py-2">
+      <div class="py-3">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.operating_system') }}</span>
         <div class="inline-flex items-center gap-2">
           <span>{{ systemInfo?.version?.release || '-' }}</span>
@@ -208,11 +208,11 @@ async function getUpdatesStatus() {
           </NeLink>
         </div>
       </div>
-      <div class="py-2">
+      <div class="py-3">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.uptime') }}</span>
         <span>{{ systemInfo?.uptime ? formatDurationLoc(systemInfo.uptime) : '-' }}</span>
       </div>
-      <div class="py-2">
+      <div class="py-3">
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.load_minutes') }}</span>
         <span>{{
           systemInfo?.load
@@ -223,7 +223,7 @@ async function getUpdatesStatus() {
         }}</span>
       </div>
       <!-- memory and storage usage -->
-      <div class="space-y-3 py-2">
+      <div class="space-y-4 pt-4">
         <div>
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.memory_usage') }}</span>
           <span>{{

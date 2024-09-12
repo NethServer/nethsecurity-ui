@@ -166,19 +166,19 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/LogsView.vue')
   },
   {
-    path: 'report',
-    name: 'Report',
-    component: () => import('../views/standalone/ReportView.vue')
+    path: 'monitoring/real-time-monitoring',
+    name: 'RealTimeMonitoring',
+    component: () => import('../views/standalone/monitoring/RealTimeMonitoringView.vue')
+  },
+  {
+    path: 'monitoring/ping-latency-monitor',
+    name: 'PingLatencyMonitor',
+    component: () => import('../views/standalone/monitoring/PingLatencyMonitorView.vue')
   },
   {
     path: 'account',
     name: 'Account',
     component: () => import('../views/standalone/AccountView.vue')
-  },
-  {
-    path: 'report',
-    name: 'Report',
-    component: () => import('../views/standalone/ReportView.vue')
   }
 ]
 

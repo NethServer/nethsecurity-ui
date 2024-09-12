@@ -78,6 +78,25 @@ const options: any = {
     legend: {
       display: false
     }
+  },
+  animation: {
+    duration: 1,
+    onComplete: function ({ chart }: any) {
+      const ctx = chart.ctx
+
+      chart.config.data.datasets.forEach(function (dataset: any, i: number) {
+        const meta = chart.getDatasetMeta(i)
+
+        meta.data.forEach(function (bar: any, index: number) {
+          const data = dataset.data[index]
+
+          if (data) {
+            ctx.fillStyle = themeStore.isLight ? GRAY_700 : GRAY_200
+            ctx.fillText(byteFormat1024(Number(data)), bar.x + 5, bar.y + 5)
+          }
+        })
+      })
+    }
   }
 }
 
@@ -89,5 +108,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 </script>
 
 <template>
-  <Bar :data="chartData" :options="options" />
+  <div>
+    <Bar :data="chartData" :options="options" />
+  </div>
 </template>

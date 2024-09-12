@@ -11,7 +11,8 @@ import {
   NeInlineNotification,
   NeButton,
   NeSkeleton,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeHeading
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
@@ -105,6 +106,12 @@ function save() {
 
 <template>
   <div>
+    <NeHeading tag="h3" class="mb-7">
+      {{ t('standalone.ping_latency_monitor.title') }}
+    </NeHeading>
+    <p class="mb-6 max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+      {{ t('standalone.ping_latency_monitor.description') }}
+    </p>
     <NeSkeleton v-if="loading" :lines="5" />
     <NeInlineNotification
       v-if="!loading && errorConfiguration.notificationTitle"
@@ -118,18 +125,11 @@ function save() {
       </template>
     </NeInlineNotification>
     <template v-if="!loading && !errorConfiguration.notificationTitle">
-      <div class="flex">
-        <div>
-          <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.report.ping_latency_monitor.description') }}
-          </p>
-        </div>
-      </div>
-      <div class="mt-6 max-w-xl">
+      <div class="max-w-md">
         <NeMultiTextInput
           v-model="formPing.hostList"
-          :title="t('standalone.report.ping_latency_monitor.host_to_monitor')"
-          :add-item-label="t('standalone.report.ping_latency_monitor.add_host')"
+          :title="t('standalone.ping_latency_monitor.host_to_monitor')"
+          :add-item-label="t('standalone.ping_latency_monitor.add_host')"
           :invalid-messages="errorForm.hostList"
           :disable-inputs="saving"
           :disable-add-button="saving"

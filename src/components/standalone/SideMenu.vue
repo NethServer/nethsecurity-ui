@@ -29,7 +29,8 @@ const menuExpanded: any = ref({
   'users-objects': false,
   firewall: false,
   security: false,
-  vpn: false
+  vpn: false,
+  monitoring: false
 })
 
 const navigation: Ref<MenuItem[]> = ref([
@@ -191,8 +192,22 @@ const navigation: Ref<MenuItem[]> = ref([
       }
     ]
   },
-  { name: t('standalone.logs.title'), to: 'logs', icon: 'list' },
-  { name: t('standalone.report.title'), to: 'report', icon: 'chart-line' }
+  {
+    name: t('standalone.monitoring.title'),
+    to: 'monitoring',
+    icon: 'chart-line',
+    children: [
+      {
+        name: t('standalone.real_time_monitor.title'),
+        to: 'monitoring/real-time-monitoring'
+      },
+      {
+        name: t('standalone.ping_latency_monitor.title'),
+        to: 'monitoring/ping-latency-monitor'
+      }
+    ]
+  },
+  { name: t('standalone.logs.title'), to: 'logs', icon: 'list' }
 ])
 
 onMounted(() => {

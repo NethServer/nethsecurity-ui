@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/NethServer/nethsecurity-ui/compare/1.3.0...1.3.1) (2024-09-12)
+
+
+### Bug Fixes
+
+* minor improvements to nat helpers ui ([#361](https://github.com/NethServer/nethsecurity-ui/issues/361)) ([7c6fbf4](https://github.com/NethServer/nethsecurity-ui/commit/7c6fbf40c752b7d16f50c90dab2a2ede86589398))
+* **openvpn:** fixed default mode in tunnel creation ([#359](https://github.com/NethServer/nethsecurity-ui/issues/359)) ([e63c8e5](https://github.com/NethServer/nethsecurity-ui/commit/e63c8e5afce1de8275d32bb340e828e940501af1))
+
 ## [1.3.0](https://github.com/NethServer/nethsecurity-ui/compare/1.2.2...1.3.0) (2024-09-11)
 
 

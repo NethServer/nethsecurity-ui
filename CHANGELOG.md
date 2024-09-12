@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/NethServer/nethsecurity-ui/compare/1.3.1...1.3.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* improve warning for modules disabled but loaded ([#362](https://github.com/NethServer/nethsecurity-ui/issues/362)) ([1d33296](https://github.com/NethServer/nethsecurity-ui/commit/1d332963323409b98d3af64729a569f9e14c6ec1))
+
 ## [1.3.1](https://github.com/NethServer/nethsecurity-ui/compare/1.3.0...1.3.1) (2024-09-12)
 
 

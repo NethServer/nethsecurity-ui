@@ -10,8 +10,7 @@ import {
   NeHeading,
   NeInlineNotification,
   NeTextInput,
-  getAxiosErrorMessage,
-  sortByProperty
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { type NatHelper } from '@/stores/standalone/firewall'
@@ -63,9 +62,7 @@ async function listNatHelpers() {
 
   try {
     const res = await ubusCall('ns.nathelpers', 'list-nat-helpers')
-    const natHelpersList = res.data.values
-    // sort by status
-    natHelpers.value = natHelpersList.sort(sortByProperty('enabled')).reverse()
+    natHelpers.value = res.data.values
   } catch (err: any) {
     console.error(err)
     error.value.listNatHelpers = t(getAxiosErrorMessage(err))

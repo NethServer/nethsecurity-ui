@@ -95,7 +95,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
           <div class="flex items-center gap-2">
             <font-awesome-icon
               :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
-              class="h-4 w-4"
+              :class="['h-4 w-4', { 'text-green-600 dark:text-green-400': item.enabled }]"
               aria-hidden="true"
             />
             {{ item.enabled ? t('common.enabled') : t('common.disabled') }}

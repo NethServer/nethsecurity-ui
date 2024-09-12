@@ -116,12 +116,12 @@ const compressionOptions = [
 
 const modeOptions = [
   {
-    id: 'bridged',
-    label: t('standalone.openvpn_rw.bridged')
-  },
-  {
     id: 'routed',
     label: t('standalone.openvpn_rw.routed')
+  },
+  {
+    id: 'bridged',
+    label: t('standalone.openvpn_rw.bridged')
   }
 ]
 

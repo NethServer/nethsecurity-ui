@@ -176,12 +176,12 @@ const authenticationOptions = [
 
 const modeOptions = [
   {
-    id: 'bridged',
-    label: t('standalone.openvpn_tunnel.bridged')
-  },
-  {
     id: 'routed',
     label: t('standalone.openvpn_tunnel.routed')
+  },
+  {
+    id: 'bridged',
+    label: t('standalone.openvpn_tunnel.bridged')
   }
 ]
 
@@ -329,7 +329,7 @@ async function resetForm() {
       username.value = ''
       password.value = ''
       certificate.value = ''
-      mode.value = 'bridged'
+      mode.value = 'routed'
     }
 
     try {

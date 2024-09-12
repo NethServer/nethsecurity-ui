@@ -110,8 +110,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
                   : t('standalone.nat_helpers.not_loaded')
               }}
             </span>
-            <!-- enabled/loaded inconsistency warning -->
-            <NeTooltip v-if="(item.enabled && !item.loaded) || (!item.enabled && item.loaded)">
+            <!-- module enabled but not loaded warning -->
+            <NeTooltip v-if="item.enabled && !item.loaded">
               <template #trigger>
                 <font-awesome-icon
                   :icon="['fas', 'triangle-exclamation']"
@@ -120,11 +120,15 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
               </template>
               <template #content>
                 <p>
-                  {{
-                    item.enabled && !item.loaded
-                      ? t('standalone.nat_helpers.enabled_but_not_loaded_tooltip')
-                      : t('standalone.nat_helpers.disabled_but_loaded_tooltip')
-                  }}
+                  {{ t('standalone.nat_helpers.enabled_but_not_loaded_tooltip') }}
+                </p>
+              </template>
+            </NeTooltip>
+            <!-- module disabled but loaded warning -->
+            <NeTooltip v-else-if="!item.enabled && item.loaded">
+              <template #content>
+                <p>
+                  {{ t('standalone.nat_helpers.disabled_but_loaded_tooltip') }}
                 </p>
               </template>
             </NeTooltip>

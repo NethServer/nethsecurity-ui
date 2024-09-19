@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/NethServer/nethsecurity-ui/compare/1.3.2...1.3.3) (2024-09-19)
+
+
+### Bug Fixes
+
+* **controller:** parsing semver when connecting to unit ([#366](https://github.com/NethServer/nethsecurity-ui/issues/366)) ([474d24d](https://github.com/NethServer/nethsecurity-ui/commit/474d24dae4689b451e5821c192c6d6c3298d3634))
+
 ## [1.3.2](https://github.com/NethServer/nethsecurity-ui/compare/1.3.1...1.3.2) (2024-09-12)
 
 

@@ -33,7 +33,7 @@ import router from '@/router'
 import { onMounted, type PropType, ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
-import { outside, satisfies } from 'semver'
+import { coerce, outside, satisfies } from 'semver'
 
 const props = defineProps({
   filteredUnits: {
@@ -79,9 +79,9 @@ async function openUnit(unit: Unit, versionCheck = true) {
     // Find the now updated unit, as the currentUnit might have changed
     currentUnit.value = unitsStore.units.find((u) => u.id == unit.id)!
     // Logic on which message is shown is inside the ObsoleteApiModal component
-    let version = currentUnit.value?.info.api_version
-    if (version == '') {
-      version = '0.0.0'
+    let version = coerce(currentUnit.value?.info.api_version)
+    if (version == null) {
+      version = coerce('0.0.0')!
     }
     if (versionCheck && !satisfies(version, REQUIRED_API_VERSION)) {
       if (outside(version, REQUIRED_API_VERSION, '>')) {

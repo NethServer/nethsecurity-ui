@@ -4,14 +4,10 @@
 -->
 
 <script setup lang="ts">
-import { NeCard, NeLink, NeHeading } from '@nethesis/vue-components'
+import { NeLink, NeHeading } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import RealTimeTrafficCard from '@/components/standalone/dashboard/RealTimeTrafficCard.vue'
 import SystemInfoCard from '@/components/standalone/dashboard/SystemInfoCard.vue'
 import ServiceCard from '@/components/standalone/dashboard/ServiceCard.vue'
-import TrafficSummaryChart from '@/components/standalone/dashboard/TrafficSummaryChart.vue'
-import WanTrafficCard from '@/components/standalone/dashboard/WanTrafficCard.vue'
-import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { useRoute } from 'vue-router'
@@ -20,17 +16,6 @@ import InternetConnectionCard from '@/components/standalone/dashboard/InternetCo
 
 const { t } = useI18n()
 const route = useRoute()
-const {
-  clientsLabels,
-  clientsDatasets,
-  protocolsLabels,
-  protocolsDatasets,
-  appsLabels,
-  appsDatasets,
-  loadingTrafficSummary,
-  errorTitle,
-  errorDescription
-} = useTrafficSummary()
 
 function goTo(path: string) {
   router.push(`${getStandaloneRoutePrefix(route)}${path}`)
@@ -131,70 +116,5 @@ function goTo(path: string) {
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />
-    <!-- column spacer (only from 3xl screen) -->
-    <div class="col-span-1 hidden 3xl:block"></div>
-    <WanTrafficCard class="sm:col-span-2 3xl:col-span-3" />
-    <!-- realtime traffic -->
-    <RealTimeTrafficCard class="sm:col-span-2 3xl:col-span-3" />
-    <!-- top hosts -->
-    <NeCard
-      :title="t('standalone.dashboard.today_top_hosts')"
-      :description="
-        clientsDatasets[0]?.data.length
-          ? t('standalone.dashboard.today_top_hosts_description')
-          : t('standalone.dashboard.no_hosts')
-      "
-      :skeletonLines="6"
-      :loading="loadingTrafficSummary"
-      :errorTitle="errorTitle"
-      :errorDescription="errorDescription"
-      class="sm:col-span-2 xl:row-span-2"
-    >
-      <TrafficSummaryChart
-        v-if="clientsDatasets[0]?.data.length"
-        :labels="clientsLabels"
-        :datasets="clientsDatasets"
-      />
-    </NeCard>
-    <!-- top applications -->
-    <NeCard
-      :title="t('standalone.dashboard.today_top_applications')"
-      :description="
-        appsDatasets[0]?.data.length
-          ? t('standalone.dashboard.today_top_applications_description')
-          : t('standalone.dashboard.no_applications')
-      "
-      :skeletonLines="6"
-      :loading="loadingTrafficSummary"
-      :errorTitle="errorTitle"
-      :errorDescription="errorDescription"
-      class="sm:col-span-2 xl:row-span-2"
-    >
-      <TrafficSummaryChart
-        v-if="appsDatasets[0]?.data.length"
-        :labels="appsLabels"
-        :datasets="appsDatasets"
-      />
-    </NeCard>
-    <!-- top protocols -->
-    <NeCard
-      :title="t('standalone.dashboard.today_top_protocols')"
-      :description="
-        protocolsDatasets[0]?.data.length
-          ? t('standalone.dashboard.today_top_protocols_description')
-          : t('standalone.dashboard.no_protocols')
-      "
-      :skeletonLines="6"
-      :loading="loadingTrafficSummary"
-      :errorTitle="errorTitle"
-      :errorDescription="errorDescription"
-      class="sm:col-span-2 xl:row-span-2"
-    >
-      <TrafficSummaryChart
-        v-if="protocolsDatasets[0]?.data.length"
-        :labels="protocolsLabels"
-        :datasets="protocolsDatasets"
-      />
-    </NeCard>
   </div>
 </template>

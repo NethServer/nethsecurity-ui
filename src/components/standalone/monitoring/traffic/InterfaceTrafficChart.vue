@@ -24,16 +24,11 @@ import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
 
 const themeStore = useThemeStore()
 
-const props = defineProps({
-  labels: {
-    type: Array,
-    required: true
-  },
-  datasets: {
-    type: Array,
-    required: true
-  }
-})
+const props = defineProps<{
+  labels: string[]
+  datasets: any[]
+  height?: string
+}>()
 
 const options: any = {
   // turn off animations and data parsing for performance
@@ -104,11 +99,20 @@ const options: any = {
         color: themeStore.isLight ? GRAY_700 : GRAY_200
       }
     }
-  }
+  },
+  responsive: true
 }
 
 const chartData: any = computed(() => {
   return { labels: props.labels, datasets: props.datasets }
+})
+
+const chartStyle = computed(() => {
+  return {
+    height: props.height || '',
+    width: '100%',
+    position: 'relative'
+  }
 })
 
 ChartJS.register(
@@ -124,5 +128,5 @@ ChartJS.register(
 </script>
 
 <template>
-  <Line :data="chartData" :options="options" />
+  <Line :data="chartData" :options="options" :style="chartStyle" />
 </template>

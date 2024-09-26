@@ -1,7 +1,7 @@
 //  Copyright (C) 2024 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { padStart, upperFirst } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
@@ -10,54 +10,46 @@ import { useThemeStore } from '@/stores/theme'
 import { CYAN_500, CYAN_600 } from '@/lib/color'
 
 export function useTrafficSummary() {
-  // random refresh interval between 20 and 30 seconds
-  const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
   const CHART_NUM_ITEMS = 5
   const { t } = useI18n()
   const themeStore = useThemeStore()
-  const intervalId = ref(0)
-  const clientsLabels = ref<any>([])
+  const clientsLabels = ref<string[]>([])
   const clientsDatasets = ref<any>([])
-  const protocolsLabels = ref<any[]>([])
+  const protocolsLabels = ref<string[]>([])
   const protocolsDatasets = ref<any[]>([])
-  const appsLabels = ref<any>([])
+  const remoteHostsLabels = ref<string[]>([])
+  const remoteHostsDatasets = ref<any[]>([])
+  const appsLabels = ref<string[]>([])
   const appsDatasets = ref<any>([])
+  const hoursLabels = ref<string[]>([])
+  const hoursDatasets = ref<any[]>([])
+  const totalTraffic = ref(0)
   const loadingTrafficSummary = ref(false)
-  const errorTitle = ref('')
-  const errorDescription = ref('')
+  const trafficSummaryError = ref('')
+  const trafficSummaryErrorDescription = ref('')
 
   const datasetProps = {
-    label: t('standalone.dashboard.traffic'),
+    label: t('standalone.real_time_monitor.traffic'),
     backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
+    borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
     borderRadius: 6,
-    maxBarThickness: 25
+    maxBarThickness: 25,
+    borderWidth: 1,
+    radius: 0
   }
 
   onMounted(() => {
     getTrafficSummary()
-
-    // periodically reload data
-    intervalId.value = setInterval(getTrafficSummary, REFRESH_INTERVAL)
-  })
-
-  onUnmounted(() => {
-    if (intervalId.value) {
-      clearInterval(intervalId.value)
-    }
   })
 
   async function getTrafficSummary() {
-    errorTitle.value = ''
-    errorDescription.value = ''
+    trafficSummaryError.value = ''
+    trafficSummaryErrorDescription.value = ''
     const today = new Date()
     const year = today.getFullYear()
     const month = today.getMonth() + 1
     const day = today.getDate()
-
-    // show skeleton only the first time
-    if (!intervalId.value) {
-      loadingTrafficSummary.value = true
-    }
+    loadingTrafficSummary.value = true
 
     try {
       const res = await ubusCall('ns.dpireport', 'summary', {
@@ -65,6 +57,7 @@ export function useTrafficSummary() {
         month: padStart(month.toString(), 2, '0'),
         day: day.toString()
       })
+      totalTraffic.value = res.data.total
 
       // protocols chart
 
@@ -125,10 +118,36 @@ export function useTrafficSummary() {
           data: clientsChartData
         }
       ]
+
+      // hosts chart
+
+      remoteHostsLabels.value = res.data.host
+        .slice(0, CHART_NUM_ITEMS)
+        .map((host: any[]) => host[0])
+
+      const hostsChartData = res.data.host.slice(0, CHART_NUM_ITEMS).map((host: any[]) => host[1])
+
+      remoteHostsDatasets.value = [
+        {
+          ...datasetProps,
+          data: hostsChartData
+        }
+      ]
+
+      // hours chart
+
+      hoursLabels.value = res.data.hours.map((host: any[]) => host[0])
+      const hoursChartData = res.data.hours.map((host: any[]) => host[1])
+      hoursDatasets.value = [
+        {
+          ...datasetProps,
+          data: hoursChartData
+        }
+      ]
     } catch (err: any) {
       console.error(err)
-      errorTitle.value = t('error.cannot_retrieve_traffic_summary')
-      errorDescription.value = t(getAxiosErrorMessage(err))
+      trafficSummaryError.value = t('error.cannot_retrieve_traffic_summary')
+      trafficSummaryErrorDescription.value = t(getAxiosErrorMessage(err))
     } finally {
       loadingTrafficSummary.value = false
     }
@@ -141,8 +160,13 @@ export function useTrafficSummary() {
     protocolsDatasets,
     appsLabels,
     appsDatasets,
+    remoteHostsLabels,
+    remoteHostsDatasets,
+    hoursLabels,
+    hoursDatasets,
+    totalTraffic,
     loadingTrafficSummary,
-    errorTitle,
-    errorDescription
+    trafficSummaryError,
+    trafficSummaryErrorDescription
   }
 }

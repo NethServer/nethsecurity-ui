@@ -2,6 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 // Use these color constants only where Tailwind classes cannot be used
+// TODO use Tailwind color variables instead of these constants
 export const CYAN_300 = '#67e8f9'
 export const CYAN_500 = '#06b6d4'
 export const CYAN_600 = '#0891b2'

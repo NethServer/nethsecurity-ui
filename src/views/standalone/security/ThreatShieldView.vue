@@ -10,6 +10,12 @@ import { useTabs } from '@/composables/useTabs'
 import AllowlistTab from '@/components/standalone/security/threat_shield/AllowlistTab.vue'
 import BlocklistTab from '@/components/standalone/security/threat_shield/BlocklistTab.vue'
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
+import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
+
+export type BlockOrAllowAddress = {
+  address: string
+  description: string
+}
 
 const { t } = useI18n()
 
@@ -21,6 +27,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'allowlist',
     label: t('standalone.threat_shield.allowlist')
+  },
+  {
+    name: 'localBlocklist',
+    label: t('standalone.threat_shield.local_blocklist')
   },
   {
     name: 'settings',
@@ -42,6 +52,7 @@ const { tabs, selectedTab } = useTabs([
     />
     <BlocklistTab v-if="selectedTab === 'blocklist'" />
     <AllowlistTab v-if="selectedTab === 'allowlist'" />
+    <LocalBlocklistTab v-if="selectedTab === 'localBlocklist'" />
     <SettingsTab v-if="selectedTab === 'settings'" />
   </div>
 </template>

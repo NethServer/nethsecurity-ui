@@ -16,11 +16,12 @@ import {
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import type { AllowlistAddress } from './AllowlistTab.vue'
+import type { BlockOrAllowAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit?: AllowlistAddress
+  itemToEdit?: BlockOrAllowAddress
+  addressKind: 'block' | 'allow'
 }>()
 
 const { t } = useI18n()
@@ -65,8 +66,13 @@ async function createOrEditAddress() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
   const isEditing = Boolean(props.itemToEdit)
+  let method = ''
 
-  const requestType = isEditing ? 'edit-allowed' : 'add-allowed'
+  if (props.addressKind == 'block') {
+    method = isEditing ? 'edit-blocked' : 'add-blocked'
+  } else {
+    method = isEditing ? 'edit-allowed' : 'add-allowed'
+  }
 
   if (!validate()) {
     return
@@ -74,7 +80,7 @@ async function createOrEditAddress() {
 
   isSavingChanges.value = true
   try {
-    await ubusCall('ns.threatshield', requestType, {
+    await ubusCall('ns.threatshield', method, {
       address: address.value,
       description: description.value
     })
@@ -147,7 +153,11 @@ watch(
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="address"
-        :label="t('standalone.threat_shield.address')"
+        :label="
+          addressKind == 'block'
+            ? t('standalone.threat_shield.blocked_address')
+            : t('standalone.threat_shield.allowed_address')
+        "
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('address'))"
         :disabled="Boolean(itemToEdit)"
       >
@@ -163,6 +173,8 @@ watch(
         v-model="description"
         :label="t('standalone.threat_shield.description')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))"
+        :optional="true"
+        :optional-label="t('common.optional')"
       />
       <hr />
       <div class="flex justify-end">

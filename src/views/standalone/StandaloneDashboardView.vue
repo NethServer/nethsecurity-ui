@@ -13,6 +13,7 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
 import InternetConnectionCard from '@/components/standalone/dashboard/InternetConnectionCard.vue'
+import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIpCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -91,21 +92,7 @@ function goTo(path: string) {
       </template>
     </ServiceCard>
     <!-- threat shield / banIP -->
-    <ServiceCard
-      serviceName="banip"
-      hasStatus
-      :counter="{
-        name: 'threat_shield_ip',
-        label: t('standalone.dashboard.blocked_ips_last_hour')
-      }"
-      :icon="['fas', 'shield']"
-    >
-      <template #title>
-        <NeLink @click="goTo('/security/threat-shield')">
-          {{ t('standalone.dashboard.thread_shield_ip') }}
-        </NeLink>
-      </template>
-    </ServiceCard>
+    <ThreatShieldIpCard />
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"

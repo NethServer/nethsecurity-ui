@@ -11,20 +11,23 @@ import { useI18n } from 'vue-i18n'
 
 defineProps<{
   ovpnConfiguration?: RWServer
+  loading: boolean
 }>()
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <NeCard :title="t('common.status')">
+  <NeCard :title="t('common.status')" :loading="loading" :skeletonLines="2">
     <SimpleStat class="mt-1">
       <div class="flex items-center justify-center gap-2">
         <font-awesome-icon
-          :icon="['fas', ovpnConfiguration?.enabled ? 'circle-check' : 'circle-xmark']"
+          :icon="['fas', ovpnConfiguration?.enabled === '1' ? 'circle-check' : 'circle-xmark']"
           aria-hidden="true"
         />
-        <span>{{ ovpnConfiguration?.enabled ? t('common.enabled') : t('common.disabled') }}</span>
+        <span>{{
+          ovpnConfiguration?.enabled === '1' ? t('common.enabled') : t('common.disabled')
+        }}</span>
       </div>
     </SimpleStat>
   </NeCard>

@@ -82,14 +82,18 @@ const allTunnels = computed(() => {
   return ovpnTunnels.value.concat(ipsecTunnels.value)
 })
 
+const enabledTunnels = computed(() => {
+  return allTunnels.value.filter((tunnel) => tunnel.enabled)
+})
+
 const connectedTunnels = computed(() => {
-  return allTunnels.value.filter((tunnel) => tunnel.connected)
+  return enabledTunnels.value.filter((tunnel) => tunnel.connected)
 })
 
 const tunnelDevices = computed(() => {
   const devices: Record<string, string> = {}
 
-  for (const tunnel of allTunnels.value) {
+  for (const tunnel of enabledTunnels.value) {
     const prefix = tunnel.type === 'ipsec' ? 'ipsec/' : 'openvpn/'
     const tunnelIdWithPrefix = prefix + tunnel.id // e.g. openvpn/ns_mytun
 
@@ -177,6 +181,7 @@ async function listIpsecTunnels() {
     const res = await ubusCall('ns.ipsectunnel', 'list-tunnels')
     ipsecTunnels.value = res.data.tunnels.map((tunnel: any) => {
       tunnel.type = 'ipsec'
+      tunnel.enabled = tunnel.enabled === '1'
       return tunnel
     })
   } catch (err: any) {
@@ -240,7 +245,7 @@ async function listDevices() {
 }
 
 function getTunnelName(tunnelId: string) {
-  const tunnel = allTunnels.value.find((tunnel) => tunnel.id === tunnelId)
+  const tunnel = enabledTunnels.value.find((tunnel) => tunnel.id === tunnelId)
   return tunnel ? tunnel.name : ''
 }
 </script>
@@ -332,7 +337,7 @@ function getTunnelName(tunnelId: string) {
           !loading.listOvpnTunnels &&
           !loading.listIpsecTunnels &&
           !ovpnInstances.length &&
-          !allTunnels.length
+          !enabledTunnels.length
         "
         :title="t('standalone.real_time_monitor.no_vpn_network_configured')"
         :icon="['fas', 'globe']"
@@ -358,6 +363,7 @@ function getTunnelName(tunnelId: string) {
         <!-- server status -->
         <ServerStatusCard
           :ovpnConfiguration="ovpnConfiguration[ovpnInstance]"
+          :loading="!ovpnConfiguration[ovpnInstance]"
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
         />
         <!-- clients traffic by hour -->
@@ -394,7 +400,7 @@ function getTunnelName(tunnelId: string) {
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></TrafficByClientByHourCard>
       </template>
-      <template v-if="allTunnels.length">
+      <template v-if="enabledTunnels.length">
         <!-- site-to-site vpn title -->
         <NeHeading tag="h6" class="col-span-full">
           {{ t('standalone.real_time_monitor.site_to_site_vpn') }}
@@ -405,12 +411,12 @@ function getTunnelName(tunnelId: string) {
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 3xl:col-span-3"
         >
           <SimpleStat class="mt-1">
-            <span>{{ connectedTunnels.length }}/{{ allTunnels.length }}</span>
+            <span>{{ connectedTunnels.length }}/{{ enabledTunnels.length }}</span>
           </SimpleStat>
         </NeCard>
         <!-- configured tunnels -->
         <ConfiguredTunnelsCard
-          :tunnels="allTunnels"
+          :tunnels="enabledTunnels"
           :tunnelDevices="tunnelDevices"
           class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 3xl:col-span-5"
         ></ConfiguredTunnelsCard>

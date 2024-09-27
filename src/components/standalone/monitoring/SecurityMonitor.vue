@@ -114,6 +114,8 @@ async function getMalwareReport() {
 
   try {
     const res = await ubusCall('ns.report', 'tsip-malware-report')
+    malwareCount.value = res.data.malware_count || 0
+    attackCount.value = res.data.attack_count || 0
 
     // blocked packets chart
 

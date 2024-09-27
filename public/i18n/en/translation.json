@@ -2182,7 +2182,11 @@
       "cannot_open_unit_description": "The unit {name} must be updated before opening it. Access the unit UI directly and go to System > Updates page.",
       "open_anyway": "Open anyway",
       "warning_open_unit": "Controller is not up-to-date",
-      "warning_open_unit_description": "It appears that the controller is not up-to-date. It's recommended to update the controller instance on your NethServer 8 cluster before opening this unit to avoid compatibility issues."
+      "warning_open_unit_description": "It appears that the controller is not up-to-date. It's recommended to update the controller instance on your NethServer 8 cluster before opening this unit to avoid compatibility issues.",
+      "scheduled_update": "Update scheduled",
+      "scheduled_update_tooltip": "The unit has been scheduled to install \"{version}\" on the {date}.",
+      "update_available": "Update available",
+      "update_available_tooltip": "Version \"{version}\" is available for download."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

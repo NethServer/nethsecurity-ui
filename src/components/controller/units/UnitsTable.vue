@@ -24,6 +24,7 @@ import {
   NeTableHeadCell,
   NeTableRow,
   NeTooltip,
+  NeBadge,
   savePreference,
   useItemPagination
 } from '@nethesis/vue-components'
@@ -34,6 +35,8 @@ import { onMounted, type PropType, ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 import { coerce, outside, satisfies } from 'semver'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faClock, faWarning } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   filteredUnits: {
@@ -400,9 +403,52 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
           <!-- installed version -->
           <NeTableCell :data-label="t('controller.units.installed_version')">
-            <template v-if="item.info.version">
+            <span v-if="item.info.version" class="flex flex-wrap items-center gap-2">
               <span>{{ item.info.version }}</span>
-            </template>
+              <template v-if="item.info.scheduled_update > 0">
+                <NeTooltip>
+                  <template #trigger>
+                    <NeBadge
+                      :icon="faClock"
+                      :text="t('controller.units.scheduled_update')"
+                      clickable
+                      kind="info"
+                    />
+                  </template>
+                  <template #content>
+                    <div>
+                      {{
+                        t('controller.units.scheduled_update_tooltip', {
+                          version: item.info.version_update,
+                          date: new Date(item.info.scheduled_update * 1000).toLocaleString()
+                        })
+                      }}
+                    </div>
+                  </template>
+                </NeTooltip>
+              </template>
+              <template v-else-if="item.info.version_update">
+                <NeTooltip>
+                  <template #trigger>
+                    <NeBadge
+                      :icon="faWarning"
+                      :text="t('controller.units.update_available')"
+                      clickable
+                      kind="warning"
+                    />
+                  </template>
+                  <template #content>
+                    <div>
+                      {{
+                        t('controller.units.update_available_tooltip', {
+                          version: item.info.version_update
+                        })
+                      }}
+                    </div>
+                  </template>
+                </NeTooltip>
+              </template>
+            </span>
             <template v-else-if="item.connected">
               <div class="space-x-2">
                 <span>{{ t('controller.units.syncing_data') }}</span>

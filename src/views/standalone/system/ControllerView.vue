@@ -5,22 +5,23 @@
 
 <script setup lang="ts">
 import {
-  NeSkeleton,
-  NeHeading,
-  NeTooltip,
-  NeBadge,
-  NeButton,
-  NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
+  NeBadge,
+  NeButton,
+  NeHeading,
+  NeInlineNotification,
+  NeModal,
+  NeSkeleton,
+  NeTextArea,
   NeTextInput,
-  NeTextArea
+  NeToggle,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { NeToggle, NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
 
 type ControllerRegistrationStatus = {
@@ -51,6 +52,7 @@ const status = ref<'connected' | 'unregistered' | 'pending'>('unregistered')
 const statusFetchIntervalId = ref()
 
 const showDisconnectUnitModal = ref(false)
+const showConnectUnitModal = ref(false)
 
 // form fields
 const unitId = ref('')
@@ -159,12 +161,8 @@ function validate() {
 }
 
 async function connectUnit() {
-  clearError()
-
-  if (!validate()) {
-    return
-  }
   isPerformingAction.value = true
+  showConnectUnitModal.value = false
 
   try {
     await ubusCall('ns.plug', 'register', {
@@ -223,6 +221,15 @@ onMounted(() => {
 onUnmounted(() => {
   stopRegistrationStatusFetchInterval()
 })
+
+function promptConnectUnit() {
+  clearError()
+
+  if (!validate()) {
+    return
+  }
+  showConnectUnitModal.value = true
+}
 </script>
 
 <template>
@@ -317,7 +324,7 @@ onUnmounted(() => {
           />
         </div>
         <div v-if="status === 'unregistered'">
-          <NeButton kind="primary" @click="connectUnit" :disabled="isPerformingAction">
+          <NeButton kind="primary" @click="promptConnectUnit" :disabled="isPerformingAction">
             <template #prefix>
               <font-awesome-icon :icon="['fas', 'link']" class="h-4 w-4" aria-hidden="true" />
               {{ t('standalone.controller.connect_unit') }}
@@ -372,5 +379,20 @@ onUnmounted(() => {
         {{ disconnectUnitError.notificationDetails }}
       </template>
     </NeInlineNotification>
+  </NeModal>
+
+  <NeModal
+    :visible="showConnectUnitModal"
+    kind="info"
+    :title="t('standalone.controller.connect_unit')"
+    :primary-label="t('standalone.controller.confirm_and_connect')"
+    :close-aria-label="t('common.close')"
+    @primary-click="connectUnit"
+    @secondary-click="showConnectUnitModal = false"
+    :secondary-label="t('common.cancel')"
+    @close="showConnectUnitModal = false"
+  >
+    <strong>{{ t('standalone.controller.disclaimer') }}: </strong>
+    <p>{{ t('standalone.controller.connect_unit_message') }}</p>
   </NeModal>
 </template>

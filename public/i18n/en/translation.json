@@ -777,7 +777,10 @@
       "vpn_ip_address": "VPN IP address",
       "disconnect": "Disconnect",
       "disconnect_unit_message": "The unit will be disconnected from the controller and will no longer be accessible from the controller itself. Do you want to proceed?",
-      "data_updated_every_seconds": "Data updated every {seconds} seconds"
+      "data_updated_every_seconds": "Data updated every {seconds} seconds",
+      "disclaimer": "Disclaimer",
+      "connect_unit_message": "Unit logs will be transmitted to the Controller for the purposes of storage, monitoring, and analysis of network usage. \nIf you do not wish for this data to leave the device, do not connect to the Controller.",
+      "confirm_and_connect": "Confirm and connect"
     },
     "network": {
       "title": "Network"

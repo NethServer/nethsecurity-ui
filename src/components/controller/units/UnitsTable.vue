@@ -36,7 +36,13 @@ import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 import { coerce, outside, satisfies } from 'semver'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faClock, faWarning } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCalendarXmark,
+  faClock,
+  faCloudArrowUp,
+  faWarning
+} from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
 
 const props = defineProps({
   filteredUnits: {
@@ -45,7 +51,15 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['reloadData', 'openSshModal'])
+// TODO: when dropdown nicely implements icons, remove this with correct imports directly in the component
+library.add(faCloudArrowUp)
+library.add(faCalendarXmark)
+
+const emit = defineEmits<{
+  reloadData: []
+  openSshModal: [unit: Unit]
+  scheduleUpdate: [unit: Unit]
+}>()
 
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
@@ -143,12 +157,35 @@ function getKebabMenuItems(unit: Unit) {
       action: () => copyJoinCode(unit)
     })
   }
+  if (unit.info.version_update != '') {
+    menuItems.push({
+      id: 'scheduleUpdate',
+      label:
+        unit.info.scheduled_update > 0
+          ? t('controller.units.edit_scheduled_update')
+          : t('controller.units.schedule_update'),
+      icon: 'arrows-rotate',
+      iconStyle: 'fas',
+      action: () => emit('scheduleUpdate', unit),
+      disabled: !unit.connected
+    })
+  }
+  if (unit.info.scheduled_update > 0) {
+    menuItems.push({
+      id: 'cancelScheduledUpdate',
+      label: t('controller.units.cancel_scheduled_update'),
+      icon: 'calendar-xmark',
+      iconStyle: 'fas',
+      action: () => {},
+      disabled: !unit.connected
+    })
+  }
   // apply common menu items
   menuItems.push(
     {
       id: 'refreshUnitInfo',
       label: t('controller.units.sync_unit_info'),
-      icon: 'rotate',
+      icon: 'cloud-arrow-up',
       iconStyle: 'fas',
       action: () => refreshUnitInfo(unit),
       disabled: !unit.connected

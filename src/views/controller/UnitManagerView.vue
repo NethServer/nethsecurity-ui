@@ -6,17 +6,17 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
-import { MAX_NO_SUBSCRIPTION_UNITS, useUnitsStore, type Unit } from '@/stores/controller/units'
+import { MAX_NO_SUBSCRIPTION_UNITS, type Unit, useUnitsStore } from '@/stores/controller/units'
 import {
-  NeHeading,
   NeButton,
-  NeEmptyState,
-  NeSkeleton,
-  NeDropdown,
-  NeTextInput,
   NeCard,
-  NeTooltip,
-  NeProgressBar
+  NeDropdown,
+  NeEmptyState,
+  NeHeading,
+  NeProgressBar,
+  NeSkeleton,
+  NeTextInput,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
@@ -24,6 +24,9 @@ import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
 import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
 import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevokeSshKeyDrawer.vue'
 import { useDefaultsStore } from '@/stores/controller/defaults'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDrawer.vue'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -31,6 +34,7 @@ const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
+const notificationStore = useNotificationsStore()
 
 const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
@@ -40,6 +44,8 @@ const isShownOpenSshModal = ref(false)
 const isShownSendOrRevokeSshKeyDrawer = ref(false)
 const currentUnit = ref<Unit>()
 const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
+const unitToUpdate = ref<Unit>()
+const showScheduleUpdate = ref(false)
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -139,6 +145,25 @@ function getBulkActionsKebabMenuItems() {
       action: () => showRevokeSshKeyDrawer()
     }
   ]
+}
+
+function scheduleUnitUpdate(unit: Unit) {
+  unitToUpdate.value = unit
+  showScheduleUpdate.value = true
+}
+
+function hideScheduleUpdate() {
+  showScheduleUpdate.value = false
+  unitToUpdate.value = undefined
+}
+
+async function scheduleUpdateSuccessful() {
+  hideScheduleUpdate()
+  notificationStore.addNotification({
+    kind: 'success',
+    id: 'schedule-unit-update',
+    title: t('controller.units.scheduled_update_success')
+  })
 }
 </script>
 
@@ -288,6 +313,7 @@ function getBulkActionsKebabMenuItems() {
           :filteredUnits="filteredUnits"
           @reloadData="loadData"
           @openSshModal="showOpenSshModal"
+          @scheduleUpdate="scheduleUnitUpdate"
         />
       </template>
     </div>
@@ -311,6 +337,13 @@ function getBulkActionsKebabMenuItems() {
       :isShown="isShownSendOrRevokeSshKeyDrawer"
       :action="sendOrRevokeAction"
       @close="isShownSendOrRevokeSshKeyDrawer = false"
+    />
+
+    <ScheduleUpdateDrawer
+      :is-shown="showScheduleUpdate"
+      :unit="unitToUpdate"
+      @close="hideScheduleUpdate"
+      @success="scheduleUpdateSuccessful"
     />
   </div>
 </template>

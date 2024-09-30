@@ -17,7 +17,7 @@ type UpdateResponse = AxiosResponse<{
 type CheckSystemUpdateResponse = AxiosResponse<{
   currentVersion: string
   lastVersion: string
-  scheduleAt: number
+  scheduledAt: number
 }>
 
 /**
@@ -47,7 +47,7 @@ export function useUpdates() {
   /**
    * Check for image system update
    */
-  function updateUnitImage(unit?: Unit): Promise<CheckSystemUpdateResponse> {
+  function checkUnitImageUpdate(unit?: Unit): Promise<CheckSystemUpdateResponse> {
     if (unit) {
       return ubusCallFromController('ns.update', 'check-system-update', {}, unit.id)
     }
@@ -85,7 +85,7 @@ export function useUpdates() {
   return {
     updatePackageIndex,
     upgradePackages,
-    updateUnitImage,
+    checkUnitImageUpdate,
     upgradeUnitImage,
     scheduleUpgradeUnitImage
   }

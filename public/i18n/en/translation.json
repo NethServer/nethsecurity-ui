@@ -683,7 +683,8 @@
       "automatic_updates_tooltip": "Enable to activate automatic updates. Available only with subscription.",
       "go_to_subscription": "Go to subscription",
       "automatic_updates_enabled_message": "Automatic updates successfully enabled",
-      "automatic_updates_disabled_message": "Automatic updates successfully disabled"
+      "automatic_updates_disabled_message": "Automatic updates successfully disabled",
+      "schedule_update": "Schedule update"
     },
     "storage": {
       "title": "Storage",
@@ -2186,7 +2187,12 @@
       "scheduled_update": "Update scheduled",
       "scheduled_update_tooltip": "The unit has been scheduled to install \"{version}\" on the {date}.",
       "update_available": "Update available",
-      "update_available_tooltip": "Version \"{version}\" is available for download."
+      "update_available_tooltip": "Version \"{version}\" is available for download.",
+      "schedule_update": "Schedule update",
+      "edit_scheduled_update": "Edit scheduled update",
+      "error_fetching_unit_version": "Error fetching unit version",
+      "error_setting_update": "Error sending update command to unit",
+      "scheduled_update_success": "Update scheduled successfully"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

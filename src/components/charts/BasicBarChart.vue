@@ -17,6 +17,7 @@ import { Bar } from 'vue-chartjs'
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
+import { byteFormat1024 } from '@nethesis/vue-components'
 
 const themeStore = useThemeStore()
 
@@ -28,8 +29,9 @@ const props = withDefaults(
     isHorizontal?: boolean
     showLegend?: boolean
     showValuesOnBars?: boolean
+    byteFormat?: boolean
   }>(),
-  { isHorizontal: false, showLegend: false, showValuesOnBars: true }
+  { isHorizontal: false, showLegend: false, showValuesOnBars: true, byteFormat: false }
 )
 
 const options: any = {
@@ -55,6 +57,25 @@ const options: any = {
   plugins: {
     legend: {
       display: props.showLegend
+    },
+    tooltip: {
+      callbacks: {
+        label: function (context: any) {
+          let label = context.dataset.label || ''
+
+          if (label) {
+            label += ': '
+          }
+          if (context.parsed.x !== null) {
+            if (props.byteFormat) {
+              label += byteFormat1024(context.parsed.x)
+            } else {
+              label += context.parsed.x.toLocaleString()
+            }
+          }
+          return label
+        }
+      }
     }
   },
   animation:

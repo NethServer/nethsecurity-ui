@@ -8,12 +8,12 @@ import { useI18n } from 'vue-i18n'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { NeCard, NeEmptyState, NeHeading, byteFormat1024 } from '@nethesis/vue-components'
 import InstantHostTrafficCard from '@/components/standalone/monitoring/traffic/InstantHostTrafficCard.vue'
-import TrafficSummaryChart from '@/components/standalone/monitoring/traffic/TrafficSummaryChart.vue'
 import TrafficByHourChart from './TrafficByHourChart.vue'
 import SimpleStat from '../../charts/SimpleStat.vue'
 import { useTopTalkers } from '@/composables/useTopTalkers'
 import InstantAppTrafficCard from './traffic/InstantAppTrafficCard.vue'
 import InstantProtocolTrafficCard from './traffic/InstantProtocolTrafficCard.vue'
+import BasicPieChart from '@/components/charts/BasicPieChart.vue'
 
 const { t } = useI18n()
 
@@ -92,7 +92,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="protocolsLabels" :datasets="protocolsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="protocolsLabels"
+          :datasets="protocolsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top applications -->
       <NeCard
@@ -109,7 +115,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="appsLabels" :datasets="appsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="appsLabels"
+          :datasets="appsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top remote hosts -->
       <NeCard
@@ -126,7 +138,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="remoteHostsLabels" :datasets="remoteHostsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="remoteHostsLabels"
+          :datasets="remoteHostsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top local hosts -->
       <NeCard
@@ -143,7 +161,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="clientsLabels" :datasets="clientsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="clientsLabels"
+          :datasets="clientsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
 
       <!-- instant traffic title -->

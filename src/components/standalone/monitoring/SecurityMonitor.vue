@@ -236,13 +236,32 @@ async function getAttackReport() {
 
     mostBlockedIpsChartDatasets.value = [
       {
-        label: t('standalone.real_time_monitor.times_blocked'),
-        backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
-        borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
-        borderRadius: 6,
-        maxBarThickness: 25,
-        borderWidth: 1,
-        radius: 0,
+        borderColor: themeStore.isLight ? GRAY_50 : GRAY_900,
+        backgroundColor: themeStore.isLight
+          ? [
+              CYAN_600,
+              INDIGO_600,
+              EMERALD_600,
+              VIOLET_600,
+              AMBER_600,
+              ROSE_600,
+              LIME_600,
+              FUCHSIA_600,
+              CYAN_800,
+              GRAY_500
+            ]
+          : [
+              CYAN_500,
+              INDIGO_500,
+              EMERALD_500,
+              VIOLET_500,
+              AMBER_500,
+              ROSE_500,
+              LIME_500,
+              FUCHSIA_500,
+              CYAN_300,
+              GRAY_400
+            ],
         data: mostBlockedIpAddresses
       }
     ]
@@ -445,12 +464,11 @@ async function getAttackReport() {
             :icon="['fas', 'chart-line']"
             class="bg-white dark:bg-gray-950"
           />
-          <BasicBarChart
+          <BasicPieChart
             v-else
             :labels="mostBlockedIpsChartLabels"
             :datasets="mostBlockedIpsChartDatasets"
-            isHorizontal
-            height="30vh"
+            height="25vh"
           />
         </NeCard>
         <!-- blocked ip addresses per hour -->

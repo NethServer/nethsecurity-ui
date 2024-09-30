@@ -7,7 +7,30 @@ import { padStart, upperFirst } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { useThemeStore } from '@/stores/theme'
-import { CYAN_500, CYAN_600 } from '@/lib/color'
+import {
+  CYAN_500,
+  CYAN_600,
+  GRAY_50,
+  GRAY_900,
+  INDIGO_600,
+  EMERALD_600,
+  VIOLET_600,
+  AMBER_600,
+  ROSE_600,
+  LIME_600,
+  FUCHSIA_600,
+  CYAN_800,
+  GRAY_500,
+  INDIGO_500,
+  EMERALD_500,
+  VIOLET_500,
+  AMBER_500,
+  ROSE_500,
+  LIME_500,
+  FUCHSIA_500,
+  CYAN_300,
+  GRAY_400
+} from '@/lib/color'
 
 export function useTrafficSummary() {
   const CHART_NUM_ITEMS = 5
@@ -28,7 +51,7 @@ export function useTrafficSummary() {
   const trafficSummaryError = ref('')
   const trafficSummaryErrorDescription = ref('')
 
-  const datasetProps = {
+  const barDatasetProps = {
     label: t('standalone.real_time_monitor.traffic'),
     backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
     borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
@@ -36,6 +59,35 @@ export function useTrafficSummary() {
     maxBarThickness: 25,
     borderWidth: 1,
     radius: 0
+  }
+
+  const pieDatasetProps = {
+    borderColor: themeStore.isLight ? GRAY_50 : GRAY_900,
+    backgroundColor: themeStore.isLight
+      ? [
+          CYAN_600,
+          INDIGO_600,
+          EMERALD_600,
+          VIOLET_600,
+          AMBER_600,
+          ROSE_600,
+          LIME_600,
+          FUCHSIA_600,
+          CYAN_800,
+          GRAY_500
+        ]
+      : [
+          CYAN_500,
+          INDIGO_500,
+          EMERALD_500,
+          VIOLET_500,
+          AMBER_500,
+          ROSE_500,
+          LIME_500,
+          FUCHSIA_500,
+          CYAN_300,
+          GRAY_400
+        ]
   }
 
   onMounted(() => {
@@ -71,7 +123,7 @@ export function useTrafficSummary() {
 
       protocolsDatasets.value = [
         {
-          ...datasetProps,
+          ...pieDatasetProps,
           data: protocolsChartData
         }
       ]
@@ -93,7 +145,7 @@ export function useTrafficSummary() {
 
       appsDatasets.value = [
         {
-          ...datasetProps,
+          ...pieDatasetProps,
           data: appsChartData
         }
       ]
@@ -114,7 +166,7 @@ export function useTrafficSummary() {
 
       clientsDatasets.value = [
         {
-          ...datasetProps,
+          ...pieDatasetProps,
           data: clientsChartData
         }
       ]
@@ -129,7 +181,7 @@ export function useTrafficSummary() {
 
       remoteHostsDatasets.value = [
         {
-          ...datasetProps,
+          ...pieDatasetProps,
           data: hostsChartData
         }
       ]
@@ -140,7 +192,7 @@ export function useTrafficSummary() {
       const hoursChartData = res.data.hours.map((host: any[]) => host[1])
       hoursDatasets.value = [
         {
-          ...datasetProps,
+          ...barDatasetProps,
           data: hoursChartData
         }
       ]

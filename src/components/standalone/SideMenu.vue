@@ -36,6 +36,21 @@ const menuExpanded: any = ref({
 const navigation: Ref<MenuItem[]> = ref([
   { name: t('standalone.dashboard.title'), to: 'dashboard', icon: 'house' },
   {
+    name: t('standalone.monitoring.title'),
+    to: 'monitoring',
+    icon: 'chart-line',
+    children: [
+      {
+        name: t('standalone.real_time_monitor.title'),
+        to: 'monitoring/real-time-monitoring'
+      },
+      {
+        name: t('standalone.ping_latency_monitor.title'),
+        to: 'monitoring/ping-latency-monitor'
+      }
+    ]
+  },
+  {
     name: t('standalone.system.title'),
     icon: 'server',
     to: 'system',
@@ -189,21 +204,6 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: t('standalone.ipsec_tunnel.title'),
         to: 'vpn/ipsec-tunnel'
-      }
-    ]
-  },
-  {
-    name: t('standalone.monitoring.title'),
-    to: 'monitoring',
-    icon: 'chart-line',
-    children: [
-      {
-        name: t('standalone.real_time_monitor.title'),
-        to: 'monitoring/real-time-monitoring'
-      },
-      {
-        name: t('standalone.ping_latency_monitor.title'),
-        to: 'monitoring/ping-latency-monitor'
       }
     ]
   },

@@ -11,6 +11,7 @@ import { getAxiosErrorMessage, NeCard } from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TrafficByHourChart from '../TrafficByHourChart.vue'
+import { padStart } from 'lodash-es'
 
 const props = defineProps<{
   ovpnInstance: string
@@ -40,7 +41,12 @@ async function getOvpnTrafficByHour() {
       instance: props.ovpnInstance,
       day: props.day
     })
-    chartLabels.value = res.data.hours.map((data: any[]) => data[0])
+    chartLabels.value = res.data.hours.map((data: any[]) => {
+      // convert hours from UTC to local time
+      const localDate = new Date(`${props.day}T${data[0]}:00:00Z`)
+      const localHours = localDate.getHours()
+      return padStart(localHours.toString(), 2, '0')
+    })
     const chartData = res.data.hours.map((data: any[]) => data[1])
     chartDatasets.value = [
       {

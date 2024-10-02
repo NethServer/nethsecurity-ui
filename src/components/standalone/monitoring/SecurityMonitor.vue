@@ -133,7 +133,7 @@ async function getMalwareReport() {
       }
     ]
 
-    // malware by direction chart
+    // threats by direction chart
 
     malwareByDirectionChartLabels.value = Object.keys(res.data.malware_by_chain)
     const malwareByDirectionChartData = Object.values(res.data.malware_by_chain)
@@ -170,7 +170,7 @@ async function getMalwareReport() {
       }
     ]
 
-    // malware by category chart
+    // threats by category chart
 
     malwareByCategoryChartLabels.value = Object.keys(res.data.malware_by_category)
     const malwareByCategoryChartData = Object.values(res.data.malware_by_category)
@@ -394,9 +394,9 @@ async function getAttackReport() {
             height="25vh"
           />
         </NeCard>
-        <!-- malware by direction -->
+        <!-- threats by direction -->
         <NeCard
-          :title="t('standalone.real_time_monitor.malware_by_direction')"
+          :title="t('standalone.real_time_monitor.threats_by_direction')"
           :skeletonLines="4"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
           :errorTitle="error.getMalwareReport"
@@ -417,9 +417,9 @@ async function getAttackReport() {
             height="25vh"
           />
         </NeCard>
-        <!-- malware by category -->
+        <!-- threats by category -->
         <NeCard
-          :title="t('standalone.real_time_monitor.malware_by_category')"
+          :title="t('standalone.real_time_monitor.threats_by_category')"
           :skeletonLines="4"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
           :errorTitle="error.getMalwareReport"
@@ -474,9 +474,9 @@ async function getAttackReport() {
             height="25vh"
           />
         </NeCard>
-        <!-- brute force attacks -->
+        <!-- most frequently blocked IP addresses -->
         <NeCard
-          :title="t('standalone.real_time_monitor.brute_force_attacks')"
+          :title="t('standalone.real_time_monitor.most_frequently_blocked_ip_addresses')"
           :skeletonLines="5"
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
           :errorTitle="error.getAttackReport"

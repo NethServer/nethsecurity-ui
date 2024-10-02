@@ -35,8 +35,9 @@ const options: any = {
         source: 'auto',
         autoSkip: true,
         color: themeStore.isLight ? GRAY_700 : GRAY_200,
-        callback: function (value: number) {
-          return `${padStart(value.toString(), 2, '0')}:00`
+        callback: function (value: any) {
+          const label = (this as any).getLabelForValue(value)
+          return `${padStart(label.toString(), 2, '0')}:00`
         }
       },
       grid: {
@@ -61,7 +62,7 @@ const options: any = {
       callbacks: {
         // format tooltip title
         title: function (context: any) {
-          return `${padStart(context[0].parsed.x.toString(), 2, '0')}:00`
+          return `${padStart(context[0].label, 2, '0')}:00`
         }
       }
     },

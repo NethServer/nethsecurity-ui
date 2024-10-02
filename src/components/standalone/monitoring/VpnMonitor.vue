@@ -402,7 +402,7 @@ function getTunnelName(tunnelId: string) {
       </template>
       <template v-if="enabledTunnels.length">
         <!-- site-to-site vpn title -->
-        <NeHeading tag="h6" class="col-span-full">
+        <NeHeading tag="h6" class="col-span-full mt-6">
           {{ t('standalone.real_time_monitor.site_to_site_vpn') }}
         </NeHeading>
         <!-- connected tunnels -->

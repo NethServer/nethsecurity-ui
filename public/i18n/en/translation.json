@@ -1814,7 +1814,7 @@
       "applications": "Applications",
       "protocol": "Protocol",
       "protocols": "Protocols",
-      "connections": "Connections",
+      "wans": "WANs",
       "wan_events": "WAN events",
       "wan_name_events": "{name} events",
       "interface_name_traffic": "{name} traffic",

@@ -73,7 +73,7 @@ const {
       </NeCard>
 
       <!-- today traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-4">
+      <NeHeading tag="h6" class="col-span-full mt-8">
         {{ t('standalone.real_time_monitor.today_traffic') }}
       </NeHeading>
 
@@ -171,7 +171,7 @@ const {
       </NeCard>
 
       <!-- instant traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-4">
+      <NeHeading tag="h6" class="col-span-full mt-8">
         {{ t('standalone.real_time_monitor.instant_traffic') }}
       </NeHeading>
 
@@ -181,7 +181,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
       <!-- instant apps traffic -->
       <InstantAppTrafficCard
@@ -189,7 +189,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
       <!-- instant protocols traffic -->
       <InstantProtocolTrafficCard
@@ -197,7 +197,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
     </div>
   </div>

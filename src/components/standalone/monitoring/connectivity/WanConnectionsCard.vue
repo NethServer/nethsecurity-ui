@@ -32,12 +32,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanConnect
 </script>
 
 <template>
-  <NeCard :title="t('standalone.real_time_monitor.connections')">
-    <NeTable
-      :ariaLabel="t('standalone.real_time_monitor.connections')"
-      cardBreakpoint="sm"
-      class="mt-2"
-    >
+  <NeCard :title="t('standalone.real_time_monitor.wans')">
+    <NeTable :ariaLabel="t('standalone.real_time_monitor.wans')" cardBreakpoint="sm" class="mt-2">
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.interface') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.device') }}</NeTableHeadCell>

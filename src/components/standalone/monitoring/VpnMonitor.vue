@@ -358,7 +358,11 @@ function getTunnelName(tunnelId: string) {
       <template v-else v-for="ovpnInstance in ovpnInstances" :key="ovpnInstance">
         <!-- rw server title -->
         <NeHeading tag="h6" class="col-span-full">
-          {{ ovpnConfiguration[ovpnInstance]?.ns_description }}
+          {{
+            `${t('standalone.real_time_monitor.rw_openvpn')}: ${
+              ovpnConfiguration[ovpnInstance]?.ns_description || '-'
+            }`
+          }}
         </NeHeading>
         <!-- server status -->
         <ServerStatusCard

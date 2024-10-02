@@ -75,9 +75,9 @@ async function getClientSessions() {
 </script>
 
 <template>
-  <NeCard :title="t('standalone.real_time_monitor.client_sessions')">
+  <NeCard :title="t('standalone.real_time_monitor.daily_connections')">
     <NeTable
-      :ariaLabel="t('standalone.real_time_monitor.client_sessions')"
+      :ariaLabel="t('standalone.real_time_monitor.daily_connections')"
       cardBreakpoint="sm"
       class="mt-2"
     >

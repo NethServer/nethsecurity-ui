@@ -66,7 +66,7 @@ async function getOvpnTrafficByHour() {
 
 <template>
   <NeCard
-    :title="t('standalone.real_time_monitor.total_clients_traffic_by_hour')"
+    :title="t('standalone.real_time_monitor.total_traffic_by_hour')"
     :loading="loading"
     :skeletonLines="5"
   >

@@ -68,14 +68,14 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.tunnels, {
                 :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
                 :class="[
                   'h-4 w-4',
-                  item.status
+                  item.connected
                     ? 'text-green-600 dark:text-green-400'
                     : 'text-rose-600 dark:text-rose-400'
                 ]"
                 aria-hidden="true"
               />
               {{
-                item.status
+                item.connected
                   ? t('standalone.openvpn_tunnel.connected')
                   : t('standalone.openvpn_tunnel.not_connected')
               }}

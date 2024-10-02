@@ -10,6 +10,7 @@ import {
   NeButton,
   NeCard,
   NeEmptyState,
+  NeHeading,
   NeInlineNotification
 } from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
@@ -42,7 +43,6 @@ import {
   VIOLET_600
 } from '@/lib/color'
 import BasicPieChart from '../../charts/BasicPieChart.vue'
-import BasicBarChart from '../../charts/BasicBarChart.vue'
 import BlockedIpsByHourChart from './security/BlockedIpsByHourChart.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
@@ -114,6 +114,7 @@ async function getMalwareReport() {
 
   try {
     const res = await ubusCall('ns.report', 'tsip-malware-report')
+    malwareCount.value = res.data.malware_count || 0
 
     // blocked packets chart
 
@@ -121,7 +122,7 @@ async function getMalwareReport() {
     const blockedPacketsChartData = res.data.malware_by_hour.map((data: any[]) => data[1])
     blockedPacketsChartDatasets.value = [
       {
-        label: t('standalone.real_time_monitor.blocked_packets_by_hour'),
+        label: t('standalone.real_time_monitor.blocked_threats_by_hour'),
         backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
         borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
         borderRadius: 6,
@@ -221,6 +222,7 @@ async function getAttackReport() {
 
   try {
     const res = await ubusCall('ns.report', 'tsip-attack-report')
+    attackCount.value = res.data.attack_count || 0
 
     // most blocked ip addresses chart
 
@@ -234,13 +236,32 @@ async function getAttackReport() {
 
     mostBlockedIpsChartDatasets.value = [
       {
-        label: t('standalone.real_time_monitor.times_blocked'),
-        backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
-        borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
-        borderRadius: 6,
-        maxBarThickness: 25,
-        borderWidth: 1,
-        radius: 0,
+        borderColor: themeStore.isLight ? GRAY_50 : GRAY_900,
+        backgroundColor: themeStore.isLight
+          ? [
+              CYAN_600,
+              INDIGO_600,
+              EMERALD_600,
+              VIOLET_600,
+              AMBER_600,
+              ROSE_600,
+              LIME_600,
+              FUCHSIA_600,
+              CYAN_800,
+              GRAY_500
+            ]
+          : [
+              CYAN_500,
+              INDIGO_500,
+              EMERALD_500,
+              VIOLET_500,
+              AMBER_500,
+              ROSE_500,
+              LIME_500,
+              FUCHSIA_500,
+              CYAN_300,
+              GRAY_400
+            ],
         data: mostBlockedIpAddresses
       }
     ]
@@ -341,6 +362,11 @@ async function getAttackReport() {
         </NeEmptyState>
       </template>
       <template v-else>
+        <!-- blocklist title -->
+        <NeHeading tag="h6" class="col-span-full mt-4">
+          {{ t('standalone.real_time_monitor.blocklist') }}
+        </NeHeading>
+
         <!-- blocked threats -->
         <NeCard
           :title="t('standalone.real_time_monitor.blocked_threats')"
@@ -356,7 +382,7 @@ async function getAttackReport() {
         </NeCard>
         <!-- blocked packets -->
         <NeCard
-          :title="t('standalone.real_time_monitor.blocked_packets_by_hour')"
+          :title="t('standalone.real_time_monitor.blocked_threats_by_hour')"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
           :errorTitle="error.getMalwareReport"
           :errorDescription="error.getMalwareReportDetails"
@@ -367,19 +393,6 @@ async function getAttackReport() {
             :datasets="blockedPacketsChartDatasets"
             height="25vh"
           />
-        </NeCard>
-        <!-- blocked ip addresses -->
-        <NeCard
-          :title="t('standalone.real_time_monitor.blocked_ip_addresses')"
-          :skeletonLines="2"
-          :loading="loading.getAttackReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getAttackReport"
-          :errorDescription="error.getAttackReportDetails"
-          class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
-        >
-          <SimpleStat class="mt-1">
-            {{ attackCount }}
-          </SimpleStat>
         </NeCard>
         <!-- malware by direction -->
         <NeCard
@@ -427,9 +440,43 @@ async function getAttackReport() {
             height="25vh"
           />
         </NeCard>
-        <!-- most blocked ip addresses -->
+
+        <!-- brute force attacks title -->
+        <NeHeading tag="h6" class="col-span-full mt-8">
+          {{ t('standalone.real_time_monitor.brute_force_attacks') }}
+        </NeHeading>
+
+        <!-- blocked ip addresses -->
         <NeCard
-          :title="t('standalone.real_time_monitor.most_blocked_ip_addresses')"
+          :title="t('standalone.real_time_monitor.blocked_ip_addresses')"
+          :skeletonLines="2"
+          :loading="loading.getAttackReport || loading.getThreatShieldSettings"
+          :errorTitle="error.getAttackReport"
+          :errorDescription="error.getAttackReportDetails"
+          class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
+        >
+          <SimpleStat class="mt-1">
+            {{ attackCount }}
+          </SimpleStat>
+        </NeCard>
+        <!-- blocked ip addresses per hour -->
+        <NeCard
+          :title="t('standalone.real_time_monitor.blocked_ip_addresses_by_hour')"
+          :skeletonLines="5"
+          :loading="loading.getAttackReport || loading.getThreatShieldSettings"
+          :errorTitle="error.getAttackReport"
+          :errorDescription="error.getAttackReportDetails"
+          class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 2xl:col-span-9 5xl:col-span-3"
+        >
+          <BlockedIpsByHourChart
+            :labels="blockedIpsByHourChartLabels"
+            :datasets="blockedIpsByHourChartDatasets"
+            height="25vh"
+          />
+        </NeCard>
+        <!-- brute force attacks -->
+        <NeCard
+          :title="t('standalone.real_time_monitor.brute_force_attacks')"
           :skeletonLines="5"
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
           :errorTitle="error.getAttackReport"
@@ -443,26 +490,10 @@ async function getAttackReport() {
             :icon="['fas', 'chart-line']"
             class="bg-white dark:bg-gray-950"
           />
-          <BasicBarChart
+          <BasicPieChart
             v-else
             :labels="mostBlockedIpsChartLabels"
             :datasets="mostBlockedIpsChartDatasets"
-            isHorizontal
-            height="30vh"
-          />
-        </NeCard>
-        <!-- blocked ip addresses per hour -->
-        <NeCard
-          :title="t('standalone.real_time_monitor.blocked_ip_addresses_by_hour')"
-          :skeletonLines="5"
-          :loading="loading.getAttackReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getAttackReport"
-          :errorDescription="error.getAttackReportDetails"
-          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
-        >
-          <BlockedIpsByHourChart
-            :labels="blockedIpsByHourChartLabels"
-            :datasets="blockedIpsByHourChartDatasets"
             height="25vh"
           />
         </NeCard>

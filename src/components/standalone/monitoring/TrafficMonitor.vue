@@ -8,12 +8,12 @@ import { useI18n } from 'vue-i18n'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { NeCard, NeEmptyState, NeHeading, byteFormat1024 } from '@nethesis/vue-components'
 import InstantHostTrafficCard from '@/components/standalone/monitoring/traffic/InstantHostTrafficCard.vue'
-import TrafficSummaryChart from '@/components/standalone/monitoring/traffic/TrafficSummaryChart.vue'
 import TrafficByHourChart from './TrafficByHourChart.vue'
 import SimpleStat from '../../charts/SimpleStat.vue'
 import { useTopTalkers } from '@/composables/useTopTalkers'
 import InstantAppTrafficCard from './traffic/InstantAppTrafficCard.vue'
 import InstantProtocolTrafficCard from './traffic/InstantProtocolTrafficCard.vue'
+import BasicPieChart from '@/components/charts/BasicPieChart.vue'
 
 const { t } = useI18n()
 
@@ -73,7 +73,7 @@ const {
       </NeCard>
 
       <!-- today traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-4">
+      <NeHeading tag="h6" class="col-span-full mt-8">
         {{ t('standalone.real_time_monitor.today_traffic') }}
       </NeHeading>
 
@@ -92,7 +92,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="protocolsLabels" :datasets="protocolsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="protocolsLabels"
+          :datasets="protocolsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top applications -->
       <NeCard
@@ -109,7 +115,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="appsLabels" :datasets="appsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="appsLabels"
+          :datasets="appsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top remote hosts -->
       <NeCard
@@ -126,7 +138,13 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="remoteHostsLabels" :datasets="remoteHostsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="remoteHostsLabels"
+          :datasets="remoteHostsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
       <!-- top local hosts -->
       <NeCard
@@ -143,11 +161,17 @@ const {
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
-        <TrafficSummaryChart v-else :labels="clientsLabels" :datasets="clientsDatasets" />
+        <BasicPieChart
+          v-else
+          :labels="clientsLabels"
+          :datasets="clientsDatasets"
+          byteFormat
+          height="25vh"
+        />
       </NeCard>
 
       <!-- instant traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-4">
+      <NeHeading tag="h6" class="col-span-full mt-8">
         {{ t('standalone.real_time_monitor.instant_traffic') }}
       </NeHeading>
 
@@ -157,7 +181,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
       <!-- instant apps traffic -->
       <InstantAppTrafficCard
@@ -165,7 +189,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
       <!-- instant protocols traffic -->
       <InstantProtocolTrafficCard
@@ -173,7 +197,7 @@ const {
         :loading="loadingTopTalkers"
         :error="errorTopTalkers"
         :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
+        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
       />
     </div>
   </div>

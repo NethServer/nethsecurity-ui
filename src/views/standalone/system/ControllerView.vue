@@ -341,12 +341,15 @@ function promptConnectUnit() {
               </label>
               <NeTooltip>
                 <template #content>
-                  {{ t('standalone.controller.sending_data_to_controller_tooltip') }}
-                  <NeLink inverted-theme>
-                    <RouterLink :to="`${getStandaloneRoutePrefix(route)}/system/subscription`">
-                      {{ t('standalone.controller.sending_data_to_controller_tooltip_link') }}
-                    </RouterLink>
-                  </NeLink>
+                  <I18nT tag="p" keypath="standalone.controller.sending_data_to_controller_tooltip">
+                    <template #subscription_link>
+                      <NeLink inverted-theme>
+                        <RouterLink :to="`${getStandaloneRoutePrefix(route)}/system/subscription`">
+                          {{ t('standalone.controller.sending_data_to_controller_tooltip_link') }}
+                        </RouterLink>
+                      </NeLink>
+                    </template>
+                  </I18nT>
                 </template>
               </NeTooltip>
             </div>

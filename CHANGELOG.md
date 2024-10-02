@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/NethServer/nethsecurity-ui/compare/1.4.0...1.4.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* bugfixes to monitoring section ([#371](https://github.com/NethServer/nethsecurity-ui/issues/371)) ([9b4fbc0](https://github.com/NethServer/nethsecurity-ui/commit/9b4fbc0111d92263edf32136420139614b394f31))
+
 ## [1.4.0](https://github.com/NethServer/nethsecurity-ui/compare/1.3.3...1.4.0) (2024-09-26)
 
 

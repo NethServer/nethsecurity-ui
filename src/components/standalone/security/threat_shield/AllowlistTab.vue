@@ -14,7 +14,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteAddressModal from './DeleteAddressModal.vue'
 import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
-import type { BlockOrAllowAddress } from '@/views/standalone/security/ThreatShieldView.vue'
+import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import AddressTable from './AddressTable.vue'
 
 const { t } = useI18n()
@@ -26,18 +26,18 @@ const error = ref({
   notificationDetails: ''
 })
 const fetchError = ref(false)
-const allowlist = ref<BlockOrAllowAddress[]>([])
-const selectedAddress = ref<BlockOrAllowAddress>()
+const allowlist = ref<BanIpLocalAddress[]>([])
+const selectedAddress = ref<BanIpLocalAddress>()
 const loading = ref(false)
 const showDeleteAddressModal = ref(false)
 const showCreateOrEditAddressDrawer = ref(false)
 
-function openCreateEditAddressDrawer(itemToEdit?: BlockOrAllowAddress) {
+function openCreateEditAddressDrawer(itemToEdit?: BanIpLocalAddress) {
   selectedAddress.value = itemToEdit
   showCreateOrEditAddressDrawer.value = true
 }
 
-function openDeleteAddressModal(itemToDelete: BlockOrAllowAddress) {
+function openDeleteAddressModal(itemToDelete: BanIpLocalAddress) {
   selectedAddress.value = itemToDelete
   showDeleteAddressModal.value = true
 }

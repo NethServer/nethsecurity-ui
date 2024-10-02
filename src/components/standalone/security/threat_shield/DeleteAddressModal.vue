@@ -9,11 +9,11 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
-import type { BlockOrAllowAddress } from '@/views/standalone/security/ThreatShieldView.vue'
+import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete?: BlockOrAllowAddress
+  itemToDelete?: BanIpLocalAddress
   addressKind: 'block' | 'allow'
 }>()
 

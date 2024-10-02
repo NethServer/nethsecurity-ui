@@ -17,13 +17,13 @@ import {
   NePaginator,
   useItemPagination
 } from '@nethesis/vue-components'
-import type { BlockOrAllowAddress } from '@/views/standalone/security/ThreatShieldView.vue'
+import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import { ref } from 'vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  addressList: BlockOrAllowAddress[]
+  addressList: BanIpLocalAddress[]
   addressKind: 'block' | 'allow'
 }>()
 
@@ -33,11 +33,11 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.addressLis
 })
 
 const emit = defineEmits<{
-  delete: [item: BlockOrAllowAddress]
-  edit: [item: BlockOrAllowAddress]
+  delete: [item: BanIpLocalAddress]
+  edit: [item: BanIpLocalAddress]
 }>()
 
-function getDropdownItems(item: BlockOrAllowAddress) {
+function getDropdownItems(item: BanIpLocalAddress) {
   return [
     {
       id: 'delete',

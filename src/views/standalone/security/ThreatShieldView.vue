@@ -12,7 +12,7 @@ import BlocklistTab from '@/components/standalone/security/threat_shield/Blockli
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
 import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
 
-export type BlockOrAllowAddress = {
+export type BanIpLocalAddress = {
   address: string
   description: string
 }

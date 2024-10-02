@@ -16,11 +16,11 @@ import {
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import type { BlockOrAllowAddress } from '@/views/standalone/security/ThreatShieldView.vue'
+import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 
 const props = defineProps<{
   isShown: boolean
-  itemToEdit?: BlockOrAllowAddress
+  itemToEdit?: BanIpLocalAddress
   addressKind: 'block' | 'allow'
 }>()
 

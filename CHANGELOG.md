@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/NethServer/nethsecurity-ui/compare/1.5.0...1.5.1) (2024-10-03)
+
+
+### Bug Fixes
+
+* more bugfixes to monitoring ([#374](https://github.com/NethServer/nethsecurity-ui/issues/374)) ([6cb1230](https://github.com/NethServer/nethsecurity-ui/commit/6cb123012202ae212365b5070f61e2a82a01597a))
+
 ## [1.5.0](https://github.com/NethServer/nethsecurity-ui/compare/1.4.1...1.5.0) (2024-10-03)
 
 

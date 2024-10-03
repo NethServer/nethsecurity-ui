@@ -657,9 +657,26 @@ function validate() {
         if (logicalIfaceType.value == 'bond') {
           maxLen = 10
         }
+        if (protocol.value == 'pppoe') {
+          maxLen = 5
+        }
         let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, maxLen)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
+          if (isValidationOk) {
+            isValidationOk = false
+            focusElement(interfaceNameRef)
+          }
+        }
+      } else {
+        // editing an already configured device
+        if (protocol.value == 'pppoe' && interfaceName.value.length > 5) {
+          error.value.interfaceName = t(
+            'standalone.interfaces_and_devices.pppoe_name_too_long_need_reconfiguration',
+            {
+              num: 5
+            }
+          )
           if (isValidationOk) {
             isValidationOk = false
             focusElement(interfaceNameRef)

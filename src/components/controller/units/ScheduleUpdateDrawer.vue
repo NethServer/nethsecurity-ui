@@ -60,6 +60,8 @@ watch(
           if (response.data.scheduledAt > 0) {
             scheduledUpdate.value = new Date(response.data.scheduledAt * 1000)
             updateMode.value = 'scheduled'
+          } else {
+            updateMode.value = 'now'
           }
           loading.value = false
         })
@@ -97,18 +99,20 @@ async function updateUnit() {
     sendingSchedule.value = false
   }
 }
+
+function close() {
+  if (!sendingSchedule.value) {
+    emit('close')
+  }
+}
 </script>
 
 <template>
   <NeSideDrawer
     :isShown="isShown"
     :closeAriaLabel="t('common.shell.close_side_drawer')"
-    :title="
-      updateMode == 'now'
-        ? t('standalone.update.update_system')
-        : t('standalone.update.schedule_update')
-    "
-    @close="emit('close')"
+    :title="t('standalone.update.update_system')"
+    @close="close"
   >
     <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
@@ -160,6 +164,8 @@ async function updateUnit() {
             :dark="!theme.isLight"
             :disabled-dates="(date: Date) => date < new Date()"
             :time-picker-inline="true"
+            :disabled="sendingSchedule"
+            :readonly="sendingSchedule"
           />
         </div>
       </template>

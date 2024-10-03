@@ -7,12 +7,14 @@ type SuccessfulResponse = AxiosResponse<{
 }>
 
 type UpdateResponse = AxiosResponse<{
-  updates: {
-    currentVersion: string
-    latestVersion: string
-    package: string
-  }[]
+  updates: PackageUpdateInfo[]
 }>
+
+export type PackageUpdateInfo = {
+  currentVersion: string
+  latestVersion: string
+  package: string
+}
 
 type CheckSystemUpdateResponse = AxiosResponse<{
   currentVersion: string

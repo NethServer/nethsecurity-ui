@@ -2189,7 +2189,6 @@
       "scheduled_image_update_tooltip": "The unit has been scheduled to install \"{version}\" on the {date}.",
       "image_update_available": "Image update available",
       "image_update_available_tooltip": "Version \"{version}\" is available for download.",
-      "schedule_image_update": "Schedule image update",
       "edit_scheduled_image_update": "Edit scheduled image update",
       "error_fetching_unit_image_version": "Error fetching unit image version",
       "error_setting_image_update": "Error sending image update command to unit",
@@ -2197,10 +2196,10 @@
       "scheduled_image_update_aborted": "Scheduled image update for '{name}' aborted successfully",
       "cancel_scheduled_image_update": "Cancel scheduled image update",
       "cancel_scheduled_image_update_description": "You are about to cancel the scheduled update to '{version}' for unit '{name}'.",
-      "upgrade_unit_packages": "Update unit packages",
-      "upgrade_unit_packages_description": "This operation will update all packages on the unit '{name}' to the latest available version.",
+      "check_packages_updates": "Check packages updates",
       "packages_upgrade_in_progress": "Packages update in progress for unit '{name}'",
-      "error_upgrading_unit_packages": "Error updating unit packages"
+      "error_upgrading_unit_packages": "Error updating unit packages",
+      "packages_to_update": "The following packages are available to be updated:"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

@@ -1,13 +1,18 @@
 <script lang="ts" setup>
 import { type Unit, useUnitsStore } from '@/stores/controller/units'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useUpdates } from '@/composables/useUpdates'
+import { type PackageUpdateInfo, useUpdates } from '@/composables/useUpdates'
 import { useNotificationsStore } from '@/stores/notifications'
-import { getAxiosErrorMessage, NeModal, NeInlineNotification } from '@nethesis/vue-components'
+import {
+  getAxiosErrorMessage,
+  NeInlineNotification,
+  NeModal,
+  NeSkeleton
+} from '@nethesis/vue-components'
 
 const { t } = useI18n()
-const { upgradePackages } = useUpdates()
+const { upgradePackages, updatePackageIndex } = useUpdates()
 const unitsStore = useUnitsStore()
 const notificationStore = useNotificationsStore()
 
@@ -20,18 +25,48 @@ const emit = defineEmits<{
 }>()
 
 const _unit = ref<Unit>()
+const fetchingData = ref(false)
 const loading = ref(false)
 const error = ref<Error>()
+const availableUpdates = ref<PackageUpdateInfo[]>([])
 
 watch(
   () => props.unit,
-  (unit) => {
+  async (unit) => {
     if (unit) {
+      fetchingData.value = true
       _unit.value = unit
+      try {
+        const response = await updatePackageIndex(_unit.value)
+        availableUpdates.value = response.data.updates
+        fetchingData.value = false
+      } catch (exception: any) {
+        error.value = exception
+      }
     }
   },
   { immediate: true }
 )
+
+const primaryButtonLabel = computed((): string => {
+  if (fetchingData.value) {
+    return t('common.loading')
+  } else if (availableUpdates.value.length > 0) {
+    return t('standalone.update.update')
+  } else {
+    return t('common.close')
+  }
+})
+
+const modalKind = computed((): string => {
+  if (fetchingData.value) {
+    return 'neutral'
+  } else if (availableUpdates.value.length > 0) {
+    return 'info'
+  } else {
+    return 'success'
+  }
+})
 
 function close() {
   if (!loading.value) {
@@ -42,6 +77,10 @@ function close() {
 async function updateUnitPackages() {
   if (!_unit.value) {
     error.value = new Error('Unit is not defined.')
+    return
+  }
+  if (availableUpdates.value.length <= 0) {
+    emit('close')
     return
   }
   try {
@@ -69,31 +108,50 @@ async function updateUnitPackages() {
 <template>
   <NeModal
     :visible="unit != undefined"
-    :title="t('controller.units.upgrade_unit_packages')"
-    :primary-label="t('common.confirm')"
-    kind="warning"
-    :cancel-label="t('common.close')"
-    :primary-button-disabled="loading"
-    :primary-button-loading="loading"
+    :title="t('controller.units.check_packages_updates')"
+    :primary-button-disabled="loading || fetchingData"
+    :primary-button-loading="loading || fetchingData"
+    :cancel-label="availableUpdates.length > 0 ? t('common.cancel') : ''"
+    :primary-label="primaryButtonLabel"
+    :kind="modalKind"
     :close-aria-label="t('common.close')"
     @primary-click="updateUnitPackages"
     @secondary-click="close"
     @close="close"
   >
-    <NeInlineNotification
-      v-if="error"
-      :description="t(getAxiosErrorMessage(error))"
-      :title="t('controller.units.error_upgrading_unit_packages')"
-      kind="error"
-    >
-      <template #details>
-        {{ error.toString() }}
+    <div class="max-h-96 overflow-y-auto">
+      <NeInlineNotification
+        v-if="error"
+        :description="t(getAxiosErrorMessage(error))"
+        :title="t('controller.units.error_upgrading_unit_packages')"
+        kind="error"
+      >
+        <template #details>
+          {{ error.toString() }}
+        </template>
+      </NeInlineNotification>
+      <NeSkeleton v-if="fetchingData" :lines="4" />
+      <template v-else-if="availableUpdates.length > 0">
+        <div class="space-y-2">
+          <h6>{{ t('controller.units.packages_to_update') }}</h6>
+          <ul>
+            <li v-for="update in availableUpdates" :key="update.package">
+              {{ update.package }}
+              <span class="text-gray-500 dark:text-gray-400">
+                {{
+                  t('standalone.update.component_update_details', {
+                    versionFrom: update.currentVersion,
+                    versionTo: update.latestVersion
+                  })
+                }}
+              </span>
+            </li>
+          </ul>
+        </div>
       </template>
-    </NeInlineNotification>
-    {{
-      t('controller.units.upgrade_unit_packages_description', {
-        name: _unit?.info.unit_name
-      })
-    }}
+      <template v-else>
+        {{ t('standalone.update.all_updates_installed_notification') }}
+      </template>
+    </div>
   </NeModal>
 </template>

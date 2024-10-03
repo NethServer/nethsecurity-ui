@@ -159,7 +159,7 @@ function getKebabMenuItems(unit: Unit) {
       action: () => copyJoinCode(unit)
     })
   }
-  if (unit.info.version_update != '') {
+  if (unit.info?.version_update ?? '' != '') {
     menuItems.push({
       id: 'scheduleUpdate',
       label:
@@ -186,7 +186,7 @@ function getKebabMenuItems(unit: Unit) {
   menuItems.push(
     {
       id: 'upgradeUnitPackages',
-      label: t('controller.units.upgrade_unit_packages'),
+      label: t('controller.units.check_packages_updates'),
       icon: 'arrows-rotate',
       iconStyle: 'fas',
       action: () => emit('upgradeUnitPackages', unit),

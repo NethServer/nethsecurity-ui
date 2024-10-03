@@ -781,7 +781,15 @@
       "vpn_ip_address": "VPN IP address",
       "disconnect": "Disconnect",
       "disconnect_unit_message": "The unit will be disconnected from the controller and will no longer be accessible from the controller itself. Do you want to proceed?",
-      "data_updated_every_seconds": "Data updated every {seconds} seconds"
+      "data_updated_every_seconds": "Data updated every {seconds} seconds",
+      "disclaimer": "Disclaimer",
+      "connect_unit_message": "Unit logs will be transmitted to the Controller for the purposes of storage, monitoring, and analysis of network usage. If you do not wish for this data to leave the device, do not connect to the Controller.",
+      "confirm_and_connect": "Confirm and connect",
+      "sending_data_to_controller": "Sending monitoring data to Controller",
+      "sending_data_to_controller_tooltip": "Complete monitoring available on Grafana with NethSecurity {subscription_link}",
+      "sending_data_to_controller_tooltip_link": "subscription",
+      "last_sent": "Last sent: {date}",
+      "no_last_sent": "Data is being prepared for transmission"
     },
     "network": {
       "title": "Network"

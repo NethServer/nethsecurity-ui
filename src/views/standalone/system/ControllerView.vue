@@ -5,23 +5,27 @@
 
 <script setup lang="ts">
 import {
-  NeSkeleton,
-  NeHeading,
-  NeTooltip,
-  NeBadge,
-  NeButton,
-  NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
+  NeBadge,
+  NeButton,
+  NeHeading,
+  NeInlineNotification,
+  NeLink,
+  NeModal,
+  NeSkeleton,
+  NeTextArea,
   NeTextInput,
-  NeTextArea
+  NeToggle,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { NeToggle, NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import { useRoute } from 'vue-router'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 
 type ControllerRegistrationStatus = {
   status: 'connected' | 'unregistered' | 'pending'
@@ -30,9 +34,12 @@ type ControllerRegistrationStatus = {
   unit_name: string
   unit_id: string
   tls_verify: boolean
+  push_status: 'enabled' | 'disabled'
+  push_last_sent: number
 }
 
 const { t } = useI18n()
+const route = useRoute()
 
 const loading = ref(false)
 const isPerformingAction = ref(false)
@@ -51,6 +58,7 @@ const status = ref<'connected' | 'unregistered' | 'pending'>('unregistered')
 const statusFetchIntervalId = ref()
 
 const showDisconnectUnitModal = ref(false)
+const showConnectUnitModal = ref(false)
 
 // form fields
 const unitId = ref('')
@@ -59,6 +67,8 @@ const controllerUrl = ref('')
 const controllerJoinCode = ref('')
 const verifyTlsCertificate = ref(false)
 const vpnIpAddress = ref('')
+const push_status = ref<'enabled' | 'disabled'>('disabled')
+const push_last_sent = ref(-1)
 
 // textinputs refs
 const unitNameRef = ref()
@@ -88,6 +98,8 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
     unitName.value = registrationStatus.unit_name
     verifyTlsCertificate.value = registrationStatus.tls_verify
     vpnIpAddress.value = registrationStatus.address ?? ''
+    push_status.value = registrationStatus.push_status ?? 'disabled'
+    push_last_sent.value = registrationStatus.push_last_sent ?? -1
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_fetch_controller_registration_status')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -159,12 +171,8 @@ function validate() {
 }
 
 async function connectUnit() {
-  clearError()
-
-  if (!validate()) {
-    return
-  }
   isPerformingAction.value = true
+  showConnectUnitModal.value = false
 
   try {
     await ubusCall('ns.plug', 'register', {
@@ -223,6 +231,15 @@ onMounted(() => {
 onUnmounted(() => {
   stopRegistrationStatusFetchInterval()
 })
+
+function promptConnectUnit() {
+  clearError()
+
+  if (!validate()) {
+    return
+  }
+  showConnectUnitModal.value = true
+}
 </script>
 
 <template>
@@ -304,20 +321,58 @@ onUnmounted(() => {
           :top-label="t('standalone.controller.verify_tls_certificate')"
           :label="verifyTlsCertificate ? t('common.enabled') : t('common.disabled')"
         />
-        <div class="align-center flex flex-row" v-else>
-          <NeHeading tag="h6" class="!mb-0 mr-4 inline-block">{{ t('common.status') }}</NeHeading>
-          <NeBadge
-            :text="
-              status === 'pending'
-                ? t('standalone.controller.pending')
-                : t('standalone.controller.connected')
-            "
-            :kind="status === 'pending' ? 'warning' : 'success'"
-            size="sm"
-          />
-        </div>
+        <template v-else>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium">
+              {{ t('common.status') }}
+            </label>
+            <NeBadge
+              v-if="status === 'pending'"
+              :text="t('standalone.controller.pending')"
+              kind="warning"
+              size="sm"
+            />
+            <NeBadge v-else :text="t('standalone.controller.connected')" kind="success" size="sm" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2">
+              <label class="text-sm font-medium">
+                {{ t('standalone.controller.sending_data_to_controller') }}
+              </label>
+              <NeTooltip>
+                <template #content>
+                  <I18nT tag="p" keypath="standalone.controller.sending_data_to_controller_tooltip">
+                    <template #subscription_link>
+                      <NeLink inverted-theme>
+                        <RouterLink :to="`${getStandaloneRoutePrefix(route)}/system/subscription`">
+                          {{ t('standalone.controller.sending_data_to_controller_tooltip_link') }}
+                        </RouterLink>
+                      </NeLink>
+                    </template>
+                  </I18nT>
+                </template>
+              </NeTooltip>
+            </div>
+            <template v-if="push_status == 'enabled'">
+              <NeBadge :text="t('common.enabled')" kind="success" size="sm" />
+              <p class="text-sm text-gray-400 dark:text-gray-500">
+                <template v-if="push_last_sent > -1">
+                  {{
+                    t('standalone.controller.last_sent', {
+                      date: new Date(push_last_sent * 1000).toLocaleString()
+                    })
+                  }}
+                </template>
+                <template v-else>
+                  {{ t('standalone.controller.no_last_sent') }}
+                </template>
+              </p>
+            </template>
+            <NeBadge v-else :text="t('common.disabled')" kind="warning" size="sm" />
+          </div>
+        </template>
         <div v-if="status === 'unregistered'">
-          <NeButton kind="primary" @click="connectUnit" :disabled="isPerformingAction">
+          <NeButton kind="primary" @click="promptConnectUnit" :disabled="isPerformingAction">
             <template #prefix>
               <font-awesome-icon :icon="['fas', 'link']" class="h-4 w-4" aria-hidden="true" />
               {{ t('standalone.controller.connect_unit') }}
@@ -372,5 +427,20 @@ onUnmounted(() => {
         {{ disconnectUnitError.notificationDetails }}
       </template>
     </NeInlineNotification>
+  </NeModal>
+
+  <NeModal
+    :visible="showConnectUnitModal"
+    kind="info"
+    :title="t('standalone.controller.connect_unit')"
+    :primary-label="t('standalone.controller.confirm_and_connect')"
+    :close-aria-label="t('common.close')"
+    @primary-click="connectUnit"
+    @secondary-click="showConnectUnitModal = false"
+    :secondary-label="t('common.cancel')"
+    @close="showConnectUnitModal = false"
+  >
+    <strong>{{ t('standalone.controller.disclaimer') }}: </strong>
+    <p>{{ t('standalone.controller.connect_unit_message') }}</p>
   </NeModal>
 </template>

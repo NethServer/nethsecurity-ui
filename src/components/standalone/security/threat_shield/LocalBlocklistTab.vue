@@ -26,7 +26,7 @@ const error = ref({
   notificationDetails: ''
 })
 const fetchError = ref(false)
-const allowlist = ref<BanIpLocalAddress[]>([])
+const localBlocklist = ref<BanIpLocalAddress[]>([])
 const selectedAddress = ref<BanIpLocalAddress>()
 const loading = ref(false)
 const showDeleteAddressModal = ref(false)
@@ -42,14 +42,14 @@ function openDeleteAddressModal(itemToDelete: BanIpLocalAddress) {
   showDeleteAddressModal.value = true
 }
 
-async function fetchAllowlist() {
+async function fetchLocalBlocklist() {
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
   fetchError.value = false
 
   try {
     loading.value = true
-    allowlist.value = (await ubusCall('ns.threatshield', 'list-allowed')).data.data
+    localBlocklist.value = (await ubusCall('ns.threatshield', 'list-blocked')).data.data
   } catch (err: any) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
@@ -59,13 +59,13 @@ async function fetchAllowlist() {
   }
 }
 
-async function refreshAllowlist() {
+async function refreshLocalBlocklist() {
   await uciChangesStore.getChanges()
-  fetchAllowlist()
+  fetchLocalBlocklist()
 }
 
 onMounted(() => {
-  fetchAllowlist()
+  fetchLocalBlocklist()
 })
 </script>
 
@@ -73,9 +73,12 @@ onMounted(() => {
   <div class="flex flex-col gap-y-6">
     <div class="flex flex-row items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.threat_shield.allowlist_description') }}
+        {{ t('standalone.threat_shield.local_blocklist_description') }}
       </p>
-      <NeButton kind="secondary" @click="openCreateEditAddressDrawer()" v-if="allowlist.length > 0"
+      <NeButton
+        kind="secondary"
+        @click="openCreateEditAddressDrawer()"
+        v-if="localBlocklist.length > 0"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -87,7 +90,7 @@ onMounted(() => {
     </div>
     <NeInlineNotification
       v-if="error.notificationDescription"
-      :title="t('error.cannot_retrieve_allowlist')"
+      :title="t('error.cannot_retrieve_local_blocklist')"
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
@@ -99,8 +102,8 @@ onMounted(() => {
     <NeSkeleton v-if="loading" :lines="6" size="lg" />
     <template v-else-if="!fetchError">
       <NeEmptyState
-        v-if="allowlist.length == 0"
-        :title="t('standalone.threat_shield.allowlist_is_empty')"
+        v-if="localBlocklist.length == 0"
+        :title="t('standalone.threat_shield.local_blocklist_is_empty')"
         :icon="['fas', 'shield']"
         ><NeButton kind="secondary" @click="openCreateEditAddressDrawer()"
           ><template #prefix>
@@ -114,8 +117,8 @@ onMounted(() => {
       >
       <AddressTable
         v-else
-        :addressList="allowlist"
-        addressKind="allow"
+        :addressList="localBlocklist"
+        addressKind="block"
         @delete="openDeleteAddressModal"
         @edit="openCreateEditAddressDrawer"
       />
@@ -124,14 +127,14 @@ onMounted(() => {
   <DeleteAddressModal
     :visible="showDeleteAddressModal"
     :item-to-delete="selectedAddress"
-    addressKind="allow"
+    addressKind="block"
     @address-deleted="
       () => {
         notificationsStore.createNotification({
           kind: 'success',
           title: t('standalone.threat_shield.address_deleted')
         })
-        refreshAllowlist()
+        refreshLocalBlocklist()
       }
     "
     @close="showDeleteAddressModal = false"
@@ -139,7 +142,7 @@ onMounted(() => {
   <CreateOrEditAddressDrawer
     :is-shown="showCreateOrEditAddressDrawer"
     :item-to-edit="selectedAddress"
-    addressKind="allow"
+    addressKind="block"
     @close="showCreateOrEditAddressDrawer = false"
     @add-address="
       () => {
@@ -147,7 +150,7 @@ onMounted(() => {
           kind: 'success',
           title: t('standalone.threat_shield.address_added')
         })
-        refreshAllowlist()
+        refreshLocalBlocklist()
       }
     "
     @edit-address="
@@ -156,7 +159,7 @@ onMounted(() => {
           kind: 'success',
           title: t('standalone.threat_shield.address_edited')
         })
-        refreshAllowlist()
+        refreshLocalBlocklist()
       }
     "
   />

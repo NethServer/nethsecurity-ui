@@ -9,11 +9,12 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
-import type { AllowlistAddress } from './AllowlistTab.vue'
+import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete?: AllowlistAddress
+  itemToDelete?: BanIpLocalAddress
+  addressKind: 'block' | 'allow'
 }>()
 
 const emit = defineEmits(['close', 'address-deleted'])
@@ -31,8 +32,10 @@ async function deleteAddress() {
     error.value.notificationDescription = ''
     error.value.notificationDetails = ''
     isDeleting.value = true
+    const method = props.addressKind === 'block' ? 'delete-blocked' : 'delete-allowed'
+
     try {
-      await ubusCall('ns.threatshield', 'delete-allowed', {
+      await ubusCall('ns.threatshield', method, {
         address: props.itemToDelete.address
       })
       emit('address-deleted')

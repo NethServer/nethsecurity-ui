@@ -60,9 +60,8 @@ export function useUpdates() {
   function upgradeUnitImage(unit?: Unit): Promise<SuccessfulResponse> {
     if (unit) {
       return ubusCallFromController('ns.update', 'update-system', {}, unit.id)
-    } else {
-      return ubusCall('ns.update', 'update-system')
     }
+    return ubusCall('ns.update', 'update-system')
   }
 
   /**
@@ -77,9 +76,22 @@ export function useUpdates() {
         { scheduleAt: scheduleAtTimestamp },
         unit.id
       )
-    } else {
-      return ubusCall('ns.update', 'schedule-system-update', { scheduleAt: scheduleAtTimestamp })
     }
+    return ubusCall('ns.update', 'schedule-system-update', { scheduleAt: scheduleAtTimestamp })
+  }
+
+  function abortScheduledUpgradeUnitImage(unit?: Unit): Promise<SuccessfulResponse> {
+    if (unit) {
+      return ubusCallFromController(
+        'ns.update',
+        'schedule-system-update',
+        {
+          scheduleAt: -1
+        },
+        unit.id
+      )
+    }
+    return ubusCall('ns.update', 'schedule-system-update', { scheduleAt: -1 })
   }
 
   return {
@@ -87,6 +99,7 @@ export function useUpdates() {
     upgradePackages,
     checkUnitImageUpdate,
     upgradeUnitImage,
-    scheduleUpgradeUnitImage
+    scheduleUpgradeUnitImage,
+    abortScheduledUpgradeUnitImage
   }
 }

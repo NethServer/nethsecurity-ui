@@ -59,6 +59,7 @@ const emit = defineEmits<{
   reloadData: []
   openSshModal: [unit: Unit]
   scheduleUpdate: [unit: Unit]
+  abortUpdate: [unit: Unit]
 }>()
 
 const { t } = useI18n()
@@ -162,8 +163,8 @@ function getKebabMenuItems(unit: Unit) {
       id: 'scheduleUpdate',
       label:
         unit.info.scheduled_update > 0
-          ? t('controller.units.edit_scheduled_update')
-          : t('controller.units.schedule_update'),
+          ? t('controller.units.edit_scheduled_image_update')
+          : t('controller.units.schedule_image_update'),
       icon: 'arrows-rotate',
       iconStyle: 'fas',
       action: () => emit('scheduleUpdate', unit),
@@ -173,10 +174,10 @@ function getKebabMenuItems(unit: Unit) {
   if (unit.info.scheduled_update > 0) {
     menuItems.push({
       id: 'cancelScheduledUpdate',
-      label: t('controller.units.cancel_scheduled_update'),
+      label: t('controller.units.cancel_scheduled_image_update'),
       icon: 'calendar-xmark',
       iconStyle: 'fas',
-      action: () => {},
+      action: () => emit('abortUpdate', unit),
       disabled: !unit.connected
     })
   }
@@ -447,7 +448,7 @@ function showRemoveUnitModal(unit: Unit) {
                   <template #trigger>
                     <NeBadge
                       :icon="faClock"
-                      :text="t('controller.units.scheduled_update')"
+                      :text="t('controller.units.scheduled_image_update')"
                       clickable
                       kind="info"
                     />
@@ -455,7 +456,7 @@ function showRemoveUnitModal(unit: Unit) {
                   <template #content>
                     <div>
                       {{
-                        t('controller.units.scheduled_update_tooltip', {
+                        t('controller.units.scheduled_image_update_tooltip', {
                           version: item.info.version_update,
                           date: new Date(item.info.scheduled_update * 1000).toLocaleString()
                         })
@@ -469,7 +470,7 @@ function showRemoveUnitModal(unit: Unit) {
                   <template #trigger>
                     <NeBadge
                       :icon="faWarning"
-                      :text="t('controller.units.update_available')"
+                      :text="t('controller.units.image_update_available')"
                       clickable
                       kind="warning"
                     />
@@ -477,7 +478,7 @@ function showRemoveUnitModal(unit: Unit) {
                   <template #content>
                     <div>
                       {{
-                        t('controller.units.update_available_tooltip', {
+                        t('controller.units.image_update_available_tooltip', {
                           version: item.info.version_update
                         })
                       }}

@@ -27,6 +27,7 @@ import { useDefaultsStore } from '@/stores/controller/defaults'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
+import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vue'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -46,6 +47,7 @@ const currentUnit = ref<Unit>()
 const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
 const unitToUpdate = ref<Unit>()
 const showScheduleUpdate = ref(false)
+const unitToAbortUpdate = ref<Unit>()
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -162,7 +164,7 @@ async function scheduleUpdateSuccessful() {
   notificationStore.addNotification({
     kind: 'success',
     id: 'schedule-unit-update',
-    title: t('controller.units.scheduled_update_success')
+    title: t('controller.units.scheduled_image_update_success')
   })
 }
 </script>
@@ -314,6 +316,7 @@ async function scheduleUpdateSuccessful() {
           @reloadData="loadData"
           @openSshModal="showOpenSshModal"
           @scheduleUpdate="scheduleUnitUpdate"
+          @abortUpdate="unitToAbortUpdate = $event"
         />
       </template>
     </div>
@@ -345,5 +348,7 @@ async function scheduleUpdateSuccessful() {
       @close="hideScheduleUpdate"
       @success="scheduleUpdateSuccessful"
     />
+
+    <AbortUpdateModal :unit="unitToAbortUpdate" @close="unitToAbortUpdate = undefined" />
   </div>
 </template>

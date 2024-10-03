@@ -100,14 +100,14 @@ async function updateUnit() {
   <NeSideDrawer
     :isShown="isShown"
     :closeAriaLabel="t('common.shell.close_side_drawer')"
-    :title="t('controller.units.schedule_update')"
+    :title="t('controller.units.schedule_image_update')"
     @close="emit('close')"
   >
     <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
       v-else-if="fetchError"
       :description="t(getAxiosErrorMessage(fetchError))"
-      :title="t('controller.units.error_fetching_unit_version')"
+      :title="t('controller.units.error_fetching_unit_image_version')"
       kind="error"
     >
       <template #details>
@@ -118,7 +118,7 @@ async function updateUnit() {
       <NeInlineNotification
         v-if="sendingError"
         :description="t(getAxiosErrorMessage(sendingError))"
-        :title="t('controller.units.error_setting_update')"
+        :title="t('controller.units.error_setting_image_update')"
         kind="error"
       >
         <template #details>

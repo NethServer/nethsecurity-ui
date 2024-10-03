@@ -41,12 +41,13 @@ async function fetchDynamicLeases(): Promise<DynamicLease[]> {
 }
 
 function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: string) {
+  const lowerCaseFilter = filter.toLowerCase()
   return dynamicLeases.filter(
     (dynamicLease) =>
-      dynamicLease.hostname.includes(filter) ||
-      dynamicLease.ipaddr.includes(filter) ||
-      dynamicLease.macaddr.includes(filter) ||
-      dynamicLease.interface.includes(filter)
+      dynamicLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
+      dynamicLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
+      dynamicLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
+      dynamicLease.interface.toLowerCase().includes(lowerCaseFilter)
   )
 }
 </script>

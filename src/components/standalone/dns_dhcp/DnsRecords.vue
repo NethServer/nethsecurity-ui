@@ -31,12 +31,13 @@ async function fetchDnsRecords(): Promise<DnsRecord[]> {
 }
 
 function applyFilterToDnsRecords(records: DnsRecord[], filter: string) {
+  const lowerCaseFilter = filter.toLowerCase()
   return records.filter(
     (dnsRecord) =>
-      dnsRecord.record.includes(filter) ||
-      dnsRecord.ip.includes(filter) ||
-      dnsRecord.name.includes(filter) ||
-      dnsRecord.description.includes(filter)
+      dnsRecord.record.toLowerCase().includes(lowerCaseFilter) ||
+      dnsRecord.ip.toLowerCase().includes(lowerCaseFilter) ||
+      dnsRecord.name.toLowerCase().includes(lowerCaseFilter) ||
+      dnsRecord.description.toLowerCase().includes(lowerCaseFilter)
   )
 }
 

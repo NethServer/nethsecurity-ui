@@ -33,12 +33,13 @@ async function fetchStaticLeases(): Promise<StaticLease[]> {
 }
 
 function applyFilterToStaticLeases(staticLeases: StaticLease[], filter: string) {
+  const lowerCaseFilter = filter.toLowerCase()
   return staticLeases.filter(
     (staticLease) =>
-      staticLease.hostname.includes(filter) ||
-      staticLease.ipaddr.includes(filter) ||
-      staticLease.macaddr.includes(filter) ||
-      staticLease.interface.includes(filter)
+      staticLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
+      staticLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
+      staticLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
+      staticLease.interface.toLowerCase().includes(lowerCaseFilter)
   )
 }
 

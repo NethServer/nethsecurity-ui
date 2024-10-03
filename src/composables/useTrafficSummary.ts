@@ -134,10 +134,14 @@ export function useTrafficSummary() {
         let appName = app[0]
 
         // beautify app names
-        if (appName.includes('netify.')) {
-          appName = appName.split('netify.')[1]
+        if (app.name === 'unknown') {
+          app.name = t('common.unknown')
+        } else {
+          if (appName.includes('netify.')) {
+            appName = appName.split('netify.')[1]
+          }
+          appName = upperFirst(appName)
         }
-        appName = upperFirst(appName)
         return appName
       })
 

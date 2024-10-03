@@ -5,6 +5,7 @@ import { onMounted, onUnmounted, ref, toValue, type MaybeRefOrGetter } from 'vue
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
+import { upperFirst } from 'lodash-es'
 
 export type TopHost = {
   host: string
@@ -63,7 +64,19 @@ export function useTopTalkers(limit: MaybeRefOrGetter<number> = 20) {
       const res = await ubusCall('ns.talkers', 'list', {
         limit: toValue(limit)
       })
-      topApps.value = res.data.talkers.top_apps
+
+      topApps.value = res.data.talkers.top_apps.map((app: any) => {
+        // beautify app names
+        if (app.name.includes('netify.unclassified')) {
+          app.name = t('common.unknown')
+        } else {
+          if (app.name.includes('netify.')) {
+            app.name = app.name.split('netify.')[1]
+          }
+          app.name = upperFirst(app.name)
+        }
+        return app
+      })
       topHosts.value = res.data.talkers.top_hosts
       topProtocols.value = res.data.talkers.top_protocols
     } catch (err: any) {

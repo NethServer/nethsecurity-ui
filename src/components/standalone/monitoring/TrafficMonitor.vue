@@ -77,9 +77,9 @@ const {
         {{ t('standalone.real_time_monitor.today_traffic') }}
       </NeHeading>
 
-      <!-- top protocols -->
+      <!-- top local hosts -->
       <NeCard
-        :title="t('standalone.real_time_monitor.today_top_protocols')"
+        :title="t('standalone.real_time_monitor.today_top_local_hosts')"
         :skeletonLines="6"
         :loading="loadingTrafficSummary"
         :errorTitle="trafficSummaryError"
@@ -87,15 +87,15 @@ const {
         class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
       >
         <NeEmptyState
-          v-if="!protocolsDatasets[0]?.data.length"
+          v-if="!clientsDatasets[0]?.data.length"
           :title="t('common.no_data_available')"
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
         <BasicPieChart
           v-else
-          :labels="protocolsLabels"
-          :datasets="protocolsDatasets"
+          :labels="clientsLabels"
+          :datasets="clientsDatasets"
           byteFormat
           height="25vh"
         />
@@ -146,9 +146,9 @@ const {
           height="25vh"
         />
       </NeCard>
-      <!-- top local hosts -->
+      <!-- top protocols -->
       <NeCard
-        :title="t('standalone.real_time_monitor.today_top_local_hosts')"
+        :title="t('standalone.real_time_monitor.today_top_protocols')"
         :skeletonLines="6"
         :loading="loadingTrafficSummary"
         :errorTitle="trafficSummaryError"
@@ -156,15 +156,15 @@ const {
         class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
       >
         <NeEmptyState
-          v-if="!clientsDatasets[0]?.data.length"
+          v-if="!protocolsDatasets[0]?.data.length"
           :title="t('common.no_data_available')"
           :icon="['fas', 'chart-line']"
           class="bg-white dark:bg-gray-950"
         />
         <BasicPieChart
           v-else
-          :labels="clientsLabels"
-          :datasets="clientsDatasets"
+          :labels="protocolsLabels"
+          :datasets="protocolsDatasets"
           byteFormat
           height="25vh"
         />

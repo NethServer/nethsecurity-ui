@@ -40,7 +40,12 @@ async function getConnectedClientsByHour() {
       instance: props.ovpnInstance,
       day: props.day
     })
-    chartLabels.value = res.data.hours.map((data: any[]) => data[0])
+    chartLabels.value = res.data.hours.map((data: any[]) => {
+      // convert hours from UTC to local time
+      const localDate = new Date(`${props.day}T${data[0]}:00:00Z`)
+      const localHours = localDate.getHours()
+      return localHours.toString().padStart(2, '0')
+    })
     const chartData = res.data.hours.map((data: any[]) => data[1])
     chartDatasets.value = [
       {

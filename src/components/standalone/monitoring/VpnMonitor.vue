@@ -395,7 +395,7 @@ function getTunnelName(tunnelId: string) {
           :day="today"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></ConnectedClientsByHourCard>
-        <!-- connected clients by hour -->
+        <!-- client traffic by hour -->
         <TrafficByClientByHourCard
           :ovpnInstance="ovpnInstance"
           :ovpnUsers="ovpnUsers[ovpnInstance] || []"

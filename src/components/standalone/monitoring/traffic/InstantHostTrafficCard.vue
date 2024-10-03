@@ -42,12 +42,16 @@ function formatTraffic(value: number) {
 
 <template>
   <NeCard
-    :title="t('standalone.real_time_monitor.hosts')"
+    :title="t('standalone.real_time_monitor.local_hosts')"
     :skeletonLines="5"
     :errorTitle="error"
     :errorDescription="errorDescription"
   >
-    <NeTable :ariaLabel="t('standalone.real_time_monitor.hosts')" cardBreakpoint="sm" class="mt-2">
+    <NeTable
+      :ariaLabel="t('standalone.real_time_monitor.local_hosts')"
+      cardBreakpoint="sm"
+      class="mt-2"
+    >
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.host') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.traffic') }}</NeTableHeadCell>

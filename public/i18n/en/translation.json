@@ -50,7 +50,8 @@
     "download": "Download",
     "upload": "Upload",
     "no_data_available": "No data available",
-    "type": "Type"
+    "type": "Type",
+    "unknown": "Unknown"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -1859,7 +1860,7 @@
       "today_traffic": "Today traffic",
       "recent_traffic": "Recent traffic",
       "host": "Host",
-      "hosts": "Hosts",
+      "local_hosts": "Local hosts",
       "application": "Application",
       "applications": "Applications",
       "protocol": "Protocol",
@@ -1870,9 +1871,10 @@
       "interface_name_traffic": "{name} traffic",
       "blocked_threats": "Blocked threats",
       "blocked_threats_by_hour": "Blocked threats by hour",
-      "malware_by_direction": "Malware by direction",
-      "malware_by_category": "Malware by category",
+      "threats_by_direction": "Threats by direction",
+      "threats_by_category": "Threats by category",
       "brute_force_attacks": "Brute force attacks",
+      "most_frequently_blocked_ip_addresses": "Most frequently blocked IP addresses",
       "blocked_ip_addresses_by_hour": "Blocked IP addresses by hour",
       "times_blocked": "Times blocked",
       "blocked_ip_addresses": "Blocked IP addresses",

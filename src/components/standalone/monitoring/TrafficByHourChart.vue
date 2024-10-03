@@ -18,7 +18,6 @@ import { Bar } from 'vue-chartjs'
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
-import { padStart } from 'lodash-es'
 import { byteFormat1024 } from '@nethesis/vue-components'
 
 const themeStore = useThemeStore()
@@ -36,8 +35,9 @@ const options: any = {
         source: 'auto',
         autoSkip: true,
         color: themeStore.isLight ? GRAY_700 : GRAY_200,
-        callback: function (value: number) {
-          return `${padStart(value.toString(), 2, '0')}:00`
+        callback: function (value: any) {
+          const label = (this as any).getLabelForValue(value)
+          return `${label.toString().padStart(2, '0')}:00`
         }
       },
       grid: {
@@ -78,7 +78,7 @@ const options: any = {
         },
         // format tooltip title
         title: function (context: any) {
-          return `${padStart(context[0].parsed.x.toString(), 2, '0')}:00`
+          return `${context[0].label.padStart(2, '0')}:00`
         }
       }
     },

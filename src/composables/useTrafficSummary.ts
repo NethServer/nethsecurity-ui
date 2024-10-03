@@ -3,7 +3,7 @@
 
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { padStart, upperFirst } from 'lodash-es'
+import { upperFirst } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { useThemeStore } from '@/stores/theme'
@@ -105,8 +105,8 @@ export function useTrafficSummary() {
 
     try {
       const res = await ubusCall('ns.dpireport', 'summary', {
-        year: padStart(year.toString(), 2, '0'),
-        month: padStart(month.toString(), 2, '0'),
+        year: year.toString().padStart(2, '0'),
+        month: month.toString().padStart(2, '0'),
         day: day.toString()
       })
       totalTraffic.value = res.data.total
@@ -134,10 +134,14 @@ export function useTrafficSummary() {
         let appName = app[0]
 
         // beautify app names
-        if (appName.includes('netify.')) {
-          appName = appName.split('netify.')[1]
+        if (app.name === 'unknown') {
+          app.name = t('common.unknown')
+        } else {
+          if (appName.includes('netify.')) {
+            appName = appName.split('netify.')[1]
+          }
+          appName = upperFirst(appName)
         }
-        appName = upperFirst(appName)
         return appName
       })
 

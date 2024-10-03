@@ -60,6 +60,7 @@ const emit = defineEmits<{
   openSshModal: [unit: Unit]
   scheduleUpdate: [unit: Unit]
   abortUpdate: [unit: Unit]
+  upgradeUnitPackages: [unit: Unit]
 }>()
 
 const { t } = useI18n()
@@ -164,8 +165,8 @@ function getKebabMenuItems(unit: Unit) {
       label:
         unit.info.scheduled_update > 0
           ? t('controller.units.edit_scheduled_image_update')
-          : t('controller.units.schedule_image_update'),
-      icon: 'arrows-rotate',
+          : t('standalone.update.update_system'),
+      icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'arrows-rotate',
       iconStyle: 'fas',
       action: () => emit('scheduleUpdate', unit),
       disabled: !unit.connected
@@ -175,7 +176,7 @@ function getKebabMenuItems(unit: Unit) {
     menuItems.push({
       id: 'cancelScheduledUpdate',
       label: t('controller.units.cancel_scheduled_image_update'),
-      icon: 'calendar-xmark',
+      icon: 'circle-xmark',
       iconStyle: 'fas',
       action: () => emit('abortUpdate', unit),
       disabled: !unit.connected
@@ -183,6 +184,14 @@ function getKebabMenuItems(unit: Unit) {
   }
   // apply common menu items
   menuItems.push(
+    {
+      id: 'upgradeUnitPackages',
+      label: t('controller.units.upgrade_unit_packages'),
+      icon: 'arrows-rotate',
+      iconStyle: 'fas',
+      action: () => emit('upgradeUnitPackages', unit),
+      disabled: !unit.connected
+    },
     {
       id: 'refreshUnitInfo',
       label: t('controller.units.sync_unit_info'),

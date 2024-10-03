@@ -15,11 +15,14 @@ import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { ref, watch } from 'vue'
 import { useUpdates } from '@/composables/useUpdates'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import theme from 'tailwindcss/defaultTheme'
+import '@vuepic/vue-datepicker/dist/main.css'
+import { useThemeStore } from '@/stores/theme'
 
 const { t } = useI18n()
 const { checkUnitImageUpdate, upgradeUnitImage, scheduleUpgradeUnitImage } = useUpdates()
 const unitsStore = useUnitsStore()
+
+const theme = useThemeStore()
 
 const updateModeOptions = [
   {
@@ -100,7 +103,11 @@ async function updateUnit() {
   <NeSideDrawer
     :isShown="isShown"
     :closeAriaLabel="t('common.shell.close_side_drawer')"
-    :title="t('controller.units.schedule_image_update')"
+    :title="
+      updateMode == 'now'
+        ? t('standalone.update.update_system')
+        : t('standalone.update.schedule_update')
+    "
     @close="emit('close')"
   >
     <NeSkeleton v-if="loading" :lines="10" />
@@ -156,6 +163,7 @@ async function updateUnit() {
           />
         </div>
       </template>
+      <hr />
       <div class="flex flex-wrap justify-end gap-4">
         <NeButton
           :disabled="sendingSchedule"
@@ -176,10 +184,25 @@ async function updateUnit() {
             {{ t('standalone.update.update_and_reboot') }}
           </template>
           <template v-else>
-            {{ t('standalone.update.schedule_update') }}
+            {{ t('standalone.update.schedule') }}
           </template>
         </NeButton>
       </div>
     </div>
   </NeSideDrawer>
 </template>
+
+<style>
+/* tailwind theme for vue-datepicker */
+.dp__theme_dark {
+  --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
+  --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));
+  --dp-primary-text-color: rgb(3 7 18 / var(--tw-text-opacity));
+  --dp-border-color-hover: var(--dp-primary-color);
+}
+
+.dp__theme_light {
+  --dp-primary-color: rgb(14 116 144 / var(--tw-bg-opacity));
+  --dp-border-color-hover: var(--dp-primary-color);
+}
+</style>

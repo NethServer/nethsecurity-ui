@@ -1,13 +1,13 @@
-<script setup lang="ts">
-import { NeModal } from '@nethesis/vue-components'
+<script lang="ts" setup>
 import { type Unit, useUnitsStore } from '@/stores/controller/units'
-import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUpdates } from '@/composables/useUpdates'
 import { useNotificationsStore } from '@/stores/notifications'
+import { getAxiosErrorMessage, NeModal, NeInlineNotification } from '@nethesis/vue-components'
 
 const { t } = useI18n()
-const { abortScheduledUpgradeUnitImage } = useUpdates()
+const { upgradePackages } = useUpdates()
 const unitsStore = useUnitsStore()
 const notificationStore = useNotificationsStore()
 
@@ -39,26 +39,27 @@ function close() {
   }
 }
 
-async function abortUpdate() {
+async function updateUnitPackages() {
+  if (!_unit.value) {
+    error.value = new Error('Unit is not defined.')
+    return
+  }
   try {
-    if (!_unit.value) {
-      error.value = new Error('Unit is not defined.')
-      return
-    }
+    error.value = undefined
     loading.value = true
-    await abortScheduledUpgradeUnitImage(_unit.value)
+    await upgradePackages(_unit.value)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
     notificationStore.addNotification({
       kind: 'success',
-      id: 'abort-scheduled-update',
-      title: t('controller.units.scheduled_image_update_aborted', {
+      id: 'update-packages',
+      title: t('controller.units.packages_upgrade_in_progress', {
         name: _unit.value.info.unit_name
       })
     })
     emit('close')
-  } catch (error) {
-    console.error(error)
+  } catch (exception: any) {
+    error.value = exception
   } finally {
     loading.value = false
   }
@@ -68,20 +69,29 @@ async function abortUpdate() {
 <template>
   <NeModal
     :visible="unit != undefined"
-    :title="t('standalone.update.cancel_update')"
-    :primary-label="t('standalone.update.cancel_update')"
-    kind="info"
-    :cancel-label="t('standalone.update.keep_scheduled_update')"
+    :title="t('controller.units.upgrade_unit_packages')"
+    :primary-label="t('common.confirm')"
+    kind="warning"
+    :cancel-label="t('common.close')"
     :primary-button-disabled="loading"
     :primary-button-loading="loading"
-    :close-aria-label="t('standalone.update.keep_scheduled_update')"
-    @primary-click="abortUpdate"
+    :close-aria-label="t('common.close')"
+    @primary-click="updateUnitPackages"
     @secondary-click="close"
     @close="close"
   >
+    <NeInlineNotification
+      v-if="error"
+      :description="t(getAxiosErrorMessage(error))"
+      :title="t('controller.units.error_upgrading_unit_packages')"
+      kind="error"
+    >
+      <template #details>
+        {{ error.toString() }}
+      </template>
+    </NeInlineNotification>
     {{
-      t('controller.units.cancel_scheduled_image_update_description', {
-        version: _unit?.info.version_update,
+      t('controller.units.upgrade_unit_packages_description', {
         name: _unit?.info.unit_name
       })
     }}

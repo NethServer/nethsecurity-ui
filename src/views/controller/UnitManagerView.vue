@@ -28,6 +28,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vue'
+import UpdateUnitsPackagesModal from '@/components/controller/units/UpdateUnitsPackagesModal.vue'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -48,6 +49,7 @@ const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
 const unitToUpdate = ref<Unit>()
 const showScheduleUpdate = ref(false)
 const unitToAbortUpdate = ref<Unit>()
+const unitToUpgradePackages = ref<Unit>()
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -317,6 +319,7 @@ async function scheduleUpdateSuccessful() {
           @openSshModal="showOpenSshModal"
           @scheduleUpdate="scheduleUnitUpdate"
           @abortUpdate="unitToAbortUpdate = $event"
+          @upgradeUnitPackages="unitToUpgradePackages = $event"
         />
       </template>
     </div>
@@ -350,5 +353,10 @@ async function scheduleUpdateSuccessful() {
     />
 
     <AbortUpdateModal :unit="unitToAbortUpdate" @close="unitToAbortUpdate = undefined" />
+
+    <UpdateUnitsPackagesModal
+      :unit="unitToUpgradePackages"
+      @close="unitToUpgradePackages = undefined"
+    />
   </div>
 </template>

@@ -2196,7 +2196,11 @@
       "scheduled_image_update_success": "Image update scheduled successfully",
       "scheduled_image_update_aborted": "Scheduled image update for '{name}' aborted successfully",
       "cancel_scheduled_image_update": "Cancel scheduled image update",
-      "cancel_scheduled_image_update_description": "You are about to cancel the scheduled update for unit '{name}'."
+      "cancel_scheduled_image_update_description": "You are about to cancel the scheduled update to '{version}' for unit '{name}'.",
+      "upgrade_unit_packages": "Update unit packages",
+      "upgrade_unit_packages_description": "This operation will update all packages on the unit '{name}' to the latest available version.",
+      "packages_upgrade_in_progress": "Packages update in progress for unit '{name}'",
+      "error_upgrading_unit_packages": "Error updating unit packages"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

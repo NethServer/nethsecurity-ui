@@ -1700,7 +1700,6 @@
       "community": "Community",
       "allowlist_description": "Inserisci un indirizzo IPv4/IPv6 valido con una notazione opzionale CIDR, un indirizzo MAC o un nome host completo che non dovrebbe essere mai bloccato da Threat shield.",
       "allowlist_is_empty": "Allowlist è vuota",
-      "address": "Indirizzo",
       "address_deleted": "Indirizzo cancellato",
       "address_tooltip": "Inserisci un IPv4 o un IPv6, la notazione CIDR è permessa. Puoi anche inserire un hostname o un Mac address nella forma xx:xx:xx:xx:xx:xx.",
       "description": "Descrizione",

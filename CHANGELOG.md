@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/NethServer/nethsecurity-ui/compare/1.4.1...1.5.0) (2024-10-03)
+
+
+### Features
+
+* add new threat shield configurations ([#369](https://github.com/NethServer/nethsecurity-ui/issues/369)) ([78f23e1](https://github.com/NethServer/nethsecurity-ui/commit/78f23e1014535f6c0f3e3be8623149b6edb0d76b))
+* **controller:** added label indicating last push of metrics from the unit to the controller ([de5cb97](https://github.com/NethServer/nethsecurity-ui/commit/de5cb97efd5d6e8f4be84d98a8d7064953f4ec2f))
+
+
+### Bug Fixes
+
+* **controller:** enhanced connection process ([#372](https://github.com/NethServer/nethsecurity-ui/issues/372)) ([de5cb97](https://github.com/NethServer/nethsecurity-ui/commit/de5cb97efd5d6e8f4be84d98a8d7064953f4ec2f))
+* **controller:** unit now shows a modal of confirmation when connecting to a controller ([de5cb97](https://github.com/NethServer/nethsecurity-ui/commit/de5cb97efd5d6e8f4be84d98a8d7064953f4ec2f))
+* **dhcp:** make search case insensitive ([#377](https://github.com/NethServer/nethsecurity-ui/issues/377)) ([10e8d6d](https://github.com/NethServer/nethsecurity-ui/commit/10e8d6d546e94b022be52bcefc45fac4893cc52d))
+* ensure pppoe iface name has a max of 5 chars ([#378](https://github.com/NethServer/nethsecurity-ui/issues/378)) ([898bc85](https://github.com/NethServer/nethsecurity-ui/commit/898bc8593bc8cbdb212ff84e604d0adf4af9ad77))
+* translated with Weblate ([#375](https://github.com/NethServer/nethsecurity-ui/issues/375)) ([b14f683](https://github.com/NethServer/nethsecurity-ui/commit/b14f683a9b14b91bbc16b2d0647095a67552b275))
+
 ## [1.4.1](https://github.com/NethServer/nethsecurity-ui/compare/1.4.0...1.4.1) (2024-10-02)
 
 

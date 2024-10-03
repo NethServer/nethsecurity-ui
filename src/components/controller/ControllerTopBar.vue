@@ -152,6 +152,7 @@ function openNotificationsDrawer() {
               :items="accountMenuOptions"
               :alignToRight="true"
               :openMenuAriaLabel="t('common.shell.open_user_menu')"
+              menuClasses="!z-[150]"
             >
               <template #button>
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">

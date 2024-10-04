@@ -87,7 +87,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
           </NeEmptyState>
         </NeTableCell>
       </NeTableRow>
-      <NeTableRow v-else v-for="item in paginatedItems" :key="item.ip">
+      <NeTableRow v-else v-for="(item, index) in paginatedItems" :key="index">
         <NeTableCell :data-label="t('standalone.nat_helpers.module')">
           {{ item.name }}
         </NeTableCell>

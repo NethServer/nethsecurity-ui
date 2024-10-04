@@ -145,12 +145,7 @@ async function listObjectSuggestions() {
   try {
     const res = await ubusCall('ns.redirects', 'list-object-suggestions')
     destinationObjectSuggestions.value = res.data.objects.ns_dst
-    restrictObjectSuggestions.value = res.data.objects.ns_src.map((domainSet: DomainSet) => {
-      return {
-        ...domainSet,
-        id: `objects/${domainSet.id}`
-      }
-    })
+    restrictObjectSuggestions.value = res.data.objects.ns_src
   } catch (err: any) {
     console.error(err)
     error.value.listObjectSuggestions = t(getAxiosErrorMessage(err))

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/NethServer/nethsecurity-ui/compare/1.5.1...1.5.2) (2024-10-04)
+
+
+### Bug Fixes
+
+* show Account menu on top of toast notifications ([#380](https://github.com/NethServer/nethsecurity-ui/issues/380)) ([eeea321](https://github.com/NethServer/nethsecurity-ui/commit/eeea3219bad420f9c0968ee0eea4bc0f2cb6362a))
+
 ## [1.5.1](https://github.com/NethServer/nethsecurity-ui/compare/1.5.0...1.5.1) (2024-10-03)
 
 

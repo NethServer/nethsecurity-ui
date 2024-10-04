@@ -4,6 +4,7 @@ import {
   NeButton,
   NeFormItemLabel,
   NeInlineNotification,
+  NeNotification,
   NeRadioSelection,
   NeSideDrawer,
   NeSkeleton,
@@ -17,10 +18,12 @@ import { useUpdates } from '@/composables/useUpdates'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useThemeStore } from '@/stores/theme'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const { t } = useI18n()
 const { checkUnitImageUpdate, upgradeUnitImage, scheduleUpgradeUnitImage } = useUpdates()
 const unitsStore = useUnitsStore()
+const notificationsStore = useNotificationsStore()
 
 const theme = useThemeStore()
 
@@ -36,13 +39,11 @@ const updateModeOptions = [
 ]
 
 const props = defineProps<{
-  isShown: boolean
   unit?: Unit
 }>()
 
 const emit = defineEmits<{
   close: []
-  success: []
 }>()
 
 // Shallow ref to avoid removal of the value when the prop is updated
@@ -50,7 +51,7 @@ const _unit = ref<Unit>()
 watch(
   () => props.unit,
   (unit) => {
-    if (props.isShown && unit !== undefined) {
+    if (unit) {
       _unit.value = unit
       fetchError.value = undefined
       loading.value = true
@@ -63,10 +64,12 @@ watch(
           } else {
             updateMode.value = 'now'
           }
-          loading.value = false
         })
         .catch((error: any) => {
           fetchError.value = error
+        })
+        .finally(() => {
+          loading.value = false
         })
     }
   },
@@ -85,14 +88,27 @@ async function updateUnit() {
   try {
     sendingSchedule.value = true
     sendingError.value = undefined
-    if (updateMode.value === 'now') {
+    if (updateMode.value == 'now') {
       await upgradeUnitImage(_unit.value)
     } else {
       await scheduleUpgradeUnitImage(scheduledUpdate.value, _unit.value)
     }
     await unitsStore.getUnitInfo(_unit.value!.id)
     await unitsStore.getUnits()
-    emit('success')
+
+    let notification: NeNotification = {
+      kind: 'success'
+    }
+    if (updateMode.value == 'now') {
+      notification.id = 'unit-update'
+      notification.title = t('controller.units.image_update_success')
+      notification.description = t('controller.units.image_update_description')
+    } else {
+      notification.id = 'schedule-unit-update'
+      notification.title = t('controller.units.scheduled_image_update_success')
+    }
+    notificationsStore.addNotification(notification)
+    emit('close')
   } catch (error: any) {
     sendingError.value = error
   } finally {
@@ -109,7 +125,7 @@ function close() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :isShown="unit != undefined"
     :closeAriaLabel="t('common.shell.close_side_drawer')"
     :title="t('standalone.update.update_system')"
     @close="close"

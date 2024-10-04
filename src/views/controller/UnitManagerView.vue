@@ -26,9 +26,9 @@ import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevoke
 import { useDefaultsStore } from '@/stores/controller/defaults'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDrawer.vue'
-import { useNotificationsStore } from '@/stores/notifications'
 import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vue'
 import UpdateUnitsPackagesModal from '@/components/controller/units/UpdateUnitsPackagesModal.vue'
+import BatchUnitImageUpdate from '@/components/controller/units/BatchUnitImageUpdate.vue'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -36,7 +36,6 @@ const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
-const notificationStore = useNotificationsStore()
 
 const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
@@ -47,9 +46,9 @@ const isShownSendOrRevokeSshKeyDrawer = ref(false)
 const currentUnit = ref<Unit>()
 const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
 const unitToUpdate = ref<Unit>()
-const showScheduleUpdate = ref(false)
 const unitToAbortUpdate = ref<Unit>()
 const unitToUpgradePackages = ref<Unit>()
+const showBatchUnitImageUpdate = ref(false)
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -135,6 +134,13 @@ function showRevokeSshKeyDrawer() {
 function getBulkActionsKebabMenuItems() {
   return [
     {
+      id: 'scheduleSystemUpdate',
+      label: t('standalone.update.update_system', 2),
+      iconStyle: 'fas',
+      icon: 'arrows-rotate',
+      action: () => (showBatchUnitImageUpdate.value = true)
+    },
+    {
       id: 'sendSshKey',
       label: t('controller.units.send_ssh_public_key'),
       iconStyle: 'fas',
@@ -149,25 +155,6 @@ function getBulkActionsKebabMenuItems() {
       action: () => showRevokeSshKeyDrawer()
     }
   ]
-}
-
-function scheduleUnitUpdate(unit: Unit) {
-  unitToUpdate.value = unit
-  showScheduleUpdate.value = true
-}
-
-function hideScheduleUpdate() {
-  showScheduleUpdate.value = false
-  unitToUpdate.value = undefined
-}
-
-async function scheduleUpdateSuccessful() {
-  hideScheduleUpdate()
-  notificationStore.addNotification({
-    kind: 'success',
-    id: 'schedule-unit-update',
-    title: t('controller.units.scheduled_image_update_success')
-  })
 }
 </script>
 
@@ -317,7 +304,7 @@ async function scheduleUpdateSuccessful() {
           :filteredUnits="filteredUnits"
           @reloadData="loadData"
           @openSshModal="showOpenSshModal"
-          @scheduleUpdate="scheduleUnitUpdate"
+          @scheduleUpdate="unitToUpdate = $event"
           @abortUpdate="unitToAbortUpdate = $event"
           @upgradeUnitPackages="unitToUpgradePackages = $event"
         />
@@ -345,18 +332,18 @@ async function scheduleUpdateSuccessful() {
       @close="isShownSendOrRevokeSshKeyDrawer = false"
     />
 
-    <ScheduleUpdateDrawer
-      :is-shown="showScheduleUpdate"
-      :unit="unitToUpdate"
-      @close="hideScheduleUpdate"
-      @success="scheduleUpdateSuccessful"
-    />
+    <ScheduleUpdateDrawer :unit="unitToUpdate" @close="unitToUpdate = undefined" />
 
     <AbortUpdateModal :unit="unitToAbortUpdate" @close="unitToAbortUpdate = undefined" />
 
     <UpdateUnitsPackagesModal
       :unit="unitToUpgradePackages"
       @close="unitToUpgradePackages = undefined"
+    />
+
+    <BatchUnitImageUpdate
+      :show="showBatchUnitImageUpdate"
+      @close="showBatchUnitImageUpdate = false"
     />
   </div>
 </template>

@@ -34,6 +34,7 @@ watch(
   () => props.unit,
   async (unit) => {
     if (unit) {
+      error.value = undefined
       fetchingData.value = true
       _unit.value = unit
       try {
@@ -75,6 +76,7 @@ function close() {
 }
 
 async function updateUnitPackages() {
+  error.value = undefined
   if (!_unit.value) {
     error.value = new Error('Unit is not defined.')
     return
@@ -84,7 +86,6 @@ async function updateUnitPackages() {
     return
   }
   try {
-    error.value = undefined
     loading.value = true
     await upgradePackages(_unit.value)
     await unitsStore.getUnitInfo(_unit.value.id)
@@ -119,7 +120,7 @@ async function updateUnitPackages() {
     @secondary-click="close"
     @close="close"
   >
-    <div class="max-h-96 overflow-y-auto">
+    <div class="max-h-96 space-y-3 overflow-y-auto">
       <NeInlineNotification
         v-if="error"
         :description="t(getAxiosErrorMessage(error))"

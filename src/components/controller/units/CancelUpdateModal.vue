@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NeModal } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
 import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
@@ -40,12 +40,13 @@ function close() {
 }
 
 async function abortUpdate() {
+  error.value = undefined
+  if (!_unit.value) {
+    error.value = new Error('Unit is not defined.')
+    return
+  }
+  loading.value = true
   try {
-    if (!_unit.value) {
-      error.value = new Error('Unit is not defined.')
-      return
-    }
-    loading.value = true
     await abortScheduledUpgradeUnitImage(_unit.value)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
@@ -57,8 +58,8 @@ async function abortUpdate() {
       })
     })
     emit('close')
-  } catch (error) {
-    console.error(error)
+  } catch (reason: any) {
+    error.value = reason
   } finally {
     loading.value = false
   }
@@ -79,11 +80,25 @@ async function abortUpdate() {
     @secondary-click="close"
     @close="close"
   >
-    {{
-      t('controller.units.cancel_scheduled_image_update_description', {
-        version: _unit?.info.version_update,
-        name: _unit?.info.unit_name
-      })
-    }}
+    <div class="space-y-4">
+      <NeInlineNotification
+        v-if="error"
+        :description="t(getAxiosErrorMessage(error))"
+        :title="t('controller.units.error_removing_scheduled_update')"
+        kind="error"
+      >
+        <template #details>
+          {{ error.toString() }}
+        </template>
+      </NeInlineNotification>
+      <p>
+        {{
+          t('controller.units.cancel_scheduled_image_update_description', {
+            version: _unit?.info.version_update,
+            name: _unit?.info.unit_name
+          })
+        }}
+      </p>
+    </div>
   </NeModal>
 </template>

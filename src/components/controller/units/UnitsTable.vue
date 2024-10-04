@@ -166,7 +166,7 @@ function getKebabMenuItems(unit: Unit) {
         unit.info.scheduled_update > 0
           ? t('controller.units.edit_scheduled_image_update')
           : t('standalone.update.update_system'),
-      icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'arrows-rotate',
+      icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'circle-arrow-up',
       iconStyle: 'fas',
       action: () => emit('scheduleUpdate', unit),
       disabled: !unit.connected

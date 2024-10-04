@@ -3,6 +3,16 @@ import { computed, ref } from 'vue'
 import type { IpVersion } from '@/composables/useObjects'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
+import {
+  faDesktop,
+  faNetworkWired,
+  faArrowsLeftRightToLine,
+  faAddressCard,
+  faBoxArchive,
+  faGlobe,
+  faCloud,
+  faCircleQuestion
+} from '@fortawesome/free-solid-svg-icons'
 
 export type NsObject = {
   id: string
@@ -70,6 +80,32 @@ export const useObjectStore = defineStore('objects', () => {
       })
   }
 
+  function getObjectIcon(subtype: string) {
+    switch (subtype) {
+      case 'host':
+      case 'dns_record':
+        return faDesktop
+      case 'cidr':
+        return faNetworkWired
+      case 'range':
+        return faArrowsLeftRightToLine
+      case 'dhcp_static_lease':
+        return faAddressCard
+      case 'host_set':
+        return faBoxArchive
+      case 'vpn_user':
+        return faGlobe
+      case 'domain_set':
+        return faCloud
+      default:
+        return faCircleQuestion
+    }
+  }
+
+  function getRecord(record: string) {
+    return objects.value.find((obj) => obj.id === record)
+  }
+
   const objects = computed<Array<HostSet | DomainSet>>(() => {
     return [...hostSets.value, ...domainSets.value]
   })
@@ -77,5 +113,5 @@ export const useObjectStore = defineStore('objects', () => {
   // loading objects on store usage
   load()
 
-  return { loading, load, hostSets, error, objects }
+  return { loading, load, hostSets, error, objects, getObjectIcon, getRecord }
 })

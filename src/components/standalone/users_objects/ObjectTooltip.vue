@@ -90,11 +90,17 @@ function isHostSet(object: HostSet | DomainSet): object is HostSet {
         <template v-if="isHostSet(object)">
           <ul class="space-y-1" :class="{ 'list-inside list-disc': multipleEntries }">
             <li v-for="ipaddr in object.ipaddr" :key="ipaddr">
-              {{ ipaddr }}
-            </li>
-            <li v-for="children in object.children" :key="children.id">
-              <FontAwesomeIcon v-if="icon" :icon="icon" aria-hidden="true" class="h-4 w-4" />
-              {{ children.name }}
+              <span class="inline-flex items-center gap-1.5">
+                <span v-if="ipaddr.includes('/ns_')">
+                  <font-awesome-icon
+                    :icon="objects.getObjectIcon(objects.getRecord(ipaddr)?.subtype || '')"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                  {{ objects.getRecord(ipaddr)?.name || '-' }}
+                </span>
+                <span v-else>{{ ipaddr }}</span>
+              </span>
             </li>
           </ul>
         </template>

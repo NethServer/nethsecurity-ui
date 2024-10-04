@@ -190,14 +190,19 @@ function editZone(zone: Zone) {
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.interfaces')">
             <template v-if="item.interfaces.length > 0">
-              <p v-for="(iface, index) in item.interfaces" :key="index">
-                {{ iface }}
-              </p>
+              {{ item.interfaces.join(', ') }}
             </template>
             <template v-else>-</template>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
-            <p>{{ item.logging ? 'ON' : 'OFF' }}</p>
+            <div class="flex items-center gap-2">
+              <font-awesome-icon
+                :icon="['fas', item.logging ? 'circle-check' : 'circle-xmark']"
+                :class="['h-4 w-4', { 'text-green-600 dark:text-green-400': item.logging }]"
+                aria-hidden="true"
+              />
+              {{ item.logging ? t('common.enabled') : t('common.disabled') }}
+            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="-ml-2.5 flex 2xl:ml-0">

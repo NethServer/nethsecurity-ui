@@ -13,7 +13,8 @@ import {
   NeRadioSelection,
   NeTextInput,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { computed, onMounted, ref, type PropType, watch, nextTick } from 'vue'
@@ -52,6 +53,7 @@ const trafficInput = ref('input-drop')
 // ID of radio selection
 const trafficForward = ref('forward-drop')
 const trafficToWan = ref(false)
+const enableLogging = ref(false)
 
 const saving = ref(false)
 const saveError = ref<Error>()
@@ -107,6 +109,7 @@ watch(
         trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
         trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
         trafficToWan.value = false
+        enableLogging.value = false
 
         nextTick(() => {
           focusElement(nameRef)
@@ -135,6 +138,7 @@ watch(
         trafficInput.value = mapTrafficPolicyToRadioId(props.zoneToEdit.input, 'input')
         trafficForward.value = mapTrafficPolicyToRadioId(props.zoneToEdit.forward, 'forward')
         trafficToWan.value = !!getTrafficToWan(props.zoneToEdit, firewallConfig.forwardings)
+        enableLogging.value = props.zoneToEdit.logging
       }
     }
   }
@@ -189,7 +193,8 @@ function editZone() {
     forward: mapRadioIdToTrafficPolicy(trafficForward.value),
     traffic_to_wan: trafficToWan.value,
     forwards_to: forwardsTo.value.map((item) => item.id),
-    forwards_from: forwardsFrom.value.map((item) => item.id)
+    forwards_from: forwardsFrom.value.map((item) => item.id),
+    log: enableLogging.value
   })
     .then(() => {
       uciPendingChangesStore.getChanges()
@@ -210,7 +215,8 @@ function addZone() {
       forward: mapRadioIdToTrafficPolicy(trafficForward.value),
       traffic_to_wan: trafficToWan.value,
       forwards_to: forwardsTo.value.map((item) => item.id),
-      forwards_from: forwardsFrom.value.map((item) => item.id)
+      forwards_from: forwardsFrom.value.map((item) => item.id),
+      log: enableLogging.value
     })
       .then(() => {
         uciPendingChangesStore.getChanges()
@@ -333,6 +339,20 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :label="t('standalone.zones_and_policies.traffic_to_same_zone')"
         :options="forwardTrafficOptions"
       />
+      <NeToggle
+        v-model="enableLogging"
+        :disabled="saving"
+        :topLabel="t('standalone.zones_and_policies.logging')"
+        :label="enableLogging ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip>
+            <template #content>
+              {{ t('standalone.zones_and_policies.enable_logging_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="saving" kind="tertiary" size="lg" @click="$emit('close')">

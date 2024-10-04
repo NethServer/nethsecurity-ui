@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/NethServer/nethsecurity-ui/compare/1.5.2...1.6.0) (2024-10-04)
+
+
+### Features
+
+* **port forward:** support multiple object types ([e0b0031](https://github.com/NethServer/nethsecurity-ui/commit/e0b003114f0730b56d40a8b0751ba8c8fa4dd4f7))
+
+
+### Bug Fixes
+
+* **port forward:** add tooltip on restrict object ([fd24cbb](https://github.com/NethServer/nethsecurity-ui/commit/fd24cbbf0609d962083cf17f6542a777e102fbb2))
+* **port forward:** fix ObjectTooltip for dhcp objects ([27ded1f](https://github.com/NethServer/nethsecurity-ui/commit/27ded1f23ec498ebf18f69f34b88b8b93a05567e))
+
 ## [1.5.2](https://github.com/NethServer/nethsecurity-ui/compare/1.5.1...1.5.2) (2024-10-04)
 
 

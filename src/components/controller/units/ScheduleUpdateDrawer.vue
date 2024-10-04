@@ -107,7 +107,7 @@ async function updateUnit() {
       notification.id = 'schedule-unit-update'
       notification.title = t('controller.units.scheduled_image_update_success')
     }
-    notificationsStore.addNotification(notification)
+    notificationsStore.createNotification(notification)
     emit('close')
   } catch (error: any) {
     sendingError.value = error

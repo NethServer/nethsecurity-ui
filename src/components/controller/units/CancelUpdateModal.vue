@@ -50,7 +50,7 @@ async function abortUpdate() {
     await abortScheduledUpgradeUnitImage(_unit.value)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
-    notificationStore.addNotification({
+    notificationStore.createNotification({
       kind: 'success',
       id: 'abort-scheduled-update',
       title: t('controller.units.scheduled_image_update_aborted', {

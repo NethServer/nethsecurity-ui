@@ -90,7 +90,7 @@ async function updateUnitPackages() {
     await upgradePackages(_unit.value)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
-    notificationStore.addNotification({
+    notificationStore.createNotification({
       kind: 'success',
       id: 'update-packages',
       title: t('controller.units.packages_upgrade_in_progress', {

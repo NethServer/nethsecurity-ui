@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/NethServer/nethsecurity-ui/compare/1.6.0...1.6.1) (2024-10-07)
+
+
+### Bug Fixes
+
+* **zones:** improve tooltip label ([84985ce](https://github.com/NethServer/nethsecurity-ui/commit/84985ce40c956eb5f4156850f78faf6b9d25c26d))
+
 ## [1.6.0](https://github.com/NethServer/nethsecurity-ui/compare/1.5.2...1.6.0) (2024-10-04)
 
 

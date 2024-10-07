@@ -44,7 +44,12 @@
     "dont_show_again": "Non mostrare più",
     "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
     "actions": "Azioni",
-    "go_to_page": "Vai a {pagina}"
+    "go_to_page": "Vai a {pagina}",
+    "clear_filters": "Azzera filtri",
+    "try_changing_search_filters": "Prova a cambiare i filtri di ricerca",
+    "download": "Download",
+    "type": "Tipo",
+    "unknown": "Sconosciuto"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -353,7 +358,14 @@
     "cannot_delete_backup": "Impossibile eliminare il backup remoto",
     "end_must_be_greater_then_start": "L'IP finale deve essere maggiore dell'IP iniziale",
     "start_reserved": "Il primo IP della rete è riservato",
-    "cannot_retrieve_object_suggestions": "Impossibile recuperare i suggerimenti sugli oggetti"
+    "cannot_retrieve_object_suggestions": "Impossibile recuperare i suggerimenti sugli oggetti",
+    "cannot_retrieve_local_blocklist": "Impossibile recuperare la blocklist locale",
+    "cannot_retrieve_nat_helpers": "Impossibile recuperare i NAT helper",
+    "cannot_retrieve_attack_report": "Impossibile caricare il report degli attachi",
+    "cannot_retrieve_mwan_report": "Impossibile caricare il report della MultiWAN",
+    "cannot_save_nat_helper": "Impossibile salvare il NAT helper",
+    "cannot_retrieve_malware_report": "Impossibile recuperare il report delle minacce",
+    "invalid_number": "Numero non valido"
   },
   "login": {
     "sign_in": "Accedi",
@@ -461,7 +473,8 @@
         "pgp-encrypted": "Criptato",
         "size": "Dimensione",
         "mimetype": "Tipo",
-        "passphrase_is_set": "Passphrase configurata: crittografia abilitata"
+        "passphrase_is_set": "Passphrase configurata: crittografia abilitata",
+        "description_subscription": "Eseguire un backup per scaricare le impostazioni e i dati correnti dell'unità. Il sistema funziona autonomamente e mantiene fino a 10 backup. Configurare una passphrase per aumentare la sicurezza dei dati."
       },
       "tabs": {
         "migration": "Migrazione",
@@ -540,7 +553,8 @@
       "clients_connected": "client connessi",
       "tunnels_connected": "tunnel connesso | tunnel connessi",
       "check_dns_configuration": "Controllare DNS",
-      "tunnels_enabled": "tunnel abilitato | tunnel abilitati"
+      "tunnels_enabled": "tunnel abilitato | tunnel abilitati",
+      "monitoring_disabled": "Monitoraggio disabilitato"
     },
     "subscription": {
       "title": "Subscription",
@@ -821,7 +835,6 @@
       "traffic_to_same_zone": "Traffico verso la stessa zona",
       "description": "Il firewall associa zone alle interfacce di rete per controllare il flusso del traffico di rete.",
       "add_new_subnet": "Aggiungi nuova sottorete",
-      "enable_logging": "Attiva logging su questa zona",
       "name": "Nome",
       "allow_forwards_from": "Consenti forward da",
       "title": "Zone e policy",
@@ -1719,7 +1732,11 @@
       "unknown": "Sconosciuta",
       "title": "Threat shield",
       "threat_shield_status_description": "Quando abilitato, threat shield blocca tutte le nuove connessioni da e per indirizzi IP malevoli 'banIP/{'<'}direction{'>'}-{'<'}zone{'>'}/{'<'}action{'>'}/{'<'}blocklist{'>'}'.",
-      "blocklist_description": "Threat shield ti tiene al sicuro bloccando attacchi da indirizzi IP malevoli. Questi indirizzi sono aggiunti in blocklist, le quali hanno un nome chiaro che ti dice quale è il suo scopo e chi fa manutenzione alla lista. Il punteggio della confidenza è un valore da 1 a 10 che indica la qualità della lista. Un numero alto significa un numero basso di falsi positivi. Questo punteggio non è disponibile per le liste 'Community'."
+      "blocklist_description": "Threat shield ti tiene al sicuro bloccando attacchi da indirizzi IP malevoli. Questi indirizzi sono aggiunti in blocklist, le quali hanno un nome chiaro che ti dice quale è il suo scopo e chi fa manutenzione alla lista. Il punteggio della confidenza è un valore da 1 a 10 che indica la qualità della lista. Un numero alto significa un numero basso di falsi positivi. Questo punteggio non è disponibile per le liste 'Community'.",
+      "blocked_address": "Indirizzo bloccato",
+      "allowed_address": "Indirizzo consentito",
+      "blocked_addresses": "Indirizzi bloccati",
+      "allowed_addresses": "Indirizzi consentiti"
     },
     "two_fa": {
       "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
@@ -1773,7 +1790,9 @@
       "action_accept_description": "Disabilita riscrittura dell'indirizzo",
       "rewrite_ip_address": "Riscrivi indirizzo IP",
       "rewrite_ip": "Riscrivi IP",
-      "delete_nat_rule": "Elimina regola NAT"
+      "delete_nat_rule": "Elimina regola NAT",
+      "any_address": "Qualsiasi indirizzo",
+      "rules_and_netmap": "Regole e NETMAP"
     },
     "netmap": {
       "destination_network": "Rete destinazione",
@@ -1816,7 +1835,10 @@
       "vpn_ip_address": "Indirizzo IP VPN",
       "disconnect_unit": "Disconnetti unità",
       "disconnect_unit_message": "L'unità sarà disconnessa dal controller e non sarà più accessibile dal controller stesso. Vuoi procedere?",
-      "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi"
+      "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
+      "disclaimer": "Disclaimer",
+      "confirm_and_connect": "Conferma e collega",
+      "sending_data_to_controller": "Invio dei dati di monitoraggio al Titolare"
     },
     "conntrack": {
       "delete_all": "Elimina tutte le connessioni",
@@ -1901,6 +1923,73 @@
     },
     "user_objects": {
       "title": "Utenti e oggetti"
+    },
+    "real_time_monitor": {
+      "traffic": "Traffico",
+      "connectivity": "Connettività",
+      "today_top_remote_hosts": "Host remoti",
+      "no_applications": "Nessuna applicazione",
+      "today_top_protocols": "Protocolli",
+      "host": "Host",
+      "application": "Applicazione",
+      "protocol": "Protocollo",
+      "protocols": "Protocolli",
+      "blocked_ip_addresses": "Indirizzi IP Bloccati",
+      "event": "Evento",
+      "connected_clients": "Client connessi",
+      "security": "Sicurezza",
+      "today_top_applications": "Applicazioni",
+      "applications": "Applicazioni",
+      "wan_name_events": "Eventi {name}",
+      "interface_name_traffic": "Traffico {name}",
+      "site_to_site_vpn": "VPN Site-to-Site",
+      "rw_openvpn": "OpenVPN RW",
+      "instant_traffic": "Traffico istantaneo",
+      "recent_traffic": "Traffico recente",
+      "wan_events": "Eventi WAN",
+      "blocked_threats": "Minacce bloccate",
+      "blocked_ip_addresses_by_hour": "Indirizzi IP bloccati per ora",
+      "vpn": "VPN",
+      "today_top_local_hosts": "Host locali",
+      "no_hosts": "Nessun host",
+      "no_protocols": "Nessun protocollo",
+      "local_hosts": "Host locali",
+      "wans": "WAN",
+      "total_traffic_by_hour": "Traffico totale per ore",
+      "threats_by_category": "Minacce per categoria",
+      "no_sessions": "Nessuna sessione",
+      "connected_clients_by_hour": "Clienti collegati per ora",
+      "connected_since": "Collegato da",
+      "client_traffic_by_hour": "Traffico cliente per ora",
+      "connected_tunnels": "Tunnel connessi",
+      "tunnel_ovpn_client": "Client tunnel OpenVPN",
+      "configured_tunnels": "Tunnel configurati",
+      "tunnel_ipsec": "IPsec",
+      "tunnel_ovpn_server": "Server tunnel OpenVPN",
+      "device": "Dispositivo",
+      "interface": "Interfaccia",
+      "online": "Online",
+      "offline": "Offline",
+      "no_events_message": "Nessun evento, tutto bene",
+      "view_all_on_grafana": "Vedi tutti su Grafana",
+      "blocklist": "Blocklist",
+      "no_vpn_network_configured": "Nessuna rete VPN configurata"
+    },
+    "ping_latency_monitor": {
+      "title": "Monitor latenza ping",
+      "add_host": "Aggiungi host",
+      "host_to_monitor": "Host da monitorare"
+    },
+    "nat_helpers": {
+      "status": "Stato",
+      "loaded": "Caricato",
+      "title": "NAT helper",
+      "module": "Modulo",
+      "not_loaded": "Non caricato",
+      "enabled_but_not_loaded_tooltip": "Questo modulo è abilitato ma non caricato nel kernel.",
+      "reboot_to_apply_changes": "Riavviare per applicare modifiche ai NAT helper",
+      "reboot_to_apply_changes_description": "Riavviare l'unità per applicare le modifiche al modulo '{module} '",
+      "nat_helper_name_saved": "NAT helper '{module}' salvato"
     }
   },
   "controller": {
@@ -1974,7 +2063,11 @@
       "num_units_left_tooltip": "Hai configurato {num} di {max} unità. Passa ad una subscription per gestire più unità.",
       "syncing_data": "Sincronizzazione dati...",
       "syncing_data_description": "I dati dell'unità non sono ancora stati sincronizzati. È possibile farlo ora facendo clic sul menu tre punti e poi '@:controller.units.sync_unit_info'.",
-      "sync_unit_info": "Sincronizza info unità"
+      "sync_unit_info": "Sincronizza info unità",
+      "open_anyway": "Apri comunque",
+      "warning_open_unit": "Il controller non è aggiornato",
+      "cannot_open_unit_description": "L'unità {nome} deve essere aggiornata prima di aprirla. Accedi direttamente all'unità UI e vai al sistema > Aggiornamenti pagina.",
+      "cannot_open_unit": "Impossibile aprire l'unità"
     },
     "unit_terminal": {
       "connection_status_active": "Attiva",
@@ -2093,5 +2186,9 @@
     "copy_the_command": "Copia comando",
     "report_issue_step_1": "{copyTheCommand} fallito",
     "report_issue_step_3": "Riporta il problema, assicurati di fornire sia il comando che l'output corrispondente"
+  },
+  "ne_dropdown_filter": {
+    "clear_filter": "Azzera filtro",
+    "open_filter": "Apri filtro"
   }
 }

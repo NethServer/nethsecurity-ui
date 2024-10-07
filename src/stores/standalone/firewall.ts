@@ -29,7 +29,7 @@ interface ZoneResponse {
   forward?: string
   output?: string
   family?: string
-  log?: number
+  log?: string
   log_limit?: string
   device?: Array<string>
   subnet?: Array<string>
@@ -181,7 +181,7 @@ export class Zone {
     this.output = Zone.trafficPolicyParser(zoneResponse.output ?? 'DROP')
     this.forward = Zone.trafficPolicyParser(zoneResponse.forward ?? 'DROP')
     this.interfaces = zoneResponse.network ?? []
-    this.logging = Boolean(zoneResponse.log ?? 0)
+    this.logging = zoneResponse.log === '1'
   }
 
   public type(): ZoneType {

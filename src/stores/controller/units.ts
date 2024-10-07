@@ -40,7 +40,7 @@ interface UnitInfo {
 interface UnitVpnData {
   bytes_rcvd: string
   bytes_sent: string
-  connected_since: string
+  connected_since: number
   real_address: string
   virtual_address: string
 }
@@ -170,7 +170,11 @@ export const useUnitsStore = defineStore('units', () => {
       const tokenDecoded: any = jwtDecode(loginInfo.token)
       const tokenExpirationMillis = tokenDecoded.exp * 1000
 
-      if (tokenExpirationMillis > Date.now()) {
+      const tokenCreationMillis = tokenDecoded.orig_iat * 1000
+      const unitConnectionTime =
+        (unitsStore.units.find((unit) => unit.id == unitId)?.vpn.connected_since ?? 0) * 1000
+      // if the unit connection is newer than the token creation, we need to refresh the token
+      if (tokenExpirationMillis > Date.now() && tokenCreationMillis > unitConnectionTime) {
         // unit token is still valid
         return loginInfo.token
       } else {

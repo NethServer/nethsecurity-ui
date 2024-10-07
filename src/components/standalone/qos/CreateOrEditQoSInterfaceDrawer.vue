@@ -71,7 +71,7 @@ async function fetchOptions() {
         description: x.iface.device
       }))
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_users')
+    error.value.notificationTitle = t('error.cannot_load_network_devices')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   } finally {

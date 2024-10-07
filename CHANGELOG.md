@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/NethServer/nethsecurity-ui/compare/1.6.1...1.6.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* **zones:** correctly display log field ([#387](https://github.com/NethServer/nethsecurity-ui/issues/387)) ([e36b933](https://github.com/NethServer/nethsecurity-ui/commit/e36b9335be5cd637102c0ccdf4c758de12b255d7))
+
 ## [1.6.1](https://github.com/NethServer/nethsecurity-ui/compare/1.6.0...1.6.1) (2024-10-07)
 
 

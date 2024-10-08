@@ -15,7 +15,6 @@ import { useI18n } from 'vue-i18n'
 import { useUnitsStore } from '@/stores/controller/units'
 import { computed, ref } from 'vue'
 import { MessageBag } from '@/lib/validation'
-import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import { useThemeStore } from '@/stores/theme'
 import { useUpdates } from '@/composables/useUpdates'
@@ -241,7 +240,8 @@ const someUnitsFailed = ref(false)
 </template>
 
 <style>
-/* tailwind theme for vue-datepicker */
+@import '@vuepic/vue-datepicker/dist/main.css';
+
 .dp__theme_dark {
   --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
   --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));

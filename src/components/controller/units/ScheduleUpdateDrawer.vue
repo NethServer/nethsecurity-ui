@@ -16,7 +16,6 @@ import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { ref, watch } from 'vue'
 import { useUpdates } from '@/composables/useUpdates'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import { useThemeStore } from '@/stores/theme'
 import { useNotificationsStore } from '@/stores/notifications'
 
@@ -215,7 +214,8 @@ function close() {
 </template>
 
 <style>
-/* tailwind theme for vue-datepicker */
+@import '@vuepic/vue-datepicker/dist/main.css';
+
 .dp__theme_dark {
   --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
   --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));

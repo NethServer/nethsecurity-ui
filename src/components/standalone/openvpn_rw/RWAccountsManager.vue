@@ -26,6 +26,7 @@ import DeleteRWAccountModal from './DeleteRWAccountModal.vue'
 import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
+import { downloadFile, deleteFile } from '@/lib/standalone/fileUpload'
 
 type ConnectionFilter = 'all' | 'connected' | 'not_connected'
 type ExpirationFilter = 'all' | 'expired' | 'not_expired'
@@ -148,6 +149,32 @@ async function downloadCertificate(account: RWAccount) {
     error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
+  }
+}
+
+async function downloadAllConfigurations() {
+  cleanError()
+  try {
+    let res = await ubusCall('ns.ovpnrw', 'download_all_user_configurations', {
+      instance: props.instanceName
+    })
+    if (res?.data?.archive_path) {
+      //remove prefix /var/run/ns-api-server/downloads/
+      res.data.archive_path = res.data.archive_path.replace('/var/run/ns-api-server/downloads/', '')
+      const file = await downloadFile(res.data.archive_path)
+      const fileURL = URL.createObjectURL(file)
+      let link = document.createElement('a')
+      link.href = fileURL
+      link.download =
+        res.data.archive_path.replace('.tar.gz', '') + '-' + Date.now().toString() + '.tar.gz'
+      link.click()
+
+      await deleteFile(res.data.archive_path)
+    }
+  } catch (exception: any) {
+    error.value.notificationTitle = t('standalone.openvpn_rw.cannot_download_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    error.value.notificationDetails = exception.toString()
   }
 }
 
@@ -285,12 +312,24 @@ function clearFilters() {
           {{ t('common.clear_filters') }}
         </NeButton>
       </div>
-      <NeButton kind="secondary" @click="openCreateEditDrawer()">
-        <template #prefix>
-          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
-        </template>
-        {{ t('standalone.openvpn_rw.add_vpn_account') }}
-      </NeButton>
+      <div class="flex flex-row gap-x-3">
+        <NeButton kind="tertiary" @click="downloadAllConfigurations()">
+          <template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'fa-circle-arrow-down']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </template>
+          {{ t('standalone.openvpn_rw.download_all_configs') }}
+        </NeButton>
+        <NeButton kind="secondary" @click="openCreateEditDrawer()">
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.openvpn_rw.add_vpn_account') }}
+        </NeButton>
+      </div>
     </div>
     <RWAccountsTable
       v-if="filteredUsers.length > 0"

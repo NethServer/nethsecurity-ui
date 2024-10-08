@@ -30,7 +30,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const pageSize = ref(5)
+const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => props.topProtocols, {
   itemsPerPage: pageSize
 })

@@ -452,48 +452,50 @@ function showRemoveUnitModal(unit: Unit) {
           <NeTableCell :data-label="t('controller.units.installed_version')">
             <span v-if="item.info.version" class="flex flex-wrap items-center gap-2">
               <span>{{ item.info.version }}</span>
-              <template v-if="item.info.scheduled_update > 0">
-                <NeTooltip>
-                  <template #trigger>
-                    <NeBadge
-                      :icon="faClock"
-                      :text="t('controller.units.scheduled_image_update')"
-                      clickable
-                      kind="info"
-                    />
-                  </template>
-                  <template #content>
-                    <div>
-                      {{
-                        t('controller.units.scheduled_image_update_tooltip', {
-                          version: item.info.version_update,
-                          date: new Date(item.info.scheduled_update * 1000).toLocaleString()
-                        })
-                      }}
-                    </div>
-                  </template>
-                </NeTooltip>
-              </template>
-              <template v-else-if="item.info.version_update">
-                <NeTooltip>
-                  <template #trigger>
-                    <NeBadge
-                      :icon="faWarning"
-                      :text="t('controller.units.image_update_available')"
-                      clickable
-                      kind="warning"
-                    />
-                  </template>
-                  <template #content>
-                    <div>
-                      {{
-                        t('controller.units.image_update_available_tooltip', {
-                          version: item.info.version_update
-                        })
-                      }}
-                    </div>
-                  </template>
-                </NeTooltip>
+              <template v-if="item.connected">
+                <template v-if="item.info.scheduled_update > 0">
+                  <NeTooltip>
+                    <template #trigger>
+                      <NeBadge
+                        :icon="faClock"
+                        :text="t('controller.units.scheduled_image_update')"
+                        clickable
+                        kind="info"
+                      />
+                    </template>
+                    <template #content>
+                      <div>
+                        {{
+                          t('controller.units.scheduled_image_update_tooltip', {
+                            version: item.info.version_update,
+                            date: new Date(item.info.scheduled_update * 1000).toLocaleString()
+                          })
+                        }}
+                      </div>
+                    </template>
+                  </NeTooltip>
+                </template>
+                <template v-else-if="item.info.version_update">
+                  <NeTooltip>
+                    <template #trigger>
+                      <NeBadge
+                        :icon="faWarning"
+                        :text="t('controller.units.image_update_available')"
+                        clickable
+                        kind="warning"
+                      />
+                    </template>
+                    <template #content>
+                      <div>
+                        {{
+                          t('controller.units.image_update_available_tooltip', {
+                            version: item.info.version_update
+                          })
+                        }}
+                      </div>
+                    </template>
+                  </NeTooltip>
+                </template>
               </template>
             </span>
             <template v-else-if="item.connected">

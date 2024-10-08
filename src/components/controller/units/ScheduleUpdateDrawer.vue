@@ -55,9 +55,12 @@ watch(
       fetchError.value = undefined
       loading.value = true
       checkUnitImageUpdate(_unit.value)
-        .then((response) => {
+        .then(async (response) => {
           versionToUpdate.value = response.data.lastVersion
-          if (response.data.scheduledAt > 0) {
+          if (versionToUpdate.value == '') {
+            await unitsStore.getUnitInfo(_unit.value!.id)
+            await unitsStore.getUnits()
+          } else if (response.data.scheduledAt > 0) {
             scheduledUpdate.value = new Date(response.data.scheduledAt * 1000)
             updateMode.value = 'scheduled'
           } else {
@@ -140,6 +143,13 @@ function close() {
         {{ fetchError.toString() }}
       </template>
     </NeInlineNotification>
+    <div v-else-if="versionToUpdate == ''" class="flex flex-col gap-6">
+      <NeInlineNotification :title="t('standalone.update.no_updates_available')" kind="info" />
+      <hr />
+      <div class="flex flex-wrap justify-end">
+        <NeButton kind="primary" @click="emit('close')">{{ t('common.close') }}</NeButton>
+      </div>
+    </div>
     <div v-else class="flex flex-col gap-6">
       <NeInlineNotification
         v-if="sendingError"

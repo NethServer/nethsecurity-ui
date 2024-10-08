@@ -49,7 +49,10 @@
     "try_changing_search_filters": "Prova a cambiare i filtri di ricerca",
     "download": "Download",
     "type": "Tipo",
-    "unknown": "Sconosciuto"
+    "unknown": "Sconosciuto",
+    "no_data_available": "Nessun dato disponibile",
+    "upload": "Upload",
+    "confirm": "Conferma"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -235,8 +238,8 @@
     "unique": "Inserire un valore unico",
     "invalid": "Valore invalido",
     "bridge_not_found": "Bridge non trovato",
-    "start_not_in_network": "Il valore iniziale non fa parte della rete",
-    "end_not_in_network": "Il valore finale non fa parte della rete",
+    "start_not_in_network": "L'IP iniziale non fa parte della rete",
+    "end_not_in_network": "L'IP finale non fa parte della rete",
     "start_must_be_greater_then_end": "Il valore iniziale deve essere più grande di quello finale",
     "ip_already_used": "Indirizzo IP già in uso",
     "invalid_ip_v4_address_or_cidr": "Inserire un indirizzo IPv4 valido con notazione CIDR opzionale",
@@ -297,7 +300,7 @@
     "cannot_disable_automatic_updates": "Impossibile disabilitare gli aggiornamenti automatici",
     "cannot_retrieve_nat_rules": "Impossibile recuperare le regole NAT",
     "cannot_save_nat_rule": "Impossibile salvare la regola NAT",
-    "cannot_retrieve_allowlist": "Impossibile recuperare allowlist",
+    "cannot_retrieve_allowlist": "Impossibile recuperare allowlist locale",
     "cannot_create_address": "Impossibile creare indirizzo",
     "cannot_edit_address": "Impossibile modificare indirizzo",
     "cannot_delete_address": "Impossibile eliminare indirizzo",
@@ -365,7 +368,13 @@
     "cannot_retrieve_mwan_report": "Impossibile caricare il report della MultiWAN",
     "cannot_save_nat_helper": "Impossibile salvare il NAT helper",
     "cannot_retrieve_malware_report": "Impossibile recuperare il report delle minacce",
-    "invalid_number": "Numero non valido"
+    "invalid_number": "Numero non valido",
+    "cannot_retrieve_connected_client_by_hour": "Impossibile caricare i client connessi per ora",
+    "cannot_retrieve_client_traffic_by_hour": "Impossibile caricare il traffico client per ora",
+    "cannot_retrieve_ovpn_tunnels": "Impossibile caricare i tunnel OpenVPN",
+    "cannot_retrieve_talkers_list": "Impossibile caricare la lista degli host che fanno più traffico",
+    "cannot_retrieve_ovpn_traffic_by_hour": "Impossibile caricare traffico orario della OpenVPN",
+    "cannot_retrieve_vpn_client_sessions": "Impossibile caricare le sessioni dei client VPN"
   },
   "login": {
     "sign_in": "Accedi",
@@ -453,7 +462,7 @@
         "no_backups_found": "Nessun backup trovato",
         "passphrase_helper": "Digitare una passphrase se si desidera crittografare il backup con GPG; se la passphrase è vuota, il backup verrà salvato senza cifratura. Attenzione: se si perde la passphrase, non potrai utilizzare il backup crittografato.",
         "configure_passphrase": "Configura passphrase",
-        "modal_download_description": "Sei sicuro di voler scaricare il backup '{name}'?",
+        "modal_download_description": "Scaricare il backup '{name}'?",
         "success_run_backup": "Backup eseguito con successo",
         "run_backup": "Esegui backup",
         "description": "Scarica le impostazioni e i dati correnti dell'unità. Questo proteggerà contro potenziali perdite di dati o guasti di sistema. Configura una passphrase per aumentare la sicurezza dei tuoi dati.",
@@ -554,7 +563,8 @@
       "tunnels_connected": "tunnel connesso | tunnel connessi",
       "check_dns_configuration": "Controllare DNS",
       "tunnels_enabled": "tunnel abilitato | tunnel abilitati",
-      "monitoring_disabled": "Monitoraggio disabilitato"
+      "monitoring_disabled": "Monitoraggio disabilitato",
+      "monitoring_disabled_tooltip": "Abilitare il log almeno in una chain per abilitare il monitoraggio delle minacce. Vai alla pagina {page}"
     },
     "subscription": {
       "title": "Subscription",
@@ -736,7 +746,8 @@
       "configure_bond": "Configura bond",
       "configure_bond_name": "Configura bond {name}",
       "management_ipv4_address_cidr_tooltip": "Questo indirizzo IP è solamente per uso interno e non sarà l'indirizzo principale del bond. Assicurati che non sia già in uso nella tua rete",
-      "clients_network": "Rete client"
+      "clients_network": "Rete client",
+      "pppoe_name_too_long_need_reconfiguration": "I nomi di interfaccia PPPoE sono limitati a caratteri {num}. È possibile rimuovere la configurazione da questo dispositivo, quindi riconfigurarlo con un nome di interfaccia più breve."
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -849,7 +860,8 @@
       "traffic_to_firewall": "Traffico verso firewall",
       "limit_log_messages": "Limita i messaggi di log",
       "edit_zone_name": "Modifica zona {name}",
-      "firewall_zones": "Zone firewall"
+      "firewall_zones": "Zone firewall",
+      "enable_logging_tooltip": "Attiva o disabilita il log dei pacchetti bloccati su questa zona"
     },
     "port_forward": {
       "disable": "Disabilita",
@@ -901,7 +913,8 @@
       "no_object": "Nessun oggetto",
       "port_forwards_for_destination_name": "Port forward per la destinazione '{name}'",
       "save_port_forward": "Salva port forward",
-      "destination_object": "Oggetto di destinazione"
+      "destination_object": "Oggetto di destinazione",
+      "restricted_object_tooltip": "Tutti gli oggetti sono supportati, tranne gli host set che contengono intervalli di IP"
     },
     "routes": {
       "route_type": "Tipo di rotta",
@@ -1330,7 +1343,7 @@
       "system_update": "Aggiornamenti di sistema",
       "schedule": "Programma",
       "choose_when_to_update": "Scegli quando aggiornare",
-      "update_system": "Aggiorna sistema",
+      "update_system": "Aggiorna sistema | Aggiorna sistemi",
       "latest_release": "Ultima release",
       "system_update_scheduled_description": "L'unità verrà aggiornata alla versione '{version}' il {date}",
       "time_and_date": "Data e orario",
@@ -1351,7 +1364,8 @@
       "automatic_updates_enabled_message": "Aggiornamenti automatici abilitati con successo",
       "automatic_updates_disabled_message": "Aggiornamenti automatici disattivati con successo",
       "automatic_updates_tooltip": "Abilita per attivare gli aggiornamenti automatici. Disponibile solo con subscription.",
-      "go_to_subscription": "Vai a subscription"
+      "go_to_subscription": "Vai a subscription",
+      "schedule_update": "Pianifica aggiornamento"
     },
     "factory_reset": {
       "title": "Factory reset",
@@ -1705,14 +1719,14 @@
     "threat_shield": {
       "status": "Stato",
       "blocklist_subscription_description": "Le blocklist Nethesis e Yoroi sono disponibili solo se l'unità ha una subscription valida che include il servizio Threat shield.",
-      "threat_shield_disabled": "Threat shield disabilitato",
+      "threat_shield_disabled": "Threat shield è disabilitato",
       "type": "Tipo",
       "confidence": "Confidenza",
       "no_blacklists_found": "Nessuna blocklist trovata. Prova a cambiare il filtro di ricerca",
       "go_to_settings": "Vai alle Impostazioni",
       "community": "Community",
       "allowlist_description": "Inserisci un indirizzo IPv4/IPv6 valido con una notazione opzionale CIDR, un indirizzo MAC o un nome host completo che non dovrebbe essere mai bloccato da Threat shield.",
-      "allowlist_is_empty": "Allowlist è vuota",
+      "allowlist_is_empty": "La Allowlist locale è vuota",
       "address_deleted": "Indirizzo cancellato",
       "address_tooltip": "Inserisci un IPv4 o un IPv6, la notazione CIDR è permessa. Puoi anche inserire un hostname o un Mac address nella forma xx:xx:xx:xx:xx:xx.",
       "description": "Descrizione",
@@ -1722,8 +1736,8 @@
       "edit_address": "Modifica indirizzo",
       "address_added": "Indirizzo aggiunto",
       "address_edited": "Indirizzo modificato",
-      "allowlist": "Allowlist",
-      "blocklist": "Blocklist",
+      "allowlist": "Allowlist locale",
+      "blocklist": "Blocklist feed",
       "settings": "Impostazioni",
       "threat_shield_status": "Stato threat shield",
       "threat_shield_enabled": "Threat shield abilitato",
@@ -1736,7 +1750,41 @@
       "blocked_address": "Indirizzo bloccato",
       "allowed_address": "Indirizzo consentito",
       "blocked_addresses": "Indirizzi bloccati",
-      "allowed_addresses": "Indirizzi consentiti"
+      "allowed_addresses": "Indirizzi consentiti",
+      "attack_patterns_tooltip": "Inserisci un'espressione regolare per cercare i log; se trovato, l'IP sorgente sarà contrassegnato come sospetto.",
+      "ban_after_n_attempts": "Ban dopo N accessi falliti",
+      "attack_patterns": "Pattern per rilevare gli attacchi",
+      "local_blocklist": "Blocklist locale",
+      "local_blocklist_is_empty": "La blocklist locale è vuota",
+      "add_pattern": "Aggiungi pattern",
+      "block_dos": "Blocca DoS",
+      "block_icmp_dos": "Blocca DoS ICMP",
+      "block_syn_dos": "Blocca DoS SYN",
+      "block_udp_dos": "Blocca DoS UDP",
+      "block_brute_force": "Blocca attacchi brute force",
+      "block_brute_force_description": "La protezione da attacchi brute force protegge contro ripetuti tentativi di login non autorizzati bloccando o limitando l'accesso dopo più tentativi falliti.",
+      "block_brute_force_tooltip": "Quando abilitato, il sistema esegue la scansione dei log per cercare i pattern dei tentativi di accesso falliti.",
+      "local_blocklist_description": "Inserisci un indirizzo IPv4/IPv6 valido con notazione CIDR opzionale, un indirizzo MAC o un nome host che deve essere sempre bloccato da Threat Shield.",
+      "logging_description": "Il monitoraggio delle minacce terrà conto e mostrerà solo le minacce che sono state salvate nel log.",
+      "log_prerouting_chain": "Log dei pacchetti bloccati nella chain di pre-routing",
+      "log_input_chain": "Log dei pacchetti bloccati nella chain di input",
+      "log_forward_chain": "Log dei pacchetti bloccati nella chain di forward",
+      "log_forward_lan_chain": "Log dei pacchetti bloccati inoltrati dalla LAN",
+      "ban_after_n_attempts_tooltip": "Il numero di volte che un IP deve apparire nel log prima di essere contrassegnato come sospetto e bloccato.",
+      "block_dos_description": "DoS (Denial of Serevice) limita richieste sospette eccessive da un'unica fonte. La fonte sarà bloccata se le soglie saranno superate. ",
+      "threats_monitoring_disabled": "Monitoraggio delle minacce disabilitato",
+      "threats_monitoring_disabled_message": "Il monitoraggio delle minacce mostra solo minacce registrate nel log. Attivare il log su almeno una chain per consentire il monitoraggio delle minacce.",
+      "ban_time_tooltip": "Dopo il periodo di timeout, l'IP bloccato verrà sbloccato automaticamente, ripristinando l'accesso al sistema.",
+      "enter_a_number_greater_than_0": "Inserisci un numero maggiore di 0",
+      "ban_time": "Tempo di ban",
+      "ten_minutes": "10 minuti",
+      "thirty_minutes": "30 minuti",
+      "one_hour": "1 ora",
+      "six_hours": "6 ore",
+      "twelve_hours": "12 ore",
+      "one_day": "1 giorno",
+      "three_days": "3 giorni",
+      "logging": "Log"
     },
     "two_fa": {
       "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
@@ -1838,7 +1886,12 @@
       "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
       "disclaimer": "Disclaimer",
       "confirm_and_connect": "Conferma e collega",
-      "sending_data_to_controller": "Invio dei dati di monitoraggio al Titolare"
+      "sending_data_to_controller": "Invio dei dati di monitoraggio al Controller",
+      "sending_data_to_controller_tooltip_link": "subscription",
+      "last_sent": "Ultimo invio: {date}",
+      "sending_data_to_controller_tooltip": "Monitoraggio completo disponibile su Grafana con NethSecurity {subscription_link}",
+      "no_last_sent": "Dai in preparazione per la trasmissione",
+      "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unit al Controller."
     },
     "conntrack": {
       "delete_all": "Elimina tutte le connessioni",
@@ -1973,12 +2026,29 @@
       "no_events_message": "Nessun evento, tutto bene",
       "view_all_on_grafana": "Vedi tutti su Grafana",
       "blocklist": "Blocklist",
-      "no_vpn_network_configured": "Nessuna rete VPN configurata"
+      "no_vpn_network_configured": "Nessuna rete VPN configurata",
+      "today_traffic": "Traffico di oggi",
+      "brute_force_attacks": "Attacchi brute force",
+      "blocked_threats_by_hour": "Minacce bloccate per ora",
+      "threats_by_direction": "Minacce per direzione",
+      "most_frequently_blocked_ip_addresses": "Indirizzi IP bloccati più frequentemente",
+      "daily_connections": "Connessioni giornaliere",
+      "account": "Account",
+      "threat_shield_disabled_message": "Non sono disponibili statistiche perché Threat Shield è disabilitato.",
+      "title": "Monitor in tempo reale",
+      "open_report": "Apri Netdata",
+      "cannot_open_grafana_message": "Il monitoraggio con Grafana è disponibile solo dopo aver collegato l'unità a un controller",
+      "today_total_traffic": "Traffico totale di oggi",
+      "description": "Analisi approfondita delle prestazioni del sistema e delle applicazioni, metriche dettagliate e visualizzazioni. I dati di monitoraggio vengono memorizzati in RAM e ripristinati al riavvio dell'unità. Se l'unità è collegata a un controller remoto, le metriche vengono salvate anche sul controller e persistono al riavvio dell'unità .",
+      "cannot_open_report_from_controller": "Impossibile aprire il report per l'unità controllata. È possibile aprire il report accedendo direttamente all'interfaccia dell unità, o accedendo all'interfaccia del controller, andando alla pagina 'Gestione unità, facendo clic sul menu tre punti dell'unità e selezionando 'Apri metriche'.",
+      "times_blocked": "Numero blocchi",
+      "timestamp": "Data e ora"
     },
     "ping_latency_monitor": {
       "title": "Monitor latenza ping",
       "add_host": "Aggiungi host",
-      "host_to_monitor": "Host da monitorare"
+      "host_to_monitor": "Host da monitorare",
+      "description": "Impostare lo strumento di monitoraggio per valutare il round-trip time e la perdita di pacchetti inviando messaggi ping agli host della rete. Questo strumento è utilizzato per monitorare la qualità della connettività di rete. È possibile aggiungere uno o più host da monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
     },
     "nat_helpers": {
       "status": "Stato",
@@ -1989,7 +2059,16 @@
       "enabled_but_not_loaded_tooltip": "Questo modulo è abilitato ma non caricato nel kernel.",
       "reboot_to_apply_changes": "Riavviare per applicare modifiche ai NAT helper",
       "reboot_to_apply_changes_description": "Riavviare l'unità per applicare le modifiche al modulo '{module} '",
-      "nat_helper_name_saved": "NAT helper '{module}' salvato"
+      "nat_helper_name_saved": "NAT helper '{module}' salvato",
+      "nat_helpers_description": "I NAT helper vengono utilizzati per modificare automaticamente il payload di specifici protocolli per consentire loro di passare attraverso il NAT.",
+      "loaded_on_kernel": "Caricato nel kernel",
+      "disabled_but_loaded_tooltip": "Questo modulo è attualmente disabilitato ma ancora caricato nel kernel. Potrebbe essere stato caricato come dipendenza da un altro modulo o disattivato manualmente. Se disattivato manualmente, può essere richiesto un riavvio del sistema per scaricarlo completamente.",
+      "filter_nat_helpers": "Filtra NAT helper",
+      "no_nat_helpers_found": "Nessun NAT helper trovato",
+      "edit_nat_helper": "Modifica NAT helper"
+    },
+    "monitoring": {
+      "title": "Monitoraggio"
     }
   },
   "controller": {
@@ -2062,12 +2141,35 @@
       "num_units_left": "Nessuna unità rimasta | {num} unità rimasta | {num} unità rimaste",
       "num_units_left_tooltip": "Hai configurato {num} di {max} unità. Passa ad una subscription per gestire più unità.",
       "syncing_data": "Sincronizzazione dati...",
-      "syncing_data_description": "I dati dell'unità non sono ancora stati sincronizzati. È possibile farlo ora facendo clic sul menu tre punti e poi '@:controller.units.sync_unit_info'.",
+      "syncing_data_description": "I dati dell'unità non sono ancora stati sincronizzati. È possibile farlo ora facendo clic sul menu tre punti e poi '@:controller.units.sync_unit_info '.",
       "sync_unit_info": "Sincronizza info unità",
       "open_anyway": "Apri comunque",
       "warning_open_unit": "Il controller non è aggiornato",
       "cannot_open_unit_description": "L'unità {nome} deve essere aggiornata prima di aprirla. Accedi direttamente all'unità UI e vai al sistema > Aggiornamenti pagina.",
-      "cannot_open_unit": "Impossibile aprire l'unità"
+      "cannot_open_unit": "Impossibile aprire l'unità",
+      "warning_open_unit_description": "Sembra che il controller non sia aggiornato. Si consiglia di aggiornare l'istanza del controller sul cluster NethServer 8 prima di aprire questa unità per evitare problemi di compatibilità.",
+      "scheduled_image_update": "Aggiornamento immagine programmato",
+      "scheduled_image_update_tooltip": "L'unità è stata programmata per installare la versione \"{version}\" in data {data}.",
+      "image_update_available": "Aggiornamento immagine disponibile",
+      "image_update_available_tooltip": "La versione \"{version}\" è disponibile per il download.",
+      "edit_scheduled_image_update": "Modificare la programmazione dell'aggiornamento dell'immagine",
+      "error_fetching_unit_image_version": "Impossibile caricare la versione dell'immagine dell'unità",
+      "error_setting_image_update": "Errore durante l'invio del comando per l'aggiornamento della unit",
+      "scheduled_image_update_success": "Aggiornamento immagine programmato con successo",
+      "image_update_success": "Aggiornamento dell'immagine inviato con successo",
+      "image_update_description": "L'unità potrebbe non essere disponibile per alcuni minuti mentre l'aggiornamento è in fase di installazione.",
+      "scheduled_image_update_aborted": "Aggiornamento programmato dell'immagine per '{name}' interrotto con successo",
+      "cancel_scheduled_image_update": "Cancella l'aggiornamento programmato dell'immagine",
+      "cancel_scheduled_image_update_description": "Stai per cancellare l'aggiornamento programmato a '{version}' per l'unità '{name}'.",
+      "check_packages_updates": "Controlla gli aggiornamenti dei pacchetti",
+      "packages_upgrade_in_progress": "Aggiornamento dei pacchetti in corso per unità '{name} '",
+      "error_upgrading_unit_packages": "Errore durante l'aggiornamento dei pacchetti",
+      "error_removing_scheduled_update": "Errore durante la rimozione dell'aggiornamento programmato",
+      "packages_to_update": "I seguenti pacchetti sono disponibili per essere aggiornati:",
+      "batch_update_system": "Stai per aggiornare il sistema per più unità. Le unità disponibili per un aggiornamento sono visualizzate all'interno della lista sottostante.",
+      "batch_updated_systems": "Aggiornamento di sistema inviato all'unità | Aggiornamento di sistema inviato a {n} unità",
+      "error_batch_updating_systems": "Alcuni sistemi hanno fallito l'aggiornamento.",
+      "error_batch_updating_systems_description": "Alcune unità non hanno ricevuto la richiesta di aggiornamento dal controller. Si prega di controllare sotto quelli che hanno fallito e riprovare."
     },
     "unit_terminal": {
       "connection_status_active": "Attiva",

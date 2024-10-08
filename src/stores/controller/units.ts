@@ -59,6 +59,7 @@ export const useUnitsStore = defineStore('units', () => {
   const loadingListUnits = ref(false)
   const errorListUnits = ref('')
   const errorListUnitsDetails = ref('')
+  const unitUpdatingPackages = ref<string[]>([])
 
   const getUnits = async () => {
     loadingListUnits.value = true
@@ -212,6 +213,13 @@ export const useUnitsStore = defineStore('units', () => {
     })
   }
 
+  function addUnitUpdating(unitId: string) {
+    unitUpdatingPackages.value.push(unitId)
+    setTimeout(() => {
+      unitUpdatingPackages.value = unitUpdatingPackages.value.filter((unit) => unit !== unitId)
+    }, 10000)
+  }
+
   return {
     units,
     getUnits,
@@ -224,6 +232,8 @@ export const useUnitsStore = defineStore('units', () => {
     loadingListUnits,
     errorListUnits,
     errorListUnitsDetails,
-    getUnitInfo
+    getUnitInfo,
+    unitUpdatingPackages,
+    addUnitUpdating
   }
 })

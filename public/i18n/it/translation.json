@@ -1365,7 +1365,8 @@
       "automatic_updates_disabled_message": "Aggiornamenti automatici disattivati con successo",
       "automatic_updates_tooltip": "Abilita per attivare gli aggiornamenti automatici. Disponibile solo con subscription.",
       "go_to_subscription": "Vai a subscription",
-      "schedule_update": "Pianifica aggiornamento"
+      "schedule_update": "Pianifica aggiornamento",
+      "no_updates_available": "Nessun aggiornamento disponibilw"
     },
     "factory_reset": {
       "title": "Factory reset",

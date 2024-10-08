@@ -27,6 +27,7 @@ import CreateOrEditRWAccountDrawer from './CreateOrEditRWAccountDrawer.vue'
 import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import { downloadFile, deleteFile } from '@/lib/standalone/fileUpload'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 type ConnectionFilter = 'all' | 'connected' | 'not_connected'
 type ExpirationFilter = 'all' | 'expired' | 'not_expired'

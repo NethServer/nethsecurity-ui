@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/NethServer/nethsecurity-ui/compare/1.7.1...1.8.0) (2024-10-08)
+
+
+### Features
+
+* **openvpn:** add download all user configurations option ([#392](https://github.com/NethServer/nethsecurity-ui/issues/392)) ([4a9dd7c](https://github.com/NethServer/nethsecurity-ui/commit/4a9dd7c546e1a0e8d6c20e2f124f39e3430511f5))
+
+
+### Bug Fixes
+
+* **standalone,monitoring:** increasing instant traffic page limit ([#395](https://github.com/NethServer/nethsecurity-ui/issues/395)) ([af7c1dd](https://github.com/NethServer/nethsecurity-ui/commit/af7c1dd753e03ba47c3c6ceab1b4dd53e2b9b59d))
+
 ## [1.7.1](https://github.com/NethServer/nethsecurity-ui/compare/1.7.0...1.7.1) (2024-10-08)
 
 

@@ -51,7 +51,8 @@
     "upload": "Upload",
     "no_data_available": "No data available",
     "type": "Type",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "confirm": "Confirm"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -676,14 +677,15 @@
       "keep_scheduled_update": "Keep scheduled update",
       "cancel_update_description": "The scheduled update to version '{version}' will be canceled",
       "system_update_in_progress_message": "Updating and rebooting unit, please wait...",
-      "update_system": "Update system",
+      "update_system": "Update system | Update systems",
       "edit_scheduled_date": "Edit scheduled date",
       "update": "Update",
       "automatic_updates": "Automatic updates",
       "automatic_updates_tooltip": "Enable to activate automatic updates. Available only with subscription.",
       "go_to_subscription": "Go to subscription",
       "automatic_updates_enabled_message": "Automatic updates successfully enabled",
-      "automatic_updates_disabled_message": "Automatic updates successfully disabled"
+      "automatic_updates_disabled_message": "Automatic updates successfully disabled",
+      "schedule_update": "Schedule update"
     },
     "storage": {
       "title": "Storage",
@@ -2182,7 +2184,29 @@
       "cannot_open_unit_description": "The unit {name} must be updated before opening it. Access the unit UI directly and go to System > Updates page.",
       "open_anyway": "Open anyway",
       "warning_open_unit": "Controller is not up-to-date",
-      "warning_open_unit_description": "It appears that the controller is not up-to-date. It's recommended to update the controller instance on your NethServer 8 cluster before opening this unit to avoid compatibility issues."
+      "warning_open_unit_description": "It appears that the controller is not up-to-date. It's recommended to update the controller instance on your NethServer 8 cluster before opening this unit to avoid compatibility issues.",
+      "scheduled_image_update": "Image update scheduled",
+      "scheduled_image_update_tooltip": "The unit has been scheduled to install \"{version}\" on the {date}.",
+      "image_update_available": "Image update available",
+      "image_update_available_tooltip": "Version \"{version}\" is available for download.",
+      "edit_scheduled_image_update": "Edit scheduled image update",
+      "error_fetching_unit_image_version": "Error fetching unit image version",
+      "error_setting_image_update": "Error sending image update command to unit",
+      "scheduled_image_update_success": "Image update scheduled successfully",
+      "image_update_success": "Image update sent successfully",
+      "image_update_description": "Unit may be not available for a few minutes while the update is being installed.",
+      "scheduled_image_update_aborted": "Scheduled image update for '{name}' aborted successfully",
+      "cancel_scheduled_image_update": "Cancel scheduled image update",
+      "cancel_scheduled_image_update_description": "You are about to cancel the scheduled update to '{version}' for unit '{name}'.",
+      "check_packages_updates": "Check packages updates",
+      "packages_upgrade_in_progress": "Packages update in progress for unit '{name}'",
+      "error_upgrading_unit_packages": "Error updating unit packages",
+      "error_removing_scheduled_update": "Error removing scheduled update",
+      "packages_to_update": "The following packages are available to be updated:",
+      "batch_update_system": "You are about to update the system for multiple units. The units that are available for an update are shown inside the combobox below.",
+      "batch_updated_systems": "System update sent to the unit | System update sent to {n} units",
+      "error_batch_updating_systems": "Some systems failed to update.",
+      "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

@@ -19,7 +19,6 @@ import { useI18n } from 'vue-i18n'
 import { validateFutureDate } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import { useThemeStore } from '@/stores/theme'
 
 const props = defineProps<{
@@ -233,6 +232,8 @@ watch(
 </template>
 
 <style>
+@import '@vuepic/vue-datepicker/dist/main.css';
+
 .dp__theme_dark {
   --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
   --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));

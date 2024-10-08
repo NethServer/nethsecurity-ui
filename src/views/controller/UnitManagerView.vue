@@ -6,17 +6,17 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { isEmpty } from 'lodash-es'
-import { MAX_NO_SUBSCRIPTION_UNITS, useUnitsStore, type Unit } from '@/stores/controller/units'
+import { MAX_NO_SUBSCRIPTION_UNITS, type Unit, useUnitsStore } from '@/stores/controller/units'
 import {
-  NeHeading,
   NeButton,
-  NeEmptyState,
-  NeSkeleton,
-  NeDropdown,
-  NeTextInput,
   NeCard,
-  NeTooltip,
-  NeProgressBar
+  NeDropdown,
+  NeEmptyState,
+  NeHeading,
+  NeProgressBar,
+  NeSkeleton,
+  NeTextInput,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
@@ -24,6 +24,11 @@ import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
 import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
 import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevokeSshKeyDrawer.vue'
 import { useDefaultsStore } from '@/stores/controller/defaults'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDrawer.vue'
+import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vue'
+import UpdateUnitsPackagesModal from '@/components/controller/units/UpdateUnitsPackagesModal.vue'
+import BatchUnitImageUpdate from '@/components/controller/units/BatchUnitImageUpdate.vue'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -40,6 +45,10 @@ const isShownOpenSshModal = ref(false)
 const isShownSendOrRevokeSshKeyDrawer = ref(false)
 const currentUnit = ref<Unit>()
 const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
+const unitToUpdate = ref<Unit>()
+const unitToAbortUpdate = ref<Unit>()
+const unitToUpgradePackages = ref<Unit>()
+const showBatchUnitImageUpdate = ref(false)
 
 const filteredUnits = computed(() => {
   if (!textFilter.value) {
@@ -124,6 +133,13 @@ function showRevokeSshKeyDrawer() {
 
 function getBulkActionsKebabMenuItems() {
   return [
+    {
+      id: 'scheduleSystemUpdate',
+      label: t('standalone.update.update_system', 2),
+      iconStyle: 'fas',
+      icon: 'arrows-rotate',
+      action: () => (showBatchUnitImageUpdate.value = true)
+    },
     {
       id: 'sendSshKey',
       label: t('controller.units.send_ssh_public_key'),
@@ -288,6 +304,9 @@ function getBulkActionsKebabMenuItems() {
           :filteredUnits="filteredUnits"
           @reloadData="loadData"
           @openSshModal="showOpenSshModal"
+          @scheduleUpdate="unitToUpdate = $event"
+          @abortUpdate="unitToAbortUpdate = $event"
+          @upgradeUnitPackages="unitToUpgradePackages = $event"
         />
       </template>
     </div>
@@ -311,6 +330,20 @@ function getBulkActionsKebabMenuItems() {
       :isShown="isShownSendOrRevokeSshKeyDrawer"
       :action="sendOrRevokeAction"
       @close="isShownSendOrRevokeSshKeyDrawer = false"
+    />
+
+    <ScheduleUpdateDrawer :unit="unitToUpdate" @close="unitToUpdate = undefined" />
+
+    <AbortUpdateModal :unit="unitToAbortUpdate" @close="unitToAbortUpdate = undefined" />
+
+    <UpdateUnitsPackagesModal
+      :unit="unitToUpgradePackages"
+      @close="unitToUpgradePackages = undefined"
+    />
+
+    <BatchUnitImageUpdate
+      :show="showBatchUnitImageUpdate"
+      @close="showBatchUnitImageUpdate = false"
     />
   </div>
 </template>

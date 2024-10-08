@@ -24,6 +24,7 @@ import {
   NeTableHeadCell,
   NeTableRow,
   NeTooltip,
+  NeBadge,
   savePreference,
   useItemPagination
 } from '@nethesis/vue-components'
@@ -34,6 +35,14 @@ import { onMounted, type PropType, ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 import { coerce, outside, satisfies } from 'semver'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {
+  faCalendarXmark,
+  faClock,
+  faCloudArrowUp,
+  faWarning
+} from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
 
 const props = defineProps({
   filteredUnits: {
@@ -42,7 +51,17 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['reloadData', 'openSshModal'])
+// TODO: when dropdown nicely implements icons, remove this with correct imports directly in the component
+library.add(faCloudArrowUp)
+library.add(faCalendarXmark)
+
+const emit = defineEmits<{
+  reloadData: []
+  openSshModal: [unit: Unit]
+  scheduleUpdate: [unit: Unit]
+  abortUpdate: [unit: Unit]
+  upgradeUnitPackages: [unit: Unit]
+}>()
 
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
@@ -140,12 +159,43 @@ function getKebabMenuItems(unit: Unit) {
       action: () => copyJoinCode(unit)
     })
   }
+  if (unit.info?.version_update ?? '' != '') {
+    menuItems.push({
+      id: 'scheduleUpdate',
+      label:
+        unit.info.scheduled_update > 0
+          ? t('controller.units.edit_scheduled_image_update')
+          : t('standalone.update.update_system'),
+      icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'circle-arrow-up',
+      iconStyle: 'fas',
+      action: () => emit('scheduleUpdate', unit),
+      disabled: !unit.connected
+    })
+  }
+  if (unit.info.scheduled_update > 0) {
+    menuItems.push({
+      id: 'cancelScheduledUpdate',
+      label: t('controller.units.cancel_scheduled_image_update'),
+      icon: 'circle-xmark',
+      iconStyle: 'fas',
+      action: () => emit('abortUpdate', unit),
+      disabled: !unit.connected
+    })
+  }
   // apply common menu items
   menuItems.push(
     {
+      id: 'upgradeUnitPackages',
+      label: t('controller.units.check_packages_updates'),
+      icon: 'arrows-rotate',
+      iconStyle: 'fas',
+      action: () => emit('upgradeUnitPackages', unit),
+      disabled: !unit.connected
+    },
+    {
       id: 'refreshUnitInfo',
       label: t('controller.units.sync_unit_info'),
-      icon: 'rotate',
+      icon: 'cloud-arrow-up',
       iconStyle: 'fas',
       action: () => refreshUnitInfo(unit),
       disabled: !unit.connected
@@ -400,9 +450,52 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
           <!-- installed version -->
           <NeTableCell :data-label="t('controller.units.installed_version')">
-            <template v-if="item.info.version">
+            <span v-if="item.info.version" class="flex flex-wrap items-center gap-2">
               <span>{{ item.info.version }}</span>
-            </template>
+              <template v-if="item.info.scheduled_update > 0">
+                <NeTooltip>
+                  <template #trigger>
+                    <NeBadge
+                      :icon="faClock"
+                      :text="t('controller.units.scheduled_image_update')"
+                      clickable
+                      kind="info"
+                    />
+                  </template>
+                  <template #content>
+                    <div>
+                      {{
+                        t('controller.units.scheduled_image_update_tooltip', {
+                          version: item.info.version_update,
+                          date: new Date(item.info.scheduled_update * 1000).toLocaleString()
+                        })
+                      }}
+                    </div>
+                  </template>
+                </NeTooltip>
+              </template>
+              <template v-else-if="item.info.version_update">
+                <NeTooltip>
+                  <template #trigger>
+                    <NeBadge
+                      :icon="faWarning"
+                      :text="t('controller.units.image_update_available')"
+                      clickable
+                      kind="warning"
+                    />
+                  </template>
+                  <template #content>
+                    <div>
+                      {{
+                        t('controller.units.image_update_available_tooltip', {
+                          version: item.info.version_update
+                        })
+                      }}
+                    </div>
+                  </template>
+                </NeTooltip>
+              </template>
+            </span>
             <template v-else-if="item.connected">
               <div class="space-x-2">
                 <span>{{ t('controller.units.syncing_data') }}</span>

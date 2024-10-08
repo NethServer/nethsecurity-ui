@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.1](https://github.com/NethServer/nethsecurity-ui/compare/1.7.0...1.7.1) (2024-10-08)
+
+
+### Bug Fixes
+
+* **controller:** disable update packages once launched ([0f5fa72](https://github.com/NethServer/nethsecurity-ui/commit/0f5fa728bc84f5b4339864c9c89b960a9798c498))
+* **controller:** remote update adjustments ([#391](https://github.com/NethServer/nethsecurity-ui/issues/391)) ([0f5fa72](https://github.com/NethServer/nethsecurity-ui/commit/0f5fa728bc84f5b4339864c9c89b960a9798c498))
+* **controller:** show banner if updates are applied ([0f5fa72](https://github.com/NethServer/nethsecurity-ui/commit/0f5fa728bc84f5b4339864c9c89b960a9798c498))
+
 ## [1.7.0](https://github.com/NethServer/nethsecurity-ui/compare/1.6.2...1.7.0) (2024-10-08)
 
 

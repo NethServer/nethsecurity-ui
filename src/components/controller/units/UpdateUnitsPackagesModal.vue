@@ -97,6 +97,7 @@ async function updateUnitPackages() {
         name: _unit.value.info.unit_name
       })
     })
+    unitsStore.addUnitUpdating(_unit.value.id)
     emit('close')
   } catch (exception: any) {
     error.value = exception

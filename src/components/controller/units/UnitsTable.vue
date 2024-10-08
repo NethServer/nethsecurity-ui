@@ -190,7 +190,7 @@ function getKebabMenuItems(unit: Unit) {
       icon: 'arrows-rotate',
       iconStyle: 'fas',
       action: () => emit('upgradeUnitPackages', unit),
-      disabled: !unit.connected
+      disabled: !unit.connected || unitsStore.unitUpdatingPackages.find((id) => id == unit.id)
     },
     {
       id: 'refreshUnitInfo',

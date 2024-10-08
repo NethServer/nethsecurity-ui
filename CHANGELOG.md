@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/NethServer/nethsecurity-ui/compare/1.6.2...1.7.0) (2024-10-08)
+
+
+### Features
+
+* **controller:** add remote unit update ([#370](https://github.com/NethServer/nethsecurity-ui/issues/370)) ([f1a1721](https://github.com/NethServer/nethsecurity-ui/commit/f1a1721a815d8b1be83ca83b6ad65450594b94cd))
+
 ## [1.6.2](https://github.com/NethServer/nethsecurity-ui/compare/1.6.1...1.6.2) (2024-10-07)
 
 

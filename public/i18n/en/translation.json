@@ -2208,7 +2208,9 @@
       "batch_update_system": "You are about to update the system for multiple units. The units that are available for an update are shown inside the combobox below.",
       "batch_updated_systems": "System update sent to the unit | System update sent to {n} units",
       "error_batch_updating_systems": "Some systems failed to update.",
-      "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again."
+      "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again.",
+      "updating_image": "Update in progress",
+      "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed."
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

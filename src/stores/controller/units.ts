@@ -60,6 +60,7 @@ export const useUnitsStore = defineStore('units', () => {
   const errorListUnits = ref('')
   const errorListUnitsDetails = ref('')
   const unitUpdatingPackages = ref<string[]>([])
+  const unitUpgradingImage = ref<string[]>([])
 
   const getUnits = async () => {
     loadingListUnits.value = true
@@ -77,6 +78,11 @@ export const useUnitsStore = defineStore('units', () => {
         unit.registered = !isEmpty(unit.info)
         unit.connected = !isEmpty(unit.vpn)
       }
+
+      // if version_update is empty, remove the unit from the unitUpgradingImage list
+      unitUpgradingImage.value = unitUpgradingImage.value.filter((unit) => {
+        return unitsList.find((u) => u.id === unit)?.info.version_update !== ''
+      })
 
       units.value = unitsList.sort(sortUnits)
     } catch (err: any) {
@@ -220,6 +226,13 @@ export const useUnitsStore = defineStore('units', () => {
     }, 10000)
   }
 
+  function addUnitUpgradingImage(unitId: string) {
+    unitUpgradingImage.value.push(unitId)
+    setTimeout(() => {
+      unitUpgradingImage.value = unitUpgradingImage.value.filter((unit) => unit !== unitId)
+    }, 60000)
+  }
+
   return {
     units,
     getUnits,
@@ -234,6 +247,8 @@ export const useUnitsStore = defineStore('units', () => {
     errorListUnitsDetails,
     getUnitInfo,
     unitUpdatingPackages,
-    addUnitUpdating
+    addUnitUpdating,
+    unitUpgradingImage,
+    addUnitUpgradingImage
   }
 })

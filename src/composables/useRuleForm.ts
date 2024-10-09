@@ -10,7 +10,8 @@ import {
   MessageBag,
   validateIp4OrCidr,
   validatePortRangeForMwan,
-  validateRequired
+  validateRequired,
+  validateUciName
 } from '@/lib/validation'
 import { type ObjectReference, useObjects } from '@/composables/useObjects'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -170,6 +171,14 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     validationCheck = validateRequired(policy.value)
     if (!validationCheck.valid) {
       validationErrors.value.set('policy', String(validationCheck.errMessage))
+    }
+    validationCheck = validateUciName(name.value, 12)
+    if (!validationCheck.valid) {
+      validationErrors.value.set('name', String(validationCheck.errMessage)),
+        validationErrors.value.set(
+          'num',
+          String((validationCheck.i18Params as { num?: number })?.num)
+        )
     }
     if (sourceAddress.value != '') {
       validationCheck = validateIp4OrCidr(sourceAddress.value)

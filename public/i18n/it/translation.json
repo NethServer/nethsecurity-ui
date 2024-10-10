@@ -1578,7 +1578,8 @@
       "reserved_ip_helper": "Riserva un indirizzo IP al di fuori dell'intervallo {range}",
       "dynamic_range_ip_message": "È possibile riservare indirizzi IP ad account OpenVPN al di fuori dell'intervallo seguente.",
       "dynamic_range_ip": "Intervallo IP dinamico",
-      "dynamic_range_ip_start": "Inizio intervallo IP dinamico"
+      "dynamic_range_ip_start": "Inizio intervallo IP dinamico",
+      "download_all_configs": "Scarica tutte le configurazioni"
     },
     "qos": {
       "interface": "Interfaccia",
@@ -2170,7 +2171,9 @@
       "batch_update_system": "Stai per aggiornare il sistema per più unità. Le unità disponibili per un aggiornamento sono visualizzate all'interno della lista sottostante.",
       "batch_updated_systems": "Aggiornamento di sistema inviato all'unità | Aggiornamento di sistema inviato a {n} unità",
       "error_batch_updating_systems": "Alcuni sistemi hanno fallito l'aggiornamento.",
-      "error_batch_updating_systems_description": "Alcune unità non hanno ricevuto la richiesta di aggiornamento dal controller. Si prega di controllare sotto quelli che hanno fallito e riprovare."
+      "error_batch_updating_systems_description": "Alcune unità non hanno ricevuto la richiesta di aggiornamento dal controller. Si prega di controllare sotto quelli che hanno fallito e riprovare.",
+      "updating_image_description": "L'unità sta aggiornando l'immagine. L'unità potrebbe non essere disponibile per alcuni minuti mentre l'aggiornamento è in fase di installazione.",
+      "updating_image": "Aggiornamento in corso"
     },
     "unit_terminal": {
       "connection_status_active": "Attiva",

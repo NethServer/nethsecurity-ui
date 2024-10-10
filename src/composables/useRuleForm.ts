@@ -172,13 +172,10 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     if (!validationCheck.valid) {
       validationErrors.value.set('policy', String(validationCheck.errMessage))
     }
-    validationCheck = validateUciName(name.value, 12)
-    if (!validationCheck.valid) {
-      validationErrors.value.set('name', String(validationCheck.errMessage)),
-        validationErrors.value.set(
-          'num',
-          String((validationCheck.i18Params as { num?: number })?.num)
-        )
+    const { valid, errMessage, i18Params } = validateUciName(name.value, 12)
+    if (!valid) {
+      validationErrors.value.set('name', errMessage as string)
+      validationErrors.value.set('num', String((i18Params as { num?: number })?.num))
     }
     if (sourceAddress.value != '') {
       validationCheck = validateIp4OrCidr(sourceAddress.value)

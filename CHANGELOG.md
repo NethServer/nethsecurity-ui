@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/NethServer/nethsecurity-ui/compare/1.8.0...1.9.0) (2024-10-10)
+
+
+### Features
+
+* **controller:** added updating image badge during image upgrade ([#398](https://github.com/NethServer/nethsecurity-ui/issues/398)) ([05bb433](https://github.com/NethServer/nethsecurity-ui/commit/05bb433c0523e5e61f2bfdaa641abd16bfe544cf))
+
+
+### Bug Fixes
+
+* **lang:** updating translations ([#400](https://github.com/NethServer/nethsecurity-ui/issues/400)) ([0ff708a](https://github.com/NethServer/nethsecurity-ui/commit/0ff708a2f823a8700e8a22157957f15c8c848ec7))
+
 ## [1.8.0](https://github.com/NethServer/nethsecurity-ui/compare/1.7.1...1.8.0) (2024-10-08)
 
 

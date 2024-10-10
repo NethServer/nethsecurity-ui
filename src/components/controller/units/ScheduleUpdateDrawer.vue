@@ -92,6 +92,7 @@ async function updateUnit() {
     sendingError.value = undefined
     if (updateMode.value == 'now') {
       await upgradeUnitImage(_unit.value)
+      unitsStore.addUnitUpgradingImage(_unit.value!.id)
     } else {
       await scheduleUpgradeUnitImage(scheduledUpdate.value, _unit.value)
     }

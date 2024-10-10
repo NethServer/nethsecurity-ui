@@ -60,7 +60,9 @@ function updateUnits() {
   Promise.allSettled(
     selectedUnits.value.map((unit) => {
       if (updateMode.value === 'now') {
-        return upgradeUnitImage(unit)
+        return upgradeUnitImage(unit).then(() => {
+          unitsStore.addUnitUpgradingImage(unit.id)
+        })
       } else {
         return scheduleUpgradeUnitImage(scheduledUpdate.value, unit)
       }

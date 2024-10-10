@@ -40,6 +40,7 @@ import {
   faCalendarXmark,
   faClock,
   faCloudArrowUp,
+  faSync,
   faWarning
 } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -169,7 +170,7 @@ function getKebabMenuItems(unit: Unit) {
       icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'circle-arrow-up',
       iconStyle: 'fas',
       action: () => emit('scheduleUpdate', unit),
-      disabled: !unit.connected
+      disabled: !unit.connected || unitsStore.unitUpgradingImage.find((id) => id == unit.id)
     })
   }
   if (unit.info.scheduled_update > 0) {
@@ -453,7 +454,24 @@ function showRemoveUnitModal(unit: Unit) {
             <span v-if="item.info.version" class="flex flex-wrap items-center gap-2">
               <span>{{ item.info.version }}</span>
               <template v-if="item.connected">
-                <template v-if="item.info.scheduled_update > 0">
+                <template v-if="unitsStore.unitUpgradingImage.find((id) => id == item.id)">
+                  <NeTooltip>
+                    <template #trigger>
+                      <NeBadge
+                        :icon="faSync"
+                        :text="t('controller.units.updating_image')"
+                        clickable
+                        kind="info"
+                      />
+                    </template>
+                    <template #content>
+                      <div>
+                        {{ t('controller.units.updating_image_description') }}
+                      </div>
+                    </template>
+                  </NeTooltip>
+                </template>
+                <template v-else-if="item.info.scheduled_update > 0">
                   <NeTooltip>
                     <template #trigger>
                       <NeBadge

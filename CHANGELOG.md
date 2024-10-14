@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/NethServer/nethsecurity-ui/compare/1.9.0...1.9.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* **threatshield:** fixing wrong label in toggle ([#402](https://github.com/NethServer/nethsecurity-ui/issues/402)) ([c571547](https://github.com/NethServer/nethsecurity-ui/commit/c5715476f4234d50ce9cb590e8e0113f3f6bf50b))
+
 ## [1.9.0](https://github.com/NethServer/nethsecurity-ui/compare/1.8.0...1.9.0) (2024-10-10)
 
 

@@ -353,7 +353,7 @@ onMounted(() => {
                 />
                 <!-- block syn dos -->
                 <NeToggle
-                  :top-label="t('standalone.threat_shield.block_icmp_dos')"
+                  :top-label="t('standalone.threat_shield.block_syn_dos')"
                   :label="isBlockSynDosEnabled ? t('common.enabled') : t('common.disabled')"
                   v-model="isBlockSynDosEnabled"
                   :disabled="loading.editSettings"

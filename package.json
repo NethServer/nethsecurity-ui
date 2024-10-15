@@ -55,7 +55,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@tsconfig/node18": "^2.0.1",
     "@types/node": "^18.16.8",
-    "@vitejs/plugin-vue": "^4.6.2",
+    "@vitejs/plugin-vue": "^5.1.4",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
     "@vue/tsconfig": "^0.4.0",
@@ -70,7 +70,7 @@
     "semver": "^7.6.3",
     "tailwindcss": "^3.3.2",
     "typescript": "~5.0.4",
-    "vite": "^4.3.5",
+    "vite": "^5.4.9",
     "vue-tsc": "^1.8.27"
   }
 }

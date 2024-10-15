@@ -5,6 +5,7 @@
     "requiredApiVersion": "~2.0.0"
   },
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "run-p type-check build-only",

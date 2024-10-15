@@ -77,8 +77,8 @@ function close() {
     <span v-if="itemToDelete !== undefined">
       {{
         t('standalone.conntrack.delete_conntrack_record_message', {
-          source: itemToDelete?.destination + ':' + itemToDelete?.destination_port ?? '',
-          destination: itemToDelete?.source + ':' + itemToDelete?.source_port ?? ''
+          source: itemToDelete?.destination + ':' + itemToDelete?.destination_port || '',
+          destination: itemToDelete?.source + ':' + itemToDelete?.source_port || ''
         })
       }}
     </span>

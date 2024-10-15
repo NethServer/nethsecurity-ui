@@ -527,7 +527,7 @@ watch(
       />
       <NeCombobox
         :label="t('standalone.openvpn_rw.user_database')"
-        :disabled="itemToEdit?.ns_description != '' ?? false"
+        :disabled="itemToEdit?.ns_description != '' || false"
         :options="userDatabaseOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"

@@ -4,7 +4,7 @@ import {
   NeButton,
   NeFormItemLabel,
   NeInlineNotification,
-  NeNotification,
+  type NeNotification,
   NeRadioSelection,
   NeSideDrawer,
   NeSkeleton,

@@ -22,7 +22,6 @@ import CreateOrEditPortForwardDrawer from '@/components/standalone/firewall/Crea
 import { computed } from 'vue'
 import { type ObjectReference } from '@/composables/useObjects'
 import DeleteModal from '@/components/DeleteModal.vue'
-import type { DomainSet } from '@/composables/useDomainSets'
 
 const { t } = useI18n()
 

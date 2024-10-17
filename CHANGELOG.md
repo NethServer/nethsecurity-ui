@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/NethServer/nethsecurity-ui/compare/1.9.1...1.10.0) (2024-10-17)
+
+
+### Features
+
+* **validation:** add length validation for mwan name rule ([#397](https://github.com/NethServer/nethsecurity-ui/issues/397)) ([56bfaea](https://github.com/NethServer/nethsecurity-ui/commit/56bfaea137907f5612ed458778d1e16451d8f574))
+
 ## [1.9.1](https://github.com/NethServer/nethsecurity-ui/compare/1.9.0...1.9.1) (2024-10-14)
 
 

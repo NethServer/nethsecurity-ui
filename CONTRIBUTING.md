@@ -143,7 +143,7 @@ Container configuration is contained inside `.devcontainer/devcontainer.json`.
 
 Developing inside a container is the recommended way, but if you want to do it on your workstation:
 
-- Install Node.js (LTS version, currently v18) and npm
+- Install Node.js (LTS version, currently v20) and npm
 - Run a web server on your workstation (hot reloading enabled):
   - `npm install`: project setup
   - `npm run dev`: start development server with hot-reload

@@ -658,7 +658,7 @@
       "installed_release": "Installed release: {release}",
       "update_with_image_file": "Update with image file",
       "all_updates_installed_notification": "All updates are installed",
-      "latest_release": "Latest release",
+      "new_release_available": "New release available",
       "bug_security_fixes_to_update": "Bug and security fixes to update",
       "component_update_details": "{versionFrom} to {versionTo}",
       "update_in_progress_message": "Updating the unit, please wait...",

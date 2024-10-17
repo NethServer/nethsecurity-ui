@@ -203,9 +203,22 @@ async function getUpdatesStatus() {
         <div class="inline-flex items-center gap-2">
           <span>{{ systemInfo?.version?.release || '-' }}</span>
           <NeSpinner v-if="loading.getUpdatesStatus" size="4" />
-          <NeLink v-if="isUpdateAvailable && !isUpdateScheduled" @click="goToUpdates">
-            {{ t('standalone.update.update') }}
-          </NeLink>
+          <!-- warning for image update available -->
+          <NeTooltip v-if="isUpdateAvailable && !isUpdateScheduled" class="leading-none">
+            <template #trigger>
+              <font-awesome-icon
+                :icon="['fas', 'warning']"
+                class="h-4 w-4 text-amber-700 dark:text-amber-500"
+                aria-hidden="true"
+              />
+            </template>
+            <template #content>
+              {{ t('standalone.update.new_release_available') }}.
+              <NeLink invertedTheme @click="goToUpdates">
+                {{ t('common.go_to_page', { page: t('standalone.update.title') }) }}
+              </NeLink>
+            </template>
+          </NeTooltip>
         </div>
       </div>
       <div class="py-3">

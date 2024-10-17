@@ -29,7 +29,7 @@ function closeDrawer() {
     <NeEmptyState
       v-if="isEmpty(notificationsStore.notifications)"
       :title="t('notifications.no_notification')"
-      :icon="['far', 'bell']"
+      :icon="['fas', 'bell']"
     />
     <!-- notifications -->
     <div v-else class="flex w-full flex-col items-center space-y-4 sm:items-end">

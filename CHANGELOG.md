@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/NethServer/nethsecurity-ui/compare/1.10.0...1.10.1) (2024-10-17)
+
+
+### Miscellaneous Chores
+
+* force release to test Vue 3.5 ([73037e0](https://github.com/NethServer/nethsecurity-ui/commit/73037e067590ccfadece5a8c58aa517208cfe694))
+
 ## [1.10.0](https://github.com/NethServer/nethsecurity-ui/compare/1.9.1...1.10.0) (2024-10-17)
 
 

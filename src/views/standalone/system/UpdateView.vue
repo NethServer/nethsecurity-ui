@@ -324,11 +324,12 @@ onMounted(() => {
           systemUpdateData?.lastVersion &&
           systemUpdateData.lastVersion != systemUpdateData?.currentVersion
         "
-        :title="t('standalone.update.latest_release')"
+        :title="t('standalone.update.new_release_available')"
         :description="systemUpdateData?.lastVersion"
       />
       <div class="mt-4">
         <NeButton
+          kind="primary"
           class="mb-2 mr-4"
           v-if="
             systemUpdateData?.lastVersion &&

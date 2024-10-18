@@ -121,7 +121,8 @@ async function createOrEditStaticLease() {
         hostname: hostname.value,
         ipaddr: ipAddress.value,
         description: reservationName.value,
-        macaddr: macAddress.value
+        // ensure MAC address uses colons instead of dashes
+        macaddr: macAddress.value.replace(/-/g, ':')
       }
 
       if (isEditing) {

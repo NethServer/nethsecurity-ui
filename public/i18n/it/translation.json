@@ -1344,7 +1344,6 @@
       "schedule": "Programma",
       "choose_when_to_update": "Scegli quando aggiornare",
       "update_system": "Aggiorna sistema | Aggiorna sistemi",
-      "latest_release": "Ultima release",
       "system_update_scheduled_description": "L'unità verrà aggiornata alla versione '{version}' il {date}",
       "time_and_date": "Data e orario",
       "bug_security_fixes_description": "Bugfix minori e di sicurezza sono distribuiti tramite l'aggiornamento di pacchetti.",

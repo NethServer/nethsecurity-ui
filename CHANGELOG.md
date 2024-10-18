@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.3](https://github.com/NethServer/nethsecurity-ui/compare/1.10.2...1.10.3) (2024-10-18)
+
+
+### Bug Fixes
+
+* **dhcp:** ensure MAC is saved with columns syntax ([#409](https://github.com/NethServer/nethsecurity-ui/issues/409)) ([dde5954](https://github.com/NethServer/nethsecurity-ui/commit/dde595454c57f2c207d67f4a7ef479ebe608c0ce))
+
 ## [1.10.2](https://github.com/NethServer/nethsecurity-ui/compare/1.10.1...1.10.2) (2024-10-18)
 
 

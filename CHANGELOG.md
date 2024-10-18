@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/NethServer/nethsecurity-ui/compare/1.10.1...1.10.2) (2024-10-18)
+
+
+### Bug Fixes
+
+* improve new release available warning ([#401](https://github.com/NethServer/nethsecurity-ui/issues/401)) ([22c57b6](https://github.com/NethServer/nethsecurity-ui/commit/22c57b63162f5d4a4705ecb9252eefccd1e92b2f))
+
 ## [1.10.1](https://github.com/NethServer/nethsecurity-ui/compare/1.10.0...1.10.1) (2024-10-17)
 
 

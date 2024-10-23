@@ -17,7 +17,9 @@ import {
   NePaginator,
   useItemPagination,
   NeButton,
-  NeTooltip
+  NeTooltip,
+  useSort,
+  NeSortDropdown
 } from '@nethesis/vue-components'
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 import { ref } from 'vue'
@@ -28,8 +30,31 @@ const props = defineProps<{
   certificates: Certificate[]
 }>()
 
+const sortKey = ref('name')
+const sortDescending = ref(false)
+
+const sortFunctions = {
+  // custom sorting function for domains attribute
+  domains: (a: Certificate, b: Certificate) => {
+    if (a.type === 'acme' && b.type === 'acme') {
+      if (a.requested_domains?.length && b.requested_domains?.length) {
+        return a.requested_domains[0].localeCompare(b.requested_domains[0])
+      } else {
+        return 0
+      }
+    } else if (a.type === 'self-signed' && b.type === 'self-signed') {
+      return a.domain.localeCompare(b.domain)
+    } else if (a.type === 'self-signed') {
+      return -1
+    } else {
+      return 1
+    }
+  }
+}
+const { sortedItems } = useSort(props.certificates, sortKey, sortDescending, sortFunctions)
+
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.certificates, {
+const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
   itemsPerPage: pageSize
 })
 
@@ -98,15 +123,51 @@ function getDropdownItems(item: Certificate) {
       : [])
   ]
 }
+
+const onSort = (payload: any) => {
+  sortKey.value = payload.key
+  sortDescending.value = payload.descending
+}
 </script>
 
 <template>
-  <NeTable :ariaLabel="t('standalone.certificates.title')" cardBreakpoint="lg" class="z-10">
+  <NeSortDropdown
+    v-model:sortKey="sortKey"
+    v-model:sortDescending="sortDescending"
+    :label="t('sort.sort')"
+    :options="[
+      { id: 'name', label: t('standalone.certificates.name') },
+      { id: 'domains', label: t('standalone.certificates.domains') },
+      { id: 'type', label: t('standalone.certificates.type') },
+      { id: 'expiration', label: t('standalone.certificates.expire') }
+    ]"
+    :openMenuAriaLabel="t('ne_dropdown.open_menu')"
+    :sortByLabel="t('sort.sort_by')"
+    :sortDirectionLabel="t('sort.direction')"
+    :ascendingLabel="t('sort.ascending')"
+    :descendingLabel="t('sort.descending')"
+    class="lg:hidden"
+  />
+  <NeTable
+    :sortKey="sortKey"
+    :sortDescending="sortDescending"
+    :ariaLabel="t('standalone.certificates.title')"
+    cardBreakpoint="lg"
+    class="z-10"
+  >
     <NeTableHead>
-      <NeTableHeadCell>{{ t('standalone.certificates.name') }}</NeTableHeadCell>
-      <NeTableHeadCell>{{ t('standalone.certificates.domains') }}</NeTableHeadCell>
-      <NeTableHeadCell>{{ t('standalone.certificates.type') }}</NeTableHeadCell>
-      <NeTableHeadCell>{{ t('standalone.certificates.expire') }}</NeTableHeadCell>
+      <NeTableHeadCell sortable columnKey="name" @sort="onSort">{{
+        t('standalone.certificates.name')
+      }}</NeTableHeadCell>
+      <NeTableHeadCell sortable columnKey="domains" @sort="onSort">{{
+        t('standalone.certificates.domains')
+      }}</NeTableHeadCell>
+      <NeTableHeadCell sortable columnKey="type" @sort="onSort">{{
+        t('standalone.certificates.type')
+      }}</NeTableHeadCell>
+      <NeTableHeadCell sortable columnKey="expiration" @sort="onSort">{{
+        t('standalone.certificates.expire')
+      }}</NeTableHeadCell>
       <NeTableHeadCell>
         <!-- no header for actions -->
       </NeTableHeadCell>
@@ -209,7 +270,7 @@ function getDropdownItems(item: Certificate) {
     <template #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="props.certificates.length"
+        :total-rows="sortedItems.length"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"

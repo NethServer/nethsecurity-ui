@@ -2296,5 +2296,12 @@
     "report_issue_step_1": "{copyTheCommand} that failed",
     "report_issue_step_2": "Paste the command on the {product} shell and execute it",
     "report_issue_step_3": "Report the issue, ensuring to provide both the command and its corresponding output"
+  },
+  "sort": {
+    "sort": "Sort",
+    "sort_by": "Sort by",
+    "direction": "Direction",
+    "ascending": "Ascending",
+    "descending": "Descending"
   }
 }

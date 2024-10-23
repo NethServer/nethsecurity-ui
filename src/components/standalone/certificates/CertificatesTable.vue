@@ -175,8 +175,8 @@ const onSort = (payload: any) => {
     <NeTableBody>
       <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
         <NeTableCell :data-label="t('standalone.certificates.name')">
-          <div class="flex flex-row items-center">
-            <div class="mr-6">
+          <div class="flex flex-row items-center gap-6">
+            <div class="flex flex-col gap-1">
               <p>{{ item.name }}</p>
               <NeButton
                 :disabled="!item.details"
@@ -206,19 +206,21 @@ const onSort = (payload: any) => {
         <NeTableCell :data-label="t('standalone.certificates.domains')">
           <p v-if="item.type != 'acme'">{{ item.domain ? item.domain : '-' }}</p>
           <template v-else>
-            <p>{{ item.requested_domains!.slice(0, 2).join(', ') }}</p>
-            <NeTooltip interactive placement="bottom" v-if="item.requested_domains!.length > 2">
-              <template #trigger>
-                <NeButton size="sm" kind="tertiary" class="-mx-2">{{
-                  t('standalone.certificates.plus_n_others', {
-                    n: item.requested_domains!.length - 2
-                  })
-                }}</NeButton>
-              </template>
-              <template #content>
-                <p>{{ item.requested_domains!.slice(2).join(', ') }}</p>
-              </template>
-            </NeTooltip>
+            <div class="flex flex-col gap-1">
+              <p>{{ item.requested_domains!.slice(0, 2).join(', ') }}</p>
+              <NeTooltip interactive placement="bottom" v-if="item.requested_domains!.length > 2">
+                <template #trigger>
+                  <NeButton size="sm" kind="tertiary" class="-mx-2">{{
+                    t('standalone.certificates.plus_n_others', {
+                      n: item.requested_domains!.length - 2
+                    })
+                  }}</NeButton>
+                </template>
+                <template #content>
+                  <p>{{ item.requested_domains!.slice(2).join(', ') }}</p>
+                </template>
+              </NeTooltip>
+            </div>
           </template>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.certificates.type')">
@@ -257,7 +259,7 @@ const onSort = (payload: any) => {
           </div>
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
-          <div class="align-center flex justify-end">
+          <div class="-ml-4 flex items-center lg:ml-0 lg:justify-end">
             <NeDropdown
               v-if="!item.default"
               :items="getDropdownItems(item)"

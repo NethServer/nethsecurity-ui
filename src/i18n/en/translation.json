@@ -1,4 +1,8 @@
 {
+  "languages": {
+    "it-IT": "Italian (it-IT)",
+    "en-US": "English (en-US)"
+  },
   "common": {
     "shell": {
       "account_settings": "Account settings",

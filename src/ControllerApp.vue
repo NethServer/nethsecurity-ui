@@ -7,24 +7,28 @@
 import ControllerAppShell from '@/components/controller/ControllerAppShell.vue'
 import ControllerAppLogin from '@/components/controller/ControllerAppLogin.vue'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/controller/controllerLogin'
-import { nextTick, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
 import { deleteFromStorage, getPreference } from '@nethesis/vue-components'
-import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/notifications'
 import { useFavicon, useTitle } from '@vueuse/core'
 import { getControllerApiEndpoint, getProductName } from './lib/config'
 
 const loginStore = useLoginStore()
-const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+const { locale } = useI18n({ useScope: 'global' })
 const notificationsStore = useNotificationsStore()
 
 const isLoaded = ref(false)
 
 onMounted(async () => {
   await loginStore.loadUserFromStorage()
-  await loadI18n()
+  // setup localization
+  let username = 'admin'
+  if (loginStore.isLoggedIn) {
+    username = loginStore.username
+  }
+  locale.value = getPreference('locale', username) || navigator.language
   configureAxios()
   isLoaded.value = true
 
@@ -36,31 +40,6 @@ onMounted(async () => {
   const favIcon = useFavicon()
   favIcon.value = '/favicon-controller.ico'
 })
-
-async function loadI18n() {
-  // default language
-  let lang = navigator.language.substring(0, 2)
-
-  // default username
-  let username = 'admin'
-
-  if (loginStore.isLoggedIn) {
-    username = loginStore.username
-  }
-
-  const preferredLanguage = getPreference('locale', username)
-
-  if (preferredLanguage) {
-    lang = preferredLanguage
-  }
-  // load preferred or navigator language, falling back to English
-  const actualLang = await loadLocaleMessages(setLocaleMessage, lang)
-  await nextTick()
-
-  if (actualLang) {
-    setI18nLanguage(locale, actualLang)
-  }
-}
 
 function configureAxios() {
   axios.defaults.headers.post['Content-Type'] = 'application/json'

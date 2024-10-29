@@ -4,18 +4,16 @@
 -->
 
 <script lang="ts" setup>
-import { NeCombobox, NeHeading } from '@nethesis/vue-components'
+import { NeHeading } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
-import { useLanguage } from '@/composables/useLanguage'
+import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
-
-const { uiLanguage, supportedLanguages } = useLanguage()
 </script>
 
 <template>
@@ -24,16 +22,7 @@ const { uiLanguage, supportedLanguages } = useLanguage()
   }}</NeHeading>
   <div class="max-w-3xl space-y-8">
     <FormLayout :title="t('standalone.account_management.ui_language')">
-      <NeCombobox
-        v-model="uiLanguage"
-        :options="supportedLanguages"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('standalone.dpi.no_interfaces_available')"
-        :selected-label="t('ne_combobox.selected')"
-        :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
-      />
+      <ChangeLangCombobox />
     </FormLayout>
     <!-- divider -->
     <div class="border-b border-gray-200 dark:border-gray-700"></div>

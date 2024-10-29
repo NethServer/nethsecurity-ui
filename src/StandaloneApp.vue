@@ -7,20 +7,19 @@
 import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { nextTick, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios, { CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
-import { loadLocaleMessages, setI18nLanguage } from './lib/i18n'
 import { useNotificationsStore } from './stores/notifications'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
-const { locale, setLocaleMessage } = useI18n({ useScope: 'global' })
+const { locale } = useI18n({ useScope: 'global' })
 const route = useRoute()
 
 const isLoaded = ref(false)
@@ -28,7 +27,12 @@ const isLoaded = ref(false)
 onMounted(async () => {
   if (isStandaloneMode()) {
     await loginStore.loadUserFromStorage()
-    await loadI18n()
+    // Setup localization
+    let username = 'root'
+    if (loginStore.isLoggedIn) {
+      username = loginStore.username
+    }
+    locale.value = getPreference('locale', username) || navigator.language
   } else {
     // a controller is managing this unit
     await unitsStore.load()
@@ -40,31 +44,6 @@ onMounted(async () => {
   }
   isLoaded.value = true
 })
-
-async function loadI18n() {
-  // default language
-  let lang = navigator.language.substring(0, 2)
-
-  // default username
-  let username = 'root'
-
-  if (loginStore.isLoggedIn) {
-    username = loginStore.username
-  }
-
-  const preferredLanguage = getPreference('locale', username)
-
-  if (preferredLanguage) {
-    lang = preferredLanguage
-  }
-  // load preferred or navigator language, falling back to English
-  const actualLang = await loadLocaleMessages(setLocaleMessage, lang)
-  await nextTick()
-
-  if (actualLang) {
-    setI18nLanguage(locale, actualLang)
-  }
-}
 
 function configureAxios() {
   axios.defaults.headers.post['Content-Type'] = 'application/json'

@@ -2,9 +2,17 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import './assets/main.css'
+import 'tippy.js/dist/tippy.css'
+
+import itTranslation from './i18n/it/translation.json'
+import enTranslation from './i18n/en/translation.json'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { loadFontAwesome } from './lib/fontawesome'
+import VueTippy from 'vue-tippy'
+import { createI18n } from 'vue-i18n'
+
 import App from './App.vue'
 import router from './router'
 
@@ -14,33 +22,24 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
-import { loadFontAwesome } from './lib/fontawesome'
+// fontawesome
 loadFontAwesome(app)
 
 // tooltip library
-
-import VueTippy from 'vue-tippy'
 app.use(VueTippy, {
   defaultProps: { theme: 'tailwind' }
 })
-import 'tippy.js/dist/tippy.css'
 
 // i18n
-
-import { setupI18n } from '@/lib/i18n'
-
-loadI18n()
-
-async function loadI18n() {
-  const locale = navigator.language.substring(0, 2)
-
-  const i18n = setupI18n({
+app.use(
+  createI18n({
     legacy: false,
-    missingWarn: false,
-    fallbackWarn: false,
-    fallbackLocale: 'en',
-    locale
+    fallbackLocale: 'en-US',
+    messages: {
+      'it-IT': itTranslation,
+      'en-US': enTranslation
+    }
   })
-  app.use(i18n)
-  app.mount('#app')
-}
+)
+
+app.mount('#app')

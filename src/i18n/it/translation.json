@@ -1344,7 +1344,6 @@
       "schedule": "Programma",
       "choose_when_to_update": "Scegli quando aggiornare",
       "update_system": "Aggiorna sistema | Aggiorna sistemi",
-      "latest_release": "Ultima release",
       "system_update_scheduled_description": "L'unità verrà aggiornata alla versione '{version}' il {date}",
       "time_and_date": "Data e orario",
       "bug_security_fixes_description": "Bugfix minori e di sicurezza sono distribuiti tramite l'aggiornamento di pacchetti.",
@@ -1366,7 +1365,8 @@
       "automatic_updates_tooltip": "Abilita per attivare gli aggiornamenti automatici. Disponibile solo con subscription.",
       "go_to_subscription": "Vai a subscription",
       "schedule_update": "Pianifica aggiornamento",
-      "no_updates_available": "Nessun aggiornamento disponibilw"
+      "no_updates_available": "Nessun aggiornamento disponibilw",
+      "new_release_available": "Nuova versione disponibile"
     },
     "factory_reset": {
       "title": "Factory reset",
@@ -2296,5 +2296,12 @@
   "ne_dropdown_filter": {
     "clear_filter": "Azzera filtro",
     "open_filter": "Apri filtro"
+  },
+  "sort": {
+    "sort_by": "Ordina per",
+    "direction": "Direzione",
+    "ascending": "Ascendente",
+    "descending": "Discendente",
+    "sort": "Ordina"
   }
 }

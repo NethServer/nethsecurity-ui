@@ -20,7 +20,12 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateAlphanumeric,
+  validateRequired,
+  type validationOutput
+} from '@/lib/validation'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
 import type { HostSet } from '@/composables/useHostSets'
 
@@ -143,7 +148,15 @@ function validateHostSetNotExists(value: string) {
 function validate() {
   const allValidators: [validationOutput[], string, Ref<any>][] = [
     // name
-    [[validateRequired(name.value), validateHostSetNotExists(name.value)], 'name', nameRef],
+    [
+      [
+        validateRequired(name.value),
+        validateAlphanumeric(name.value),
+        validateHostSetNotExists(name.value)
+      ],
+      'name',
+      nameRef
+    ],
     // records
     [[validateRequired(records.value[0])], 'ipaddr', recordRef]
   ]

@@ -17,7 +17,13 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateAlphanumeric,
+  validateRequired,
+  validateUciName,
+  type validationOutput
+} from '@/lib/validation'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import type { DomainSet } from '@/composables/useDomainSets'
@@ -143,7 +149,15 @@ function validateDomainSetNotExists(value: string) {
 function validate() {
   const allValidators: [validationOutput[], string, Ref<any>][] = [
     // name
-    [[validateRequired(name.value), validateDomainSetNotExists(name.value)], 'name', nameRef],
+    [
+      [
+        validateRequired(name.value),
+        validateAlphanumeric(name.value),
+        validateDomainSetNotExists(name.value)
+      ],
+      'name',
+      nameRef
+    ],
     // records
     [[validateRecordsRequired()], 'ipaddr', recordRef]
   ]

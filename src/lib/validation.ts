@@ -359,6 +359,22 @@ export const validateUciName = (value: String, maxLength = 0): validationOutput 
   return { valid: true }
 }
 
+export const validateAlphanumeric = (
+  value: String,
+  mustStartWithLetter = true
+): validationOutput => {
+  const re = mustStartWithLetter ? /^[a-zA-Z][a-zA-Z0-9]*$/ : /^[a-zA-Z0-9]+$/
+  const match = value.match(re)
+
+  if (!match) {
+    const message = mustStartWithLetter
+      ? 'error.invalid_alphanumeric_starting_with_letter'
+      : 'error.invalid_alphanumeric'
+    return { valid: false, errMessage: message }
+  }
+  return { valid: true }
+}
+
 export const validateVlanId = (value: String): validationOutput => {
   const vlanId = Number(value)
 

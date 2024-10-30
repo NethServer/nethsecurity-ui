@@ -100,6 +100,8 @@
     "invalid_port": "Invalid port number",
     "invalid_port_or_port_range": "Enter a valid port or port range",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
+    "invalid_alphanumeric_starting_with_letter": "Only letters and numbers are allowed, starting with a letter",
+    "invalid_alphanumeric": "Only letters and numbers are allowed",
     "invalid_lease_time": "Invalid lease time",
     "invalid_lease_time_duration": "Lease time must be at least 2 minutes",
     "invalid_future_date": "Date cannot be set in the past",

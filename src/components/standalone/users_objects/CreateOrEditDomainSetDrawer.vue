@@ -20,8 +20,8 @@ import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
   MessageBag,
   validateAlphanumeric,
+  validateDomainName,
   validateRequired,
-  validateUciName,
   type validationOutput
 } from '@/lib/validation'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
@@ -126,9 +126,24 @@ function runFieldValidators(
 }
 
 function validateRecordsRequired() {
+  let totalChars = 0
+
   for (const record of records.value) {
     if (!record) {
-      return { valid: false, errMessage: 'error.invalid_ipaddr' }
+      return { valid: false, errMessage: 'error.empty_domains' }
+    }
+
+    const { valid } = validateDomainName(record)
+    if (!valid) {
+      return { valid: false, errMessage: 'error.invalid_domains' }
+    }
+    totalChars += record.length
+  }
+
+  if (totalChars >= 1024) {
+    return {
+      valid: false,
+      errMessage: 'error.domains_total_chars_exceeded'
     }
   }
   return { valid: true }
@@ -152,7 +167,7 @@ function validate() {
     [
       [
         validateRequired(name.value),
-        validateAlphanumeric(name.value),
+        validateAlphanumeric(name.value, true),
         validateDomainSetNotExists(name.value)
       ],
       'name',

@@ -151,7 +151,7 @@ function validate() {
     [
       [
         validateRequired(name.value),
-        validateAlphanumeric(name.value),
+        validateAlphanumeric(name.value, true),
         validateHostSetNotExists(name.value)
       ],
       'name',

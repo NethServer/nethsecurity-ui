@@ -55,6 +55,17 @@ export const validateHostname = (hostname: String): validationOutput => {
   return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }
 
+export const validateDomainName = (value: String): validationOutput => {
+  const isValid =
+    value.match(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$/) != null
+
+  if (isValid) {
+    return { valid: true }
+  } else {
+    return { valid: false, errMessage: 'error.invalid_domain_name' }
+  }
+}
+
 export const validateMacAddress = (macAddress: String): validationOutput => {
   const isValid = macAddress.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/) != null
 
@@ -361,7 +372,7 @@ export const validateUciName = (value: String, maxLength = 0): validationOutput 
 
 export const validateAlphanumeric = (
   value: String,
-  mustStartWithLetter = true
+  mustStartWithLetter = false
 ): validationOutput => {
   const re = mustStartWithLetter ? /^[a-zA-Z][a-zA-Z0-9]*$/ : /^[a-zA-Z0-9]+$/
   const match = value.match(re)

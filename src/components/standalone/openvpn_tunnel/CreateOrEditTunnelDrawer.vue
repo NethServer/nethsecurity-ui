@@ -35,7 +35,8 @@ import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { AxiosError } from 'axios'
 
 type TunnelDefaults = {
   secret: string
@@ -564,12 +565,16 @@ async function createOrEditTunnel() {
       close()
     }
   } catch (err: any) {
-    error.value.notificationTitle = isEditing
-      ? t('error.cannot_edit_tunnel')
-      : t('error.cannot_create_tunnel')
+    if (err instanceof ValidationError) {
+      validationErrorBag.value = err.errorBag
+    } else {
+      error.value.notificationTitle = isEditing
+        ? t('error.cannot_edit_tunnel')
+        : t('error.cannot_create_tunnel')
 
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      error.value.notificationDetails = err.toString()
+    }
   } finally {
     isSavingChanges.value = false
   }
@@ -658,7 +663,7 @@ watch(
         v-model="name"
         :disabled="id != ''"
         :label="t('standalone.openvpn_tunnel.tunnel_name')"
-        :invalid-message="validationErrorBag.getFirstFor('name')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_name'))"
       />
       <template v-if="!isClientTunnel">
         <NeMultiTextInput

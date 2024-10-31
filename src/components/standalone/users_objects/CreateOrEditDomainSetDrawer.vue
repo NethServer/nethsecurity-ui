@@ -140,7 +140,7 @@ function validateRecordsRequired() {
     totalChars += record.length
   }
 
-  if (totalChars >= 1024) {
+  if (totalChars >= 960) {
     return {
       valid: false,
       errMessage: 'error.domains_total_chars_exceeded'

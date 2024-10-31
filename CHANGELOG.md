@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.4](https://github.com/NethServer/nethsecurity-ui/compare/1.10.3...1.10.4) (2024-10-31)
+
+
+### Bug Fixes
+
+* improve validation of host/domain set name ([#416](https://github.com/NethServer/nethsecurity-ui/issues/416)) ([4dbfde5](https://github.com/NethServer/nethsecurity-ui/commit/4dbfde5aa195ba5e3497a94ed876cf5862ae8f87))
+* make certificates table sortable ([#413](https://github.com/NethServer/nethsecurity-ui/issues/413)) ([c20e006](https://github.com/NethServer/nethsecurity-ui/commit/c20e006ee4e285897789177aeb798e9aab895298))
+* translated with Weblate ([#410](https://github.com/NethServer/nethsecurity-ui/issues/410)) ([44406d6](https://github.com/NethServer/nethsecurity-ui/commit/44406d688fe62347065232c94b67c7e4ddcd95c5))
+
 ## [1.10.3](https://github.com/NethServer/nethsecurity-ui/compare/1.10.2...1.10.3) (2024-10-18)
 
 

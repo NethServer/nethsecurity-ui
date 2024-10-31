@@ -293,23 +293,6 @@ onMounted(() => {
                       </NeTooltip>
                     </template>
                   </NeTextInput>
-                  <!-- patterns to detect attacks -->
-                  <NeMultiTextInput
-                    v-model="attackPatterns"
-                    :add-item-label="t('standalone.threat_shield.add_pattern')"
-                    :title="t('standalone.threat_shield.attack_patterns')"
-                    required
-                    :disabledInputs="loading.editSettings"
-                    :generalInvalidMessage="errorBag.getFirstFor('attackPatterns')"
-                  >
-                    <template #tooltip>
-                      <NeTooltip>
-                        <template #content>{{
-                          t('standalone.threat_shield.attack_patterns_tooltip')
-                        }}</template>
-                      </NeTooltip>
-                    </template>
-                  </NeMultiTextInput>
                   <!-- ban time -->
                   <NeCombobox
                     v-model="banTime"
@@ -332,6 +315,23 @@ onMounted(() => {
                       </NeTooltip>
                     </template>
                   </NeCombobox>
+                  <!-- patterns to detect attacks -->
+                  <NeMultiTextInput
+                    v-model="attackPatterns"
+                    :add-item-label="t('standalone.threat_shield.add_pattern')"
+                    :title="t('standalone.threat_shield.attack_patterns')"
+                    required
+                    :disabledInputs="loading.editSettings"
+                    :generalInvalidMessage="errorBag.getFirstFor('attackPatterns')"
+                  >
+                    <template #tooltip>
+                      <NeTooltip>
+                        <template #content>{{
+                          t('standalone.threat_shield.attack_patterns_tooltip')
+                        }}</template>
+                      </NeTooltip>
+                    </template>
+                  </NeMultiTextInput>
                 </template>
               </div>
             </FormLayout>

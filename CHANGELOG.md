@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.5](https://github.com/NethServer/nethsecurity-ui/compare/1.10.4...1.10.5) (2024-10-31)
+
+
+### Bug Fixes
+
+* improve domain sets validation ([#419](https://github.com/NethServer/nethsecurity-ui/issues/419)) ([fcfdc6c](https://github.com/NethServer/nethsecurity-ui/commit/fcfdc6c0a387f065414b2cc2a3ddadd8ef3c75fc))
+
 ## [1.10.4](https://github.com/NethServer/nethsecurity-ui/compare/1.10.3...1.10.4) (2024-10-31)
 
 

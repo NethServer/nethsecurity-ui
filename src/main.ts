@@ -34,10 +34,12 @@ app.use(VueTippy, {
 app.use(
   createI18n({
     legacy: false,
-    fallbackLocale: 'en-US',
+    fallbackLocale: 'en',
+    fallbackWarn: false,
+    missingWarn: false,
     messages: {
-      'it-IT': itTranslation,
-      'en-US': enTranslation
+      it: itTranslation,
+      en: enTranslation
     }
   })
 )

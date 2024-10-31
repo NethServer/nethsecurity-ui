@@ -17,7 +17,13 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateAlphanumeric,
+  validateDomainName,
+  validateRequired,
+  type validationOutput
+} from '@/lib/validation'
 import type { IpVersion } from '@/views/standalone/users_objects/ObjectsView.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import type { DomainSet } from '@/composables/useDomainSets'
@@ -120,9 +126,24 @@ function runFieldValidators(
 }
 
 function validateRecordsRequired() {
+  let totalChars = 0
+
   for (const record of records.value) {
     if (!record) {
-      return { valid: false, errMessage: 'error.invalid_ipaddr' }
+      return { valid: false, errMessage: 'error.empty_domains' }
+    }
+
+    const { valid } = validateDomainName(record)
+    if (!valid) {
+      return { valid: false, errMessage: 'error.invalid_domains' }
+    }
+    totalChars += record.length
+  }
+
+  if (totalChars >= 1024) {
+    return {
+      valid: false,
+      errMessage: 'error.domains_total_chars_exceeded'
     }
   }
   return { valid: true }
@@ -143,7 +164,15 @@ function validateDomainSetNotExists(value: string) {
 function validate() {
   const allValidators: [validationOutput[], string, Ref<any>][] = [
     // name
-    [[validateRequired(name.value), validateDomainSetNotExists(name.value)], 'name', nameRef],
+    [
+      [
+        validateRequired(name.value),
+        validateAlphanumeric(name.value, true),
+        validateDomainSetNotExists(name.value)
+      ],
+      'name',
+      nameRef
+    ],
     // records
     [[validateRecordsRequired()], 'ipaddr', recordRef]
   ]

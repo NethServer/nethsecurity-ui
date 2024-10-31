@@ -23,19 +23,19 @@ const controllerLogin = useLoginStore()
 
 const navigation: Ref<MenuItem[]> = ref([
   {
-    name: t('controller.units.title'),
+    name: 'controller.units.title',
     to: 'units',
     icon: 'server'
   },
   {
-    name: t('controller.account_settings.title'),
+    name: 'controller.account_settings.title',
     to: 'account',
     icon: 'gear'
   },
   ...(controllerLogin.isAdmin
     ? [
         {
-          name: t('controller.users.title'),
+          name: 'controller.users.title',
           to: 'users',
           icon: 'user-group'
         }
@@ -64,7 +64,7 @@ function isCurrentRoute(itemPath: string) {
         class="h-6 w-8 shrink-0"
         aria-hidden="true"
       />
-      {{ item.name }}
+      {{ t(item.name) }}
     </router-link>
   </li>
 </template>

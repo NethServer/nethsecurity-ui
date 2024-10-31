@@ -34,180 +34,180 @@ const menuExpanded: any = ref({
 })
 
 const navigation: Ref<MenuItem[]> = ref([
-  { name: t('standalone.dashboard.title'), to: 'dashboard', icon: 'house' },
+  { name: 'standalone.dashboard.title', to: 'dashboard', icon: 'house' },
   {
-    name: t('standalone.monitoring.title'),
+    name: 'standalone.monitoring.title',
     to: 'monitoring',
     icon: 'chart-line',
     children: [
       {
-        name: t('standalone.real_time_monitor.title'),
+        name: 'standalone.real_time_monitor.title',
         to: 'monitoring/real-time-monitoring'
       },
       {
-        name: t('standalone.ping_latency_monitor.title'),
+        name: 'standalone.ping_latency_monitor.title',
         to: 'monitoring/ping-latency-monitor'
       }
     ]
   },
   {
-    name: t('standalone.system.title'),
+    name: 'standalone.system.title',
     icon: 'server',
     to: 'system',
     children: [
-      { name: t('standalone.subscription.title'), to: 'system/subscription' },
+      { name: 'standalone.subscription.title', to: 'system/subscription' },
       {
-        name: t('standalone.system_settings.title'),
+        name: 'standalone.system_settings.title',
         to: 'system/systemSettings'
       },
-      { name: t('standalone.ssh.title'), to: 'system/ssh' },
+      { name: 'standalone.ssh.title', to: 'system/ssh' },
       {
-        name: t('standalone.backup_and_restore.title'),
+        name: 'standalone.backup_and_restore.title',
         to: 'system/backup-and-restore'
       },
       {
-        name: t('standalone.reboot_and_shutdown.title'),
+        name: 'standalone.reboot_and_shutdown.title',
         to: 'system/reboot-and-shutdown'
       },
       {
-        name: t('standalone.update.title'),
+        name: 'standalone.update.title',
         to: 'system/update'
       },
       {
-        name: t('standalone.storage.title'),
+        name: 'standalone.storage.title',
         to: 'system/storage'
       },
       {
-        name: t('standalone.factory_reset.title'),
+        name: 'standalone.factory_reset.title',
         to: 'system/factory_reset'
       },
       {
-        name: t('standalone.certificates.title'),
+        name: 'standalone.certificates.title',
         to: 'system/certificates'
       },
       {
-        name: t('standalone.controller.title'),
+        name: 'standalone.controller.title',
         to: 'system/controller'
       }
     ]
   },
   {
-    name: t('standalone.network.title'),
+    name: 'standalone.network.title',
     to: 'network',
     icon: 'network-wired',
     children: [
       {
-        name: t('standalone.interfaces_and_devices.title'),
+        name: 'standalone.interfaces_and_devices.title',
         to: 'network/interfaces-and-devices'
       },
       {
-        name: t('standalone.dns_dhcp.title'),
+        name: 'standalone.dns_dhcp.title',
         to: 'network/dns-dhcp'
       },
       {
-        name: t('standalone.routes.title'),
+        name: 'standalone.routes.title',
         to: 'network/routes'
       },
       {
-        name: t('standalone.multi_wan.title'),
+        name: 'standalone.multi_wan.title',
         to: 'network/multi-wan'
       },
       {
-        name: t('standalone.hotspot.title'),
+        name: 'standalone.hotspot.title',
         to: 'network/hotspot'
       },
       {
-        name: t('standalone.reverse_proxy.title'),
+        name: 'standalone.reverse_proxy.title',
         to: 'network/reverse-proxy'
       },
       {
-        name: t('standalone.qos.title_short'),
+        name: 'standalone.qos.title_short',
         to: 'network/qos'
       }
     ]
   },
   {
-    name: t('standalone.user_objects.title'),
+    name: 'standalone.user_objects.title',
     to: 'users-objects',
     icon: 'user-group',
     children: [
       {
-        name: t('standalone.users_database.title'),
+        name: 'standalone.users_database.title',
         to: 'users-objects/users-database'
       },
       {
-        name: t('standalone.objects.title'),
+        name: 'standalone.objects.title',
         to: 'users-objects/objects'
       }
     ]
   },
   {
-    name: t('standalone.firewall.title'),
+    name: 'standalone.firewall.title',
     to: 'firewall',
     icon: 'block-brick-fire',
     children: [
       {
-        name: t('standalone.port_forward.title'),
+        name: 'standalone.port_forward.title',
         to: 'firewall/port-forward'
       },
       {
-        name: t('standalone.nat.title'),
+        name: 'standalone.nat.title',
         to: 'firewall/nat'
       },
       {
-        name: t('standalone.firewall_rules.short_title'),
+        name: 'standalone.firewall_rules.short_title',
         to: 'firewall/rules'
       },
       {
-        name: t('standalone.conntrack.short_title'),
+        name: 'standalone.conntrack.short_title',
         to: 'firewall/conntrack'
       },
       {
-        name: t('standalone.zones_and_policies.title'),
+        name: 'standalone.zones_and_policies.title',
         to: 'firewall/zones-and-policies'
       }
     ]
   },
   {
-    name: t('standalone.security.title'),
+    name: 'standalone.security.title',
     to: 'security',
     icon: 'shield-halved',
     children: [
       {
-        name: t('standalone.threat_shield.title'),
+        name: 'standalone.threat_shield.title',
         to: 'security/threat-shield'
       },
       {
-        name: t('standalone.flashstart.title'),
+        name: 'standalone.flashstart.title',
         to: 'security/flashstart'
       },
       {
-        name: t('standalone.dpi.title'),
+        name: 'standalone.dpi.title',
         to: 'security/dpi'
       }
     ],
     expanded: false
   },
   {
-    name: t('standalone.vpn.title'),
+    name: 'standalone.vpn.title',
     to: 'vpn',
     icon: 'globe',
     children: [
       {
-        name: t('standalone.openvpn_rw.title'),
+        name: 'standalone.openvpn_rw.title',
         to: 'vpn/openvpn-rw'
       },
       {
-        name: t('standalone.openvpn_tunnel.title'),
+        name: 'standalone.openvpn_tunnel.title',
         to: 'vpn/openvpn-tunnel'
       },
       {
-        name: t('standalone.ipsec_tunnel.title'),
+        name: 'standalone.ipsec_tunnel.title',
         to: 'vpn/ipsec-tunnel'
       }
     ]
   },
-  { name: t('standalone.logs.title'), to: 'logs', icon: 'list' }
+  { name: 'standalone.logs.title', to: 'logs', icon: 'list' }
 ])
 
 onMounted(() => {
@@ -259,7 +259,7 @@ function loadMenuItemsExpanded() {
           class="h-6 w-8 shrink-0"
           aria-hidden="true"
         />
-        {{ item.name }}
+        {{ t(item.name) }}
       </router-link>
     </template>
     <!-- open submenu -->
@@ -280,7 +280,7 @@ function loadMenuItemsExpanded() {
             aria-hidden="true"
           />
           <span>
-            {{ item.name }}
+            {{ t(item.name) }}
           </span>
         </div>
         <font-awesome-icon
@@ -302,7 +302,7 @@ function loadMenuItemsExpanded() {
                   'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-1 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
                 ]"
               >
-                {{ child.name }}
+                {{ t(child.name) }}
               </router-link>
             </div>
           </li>

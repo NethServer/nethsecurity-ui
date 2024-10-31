@@ -8,26 +8,23 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import {
   NeButton,
-  NeSkeleton,
-  NeInlineNotification,
-  NeCombobox,
   NeHeading,
+  NeInlineNotification,
+  NeSkeleton,
   NeTextArea
 } from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useAccountsStore } from '@/stores/controller/accounts'
-import { useLanguage } from '@/composables/useLanguage'
 import ChangePasswordDrawer from '@/components/controller/account_settings/ChangePasswordDrawer.vue'
 import GenerateSSHKeyPairDrawer from '@/components/controller/account_settings/GenerateSSHKeyPairDrawer.vue'
 import DeleteSSHKeyModal from '@/components/controller/account_settings/DeleteSSHKeyModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
+import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
 
 const { t } = useI18n()
 
 const accountsStore = useAccountsStore()
 const notificationsStore = useNotificationsStore()
-
-const { uiLanguage, supportedLanguages } = useLanguage()
 
 const showChangePasswordDrawer = ref(false)
 const showGenerateSSHKeyPairDrawer = ref(false)
@@ -42,16 +39,8 @@ onMounted(() => {
   <NeHeading tag="h3" class="mb-7">{{ t('controller.account_settings.title') }}</NeHeading>
   <div class="flex max-w-3xl flex-col gap-y-8">
     <FormLayout :title="t('controller.account_settings.change_language')">
-      <NeCombobox
-        v-model="uiLanguage"
-        :label="t('controller.account_settings.language')"
-        :options="supportedLanguages"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
-        :selected-label="t('ne_combobox.selected')"
-        :user-input-label="t('ne_combobox.user_input_label')"
-    /></FormLayout>
+      <ChangeLangCombobox />
+    </FormLayout>
     <hr />
     <FormLayout
       :title="t('controller.account_settings.change_password')"

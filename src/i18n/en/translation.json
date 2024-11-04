@@ -383,7 +383,8 @@
     "cannot_retrieve_connected_client_by_hour": "Cannot retrieve connected clients by hour",
     "cannot_retrieve_client_traffic_by_hour": "Cannot retrieve client traffic by hour",
     "cannot_retrieve_talkers_list": "Cannot retrieve talkers list",
-    "invalid_number": "Invalid number"
+    "invalid_number": "Invalid number",
+    "network_conflict": "This name is already in use by another network interface"
   },
   "ne_text_input": {
     "show_password": "Show password",

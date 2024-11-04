@@ -1,7 +1,7 @@
 {
   "languages": {
-    "it-IT": "Italian (it-IT)",
-    "en-US": "English (en-US)"
+    "it": "Italian",
+    "en": "English"
   },
   "common": {
     "shell": {

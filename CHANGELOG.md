@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.6](https://github.com/NethServer/nethsecurity-ui/compare/1.10.5...1.10.6) (2024-11-04)
+
+
+### Bug Fixes
+
+* **lang:** fixing translation fields under "languages" ([#424](https://github.com/NethServer/nethsecurity-ui/issues/424)) ([8610efd](https://github.com/NethServer/nethsecurity-ui/commit/8610efdcde033b291e32850936307ece9d633074))
+* **openvpn:** adding server-side validation ([#420](https://github.com/NethServer/nethsecurity-ui/issues/420)) ([f84a2ce](https://github.com/NethServer/nethsecurity-ui/commit/f84a2ceacc13bb03a8fbe19c377cc19fe62939c8))
+
 ## [1.10.5](https://github.com/NethServer/nethsecurity-ui/compare/1.10.4...1.10.5) (2024-10-31)
 
 

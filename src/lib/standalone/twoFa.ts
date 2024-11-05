@@ -2,14 +2,16 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import axios from 'axios'
-import { getStandaloneApiEndpoint } from '../config'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { getControllerApiEndpoint, getStandaloneApiEndpoint, isStandaloneMode } from '../config'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { getValidationErrorsFromAxiosError } from '../validation'
 import { ValidationError } from './ubus'
 
 export async function getTwoFaStatus() {
-  const loginStore = useLoginStore()
-  const res = await axios.get(`${getStandaloneApiEndpoint()}/2fa`, {
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+  const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
+  const res = await axios.get(`${endpoint}/2fa`, {
     headers: {
       Authorization: `Bearer ${loginStore.token}`
     }
@@ -18,8 +20,9 @@ export async function getTwoFaStatus() {
 }
 
 export async function getTwoFaQrCode() {
-  const loginStore = useLoginStore()
-  const res = await axios.get(`${getStandaloneApiEndpoint()}/2fa/qr-code`, {
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+  const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
+  const res = await axios.get(`${endpoint}/2fa/qr-code`, {
     headers: {
       Authorization: `Bearer ${loginStore.token}`
     }
@@ -28,8 +31,9 @@ export async function getTwoFaQrCode() {
 }
 
 export async function verifyTwoFaOtp(username: string, token: string, otp: string) {
+  const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
   try {
-    const res = await axios.post(`${getStandaloneApiEndpoint()}/2fa/otp-verify`, {
+    const res = await axios.post(`${endpoint}/2fa/otp-verify`, {
       otp,
       username,
       token
@@ -48,10 +52,10 @@ export async function verifyTwoFaOtp(username: string, token: string, otp: strin
 }
 
 export async function revokeTwoFa() {
-  const loginStore = useLoginStore()
-
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+  const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
   try {
-    const res = await axios.delete(`${getStandaloneApiEndpoint()}/2fa`, {
+    const res = await axios.delete(`${endpoint}/2fa`, {
       headers: {
         Authorization: `Bearer ${loginStore.token}`
       }

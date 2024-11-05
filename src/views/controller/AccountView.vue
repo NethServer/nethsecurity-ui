@@ -20,6 +20,9 @@ import GenerateSSHKeyPairDrawer from '@/components/controller/account_settings/G
 import DeleteSSHKeyModal from '@/components/controller/account_settings/DeleteSSHKeyModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
+import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
+import ConfigureTwoFaDrawer from '@/components/standalone/account/two_fa/ConfigureTwoFaDrawer.vue'
+import TwoFaComponent from '@/components/TwoFaComponent.vue'
 
 const { t } = useI18n()
 
@@ -97,6 +100,7 @@ onMounted(() => {
         }}</NeButton></template
       >
     </FormLayout>
+    <TwoFaComponent />
   </div>
   <ChangePasswordDrawer
     :is-shown="showChangePasswordDrawer"

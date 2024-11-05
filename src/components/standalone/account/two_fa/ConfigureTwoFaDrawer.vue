@@ -19,8 +19,10 @@ import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
 import QRCodeVue3 from 'qrcode-vue3'
 import { ValidationError } from '@/lib/standalone/ubus'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useNotificationsStore } from '@/stores/notifications'
+import { isStandaloneMode } from '@/lib/config'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false }
@@ -116,7 +118,7 @@ async function verifyOtp() {
     return
   }
   loading.value.verifyOtp = true
-  const loginStore = useLoginStore()
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 
   try {
     await verifyTwoFaOtp(loginStore.username, loginStore.token, otp.value)

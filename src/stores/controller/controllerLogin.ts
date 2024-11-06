@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router'
 import { getControllerRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
 import { jwtDecode } from 'jwt-decode'
-import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
+import { verifyTwoFaOtp } from '@/lib/twoFa'
 
 type JwtToken = {
   '2fa': boolean

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { revokeTwoFa, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
+import { revokeTwoFa, verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { useNotificationsStore } from '@/stores/notifications'

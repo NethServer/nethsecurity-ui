@@ -16,7 +16,7 @@ import {
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
-import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
+import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/twoFa'
 import QRCodeVue3 from 'qrcode-vue3'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'

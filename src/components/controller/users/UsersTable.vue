@@ -20,6 +20,8 @@ import { NeButton } from '@nethesis/vue-components'
 import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ref } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCheck, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   users: ControllerAccount[]
@@ -64,6 +66,9 @@ function getDropdownItems(item: ControllerAccount) {
         {{ t('controller.users.display_name') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
+        {{ t('controller.users.two_fa_status') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>
         <!-- no header for actions -->
       </NeTableHeadCell>
     </NeTableHead>
@@ -74,6 +79,18 @@ function getDropdownItems(item: ControllerAccount) {
         </NeTableCell>
         <NeTableCell :data-label="t('controller.users.display_name')">
           {{ item.display_name }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('controller.users.two_fa_status')">
+          <span class="flex items-center gap-2">
+            <template v-if="item.two_fa">
+              <FontAwesomeIcon :icon="faCircleCheck" class="text-green-700 dark:text-green-500" />
+              <span>{{ t('controller.users.two_fa_enabled') }}</span>
+            </template>
+            <template v-else>
+              <FontAwesomeIcon :icon="faCircleXmark" />
+              <span>{{ t('controller.users.two_fa_disabled') }}</span>
+            </template>
+          </span>
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center -ml-2.5 flex gap-2 md:ml-0 md:justify-end">

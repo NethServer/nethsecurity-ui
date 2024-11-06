@@ -2288,7 +2288,10 @@
       "user_added": "User added",
       "user_edited": "User edited",
       "unchanged": "Unchanged",
-      "edit_user": "Edit user"
+      "edit_user": "Edit user",
+      "two_fa_status": "2FA status",
+      "two_fa_enabled": "Enabled",
+      "two_fa_disabled": "Disabled"
     }
   },
   "notifications": {

@@ -2,11 +2,11 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import axios from 'axios'
-import { getControllerApiEndpoint, getStandaloneApiEndpoint, isStandaloneMode } from '../config'
+import { getControllerApiEndpoint, getStandaloneApiEndpoint, isStandaloneMode } from '@/lib/config'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
-import { getValidationErrorsFromAxiosError } from '../validation'
-import { ValidationError } from './ubus'
+import { getValidationErrorsFromAxiosError } from '@/lib/validation'
+import { ValidationError } from '@/lib/standalone/ubus'
 
 export async function getTwoFaStatus() {
   const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()

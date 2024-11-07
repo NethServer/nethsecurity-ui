@@ -139,7 +139,7 @@ function getCellClasses(item: RWAccount) {
       </NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
-      <NeTableRow v-for="item in paginatedItems" :key="item.username">
+      <NeTableRow v-for="item in paginatedItems" :key="item.id">
         <!-- username -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.username')">
           <div class="flex flex-row gap-x-3">

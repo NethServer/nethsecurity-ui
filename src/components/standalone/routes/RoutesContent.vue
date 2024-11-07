@@ -35,7 +35,39 @@ import {
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
 import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEditRouteDrawer.vue'
-import { AxiosError } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
+
+type MainTableResponse = {
+  table: MainTableRoute[]
+}
+
+type MainTableRoute = {
+  network: string
+  device: string
+  interface: string
+  gateway: string
+  metric: string
+  protocol: string
+}
+
+type RouteResponse = {
+  routes: Record<string, Route>
+}
+
+type Route = {
+  target: string
+  gateway: string
+  metric: string
+  table: string
+  interface: string
+  type: string
+  mtu: string
+  onlink: string
+  disabled: string
+  ns_description: string
+  readonly: boolean
+  id: string
+}
 
 /**
  * Props parent component
@@ -51,14 +83,14 @@ const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 
 let createEditRoute = ref(false)
-let routes: any = ref([])
-let table: any = ref([])
+let routes = ref<Route[]>([])
+let table = ref<MainTableRoute[]>([])
 let loading = ref(true)
 let selectedRoute = ref({})
 let deleting = ref(false)
 let deleteError = ref<Error>()
-let deleteRouteId = ref(undefined)
-let deleteRouteName = ref(undefined)
+let deleteRouteId = ref<string>()
+let deleteRouteName = ref<string>()
 let error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -91,20 +123,14 @@ onMounted(async () => {
 async function loadRoutes() {
   loading.value = true
   try {
-    const res = await ubusCall('ns.routes', 'list-routes', {
+    const res: AxiosResponse<RouteResponse> = await ubusCall('ns.routes', 'list-routes', {
       protocol: props.protocol
     })
 
-    const items: any = []
-    for (let item in res.data.routes) {
-      let obj = {
-        id: item
-      }
-      obj = Object.assign(obj, res.data.routes[item])
-      items.push(obj)
-    }
-
-    routes.value = items
+    // extracting object key and setting id
+    routes.value = Object.keys(res.data.routes).map((key): Route => {
+      return { ...res.data.routes[key], id: key }
+    })
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -118,13 +144,10 @@ async function loadRoutes() {
  */
 async function loadMainTable() {
   try {
-    const res = await ubusCall('ns.routes', 'main-table', {
+    const res: AxiosResponse<MainTableResponse> = await ubusCall('ns.routes', 'main-table', {
       protocol: props.protocol
     })
-
-    if (res.data) {
-      table.value = res.data.table
-    }
+    table.value = res.data.table
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -406,7 +429,7 @@ function scrollToMainTable() {
                   />
                 </NeTableCell>
               </NeTableRow>
-              <NeTableRow v-else v-for="item in paginatedItemsTable" :key="item.id">
+              <NeTableRow v-else v-for="(item, index) in paginatedItemsTable" :key="index">
                 <NeTableCell :data-label="t('standalone.routes.route_interface')">
                   <div>
                     {{ item.interface }}

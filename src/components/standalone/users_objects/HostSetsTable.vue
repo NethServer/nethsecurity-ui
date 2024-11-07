@@ -57,7 +57,7 @@ const route = useRoute()
 const { getObjectIcon } = useObjects()
 
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.filteredHostSets, {
+const { currentPage, paginatedItems } = useItemPagination(() => props.filteredHostSets ?? [], {
   itemsPerPage: pageSize
 })
 
@@ -227,7 +227,7 @@ function getManagementPageLabel(subtype: string) {
     <template #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="props.filteredHostSets?.length"
+        :total-rows="props.filteredHostSets?.length ?? 0"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"

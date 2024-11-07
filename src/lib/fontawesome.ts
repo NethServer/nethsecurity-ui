@@ -5,6 +5,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faArrowCircleDown,
+  faArrowDown,
+  faArrowUp,
   faArrowCircleUp,
   faArrowRight,
   faArrowRotateLeft,
@@ -32,6 +34,7 @@ import {
   faCircleUser as fasCircleUser,
   faCircleXmark as fasCircleXmark,
   faClock as faClock,
+  faClockRotateLeft as faClockRotateLeft,
   faClone as faClone,
   faCopy as fasCopy,
   faDiagramProject as fasDiagramProject,
@@ -167,7 +170,10 @@ export async function loadFontAwesome(app: any) {
   library.add(fasUsers)
   library.add(faScaleBalanced)
   library.add(faClock)
+  library.add(faClockRotateLeft)
   library.add(faLock)
+  library.add(faArrowDown)
+  library.add(faArrowUp)
   library.add(faLayerGroup)
   library.add(faWarning)
   library.add(fasWrench)

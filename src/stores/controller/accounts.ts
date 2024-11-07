@@ -12,6 +12,7 @@ export type ControllerAccount = {
   password: string
   display_name: string
   created: string
+  two_fa: boolean
 }
 
 /*

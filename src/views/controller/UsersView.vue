@@ -4,14 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
+import { type ControllerAccount, useAccountsStore } from '@/stores/controller/accounts'
 import {
-  NeHeading,
   NeButton,
+  NeEmptyState,
+  NeHeading,
   NeInlineNotification,
   NeSkeleton,
-  NeTextInput,
-  NeEmptyState
+  NeTextInput
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'

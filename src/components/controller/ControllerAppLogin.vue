@@ -5,34 +5,36 @@
 
 <script setup lang="ts">
 import {
-  NeLink,
+  getAxiosErrorMessage,
+  getStringFromStorage,
+  NeButton,
   NeHeading,
   NeInlineNotification,
-  NeButton,
-  NeTextInput,
-  getAxiosErrorMessage,
-  focusElement,
-  deleteFromStorage,
-  getStringFromStorage,
-  saveToStorage
+  NeLink,
+  NeTextInput
 } from '@nethesis/vue-components'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/config'
-import { validateRequired } from '@/lib/validation'
+import { getCompanyName, getPrivacyPolicyUrl, getProductName } from '@/lib/config'
+import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
+import { getControllerRoutePrefix } from '@/lib/router'
+import router from '@/router'
+import { ValidationError } from '@/lib/standalone/ubus'
 
-let username = ref('')
-let usernameRef = ref()
-let password = ref('')
-let passwordRef = ref()
-let rememberMe = ref(false)
+const username = ref('')
+const password = ref('')
+const twoFaOtp = ref('')
+const formRefs = {
+  username: useTemplateRef<HTMLInputElement>('username-ref'),
+  password: useTemplateRef<HTMLInputElement>('password-ref'),
+  twoFaOtp: useTemplateRef<HTMLInputElement>('two-fa-otp-ref')
+}
+const rememberMe = ref(false)
+const validationErrors = ref(new MessageBag())
+const error = ref<Error>()
 
-let error = ref({
-  username: '',
-  password: '',
-  login: ''
-})
+const loading = ref(false)
 
 const loginStore = useLoginStore()
 const { t } = useI18n()
@@ -44,80 +46,89 @@ onMounted(() => {
   if (usernameFromStorage) {
     rememberMe.value = true
     username.value = usernameFromStorage
-    focusElement(passwordRef)
+    formRefs.password.value?.focus()
   } else {
-    focusElement(usernameRef)
+    formRefs.username.value?.focus()
   }
 })
 
 async function login() {
-  error.value.username = ''
-  error.value.password = ''
-  error.value.login = ''
-
-  const isValidationOk = validate()
-
-  if (!isValidationOk) {
+  loading.value = true
+  error.value = undefined
+  if (isFormInvalid()) {
+    loading.value = false
     return
   }
 
   try {
-    await loginStore.login(username.value, password.value)
-
-    // set or remove username to/from local storage
-    if (rememberMe.value) {
-      saveToStorage('controllerUsername', username.value)
-    } else {
-      deleteFromStorage('controllerUsername')
+    await loginStore.login(username.value, password.value, rememberMe.value)
+    if (!loginStore.twoFaActive) {
+      await router.push(`${getControllerRoutePrefix()}/`)
     }
   } catch (err: any) {
-    console.error('login error', err)
-
     if (err?.response?.status == 401) {
-      error.value.login = 'login.incorrect_username_or_password'
-      focusElement(passwordRef)
+      error.value = new Error('login.incorrect_username_or_password')
+      formRefs.password.value?.focus()
     } else {
-      error.value.login = getAxiosErrorMessage(err)
+      error.value = new Error(getAxiosErrorMessage(err))
     }
+  } finally {
+    loading.value = false
   }
 }
 
-function validate() {
-  error.value.username = ''
-  error.value.password = ''
-  error.value.login = ''
-  let isValidationOk = true
+async function verifyTwoFa() {
+  loading.value = true
+  error.value = undefined
+  if (isFormInvalid()) {
+    loading.value = false
+    return
+  }
+  try {
+    await loginStore.verifyTwoFaToken(username.value, twoFaOtp.value)
+    await router.push(`${getControllerRoutePrefix()}/`)
+  } catch (err: any) {
+    if (err instanceof ValidationError) {
+      validationErrors.value = err.errorBag
+      formRefs.twoFaOtp.value?.focus()
+    } else {
+      error.value = new Error(getAxiosErrorMessage(err))
+    }
+  } finally {
+    loading.value = false
+  }
+}
 
-  // username
-
-  {
-    // check required
-    let { valid, errMessage } = validateRequired(username.value)
-    if (!valid) {
-      error.value.username = errMessage as string
-
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(usernameRef)
+function isFormInvalid() {
+  validationErrors.value.clear()
+  if (loginStore.twoFaActive) {
+    {
+      // otp
+      let { valid, errMessage } = validateSixDigitCode(twoFaOtp.value)
+      if (!valid) {
+        validationErrors.value.set('otp', errMessage as string)
+        formRefs.twoFaOtp.value?.focus()
+      }
+    }
+  } else {
+    {
+      // username
+      let { valid, errMessage } = validateRequired(username.value)
+      if (!valid) {
+        validationErrors.value.set('username', errMessage as string)
+        formRefs.username.value?.focus()
+      }
+    }
+    {
+      // password
+      let { valid, errMessage } = validateRequired(password.value)
+      if (!valid) {
+        validationErrors.value.set('password', errMessage as string)
+        formRefs.password.value?.focus()
       }
     }
   }
-
-  // password
-
-  {
-    // check required
-    let { valid, errMessage } = validateRequired(password.value)
-    if (!valid) {
-      error.value.password = errMessage as string
-
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(passwordRef)
-      }
-    }
-  }
-  return isValidationOk
+  return validationErrors.value.size > 0
 }
 </script>
 
@@ -148,29 +159,59 @@ function validate() {
               {{ t('login.privacy_policy') }}
             </NeLink>
           </div>
-          <form class="space-y-6" @submit.prevent>
+          <form v-if="loginStore.twoFaActive" class="space-y-6">
             <NeInlineNotification
-              v-if="error.login"
+              v-if="error"
+              :description="t(error.message)"
+              :title="t('login.cannot_login')"
+              kind="error"
+            />
+            <NeTextInput
+              ref="two-fa-otp-ref"
+              v-model.trim="twoFaOtp"
+              :disabled="loading"
+              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('otp'))"
+              :label="t('standalone.two_fa.otp')"
+              :loading="loading"
+            />
+            <NeButton
+              :disabled="loading"
+              :loading="loading"
+              class="w-full"
+              kind="primary"
+              size="lg"
+              type="submit"
+              @click.prevent="verifyTwoFa"
+              >{{ t('standalone.two_fa.verify_code') }}
+            </NeButton>
+          </form>
+          <form v-else class="space-y-6" @submit.prevent>
+            <NeInlineNotification
+              v-if="error"
               kind="error"
               :title="t('login.cannot_login')"
-              :description="t(error.login)"
+              :description="t(error.message)"
             />
             <NeTextInput
               :label="t('login.username')"
               v-model.trim="username"
-              :invalidMessage="t(error.username)"
+              ref="username-ref"
+              :disabled="loading"
+              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('username'))"
               autocomplete="username"
-              ref="usernameRef"
+              :loading="loading"
             />
             <NeTextInput
               :label="t('login.password')"
               v-model="password"
               isPassword
+              ref="password-ref"
+              :disabled="loading"
               :showPasswordLabel="t('ne_text_input.show_password')"
               :hidePasswordLabel="t('ne_text_input.hide_password')"
-              :invalidMessage="t(error.password)"
+              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('password'))"
               autocomplete="current-password"
-              ref="passwordRef"
+              :loading="loading"
             />
             <div class="flex items-center justify-between">
               <div class="flex items-center">
@@ -200,6 +241,8 @@ function validate() {
                 kind="primary"
                 size="lg"
                 @click.prevent="login"
+                :disabled="loading"
+                :loading="loading"
                 type="submit"
                 class="w-full"
                 >{{ t('login.sign_in') }}</NeButton

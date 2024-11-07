@@ -22,7 +22,7 @@ import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/valida
 import { useI18n } from 'vue-i18n'
 import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/config'
 import { jwtDecode } from 'jwt-decode'
-import { verifyTwoFaOtp } from '@/lib/standalone/twoFa'
+import { verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 
 let username = ref('')

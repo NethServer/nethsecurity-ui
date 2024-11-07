@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
-import { getTwoFaStatus } from '@/lib/standalone/twoFa'
+import { getTwoFaStatus } from '@/lib/twoFa'
 import {
   NeInlineNotification,
   NeSkeleton,
@@ -18,8 +18,8 @@ import {
   getAxiosErrorMessage,
   NeTextArea
 } from '@nethesis/vue-components'
-import ConfigureTwoFaDrawer from './ConfigureTwoFaDrawer.vue'
-import RevokeTwoFaModal from './RevokeTwoFaModal.vue'
+import ConfigureTwoFaDrawer from '@/components/two_fa/ConfigureTwoFaDrawer.vue'
+import RevokeTwoFaModal from '@/components/two_fa/RevokeTwoFaModal.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
 const { t } = useI18n()

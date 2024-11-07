@@ -6,10 +6,16 @@ import { defineStore } from 'pinia'
 import { isEmpty } from 'lodash-es'
 import { getJsonFromStorage, deleteFromStorage, saveToStorage } from '@nethesis/vue-components'
 import axios from 'axios'
-import { getControllerApiEndpoint } from '../../lib/config'
+import { getControllerApiEndpoint } from '@/lib/config'
 import { useRouter } from 'vue-router'
 import { getControllerRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
+import { jwtDecode } from 'jwt-decode'
+import { verifyTwoFaOtp } from '@/lib/twoFa'
+
+type JwtToken = {
+  '2fa': boolean
+}
 
 export const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
@@ -28,6 +34,14 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   })
   const isAdmin = computed(() => role.value === 'admin')
 
+  const twoFaActive = computed((): boolean => {
+    try {
+      return jwtDecode<JwtToken>(token.value)['2fa']
+    } catch (e) {
+      return false
+    }
+  })
+
   const loadUserFromStorage = () => {
     const loginInfo = getJsonFromStorage('controllerLoginInfo')
 
@@ -39,27 +53,39 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     }
   }
 
-  const login = async (user: string, password: string) => {
+  const login = async (user: string, password: string, rememberMe = false) => {
     const res = await axios.post(`${getControllerApiEndpoint()}/login`, {
       username: user,
       password
     })
-    const jwtToken = res.data.token
-    tokenRefreshedTime.value = new Date().getTime()
 
-    const loginInfo = {
-      username: user,
-      token: jwtToken,
-      tokenRefreshedTime: tokenRefreshedTime.value
+    // set or remove username to/from local storage
+    if (rememberMe) {
+      saveToStorage('controllerUsername', username.value)
+    } else {
+      deleteFromStorage('controllerUsername')
     }
-    saveToStorage('controllerLoginInfo', loginInfo)
+
+    token.value = res.data.token
+    tokenRefreshedTime.value = new Date().getTime()
+    if (!twoFaActive.value) {
+      username.value = user
+      role.value = JSON.parse(atob(token.value.split('.')[1])).role
+    }
+  }
+
+  async function verifyTwoFaToken(user: string, otp: string) {
+    await verifyTwoFaOtp(user, token.value, otp)
     username.value = user
-    token.value = jwtToken
-    role.value = JSON.parse(atob(jwtToken.split('.')[1])).role
+    role.value = JSON.parse(atob(token.value.split('.')[1])).role
+    saveToStorage('controllerLoginInfo', {
+      username: username.value,
+      token: token.value,
+      tokenRefreshedTime: tokenRefreshedTime.value
+    })
     const themeStore = useThemeStore()
     themeStore.loadTheme()
     isSessionExpired.value = false
-    router.push(`${getControllerRoutePrefix()}/`)
   }
 
   const logout = async () => {
@@ -121,6 +147,8 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     login,
     logout,
     refreshToken,
-    isAdmin
+    isAdmin,
+    twoFaActive,
+    verifyTwoFaToken
   }
 })

@@ -20,6 +20,7 @@ import GenerateSSHKeyPairDrawer from '@/components/controller/account_settings/G
 import DeleteSSHKeyModal from '@/components/controller/account_settings/DeleteSSHKeyModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
+import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
 
 const { t } = useI18n()
 
@@ -96,6 +97,16 @@ onMounted(() => {
           t('controller.account_settings.generate_ssh_key_pair')
         }}</NeButton></template
       >
+    </FormLayout>
+    <hr />
+    <FormLayout>
+      <template #title>
+        {{ t('standalone.two_fa.title') }}
+      </template>
+      <template #description>
+        {{ t('standalone.two_fa.description') }}
+      </template>
+      <TwoFactorAuth />
     </FormLayout>
   </div>
   <ChangePasswordDrawer

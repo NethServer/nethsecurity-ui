@@ -4,18 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { revokeTwoFa, verifyTwoFaOtp } from '@/lib/standalone/twoFa'
+import { revokeTwoFa, verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { useNotificationsStore } from '@/stores/notifications'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import {
-  NeInlineNotification,
   focusElement,
   getAxiosErrorMessage,
+  NeInlineNotification,
+  NeModal,
   NeTextInput
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
+import { isStandaloneMode } from '@/lib/config'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -28,7 +30,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
-const loginStore = useLoginStore()
+const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 const notificationsStore = useNotificationsStore()
 const otp = ref('')
 const otpRef = ref()

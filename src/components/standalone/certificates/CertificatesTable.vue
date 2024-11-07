@@ -30,21 +30,21 @@ const props = defineProps<{
   certificates: Certificate[]
 }>()
 
-const sortKey = ref('name')
+const sortKey = ref<keyof Certificate>('name')
 const sortDescending = ref(false)
 
 const sortFunctions = {
   // custom sorting function for domains attribute
-  domains: (a: Certificate, b: Certificate) => {
-    if (a.type === 'acme' && b.type === 'acme') {
+  domain: (a: Certificate, b: Certificate) => {
+    if (a.type == 'acme' && b.type == 'acme') {
       if (a.requested_domains?.length && b.requested_domains?.length) {
         return a.requested_domains[0].localeCompare(b.requested_domains[0])
       } else {
         return 0
       }
-    } else if (a.type === 'self-signed' && b.type === 'self-signed') {
+    } else if (a.type == 'self-signed' && b.type == 'self-signed') {
       return a.domain.localeCompare(b.domain)
-    } else if (a.type === 'self-signed') {
+    } else if (a.type == 'self-signed') {
       return -1
     } else {
       return 1

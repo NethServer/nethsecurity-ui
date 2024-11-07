@@ -305,7 +305,7 @@ function showRemoveUnitModal(unit: Unit) {
         </NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
-        <NeTableRow v-for="item in paginatedItems" :key="item.name">
+        <NeTableRow v-for="item in paginatedItems" :key="item.id">
           <!-- unit name -->
           <NeTableCell :data-label="t('controller.units.unit_name')">
             <div class="space-y-1">
@@ -367,7 +367,7 @@ function showRemoveUnitModal(unit: Unit) {
                           {{ t('controller.units.data_received') }}:
                         </span>
                         <span class="text-gray-300 dark:text-gray-600">
-                          {{ byteFormat1024(item.vpn.bytes_rcvd) }}
+                          {{ byteFormat1024(Number(item.vpn.bytes_rcvd)) }}
                         </span>
                       </div>
                       <!-- data sent -->
@@ -376,7 +376,7 @@ function showRemoveUnitModal(unit: Unit) {
                           {{ t('controller.units.data_sent') }}:
                         </span>
                         <span class="text-gray-300 dark:text-gray-600">
-                          {{ byteFormat1024(item.vpn.bytes_sent) }}
+                          {{ byteFormat1024(Number(item.vpn.bytes_sent)) }}
                         </span>
                       </div>
                       <!-- connected since -->

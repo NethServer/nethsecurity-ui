@@ -1,4 +1,3 @@
-import type { Unit } from '@/stores/controller/units'
 import { ubusCall, ubusCallFromController } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 
@@ -29,9 +28,9 @@ export function useUpdates() {
   /**
    * Update the package index
    */
-  function updatePackageIndex(unit?: Unit): Promise<UpdateResponse> {
-    if (unit) {
-      return ubusCallFromController('ns.update', 'check-package-updates', {}, unit.id)
+  function updatePackageIndex(unitId?: string): Promise<UpdateResponse> {
+    if (unitId) {
+      return ubusCallFromController('ns.update', 'check-package-updates', {}, unitId)
     }
     return ubusCall('ns.update', 'check-package-updates', {})
   }
@@ -39,9 +38,9 @@ export function useUpdates() {
   /**
    * Upgrade all packages
    */
-  function upgradePackages(unit?: Unit): Promise<SuccessfulResponse> {
-    if (unit) {
-      return ubusCallFromController('ns.update', 'install-package-updates', {}, unit.id)
+  function upgradePackages(unitId?: string): Promise<SuccessfulResponse> {
+    if (unitId) {
+      return ubusCallFromController('ns.update', 'install-package-updates', {}, unitId)
     }
     return ubusCall('ns.update', 'install-package-updates')
   }
@@ -49,9 +48,9 @@ export function useUpdates() {
   /**
    * Check for image system update
    */
-  function checkUnitImageUpdate(unit?: Unit): Promise<CheckSystemUpdateResponse> {
-    if (unit) {
-      return ubusCallFromController('ns.update', 'check-system-update', {}, unit.id)
+  function checkUnitImageUpdate(unitId?: string): Promise<CheckSystemUpdateResponse> {
+    if (unitId) {
+      return ubusCallFromController('ns.update', 'check-system-update', {}, unitId)
     }
     return ubusCall('ns.update', 'check-system-update')
   }
@@ -59,9 +58,9 @@ export function useUpdates() {
   /**
    * Upgrade the system
    */
-  function upgradeUnitImage(unit?: Unit): Promise<SuccessfulResponse> {
-    if (unit) {
-      return ubusCallFromController('ns.update', 'update-system', {}, unit.id)
+  function upgradeUnitImage(unitId?: string): Promise<SuccessfulResponse> {
+    if (unitId) {
+      return ubusCallFromController('ns.update', 'update-system', {}, unitId)
     }
     return ubusCall('ns.update', 'update-system')
   }
@@ -69,28 +68,31 @@ export function useUpdates() {
   /**
    * Schedule a system upgrade
    */
-  function scheduleUpgradeUnitImage(scheduleAt: Date, unit?: Unit): Promise<SuccessfulResponse> {
+  function scheduleUpgradeUnitImage(
+    scheduleAt: Date,
+    unitId?: string
+  ): Promise<SuccessfulResponse> {
     const scheduleAtTimestamp = Math.floor(scheduleAt.getTime() / 1000)
-    if (unit) {
+    if (unitId) {
       return ubusCallFromController(
         'ns.update',
         'schedule-system-update',
         { scheduleAt: scheduleAtTimestamp },
-        unit.id
+        unitId
       )
     }
     return ubusCall('ns.update', 'schedule-system-update', { scheduleAt: scheduleAtTimestamp })
   }
 
-  function abortScheduledUpgradeUnitImage(unit?: Unit): Promise<SuccessfulResponse> {
-    if (unit) {
+  function abortScheduledUpgradeUnitImage(unitId: string): Promise<SuccessfulResponse> {
+    if (unitId) {
       return ubusCallFromController(
         'ns.update',
         'schedule-system-update',
         {
           scheduleAt: -1
         },
-        unit.id
+        unitId
       )
     }
     return ubusCall('ns.update', 'schedule-system-update', { scheduleAt: -1 })

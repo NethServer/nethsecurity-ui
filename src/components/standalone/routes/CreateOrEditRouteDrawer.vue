@@ -13,7 +13,8 @@ import {
   NeTooltip,
   NeTextInput,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  type NeComboboxOption
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
@@ -66,15 +67,9 @@ interface Form {
   onlink: boolean
 }
 
-interface RouteInterface {
-  id: string
-  label: string
-}
+interface RouteInterface extends NeComboboxOption {}
 
-interface RouteType {
-  id: string
-  label: string
-}
+interface RouteType extends NeComboboxOption {}
 
 const originalForm = {
   id: '',
@@ -91,8 +86,8 @@ const originalForm = {
 
 const form = ref<Form>({ ...originalForm })
 
-let routeInterfaces = ref<Array<RouteInterface>>()
-let routeTypes = ref<Array<RouteType>>()
+let routeInterfaces = ref<Array<RouteInterface>>([])
+let routeTypes = ref<Array<RouteType>>([])
 let loading = ref(false)
 let saving = ref(false)
 let isExpandedAdvancedSettings = ref(false)

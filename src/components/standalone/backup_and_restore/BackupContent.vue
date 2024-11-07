@@ -178,7 +178,7 @@ function getDropdownItems(item: Backup) {
           item.id,
           formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
             ' (' +
-            byteFormat1024(item.size) +
+            byteFormat1024(Number(item.size)) +
             ')'
         )
       }
@@ -308,7 +308,7 @@ function successDeleteBackup() {
             </NeTableCell>
             <NeTableCell :data-label="t('standalone.backup_and_restore.backup.size')">
               <div>
-                {{ byteFormat1024(item.size) }}
+                {{ byteFormat1024(Number(item.size)) }}
               </div>
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">

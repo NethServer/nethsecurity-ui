@@ -5,16 +5,17 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeDropdown } from '@nethesis/vue-components'
 import {
   NeButton,
+  NeDropdown,
+  type NeDropdownItem,
+  NePaginator,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
   useItemPagination
 } from '@nethesis/vue-components'
 import type { StaticLease } from './StaticLeases.vue'
@@ -24,7 +25,7 @@ import { ref } from 'vue'
 const { t } = useI18n()
 
 const props = defineProps<{
-  leases: StaticLease[] | DynamicLease[]
+  leases: Array<StaticLease | DynamicLease>
   showDynamicLeases: boolean
 }>()
 
@@ -35,7 +36,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.leases, {
   itemsPerPage: pageSize
 })
 
-function getDropdownItems(item: StaticLease) {
+function getDropdownItems(item: StaticLease | DynamicLease) {
   return !props.showDynamicLeases
     ? [
         {
@@ -89,7 +90,7 @@ function getDropdownItems(item: StaticLease) {
           v-if="!showDynamicLeases"
           :data-label="t('standalone.dns_dhcp.reservation_name')"
         >
-          {{ item.description ? item.description : '-' }}
+          {{ 'description' in item ? item.description : '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.dns_dhcp.interface')">
           <p v-if="!item.interface && !item.device">-</p>
@@ -105,8 +106,10 @@ function getDropdownItems(item: StaticLease) {
           v-if="showDynamicLeases"
           :data-label="t('standalone.dns_dhcp.lease_expiration')"
         >
-          {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
-          {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
+          <template v-if="'timestamp' in item">
+            {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
+            {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
+          </template>
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">

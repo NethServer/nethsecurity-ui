@@ -153,14 +153,14 @@ async function listDevices() {
       // editing rule
       if (props.currentRule.device_in?.length) {
         inboundDevices.value = props.currentRule.device_in.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev) => dev.id === deviceId)!
         })
         isExpandedAdvancedSettings.value = true
       }
 
       if (props.currentRule.device_out) {
         outboundDevices.value = props.currentRule.device_out.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev) => dev.id === deviceId)!
         })
         isExpandedAdvancedSettings.value = true
       }

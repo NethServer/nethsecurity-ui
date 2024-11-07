@@ -54,7 +54,7 @@ watch(
       _unit.value = unit
       fetchError.value = undefined
       loading.value = true
-      checkUnitImageUpdate(_unit.value)
+      checkUnitImageUpdate(_unit.value.id)
         .then(async (response) => {
           versionToUpdate.value = response.data.lastVersion
           if (versionToUpdate.value == '') {
@@ -91,26 +91,28 @@ async function updateUnit() {
     sendingSchedule.value = true
     sendingError.value = undefined
     if (updateMode.value == 'now') {
-      await upgradeUnitImage(_unit.value)
+      await upgradeUnitImage(_unit.value!.id)
       unitsStore.addUnitUpgradingImage(_unit.value!.id)
     } else {
-      await scheduleUpgradeUnitImage(scheduledUpdate.value, _unit.value)
+      await scheduleUpgradeUnitImage(scheduledUpdate.value, _unit.value!.id)
     }
     await unitsStore.getUnitInfo(_unit.value!.id)
     await unitsStore.getUnits()
 
-    let notification: NeNotification = {
-      kind: 'success'
-    }
     if (updateMode.value == 'now') {
-      notification.id = 'unit-update'
-      notification.title = t('controller.units.image_update_success')
-      notification.description = t('controller.units.image_update_description')
+      notificationsStore.createNotification({
+        id: 'unit-update',
+        title: t('controller.units.image_update_success'),
+        description: t('controller.units.image_update_description'),
+        kind: 'success'
+      } as NeNotification)
     } else {
-      notification.id = 'schedule-unit-update'
-      notification.title = t('controller.units.scheduled_image_update_success')
+      notificationsStore.createNotification({
+        id: 'schedule-unit-update',
+        title: t('controller.units.scheduled_image_update_success'),
+        kind: 'success'
+      } as NeNotification)
     }
-    notificationsStore.createNotification(notification)
     emit('close')
   } catch (error: any) {
     sendingError.value = error

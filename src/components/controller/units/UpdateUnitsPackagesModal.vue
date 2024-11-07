@@ -8,7 +8,8 @@ import {
   getAxiosErrorMessage,
   NeInlineNotification,
   NeModal,
-  NeSkeleton
+  NeSkeleton,
+  type ModalKind
 } from '@nethesis/vue-components'
 
 const { t } = useI18n()
@@ -38,7 +39,7 @@ watch(
       fetchingData.value = true
       _unit.value = unit
       try {
-        const response = await updatePackageIndex(_unit.value)
+        const response = await updatePackageIndex(_unit.value.id)
         availableUpdates.value = response.data.updates
         fetchingData.value = false
       } catch (exception: any) {
@@ -59,7 +60,7 @@ const primaryButtonLabel = computed((): string => {
   }
 })
 
-const modalKind = computed((): string => {
+const modalKind = computed((): ModalKind => {
   if (fetchingData.value) {
     return 'neutral'
   } else if (availableUpdates.value.length > 0) {
@@ -87,7 +88,7 @@ async function updateUnitPackages() {
   }
   try {
     loading.value = true
-    await upgradePackages(_unit.value)
+    await upgradePackages(_unit.value.id)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
     notificationStore.createNotification({

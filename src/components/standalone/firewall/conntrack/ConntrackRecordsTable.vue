@@ -72,8 +72,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
             'standalone.conntrack.upload'
           )}`"
         >
-          {{ byteFormat1024(item.source_stats.bytes) }} /
-          {{ byteFormat1024(item.destination_stats.bytes) }}
+          {{ byteFormat1024(Number(item.source_stats.bytes)) }} /
+          {{ byteFormat1024(Number(item.destination_stats.bytes)) }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.conntrack.state')">
           {{ item.state || '-' }}

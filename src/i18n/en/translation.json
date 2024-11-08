@@ -359,7 +359,7 @@
     "invalid_ipaddr": "One or more records are invalid",
     "empty_domains": "One or more domains are empty",
     "invalid_domains": "One or more domains are invalid",
-    "domains_total_chars_exceeded": "Total characters of all domains must not exceed 960. Please remove some domains or create a new domain set.",
+    "total_chars_exceeded": "There are too many domains. Please remove some and include them in a new domain set.",
     "cannot_delete_host_set": "Cannot delete host set",
     "cannot_delete_domain_set": "Cannot delete domain set",
     "cannot_retrieve_host_sets": "Cannot retrieve host sets",

@@ -125,9 +125,7 @@ function runFieldValidators(
   return validators.every((validator) => validator.valid)
 }
 
-function validateRecordsRequired() {
-  let totalChars = 0
-
+function validateRecords() {
   for (const record of records.value) {
     if (!record) {
       return { valid: false, errMessage: 'error.empty_domains' }
@@ -136,14 +134,6 @@ function validateRecordsRequired() {
     const { valid } = validateDomainName(record)
     if (!valid) {
       return { valid: false, errMessage: 'error.invalid_domains' }
-    }
-    totalChars += record.length
-  }
-
-  if (totalChars >= 960) {
-    return {
-      valid: false,
-      errMessage: 'error.domains_total_chars_exceeded'
     }
   }
   return { valid: true }
@@ -174,7 +164,7 @@ function validate() {
       nameRef
     ],
     // records
-    [[validateRecordsRequired()], 'ipaddr', recordRef]
+    [[validateRecords()], 'domain', recordRef]
   ]
 
   // reset firstErrorRef for focus management
@@ -281,10 +271,10 @@ async function saveDomainSet() {
         />
         <!-- records invalid message -->
         <p
-          v-if="errorBag.getFirstI18nKeyFor('ipaddr')"
+          v-if="errorBag.getFirstI18nKeyFor('domain')"
           :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
         >
-          {{ t(errorBag.getFirstI18nKeyFor('ipaddr')) }}
+          {{ t(errorBag.getFirstI18nKeyFor('domain')) }}
         </p>
         <!-- save domain set error notification -->
         <NeInlineNotification

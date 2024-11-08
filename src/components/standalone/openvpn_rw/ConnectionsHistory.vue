@@ -174,10 +174,7 @@ function clearFilters() {
   accountsFilter.value = []
 }
 
-function timezoneOffset() {
-  const date = new Date()
-  return date.getTimezoneOffset() / -60 // convert to hours and invert sign
-}
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 // download all history from csv file
 async function downloadAllHistory() {
@@ -185,7 +182,7 @@ async function downloadAllHistory() {
   try {
     let res = await ubusCall('ns.ovpnrw', 'connection-history-csv', {
       instance: props.instance,
-      timezone: timezoneOffset()
+      timezone: timezone
     })
     if (res?.data?.csv_path) {
       //remove prefix /var/run/ns-api-server/downloads/

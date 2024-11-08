@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.11.0](https://github.com/NethServer/nethsecurity-ui/compare/1.10.6...1.11.0) (2024-11-08)
+
+
+### Features
+
+* **controller:** added 2fa auth ([#426](https://github.com/NethServer/nethsecurity-ui/issues/426)) ([0037e05](https://github.com/NethServer/nethsecurity-ui/commit/0037e05bce9b8371fcac44a88d5d1ded321a52a8))
+
+
+### Bug Fixes
+
+* remove some validations for domain sets ([#430](https://github.com/NethServer/nethsecurity-ui/issues/430)) ([7c5ebf6](https://github.com/NethServer/nethsecurity-ui/commit/7c5ebf69ccb8af131b00a2e94cd0548c2d1c2ab8))
+* translated with Weblate ([#427](https://github.com/NethServer/nethsecurity-ui/issues/427)) ([c0a1d6f](https://github.com/NethServer/nethsecurity-ui/commit/c0a1d6f26db113f7bbe8cacfd18e73218854fc1a))
+
 ## [1.10.6](https://github.com/NethServer/nethsecurity-ui/compare/1.10.5...1.10.6) (2024-11-04)
 
 

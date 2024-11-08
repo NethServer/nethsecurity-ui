@@ -374,7 +374,12 @@
     "cannot_retrieve_ovpn_tunnels": "Impossibile caricare i tunnel OpenVPN",
     "cannot_retrieve_talkers_list": "Impossibile caricare la lista degli host che fanno più traffico",
     "cannot_retrieve_ovpn_traffic_by_hour": "Impossibile caricare traffico orario della OpenVPN",
-    "cannot_retrieve_vpn_client_sessions": "Impossibile caricare le sessioni dei client VPN"
+    "cannot_retrieve_vpn_client_sessions": "Impossibile caricare le sessioni dei client VPN",
+    "invalid_alphanumeric_starting_with_letter": "Deve iniziare con una lettera, e contenere solo lettere e numeri",
+    "invalid_alphanumeric": "Sono consentite solo lettere e numeri",
+    "network_conflict": "Questo nome è già utilizzato da un'altra interfaccia di rete",
+    "empty_domains": "Uno o più domini sono vuoti",
+    "invalid_domains": "Uno o più domini non sono validi"
   },
   "login": {
     "sign_in": "Accedi",
@@ -2303,5 +2308,9 @@
     "ascending": "Ascendente",
     "descending": "Discendente",
     "sort": "Ordina"
+  },
+  "languages": {
+    "en": "Inglese",
+    "it": "Italiano"
   }
 }

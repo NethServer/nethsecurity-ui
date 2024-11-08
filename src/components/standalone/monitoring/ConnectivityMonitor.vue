@@ -19,11 +19,16 @@ import InterfaceTrafficCard from './connectivity/InterfaceTrafficCard.vue'
 import { isEmpty } from 'lodash-es'
 import type { Policy } from '@/composables/useMwan'
 import WanConnectionsCard from './connectivity/WanConnectionsCard.vue'
+import { useNetworkDevices } from '@/composables/useNetworkDevices'
+import { getIpv4Addresses, getIpv6Addresses, getName, isDeviceUp } from '@/lib/standalone/network'
+import { useUciNetworkConfig } from '@/composables/useUciNetworkConfig'
 
 export type Wan = {
   iface: string
   device: string
   status?: string
+  ip4Addresses?: string[]
+  ip6Addresses?: string[]
 }
 
 export type WanEvent = {
@@ -32,10 +37,20 @@ export type WanEvent = {
 }
 
 const { t } = useI18n()
+const { allDevices, listDevices, loadingListDevices, errorListDevices, errorListDevicesDetails } =
+  useNetworkDevices()
+const {
+  networkConfig,
+  getNetworkConfig,
+  loadingNetworkConfig,
+  errorNetworkConfig,
+  errorNetworkConfigDetails
+} = useUciNetworkConfig()
 
 const wans = ref<Wan[]>([])
 const mwanEvents = ref<Record<string, any[]>>({})
 const mwanPolicies = ref<Policy[]>([])
+
 let loading = ref({
   listWans: false,
   getMwanReport: false,
@@ -51,43 +66,75 @@ let error = ref({
   getMwanPoliciesDetails: ''
 })
 
+const loadingData = computed(() => {
+  return (
+    loading.value.listWans ||
+    loading.value.getMwanReport ||
+    loading.value.getMwanPolicies ||
+    loadingNetworkConfig.value ||
+    loadingListDevices.value
+  )
+})
+
 const wanConnections = computed(() => {
-  const wanData = []
+  const wanData: Wan[] = []
 
   for (const wan of wans.value) {
     // get wan status from policy data
     let statusFound = false
 
-    for (const policy of mwanPolicies.value) {
-      if (statusFound) {
-        break
-      }
-
-      for (const policyMembers of Object.values(policy.members)) {
+    if (mwanPolicies.value.length > 0) {
+      // multiwan configured
+      for (const policy of mwanPolicies.value) {
         if (statusFound) {
           break
         }
 
-        for (const policyMember of policyMembers) {
-          if (policyMember.interface == wan.iface) {
-            wanData.push({
-              ...wan,
-              status: policyMember.status
-            })
-            statusFound = true
+        for (const policyMembers of Object.values(policy.members)) {
+          if (statusFound) {
             break
+          }
+
+          for (const policyMember of policyMembers) {
+            if (policyMember.interface == wan.iface) {
+              const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
+
+              wanData.push({
+                ...wan,
+                status: policyMember.status,
+                ip4Addresses: devFound ? getIpv4Addresses(devFound, networkConfig.value) : [],
+                ip6Addresses: devFound ? getIpv6Addresses(devFound, networkConfig.value) : []
+              })
+              statusFound = true
+              break
+            }
           }
         }
       }
+    } else {
+      // multiwan not configured
+
+      const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
+
+      if (devFound) {
+        wanData.push({
+          ...wan,
+          status: isDeviceUp(devFound, allDevices.value) ? 'online' : 'offline',
+          ip4Addresses: getIpv4Addresses(devFound, networkConfig.value),
+          ip6Addresses: getIpv6Addresses(devFound, networkConfig.value)
+        })
+      }
     }
   }
-  return wanData
+  return wanData.sort(sortByProperty('iface'))
 })
 
 onMounted(() => {
   listWans()
   getMwanReport()
   getMwanPolicies()
+  listDevices()
+  getNetworkConfig()
 })
 
 async function listWans() {
@@ -196,25 +243,60 @@ async function getMwanPolicies() {
         {{ error.getMwanPoliciesDetails }}
       </template>
     </NeInlineNotification>
-    <div class="grid grid-cols-1 gap-x-6 gap-y-6 xl:grid-cols-2">
+    <!-- listDevices error notification -->
+    <NeInlineNotification
+      v-if="errorListDevices"
+      kind="error"
+      :title="t('error.cannot_load_network_devices')"
+      :description="errorListDevices"
+      :closeAriaLabel="t('common.close')"
+      class="mb-4"
+    >
+      <template v-if="errorListDevicesDetails" #details>
+        {{ errorListDevicesDetails }}
+      </template>
+    </NeInlineNotification>
+    <!-- uci network config error notification -->
+    <NeInlineNotification
+      v-if="errorNetworkConfig"
+      kind="error"
+      :title="t('error.cannot_load_network_config')"
+      :description="errorNetworkConfig"
+      :closeAriaLabel="t('common.close')"
+      class="mb-4"
+    >
+      <template v-if="errorNetworkConfigDetails" #details>
+        {{ errorNetworkConfigDetails }}
+      </template>
+    </NeInlineNotification>
+    <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-12">
       <!-- skeleton -->
-      <template v-if="loading.listWans || loading.getMwanReport || loading.getMwanPolicies">
+      <template v-if="loadingData">
+        <NeCard
+          loading
+          :skeletonLines="7"
+          class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
+        ></NeCard>
         <NeCard
           v-for="index in 4"
           :key="index"
           loading
-          :skeletonLines="5"
-          class="col-span-1"
+          :skeletonLines="7"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         ></NeCard>
       </template>
       <template v-else>
         <!-- connections -->
-        <WanConnectionsCard v-if="wanConnections.length" :wanConnections="wanConnections" />
+        <WanConnectionsCard
+          v-if="wanConnections.length"
+          :wanConnections="wanConnections"
+          class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
+        />
         <!-- wan events -->
         <NeCard
           v-if="isEmpty(mwanEvents)"
           :title="t('standalone.real_time_monitor.wan_events')"
-          class="col-span-1"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         >
           <NeEmptyState
             :title="t('standalone.real_time_monitor.no_events_message')"
@@ -228,7 +310,7 @@ async function getMwanPolicies() {
           :key="wanName"
           :wan="wanName"
           :wanEvents="events"
-          class="col-span-1"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
         <!-- wans traffic -->
         <InterfaceTrafficCard
@@ -236,7 +318,7 @@ async function getMwanPolicies() {
           :key="wan.device"
           :iface="wan.iface"
           :device="wan.device"
-          class="col-span-1"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
       </template>
     </div>

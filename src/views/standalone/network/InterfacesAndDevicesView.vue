@@ -1,5 +1,5 @@
+Copyright (C) 2024 Nethesis S.r.l.
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -42,7 +42,11 @@ import {
   isVpn,
   getZoneIconBackgroundStyle,
   getZoneIconForegroundStyle,
-  type DeviceVpnNetworks
+  type DeviceVpnNetworks,
+  getIpv4Addresses,
+  getIpv6Addresses,
+  getVlanParent,
+  isDeviceUp
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -50,10 +54,11 @@ import ConfigureDeviceDrawer, {
 import UnconfigureDeviceModal from '@/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue'
 import CreateVlanDeviceDrawer from '@/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue'
 import DeleteDeviceModal from '@/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue'
-import { isEmpty, isEqual, uniqWith, toUpper, clone } from 'lodash-es'
+import { clone, isEmpty, toUpper } from 'lodash-es'
 import { zonesSorting } from '@/stores/standalone/firewall'
 import DeleteBondModal from '@/components/standalone/interfaces_and_devices/DeleteBondModal.vue'
 import DeviceButtons from '@/components/standalone/interfaces_and_devices/DeviceButtons.vue'
+import type { UciNetworkConfig } from '@/composables/useUciNetworkConfig'
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -179,7 +184,7 @@ async function getNetworkConfig() {
     networkConfig.value = await getUciConfig('network')
   } catch (err: any) {
     console.error(err)
-    error.value.notificationTitle = t('error.cannot_load_firewall_config')
+    error.value.notificationTitle = t('error.cannot_load_network_config')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
   }
   loading.value.networkConfig = false
@@ -443,10 +448,10 @@ function showUnconfigureDeviceModal(device: any) {
   isShownUnconfigureDeviceModal.value = true
 }
 
-function getNumAlias(device: any, networkConfig: any) {
+function getNumAlias(device: any, networkConfig: UciNetworkConfig) {
   const alias = getAliasInterface(device, networkConfig)
-  const numIpv4Addresses = alias.ipaddr?.length || 0
-  const numIpv6Addresses = alias.ip6addr?.length || 0
+  const numIpv4Addresses = alias?.ipaddr?.length || 0
+  const numIpv6Addresses = alias?.ip6addr?.length || 0
   return numIpv4Addresses + numIpv6Addresses
 }
 
@@ -458,87 +463,10 @@ function hideCreateVlanDeviceDrawer() {
   isShownCreateVlanDeviceDrawer.value = false
 }
 
-function getIpv4Addresses(device: any) {
-  const ipv4Addresses = []
-  const iface = getInterface(device)
-  const aliasIface = getAliasInterface(device, networkConfig.value)
-
-  // device ip addresses
-
-  if (!isEmpty(device.ipaddrs)) {
-    for (const ipv4 of device.ipaddrs) {
-      // skip alias addresses
-      if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(ipv4.address)) {
-        ipv4Addresses.push({ address: ipv4.address })
-      }
-    }
-  }
-
-  // interface ip address
-
-  if (iface?.ipaddr) {
-    // skip alias addresses
-    if (!aliasIface || !aliasIface.ipaddr || !aliasIface.ipaddr.includes(iface.ipaddr)) {
-      ipv4Addresses.push({ address: iface.ipaddr })
-    }
-  }
-  if (isBond(device) && ipv4Addresses.length > 0) {
-    ipv4Addresses.splice(0, 1)
-  }
-  return uniqWith(ipv4Addresses, isEqual)
-}
-
-function getIpv6Addresses(device: any) {
-  // ensure ipv6 is enabled
-  if (device.ipv6 !== '1') {
-    return
-  }
-
-  const ipv6Addresses = []
-  const iface = getInterface(device)
-  const aliasIface = getAliasInterface(device, networkConfig.value)
-
-  // device ip addresses
-
-  if (!isEmpty(device.ip6addrs)) {
-    for (const ipv6 of device.ip6addrs) {
-      // skip alias addresses
-      if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(ipv6.address)) {
-        ipv6Addresses.push({ address: ipv6.address })
-      }
-    }
-  }
-
-  // interface ip address
-
-  if (iface?.ip6addr) {
-    let addr = iface.ip6addr
-
-    // ipv6 address is stored inside a one-element array
-    if (addr instanceof Array) {
-      addr = addr[0]
-    }
-
-    // skip alias addresses
-    if (!aliasIface || !aliasIface.ip6addr || !aliasIface.ip6addr.includes(addr)) {
-      ipv6Addresses.push({ address: addr })
-    }
-  }
-  return uniqWith(ipv6Addresses, isEqual)
-}
-
-function isDeviceUp(device: any) {
+function getDeviceMac(device: any, allDevices: DeviceOrIface[]) {
   // get parent device if it's a vlan
   if (isVlan(device)) {
-    device = getVlanParent(device)
-  }
-  return device?.up
-}
-
-function getDeviceMac(device: any) {
-  // get parent device if it's a vlan
-  if (isVlan(device)) {
-    device = getVlanParent(device)
+    device = getVlanParent(device, allDevices)
   }
 
   if (device?.mac) {
@@ -568,16 +496,10 @@ function getIpv6Gateway(device: any) {
   }
 }
 
-function getVlanParent(bridgeDevice: any) {
-  const parentDevice = bridgeDevice.ifname
-  const deviceFound = allDevices.value.find((dev) => dev.name === parentDevice)
-  return deviceFound
-}
-
-function getRxBytes(device: any) {
+function getRxBytes(device: any, allDevices: DeviceOrIface[]) {
   // get parent device if it's a vlan
   if (isVlan(device)) {
-    device = getVlanParent(device)
+    device = getVlanParent(device, allDevices)
   }
 
   if (device?.stats?.rx_bytes) {
@@ -587,10 +509,10 @@ function getRxBytes(device: any) {
   }
 }
 
-function getTxBytes(device: any) {
+function getTxBytes(device: any, allDevices: DeviceOrIface[]) {
   // get parent device if it's a vlan
   if (isVlan(device)) {
-    device = getVlanParent(device)
+    device = getVlanParent(device, allDevices)
   }
 
   if (device?.stats?.tx_bytes) {
@@ -854,9 +776,9 @@ function formatPackets(packets: number) {
                       </div>
                       <!-- second column -->
                       <div class="space-y-2">
-                        <div v-if="getDeviceMac(device)">
+                        <div v-if="getDeviceMac(device, allDevices)">
                           <span class="font-medium">MAC: </span>
-                          <span>{{ getDeviceMac(device) }}</span>
+                          <span>{{ getDeviceMac(device, allDevices) }}</span>
                         </div>
                         <!-- hotspot network -->
                         <div v-if="isHotspot(device)">
@@ -866,11 +788,14 @@ function formatPackets(packets: number) {
                           <span>{{ device.hotspot?.network }}</span>
                         </div>
                         <div>
-                          <div v-if="getIpv4Addresses(device)?.length">
-                            <div v-for="(ipv4, i) in getIpv4Addresses(device)" :key="i">
+                          <div v-if="getIpv4Addresses(device, networkConfig)?.length">
+                            <div
+                              v-for="(ipv4, i) in getIpv4Addresses(device, networkConfig)"
+                              :key="i"
+                            >
                               <div>
                                 <span class="font-medium">IPv4: </span>
-                                <span>{{ ipv4.address }}</span>
+                                <span>{{ ipv4 }}</span>
                               </div>
                             </div>
                           </div>
@@ -882,11 +807,14 @@ function formatPackets(packets: number) {
                           </div>
                         </div>
                         <div>
-                          <div v-if="getIpv6Addresses(device)?.length">
-                            <div v-for="(ipv6, i) in getIpv6Addresses(device)" :key="i">
+                          <div v-if="getIpv6Addresses(device, networkConfig)?.length">
+                            <div
+                              v-for="(ipv6, i) in getIpv6Addresses(device, networkConfig)"
+                              :key="i"
+                            >
                               <div>
                                 <span class="font-medium">IPv6: </span>
-                                <span>{{ ipv6.address }}</span>
+                                <span>{{ ipv6 }}</span>
                               </div>
                             </div>
                           </div>
@@ -955,16 +883,16 @@ function formatPackets(packets: number) {
                       </div>
                       <!-- third column -->
                       <div>
-                        <div v-if="getRxBytes(device)">
+                        <div v-if="getRxBytes(device, allDevices)">
                           <span class="font-medium">RX: </span>
-                          <span>{{ getRxBytes(device) || '-' }}</span>
+                          <span>{{ getRxBytes(device, allDevices) || '-' }}</span>
                           <span v-if="device.stats?.rx_packets">
                             ({{ formatPackets(device.stats.rx_packets) }} pkts)</span
                           >
                         </div>
-                        <div v-if="getTxBytes(device)">
+                        <div v-if="getTxBytes(device, allDevices)">
                           <span class="font-medium">TX: </span>
-                          <span>{{ getTxBytes(device) || '-' }}</span>
+                          <span>{{ getTxBytes(device, allDevices) || '-' }}</span>
                           <span v-if="device.stats?.tx_packets">
                             ({{ formatPackets(device.stats.tx_packets) }} pkts)</span
                           >
@@ -973,7 +901,10 @@ function formatPackets(packets: number) {
                       <!-- fourth column -->
                       <div>
                         <div v-if="!isVpn(device)">
-                          <div v-if="isDeviceUp(device)" class="mb-2 flex items-center gap-2">
+                          <div
+                            v-if="isDeviceUp(device, allDevices)"
+                            class="mb-2 flex items-center gap-2"
+                          >
                             <font-awesome-icon
                               :icon="['fas', 'circle-check']"
                               class="h-4 w-4"
@@ -1063,18 +994,18 @@ function formatPackets(packets: number) {
                             >
                               <div class="font-semibold">
                                 {{ t('standalone.interfaces_and_devices.alias') }}:
-                                {{ alias['.name'] }}
+                                {{ alias!['.name'] }}
                               </div>
                             </div>
                             <div class="flex grow flex-wrap gap-8 pr-40">
                               <!-- ipv4 addresses -->
-                              <div v-for="(ipv4, i) in alias.ipaddr" :key="i">
+                              <div v-for="(ipv4, i) in alias!.ipaddr" :key="i">
                                 <span class="font-medium">
                                   {{ t('standalone.interfaces_and_devices.ipv4') }}: </span
                                 ><span>{{ ipv4 }}</span>
                               </div>
                               <!-- ipv6 addresses -->
-                              <div v-for="(ipv6, i) in alias.ip6addr" :key="i">
+                              <div v-for="(ipv6, i) in alias!.ip6addr" :key="i">
                                 <span class="font-medium">
                                   {{ t('standalone.interfaces_and_devices.ipv6') }}: </span
                                 ><span>{{ ipv6 }}</span>

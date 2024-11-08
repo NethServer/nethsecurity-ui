@@ -56,7 +56,8 @@
     "no_data_available": "No data available",
     "type": "Type",
     "unknown": "Unknown",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "ip_address": "IP address"
   },
   "error": {
     "generic_error": "Something went wrong",

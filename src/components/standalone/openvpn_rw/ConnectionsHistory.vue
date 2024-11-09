@@ -124,9 +124,10 @@ function applyFilterToConntrackRecords(
   }
 
   return records.filter((connectionsRecord: ConnectionsRecord) => {
+    // Assuming startTime is in seconds, convert to ms
     const recordDate = connectionsRecord.startTime
       ? new Date(connectionsRecord.startTime * 1000)
-      : new Date(0) // Assuming startTime is in seconds, convert to ms
+      : new Date(0)
 
     const matchesTextFilter =
       connectionsRecord.account.toLowerCase().includes(lowerCaseFilter) ||
@@ -174,15 +175,13 @@ function clearFilters() {
   accountsFilter.value = []
 }
 
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
 // download all history from csv file
 async function downloadAllHistory() {
   cleanError()
   try {
     let res = await ubusCall('ns.ovpnrw', 'connection-history-csv', {
       instance: props.instance,
-      timezone: timezone
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' // get the timezone of the browser
     })
     if (res?.data?.csv_path) {
       //remove prefix /var/run/ns-api-server/downloads/

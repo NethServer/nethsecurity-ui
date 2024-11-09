@@ -47,12 +47,6 @@ function compareIpAddresses(ip1: string, ip2: string): number {
 
 // Custom sorting functions
 const sortFunctions = {
-  account: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return a.account.localeCompare(b.account)
-  },
-  startTime: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return (a.startTime ?? 0) - (b.startTime ?? 0)
-  },
   endTime: (a: ConnectionsRecord, b: ConnectionsRecord) => {
     return (a.endTime ?? 0) - (b.endTime ?? 0)
   },
@@ -64,12 +58,6 @@ const sortFunctions = {
   },
   remoteIpAddress: (a: ConnectionsRecord, b: ConnectionsRecord) => {
     return compareIpAddresses(a.remoteIpAddress, b.remoteIpAddress)
-  },
-  bytesReceived: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return (a.bytesReceived ?? 0) - (b.bytesReceived ?? 0)
-  },
-  bytesSent: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return (a.bytesSent ?? 0) - (b.bytesSent ?? 0)
   }
 }
 

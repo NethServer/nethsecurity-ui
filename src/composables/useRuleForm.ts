@@ -164,17 +164,23 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
 
   function isValid() {
     validationErrors.value.clear()
-    let validationCheck = validateRequired(name.value)
+    let validationCheck = validateRequired(policy.value)
     if (!validationCheck.valid) {
-      validationErrors.value.set('name', String(validationCheck.errMessage))
+      validationErrors.value.set('policy', String(validationCheck.errMessage))
     }
     validationCheck = validateRequired(policy.value)
     if (!validationCheck.valid) {
       validationErrors.value.set('policy', String(validationCheck.errMessage))
     }
-    const { valid, errMessage, i18Params } = validateUciName(name.value, 12)
-    if (!valid) {
-      validationErrors.value.set('name', t(errMessage as string, i18Params as any))
+    if (name.value != 'Default Rule') {
+      validationCheck = validateRequired(name.value)
+      if (!validationCheck.valid) {
+        validationErrors.value.set('name', String(validationCheck.errMessage))
+      }
+      const { valid, errMessage, i18Params } = validateUciName(name.value, 12)
+      if (!valid) {
+        validationErrors.value.set('name', t(errMessage as string, i18Params as any))
+      }
     }
     if (sourceAddress.value != '') {
       validationCheck = validateIp4OrCidr(sourceAddress.value)

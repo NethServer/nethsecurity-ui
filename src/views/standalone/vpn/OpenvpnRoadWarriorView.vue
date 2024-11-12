@@ -11,8 +11,10 @@ import {
   NeSkeleton,
   NeInlineNotification,
   NeEmptyState,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeTabs
 } from '@nethesis/vue-components'
+import { useTabs } from '@/composables/useTabs'
 import RWAccountsManager from '@/components/standalone/openvpn_rw/RWAccountsManager.vue'
 import RWServerDetails from '@/components/standalone/openvpn_rw/RWServerDetails.vue'
 import { onUnmounted, ref } from 'vue'
@@ -22,6 +24,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
+import ConnectionsHistory from '@/components/standalone/openvpn_rw/ConnectionsHistory.vue'
 
 export type RWAuthenticationMode =
   | 'username_password'
@@ -99,6 +102,17 @@ const loadingError = ref(false)
 const fetchServerIntervalId = ref(0)
 
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
+
+const { tabs, selectedTab } = useTabs([
+  {
+    name: 'road-warrior-server',
+    label: t('standalone.openvpn_rw.tabs.road_warrior_server')
+  },
+  {
+    name: 'connection-history',
+    label: t('standalone.openvpn_rw.tabs.connections_history')
+  }
+])
 
 async function fetchUsers(setLoading: boolean = true) {
   try {
@@ -194,7 +208,10 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col justify-between md:flex-row md:items-center">
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.openvpn_rw.title') }}</NeHeading>
-    <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+    <div
+      v-if="selectedTab == 'road-warrior-server'"
+      class="mb-6 text-sm text-gray-500 dark:text-gray-400"
+    >
       {{ t('common.data_updated_every_seconds', { seconds: RELOAD_INTERVAL / 1000 }) }}
     </div>
   </div>
@@ -210,61 +227,75 @@ onUnmounted(() => {
     </template></NeInlineNotification
   >
   <NeSkeleton v-if="loading" size="lg" :lines="10" />
-  <div class="flex flex-col gap-y-6" v-else-if="!loadingError">
-    <div class="flex flex-col">
+  <div class="flex flex-col" v-else-if="!loadingError">
+    <div class="flex flex-col gap-y-6">
+      <NeTabs
+        v-if="instanceData && instanceData.ns_description"
+        :selected="selectedTab"
+        :srSelectTabLabel="t('ne_tabs.select_a_tab')"
+        :srTabsLabel="t('ne_tabs.tabs')"
+        :tabs="tabs"
+        class="mb-8"
+        @selectTab="selectedTab = $event"
+      />
+    </div>
+    <div class="flex flex-col gap-y-6" v-if="selectedTab == 'connection-history'">
+      <ConnectionsHistory :instance="instanceName" />
+    </div>
+    <div class="flex flex-col gap-y-6" v-if="selectedTab == 'road-warrior-server'">
       <NeHeading tag="h5" class="mb-2">{{
         t('standalone.openvpn_rw.roadwarrior_server')
       }}</NeHeading>
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.openvpn_rw.roadwarrior_server_description') }}
       </p>
-    </div>
-    <NeEmptyState
-      v-if="!instanceData || !instanceData.ns_description"
-      :title="t('standalone.openvpn_rw.no_openvpn_rw_server_found')"
-      :icon="['fas', 'globe']"
-      ><NeButton
-        kind="primary"
-        @click="initAndConfigureServer()"
-        :loading="isInitializingInstance"
-        :disabled="isInitializingInstance"
-        ><template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'wrench']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
-        >{{ t('standalone.openvpn_rw.create_server') }}</NeButton
-      ></NeEmptyState
-    >
-    <RWServerDetails
-      v-else
-      :connected-clients="connectedClients"
-      :server="instanceData"
-      @delete-server="showDeleteServerModal = true"
-      @edit-server="showCreateOrEditServerModal = true"
-    />
+      <NeEmptyState
+        v-if="!instanceData || !instanceData.ns_description"
+        :title="t('standalone.openvpn_rw.no_openvpn_rw_server_found')"
+        :icon="['fas', 'globe']"
+        ><NeButton
+          kind="primary"
+          @click="initAndConfigureServer()"
+          :loading="isInitializingInstance"
+          :disabled="isInitializingInstance"
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'wrench']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('standalone.openvpn_rw.create_server') }}</NeButton
+        ></NeEmptyState
+      >
+      <RWServerDetails
+        v-else
+        :connected-clients="connectedClients"
+        :server="instanceData"
+        @delete-server="showDeleteServerModal = true"
+        @edit-server="showCreateOrEditServerModal = true"
+      />
 
-    <RWAccountsManager
-      v-if="instanceData && instanceData.ns_description"
-      :users="users"
-      :server="instanceData"
+      <RWAccountsManager
+        v-if="instanceData && instanceData.ns_description"
+        :users="users"
+        :server="instanceData"
+        :instance-name="instanceName"
+        :is-loading="loadingUsers"
+        @update-users="reloadUsers"
+      />
+    </div>
+    <DeleteRWServerModal
+      :visible="showDeleteServerModal"
       :instance-name="instanceName"
-      :is-loading="loadingUsers"
-      @update-users="reloadUsers"
+      @close="showDeleteServerModal = false"
+      @server-deleted="reloadServer"
+    />
+    <CreateOrEditRWServerDrawer
+      :item-to-edit="instanceData"
+      :instance-name="instanceName"
+      :is-shown="showCreateOrEditServerModal"
+      @close="showCreateOrEditServerModal = false"
+      @add-edit-server="reloadServer"
     />
   </div>
-  <DeleteRWServerModal
-    :visible="showDeleteServerModal"
-    :instance-name="instanceName"
-    @close="showDeleteServerModal = false"
-    @server-deleted="reloadServer"
-  />
-  <CreateOrEditRWServerDrawer
-    :item-to-edit="instanceData"
-    :instance-name="instanceName"
-    :is-shown="showCreateOrEditServerModal"
-    @close="showCreateOrEditServerModal = false"
-    @add-edit-server="reloadServer"
-  />
 </template>

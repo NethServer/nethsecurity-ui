@@ -421,7 +421,10 @@
   },
   "ne_dropdown_filter": {
     "clear_filter": "Clear filter",
-    "open_filter": "Open filter"
+    "open_filter": "Open filter",
+    "no_options": "No options",
+    "more_options_hidden": "Continue typing to show more options",
+    "clear_selection": "Clear selection"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -1638,7 +1641,38 @@
       "dynamic_range_ip_message": "You can reserve IP addresses to OpenVPN accounts outside the following range.",
       "dynamic_range_ip_start": "Dynamic range IP start",
       "dynamic_range_ip_end": "Dynamic range IP end",
-      "download_all_configs": "Download all configurations"
+      "download_all_configs": "Download all configurations",
+      "tabs": {
+        "road_warrior_server": "Road Warrior server",
+        "connections_history": "Connections history"
+      },
+      "history": {
+        "account": "Account",
+        "start_time": "Started",
+        "end_time": "Ended",
+        "virtual_ip_address": "Virtual IP address",
+        "remote_ip_address": "Remote IP address",
+        "received_sent": "Received / Sent",
+        "connection_history_description": "This page shows the history of connections made by users to the OpenVPN Road Warrior server. The connection history is stored in RAM and is lost when the unit is rebooted.",
+        "download_history": "Download server history",
+        "filter_change_suggestion": "Try changing the search filters",
+        "no_connections_found": "No connections found",
+        "duration": "Duration",
+        "time_range": "Time range",
+        "today": "Today",
+        "last_week": "Last week",
+        "last_month": "Last month",
+        "last_3_months": "Last 3 months",
+        "all": "Any",
+        "accounts": "Accounts",
+        "bytes_received": "Bytes received",
+        "bytes_sent": "Bytes sent",
+        "reset_filters": "Reset filters",
+        "reset_filter": "Reset filter",
+        "filter_accounts": "Filter accounts",
+        "cannot_download_history": "Cannot download history",
+        "cannot_fetch_history": "Cannot fetch history"
+      }
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

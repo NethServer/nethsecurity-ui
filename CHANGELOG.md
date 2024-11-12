@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.12.0](https://github.com/NethServer/nethsecurity-ui/compare/1.11.0...1.12.0) (2024-11-12)
+
+
+### Features
+
+* **monitoring:** show ip addresses of wan ifaces ([#433](https://github.com/NethServer/nethsecurity-ui/issues/433)) ([4773bb7](https://github.com/NethServer/nethsecurity-ui/commit/4773bb7472f022b6fd5aa172dcbb378313260ba6))
+
+
+### Bug Fixes
+
+* **mwan:** fixing validation on default rule ([#431](https://github.com/NethServer/nethsecurity-ui/issues/431)) ([767d4a1](https://github.com/NethServer/nethsecurity-ui/commit/767d4a14e122e545174695ea1b1bb53a66873f79))
+
 ## [1.11.0](https://github.com/NethServer/nethsecurity-ui/compare/1.10.6...1.11.0) (2024-11-08)
 
 

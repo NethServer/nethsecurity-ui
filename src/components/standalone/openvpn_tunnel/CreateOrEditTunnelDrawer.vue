@@ -36,7 +36,6 @@ import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { AxiosError } from 'axios'
 
 type TunnelDefaults = {
   secret: string

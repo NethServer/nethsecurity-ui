@@ -38,6 +38,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanConnect
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.interface') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.device') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('common.ip_address') }}</NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
         <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
@@ -65,6 +66,12 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanConnect
                   : t('standalone.real_time_monitor.offline')
               }}
             </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('common.ip_address')">
+            <span v-if="item.ip4Addresses.length || item.ip6Addresses.length">
+              {{ (item.ip4Addresses || []).concat(item.ip6Addresses || []).join(', ') }}
+            </span>
+            <span v-else>-</span>
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>

@@ -13,11 +13,16 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
-  useItemPagination
+  useItemPagination,
+  getAxiosErrorMessage,
+  NeInlineNotification,
+  NeSkeleton
 } from '@nethesis/vue-components'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Wan } from '../ConnectivityMonitor.vue'
+import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
+import { ubusCall } from '@/lib/standalone/ubus'
 
 const props = defineProps<{
   wanConnections: Wan[]
@@ -29,16 +34,64 @@ const pageSize = ref(5)
 const { currentPage, paginatedItems } = useItemPagination(() => props.wanConnections, {
   itemsPerPage: pageSize
 })
+const qosData = ref<QoSInterface[]>([])
+
+const loading = ref({
+  listQos: false
+})
+
+const error = ref({
+  listQos: '',
+  listQosDetails: ''
+})
+
+onMounted(() => {
+  listQos()
+})
+
+async function listQos() {
+  loading.value.listQos = true
+  error.value.listQos = ''
+  error.value.listQosDetails = ''
+
+  try {
+    const res = await ubusCall('ns.qos', 'list')
+    qosData.value = res.data.rules
+  } catch (err: any) {
+    error.value.listQos = t(getAxiosErrorMessage(err))
+    error.value.listQosDetails = err.toString()
+  } finally {
+    loading.value.listQos = false
+  }
+}
+
+function getQosRule(item: Wan) {
+  return qosData.value.find((qosRule) => qosRule.interface === item.iface)
+}
 </script>
 
 <template>
   <NeCard :title="t('standalone.real_time_monitor.wans')">
-    <NeTable :ariaLabel="t('standalone.real_time_monitor.wans')" cardBreakpoint="sm" class="mt-2">
+    <!-- listQos error notification -->
+    <NeInlineNotification
+      v-if="error.listQos"
+      kind="error"
+      :title="t('error.cannot_retrieve_qos_interfaces')"
+      :description="error.listQos"
+      :closeAriaLabel="t('common.close')"
+      class="mb-4"
+    >
+      <template v-if="error.listQosDetails" #details>
+        {{ error.listQosDetails }}
+      </template>
+    </NeInlineNotification>
+    <NeTable :ariaLabel="t('standalone.real_time_monitor.wans')" cardBreakpoint="md" class="mt-2">
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.interface') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.device') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('common.ip_address') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.qos.title_short') }}</NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
         <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
@@ -72,6 +125,43 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanConnect
               {{ (item.ip4Addresses || []).concat(item.ip6Addresses || []).join(', ') }}
             </span>
             <span v-else>-</span>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.qos.title_short')">
+            <NeSkeleton v-if="loading.listQos" />
+            <!-- qos disabled -->
+            <template v-else-if="!getQosRule(item) || getQosRule(item)?.disabled">
+              <div class="flex items-center gap-2">
+                <font-awesome-icon
+                  :icon="['fas', 'circle-xmark']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+                <span>{{ t('common.disabled') }}</span>
+              </div>
+            </template>
+            <!-- qos enabled -->
+            <template v-else-if="getQosRule(item) && !getQosRule(item)?.disabled">
+              <div class="flex items-center gap-5">
+                <!-- download -->
+                <div class="flex items-center gap-2">
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-down']"
+                    class="h-4 w-4"
+                    :aria-label="t('common.download')"
+                  />
+                  <span>{{ getQosRule(item)?.download }} Mbps</span>
+                </div>
+                <!-- upload -->
+                <div class="flex items-center gap-2">
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up']"
+                    class="h-4 w-4"
+                    :aria-label="t('common.upload')"
+                  />
+                  <span>{{ getQosRule(item)?.upload }} Mbps</span>
+                </div>
+              </div>
+            </template>
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>

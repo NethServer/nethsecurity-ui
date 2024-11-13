@@ -80,7 +80,7 @@ async function fetchOptions() {
 }
 
 async function resetForm() {
-  enabled.value = !props.itemToEdit?.disabled || true
+  enabled.value = !props.itemToEdit?.disabled == true
   iface.value = props.itemToEdit?.interface ?? ifaceOptions.value?.[0]?.id ?? ''
   downloadSpeed.value = props.itemToEdit?.download.toString() ?? ''
   uploadSpeed.value = props.itemToEdit?.upload.toString() ?? ''

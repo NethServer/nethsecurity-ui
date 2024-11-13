@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/NethServer/nethsecurity-ui/compare/1.12.0...1.13.0) (2024-11-13)
+
+
+### Features
+
+* **monitoring:** show qos info of wan ifaces ([#434](https://github.com/NethServer/nethsecurity-ui/issues/434)) ([d84df72](https://github.com/NethServer/nethsecurity-ui/commit/d84df729e94ad029c0341e388abb532b2d71d529))
+
 ## [1.12.0](https://github.com/NethServer/nethsecurity-ui/compare/1.11.0...1.12.0) (2024-11-12)
 
 

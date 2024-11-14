@@ -31,7 +31,7 @@ const props = withDefaults(
     showValuesOnBars?: boolean
     byteFormat?: boolean
   }>(),
-  { isHorizontal: false, showLegend: false, showValuesOnBars: true, byteFormat: false }
+  { height: '', isHorizontal: false, showLegend: false, showValuesOnBars: true, byteFormat: false }
 )
 
 const options: any = {

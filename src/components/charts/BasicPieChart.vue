@@ -14,12 +14,15 @@ import { byteFormat1024 } from '@nethesis/vue-components'
 
 const themeStore = useThemeStore()
 
-const props = defineProps<{
-  labels: string[]
-  datasets: any[]
-  height?: string
-  byteFormat?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    labels: string[]
+    datasets: any[]
+    height?: string
+    byteFormat?: boolean
+  }>(),
+  { height: '', byteFormat: false }
+)
 
 const options: any = {
   responsive: true,

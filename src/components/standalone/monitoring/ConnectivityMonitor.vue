@@ -7,6 +7,7 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
   getAxiosErrorMessage,
+  NeButton,
   NeCard,
   NeEmptyState,
   NeInlineNotification,
@@ -15,13 +16,17 @@ import {
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WanEventsCard from './connectivity/WanEventsCard.vue'
-import InterfaceTrafficCard from './connectivity/InterfaceTrafficCard.vue'
 import { isEmpty } from 'lodash-es'
 import type { Policy } from '@/composables/useMwan'
 import WanConnectionsCard from './connectivity/WanConnectionsCard.vue'
 import { useNetworkDevices } from '@/composables/useNetworkDevices'
 import { getIpv4Addresses, getIpv6Addresses, getName, isDeviceUp } from '@/lib/standalone/network'
 import { useUciNetworkConfig } from '@/composables/useUciNetworkConfig'
+import InterfaceTrafficCard from './connectivity/InterfaceTrafficCard.vue'
+import { useLatencyAndQualityReport } from '@/composables/useLatencyAndQualityReport'
+import TimeLineChart from '@/components/charts/TimeLineChart.vue'
+import { useRouter } from 'vue-router'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 
 export type Wan = {
   iface: string
@@ -46,10 +51,18 @@ const {
   errorNetworkConfig,
   errorNetworkConfigDetails
 } = useUciNetworkConfig()
+const router = useRouter()
 
 const wans = ref<Wan[]>([])
 const mwanEvents = ref<Record<string, any[]>>({})
 const mwanPolicies = ref<Policy[]>([])
+
+const {
+  latencyAndQualityCharts,
+  loadingLatencyAndQualityReport,
+  errorLatencyAndQualityReport,
+  errorLatencyAndQualityReportDetails
+} = useLatencyAndQualityReport()
 
 let loading = ref({
   listWans: false,
@@ -269,6 +282,19 @@ async function getMwanPolicies() {
         {{ errorNetworkConfigDetails }}
       </template>
     </NeInlineNotification>
+    <!-- latencyAndQualityReport error notification -->
+    <NeInlineNotification
+      v-if="errorLatencyAndQualityReport"
+      kind="error"
+      :title="t('error.cannot_retrieve_latency_and_quality_report')"
+      :description="errorLatencyAndQualityReport"
+      :closeAriaLabel="t('common.close')"
+      class="mb-4"
+    >
+      <template v-if="errorLatencyAndQualityReportDetails" #details>
+        {{ errorLatencyAndQualityReportDetails }}
+      </template>
+    </NeInlineNotification>
     <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-12">
       <!-- skeleton -->
       <template v-if="loadingData">
@@ -320,6 +346,69 @@ async function getMwanPolicies() {
           :device="wan.device"
           class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
+        <!-- latency and quality -->
+        <NeCard
+          v-if="loadingLatencyAndQualityReport"
+          loading
+          :skeletonLines="7"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
+        ></NeCard>
+        <NeCard
+          v-else-if="latencyAndQualityCharts.length == 0"
+          :title="t('standalone.real_time_monitor.latency_and_packet_delivery_rate')"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
+        >
+          <NeEmptyState
+            :title="t('standalone.real_time_monitor.no_hosts_configured_for_monitoring')"
+            :icon="['fas', 'chart-line']"
+            class="bg-white dark:bg-gray-950"
+          >
+            <NeButton
+              kind="secondary"
+              @click="
+                () => {
+                  router.push(`${getStandaloneRoutePrefix()}/monitoring/ping-latency-monitor`)
+                }
+              "
+            >
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'arrow-right']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('common.go_to_page', { page: t('standalone.ping_latency_monitor.title') }) }}
+            </NeButton>
+          </NeEmptyState>
+        </NeCard>
+        <template v-else v-for="(chart, index) in latencyAndQualityCharts" :key="index">
+          <NeCard
+            :title="
+              chart.type === 'latency'
+                ? t('standalone.real_time_monitor.ping_host_latency', { pingHost: chart.pingHost })
+                : t('standalone.real_time_monitor.ping_host_packet_delivery_rate', {
+                    pingHost: chart.pingHost
+                  })
+            "
+            class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
+          >
+            <TimeLineChart
+              v-if="chart.type === 'latency'"
+              :labels="chart.labels"
+              :datasets="chart.datasets"
+              datasetSuffix="ms"
+              height="30vh"
+            />
+            <TimeLineChart
+              v-else-if="chart.type === 'quality'"
+              :labels="chart.labels"
+              :datasets="chart.datasets"
+              datasetSuffix="%"
+              height="30vh"
+            />
+          </NeCard>
+        </template>
       </template>
     </div>
   </div>

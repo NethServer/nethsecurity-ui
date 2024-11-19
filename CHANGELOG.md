@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/NethServer/nethsecurity-ui/compare/1.13.0...1.14.0) (2024-11-19)
+
+
+### Features
+
+* **monitoring:** add latency & ping delivery rate charts ([#436](https://github.com/NethServer/nethsecurity-ui/issues/436)) ([7cade8c](https://github.com/NethServer/nethsecurity-ui/commit/7cade8c3d217479f20f32fd4b6dc200a03e5dc2f))
+
 ## [1.13.0](https://github.com/NethServer/nethsecurity-ui/compare/1.12.0...1.13.0) (2024-11-13)
 
 

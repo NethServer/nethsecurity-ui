@@ -385,7 +385,8 @@
     "cannot_retrieve_client_traffic_by_hour": "Cannot retrieve client traffic by hour",
     "cannot_retrieve_talkers_list": "Cannot retrieve talkers list",
     "invalid_number": "Invalid number",
-    "network_conflict": "This name is already in use by another network interface"
+    "network_conflict": "This name is already in use by another network interface",
+    "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1953,11 +1954,19 @@
       "no_events_message": "No events, all good",
       "view_all_on_grafana": "View all on Grafana",
       "no_vpn_network_configured": "No VPN network configured",
-      "blocklist": "Blocklist"
+      "blocklist": "Blocklist",
+      "min_latency": "Min latency",
+      "max_latency": "Max latency",
+      "avg_latency": "Avg latency",
+      "packet_delivery_rate": "Packet delivery rate",
+      "ping_host_latency": "Latency to {pingHost}",
+      "ping_host_packet_delivery_rate": "Packet delivery rate to {pingHost}",
+      "latency_and_packet_delivery_rate": "Latency and packet delivery rate",
+      "no_hosts_configured_for_monitoring": "No hosts configured for monitoring"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",
-      "description": "Set up the monitoring tool to assess round-trip time and packet loss by sending ping messages to network hosts. This tool is used for monitoring network connectivity quality. You can add one or more hosts to monitor. It's also possible to add IP addresses in a VPN to assess tunnel quality.",
+      "description": "Measure round-trip time and packet delivery rates by pinging network hosts. Add one or more hosts, including VPN IPs to monitor tunnel quality. Latency and packet delivery charts are available under Monitoring > Real Time Monitor > Connectivity.",
       "add_host": "Add host",
       "host_to_monitor": "Hosts to monitor"
     },

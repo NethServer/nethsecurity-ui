@@ -484,3 +484,8 @@ export function getVlanParent(bridgeDevice: DeviceOrIface, allDevices: DeviceOrI
   const deviceFound = allDevices.find((dev) => dev.name === parentDevice)
   return deviceFound
 }
+
+export function isIpv6Enabled(device: DeviceOrIface) {
+  const iface = getInterface(device)
+  return device.ipv6 === '1' || (iface.proto === 'pppoe' && device.ipv6 === 'auto')
+}

@@ -1962,7 +1962,8 @@
       "ping_host_latency": "Latency to {pingHost}",
       "ping_host_packet_delivery_rate": "Packet delivery rate to {pingHost}",
       "latency_and_packet_delivery_rate": "Latency and packet delivery rate",
-      "no_hosts_configured_for_monitoring": "No hosts configured for monitoring"
+      "no_hosts_configured_for_monitoring": "No hosts configured for monitoring",
+      "public_ip_address": "Public IP address"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

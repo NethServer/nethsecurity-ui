@@ -13,14 +13,21 @@ import {
   NeInlineNotification,
   sortByProperty
 } from '@nethesis/vue-components'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WanEventsCard from './connectivity/WanEventsCard.vue'
 import { isEmpty } from 'lodash-es'
 import type { Policy } from '@/composables/useMwan'
 import WanConnectionsCard from './connectivity/WanConnectionsCard.vue'
 import { useNetworkDevices } from '@/composables/useNetworkDevices'
-import { getIpv4Addresses, getIpv6Addresses, getName, isDeviceUp } from '@/lib/standalone/network'
+import {
+  getIpv4Addresses,
+  getIpv6Addresses,
+  getName,
+  isDeviceUp,
+  isIpv6Enabled,
+  type DeviceOrIface
+} from '@/lib/standalone/network'
 import { useUciNetworkConfig } from '@/composables/useUciNetworkConfig'
 import InterfaceTrafficCard from './connectivity/InterfaceTrafficCard.vue'
 import { useLatencyAndQualityReport } from '@/composables/useLatencyAndQualityReport'
@@ -32,8 +39,7 @@ export type Wan = {
   iface: string
   device: string
   status?: string
-  ip4Addresses?: string[]
-  ip6Addresses?: string[]
+  ipAddresses?: string[]
 }
 
 export type WanEvent = {
@@ -56,6 +62,7 @@ const router = useRouter()
 const wans = ref<Wan[]>([])
 const mwanEvents = ref<Record<string, any[]>>({})
 const mwanPolicies = ref<Policy[]>([])
+const wanConnections = ref<Wan[]>([])
 
 const {
   latencyAndQualityCharts,
@@ -76,7 +83,9 @@ let error = ref({
   getMwanReport: '',
   getMwanReportDetails: '',
   getMwanPolicies: '',
-  getMwanPoliciesDetails: ''
+  getMwanPoliciesDetails: '',
+  getPublicIpAddresses: '',
+  getPublicIpAddressesDetails: ''
 })
 
 const loadingData = computed(() => {
@@ -89,7 +98,7 @@ const loadingData = computed(() => {
   )
 })
 
-const wanConnections = computed(() => {
+watchEffect(async () => {
   const wanData: Wan[] = []
 
   for (const wan of wans.value) {
@@ -112,14 +121,17 @@ const wanConnections = computed(() => {
             if (policyMember.interface == wan.iface) {
               const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
 
-              wanData.push({
-                ...wan,
-                status: policyMember.status,
-                ip4Addresses: devFound ? getIpv4Addresses(devFound, networkConfig.value) : [],
-                ip6Addresses: devFound ? getIpv6Addresses(devFound, networkConfig.value) : []
-              })
-              statusFound = true
-              break
+              if (devFound) {
+                const publicIpAddresses = await retrievePublicIpAddresses(devFound)
+
+                wanData.push({
+                  ...wan,
+                  status: policyMember.status,
+                  ipAddresses: publicIpAddresses
+                })
+                statusFound = true
+                break
+              }
             }
           }
         }
@@ -130,16 +142,17 @@ const wanConnections = computed(() => {
       const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
 
       if (devFound) {
+        const publicIpAddresses = await retrievePublicIpAddresses(devFound)
+
         wanData.push({
           ...wan,
           status: isDeviceUp(devFound, allDevices.value) ? 'online' : 'offline',
-          ip4Addresses: getIpv4Addresses(devFound, networkConfig.value),
-          ip6Addresses: getIpv6Addresses(devFound, networkConfig.value)
+          ipAddresses: publicIpAddresses
         })
       }
     }
   }
-  return wanData.sort(sortByProperty('iface'))
+  wanConnections.value = wanData.sort(sortByProperty('iface'))
 })
 
 onMounted(() => {
@@ -149,6 +162,27 @@ onMounted(() => {
   listDevices()
   getNetworkConfig()
 })
+
+async function retrievePublicIpAddresses(device: DeviceOrIface) {
+  let ipAddresses = []
+  let publicIpAddresses: string[] = []
+
+  if (isIpv6Enabled(device)) {
+    ipAddresses = getIpv6Addresses(device, networkConfig.value).concat(
+      getIpv4Addresses(device, networkConfig.value)
+    )
+  } else {
+    ipAddresses = getIpv4Addresses(device, networkConfig.value)
+  }
+  const ipAddr = ipAddresses[0].split('/')[0]
+  publicIpAddresses = await getPublicIpAddresses(ipAddr)
+
+  if (publicIpAddresses.length == 0 || publicIpAddresses[0] == '') {
+    // cannot retrieve public IP address, using interface IP address as fallback
+    publicIpAddresses = ipAddresses
+  }
+  return publicIpAddresses
+}
 
 async function listWans() {
   loading.value.listWans = true
@@ -194,6 +228,22 @@ async function getMwanReport() {
     error.value.getMwanReportDetails = err.toString()
   } finally {
     loading.value.getMwanReport = false
+  }
+}
+
+async function getPublicIpAddresses(privateIpAddr: string) {
+  error.value.getPublicIpAddresses = ''
+  error.value.getPublicIpAddressesDetails = ''
+
+  try {
+    const res = await ubusCall('ns.report', 'get-public-ip-addresses', {
+      ip_address: privateIpAddr
+    })
+    return res.data.public_ip_addresses
+  } catch (err: any) {
+    console.error(err)
+    error.value.getPublicIpAddresses = t(getAxiosErrorMessage(err))
+    error.value.getPublicIpAddressesDetails = err.toString()
   }
 }
 

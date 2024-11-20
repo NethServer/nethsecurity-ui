@@ -90,7 +90,7 @@ function getQosRule(item: Wan) {
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.interface') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.device') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('common.ip_address') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.real_time_monitor.public_ip_address') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.qos.title_short') }}</NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
@@ -120,9 +120,9 @@ function getQosRule(item: Wan) {
               }}
             </div>
           </NeTableCell>
-          <NeTableCell :data-label="t('common.ip_address')">
-            <span v-if="item.ip4Addresses.length || item.ip6Addresses.length">
-              {{ (item.ip4Addresses || []).concat(item.ip6Addresses || []).join(', ') }}
+          <NeTableCell :data-label="t('standalone.real_time_monitor.public_ip_address')">
+            <span v-if="item.ipAddresses.length">
+              {{ item.ipAddresses.join(', ') }}
             </span>
             <span v-else>-</span>
           </NeTableCell>

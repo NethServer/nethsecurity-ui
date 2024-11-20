@@ -404,6 +404,7 @@ async function getMwanPolicies() {
               v-else-if="chart.type === 'quality'"
               :labels="chart.labels"
               :datasets="chart.datasets"
+              :options="{ scales: { y: { max: 100 } } }"
               datasetSuffix="%"
               height="30vh"
             />

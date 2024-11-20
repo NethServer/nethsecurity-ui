@@ -21,6 +21,7 @@ import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { formatDateLoc, kbpsFormat } from '@nethesis/vue-components'
 import { GRAY_200, GRAY_700, GRAY_800 } from '@/lib/color'
+import { merge } from 'lodash-es'
 
 const themeStore = useThemeStore()
 
@@ -32,11 +33,12 @@ const props = withDefaults(
     showLegend?: boolean
     useKbpsFormat?: boolean
     datasetSuffix?: string
+    options?: unknown
   }>(),
   { height: '', showLegend: true, useKbpsFormat: false, datasetSuffix: '' }
 )
 
-const options: any = {
+const defaultOptions: any = {
   // turn off animations and data parsing for performance
   animation: false,
   interaction: {
@@ -122,6 +124,10 @@ const options: any = {
   responsive: true
 }
 
+const allOptions = computed(() => {
+  return merge(typeof props.options === 'object' ? props.options : {}, defaultOptions)
+})
+
 const chartData: any = computed(() => {
   return { labels: props.labels, datasets: props.datasets }
 })
@@ -147,5 +153,6 @@ ChartJS.register(
 </script>
 
 <template>
-  <Line :data="chartData" :options="options" :style="chartStyle" />
+  options {{ allOptions }}
+  <Line :data="chartData" :options="allOptions" :style="chartStyle" />
 </template>

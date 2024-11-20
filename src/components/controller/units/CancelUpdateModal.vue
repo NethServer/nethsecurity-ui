@@ -47,7 +47,7 @@ async function abortUpdate() {
   }
   loading.value = true
   try {
-    await abortScheduledUpgradeUnitImage(_unit.value)
+    await abortScheduledUpgradeUnitImage(_unit.value.id)
     await unitsStore.getUnitInfo(_unit.value.id)
     await unitsStore.getUnits()
     notificationStore.createNotification({

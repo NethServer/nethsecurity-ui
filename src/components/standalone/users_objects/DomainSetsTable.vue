@@ -6,32 +6,27 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
+  NeBadge,
   NeButton,
   NeDropdown,
+  NePaginator,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
-  useItemPagination,
-  NeBadge
+  useItemPagination
 } from '@nethesis/vue-components'
-import { ref, type PropType } from 'vue'
+import { ref } from 'vue'
 import { library as faLibrary } from '@fortawesome/fontawesome-svg-core'
 import { faCloud } from '@fortawesome/free-solid-svg-icons'
 import type { DomainSet } from '@/composables/useDomainSets'
 
-const props = defineProps({
-  filteredDomainSets: {
-    type: Array as PropType<DomainSet[]>
-  },
-  loading: {
-    type: Boolean,
-    required: true
-  }
-})
+const { filteredDomainSets, loading } = defineProps<{
+  filteredDomainSets?: DomainSet[]
+  loading: boolean
+}>()
 
 const emit = defineEmits<{
   editDomainSet: [item: DomainSet]
@@ -42,7 +37,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.filteredDomainSets, {
+const { currentPage, paginatedItems } = useItemPagination(() => filteredDomainSets ?? [], {
   itemsPerPage: pageSize
 })
 
@@ -140,7 +135,7 @@ function getKebabMenuItems(domainSet: DomainSet) {
     <template #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="props.filteredDomainSets?.length"
+        :total-rows="filteredDomainSets?.length ?? 0"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"

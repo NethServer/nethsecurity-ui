@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/NethServer/nethsecurity-ui/compare/1.14.0...1.14.1) (2024-11-20)
+
+
+### Bug Fixes
+
+* **monitoring:** show wan public ip address ([#438](https://github.com/NethServer/nethsecurity-ui/issues/438)) ([cede102](https://github.com/NethServer/nethsecurity-ui/commit/cede10240c93a70b390cf223b01856784d435dbd))
+
 ## [1.14.0](https://github.com/NethServer/nethsecurity-ui/compare/1.13.0...1.14.0) (2024-11-19)
 
 

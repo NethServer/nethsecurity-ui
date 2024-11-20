@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.3](https://github.com/NethServer/nethsecurity-ui/compare/1.14.2...1.14.3) (2024-11-20)
+
+
+### Bug Fixes
+
+* **monitoring:** remove debug print ([9e73389](https://github.com/NethServer/nethsecurity-ui/commit/9e733895f41d738ccd50b0a70ba0a79c3770c07d))
+
 ## [1.14.2](https://github.com/NethServer/nethsecurity-ui/compare/1.14.1...1.14.2) (2024-11-20)
 
 

@@ -153,6 +153,5 @@ ChartJS.register(
 </script>
 
 <template>
-  options {{ allOptions }}
   <Line :data="chartData" :options="allOptions" :style="chartStyle" />
 </template>

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.2](https://github.com/NethServer/nethsecurity-ui/compare/1.14.1...1.14.2) (2024-11-20)
+
+
+### Bug Fixes
+
+* **monitoring:** fix y scale of ping delivery rate ([#439](https://github.com/NethServer/nethsecurity-ui/issues/439)) ([86b5068](https://github.com/NethServer/nethsecurity-ui/commit/86b50687f0c850ea4848ba9565876751a9d9cfd9))
+
 ## [1.14.1](https://github.com/NethServer/nethsecurity-ui/compare/1.14.0...1.14.1) (2024-11-20)
 
 

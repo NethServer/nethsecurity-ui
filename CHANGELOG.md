@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.4](https://github.com/NethServer/nethsecurity-ui/compare/1.14.3...1.14.4) (2024-11-22)
+
+
+### Bug Fixes
+
+* **controller:** fixing missed save of credentials ([#443](https://github.com/NethServer/nethsecurity-ui/issues/443)) ([98ed159](https://github.com/NethServer/nethsecurity-ui/commit/98ed15965f233f78addf991b3905440a1ef1dcee))
+
 ## [1.14.3](https://github.com/NethServer/nethsecurity-ui/compare/1.14.2...1.14.3) (2024-11-20)
 
 

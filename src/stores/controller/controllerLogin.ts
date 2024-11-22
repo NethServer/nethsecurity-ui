@@ -71,6 +71,11 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     if (!twoFaActive.value) {
       username.value = user
       role.value = JSON.parse(atob(token.value.split('.')[1])).role
+      saveToStorage('controllerLoginInfo', {
+        username: username.value,
+        token: token.value,
+        tokenRefreshedTime: tokenRefreshedTime.value
+      })
     }
   }
 

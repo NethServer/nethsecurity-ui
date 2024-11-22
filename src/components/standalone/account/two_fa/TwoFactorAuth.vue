@@ -8,22 +8,24 @@ import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
 import { getTwoFaStatus } from '@/lib/twoFa'
 import {
-  NeInlineNotification,
-  NeSkeleton,
-  NeTooltip,
+  getAxiosErrorMessage,
+  getPreference,
   NeButton,
   NeFormItemLabel,
-  getPreference,
-  savePreference,
-  getAxiosErrorMessage,
-  NeTextArea
+  NeInlineNotification,
+  NeSkeleton,
+  NeTextArea,
+  NeTooltip,
+  savePreference
 } from '@nethesis/vue-components'
 import ConfigureTwoFaDrawer from '@/components/two_fa/ConfigureTwoFaDrawer.vue'
 import RevokeTwoFaModal from '@/components/two_fa/RevokeTwoFaModal.vue'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
+import { isStandaloneMode } from '@/lib/config'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 
 const { t } = useI18n()
-const loginStore = useLoginStore()
+const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 const isTwoFaEnabled = ref(false)
 const isShownConfigureTwoFaDrawer = ref(false)
 const isShownRevokeTwoFaModal = ref(false)

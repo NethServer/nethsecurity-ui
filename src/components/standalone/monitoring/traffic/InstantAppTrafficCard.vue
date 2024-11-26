@@ -52,7 +52,7 @@ function formatTraffic(value: number) {
 
 <template>
   <NeCard :skeletonLines="5" :title="t('standalone.real_time_monitor.applications')">
-    <div class="mb-3">
+    <div class="mb-3 max-w-xs">
       <NeTextInput v-model="filter" :placeholder="t('common.filter')">
         <template #prefix>
           <FontAwesomeIcon :icon="faSearch" aria-hidden="true" class="h-4 w-4" />

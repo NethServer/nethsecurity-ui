@@ -20,6 +20,7 @@ import SecurityMonitor from '@/components/standalone/monitoring/SecurityMonitor.
 import { isStandaloneMode } from '@/lib/config'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import InstantTrafficMonitor from '@/components/standalone/monitoring/InstantTrafficMonitor.vue'
 
 const { t } = useI18n()
 
@@ -39,6 +40,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'security',
     label: t('standalone.real_time_monitor.security')
+  },
+  {
+    name: 'instant-traffic',
+    label: t('standalone.real_time_monitor.instant_traffic')
   }
 ])
 
@@ -161,5 +166,6 @@ function openGrafana() {
     <ConnectivityMonitor v-else-if="selectedTab === 'connectivity'" />
     <VpnMonitor v-else-if="selectedTab === 'vpn'" />
     <SecurityMonitor v-else-if="selectedTab === 'security'" />
+    <InstantTrafficMonitor v-else-if="selectedTab == 'instant-traffic'" />
   </div>
 </template>

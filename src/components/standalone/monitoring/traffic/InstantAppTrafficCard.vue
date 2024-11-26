@@ -5,33 +5,43 @@
 
 <script setup lang="ts">
 import {
+  kbpsFormat,
   NeCard,
+  NeEmptyState,
+  NePaginator,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
-  useItemPagination,
-  NeEmptyState
+  NeTextInput,
+  useItemPagination
 } from '@nethesis/vue-components'
-import { kbpsFormat } from '@nethesis/vue-components'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type TopItem } from '@/composables/useTopTalkers'
+import { type TopHost, type TopItem } from '@/composables/useTopTalkers'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { refDebounced } from '@vueuse/core'
 
-const props = defineProps<{
+const { topApps } = defineProps<{
   topApps: TopItem[]
-  loading: boolean
-  error: string
-  errorDescription: string
 }>()
 
 const { t } = useI18n()
 
+const filter = ref('')
+const filterDebounced = refDebounced(filter, 400)
+
+const filteredItems = computed<TopItem[]>(() => {
+  return topApps.filter((item) =>
+    item.name.toLowerCase().includes(filterDebounced.value.toLowerCase())
+  )
+})
+
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.topApps, {
+const { currentPage, paginatedItems } = useItemPagination(() => filteredItems.value, {
   itemsPerPage: pageSize
 })
 
@@ -41,12 +51,14 @@ function formatTraffic(value: number) {
 </script>
 
 <template>
-  <NeCard
-    :title="t('standalone.real_time_monitor.applications')"
-    :skeletonLines="5"
-    :errorTitle="error"
-    :errorDescription="errorDescription"
-  >
+  <NeCard :skeletonLines="5" :title="t('standalone.real_time_monitor.applications')">
+    <div class="mb-3">
+      <NeTextInput v-model="filter" :placeholder="t('common.filter')">
+        <template #prefix>
+          <FontAwesomeIcon :icon="faSearch" aria-hidden="true" class="h-4 w-4" />
+        </template>
+      </NeTextInput>
+    </div>
     <NeTable
       :ariaLabel="t('standalone.real_time_monitor.applications')"
       cardBreakpoint="sm"
@@ -78,7 +90,7 @@ function formatTraffic(value: number) {
       <template #paginator>
         <NePaginator
           :current-page="currentPage"
-          :total-rows="props.topApps.length"
+          :total-rows="topApps.length"
           :page-size="pageSize"
           :page-sizes="[5, 10]"
           :nav-pagination-label="t('ne_table.pagination')"

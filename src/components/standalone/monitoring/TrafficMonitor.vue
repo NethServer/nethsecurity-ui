@@ -7,12 +7,8 @@
 import { useI18n } from 'vue-i18n'
 import { useTrafficSummary } from '@/composables/useTrafficSummary'
 import { NeCard, NeEmptyState, NeHeading, byteFormat1024 } from '@nethesis/vue-components'
-import InstantHostTrafficCard from '@/components/standalone/monitoring/traffic/InstantHostTrafficCard.vue'
 import TrafficByHourChart from './TrafficByHourChart.vue'
 import SimpleStat from '../../charts/SimpleStat.vue'
-import { useTopTalkers } from '@/composables/useTopTalkers'
-import InstantAppTrafficCard from './traffic/InstantAppTrafficCard.vue'
-import InstantProtocolTrafficCard from './traffic/InstantProtocolTrafficCard.vue'
 import BasicPieChart from '@/components/charts/BasicPieChart.vue'
 
 const { t } = useI18n()
@@ -33,15 +29,6 @@ const {
   trafficSummaryError,
   trafficSummaryErrorDescription
 } = useTrafficSummary()
-
-const {
-  topApps,
-  topHosts,
-  topProtocols,
-  loadingTopTalkers,
-  errorTopTalkers,
-  errorTopTalkersDescription
-} = useTopTalkers(20)
 </script>
 
 <template>
@@ -169,36 +156,6 @@ const {
           height="25vh"
         />
       </NeCard>
-
-      <!-- instant traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-8">
-        {{ t('standalone.real_time_monitor.instant_traffic') }}
-      </NeHeading>
-
-      <!-- instant hosts traffic -->
-      <InstantHostTrafficCard
-        :topHosts="topHosts"
-        :loading="loadingTopTalkers"
-        :error="errorTopTalkers"
-        :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
-      />
-      <!-- instant apps traffic -->
-      <InstantAppTrafficCard
-        :topApps="topApps"
-        :loading="loadingTopTalkers"
-        :error="errorTopTalkers"
-        :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
-      />
-      <!-- instant protocols traffic -->
-      <InstantProtocolTrafficCard
-        :topProtocols="topProtocols"
-        :loading="loadingTopTalkers"
-        :error="errorTopTalkers"
-        :errorDescription="errorTopTalkersDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 5xl:col-span-4"
-      />
     </div>
   </div>
 </template>

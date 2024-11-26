@@ -34,7 +34,7 @@ export function useTopTalkers(limit: MaybeRefOrGetter<number> = 20) {
   const topHosts = ref<TopHost[]>([])
   const topApps = ref<TopItem[]>([])
   const topProtocols = ref<TopItem[]>([])
-  const loadingTopTalkers = ref(false)
+  const loadingTopTalkers = ref(true)
   const errorTopTalkers = ref('')
   const errorTopTalkersDescription = ref('')
 
@@ -54,11 +54,6 @@ export function useTopTalkers(limit: MaybeRefOrGetter<number> = 20) {
   async function getTopTalkers() {
     errorTopTalkers.value = ''
     errorTopTalkersDescription.value = ''
-
-    // show skeleton only the first time
-    if (!intervalId.value) {
-      loadingTopTalkers.value = true
-    }
 
     try {
       const res = await ubusCall('ns.talkers', 'list', {

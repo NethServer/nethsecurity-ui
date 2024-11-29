@@ -1423,7 +1423,10 @@
       "zones_placeholder": "Choose zones",
       "sourcebypass": "Bypass source IPs or networks",
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
-      "add_sourcebypass": "Add source bypass"
+      "add_sourcebypass": "Add source bypass",
+      "flashstart_disabled": "FlashStart is disabled",
+      "flashstart_disabled_description": "The filter is available only with a NethSecurity subscription",
+      "go_to_subscription": "Go to Subscription"
     },
     "dpi": {
       "title": "DPI filter",

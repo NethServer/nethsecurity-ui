@@ -1965,7 +1965,6 @@
       "no_hosts_configured_for_monitoring": "No hosts configured for monitoring",
       "public_ip_address": "Public IP address",
       "error_fetching_data": "Error fetching data",
-      "no_data_received": "No data received",
       "remote_hosts": "Remote hosts",
       "no_data_available": "No data available"
     },

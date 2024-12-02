@@ -1425,8 +1425,7 @@
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
       "add_sourcebypass": "Add source bypass",
       "flashstart_disabled": "FlashStart is disabled",
-      "flashstart_disabled_description": "FlashStart filter is available only with a {product} subscription",
-      "go_to_subscription": "Go to Subscription"
+      "flashstart_disabled_description": "FlashStart filter is available only with a {product} subscription"
     },
     "dpi": {
       "title": "DPI filter",

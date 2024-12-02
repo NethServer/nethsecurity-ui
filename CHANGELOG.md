@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/NethServer/nethsecurity-ui/compare/1.14.4...1.15.0) (2024-12-02)
+
+
+### Features
+
+* **flashstart:** add info fetching and new translations ([027108f](https://github.com/NethServer/nethsecurity-ui/commit/027108f3b174ecd9f57f8382bb219b7588be3525))
+
 ## [1.14.4](https://github.com/NethServer/nethsecurity-ui/compare/1.14.3...1.14.4) (2024-11-22)
 
 

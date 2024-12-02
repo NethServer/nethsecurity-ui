@@ -41,11 +41,11 @@ const { title, data } = defineProps<{
   data: TrafficRecord[]
 }>()
 
-const clientLimited = computed(() => {
+const dataLimited = computed(() => {
   return data.slice(0, 5) ?? []
 })
 
-const clientDatasets = computed(() => {
+const pieDatasets = computed(() => {
   return [
     {
       borderColor: themeStore.isLight ? GRAY_50 : GRAY_900,
@@ -74,20 +74,20 @@ const clientDatasets = computed(() => {
             CYAN_300,
             GRAY_400
           ],
-      data: clientLimited.value.map((value) => value.traffic)
+      data: dataLimited.value.map((value) => value.traffic)
     }
   ]
 })
 
-const clientLabels = computed(() => {
-  return clientLimited.value.map((value) => value?.label ?? value.id)
+const pieLabels = computed(() => {
+  return dataLimited.value.map((value) => value?.label ?? value.id)
 })
 </script>
 
 <template>
   <NeCard :title="title">
     <div v-if="data.length > 0" class="space-y-4">
-      <BasicPieChart :datasets="clientDatasets" :labels="clientLabels" byteFormat height="25vh" />
+      <BasicPieChart :datasets="pieDatasets" :labels="pieLabels" byteFormat height="25vh" />
       <TrafficTable :title="title" :traffic-entries="data" />
     </div>
     <NeEmptyState

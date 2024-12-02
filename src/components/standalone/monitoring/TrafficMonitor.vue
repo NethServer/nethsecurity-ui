@@ -19,7 +19,7 @@ import { computed } from 'vue'
 import { CYAN_500, CYAN_600 } from '@/lib/color'
 import { useThemeStore } from '@/stores/theme'
 import { useTrafficStats } from '@/composables/useTrafficStats'
-import TrafficByCard from '@/components/standalone/monitoring/TrafficByCard.vue'
+import TrafficCard from '@/components/standalone/monitoring/TrafficCard.vue'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 
 const { t } = useI18n()
@@ -86,19 +86,19 @@ const hoursDatasets = computed(() => {
         </NeCard>
       </div>
       <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <TrafficByCard
+        <TrafficCard
           :title="t('standalone.real_time_monitor.local_hosts')"
           :data="data?.clients ?? []"
         />
-        <TrafficByCard
+        <TrafficCard
           :title="t('standalone.real_time_monitor.applications')"
           :data="data?.applications ?? []"
         />
-        <TrafficByCard
+        <TrafficCard
           :title="t('standalone.real_time_monitor.remote_hosts')"
           :data="data?.remote_hosts ?? []"
         />
-        <TrafficByCard
+        <TrafficCard
           :title="t('standalone.real_time_monitor.protocols')"
           :data="data?.protocols ?? []"
         />

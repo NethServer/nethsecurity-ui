@@ -12,6 +12,7 @@ import {
   NeButton,
   NeSkeleton
 } from '@nethesis/vue-components'
+import { getProductName } from '@/lib/config'
 import { ubusCall } from '@/lib/standalone/ubus'
 import FlashstartContent from '@/components/standalone/security/FlashstartContent.vue'
 import { ref, onMounted } from 'vue'
@@ -58,7 +59,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     />
-    <NeSkeleton v-if="loading.getSubscriptionInfo" :lines="7" />
+    <NeSkeleton v-if="loading.getSubscriptionInfo" :lines="7" size="lg" />
     <template v-else>
       <div v-if="activeSubscription">
         <FlashstartContent />
@@ -66,7 +67,11 @@ onMounted(() => {
       <div v-else>
         <NeEmptyState
           :title="t('standalone.flashstart.flashstart_disabled')"
-          :description="t('standalone.flashstart.flashstart_disabled_description')"
+          :description="
+            t('standalone.flashstart.flashstart_disabled_description', {
+              product: getProductName()
+            })
+          "
           :icon="['fas', 'shield']"
           class="pb-8"
           ><NeButton
@@ -82,7 +87,7 @@ onMounted(() => {
                 class="h-4 w-4"
                 aria-hidden="true"
               /> </template
-            >{{ t('standalone.flashstart.go_to_subscription') }}</NeButton
+            >{{ t('common.go_to_page', { page: t('standalone.subscription.title') }) }}</NeButton
           ></NeEmptyState
         >
       </div>

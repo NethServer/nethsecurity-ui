@@ -1906,7 +1906,7 @@
       "no_applications": "No applications",
       "today_top_protocols": "Protocols",
       "no_protocols": "No protocols",
-      "today_total_traffic": "Today total traffic",
+      "daily_total_traffic": "Daily total traffic",
       "instant_traffic": "Instant traffic",
       "today_traffic": "Today traffic",
       "recent_traffic": "Recent traffic",
@@ -1963,7 +1963,10 @@
       "ping_host_packet_delivery_rate": "Packet delivery rate to {pingHost}",
       "latency_and_packet_delivery_rate": "Latency and packet delivery rate",
       "no_hosts_configured_for_monitoring": "No hosts configured for monitoring",
-      "public_ip_address": "Public IP address"
+      "public_ip_address": "Public IP address",
+      "error_fetching_data": "Error fetching data",
+      "remote_hosts": "Remote hosts",
+      "no_data_available": "No data available"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

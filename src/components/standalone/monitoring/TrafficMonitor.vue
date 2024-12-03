@@ -5,157 +5,104 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useTrafficSummary } from '@/composables/useTrafficSummary'
-import { NeCard, NeEmptyState, NeHeading, byteFormat1024 } from '@nethesis/vue-components'
-import TrafficByHourChart from './TrafficByHourChart.vue'
-import SimpleStat from '../../charts/SimpleStat.vue'
-import BasicPieChart from '@/components/charts/BasicPieChart.vue'
+import {
+  byteFormat1024,
+  getAxiosErrorMessage,
+  NeCard,
+  NeEmptyState,
+  NeInlineNotification,
+  NeSkeleton
+} from '@nethesis/vue-components'
+import SimpleStat from '@/components/charts/SimpleStat.vue'
+import TrafficByHourChart from '@/components/standalone/monitoring/TrafficByHourChart.vue'
+import { computed } from 'vue'
+import { CYAN_500, CYAN_600 } from '@/lib/color'
+import { useThemeStore } from '@/stores/theme'
+import { useTrafficStats } from '@/composables/useTrafficStats'
+import TrafficCard from '@/components/standalone/monitoring/TrafficCard.vue'
+import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 
 const { t } = useI18n()
 
-const {
-  clientsLabels,
-  clientsDatasets,
-  protocolsLabels,
-  protocolsDatasets,
-  appsLabels,
-  appsDatasets,
-  remoteHostsLabels,
-  remoteHostsDatasets,
-  hoursLabels,
-  hoursDatasets,
-  totalTraffic,
-  loadingTrafficSummary,
-  trafficSummaryError,
-  trafficSummaryErrorDescription
-} = useTrafficSummary()
+const { loading, error, data } = useTrafficStats()
+const themeStore = useThemeStore()
+
+const hoursLabels = computed(() => {
+  return data.value?.hourly_traffic.map((value) => value.id) ?? []
+})
+
+const hoursDatasets = computed(() => {
+  return [
+    {
+      label: t('standalone.real_time_monitor.traffic'),
+      backgroundColor: themeStore.isLight ? CYAN_600 : CYAN_500,
+      borderColor: themeStore.isLight ? CYAN_600 : CYAN_500,
+      borderRadius: 6,
+      borderWidth: 1,
+      radius: 0,
+      data: data.value?.hourly_traffic.map((value) => value.traffic)
+    }
+  ]
+})
 </script>
 
 <template>
-  <div>
-    <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-12">
-      <!-- total traffic -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.today_total_traffic')"
-        :skeletonLines="2"
-        :loading="loadingTrafficSummary"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
-      >
-        <SimpleStat class="mt-1">
-          {{ byteFormat1024(totalTraffic) }}
-        </SimpleStat>
-      </NeCard>
-      <!-- recent traffic -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.recent_traffic')"
-        :loading="loadingTrafficSummary"
-        :skeletonLines="6"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="row-span-2 sm:col-span-12 xl:col-span-9 2xl:col-span-9"
-      >
-        <TrafficByHourChart :labels="hoursLabels" :datasets="hoursDatasets" height="25vh" />
-      </NeCard>
-
-      <!-- today traffic title -->
-      <NeHeading tag="h6" class="col-span-full mt-8">
-        {{ t('standalone.real_time_monitor.today_traffic') }}
-      </NeHeading>
-
-      <!-- top local hosts -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.today_top_local_hosts')"
-        :skeletonLines="6"
-        :loading="loadingTrafficSummary"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
-      >
-        <NeEmptyState
-          v-if="!clientsDatasets[0]?.data.length"
-          :title="t('common.no_data_available')"
-          :icon="['fas', 'chart-line']"
-          class="bg-white dark:bg-gray-950"
+  <div class="space-y-12">
+    <NeSkeleton v-if="loading" :lines="10" />
+    <NeInlineNotification
+      v-else-if="error"
+      :description="t(getAxiosErrorMessage(error.message))"
+      :title="t('standalone.real_time_monitor.error_fetching_data')"
+      kind="error"
+    />
+    <template v-else>
+      <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-12">
+        <NeCard
+          :title="t('standalone.real_time_monitor.daily_total_traffic')"
+          class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
+        >
+          <SimpleStat>
+            <span v-if="data?.total_traffic != 0">
+              {{ byteFormat1024(data?.total_traffic) }}
+            </span>
+            <span v-else> N/A </span>
+          </SimpleStat>
+        </NeCard>
+        <NeCard
+          :title="t('standalone.real_time_monitor.recent_traffic')"
+          class="row-span-2 sm:col-span-12 xl:col-span-9 2xl:col-span-9"
+        >
+          <TrafficByHourChart
+            v-if="data?.hourly_traffic.length ?? 0 > 0"
+            :datasets="hoursDatasets"
+            :labels="hoursLabels"
+            height="25vh"
+          />
+          <NeEmptyState
+            v-else
+            :title="t('standalone.real_time_monitor.no_data_available')"
+            :icon="faEmptySet"
+          />
+        </NeCard>
+      </div>
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <TrafficCard
+          :title="t('standalone.real_time_monitor.local_hosts')"
+          :data="data?.clients ?? []"
         />
-        <BasicPieChart
-          v-else
-          :labels="clientsLabels"
-          :datasets="clientsDatasets"
-          byteFormat
-          height="25vh"
+        <TrafficCard
+          :title="t('standalone.real_time_monitor.applications')"
+          :data="data?.applications ?? []"
         />
-      </NeCard>
-      <!-- top applications -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.today_top_applications')"
-        :skeletonLines="6"
-        :loading="loadingTrafficSummary"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
-      >
-        <NeEmptyState
-          v-if="!appsDatasets[0]?.data.length"
-          :title="t('common.no_data_available')"
-          :icon="['fas', 'chart-line']"
-          class="bg-white dark:bg-gray-950"
+        <TrafficCard
+          :title="t('standalone.real_time_monitor.remote_hosts')"
+          :data="data?.remote_hosts ?? []"
         />
-        <BasicPieChart
-          v-else
-          :labels="appsLabels"
-          :datasets="appsDatasets"
-          byteFormat
-          height="25vh"
+        <TrafficCard
+          :title="t('standalone.real_time_monitor.protocols')"
+          :data="data?.protocols ?? []"
         />
-      </NeCard>
-      <!-- top remote hosts -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.today_top_remote_hosts')"
-        :skeletonLines="6"
-        :loading="loadingTrafficSummary"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
-      >
-        <NeEmptyState
-          v-if="!remoteHostsDatasets[0]?.data.length"
-          :title="t('common.no_data_available')"
-          :icon="['fas', 'chart-line']"
-          class="bg-white dark:bg-gray-950"
-        />
-        <BasicPieChart
-          v-else
-          :labels="remoteHostsLabels"
-          :datasets="remoteHostsDatasets"
-          byteFormat
-          height="25vh"
-        />
-      </NeCard>
-      <!-- top protocols -->
-      <NeCard
-        :title="t('standalone.real_time_monitor.today_top_protocols')"
-        :skeletonLines="6"
-        :loading="loadingTrafficSummary"
-        :errorTitle="trafficSummaryError"
-        :errorDescription="trafficSummaryErrorDescription"
-        class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
-      >
-        <NeEmptyState
-          v-if="!protocolsDatasets[0]?.data.length"
-          :title="t('common.no_data_available')"
-          :icon="['fas', 'chart-line']"
-          class="bg-white dark:bg-gray-950"
-        />
-        <BasicPieChart
-          v-else
-          :labels="protocolsLabels"
-          :datasets="protocolsDatasets"
-          byteFormat
-          height="25vh"
-        />
-      </NeCard>
-    </div>
+      </div>
+    </template>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTable } from '@fortawesome/free-solid-svg-icons'
 import {
   byteFormat1024,
   NeEmptyState,
@@ -11,20 +11,26 @@ import {
   NeTableHeadCell,
   NeTableRow,
   NeTextInput,
-  useItemPagination
+  useItemPagination,
+  NeLink
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, ref } from 'vue'
 import { refDebounced } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import type { TrafficRecord } from '@/composables/useTrafficStats'
+import { type AvailableFilters, useTrafficFilter } from '@/composables/useTrafficFilter'
 
 const { trafficEntries, title } = defineProps<{
   trafficEntries: TrafficRecord[]
   title: string
+  filterable?: boolean
+  filterableKey?: AvailableFilters
 }>()
 
 const { t } = useI18n()
+
+const filters = useTrafficFilter()
 
 const filter = ref('')
 const filterDebounced = refDebounced(filter, 400)
@@ -59,7 +65,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
         <NeTableRow v-if="!paginatedItems.length">
           <NeTableCell colspan="9">
             <NeEmptyState
-              :icon="['fas', 'table']"
+              :icon="faTable"
               :title="t('common.no_data_available')"
               class="bg-white dark:bg-gray-950"
             />
@@ -67,7 +73,20 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
         </NeTableRow>
         <NeTableRow v-for="(item, index) in paginatedItems as TrafficRecord[]" v-else :key="index">
           <NeTableCell :data-label="title">
-            {{ item?.label ?? item.id }}
+            <template v-if="filterable">
+              <NeLink
+                @click="
+                  filters.push({
+                    key: filterableKey!,
+                    value: item.id
+                  })
+                "
+                >{{ item?.label ?? item.id }}</NeLink
+              >
+            </template>
+            <template v-else>
+              {{ item?.label ?? item.id }}
+            </template>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.traffic')">
             {{ byteFormat1024(item.traffic) }}

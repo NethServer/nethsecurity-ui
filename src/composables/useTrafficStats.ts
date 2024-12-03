@@ -13,17 +13,33 @@ export type TrafficSummary = {
   hourly_traffic: TrafficRecord[]
   applications: TrafficRecord[]
   clients: TrafficRecord[]
-  remote_hosts: TrafficRecord[]
-  protocols: TrafficRecord[]
+  remote_hosts?: TrafficRecord[]
+  protocols?: TrafficRecord[]
 }
 
 export function useTrafficStats() {
-  const loading = ref(true)
+  const loading = ref(false)
   const error = ref<Error>()
-  const data = ref<TrafficSummary>()
+  const data = ref<TrafficSummary>({
+    total_traffic: 0,
+    hourly_traffic: [],
+    applications: [],
+    clients: []
+  })
 
-  function loadData() {
-    ubusCall('ns.dpireport', 'summary-v2')
+  function loadData(client?: string, application?: string) {
+    loading.value = true
+    const payload: {
+      client?: string
+      application?: string
+    } = {}
+    if (client) {
+      payload.client = client
+    }
+    if (application) {
+      payload.application = application
+    }
+    ubusCall('ns.dpireport', 'summary-v2', payload)
       .then((response: AxiosResponse<TrafficSummary>) => {
         data.value = response.data
       })
@@ -34,8 +50,6 @@ export function useTrafficStats() {
         loading.value = false
       })
   }
-
-  loadData()
 
   return {
     loading,

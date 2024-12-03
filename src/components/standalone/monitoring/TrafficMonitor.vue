@@ -15,20 +15,30 @@ import {
 } from '@nethesis/vue-components'
 import SimpleStat from '@/components/charts/SimpleStat.vue'
 import TrafficByHourChart from '@/components/standalone/monitoring/TrafficByHourChart.vue'
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { CYAN_500, CYAN_600 } from '@/lib/color'
 import { useThemeStore } from '@/stores/theme'
 import { useTrafficStats } from '@/composables/useTrafficStats'
 import TrafficCard from '@/components/standalone/monitoring/TrafficCard.vue'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
+import FilteredTraffic from '@/components/standalone/monitoring/FilteredTraffic.vue'
+import { useTrafficFilter } from '@/composables/useTrafficFilter'
 
 const { t } = useI18n()
 
-const { loading, error, data } = useTrafficStats()
+const filters = useTrafficFilter()
+
+const { loading, error, data, loadData } = useTrafficStats()
 const themeStore = useThemeStore()
 
+watchEffect(() => {
+  if (!filters.active.value) {
+    loadData()
+  }
+})
+
 const hoursLabels = computed(() => {
-  return data.value?.hourly_traffic.map((value) => value.id) ?? []
+  return data.value.hourly_traffic.map((value) => value.id)
 })
 
 const hoursDatasets = computed(() => {
@@ -40,14 +50,15 @@ const hoursDatasets = computed(() => {
       borderRadius: 6,
       borderWidth: 1,
       radius: 0,
-      data: data.value?.hourly_traffic.map((value) => value.traffic)
+      data: data.value.hourly_traffic.map((value) => value.traffic)
     }
   ]
 })
 </script>
 
 <template>
-  <div class="space-y-12">
+  <FilteredTraffic v-if="filters.active" />
+  <div v-else class="space-y-12">
     <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
       v-else-if="error"
@@ -89,10 +100,14 @@ const hoursDatasets = computed(() => {
         <TrafficCard
           :title="t('standalone.real_time_monitor.local_hosts')"
           :data="data?.clients ?? []"
+          filterable
+          filterableKey="client"
         />
         <TrafficCard
           :title="t('standalone.real_time_monitor.applications')"
           :data="data?.applications ?? []"
+          filterable
+          filterable-key="app"
         />
         <TrafficCard
           :title="t('standalone.real_time_monitor.remote_hosts')"

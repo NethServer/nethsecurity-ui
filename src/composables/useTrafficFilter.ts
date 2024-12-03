@@ -1,8 +1,8 @@
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 
-const FILTERS = ['client', 'app']
-export type AvailableFilters = 'client' | 'app'
+const FILTERS = ['client', 'app', 'protocol', 'host']
+export type AvailableFilters = 'client' | 'app' | 'protocol' | 'host'
 
 export type Filter = {
   key: AvailableFilters

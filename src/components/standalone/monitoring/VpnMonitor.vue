@@ -53,6 +53,7 @@ const allDevices = ref<DeviceOrIface[]>([])
 const ovpnUsers = ref<Record<string, OvpnUser[]>>({})
 const ovpnConfiguration = ref<Record<string, RWServer>>({})
 const today = formatDateLoc(new Date(), 'yyyy-MM-dd')
+const ovpnServerConfigured = ref(false)
 
 const loading = ref({
   listOvpnInstances: true,
@@ -217,6 +218,11 @@ async function getOvpnConfiguration(ovpnInstance: string) {
 
   try {
     const res = await ubusCall('ns.ovpnrw', 'get-configuration', { instance: ovpnInstance })
+
+    // ensure ovpn server has been configured
+    if (res.data.ns_description) {
+      ovpnServerConfigured.value = true
+    }
     ovpnConfiguration.value[ovpnInstance] = res.data
   } catch (err: any) {
     console.error(err)
@@ -336,7 +342,7 @@ function getTunnelName(tunnelId: string) {
           !loading.listOvpnInstances &&
           !loading.listOvpnTunnels &&
           !loading.listIpsecTunnels &&
-          !ovpnInstances.length &&
+          (!ovpnInstances.length || !ovpnServerConfigured) &&
           !enabledTunnels.length
         "
         :title="t('standalone.real_time_monitor.no_vpn_network_configured')"
@@ -355,7 +361,11 @@ function getTunnelName(tunnelId: string) {
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></NeCard>
       </template>
-      <template v-else v-for="ovpnInstance in ovpnInstances" :key="ovpnInstance">
+      <template
+        v-else-if="ovpnServerConfigured"
+        v-for="ovpnInstance in ovpnInstances"
+        :key="ovpnInstance"
+      >
         <!-- rw server title -->
         <NeHeading tag="h6" class="col-span-full">
           {{

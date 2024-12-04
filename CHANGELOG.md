@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/NethServer/nethsecurity-ui/compare/1.15.0...1.15.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* **monitoring:** handle ovpn server not configured ([#453](https://github.com/NethServer/nethsecurity-ui/issues/453)) ([3b457c1](https://github.com/NethServer/nethsecurity-ui/commit/3b457c16ee5f5c245b65dfa0de3dc23bf98352e8))
+
 ## [1.15.0](https://github.com/NethServer/nethsecurity-ui/compare/1.14.4...1.15.0) (2024-12-02)
 
 

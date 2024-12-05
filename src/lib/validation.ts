@@ -723,6 +723,17 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
 }
 
 /**
+ * Validate if the string doesn't have spaces.
+ * @param value
+ */
+export function validateNoSpaces(value: string): validationOutput {
+  if (value.includes(' ')) {
+    return { valid: false, errMessage: 'error.invalid_space' }
+  }
+  return { valid: true }
+}
+
+/**
  * Validate a 6-digit code
  *
  * * Examples of valid values:

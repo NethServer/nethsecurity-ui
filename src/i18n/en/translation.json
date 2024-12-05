@@ -386,7 +386,8 @@
     "cannot_retrieve_talkers_list": "Cannot retrieve talkers list",
     "invalid_number": "Invalid number",
     "network_conflict": "This name is already in use by another network interface",
-    "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report"
+    "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report",
+    "invalid_space": "Field cannot contain spaces"
   },
   "ne_text_input": {
     "show_password": "Show password",

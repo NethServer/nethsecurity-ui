@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/NethServer/nethsecurity-ui/compare/1.15.1...1.16.0) (2024-12-05)
+
+
+### Features
+
+* **monitoring:** instant traffic tab and filtering options  ([#455](https://github.com/NethServer/nethsecurity-ui/issues/455)) ([2ddd342](https://github.com/NethServer/nethsecurity-ui/commit/2ddd342042468d6e92f150cb45873e32f043ce90))
+
 ## [1.15.1](https://github.com/NethServer/nethsecurity-ui/compare/1.15.0...1.15.1) (2024-12-04)
 
 

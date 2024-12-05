@@ -31,18 +31,25 @@ import { useThemeStore } from '@/stores/theme'
 import TrafficTable from '@/components/standalone/monitoring/TrafficTable.vue'
 import { useI18n } from 'vue-i18n'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
+import type { AvailableFilters } from '@/composables/useTrafficFilter'
 
 const themeStore = useThemeStore()
 
 const { t } = useI18n()
 
-const { title, data } = defineProps<{
+const {
+  title,
+  data,
+  filterable = false
+} = defineProps<{
   title: string
-  data: TrafficRecord[]
+  data?: TrafficRecord[]
+  filterable?: boolean
+  filterableKey?: AvailableFilters
 }>()
 
 const dataLimited = computed(() => {
-  return data.slice(0, 5) ?? []
+  return data?.slice(0, 5) ?? []
 })
 
 const pieDatasets = computed(() => {
@@ -85,10 +92,15 @@ const pieLabels = computed(() => {
 </script>
 
 <template>
-  <NeCard :title="title">
-    <div v-if="data.length > 0" class="space-y-4">
+  <NeCard v-if="data" :title="title">
+    <div v-if="data.length > 0" class="space-y-6">
       <BasicPieChart :datasets="pieDatasets" :labels="pieLabels" byteFormat height="25vh" />
-      <TrafficTable :title="title" :traffic-entries="data" />
+      <TrafficTable
+        :filterable="filterable"
+        :filterable-key="filterableKey"
+        :title="title"
+        :traffic-entries="data"
+      />
     </div>
     <NeEmptyState
       v-else

@@ -1892,13 +1892,13 @@
       "title": "Monitoring"
     },
     "real_time_monitor": {
-      "title": "Real time monitor",
+      "title": "Real-time monitor",
       "description": "In-depth analysis of system and application performance, detailed metrics and visualizations. Monitoring data are stored in RAM and reset upon unit reboot. If the unit is linked to a remote controller, metrics are saved on the controller too and persist through unit reboots.",
       "open_report": "Open Netdata",
       "cannot_open_grafana_message": "Grafana monitoring is available only after connecting the unit to a controller",
       "cannot_open_report_from_controller": "Cannot open report from a controlled unit. You can open the report by accessing the unit UI directly, or by accessing the controller UI, going to 'Unit manager' page, clicking the three dots menu of the unit and selecting 'Open metrics'.",
       "traffic": "Traffic",
-      "connectivity": "Connectivity",
+      "connectivity": "WAN uplinks",
       "vpn": "VPN",
       "security": "Security",
       "today_top_local_hosts": "Local hosts",
@@ -1909,7 +1909,7 @@
       "today_top_protocols": "Protocols",
       "no_protocols": "No protocols",
       "daily_total_traffic": "Daily total traffic",
-      "instant_traffic": "Instant traffic",
+      "instant_traffic": "Real-time traffic",
       "today_traffic": "Today traffic",
       "recent_traffic": "Recent traffic",
       "host": "Host",
@@ -1972,7 +1972,7 @@
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",
-      "description": "Measure round-trip time and packet delivery rates by pinging network hosts. Add one or more hosts, including VPN IPs to monitor tunnel quality. Latency and packet delivery charts are available under Monitoring > Real Time Monitor > Connectivity.",
+      "description": "Measure round-trip time and packet delivery rates by pinging network hosts. Add one or more hosts, including VPN IPs to monitor tunnel quality. Latency and packet delivery charts are available under Monitoring > Real-time monitor > WAN uplinks.",
       "add_host": "Add host",
       "host_to_monitor": "Hosts to monitor"
     },

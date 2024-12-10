@@ -137,16 +137,12 @@ const hoursDatasets = computed(() => {
     <template v-else>
       <div class="flex flex-col gap-6 xl:flex-row">
         <div class="flex flex-col gap-6 sm:w-96">
-          <NeCard :title="t('standalone.real_time_monitor.daily_total_traffic')">
-            <SimpleStat>
-              <span v-if="data.total_traffic != 0">{{ byteFormat1024(data.total_traffic) }}</span>
-              <span v-else> N/A </span>
-            </SimpleStat>
-          </NeCard>
           <NeCard v-if="contains('client')" :title="t('standalone.dashboard.hostname')">
             <SimpleStat>
-              <p v-if="resolvedHostname != get('client')">{{ resolvedHostname }}</p>
-              <p class="[&:nth-child(2)]:text-lg">{{ get('client') }}</p>
+              <p v-if="resolvedHostname != get('client')">
+                {{ resolvedHostname }}
+              </p>
+              <p class="[&:nth-child(2)]:text-base">{{ get('client') }}</p>
             </SimpleStat>
           </NeCard>
           <NeCard v-if="applicationName" :title="t('standalone.real_time_monitor.application')">
@@ -156,7 +152,15 @@ const hoursDatasets = computed(() => {
             <SimpleStat> {{ get('protocol').toUpperCase() }}</SimpleStat>
           </NeCard>
           <NeCard v-if="contains('host')" :title="t('standalone.real_time_monitor.remote_hosts')">
-            <SimpleStat> {{ get('host') }}</SimpleStat>
+            <SimpleStat>
+              <p class="text-lg">{{ get('host') }}</p>
+            </SimpleStat>
+          </NeCard>
+          <NeCard :title="t('standalone.real_time_monitor.daily_total_traffic')">
+            <SimpleStat>
+              <span v-if="data.total_traffic != 0">{{ byteFormat1024(data.total_traffic) }}</span>
+              <span v-else> - </span>
+            </SimpleStat>
           </NeCard>
         </div>
         <NeCard :title="t('standalone.real_time_monitor.recent_traffic')" class="flex-1 self-start">

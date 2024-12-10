@@ -23,7 +23,12 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { MessageBag, validateRequired, type validationOutput } from '@/lib/validation'
+import {
+  MessageBag,
+  validateRequired,
+  validateNoSpaces,
+  type validationOutput
+} from '@/lib/validation'
 import { useRoute } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 
@@ -153,7 +158,11 @@ function validate() {
   errorBag.value.clear()
 
   const validators: [validationOutput[], string, Ref<any>][] = [
-    [[validateRequired(unitName.value)], 'unit_name', unitNameRef],
+    [
+      [validateRequired(unitName.value), validateNoSpaces(unitName.value)],
+      'unit_name',
+      unitNameRef
+    ],
     [[validateRequired(controllerJoinCode.value)], 'join_code', controllerJoinCodeRef]
   ]
 

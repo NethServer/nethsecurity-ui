@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.16.1](https://github.com/NethServer/nethsecurity-ui/compare/1.16.0...1.16.1) (2024-12-10)
+
+
+### Bug Fixes
+
+* **controller:** adding space as non-valid character ([#457](https://github.com/NethServer/nethsecurity-ui/issues/457)) ([0b94a5d](https://github.com/NethServer/nethsecurity-ui/commit/0b94a5d52505cff51e2aa11ad5acba0244d47883))
+* **lang:** change names in monitoring section ([#458](https://github.com/NethServer/nethsecurity-ui/issues/458)) ([d499b54](https://github.com/NethServer/nethsecurity-ui/commit/d499b5459804eda862880d5b916a65b10b9b0acc))
+* **monitoring:** shrank text and rearranged cards ([#459](https://github.com/NethServer/nethsecurity-ui/issues/459)) ([30c0c41](https://github.com/NethServer/nethsecurity-ui/commit/30c0c41c4dcee04d26a2438d88ea3f9aaf710755))
+
 ## [1.16.0](https://github.com/NethServer/nethsecurity-ui/compare/1.15.1...1.16.0) (2024-12-05)
 
 

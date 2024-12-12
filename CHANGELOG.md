@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.16.1](https://github.com/NethServer/nethsecurity-ui/compare/1.16.0...1.16.1) (2024-12-12)
+
+
+### Bug Fixes
+
+* **controller:** adding space as non-valid character ([#457](https://github.com/NethServer/nethsecurity-ui/issues/457)) ([0b94a5d](https://github.com/NethServer/nethsecurity-ui/commit/0b94a5d52505cff51e2aa11ad5acba0244d47883))
+* **controller:** bump ns-api requirements ([#462](https://github.com/NethServer/nethsecurity-ui/issues/462)) ([f3c9269](https://github.com/NethServer/nethsecurity-ui/commit/f3c92697ac57fa5f104f32a6bdd00186949c7e7d))
+* **controller:** updated cannot connect message ([#461](https://github.com/NethServer/nethsecurity-ui/issues/461)) ([d713648](https://github.com/NethServer/nethsecurity-ui/commit/d713648587a9220f1167b2bb516af59717bb884b))
+* **lang:** change names in monitoring section ([#458](https://github.com/NethServer/nethsecurity-ui/issues/458)) ([d499b54](https://github.com/NethServer/nethsecurity-ui/commit/d499b5459804eda862880d5b916a65b10b9b0acc))
+* **lang:** translations update from weblate ([#450](https://github.com/NethServer/nethsecurity-ui/issues/450)) ([f9dd4b1](https://github.com/NethServer/nethsecurity-ui/commit/f9dd4b1e779c8b0bdda01bb25d46e61af29c649b))
+* **monitoring:** shrank text and rearranged cards ([#459](https://github.com/NethServer/nethsecurity-ui/issues/459)) ([30c0c41](https://github.com/NethServer/nethsecurity-ui/commit/30c0c41c4dcee04d26a2438d88ea3f9aaf710755))
+
 ## [1.16.0](https://github.com/NethServer/nethsecurity-ui/compare/1.15.1...1.16.0) (2024-12-05)
 
 

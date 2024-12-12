@@ -2152,7 +2152,7 @@
       "sync_unit_info": "Sincronizza info unità",
       "open_anyway": "Apri comunque",
       "warning_open_unit": "Il controller non è aggiornato",
-      "cannot_open_unit_description": "L'unità {nome} deve essere aggiornata prima di aprirla. Accedi direttamente all'unità UI e vai al sistema > Aggiornamenti pagina.",
+      "cannot_open_unit_description": "L'unità '{name}' deve essere aggiornata prima di poter essere aperta. Per aggiornare, apri il menu a tre punti nell'elenco delle unità e seleziona '@:controller.units.check_packages_updates ' e/o '@:standalone.update.update_system '. In alternativa, è possibile accedere all'interfaccia dell'unità e navigare fino a '@:standalone.system.title > @:standalone.update.title '.",
       "cannot_open_unit": "Impossibile aprire l'unità",
       "warning_open_unit_description": "Sembra che il controller non sia aggiornato. Si consiglia di aggiornare l'istanza del controller sul cluster NethServer 8 prima di aprire questa unità per evitare problemi di compatibilità.",
       "scheduled_image_update": "Aggiornamento immagine programmato",

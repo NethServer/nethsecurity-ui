@@ -2045,7 +2045,6 @@
       "title": "Monitor in tempo reale",
       "open_report": "Apri Netdata",
       "cannot_open_grafana_message": "Il monitoraggio con Grafana è disponibile solo dopo aver collegato l'unità a un controller",
-      "today_total_traffic": "Traffico totale di oggi",
       "description": "Analisi approfondita delle prestazioni del sistema e delle applicazioni, metriche dettagliate e visualizzazioni. I dati di monitoraggio vengono memorizzati in RAM e ripristinati al riavvio dell'unità. Se l'unità è collegata a un controller remoto, le metriche vengono salvate anche sul controller e persistono al riavvio dell'unità .",
       "cannot_open_report_from_controller": "Impossibile aprire il report per l'unità controllata. È possibile aprire il report accedendo direttamente all'interfaccia dell unità, o accedendo all'interfaccia del controller, andando alla pagina 'Gestione unità, facendo clic sul menu tre punti dell'unità e selezionando 'Apri metriche'.",
       "times_blocked": "Numero blocchi",

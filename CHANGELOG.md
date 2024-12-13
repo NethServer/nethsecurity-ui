@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/NethServer/nethsecurity-ui/compare/1.16.1...1.16.2) (2024-12-13)
+
+
+### Bug Fixes
+
+* **monitoring:** missing css for hosts ([#463](https://github.com/NethServer/nethsecurity-ui/issues/463)) ([dbf54e0](https://github.com/NethServer/nethsecurity-ui/commit/dbf54e0203a294860a1a3f974ec599bc5aa2d6d2))
+
 ## [1.16.1](https://github.com/NethServer/nethsecurity-ui/compare/1.16.0...1.16.1) (2024-12-12)
 
 

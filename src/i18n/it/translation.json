@@ -52,7 +52,8 @@
     "unknown": "Sconosciuto",
     "no_data_available": "Nessun dato disponibile",
     "upload": "Upload",
-    "confirm": "Conferma"
+    "confirm": "Conferma",
+    "ip_address": "Indirizzo IP"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -379,7 +380,8 @@
     "invalid_alphanumeric": "Sono consentite solo lettere e numeri",
     "network_conflict": "Questo nome è già utilizzato da un'altra interfaccia di rete",
     "empty_domains": "Uno o più domini sono vuoti",
-    "invalid_domains": "Uno o più domini non sono validi"
+    "invalid_domains": "Uno o più domini non sono validi",
+    "invalid_space": "Il campo non può contenere spazi"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1097,7 +1099,8 @@
       "sourcebypass_helper": "Inserisci indirizzi IP o reti in formato CIDR. Gli indirizzi inseriti non saranno soggetti al filtro DNS",
       "username_helper": "Inserisci il nome utente o l'indirizzo email registrato su {flashstartUrl}",
       "add_sourcebypass": "Aggiungi bypass sorgente",
-      "title": "Filtro FlashStart"
+      "title": "Filtro FlashStart",
+      "flashstart_disabled": "FlashStart è disattivato"
     },
     "hotspot": {
       "settings": {
@@ -1584,7 +1587,18 @@
       "dynamic_range_ip_message": "È possibile riservare indirizzi IP ad account OpenVPN al di fuori dell'intervallo seguente.",
       "dynamic_range_ip": "Intervallo IP dinamico",
       "dynamic_range_ip_start": "Inizio intervallo IP dinamico",
-      "download_all_configs": "Scarica tutte le configurazioni"
+      "download_all_configs": "Scarica tutte le configurazioni",
+      "history": {
+        "bytes_received": "Byte ricevuti",
+        "duration": "Durata",
+        "last_3_months": "Ultimi 3 mesi",
+        "remote_ip_address": "Indirizzo IP remoto",
+        "today": "Oggi",
+        "bytes_sent": "Byte inviati"
+      },
+      "tabs": {
+        "road_warrior_server": "Server Road Warrior"
+      }
     },
     "qos": {
       "interface": "Interfaccia",
@@ -2048,7 +2062,9 @@
       "description": "Analisi approfondita delle prestazioni del sistema e delle applicazioni, metriche dettagliate e visualizzazioni. I dati di monitoraggio vengono memorizzati in RAM e ripristinati al riavvio dell'unità. Se l'unità è collegata a un controller remoto, le metriche vengono salvate anche sul controller e persistono al riavvio dell'unità .",
       "cannot_open_report_from_controller": "Impossibile aprire il report per l'unità controllata. È possibile aprire il report accedendo direttamente all'interfaccia dell unità, o accedendo all'interfaccia del controller, andando alla pagina 'Gestione unità, facendo clic sul menu tre punti dell'unità e selezionando 'Apri metriche'.",
       "times_blocked": "Numero blocchi",
-      "timestamp": "Data e ora"
+      "timestamp": "Data e ora",
+      "daily_total_traffic": "Traffico totale giornaliero",
+      "public_ip_address": "Indirizzo IP pubblico"
     },
     "ping_latency_monitor": {
       "title": "Monitor latenza ping",

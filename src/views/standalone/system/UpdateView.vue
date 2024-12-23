@@ -23,6 +23,7 @@ import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUp
 import { getProductName } from '@/lib/config'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useRouter } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export type PackageUpdate = {
   package: string
@@ -101,9 +102,28 @@ async function fetchUpdatesStatus() {
     ).data.enabled
     loading.value = false
   } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_updates_status')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
+    switch (err.response?.data?.message) {
+      case 'connection_error':
+        error.value.notificationTitle = t('standalone.update.connection_error')
+        error.value.notificationDescription = t('standalone.update.connection_error_description')
+        break
+      case 'maintenance':
+        error.value.notificationTitle = t('standalone.update.maintenance_mode')
+        error.value.notificationDescription = t('standalone.update.maintenance_mode_description')
+        break
+      case 'unauthorized':
+        error.value.notificationTitle = t('standalone.update.unauthorized')
+        error.value.notificationDescription = t('standalone.update.unauthorized_description')
+        break
+      case 'server_error':
+        error.value.notificationTitle = t('standalone.update.server_error')
+        error.value.notificationDescription = t('standalone.update.server_error_description')
+        break
+      default:
+        error.value.notificationTitle = t('standalone.update.generic_error')
+        error.value.notificationDescription = t('standalone.update.generic_error_description')
+        error.value.notificationDetails = err.toString()
+    }
   }
 }
 

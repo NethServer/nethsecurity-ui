@@ -230,7 +230,6 @@
     "cannot_retrieve_ipsec_algorithms": "Cannot retrieve IPsec algorithms",
     "cannot_retrieve_tunnel_data": "Cannot retrieve tunnel data",
     "cannot_perform_factory_reset": "Cannot perform factory reset",
-    "cannot_retrieve_updates_status": "Cannot retrieve updates status",
     "cannot_retrieve_package_updates": "Cannot retrieve package updates",
     "cannot_cancel_update_schedule": "Cannot cancel update schedule",
     "cannot_set_update_schedule": "Cannot set update schedule",
@@ -702,7 +701,17 @@
       "automatic_updates_enabled_message": "Automatic updates successfully enabled",
       "automatic_updates_disabled_message": "Automatic updates successfully disabled",
       "schedule_update": "Schedule update",
-      "no_updates_available": "No updates available"
+      "no_updates_available": "No updates available",
+      "connection_error": "Connection error",
+      "connection_error_description": "Cannot connect to the update server. Check internet connection and try again.",
+      "maintenance": "Server under maintenance",
+      "maintenance_description": "The update server is under maintenance. Try again later.",
+      "unauthorized": "Unauthorized access",
+      "unauthorized_description": "Unauthorized access to the update server. Check your subscription status.",
+      "server_error": "Remote server error",
+      "server_error_description": "The update server appears to have some issues. Try again later.",
+      "generic_error": "Error while checking for updates",
+      "generic_error_description": "An error occurred while checking for updates. Try again later."
     },
     "storage": {
       "title": "Storage",

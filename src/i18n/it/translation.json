@@ -175,7 +175,6 @@
     "cannot_retrieve_tunnel_defaults": "Impossibile recuperare i valori di default del tunnel",
     "cannot_retrieve_system_board": "Impossibile recuperare la system board",
     "cannot_create_tunnel": "Impossibile creare il tunnel",
-    "cannot_retrieve_updates_status": "Impossibile recuperare lo stato degli aggiornamenti",
     "required_file": "Selezionare un file",
     "cannot_enable_tunnel": "Impossibile attivare il tunnel",
     "cannot_update_system": "Impossibile aggiornare il sistema",
@@ -1371,7 +1370,17 @@
       "go_to_subscription": "Vai a subscription",
       "schedule_update": "Pianifica aggiornamento",
       "no_updates_available": "Nessun aggiornamento disponibilw",
-      "new_release_available": "Nuova versione disponibile"
+      "new_release_available": "Nuova versione disponibile",
+      "connection_error": "Errore di connessione",
+      "connection_error_description": "Impossibile connettersi al server di aggiornamento. Controlla la connessione internet e riprova.",
+      "maintenance": "Server in manutenzione",
+      "maintenance_description": "Il server di aggiornamento è in manutenzione. Riprova più tardi.",
+      "unauthorized": "Accesso non autorizzato",
+      "unauthorized_description": "Accesso non autorizzato al server di aggiornamento. Controlla lo stato della tua subscription.",
+      "server_error": "Errore del server remoto",
+      "server_error_description": "Il server di aggiornamento sembra avere alcuni problemi. Riprova più tardi.",
+      "generic_error": "Errore durante il controllo degli aggiornamenti",
+      "generic_error_description": "Si è verificato un errore durante il controllo degli aggiornamenti. Riprova più tardi."
     },
     "factory_reset": {
       "title": "Factory reset",

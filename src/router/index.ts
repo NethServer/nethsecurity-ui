@@ -171,6 +171,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/monitoring/RealTimeMonitoringView.vue')
   },
   {
+    path: 'monitoring/netify-informatics',
+    name: 'NetifyInformatics',
+    component: () => import('../views/standalone/monitoring/NetifyInformaticsView.vue')
+  },
+  {
     path: 'monitoring/ping-latency-monitor',
     name: 'PingLatencyMonitor',
     component: () => import('../views/standalone/monitoring/PingLatencyMonitorView.vue')

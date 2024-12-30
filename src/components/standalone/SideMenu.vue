@@ -45,6 +45,10 @@ const navigation: Ref<MenuItem[]> = ref([
         to: 'monitoring/real-time-monitoring'
       },
       {
+        name: 'standalone.netify_informatics.title',
+        to: 'monitoring/netify-informatics'
+      },
+      {
         name: 'standalone.ping_latency_monitor.title',
         to: 'monitoring/ping-latency-monitor'
       }

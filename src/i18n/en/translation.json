@@ -387,7 +387,8 @@
     "invalid_number": "Invalid number",
     "network_conflict": "This name is already in use by another network interface",
     "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report",
-    "invalid_space": "Field cannot contain spaces"
+    "invalid_space": "Field cannot contain spaces",
+    "cannot_retrieve_netify_informatics_configuration": "Cannot retrieve Netify Informatics configuration"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -446,6 +447,21 @@
     "please_sign_in_again": "Please sign in again"
   },
   "standalone": {
+    "netify_informatics": {
+      "title": "Netify Informatics",
+      "netify_informatics_enable": "Netify Informatics enabled",
+      "netify_informatics_disable": "Netify Informatics disabled",
+      "netify_informatics_enable_description": "Metadata sending is now active. Configuration saved successfully",
+      "netify_informatics_disable_description": "Metadata sending has been disabled. Configuration saved successfully",
+      "content_description": "Netify Informatics is a third-party cloud service that utilizes analytics and AI to convert local DPI metadata obtained from NethSecurity into high-level network intelligence and visibility.",
+      "uuid": "UUID",
+      "status_disabled": "Disabled",
+      "status_enabled": "Enabled",
+      "status": "Status",
+      "open_netify_dashboard": "Open Netify dashboard",
+      "copy": "Copy",
+      "copied_to_clipboard": "Copied to clipboard"
+    },
     "dashboard": {
       "title": "Dashboard",
       "system": "System",

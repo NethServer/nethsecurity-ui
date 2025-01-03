@@ -1401,7 +1401,10 @@
       "any_source_address": "Any source address",
       "any_destination_address": "Any destination address",
       "source_object": "Source object",
-      "destination_object": "Destination object"
+      "destination_object": "Destination object",
+      "inactive": "Inactive",
+      "zone_no_longer_exists": "This rule is not active because it uses a zone that no longer exists",
+      "disabled_rule": "This rule is disabled by its configuration, you can enable it again"
     },
     "firewall": {
       "title": "Firewall"

@@ -179,7 +179,7 @@ function getRuleActionIcon(ruleTarget: string) {
 }
 
 function getRuleActionColor(rule: FirewallRule) {
-  if (!rule.enabled || !rule.true_zone) {
+  if (!rule.enabled || !rule.active_zone) {
     return 'text-gray-500 dark:text-gray-400'
   }
 
@@ -323,13 +323,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   v-if="!textFilter"
                   :class="[
                     'cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70',
-                    !rule.enabled || !rule.true_zone ? disabledRuleClasses : ''
+                    !rule.enabled || !rule.active_zone ? disabledRuleClasses : ''
                   ]"
                 >
                   <FontAwesomeIcon :icon="faGripVertical" />
                 </td>
                 <!-- cannot drag & drop rules with active text filter -->
-                <td v-else :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td v-else :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                     <template #trigger>
                       <FontAwesomeIcon
@@ -343,15 +343,15 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </NeTooltip>
                 </td>
                 <!-- name -->
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <div
                     class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
                   >
                     <div>
-                      <div :class="{ 'opacity-50': !rule.enabled || !rule.true_zone }">
+                      <div :class="{ 'opacity-50': !rule.enabled || !rule.active_zone }">
                         {{ rule.name }}
                       </div>
-                      <div v-if="!rule.true_zone" class="mt-4">
+                      <div v-if="!rule.active_zone" class="mt-4">
                         <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                           <template #trigger>
                             <NeBadge
@@ -403,41 +403,41 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </div>
                 </td>
                 <!-- source -->
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="source"
                     :rulesType="rulesType"
-                    :enabled="rule.enabled && rule.true_zone"
+                    :enabled="rule.enabled && rule.active_zone"
                     :hostSets="hostSets"
                     :domainSets="domainSets"
                     :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- destination -->
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="destination"
                     :rulesType="rulesType"
-                    :enabled="rule.enabled && rule.true_zone"
+                    :enabled="rule.enabled && rule.active_zone"
                     :hostSets="hostSets"
                     :domainSets="domainSets"
                     :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- service -->
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
-                  <span :class="{ 'opacity-50': !rule.enabled || !rule.true_zone }">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
+                  <span :class="{ 'opacity-50': !rule.enabled || !rule.active_zone }">
                     {{ getServiceText(rule) }}
                   </span>
                 </td>
                 <!-- action -->
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <span
                     :class="[
                       'flex items-center gap-x-2',
-                      { 'opacity-50': !rule.enabled || !rule.true_zone }
+                      { 'opacity-50': !rule.enabled || !rule.active_zone }
                     ]"
                   >
                     <font-awesome-icon
@@ -447,7 +447,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     {{ rule.target }}
                   </span>
                 </td>
-                <td :class="!rule.enabled || !rule.true_zone ? disabledRuleClasses : ''">
+                <td :class="!rule.enabled || !rule.active_zone ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->
                   <div class="flex justify-end gap-2">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">

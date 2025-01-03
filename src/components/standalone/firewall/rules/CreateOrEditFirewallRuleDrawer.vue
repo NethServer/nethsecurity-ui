@@ -721,7 +721,7 @@ async function saveRule() {
     }),
     log: isLoggingEnabled.value,
     system_rule: props.currentRule?.system_rule || false,
-    true_zone: props.currentRule?.true_zone || false
+    active_zone: props.currentRule?.active_zone || false
   }
 
   if (isEditingRule.value && props.currentRule) {

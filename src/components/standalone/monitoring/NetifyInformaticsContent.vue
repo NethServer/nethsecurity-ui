@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowUpRightFromSquare, faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare, faCopy, faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 import {
   NeSkeleton,
   NeTextInput,
@@ -68,7 +68,7 @@ function clearErrors() {
   }
 }
 
-function handleSaveAutomaticToggle() {
+function save() {
   clearErrors()
   saving.value = true
   const state = status.value ? 'enable' : 'disable'
@@ -153,13 +153,20 @@ function copyUuid() {
         <NeToggle
           v-model="status"
           :topLabel="t('standalone.netify_informatics.status')"
-          @update:model-value="handleSaveAutomaticToggle"
           :label="
             status
               ? t('standalone.netify_informatics.status_enabled')
               : t('standalone.netify_informatics.status_disabled')
           "
         />
+        <div>
+          <NeButton :disabled="loading" :loading="loading" kind="primary" @click="save()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
+            </template>
+            {{ t('common.save') }}
+          </NeButton>
+        </div>
       </div>
     </FormLayout>
   </div>

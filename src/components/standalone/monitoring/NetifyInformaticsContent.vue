@@ -21,7 +21,6 @@ import {
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { AxiosError } from 'axios'
 
 const notificationsStore = useNotificationsStore()
 const { t } = useI18n()
@@ -30,8 +29,10 @@ const status = ref(false)
 const uuid = ref('')
 
 const error = ref({
-  notificationTitle: '',
-  notificationDescription: ''
+  getNotificationTitle: '',
+  getNotificationDescription: '',
+  saveNotificationTitle: '',
+  saveNotificationDescription: ''
 })
 
 const loading = ref(false)
@@ -54,8 +55,8 @@ async function getConfiguration() {
     }
   } catch (exception: any) {
     console.error(exception)
-    error.value.notificationTitle = t('error.cannot_retrieve_netify_informatics_configuration')
-    error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    error.value.getNotificationTitle = t('error.cannot_retrieve_netify_informatics_configuration')
+    error.value.getNotificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     loading.value = false
   }
@@ -63,35 +64,33 @@ async function getConfiguration() {
 
 function clearErrors() {
   error.value = {
-    notificationTitle: '',
-    notificationDescription: ''
+    getNotificationTitle: '',
+    getNotificationDescription: '',
+    saveNotificationTitle: '',
+    saveNotificationDescription: ''
   }
 }
 
-function save() {
+async function saveSettings() {
   clearErrors()
-  saving.value = true
-  const state = status.value ? 'enable' : 'disable'
-  ubusCall('ns.netifyd', state)
-    .then((response) => {
-      if (response.data && response.data.result && response.data.result === 'success') {
-        setTimeout(() => {
-          notificationsStore.createNotification({
-            title: t('standalone.netify_informatics.netify_informatics_' + state),
-            description: t(
-              'standalone.netify_informatics.netify_informatics_' + state + '_description'
-            ),
-            kind: 'success'
-          })
-        }, 500)
-      }
+  try {
+    saving.value = true
+
+    const state = status.value ? 'enable' : 'disable'
+    await ubusCall('ns.netifyd', state)
+    notificationsStore.createNotification({
+      title: t('standalone.netify_informatics.netify_informatics_' + state),
+      description: t('standalone.netify_informatics.netify_informatics_' + state + '_description'),
+      kind: 'success'
     })
-    .catch((exception: AxiosError) => {
-      console.error(exception)
-      error.value.notificationTitle = t('error.cannot_save_configuration')
-      error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    })
-    .finally(() => (saving.value = false))
+    getConfiguration()
+  } catch (err: any) {
+    console.error(err)
+    error.value.saveNotificationTitle = t('error.cannot_save_configuration')
+    error.value.saveNotificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    saving.value = false
+  }
 }
 
 function copyUuid() {
@@ -115,11 +114,18 @@ function copyUuid() {
       </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
-        v-if="error.notificationTitle"
+        v-if="error.getNotificationTitle"
         class="my-4"
         kind="error"
-        :title="error.notificationTitle"
-        :description="error.notificationDescription"
+        :title="error.getNotificationTitle"
+        :description="error.getNotificationDescription"
+      />
+      <NeInlineNotification
+        v-if="error.saveNotificationTitle"
+        class="my-4"
+        kind="error"
+        :title="error.saveNotificationTitle"
+        :description="error.saveNotificationDescription"
       />
       <div v-if="!loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-end gap-2">
@@ -143,7 +149,14 @@ function copyUuid() {
               {{ t('standalone.netify_informatics.copied_to_clipboard') }}
             </template>
           </NeTooltip>
-          <NeButton v-else kind="secondary" size="md" @click="copyUuid" class="mb-px ml-2.5">
+          <NeButton
+            v-else
+            :disabled="error.getNotificationTitle !== ''"
+            kind="secondary"
+            size="md"
+            @click="copyUuid"
+            class="mb-px ml-2.5"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
             </template>
@@ -152,6 +165,7 @@ function copyUuid() {
         </div>
         <NeToggle
           v-model="status"
+          :disabled="error.getNotificationTitle !== ''"
           :topLabel="t('standalone.netify_informatics.status')"
           :label="
             status
@@ -160,7 +174,12 @@ function copyUuid() {
           "
         />
         <div>
-          <NeButton :disabled="saving" :loading="loading" kind="primary" @click="save()">
+          <NeButton
+            :disabled="error.getNotificationTitle !== '' || saving"
+            :loading="loading"
+            kind="primary"
+            @click="saveSettings()"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
             </template>

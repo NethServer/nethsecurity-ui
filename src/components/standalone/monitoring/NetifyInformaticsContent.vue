@@ -9,15 +9,15 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowUpRightFromSquare, faCopy, faCheck } from '@fortawesome/free-solid-svg-icons'
-import { NeButton } from '@nethesis/vue-components'
+import { faArrowUpRightFromSquare, faCopy } from '@fortawesome/free-solid-svg-icons'
 import {
   NeSkeleton,
-  NeFormItemLabel,
   NeTextInput,
   getAxiosErrorMessage,
   NeInlineNotification,
-  NeBadge
+  NeTooltip,
+  NeButton,
+  NeLink
 } from '@nethesis/vue-components'
 import { NeToggle } from '@nethesis/vue-components'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -120,9 +120,6 @@ function handleSaveAutomaticToggle() {
     .finally(() => (saving.value = false))
 }
 
-function openDashboard() {
-  window.open('https://portal.netify.ai/login', '_blank')
-}
 function copyUuid() {
   navigator.clipboard.writeText(form.value.uuid)
   justCopied.value = true
@@ -137,12 +134,10 @@ function copyUuid() {
     <FormLayout class="max-w-6xl">
       <template #description>
         <p>{{ t('standalone.netify_informatics.content_description') }}</p>
-        <NeButton kind="tertiary" size="lg" @click="openDashboard()" class="ml-2 shrink-0">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faArrowUpRightFromSquare" aria-hidden="true" />
-          </template>
-          {{ t('standalone.netify_informatics.open_netify_dashboard') }}</NeButton
-        >
+        <NeLink href="https://portal.netify.ai/login" target="_blank">
+          <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
+          {{ t('standalone.netify_informatics.open_netify_dashboard') }}
+        </NeLink>
       </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
@@ -160,7 +155,7 @@ function copyUuid() {
         :description="errorSaving.notificationDescription"
       />
       <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
-        <div class="relative flex items-center gap-2">
+        <div class="relative flex items-end gap-2">
           <NeTextInput
             v-model="form.uuid"
             disabled
@@ -169,25 +164,29 @@ function copyUuid() {
             ref="uuidRef"
           >
           </NeTextInput>
-          <NeButton kind="tertiary" size="sm" @click="copyUuid" class="ml-2.5 mt-8">
+          <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
+            <template #trigger>
+              <NeButton kind="secondary" size="md" @click="copyUuid" class="mb-px ml-2.5">
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
+                </template>
+                {{ t('standalone.netify_informatics.copy') }}
+              </NeButton>
+            </template>
+            <template #content>
+              {{ t('standalone.netify_informatics.copied_to_clipboard') }}
+            </template>
+          </NeTooltip>
+          <NeButton v-else kind="secondary" size="md" @click="copyUuid" class="mb-px ml-2.5">
             <template #prefix>
               <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.netify_informatics.copy') }}
           </NeButton>
-          <NeBadge
-            class="ml-2.5 mt-8"
-            v-if="justCopied"
-            :icon="faCheck"
-            :text="t('standalone.netify_informatics.copied_to_clipboard')"
-            kind="secondary"
-            :rounded="false"
-            size="sm"
-          />
         </div>
-        <NeFormItemLabel>{{ t('standalone.netify_informatics.status') }}</NeFormItemLabel>
         <NeToggle
           v-model="form.status"
+          :topLabel="t('standalone.netify_informatics.status')"
           @update:model-value="handleSaveAutomaticToggle"
           :label="
             form.status

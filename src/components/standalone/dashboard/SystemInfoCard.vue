@@ -142,6 +142,7 @@ function goToUpdates() {
 async function getUpdatesStatus() {
   try {
     systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
+    // Ignore error: toast error notification is enough here
   } finally {
     loading.value.getUpdatesStatus = false
   }

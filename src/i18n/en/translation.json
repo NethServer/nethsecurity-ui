@@ -1877,7 +1877,11 @@
       "administrator_tooltip": "A user promoted to administrator can access the administration web interface and configure this unit.",
       "remove_admin": "Remove from administrator users",
       "set_admin": "Set as administrator user",
-      "administrator_table_tooltip": "Administrator user"
+      "administrator_table_tooltip": "Administrator user",
+      "cannot_delete_database": "Cannot delete database '{name}'",
+      "cannot_delete_database_description": "Database '{name}' cannot be deleted because is used by:",
+      "openvpn": "OpenVPN Road Warrior",
+      "wireguard": "WireGuard"
     },
     "logs": {
       "title": "Logs",

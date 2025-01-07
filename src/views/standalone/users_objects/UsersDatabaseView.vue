@@ -24,6 +24,7 @@ export type UserDatabase = {
   description: string
   schema?: string
   uri?: string
+  used?: Array<string>
 }
 
 const { t } = useI18n()

@@ -28,13 +28,11 @@ const { t } = useI18n()
 
 const status = ref(false)
 const uuid = ref('')
-const objError = {
+
+const error = ref({
   notificationTitle: '',
   notificationDescription: ''
-}
-
-const errorLoadingConfiguration = ref({ ...objError })
-const errorSaving = ref({ ...objError })
+})
 
 const isError = ref(false)
 const loading = ref(false)
@@ -58,21 +56,15 @@ async function getConfiguration() {
     }
   } catch (exception: any) {
     isError.value = true
-    errorLoadingConfiguration.value.notificationTitle = t(
-      'error.cannot_retrieve_netify_informatics_configuration'
-    )
-    errorLoadingConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    error.value.notificationTitle = t('error.cannot_retrieve_netify_informatics_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     loading.value = false
   }
 }
 
 function clearErrors() {
-  errorSaving.value = {
-    notificationTitle: '',
-    notificationDescription: ''
-  }
-  errorLoadingConfiguration.value = {
+  error.value = {
     notificationTitle: '',
     notificationDescription: ''
   }
@@ -97,8 +89,8 @@ function handleSaveAutomaticToggle() {
       }
     })
     .catch((exception: AxiosError) => {
-      errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
-      errorSaving.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      error.value.notificationTitle = t('error.cannot_save_configuration')
+      error.value.notificationDescription = t(getAxiosErrorMessage(exception))
     })
     .finally(() => (saving.value = false))
 }
@@ -124,18 +116,11 @@ function copyUuid() {
       </template>
       <NeSkeleton v-if="loading" :lines="5" />
       <NeInlineNotification
-        v-if="errorLoadingConfiguration.notificationTitle"
+        v-if="error.notificationTitle"
         class="my-4"
         kind="error"
-        :title="errorLoadingConfiguration.notificationTitle"
-        :description="errorLoadingConfiguration.notificationDescription"
-      />
-      <NeInlineNotification
-        v-if="errorSaving.notificationTitle"
-        class="my-4"
-        kind="error"
-        :title="errorSaving.notificationTitle"
-        :description="errorSaving.notificationDescription"
+        :title="error.notificationTitle"
+        :description="error.notificationDescription"
       />
       <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-end gap-2">

@@ -26,16 +26,8 @@ import { AxiosError } from 'axios'
 const notificationsStore = useNotificationsStore()
 const { t } = useI18n()
 
-interface Form {
-  status: boolean
-  uuid: string
-}
-
-const form = ref<Form>({
-  status: false,
-  uuid: ''
-})
-
+const status = ref(false)
+const uuid = ref('')
 const objError = {
   notificationTitle: '',
   notificationDescription: '',
@@ -63,8 +55,8 @@ async function getConfiguration() {
     let getDataConfiguration = await ubusCall('ns.netifyd', 'status', {})
     if (getDataConfiguration && getDataConfiguration.data) {
       let configuration = getDataConfiguration.data
-      form.value.status = configuration.enabled
-      form.value.uuid = configuration.uuid
+      status.value = configuration.enabled
+      uuid.value = configuration.uuid
     }
   } catch (exception: any) {
     isError.value = true
@@ -98,15 +90,15 @@ function clearErrors() {
 function handleSaveAutomaticToggle() {
   clearErrors()
   saving.value = true
-  const status = form.value.status ? 'enable' : 'disable'
-  ubusCall('ns.netifyd', status)
+  const state = status.value ? 'enable' : 'disable'
+  ubusCall('ns.netifyd', state)
     .then((response) => {
       if (response.data && response.data.result && response.data.result === 'success') {
         setTimeout(() => {
           notificationsStore.createNotification({
-            title: t('standalone.netify_informatics.netify_informatics_' + status),
+            title: t('standalone.netify_informatics.netify_informatics_' + state),
             description: t(
-              'standalone.netify_informatics.netify_informatics_' + status + '_description'
+              'standalone.netify_informatics.netify_informatics_' + state + '_description'
             ),
             kind: 'success'
           })
@@ -121,7 +113,7 @@ function handleSaveAutomaticToggle() {
 }
 
 function copyUuid() {
-  navigator.clipboard.writeText(form.value.uuid)
+  navigator.clipboard.writeText(uuid.value)
   justCopied.value = true
   setTimeout(() => {
     justCopied.value = false
@@ -157,7 +149,7 @@ function copyUuid() {
       <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-end gap-2">
           <NeTextInput
-            v-model="form.uuid"
+            v-model="uuid"
             disabled
             :invalid-message="error.uuid"
             :label="t('standalone.netify_informatics.uuid')"
@@ -185,11 +177,11 @@ function copyUuid() {
           </NeButton>
         </div>
         <NeToggle
-          v-model="form.status"
+          v-model="status"
           :topLabel="t('standalone.netify_informatics.status')"
           @update:model-value="handleSaveAutomaticToggle"
           :label="
-            form.status
+            status
               ? t('standalone.netify_informatics.status_enabled')
               : t('standalone.netify_informatics.status_disabled')
           "

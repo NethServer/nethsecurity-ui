@@ -1480,7 +1480,7 @@
       "user_display_attribute": "Nome utente",
       "user_display_attribute_tooltip": "Attributo del nome visualizzato per l'utente. Il nome visualizzato rappresenta tipicamente il nome completo dell'utente, ad es. 'John Doe'. Suggerimento: utilizzare 'displayName' per Active Directory o 'cn' per NethServer OpenLDAP",
       "cannot_delete_database": "Non è possibile eliminare il database '{name}'",
-      "cannot_delete_database_description": "Il database '{name}' non può essere cancellato perché usato da:",
+      "cannot_delete_database_description": "Il database '{name}' non può essere eliminato perché è usato da:",
       "openvpn": "OpenVPN Road Warrior",
       "wireguard": "WireGuard"
     },

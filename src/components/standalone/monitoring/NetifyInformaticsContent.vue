@@ -47,11 +47,11 @@ const objError: ErrorObject = {
   uuid: ''
 }
 
-let isError = ref(false)
-let loading = ref(false)
-let saving = ref(false)
-let uuidRef = ref()
-let JustCopied = ref(false)
+const isError = ref(false)
+const loading = ref(false)
+const saving = ref(false)
+const uuidRef = ref()
+const JustCopied = ref(false)
 
 const error: Ref<ErrorObject> = ref({ ...objError })
 const errorLoadingConfiguration: Ref<ErrorObject> = ref({ ...objError })

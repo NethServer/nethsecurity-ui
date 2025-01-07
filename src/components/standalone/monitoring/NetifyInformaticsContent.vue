@@ -30,11 +30,9 @@ const status = ref(false)
 const uuid = ref('')
 const objError = {
   notificationTitle: '',
-  notificationDescription: '',
-  uuid: ''
+  notificationDescription: ''
 }
 
-const error = ref({ ...objError })
 const errorLoadingConfiguration = ref({ ...objError })
 const errorSaving = ref({ ...objError })
 
@@ -70,20 +68,13 @@ async function getConfiguration() {
 }
 
 function clearErrors() {
-  error.value = {
-    notificationTitle: '',
-    notificationDescription: '',
-    uuid: ''
-  }
   errorSaving.value = {
     notificationTitle: '',
-    notificationDescription: '',
-    uuid: ''
+    notificationDescription: ''
   }
   errorLoadingConfiguration.value = {
     notificationTitle: '',
-    notificationDescription: '',
-    uuid: ''
+    notificationDescription: ''
   }
 }
 
@@ -151,7 +142,6 @@ function copyUuid() {
           <NeTextInput
             v-model="uuid"
             disabled
-            :invalid-message="error.uuid"
             :label="t('standalone.netify_informatics.uuid')"
             ref="uuidRef"
           >

@@ -37,12 +37,12 @@ const form = ref<Form>({
   uuid: ''
 })
 
-interface ErrorObject {
+interface errorObject {
   notificationTitle: string
   notificationDescription: string
   uuid: string
 }
-const objError: ErrorObject = {
+const objError: errorObject = {
   notificationTitle: '',
   notificationDescription: '',
   uuid: ''
@@ -52,11 +52,11 @@ const isError = ref(false)
 const loading = ref(false)
 const saving = ref(false)
 const uuidRef = ref()
-const JustCopied = ref(false)
+const justCopied = ref(false)
 
-const error: Ref<ErrorObject> = ref({ ...objError })
-const errorLoadingConfiguration: Ref<ErrorObject> = ref({ ...objError })
-const errorSaving: Ref<ErrorObject> = ref({ ...objError })
+const error: Ref<errorObject> = ref({ ...objError })
+const errorLoadingConfiguration: Ref<errorObject> = ref({ ...objError })
+const errorSaving: Ref<errorObject> = ref({ ...objError })
 
 onMounted(() => {
   getConfiguration()
@@ -115,14 +115,14 @@ function handleSaveAutomaticToggle() {
     .finally(() => (saving.value = false))
 }
 
-function open_dashboard() {
+function openDashboard() {
   window.open('https://portal.netify.ai/login', '_blank')
 }
-function copy_uuid() {
+function copyUuid() {
   navigator.clipboard.writeText(form.value.uuid)
-  JustCopied.value = true
+  justCopied.value = true
   setTimeout(() => {
-    JustCopied.value = false
+    justCopied.value = false
   }, 3000)
 }
 </script>
@@ -132,7 +132,7 @@ function copy_uuid() {
     <FormLayout class="max-w-6xl">
       <template #description>
         <p>{{ t('standalone.netify_informatics.content_description') }}</p>
-        <NeButton kind="tertiary" size="lg" @click="open_dashboard()" class="ml-2 shrink-0">
+        <NeButton kind="tertiary" size="lg" @click="openDashboard()" class="ml-2 shrink-0">
           <template #prefix>
             <FontAwesomeIcon :icon="faArrowUpRightFromSquare" aria-hidden="true" />
           </template>
@@ -157,7 +157,7 @@ function copy_uuid() {
             ref="uuidRef"
           >
           </NeTextInput>
-          <NeButton kind="tertiary" size="sm" @click="copy_uuid" class="ml-2.5 mt-8">
+          <NeButton kind="tertiary" size="sm" @click="copyUuid" class="ml-2.5 mt-8">
             <template #prefix>
               <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
             </template>
@@ -165,7 +165,7 @@ function copy_uuid() {
           </NeButton>
           <NeBadge
             class="ml-2.5 mt-8"
-            v-if="JustCopied"
+            v-if="justCopied"
             :icon="faCheck"
             :text="t('standalone.netify_informatics.copied_to_clipboard')"
             kind="secondary"

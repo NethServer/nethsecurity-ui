@@ -34,12 +34,10 @@ const error = ref({
   notificationDescription: ''
 })
 
-const isError = ref(false)
 const loading = ref(false)
 const saving = ref(false)
 const uuidRef = ref()
 const justCopied = ref(false)
-
 onMounted(() => {
   clearErrors()
   getConfiguration()
@@ -55,7 +53,7 @@ async function getConfiguration() {
       uuid.value = configuration.uuid
     }
   } catch (exception: any) {
-    isError.value = true
+    console.error(exception)
     error.value.notificationTitle = t('error.cannot_retrieve_netify_informatics_configuration')
     error.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
@@ -89,6 +87,7 @@ function handleSaveAutomaticToggle() {
       }
     })
     .catch((exception: AxiosError) => {
+      console.error(exception)
       error.value.notificationTitle = t('error.cannot_save_configuration')
       error.value.notificationDescription = t(getAxiosErrorMessage(exception))
     })
@@ -122,7 +121,7 @@ function copyUuid() {
         :title="error.notificationTitle"
         :description="error.notificationDescription"
       />
-      <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
+      <div v-if="!error.notificationTitle && !loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-end gap-2">
           <NeTextInput
             v-model="uuid"

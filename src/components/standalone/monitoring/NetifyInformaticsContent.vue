@@ -5,7 +5,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useNotificationsStore } from '@/stores/notifications'
@@ -37,16 +36,15 @@ const form = ref<Form>({
   uuid: ''
 })
 
-interface errorObject {
-  notificationTitle: string
-  notificationDescription: string
-  uuid: string
-}
-const objError: errorObject = {
+const objError = {
   notificationTitle: '',
   notificationDescription: '',
   uuid: ''
 }
+
+const error = ref({ ...objError })
+const errorLoadingConfiguration = ref({ ...objError })
+const errorSaving = ref({ ...objError })
 
 const isError = ref(false)
 const loading = ref(false)
@@ -54,11 +52,8 @@ const saving = ref(false)
 const uuidRef = ref()
 const justCopied = ref(false)
 
-const error: Ref<errorObject> = ref({ ...objError })
-const errorLoadingConfiguration: Ref<errorObject> = ref({ ...objError })
-const errorSaving: Ref<errorObject> = ref({ ...objError })
-
 onMounted(() => {
+  clearErrors()
   getConfiguration()
 })
 
@@ -84,6 +79,16 @@ async function getConfiguration() {
 
 function clearErrors() {
   error.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    uuid: ''
+  }
+  errorSaving.value = {
+    notificationTitle: '',
+    notificationDescription: '',
+    uuid: ''
+  }
+  errorLoadingConfiguration.value = {
     notificationTitle: '',
     notificationDescription: '',
     uuid: ''
@@ -146,6 +151,13 @@ function copyUuid() {
         kind="error"
         :title="errorLoadingConfiguration.notificationTitle"
         :description="errorLoadingConfiguration.notificationDescription"
+      />
+      <NeInlineNotification
+        v-if="errorSaving.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="errorSaving.notificationTitle"
+        :description="errorSaving.notificationDescription"
       />
       <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-center gap-2">

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.16.2](https://github.com/NethServer/nethsecurity-ui/compare/1.16.1...1.16.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* **monitoring:** missing css for hosts ([#463](https://github.com/NethServer/nethsecurity-ui/issues/463)) ([dbf54e0](https://github.com/NethServer/nethsecurity-ui/commit/dbf54e0203a294860a1a3f974ec599bc5aa2d6d2))
+* **updates:** gracefully handle error for updates ([#466](https://github.com/NethServer/nethsecurity-ui/issues/466)) ([15ee0fa](https://github.com/NethServer/nethsecurity-ui/commit/15ee0fab27276d81b5e13976dc2e86ba719f57df))
+* **users:** preventing database deletion if used ([#469](https://github.com/NethServer/nethsecurity-ui/issues/469)) ([743cebb](https://github.com/NethServer/nethsecurity-ui/commit/743cebb0f214a09990b8bf6a8f607be6cf0dbd5a))
+
 ## [1.16.1](https://github.com/NethServer/nethsecurity-ui/compare/1.16.0...1.16.1) (2024-12-12)
 
 

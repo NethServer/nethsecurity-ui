@@ -130,8 +130,7 @@ function copy_uuid() {
   <div>
     <FormLayout class="max-w-6xl">
       <template #description>
-        <i18n-t keypath="standalone.netify_informatics.content_description" tag="p" scope="global">
-        </i18n-t>
+        <p>{{ t('standalone.netify_informatics.content_description') }}</p>
         <NeButton kind="tertiary" size="lg" @click="open_dashboard()" class="ml-2 shrink-0">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'arrow-up-right-from-square']" aria-hidden="true" />

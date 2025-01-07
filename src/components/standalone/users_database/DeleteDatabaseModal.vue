@@ -8,8 +8,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { UserDatabase } from '@/views/standalone/users_objects/UsersDatabaseView.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
+import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
 
 const props = defineProps<{
   visible: boolean
@@ -48,41 +47,54 @@ function close() {
   emit('close')
 }
 
-const itemUsed = computed((): boolean => {
+const isUsed = computed((): boolean => {
   return (props.itemToDelete.used?.length ?? 0) > 0
 })
 </script>
 
 <template>
   <NeModal
+    v-if="isUsed"
+    :close-aria-label="t('common.close')"
+    :primary-label="t('common.close')"
+    :title="t('standalone.users_database.cannot_delete_database', { name: itemToDelete.name })"
+    :visible="visible"
+    kind="warning"
+    @close="close()"
+    @primary-click="close()"
+  >
+    <div class="space-y-2">
+      <p>
+        {{
+          t('standalone.users_database.cannot_delete_database_description', {
+            name: itemToDelete.name
+          })
+        }}
+      </p>
+      <ul class="list-inside list-disc">
+        <li v-for="item in itemToDelete.used" :key="item">
+          {{ t('standalone.users_database.' + item) }}
+        </li>
+      </ul>
+    </div>
+  </NeModal>
+  <NeModal
+    v-else
     :visible="visible"
     kind="warning"
     :title="t('standalone.users_database.delete_database')"
     :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting || itemUsed"
+    :primaryButtonDisabled="isDeleting"
     :primaryButtonLoading="isDeleting"
     :close-aria-label="t('common.close')"
     @primaryClick="deleteDatabase()"
     @close="close()"
-    :cancel-label="itemUsed ? t('common.cancel') : t('common.close')"
   >
-    <div v-if="itemUsed">
-      <p>
-        {{ t('standalone.users_database.database_in_use', props.itemToDelete.used?.length ?? 1) }}
-      </p>
-      <ul class="list-inside list-disc">
-        <li v-for="used in props.itemToDelete.used" :key="used">
-          {{ t('standalone.users_database.' + used) }}
-        </li>
-      </ul>
-    </div>
-    <p v-else>
-      {{
-        t('standalone.users_database.delete_database_message', {
-          name: itemToDelete.name
-        })
-      }}
-    </p>
+    {{
+      t('standalone.users_database.delete_database_message', {
+        name: itemToDelete.name
+      })
+    }}
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"

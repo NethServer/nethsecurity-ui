@@ -142,10 +142,7 @@ function goToUpdates() {
 async function getUpdatesStatus() {
   try {
     systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
-  } catch (err: any) {
-    console.error(err)
-    error.value.title = t('error.cannot_retrieve_updates_status')
-    error.value.description = t(getAxiosErrorMessage(err))
+    // Ignore error: toast error notification is enough here
   } finally {
     loading.value.getUpdatesStatus = false
   }

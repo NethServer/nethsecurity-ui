@@ -1479,7 +1479,9 @@
       "edit_remote_database": "Modifica database remoto",
       "user_display_attribute": "Nome utente",
       "user_display_attribute_tooltip": "Attributo del nome visualizzato per l'utente. Il nome visualizzato rappresenta tipicamente il nome completo dell'utente, ad es. 'John Doe'. Suggerimento: utilizzare 'displayName' per Active Directory o 'cn' per NethServer OpenLDAP",
-      "database_in_use": "Il database è in uso da OpenVPN RoadWarrior, rimuoverlo prima dalla configurazione del server."
+      "database_in_use": "Il database è utilizzato per autenticare gli utenti da alcuni servizi. Rimuovere il riferimento dalla seguente configurazione per eliminare il database: | Il database è utilizzato per autenticare gli utenti da alcuni servizi. Rimuovere il riferimento dalle seguenti configurazioni per eliminare il database:",
+      "openvpn": "OpenVPN Road Warrior",
+      "wireguard": "WireGuard"
     },
     "openvpn_rw": {
       "digest": "Digest",

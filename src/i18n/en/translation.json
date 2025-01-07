@@ -1878,7 +1878,9 @@
       "remove_admin": "Remove from administrator users",
       "set_admin": "Set as administrator user",
       "administrator_table_tooltip": "Administrator user",
-      "database_in_use": "Database is in use by OpenVPN RoadWarrior, please remove it from the server configuration first."
+      "database_in_use": "Database is being used to authenticate users by some service. Remove the reference from the following configuration to delete the database: | Database is being used to authenticate users by some services. Remove the reference from the following configurations to delete the database:",
+      "openvpn": "OpenVPN Road Warrior",
+      "wireguard": "WireGuard"
     },
     "logs": {
       "title": "Logs",

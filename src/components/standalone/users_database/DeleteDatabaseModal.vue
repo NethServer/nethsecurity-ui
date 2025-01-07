@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { UserDatabase } from '@/views/standalone/users_objects/UsersDatabaseView.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
@@ -47,6 +47,10 @@ function close() {
   error.value.notificationDetails = ''
   emit('close')
 }
+
+const itemUsed = computed((): boolean => {
+  return (props.itemToDelete.used?.length ?? 0) > 0
+})
 </script>
 
 <template>
@@ -55,16 +59,23 @@ function close() {
     kind="warning"
     :title="t('standalone.users_database.delete_database')"
     :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting || itemToDelete.used"
+    :primaryButtonDisabled="isDeleting || itemUsed"
     :primaryButtonLoading="isDeleting"
     :close-aria-label="t('common.close')"
     @primaryClick="deleteDatabase()"
     @close="close()"
-    :cancel-label="itemToDelete.used ? t('common.cancel') : t('common.close')"
+    :cancel-label="itemUsed ? t('common.cancel') : t('common.close')"
   >
-    <p v-if="itemToDelete.used">
-      {{ t('standalone.users_database.database_in_use') }}
-    </p>
+    <div v-if="itemUsed">
+      <p>
+        {{ t('standalone.users_database.database_in_use', props.itemToDelete.used?.length ?? 1) }}
+      </p>
+      <ul class="list-inside list-disc">
+        <li v-for="used in props.itemToDelete.used" :key="used">
+          {{ t('standalone.users_database.' + used) }}
+        </li>
+      </ul>
+    </div>
     <p v-else>
       {{
         t('standalone.users_database.delete_database_message', {

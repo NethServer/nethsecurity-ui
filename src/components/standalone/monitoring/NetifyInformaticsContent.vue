@@ -121,7 +121,7 @@ function copyUuid() {
         :title="error.notificationTitle"
         :description="error.notificationDescription"
       />
-      <div v-if="!error.notificationTitle && !loading" class="mb-8 flex flex-col gap-y-6">
+      <div v-if="!loading" class="mb-8 flex flex-col gap-y-6">
         <div class="relative flex items-end gap-2">
           <NeTextInput
             v-model="uuid"
@@ -160,7 +160,7 @@ function copyUuid() {
           "
         />
         <div>
-          <NeButton :disabled="loading" :loading="loading" kind="primary" @click="save()">
+          <NeButton :disabled="saving" :loading="loading" kind="primary" @click="save()">
             <template #prefix>
               <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
             </template>

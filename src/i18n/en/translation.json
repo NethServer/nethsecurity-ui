@@ -711,7 +711,9 @@
       "server_error": "Remote server error",
       "server_error_description": "The update server appears to have some issues. Try again later.",
       "generic_error": "Error while checking for updates",
-      "generic_error_description": "An error occurred while checking for updates. Try again later."
+      "generic_error_description": "An error occurred while checking for updates. Try again later.",
+      "repository_url_not_set": "Repository URL not set",
+      "repository_url_not_set_description": "The repository URL appears not to be set. Please check the underlying configuration."
     },
     "storage": {
       "title": "Storage",

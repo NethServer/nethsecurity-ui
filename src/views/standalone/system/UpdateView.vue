@@ -119,6 +119,12 @@ async function fetchUpdatesStatus() {
         error.value.notificationTitle = t('standalone.update.server_error')
         error.value.notificationDescription = t('standalone.update.server_error_description')
         break
+      case 'repository_url_not_set':
+        error.value.notificationTitle = t('standalone.update.repository_url_not_set')
+        error.value.notificationDescription = t(
+          'standalone.update.repository_url_not_set_description'
+        )
+        break
       default:
         error.value.notificationTitle = t('standalone.update.generic_error')
         error.value.notificationDescription = t('standalone.update.generic_error_description')

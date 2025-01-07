@@ -97,10 +97,10 @@ const filteredRules = computed(() => {
   }
 })
 
-// enable follows rule.enabled and rule.active_zone
-const enabled = computed(() => {
-  return (rule: FirewallRule) => rule.enabled && rule.active_zone
-})
+// isEnable follows rule.enabled and rule.active_zone
+function isEnabled(rule: FirewallRule): boolean {
+  return rule.enabled && rule.active_zone
+}
 
 watch(
   () => props.rules,
@@ -184,7 +184,7 @@ function getRuleActionIcon(ruleTarget: string) {
 }
 
 function getRuleActionColor(rule: FirewallRule) {
-  if (!enabled.value) {
+  if (isEnabled(rule)) {
     return 'text-gray-500 dark:text-gray-400'
   }
 
@@ -328,13 +328,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   v-if="!textFilter"
                   :class="[
                     'cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70',
-                    !enabled(rule) ? disabledRuleClasses : ''
+                    !isEnabled(rule) ? disabledRuleClasses : ''
                   ]"
                 >
                   <FontAwesomeIcon :icon="faGripVertical" />
                 </td>
                 <!-- cannot drag & drop rules with active text filter -->
-                <td v-else :class="!enabled(rule) ? disabledRuleClasses : ''">
+                <td v-else :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                     <template #trigger>
                       <FontAwesomeIcon
@@ -348,12 +348,12 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </NeTooltip>
                 </td>
                 <!-- name -->
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <div
                     class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
                   >
                     <div>
-                      <div :class="{ 'opacity-50': !enabled(rule) }">
+                      <div :class="{ 'opacity-50': !isEnabled(rule) }">
                         {{ rule.name }}
                       </div>
                       <div v-if="!rule.active_zone" class="mt-4">
@@ -408,38 +408,38 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </div>
                 </td>
                 <!-- source -->
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="source"
                     :rulesType="rulesType"
-                    :enabled="enabled(rule)"
+                    :enabled="isEnabled(rule)"
                     :hostSets="hostSets"
                     :domainSets="domainSets"
                     :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- destination -->
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
                     columnType="destination"
                     :rulesType="rulesType"
-                    :enabled="enabled(rule)"
+                    :enabled="isEnabled(rule)"
                     :hostSets="hostSets"
                     :domainSets="domainSets"
                     :loadingObjects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- service -->
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
-                  <span :class="{ 'opacity-50': !enabled(rule) }">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
+                  <span :class="{ 'opacity-50': !isEnabled(rule) }">
                     {{ getServiceText(rule) }}
                   </span>
                 </td>
                 <!-- action -->
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
-                  <span :class="['flex items-center gap-x-2', { 'opacity-50': !enabled(rule) }]">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
+                  <span :class="['flex items-center gap-x-2', { 'opacity-50': !isEnabled(rule) }]">
                     <font-awesome-icon
                       :icon="['fas', getRuleActionIcon(rule.target)]"
                       :class="getRuleActionColor(rule)"
@@ -447,7 +447,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     {{ rule.target }}
                   </span>
                 </td>
-                <td :class="!enabled(rule) ? disabledRuleClasses : ''">
+                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->
                   <div class="flex justify-end gap-2">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">

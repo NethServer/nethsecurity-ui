@@ -69,7 +69,6 @@ async function getConfiguration() {
       let configuration = getDataConfiguration.data
       form.value.status = configuration.enabled
       form.value.uuid = configuration.uuid
-      loading.value = false
     }
   } catch (exception: any) {
     isError.value = true
@@ -77,6 +76,8 @@ async function getConfiguration() {
       'error.cannot_retrieve_netify_informatics_configuration'
     )
     errorLoadingConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
+  } finally {
+    loading.value = false
   }
 }
 

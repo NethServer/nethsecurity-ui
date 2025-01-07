@@ -55,17 +55,23 @@ function close() {
     kind="warning"
     :title="t('standalone.users_database.delete_database')"
     :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
+    :primaryButtonDisabled="isDeleting || itemToDelete.used"
     :primaryButtonLoading="isDeleting"
     :close-aria-label="t('common.close')"
     @primaryClick="deleteDatabase()"
     @close="close()"
+    :cancel-label="itemToDelete.used ? t('common.cancel') : t('common.close')"
   >
-    {{
-      t('standalone.users_database.delete_database_message', {
-        name: itemToDelete.name
-      })
-    }}
+    <p v-if="itemToDelete.used">
+      {{ t('standalone.users_database.database_in_use') }}
+    </p>
+    <p v-else>
+      {{
+        t('standalone.users_database.delete_database_message', {
+          name: itemToDelete.name
+        })
+      }}
+    </p>
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"

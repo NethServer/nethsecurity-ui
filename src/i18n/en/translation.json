@@ -1877,7 +1877,8 @@
       "administrator_tooltip": "A user promoted to administrator can access the administration web interface and configure this unit.",
       "remove_admin": "Remove from administrator users",
       "set_admin": "Set as administrator user",
-      "administrator_table_tooltip": "Administrator user"
+      "administrator_table_tooltip": "Administrator user",
+      "database_in_use": "Database is in use by OpenVPN RoadWarrior, please remove it from the server configuration first."
     },
     "logs": {
       "title": "Logs",

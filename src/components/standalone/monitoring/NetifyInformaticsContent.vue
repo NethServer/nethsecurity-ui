@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faArrowUpRightFromSquare, faCopy, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { NeButton } from '@nethesis/vue-components'
 import {
   NeSkeleton,
@@ -133,7 +134,7 @@ function copy_uuid() {
         <p>{{ t('standalone.netify_informatics.content_description') }}</p>
         <NeButton kind="tertiary" size="lg" @click="open_dashboard()" class="ml-2 shrink-0">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'arrow-up-right-from-square']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faArrowUpRightFromSquare" aria-hidden="true" />
           </template>
           {{ t('standalone.netify_informatics.open_netify_dashboard') }}</NeButton
         >
@@ -158,14 +159,14 @@ function copy_uuid() {
           </NeTextInput>
           <NeButton kind="tertiary" size="sm" @click="copy_uuid" class="ml-2.5 mt-8">
             <template #prefix>
-              <font-awesome-icon :icon="['fas', 'copy']" class="h-4 w-4" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.netify_informatics.copy') }}
           </NeButton>
           <NeBadge
             class="ml-2.5 mt-8"
             v-if="JustCopied"
-            :icon="['fas', 'check']"
+            :icon="faCheck"
             :text="t('standalone.netify_informatics.copied_to_clipboard')"
             kind="secondary"
             :rounded="false"

@@ -1552,7 +1552,7 @@
       "attack_patterns_tooltip": "Enter a regular expression to search the logs; if matched, the source IP will be marked as suspicious.",
       "add_pattern": "Add pattern",
       "block_dos": "Block DoS",
-      "block_dos_description": "DoS (Denial of Serevice) limits excessive suspicious requests from a single source. The source will be blocked if thresholds are exceeded. ",
+      "block_dos_description": "DoS (Denial of Service) limits excessive suspicious requests from a single source. The source will be blocked if thresholds are exceeded. ",
       "block_icmp_dos": "Block ICMP DoS",
       "block_syn_dos": "Block SYN DoS",
       "block_udp_dos": "Block UDP DoS",

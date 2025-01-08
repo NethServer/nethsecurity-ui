@@ -108,8 +108,8 @@ async function fetchUpdatesStatus() {
         error.value.notificationDescription = t('standalone.update.connection_error_description')
         break
       case 'maintenance':
-        error.value.notificationTitle = t('standalone.update.maintenance_mode')
-        error.value.notificationDescription = t('standalone.update.maintenance_mode_description')
+        error.value.notificationTitle = t('standalone.update.maintenance')
+        error.value.notificationDescription = t('standalone.update.maintenance_description')
         break
       case 'unauthorized':
         error.value.notificationTitle = t('standalone.update.unauthorized')

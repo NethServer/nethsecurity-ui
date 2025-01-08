@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.0](https://github.com/NethServer/nethsecurity-ui/compare/1.16.2...1.17.0) (2025-01-08)
+
+
+### Features
+
+* added netify interface ([#467](https://github.com/NethServer/nethsecurity-ui/issues/467)) ([09e3cad](https://github.com/NethServer/nethsecurity-ui/commit/09e3cad0a887730f4969a25f8e7084015285d5e2))
+* **firewall:** highlight rules on non-existent zones ([#468](https://github.com/NethServer/nethsecurity-ui/issues/468)) ([8019f6d](https://github.com/NethServer/nethsecurity-ui/commit/8019f6da9a46e049f24f3c9c1e16a4abd21fd1e2))
+
 ## [1.16.2](https://github.com/NethServer/nethsecurity-ui/compare/1.16.1...1.16.2) (2025-01-07)
 
 

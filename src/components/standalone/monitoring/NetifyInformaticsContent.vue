@@ -107,7 +107,7 @@ function copyUuid() {
     <FormLayout class="max-w-6xl">
       <template #description>
         <p>{{ t('standalone.netify_informatics.content_description') }}</p>
-        <NeLink href="https://portal.netify.ai/login" target="_blank">
+        <NeLink href="https://portal.netify.ai/login" target="_blank" class="mt-4 inline-block">
           <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
           {{ t('standalone.netify_informatics.open_netify_dashboard') }}
         </NeLink>

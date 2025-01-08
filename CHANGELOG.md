@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.2](https://github.com/NethServer/nethsecurity-ui/compare/1.17.1...1.17.2) (2025-01-08)
+
+
+### Bug Fixes
+
+* **updates:** correctly enable updates page even with errors ([#474](https://github.com/NethServer/nethsecurity-ui/issues/474)) ([ab4aeca](https://github.com/NethServer/nethsecurity-ui/commit/ab4aeca401417cd4489a00eee0160ac013490e6b))
+
 ## [1.17.1](https://github.com/NethServer/nethsecurity-ui/compare/1.17.0...1.17.1) (2025-01-08)
 
 

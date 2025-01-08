@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.1](https://github.com/NethServer/nethsecurity-ui/compare/1.17.0...1.17.1) (2025-01-08)
+
+
+### Bug Fixes
+
+* **lang:** fix typo in i18n string ([#471](https://github.com/NethServer/nethsecurity-ui/issues/471)) ([e9bde29](https://github.com/NethServer/nethsecurity-ui/commit/e9bde2987e7a7e9cc138a1d07b9c6b0023091712))
+* **updates:** typos in tranlsation strings ([#473](https://github.com/NethServer/nethsecurity-ui/issues/473)) ([a452129](https://github.com/NethServer/nethsecurity-ui/commit/a4521294c4789c2201ba79abb9f2b96cd26ac6e5))
+
 ## [1.17.0](https://github.com/NethServer/nethsecurity-ui/compare/1.16.2...1.17.0) (2025-01-08)
 
 

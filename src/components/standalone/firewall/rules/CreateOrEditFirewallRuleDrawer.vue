@@ -720,8 +720,7 @@ async function saveRule() {
       return tag.id
     }),
     log: isLoggingEnabled.value,
-    system_rule: props.currentRule?.system_rule || false,
-    active_zone: props.currentRule?.active_zone || false
+    system_rule: props.currentRule?.system_rule || false
   }
 
   if (isEditingRule.value && props.currentRule) {

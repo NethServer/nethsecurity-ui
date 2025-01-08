@@ -70,7 +70,7 @@ export interface FirewallRule {
   ns_tag: string[] // tags
   add_to_top: boolean // add rule to top?
   system_rule: boolean // system rule?
-  active_zone: boolean // zone exists?
+  active_zone?: boolean // zone exists?
 }
 
 export interface NatRule {

@@ -99,7 +99,7 @@ const filteredRules = computed(() => {
 
 // isEnable follows rule.enabled and rule.active_zone
 function isEnabled(rule: FirewallRule): boolean {
-  return rule.enabled && rule.active_zone
+  return !!rule.enabled && !!rule.active_zone
 }
 
 watch(

@@ -131,9 +131,14 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/security/DpiFilterView.vue')
   },
   {
-    path: 'security/threat-shield',
+    path: 'security/threat-shield-ip',
     name: 'ThreatShield',
     component: () => import('../views/standalone/security/ThreatShieldView.vue')
+  },
+  {
+    path: 'security/threat-shield-dns',
+    name: 'ThreatShieldDns',
+    component: () => import('../views/standalone/security/ThreatShieldDnsView.vue')
   },
   {
     path: 'system/storage',

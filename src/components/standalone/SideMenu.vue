@@ -179,7 +179,11 @@ const navigation: Ref<MenuItem[]> = ref([
     children: [
       {
         name: 'standalone.threat_shield.title',
-        to: 'security/threat-shield'
+        to: 'security/threat-shield-ip'
+      },
+      {
+        name: 'standalone.threat_shield_dns.title',
+        to: 'security/threat-shield-dns'
       },
       {
         name: 'standalone.flashstart.title',

@@ -346,7 +346,7 @@ async function getAttackReport() {
             kind="primary"
             @click="
               () => {
-                router.push(`${getStandaloneRoutePrefix()}/security/threat-shield?tab=settings`)
+                router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-ip?tab=settings`)
               }
             "
           >

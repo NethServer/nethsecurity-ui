@@ -23,14 +23,16 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   blocklists: Blocklist[]
-  disableToggle: boolean
+  disableToggles: boolean
+  kind: 'ip' | 'dns'
+  loading?: boolean
 }>()
 
 defineEmits<{
-  enableDisable: [item: Blocklist]
+  toggleBlocklist: [item: Blocklist]
 }>()
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => props.blocklists, {
   itemsPerPage: pageSize
@@ -57,6 +59,10 @@ function getTypeIcon(item: Blocklist) {
       return 'warning'
   }
 }
+
+function getBlocklistName(blocklist: Blocklist) {
+  return props.kind === 'ip' ? blocklist.description : blocklist.name
+}
 </script>
 
 <template>
@@ -65,18 +71,22 @@ function getTypeIcon(item: Blocklist) {
     cardBreakpoint="xl"
     :skeletonColumns="4"
     :skeletonRows="8"
+    :loading="loading"
     class="z-10"
   >
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.threat_shield.name') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.threat_shield.type') }}</NeTableHeadCell>
+      <NeTableHeadCell v-if="kind == 'dns'">
+        {{ t('standalone.threat_shield.description') }}
+      </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.threat_shield.confidence') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.name">
         <NeTableCell :data-label="t('standalone.threat_shield.name')">
-          <p>{{ item.description }}</p>
+          <p>{{ getBlocklistName(item) }}</p>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.type')">
           <div class="flex flex-row items-center gap-x-2">
@@ -85,6 +95,13 @@ function getTypeIcon(item: Blocklist) {
               {{ getTypeLabel(item) }}
             </p>
           </div>
+        </NeTableCell>
+        <NeTableCell v-if="kind == 'dns'" :data-label="t('standalone.threat_shield.description')">
+          {{
+            te(`standalone.threat_shield_dns.description_${item.name}`)
+              ? t(`standalone.threat_shield_dns.description_${item.name}`)
+              : t('standalone.threat_shield.unknown')
+          }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">
           <p v-if="item.confidence === -1">{{ t('standalone.threat_shield.unknown') }}</p>
@@ -109,10 +126,10 @@ function getTypeIcon(item: Blocklist) {
             v-model="item.enabled"
             @change="
               () => {
-                $emit('enableDisable', item)
+                $emit('toggleBlocklist', item)
               }
             "
-            :disabled="disableToggle || item.type === 'unknown'"
+            :disabled="disableToggles || item.type === 'unknown'"
             :label="item.enabled ? t('common.enabled') : t('common.disabled')"
           />
         </NeTableCell>

@@ -52,7 +52,8 @@
     "unknown": "Sconosciuto",
     "no_data_available": "Nessun dato disponibile",
     "upload": "Upload",
-    "confirm": "Conferma"
+    "confirm": "Conferma",
+    "ip_address": "Indirizzo IP"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -378,7 +379,10 @@
     "invalid_alphanumeric": "Sono consentite solo lettere e numeri",
     "network_conflict": "Questo nome è già utilizzato da un'altra interfaccia di rete",
     "empty_domains": "Uno o più domini sono vuoti",
-    "invalid_domains": "Uno o più domini non sono validi"
+    "invalid_domains": "Uno o più domini non sono validi",
+    "invalid_space": "Il campo non può contenere spazi",
+    "total_chars_exceeded": "Ci sono troppi domini. Rimuovine alcuni e includili in un nuovo set di domini.",
+    "cannot_retrieve_latency_and_quality_report": "Impossibile recuperare il report sulla latenza e sulla qualità"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1096,7 +1100,9 @@
       "sourcebypass_helper": "Inserisci indirizzi IP o reti in formato CIDR. Gli indirizzi inseriti non saranno soggetti al filtro DNS",
       "username_helper": "Inserisci il nome utente o l'indirizzo email registrato su {flashstartUrl}",
       "add_sourcebypass": "Aggiungi bypass sorgente",
-      "title": "Filtro FlashStart"
+      "title": "Filtro FlashStart",
+      "flashstart_disabled": "FlashStart è disattivato",
+      "flashstart_disabled_description": "Il filtro FlashStart è disponibile solo con un abbonamento {product}"
     },
     "hotspot": {
       "settings": {
@@ -1599,7 +1605,38 @@
       "dynamic_range_ip_message": "È possibile riservare indirizzi IP ad account OpenVPN al di fuori dell'intervallo seguente.",
       "dynamic_range_ip": "Intervallo IP dinamico",
       "dynamic_range_ip_start": "Inizio intervallo IP dinamico",
-      "download_all_configs": "Scarica tutte le configurazioni"
+      "download_all_configs": "Scarica tutte le configurazioni",
+      "history": {
+        "bytes_received": "Byte ricevuti",
+        "duration": "Durata",
+        "last_3_months": "Ultimi 3 mesi",
+        "remote_ip_address": "Indirizzo IP remoto",
+        "today": "Oggi",
+        "bytes_sent": "Byte inviati",
+        "virtual_ip_address": "Indirizzo IP virtuale",
+        "download_history": "Scarica la cronologia del server",
+        "received_sent": "Ricevuto / Inviato",
+        "no_connections_found": "Nessuna connessione trovata",
+        "connection_history_description": "Questa pagina mostra la cronologia delle connessioni effettuate dagli utenti al server OpenVPN Road Warrior. La cronologia delle connessioni è memorizzata nella RAM e viene persa quando l'unità viene riavviata.",
+        "account": "Account",
+        "filter_change_suggestion": "Prova a cambiare i filtri di ricerca",
+        "last_week": "Settimana scorsa",
+        "end_time": "Fine",
+        "accounts": "Account",
+        "cannot_fetch_history": "Impossibile caricare lo storico",
+        "start_time": "Inizio",
+        "time_range": "Periodo",
+        "cannot_download_history": "Impossibile scaricare lo storico",
+        "filter_accounts": "Filtra account",
+        "last_month": "Mese precedente",
+        "reset_filter": "Ripristina filtri",
+        "all": "Qualsiasi",
+        "reset_filters": "Ripristina filtri"
+      },
+      "tabs": {
+        "road_warrior_server": "Server Road Warrior",
+        "connections_history": "Cronologia delle connessioni"
+      }
     },
     "qos": {
       "interface": "Interfaccia",
@@ -2063,7 +2100,20 @@
       "description": "Analisi approfondita delle prestazioni del sistema e delle applicazioni, metriche dettagliate e visualizzazioni. I dati di monitoraggio vengono memorizzati in RAM e ripristinati al riavvio dell'unità. Se l'unità è collegata a un controller remoto, le metriche vengono salvate anche sul controller e persistono al riavvio dell'unità .",
       "cannot_open_report_from_controller": "Impossibile aprire il report per l'unità controllata. È possibile aprire il report accedendo direttamente all'interfaccia dell unità, o accedendo all'interfaccia del controller, andando alla pagina 'Gestione unità, facendo clic sul menu tre punti dell'unità e selezionando 'Apri metriche'.",
       "times_blocked": "Numero blocchi",
-      "timestamp": "Data e ora"
+      "timestamp": "Data e ora",
+      "daily_total_traffic": "Traffico totale giornaliero",
+      "public_ip_address": "Indirizzo IP pubblico",
+      "latency_and_packet_delivery_rate": "Latenza e delivery rate pacchetti",
+      "error_fetching_data": "Errore nel recupero dei dati",
+      "ping_host_packet_delivery_rate": "Delivery rate pacchetti per {pingHost}",
+      "packet_delivery_rate": "Delivery rate pacchetti",
+      "ping_host_latency": "Latenza per {pingHost}",
+      "no_hosts_configured_for_monitoring": "Nessun host configurato per il monitoraggio",
+      "max_latency": "Latenza massima",
+      "min_latency": "Latenza minima",
+      "no_data_available": "Nessun dato disponibile",
+      "avg_latency": "Latenza media",
+      "remote_hosts": "Host remoti"
     },
     "ping_latency_monitor": {
       "title": "Monitor latenza ping",
@@ -2260,7 +2310,10 @@
       "password_suggestion_3": "Almeno una minuscola (a-z)",
       "unchanged": "Invariata",
       "edit_user": "Modifica utente",
-      "user_edited": "Utente modificato"
+      "user_edited": "Utente modificato",
+      "two_fa_status": "Stato 2FA",
+      "two_fa_enabled": "Abilitato",
+      "two_fa_disabled": "Disabilitato"
     }
   },
   "ne_text_input": {
@@ -2314,7 +2367,10 @@
   },
   "ne_dropdown_filter": {
     "clear_filter": "Azzera filtro",
-    "open_filter": "Apri filtro"
+    "open_filter": "Apri filtro",
+    "clear_selection": "Cancella selezione",
+    "more_options_hidden": "Continua a digitare per visualizzare altre opzioni",
+    "no_options": "Nessuna opzione"
   },
   "sort": {
     "sort_by": "Ordina per",

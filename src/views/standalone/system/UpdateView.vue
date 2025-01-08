@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import {
-  NeHeading,
+  getAxiosErrorMessage,
   NeButton,
+  NeHeading,
   NeInlineNotification,
-  NeSkeleton,
   NeLink,
-  NeTooltip,
-  getAxiosErrorMessage
+  NeModal,
+  NeSkeleton,
+  NeToggle,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { NeModal, NeToggle } from '@nethesis/vue-components'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'
 import UploadImageDrawer from '@/components/standalone/update/UploadImageDrawer.vue'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { computed } from 'vue'
-import { onMounted } from 'vue'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 import { getProductName } from '@/lib/config'
@@ -52,6 +51,8 @@ const cancelScheduleError = ref({
   notificationDetails: ''
 })
 
+const disableRemoteUpdates = ref(false)
+
 const lastPackageUpdateCheck = ref<Date | null>(null)
 const packageUpdates = ref<PackageUpdate[]>([])
 const systemUpdateData = ref<SystemUpdate | null>(null)
@@ -83,9 +84,8 @@ function cleanError() {
 async function fetchUpdatesStatus() {
   cleanError()
   loading.value = true
+  disableRemoteUpdates.value = false
   try {
-    systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
-
     const lastPackageUpdateCheckResponse = (
       await ubusCall('ns.update', 'get-package-updates-last-check')
     ).data
@@ -100,8 +100,10 @@ async function fetchUpdatesStatus() {
     automaticUpdatesEnabled.value = (
       await ubusCall('ns.update', 'get-automatic-updates-status')
     ).data.enabled
-    loading.value = false
+
+    systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
   } catch (err: any) {
+    disableRemoteUpdates.value = true
     switch (err.response?.data?.message) {
       case 'connection_error':
         error.value.notificationTitle = t('standalone.update.connection_error')
@@ -130,6 +132,8 @@ async function fetchUpdatesStatus() {
         error.value.notificationDescription = t('standalone.update.generic_error_description')
         error.value.notificationDetails = err.toString()
     }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -242,7 +246,7 @@ onMounted(() => {
       </p>
       <NeButton
         @click="checkPackageUpdates"
-        :disabled="isCheckingPackageUpdates"
+        :disabled="isCheckingPackageUpdates || disableRemoteUpdates"
         :loading="isCheckingPackageUpdates"
       >
         <template #prefix>
@@ -316,10 +320,8 @@ onMounted(() => {
 
     <NeSkeleton v-if="loading" :lines="5" />
     <template v-else>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        {{
-          t('standalone.update.installed_release', { release: systemUpdateData?.currentVersion })
-        }}
+      <p v-if="systemUpdateData?.currentVersion" class="text-sm text-gray-500 dark:text-gray-400">
+        {{ t('standalone.update.installed_release', { release: systemUpdateData.currentVersion }) }}
       </p>
       <NeInlineNotification
         kind="info"
@@ -362,6 +364,7 @@ onMounted(() => {
             systemUpdateData.lastVersion != systemUpdateData?.currentVersion &&
             !scheduleDate
           "
+          :disabled="disableRemoteUpdates"
           @click="showEditScheduleDrawer"
           ><template #prefix>
             <font-awesome-icon

@@ -184,7 +184,7 @@ function getRuleActionIcon(ruleTarget: string) {
 }
 
 function getRuleActionColor(rule: FirewallRule) {
-  if (isEnabled(rule)) {
+  if (!isEnabled(rule)) {
     return 'text-gray-500 dark:text-gray-400'
   }
 
@@ -356,12 +356,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                       <div :class="{ 'opacity-50': !isEnabled(rule) }">
                         {{ rule.name }}
                       </div>
-                      <div v-if="!rule.active_zone" class="mt-4">
+                      <div v-if="!rule.active_zone">
                         <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                           <template #trigger>
                             <NeBadge
                               kind="warning"
-                              class="-mt-2"
+                              size="xs"
+                              class="mt-2"
                               :icon="['fas', 'triangle-exclamation']"
                               :text="t('standalone.firewall_rules.inactive')"
                             />
@@ -371,12 +372,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                           </template>
                         </NeTooltip>
                       </div>
-                      <div v-else-if="!rule.enabled" class="mt-4">
+                      <div v-else-if="!rule.enabled">
                         <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
                           <template #trigger>
                             <NeBadge
                               kind="secondary"
-                              class="-mt-2"
+                              size="xs"
+                              class="mt-2"
                               :icon="['fas', 'circle-xmark']"
                               :text="t('common.disabled')"
                             />

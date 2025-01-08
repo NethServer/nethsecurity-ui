@@ -1403,8 +1403,8 @@
       "source_object": "Source object",
       "destination_object": "Destination object",
       "inactive": "Inactive",
-      "zone_no_longer_exists": "This rule is not active because it uses a zone that no longer exists",
-      "disabled_rule": "This rule is disabled by its configuration, you can enable it again"
+      "zone_no_longer_exists": "This rule is inactive because it uses a zone that no longer exists",
+      "disabled_rule": "This rule has been manually disabled, but can be re-enabled"
     },
     "firewall": {
       "title": "Firewall"

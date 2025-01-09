@@ -79,8 +79,10 @@ async function saveSettings() {
     const state = status.value ? 'enable' : 'disable'
     await ubusCall('ns.netifyd', state)
     notificationsStore.createNotification({
-      title: t('standalone.netify_informatics.netify_informatics_' + state),
-      description: t('standalone.netify_informatics.netify_informatics_' + state + '_description'),
+      title: t('standalone.netify_informatics.metadata_sending_' + state),
+      description: t(
+        'standalone.netify_informatics.metadata_sending_configuration_saved_successfully'
+      ),
       kind: 'success'
     })
     getConfiguration()
@@ -128,7 +130,25 @@ function copyUuid() {
         :description="error.saveNotificationDescription"
       />
       <div v-if="!loading" class="mb-8 flex flex-col gap-y-6">
-        <div class="relative flex items-end gap-2">
+        <NeToggle
+          v-model="status"
+          :disabled="error.getNotificationTitle !== ''"
+          :topLabel="t('standalone.netify_informatics.metadata_sending')"
+          :label="
+            status
+              ? t('standalone.netify_informatics.status_enabled')
+              : t('standalone.netify_informatics.status_disabled')
+          "
+        >
+          <template #topTooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.netify_informatics.enable_metadata_sending') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
+        <div v-if="status" class="relative flex items-end gap-2">
           <NeTextInput
             v-model="uuid"
             disabled
@@ -163,16 +183,6 @@ function copyUuid() {
             {{ t('standalone.netify_informatics.copy') }}
           </NeButton>
         </div>
-        <NeToggle
-          v-model="status"
-          :disabled="error.getNotificationTitle !== ''"
-          :topLabel="t('standalone.netify_informatics.status')"
-          :label="
-            status
-              ? t('standalone.netify_informatics.status_enabled')
-              : t('standalone.netify_informatics.status_disabled')
-          "
-        />
         <div>
           <NeButton
             :disabled="error.getNotificationTitle !== '' || saving"

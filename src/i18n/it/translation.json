@@ -382,7 +382,8 @@
     "invalid_domains": "Uno o più domini non sono validi",
     "invalid_space": "Il campo non può contenere spazi",
     "total_chars_exceeded": "Ci sono troppi domini. Rimuovine alcuni e includili in un nuovo set di domini.",
-    "cannot_retrieve_latency_and_quality_report": "Impossibile recuperare il report sulla latenza e sulla qualità"
+    "cannot_retrieve_latency_and_quality_report": "Impossibile recuperare il report sulla latenza e sulla qualità",
+    "cannot_retrieve_netify_informatics_configuration": "Impossibile caricare la configurazione di Netify Informatics"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1728,7 +1729,10 @@
       "any_source_address": "Qualsiasi indirizzo sorgente",
       "any_destination_address": "Qualsiasi indirizzo di destinazione",
       "source_object": "Oggetto sorgente",
-      "destination_object": "Oggetto di destinazione"
+      "destination_object": "Oggetto di destinazione",
+      "inactive": "Inattiva",
+      "zone_no_longer_exists": "Questa regola è stata disattivata perché utilizza una zona che non esiste più",
+      "disabled_rule": "Questa regola è stata disabilitata manualmente, ma può essere riattivata"
     },
     "certificates": {
       "title": "Certificati",
@@ -2140,6 +2144,22 @@
     },
     "monitoring": {
       "title": "Monitoraggio"
+    },
+    "netify_informatics": {
+      "title": "Netify Informatics",
+      "netify_informatics_disable_description": "L'invio di metadati è stato disattivato",
+      "open_netify_dashboard": "Apri dashboard Netify",
+      "status_enabled": "Abilitato",
+      "status_disabled": "Disabilitato",
+      "copied_to_clipboard": "Copiato negli appunti",
+      "copy": "Copia",
+      "metadata_sending_enable": "Invio dei metadati abilitato",
+      "metadata_sending": "Invia i metadati dei flussi di rete a Netify Informatics",
+      "metadata_sending_configuration_saved_successfully": "Configurazione salvata con successo",
+      "metadata_sending_disable": "Invio metadati disabilitato",
+      "enable_metadata_sending": "Assicurarsi di attivare l'invio di metadati prima di effettuare il provisioning dell'agent",
+      "content_description": "Netify Informatics è un servizio cloud di terze parti che utilizza analisi e AI per convertire i metadati DPI locali ottenuti da NethSecurity in network intelligence di alto livello. Abilitare l'invio di metadati e salvare la configurazione. Copiare l'agent UUID, quindi accedere al sito Netify e procedere con la procedura di provisioning dell'agent.",
+      "uuid": "Agent UUID"
     }
   },
   "controller": {

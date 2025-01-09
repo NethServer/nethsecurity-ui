@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.3](https://github.com/NethServer/nethsecurity-ui/compare/1.17.2...1.17.3) (2025-01-09)
+
+
+### Bug Fixes
+
+* **netify:** update notification titles and improve metadata sending descriptions ([#480](https://github.com/NethServer/nethsecurity-ui/issues/480)) ([45d9cec](https://github.com/NethServer/nethsecurity-ui/commit/45d9ceca6f547cbd342c50da3cd708baa9b80a79))
+* **rules:** correctly set action color ([#477](https://github.com/NethServer/nethsecurity-ui/issues/477)) ([ee03e7c](https://github.com/NethServer/nethsecurity-ui/commit/ee03e7c7245708255559b4fecfc63753a90ac79c))
+
 ## [1.17.2](https://github.com/NethServer/nethsecurity-ui/compare/1.17.1...1.17.2) (2025-01-08)
 
 

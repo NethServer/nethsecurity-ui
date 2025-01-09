@@ -448,18 +448,19 @@
   "standalone": {
     "netify_informatics": {
       "title": "Netify Informatics",
-      "netify_informatics_enable": "Netify Informatics enabled",
-      "netify_informatics_disable": "Netify Informatics disabled",
-      "netify_informatics_enable_description": "Metadata sending is now active",
+      "metadata_sending_enable": "Metadata sending enabled",
+      "metadata_sending_disable": "Metadata sending disabled",
+      "metadata_sending_configuration_saved_successfully": "Configuration saved successfully",
       "netify_informatics_disable_description": "Metadata sending has been disabled",
-      "content_description": "Netify Informatics is a third-party cloud service that utilizes analytics and AI to convert local DPI metadata obtained from NethSecurity into high-level network intelligence. Copy the Agent UUID, then access Netify site and proceed with provision agent wizard.",
+      "content_description": "Netify Informatics is a third-party cloud service that utilizes analytics and AI to convert local DPI metadata obtained from NethSecurity into high-level network intelligence. Enable metadata sending and save the configuration. Copy the Agent UUID, then access Netify site and proceed with provision agent wizard.",
       "uuid": "Agent UUID",
       "status_disabled": "Disabled",
       "status_enabled": "Enabled",
-      "status": "Status",
+      "metadata_sending": "Send flow metadata to Netify Informatics",
       "open_netify_dashboard": "Open Netify dashboard",
       "copy": "Copy",
-      "copied_to_clipboard": "Copied to clipboard"
+      "copied_to_clipboard": "Copied to clipboard",
+      "enable_metadata_sending": "Make sure to enable metadata sending before provisioning the agent"
     },
     "dashboard": {
       "title": "Dashboard",

@@ -2203,6 +2203,33 @@
       "domain_set_already_exists": "Domain set already exists",
       "delete_domain_set": "Delete domain set",
       "database_mwan3": "MultiWAN"
+    },
+    "ips": {
+      "title": "Intrusion Prevention System",
+      "sidebar_title": "IPS",
+      "event_list_tab": "Event list",
+      "filter_bypass_tab": "Filter bypass",
+      "disabled_rules_tab": "Disabled rules",
+      "suppressed_alerts_tab": "Suppressed alerts",
+      "settings_tab": "Settings",
+      "ips_is_disabled": "IPS is disabled",
+      "ips_is_disabled_description": "Enable it in Settings page to start monitoring network activity",
+      "go_to_settings": "Go to Settings",
+      "ips_status": "IPS status",
+      "ips_settings_description": "TBA",
+      "failed_to_fetch_info": "Failed to fetch information",
+      "policy": "Rule policy",
+      "connectivity": "Connectivity",
+      "connectivity_description": "Prioritizes performance with minimal rule coverage",
+      "balanced": "Balanced",
+      "balanced_description": "Balances security and performance for general use",
+      "security": "Security",
+      "security_description": "Maximizes protection with comprehensive rule coverage",
+      "oinkcode": "Oinkcode",
+      "oinkcode_tooltip": "TBA",
+      "verify_oinkcode": "Test Code",
+      "oinkcode_invalid": "Invalid Oinkcode",
+      "oinkcode_verified": "Verified"
     }
   },
   "controller": {

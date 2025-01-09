@@ -456,11 +456,11 @@
       "uuid": "Agent UUID",
       "status_disabled": "Disabled",
       "status_enabled": "Enabled",
-      "metadata_sending": "Metadata sending",
+      "metadata_sending": "Send flow metadata to Netify Informatics",
       "open_netify_dashboard": "Open Netify dashboard",
       "copy": "Copy",
       "copied_to_clipboard": "Copied to clipboard",
-      "enable_metadata_sending": "Enable metadata sending, copy the Agent UUID and access Netify site to provision agent"
+      "enable_metadata_sending": "Make sure to enable metadata sending before provisioning the agent"
     },
     "dashboard": {
       "title": "Dashboard",

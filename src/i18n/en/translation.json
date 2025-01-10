@@ -2216,7 +2216,7 @@
       "ips_is_disabled_description": "Enable it in Settings page to start monitoring network activity",
       "go_to_settings": "Go to Settings",
       "ips_status": "IPS status",
-      "ips_settings_description": "TBA",
+      "ips_settings_description": "The Snort IPS analyzes all traffic that goes through the firewall. Traffic matching active rules will be blocked. Rules are automatically updated once a day during the night.",
       "failed_to_fetch_info": "Failed to fetch information",
       "policy": "Rule policy",
       "connectivity": "Connectivity",
@@ -2226,7 +2226,7 @@
       "security": "Security",
       "security_description": "Maximizes protection with comprehensive rule coverage",
       "oinkcode": "Oinkcode",
-      "oinkcode_tooltip": "TBA",
+      "oinkcode_tooltip": "The Oinkcode is a unique identifier used to download the latest Snort rule sets. Register for an account on Snort.org to get your Oinkcode.",
       "verify_oinkcode": "Test Code",
       "oinkcode_invalid": "Invalid Oinkcode",
       "oinkcode_verified": "Verified"

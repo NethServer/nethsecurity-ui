@@ -12,6 +12,11 @@ type IpsStatus = {
 
 export type Policy = 'connectivity' | 'balanced' | 'security' | 'max-detect'
 
+/**
+ * FIXME: This won't be supported, phase out by end of implementation
+ *
+ * @deprecated
+ */
 export const useIpsStore = defineStore('ips', () => {
   const uciChangesStore = useUciPendingChangesStore()
 

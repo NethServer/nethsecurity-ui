@@ -7,6 +7,7 @@ import {
   NeBadge,
   NeButton,
   NeInlineNotification,
+  NeLink,
   NeRadioSelection,
   NeTextInput,
   NeToggle,
@@ -77,13 +78,17 @@ const ips = useIpsStore()
               :disabled="ips.saving"
               :invalid-message="ips.invalidOinkcode ? t('standalone.ips.oinkcode_invalid') : ''"
               :label="t('standalone.ips.oinkcode')"
-              autocomplete="oinkcode"
+              autocomplete="off"
               is-password
             >
               <template #tooltip>
                 <NeTooltip>
                   <template #content>
-                    {{ t('standalone.ips.oinkcode_tooltip') }}
+                    <i18n-t keypath="standalone.ips.oinkcode_tooltip" tag="p">
+                      <NeLink href="https://www.snort.org/" target="_blank" inverted-theme>
+                        https://www.snort.org
+                      </NeLink>
+                    </i18n-t>
                   </template>
                 </NeTooltip>
               </template>
@@ -107,6 +112,7 @@ const ips = useIpsStore()
             </div>
           </div>
         </template>
+        <hr />
         <NeButton :disabled="ips.saving" :loading="ips.saving" kind="primary" type="submit">
           <template #prefix>
             <FontAwesomeIcon :icon="faFloppyDisk" />

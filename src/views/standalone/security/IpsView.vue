@@ -42,7 +42,6 @@ const ips = useIpsStore()
         kind="error"
       />
       <IpsFilterBypass v-if="selectedTab == 'filter_bypass'" />
-      <!--      <IpsDisabled v-if="!ips.enabled" />-->
       <IpsSettings v-if="selectedTab == 'settings'" />
     </template>
   </div>

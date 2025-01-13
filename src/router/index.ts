@@ -189,6 +189,11 @@ const standaloneRoutes = [
     path: 'account',
     name: 'Account',
     component: () => import('../views/standalone/AccountView.vue')
+  },
+  {
+    path: 'security/ips',
+    name: 'IPS',
+    component: () => import('../views/standalone/security/IpsView.vue')
   }
 ]
 

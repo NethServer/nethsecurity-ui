@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
 import IpsSettings from '@/components/standalone/security/ips/IpsSettings.vue'
 import { useIpsStore } from '@/stores/standalone/ips'
+import IpsFilterBypass from '@/components/standalone/security/ips/IpsFilterBypass.vue'
 
 const { t } = useI18n()
 const { tabs, selectedTab } = useTabs([
@@ -33,13 +34,14 @@ const ips = useIpsStore()
       @selectTab="selectedTab = $event"
     />
     <NeSkeleton v-if="ips.loading" :lines="10" />
-    <NeInlineNotification
-      v-else-if="ips.error"
-      :description="t(getAxiosErrorMessage(ips.error))"
-      :title="t('standalone.ips.failed_to_fetch_info')"
-      kind="error"
-    />
     <template v-else>
+      <NeInlineNotification
+        v-if="ips.error"
+        :description="t(getAxiosErrorMessage(ips.error))"
+        :title="t('standalone.ips.failed_to_fetch_info')"
+        kind="error"
+      />
+      <IpsFilterBypass v-if="selectedTab == 'filter_bypass'" />
       <!--      <IpsDisabled v-if="!ips.enabled" />-->
       <IpsSettings v-if="selectedTab == 'settings'" />
     </template>

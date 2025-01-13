@@ -2229,7 +2229,18 @@
       "oinkcode_tooltip": "The Oinkcode is a unique identifier used to download the latest Snort rule sets. Register for an account on Snort.org to get your Oinkcode.",
       "verify_oinkcode": "Test Code",
       "oinkcode_invalid": "Invalid Oinkcode",
-      "oinkcode_verified": "Verified"
+      "oinkcode_verified": "Verified",
+      "filter_bypass_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
+      "ips_enabled": "IPS enabled",
+      "no_filter_bypass": "No filter bypass",
+      "add_bypass": "Add bypass",
+      "create_bypass": "Create bypass",
+      "error_loading_bypasses": "Error loading bypasses",
+      "bypass_address": "IP address",
+      "bypass_direction": "Direction",
+      "source": "Source",
+      "destination": "Destination",
+      "bypass_description": "Description"
     }
   },
   "controller": {

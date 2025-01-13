@@ -22,7 +22,6 @@ export const useIpsStore = defineStore('ips', () => {
   const oinkcode = ref('')
 
   function fetch() {
-    loading.value = true
     error.value = undefined
     ubusCall('ns.snort', 'status', {})
       .then((response: AxiosResponse<IpsStatus>) => {

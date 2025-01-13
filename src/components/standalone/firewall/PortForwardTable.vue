@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { PortForward } from '@/views/standalone/firewall/PortForward.vue'
-import { toRefs } from 'vue'
+import { toRefs, computed } from 'vue'
 import {
   NeDropdown,
   NeTable,
@@ -15,8 +15,11 @@ import {
   NeTableBody,
   NeTableRow,
   NeTableCell,
-  NeButton
+  NeButton,
+  NeTooltip,
+  NeBadge
 } from '@nethesis/vue-components'
+import { useObjectStore } from '@/stores/standalone/objects'
 import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
 
 const { t } = useI18n()
@@ -27,6 +30,13 @@ const props = defineProps<{
 }>()
 
 const { portForwards, header } = toRefs(props)
+
+const objects = useObjectStore()
+
+// Computed property to check if the header contains a hyphen
+const hasHyphen = computed(() => {
+  return header.value.includes('-')
+})
 
 const emit = defineEmits([
   'port-forward-duplicate',
@@ -117,6 +127,26 @@ function getCellClasses(item: PortForward) {
         <NeTableRow v-for="item in portForwards" :key="item.id">
           <NeTableCell :data-label="t('standalone.port_forward.name')">
             <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+            <div v-if="hasHyphen">
+              <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
+                <template #trigger>
+                  <NeBadge
+                    kind="warning"
+                    size="xs"
+                    class="mt-2"
+                    :icon="['fas', 'triangle-exclamation']"
+                    :text="t('standalone.port_forward.inactive')"
+                  />
+                </template>
+                <template #content>
+                  {{
+                    t('standalone.port_forward.range_object_not_compatible', {
+                      name: objects.getRecord(item.ns_dst ?? '')?.name || '-'
+                    })
+                  }}
+                </template>
+              </NeTooltip>
+            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.source_port')">
             <p :class="[...getCellClasses(item)]">

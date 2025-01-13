@@ -1357,7 +1357,7 @@
       "no_object": "No object",
       "port_forwards_for_destination_name": "Port forwards for destination '{name}'",
       "inactive": "Inactive",
-      "range_object_not_compatible": "This port forward is inactive because host set [{name}] include an ip range"
+      "range_object_not_compatible": "This port forward is inactive because host set '{name}' includes an ip range"
     },
     "firewall_rules": {
       "title": "Firewall rules",

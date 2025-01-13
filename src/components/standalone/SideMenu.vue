@@ -192,6 +192,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: 'standalone.dpi.title',
         to: 'security/dpi'
+      },
+      {
+        name: 'standalone.ips.sidebar_title',
+        to: 'security/ips'
       }
     ],
     expanded: false

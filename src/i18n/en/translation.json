@@ -2232,6 +2232,7 @@
       "oinkcode_verified": "Verified",
       "filter_bypass_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
       "ips_enabled": "IPS enabled",
+      "ips_disabled": "IPS disabled",
       "no_filter_bypass": "No filter bypass",
       "add_bypass": "Add bypass",
       "create_bypass": "Create bypass",
@@ -2240,7 +2241,17 @@
       "bypass_direction": "Direction",
       "source": "Source",
       "destination": "Destination",
-      "bypass_description": "Description"
+      "bypass_description": "Description",
+      "address_type": "Address type",
+      "ip_address": "IP Address",
+      "direction": "Direction",
+      "direction_tooltip": "TBA",
+      "source_bypass": "Source bypass",
+      "destination_bypass": "Destination bypass",
+      "delete_bypass_modal_title": "Deleting bypass",
+      "delete_bypass_modal_w_description": "Do you want to delete Bypass '{description}'?",
+      "delete_bypass_modal_wo_description": "Do you want to delete Bypass with IP address '{ip}' and direction '{direction}'?",
+      "delete_bypass_error": "Error deleting bypass"
     }
   },
   "controller": {

@@ -3,11 +3,11 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 
 export type Direction = 'src' | 'dst'
-export type Protocol = 'ipv4' | 'ipv6'
+export type AddressType = 'ipv4' | 'ipv6'
 
 export type ByPass = {
   direction: Direction
-  protocol: Protocol
+  protocol: AddressType
   ip: string
   description: string
 }

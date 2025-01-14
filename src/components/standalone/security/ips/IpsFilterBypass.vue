@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import {
   getAxiosErrorMessage,
-  NeBadge,
   NeButton,
+  NeDropdown,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -17,26 +18,46 @@ import {
   useItemPagination,
   useSort
 } from '@nethesis/vue-components'
-import { useIpsStore } from '@/stores/standalone/ips'
 import { useI18n } from 'vue-i18n'
-import {
-  faCheck,
-  faCirclePlus,
-  faMagnifyingGlass,
-  faShield
-} from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus, faMagnifyingGlass, faShield } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref } from 'vue'
-import { type ByPass, useIps } from '@/composables/useIps'
+import { type ByPass } from '@/composables/useIps'
+import IpsCreateBypassDrawer from '@/components/standalone/security/ips/IpsCreateBypassDrawer.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
+import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
+import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
 
-const ips = useIpsStore()
+type ByPassResponse = {
+  bypasses: ByPass[]
+}
+
+const changes = useUciPendingChangesStore()
 const { t } = useI18n()
 
 const creatingBypass = ref(false)
-const { fetchByPasses, error, loadingByPasses, byPasses } = useIps()
+
+const byPasses = ref<ByPass[]>([])
+const loadingByPasses = ref(true)
+const error = ref<Error>()
+
+function listBypasses() {
+  ubusCall('ns.snort', 'list-bypasses', {})
+    .then((response: AxiosResponse<ByPassResponse>) => {
+      byPasses.value = response.data.bypasses
+    })
+    .catch((e: Error) => {
+      error.value = e
+    })
+    .finally(() => {
+      loadingByPasses.value = false
+    })
+}
 
 onMounted(() => {
-  fetchByPasses()
+  listBypasses()
 })
 
 const filter = ref('')
@@ -60,18 +81,43 @@ const onSort = (payload: any) => {
   sortKey.value = payload.key
   sortDescending.value = payload.descending
 }
+
+function savedBypass(bypass: ByPass) {
+  byPasses.value.push(bypass)
+  creatingBypass.value = false
+  changes.getChanges()
+}
+
+function dropDownActions(bypass: ByPass): NeDropdownItem[] {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      danger: true,
+      action: () => {
+        byPassToDelete.value = bypass
+      }
+    }
+  ]
+}
+
+const byPassToDelete = ref<ByPass>()
+
+function handleDeleted() {
+  // Being unable to give an ID to the bypasses, we just fetch again the list
+  listBypasses()
+  byPassToDelete.value = undefined
+  changes.getChanges()
+}
 </script>
 
 <template>
   <div class="space-y-8">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <p class="max-w-lg">{{ t('standalone.ips.filter_bypass_description') }}</p>
-      <NeBadge
-        v-if="ips.enabled"
-        :icon="faCheck"
-        :text="t('standalone.ips.ips_enabled')"
-        kind="success"
-      />
+      <IpsEnabledBadge />
     </div>
 
     <NeInlineNotification
@@ -137,7 +183,11 @@ const onSort = (payload: any) => {
             <NeTableCell :data-label="t('standalone.ips.bypass_description')">
               {{ item.description }}
             </NeTableCell>
-            <NeTableCell :data-label="t('common.actions')"></NeTableCell>
+            <NeTableCell :data-label="t('common.actions')">
+              <div class="flex justify-end">
+                <NeDropdown :items="dropDownActions(item)" :align-to-right="true" />
+              </div>
+            </NeTableCell>
           </NeTableRow>
         </NeTableBody>
         <template #paginator>
@@ -163,6 +213,16 @@ const onSort = (payload: any) => {
           {{ t('standalone.ips.add_bypass') }}
         </NeButton>
       </NeEmptyState>
+      <IpsCreateBypassDrawer
+        :visible="creatingBypass"
+        @close="creatingBypass = false"
+        @saved="savedBypass($event)"
+      />
+      <IpsDeleteBypassModal
+        @close="byPassToDelete = undefined"
+        :bypass="byPassToDelete"
+        @deleted="handleDeleted()"
+      />
     </div>
   </div>
 </template>

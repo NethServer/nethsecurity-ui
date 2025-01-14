@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
-import { type Policy, useIpsStore } from '@/stores/standalone/ips'
 import {
   getAxiosErrorMessage,
   NeBadge,
@@ -15,6 +14,21 @@ import {
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { onMounted, ref } from 'vue'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
+import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
+
+export type IpsStatus = {
+  enabled: boolean
+  ns_policy: Policy
+  oinkcode: string
+}
+
+export type Policy = 'connectivity' | 'balanced' | 'security' | 'max-detect'
+
+const ips = useIpsStatusStore()
 
 const { t } = useI18n()
 const options: Array<{
@@ -39,7 +53,90 @@ const options: Array<{
   }
 ]
 
-const ips = useIpsStore()
+const uciChangesStore = useUciPendingChangesStore()
+
+const loading = ref(true)
+const error = ref<Error>()
+const enabled = ref(false)
+const policy = ref<Policy>('connectivity')
+const oinkcode = ref('')
+
+function fetch() {
+  error.value = undefined
+  ubusCall('ns.snort', 'status', {})
+    .then((response: AxiosResponse<IpsStatus>) => {
+      enabled.value = response.data.enabled
+      policy.value = response.data.ns_policy
+      oinkcode.value = response.data.oinkcode
+    })
+    .catch((reason: Error) => {
+      error.value = reason
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+onMounted(() => {
+  fetch()
+})
+
+const saving = ref(false)
+const saveError = ref<Error>()
+
+function save() {
+  saving.value = true
+  saveError.value = undefined
+  ubusCall('ns.snort', 'save', {
+    enabled: enabled.value,
+    ns_policy: policy.value,
+    oinkcode: oinkcode.value
+  })
+    .then(() => {
+      ips.enabled = enabled.value
+      uciChangesStore.getChanges()
+    })
+    .catch((reason: Error) => {
+      saveError.value = reason
+    })
+    .finally(() => {
+      saving.value = false
+    })
+}
+
+const checkingOinkcode = ref(false)
+/*
+  these variables are decoupled only for the sake of the UI and the different messages that
+  needs to be shown to the user
+   */
+const validOinkcode = ref(false)
+const invalidOinkcode = ref(false)
+
+function checkOinkcode() {
+  checkingOinkcode.value = true
+  error.value = undefined
+  validOinkcode.value = false
+  invalidOinkcode.value = false
+  ubusCall('ns.snort', 'check-oinkcode', {
+    oinkcode: oinkcode.value
+  })
+    .then(() => {
+      validOinkcode.value = true
+      setTimeout(() => {
+        validOinkcode.value = false
+      }, 5000)
+    })
+    .catch((reason: Error) => {
+      if (reason instanceof ValidationError) {
+        invalidOinkcode.value = true
+      } else {
+        error.value = reason
+      }
+    })
+    .finally(() => {
+      checkingOinkcode.value = false
+    })
+}
 </script>
 
 <template>
@@ -48,25 +145,25 @@ const ips = useIpsStore()
       :description="t('standalone.ips.ips_settings_description')"
       :title="t('standalone.ips.ips_status')"
     >
-      <form class="space-y-8" @submit.prevent="ips.save">
+      <form class="space-y-8" @submit.prevent="save">
         <NeInlineNotification
-          v-if="ips.saveError"
-          :description="t(getAxiosErrorMessage(ips.saveError))"
+          v-if="saveError"
+          :description="t(getAxiosErrorMessage(saveError))"
           :title="t('error.cannot_open_unit')"
           kind="error"
         />
         <NeToggle
-          v-model="ips.enabled"
-          :disabled="ips.saving"
-          :label="ips.enabled ? t('common.enabled') : t('common.disabled')"
+          v-model="enabled"
+          :disabled="saving"
+          :label="enabled ? t('common.enabled') : t('common.disabled')"
           :top-label="t('common.status')"
         />
-        <template v-if="ips.enabled">
+        <template v-if="enabled">
           <!-- If the value is not max-detect, show the radio selection -->
           <NeRadioSelection
-            v-if="ips.policy != 'max-detect'"
-            v-model="ips.policy"
-            :disabled="ips.saving"
+            v-if="policy != 'max-detect'"
+            v-model="policy"
+            :disabled="saving"
             :options="options"
           >
             <template #label>{{ t('standalone.ips.policy') }}</template>
@@ -74,9 +171,9 @@ const ips = useIpsStore()
           <!-- FIXME: If the value is max-detect, show a disabled input -->
           <div class="space-y-2">
             <NeTextInput
-              v-model="ips.oinkcode"
-              :disabled="ips.saving"
-              :invalid-message="ips.invalidOinkcode ? t('standalone.ips.oinkcode_invalid') : ''"
+              v-model="oinkcode"
+              :disabled="saving"
+              :invalid-message="invalidOinkcode ? t('standalone.ips.oinkcode_invalid') : ''"
               :label="t('standalone.ips.oinkcode')"
               autocomplete="off"
               is-password
@@ -95,15 +192,15 @@ const ips = useIpsStore()
             </NeTextInput>
             <div class="flex items-center gap-4">
               <NeButton
-                :disabled="ips.checkingOinkcode"
-                :loading="ips.checkingOinkcode"
-                @click="ips.checkOinkcode"
+                :disabled="checkingOinkcode"
+                :loading="checkingOinkcode"
+                @click="checkOinkcode"
               >
                 {{ t('standalone.ips.verify_oinkcode') }}
               </NeButton>
               <Transition name="fade">
                 <NeBadge
-                  v-if="ips.validOinkcode"
+                  v-if="validOinkcode"
                   :icon="faCheck"
                   :text="t('standalone.ips.oinkcode_verified')"
                   kind="success"
@@ -113,7 +210,7 @@ const ips = useIpsStore()
           </div>
         </template>
         <hr />
-        <NeButton :disabled="ips.saving" :loading="ips.saving" kind="primary" type="submit">
+        <NeButton :disabled="saving" :loading="saving" kind="primary" type="submit">
           <template #prefix>
             <FontAwesomeIcon :icon="faFloppyDisk" />
           </template>

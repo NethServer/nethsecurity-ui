@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import {
   getAxiosErrorMessage,
-  NeBadge,
   NeButton,
+  NeDropdown,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -17,36 +18,66 @@ import {
   useItemPagination,
   useSort
 } from '@nethesis/vue-components'
-import { useIpsStore } from '@/stores/standalone/ips'
 import { useI18n } from 'vue-i18n'
-import {
-  faCheck,
-  faCirclePlus,
-  faMagnifyingGlass,
-  faShield
-} from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus, faMagnifyingGlass, faShield } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref } from 'vue'
-import { type ByPass, useIps } from '@/composables/useIps'
+import IpsCreateBypassDrawer from '@/components/standalone/security/ips/IpsCreateBypassDrawer.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
+import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
+import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
 
-const ips = useIpsStore()
+export type Direction = 'src' | 'dst'
+export type AddressType = 'ipv4' | 'ipv6'
+
+export type Bypass = {
+  direction: Direction
+  protocol: AddressType
+  ip: string
+  description: string
+}
+
+type BypassResponse = {
+  bypasses: Bypass[]
+}
+
+const changes = useUciPendingChangesStore()
 const { t } = useI18n()
 
 const creatingBypass = ref(false)
-const { fetchByPasses, error, loadingByPasses, byPasses } = useIps()
+
+const bypasses = ref<Bypass[]>([])
+const loading = ref(true)
+const error = ref<Error>()
+
+function listBypasses() {
+  loading.value = true
+  ubusCall('ns.snort', 'list-bypasses', {})
+    .then((response: AxiosResponse<BypassResponse>) => {
+      bypasses.value = response.data.bypasses
+    })
+    .catch((e: Error) => {
+      error.value = e
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
 
 onMounted(() => {
-  fetchByPasses()
+  listBypasses()
 })
 
 const filter = ref('')
-const filteredByPasses = computed((): ByPass[] => {
-  return byPasses.value.filter((byPass) => {
+const filteredByPasses = computed((): Bypass[] => {
+  return bypasses.value.filter((byPass) => {
     return byPass.ip.includes(filter.value)
   })
 })
 
-const sortKey = ref<keyof ByPass>('ip')
+const sortKey = ref<keyof Bypass>('ip')
 const sortDescending = ref(false)
 const { sortedItems } = useSort(filteredByPasses, sortKey, sortDescending, {})
 
@@ -60,18 +91,43 @@ const onSort = (payload: any) => {
   sortKey.value = payload.key
   sortDescending.value = payload.descending
 }
+
+function savedBypass() {
+  listBypasses()
+  creatingBypass.value = false
+  changes.getChanges()
+}
+
+function dropDownActions(bypass: Bypass): NeDropdownItem[] {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      danger: true,
+      action: () => {
+        bypassToDelete.value = bypass
+      }
+    }
+  ]
+}
+
+const bypassToDelete = ref<Bypass>()
+
+function handleDeleted() {
+  // Being unable to give an ID to the bypasses, we just fetch again the list
+  listBypasses()
+  bypassToDelete.value = undefined
+  changes.getChanges()
+}
 </script>
 
 <template>
   <div class="space-y-8">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <p class="max-w-lg">{{ t('standalone.ips.filter_bypass_description') }}</p>
-      <NeBadge
-        v-if="ips.enabled"
-        :icon="faCheck"
-        :text="t('standalone.ips.ips_enabled')"
-        kind="success"
-      />
+      <IpsEnabledBadge />
     </div>
 
     <NeInlineNotification
@@ -80,7 +136,7 @@ const onSort = (payload: any) => {
       :title="t('standalone.ips.error_loading_bypasses')"
       kind="error"
     />
-    <NeSkeleton v-if="loadingByPasses" :lines="10" />
+    <NeSkeleton v-if="loading" :lines="10" />
     <div v-else class="space-y-4">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model="filter" :placeholder="t('common.filter')">
@@ -90,7 +146,7 @@ const onSort = (payload: any) => {
         </NeTextInput>
         <NeButton
           kind="secondary"
-          v-if="byPasses.length > 0"
+          v-if="bypasses.length > 0"
           size="lg"
           @click="creatingBypass = true"
         >
@@ -101,7 +157,7 @@ const onSort = (payload: any) => {
         </NeButton>
       </div>
       <NeTable
-        v-if="byPasses.length > 0"
+        v-if="bypasses.length > 0"
         :ariaLabel="t('standalone.ips.title')"
         :skeleton-columns="7"
         :skeleton-rows="5"
@@ -137,7 +193,11 @@ const onSort = (payload: any) => {
             <NeTableCell :data-label="t('standalone.ips.bypass_description')">
               {{ item.description }}
             </NeTableCell>
-            <NeTableCell :data-label="t('common.actions')"></NeTableCell>
+            <NeTableCell :data-label="t('common.actions')">
+              <div class="flex justify-end">
+                <NeDropdown :items="dropDownActions(item)" :align-to-right="true" />
+              </div>
+            </NeTableCell>
           </NeTableRow>
         </NeTableBody>
         <template #paginator>
@@ -149,7 +209,7 @@ const onSort = (payload: any) => {
             :page-size-label="t('ne_table.show')"
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
-            :total-rows="byPasses.length"
+            :total-rows="bypasses.length"
             @selectPageSize="(size: number) => { pageSize = size }"
             @select-page="(page: number) => { currentPage = page }"
           />
@@ -163,6 +223,16 @@ const onSort = (payload: any) => {
           {{ t('standalone.ips.add_bypass') }}
         </NeButton>
       </NeEmptyState>
+      <IpsCreateBypassDrawer
+        :visible="creatingBypass"
+        @close="creatingBypass = false"
+        @save="savedBypass()"
+      />
+      <IpsDeleteBypassModal
+        @close="bypassToDelete = undefined"
+        :bypass="bypassToDelete"
+        @deleted="handleDeleted()"
+      />
     </div>
   </div>
 </template>

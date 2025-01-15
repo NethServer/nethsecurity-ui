@@ -2,9 +2,12 @@
 import { NeButton, NeRadioSelection, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
-import type { AddressType, ByPass, Direction } from '@/composables/useIps'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag } from '@/lib/validation'
+import type {
+  AddressType,
+  Direction
+} from '@/components/standalone/security/ips/IpsFilterBypass.vue'
 
 const { t } = useI18n()
 
@@ -14,7 +17,7 @@ const { visible = false } = defineProps<{
 
 const emit = defineEmits<{
   close: [void]
-  saved: [value: ByPass]
+  save: [void]
 }>()
 
 // FIXME: export the type from the library
@@ -66,12 +69,7 @@ function save() {
     description: description.value
   })
     .then(() => {
-      emit('saved', {
-        direction: direction.value,
-        protocol: protocol.value,
-        ip: ip.value,
-        description: description.value
-      })
+      emit('save')
     })
     .catch((reason: Error) => {
       if (reason instanceof ValidationError) {

@@ -18,7 +18,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { onMounted, ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
-import { ipsStatus } from '@/stores/standalone/ipsStatus'
+import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 
 export type IpsStatus = {
   enabled: boolean
@@ -28,7 +28,7 @@ export type IpsStatus = {
 
 export type Policy = 'connectivity' | 'balanced' | 'security' | 'max-detect'
 
-const ips = ipsStatus()
+const ips = useIpsStatusStore()
 
 const { t } = useI18n()
 const options: Array<{

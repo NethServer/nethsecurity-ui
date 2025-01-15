@@ -22,7 +22,6 @@ import { useI18n } from 'vue-i18n'
 import { faCirclePlus, faMagnifyingGlass, faShield } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref } from 'vue'
-import { type ByPass } from '@/composables/useIps'
 import IpsCreateBypassDrawer from '@/components/standalone/security/ips/IpsCreateBypassDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -30,8 +29,18 @@ import type { AxiosResponse } from 'axios'
 import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
 import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
 
-type ByPassResponse = {
-  bypasses: ByPass[]
+export type Direction = 'src' | 'dst'
+export type AddressType = 'ipv4' | 'ipv6'
+
+export type Bypass = {
+  direction: Direction
+  protocol: AddressType
+  ip: string
+  description: string
+}
+
+type BypassResponse = {
+  bypasses: Bypass[]
 }
 
 const changes = useUciPendingChangesStore()
@@ -39,20 +48,21 @@ const { t } = useI18n()
 
 const creatingBypass = ref(false)
 
-const byPasses = ref<ByPass[]>([])
-const loadingByPasses = ref(true)
+const bypasses = ref<Bypass[]>([])
+const loading = ref(true)
 const error = ref<Error>()
 
 function listBypasses() {
+  loading.value = true
   ubusCall('ns.snort', 'list-bypasses', {})
-    .then((response: AxiosResponse<ByPassResponse>) => {
-      byPasses.value = response.data.bypasses
+    .then((response: AxiosResponse<BypassResponse>) => {
+      bypasses.value = response.data.bypasses
     })
     .catch((e: Error) => {
       error.value = e
     })
     .finally(() => {
-      loadingByPasses.value = false
+      loading.value = false
     })
 }
 
@@ -61,13 +71,13 @@ onMounted(() => {
 })
 
 const filter = ref('')
-const filteredByPasses = computed((): ByPass[] => {
-  return byPasses.value.filter((byPass) => {
+const filteredByPasses = computed((): Bypass[] => {
+  return bypasses.value.filter((byPass) => {
     return byPass.ip.includes(filter.value)
   })
 })
 
-const sortKey = ref<keyof ByPass>('ip')
+const sortKey = ref<keyof Bypass>('ip')
 const sortDescending = ref(false)
 const { sortedItems } = useSort(filteredByPasses, sortKey, sortDescending, {})
 
@@ -82,13 +92,13 @@ const onSort = (payload: any) => {
   sortDescending.value = payload.descending
 }
 
-function savedBypass(bypass: ByPass) {
-  byPasses.value.push(bypass)
+function savedBypass() {
+  listBypasses()
   creatingBypass.value = false
   changes.getChanges()
 }
 
-function dropDownActions(bypass: ByPass): NeDropdownItem[] {
+function dropDownActions(bypass: Bypass): NeDropdownItem[] {
   return [
     {
       id: 'delete',
@@ -97,18 +107,18 @@ function dropDownActions(bypass: ByPass): NeDropdownItem[] {
       iconStyle: 'fas',
       danger: true,
       action: () => {
-        byPassToDelete.value = bypass
+        bypassToDelete.value = bypass
       }
     }
   ]
 }
 
-const byPassToDelete = ref<ByPass>()
+const bypassToDelete = ref<Bypass>()
 
 function handleDeleted() {
   // Being unable to give an ID to the bypasses, we just fetch again the list
   listBypasses()
-  byPassToDelete.value = undefined
+  bypassToDelete.value = undefined
   changes.getChanges()
 }
 </script>
@@ -126,7 +136,7 @@ function handleDeleted() {
       :title="t('standalone.ips.error_loading_bypasses')"
       kind="error"
     />
-    <NeSkeleton v-if="loadingByPasses" :lines="10" />
+    <NeSkeleton v-if="loading" :lines="10" />
     <div v-else class="space-y-4">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model="filter" :placeholder="t('common.filter')">
@@ -136,7 +146,7 @@ function handleDeleted() {
         </NeTextInput>
         <NeButton
           kind="secondary"
-          v-if="byPasses.length > 0"
+          v-if="bypasses.length > 0"
           size="lg"
           @click="creatingBypass = true"
         >
@@ -147,7 +157,7 @@ function handleDeleted() {
         </NeButton>
       </div>
       <NeTable
-        v-if="byPasses.length > 0"
+        v-if="bypasses.length > 0"
         :ariaLabel="t('standalone.ips.title')"
         :skeleton-columns="7"
         :skeleton-rows="5"
@@ -199,7 +209,7 @@ function handleDeleted() {
             :page-size-label="t('ne_table.show')"
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
-            :total-rows="byPasses.length"
+            :total-rows="bypasses.length"
             @selectPageSize="(size: number) => { pageSize = size }"
             @select-page="(page: number) => { currentPage = page }"
           />
@@ -216,11 +226,11 @@ function handleDeleted() {
       <IpsCreateBypassDrawer
         :visible="creatingBypass"
         @close="creatingBypass = false"
-        @saved="savedBypass($event)"
+        @save="savedBypass()"
       />
       <IpsDeleteBypassModal
-        @close="byPassToDelete = undefined"
-        :bypass="byPassToDelete"
+        @close="bypassToDelete = undefined"
+        :bypass="bypassToDelete"
         @deleted="handleDeleted()"
       />
     </div>

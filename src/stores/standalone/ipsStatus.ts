@@ -4,7 +4,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import type { IpsStatus } from '@/components/standalone/security/ips/IpsSettings.vue'
 
-export const ipsStatus = defineStore('ipsStatus', () => {
+export const useIpsStatusStore = defineStore('ipsStatus', () => {
   const enabled = ref<boolean>()
   const loading = ref(true)
 

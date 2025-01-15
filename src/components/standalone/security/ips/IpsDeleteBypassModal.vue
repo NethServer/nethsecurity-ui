@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import type { ByPass } from '@/composables/useIps'
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
+import type { Bypass } from '@/components/standalone/security/ips/IpsFilterBypass.vue'
 
 const { t } = useI18n()
 
 const { bypass } = defineProps<{
-  bypass?: ByPass
+  bypass?: Bypass
 }>()
 
 /*
  * Shallow variable
  */
-const _byPass = ref<ByPass | undefined>()
+const _byPass = ref<Bypass | undefined>()
 watch(
   () => bypass,
   (value) => {

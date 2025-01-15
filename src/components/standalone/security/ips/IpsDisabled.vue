@@ -5,12 +5,12 @@ import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
-import { ipsStatus } from '@/stores/standalone/ipsStatus'
+import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 import { onMounted } from 'vue'
 
 const { t } = useI18n()
 const router = useRouter()
-const ips = ipsStatus()
+const ips = useIpsStatusStore()
 
 onMounted(() => {
   ips.fetchStatus()

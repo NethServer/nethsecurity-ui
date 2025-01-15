@@ -2243,15 +2243,15 @@
       "destination": "Destination",
       "bypass_description": "Description",
       "address_type": "Address type",
-      "ip_address": "IP Address",
+      "ip_address": "IP address",
       "direction": "Direction",
       "direction_tooltip": "TBA",
       "source_bypass": "Source bypass",
       "destination_bypass": "Destination bypass",
-      "delete_bypass_modal_title": "Deleting bypass",
-      "delete_bypass_modal_w_description": "Do you want to delete Bypass '{description}'?",
-      "delete_bypass_modal_wo_description": "Do you want to delete Bypass with IP address '{ip}' and direction '{direction}'?",
-      "delete_bypass_error": "Error deleting bypass"
+      "delete_bypass_modal_title": "Delete bypass",
+      "delete_bypass_modal_w_description": "Delete bypass '{description}'?",
+      "delete_bypass_modal_wo_description": "Delete bypass with IP address '{ip}' and direction '{direction}'?",
+      "delete_bypass_error": "Cannot delete bypass"
     }
   },
   "controller": {

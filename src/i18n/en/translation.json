@@ -387,7 +387,8 @@
     "network_conflict": "This name is already in use by another network interface",
     "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report",
     "invalid_space": "Field cannot contain spaces",
-    "cannot_retrieve_netify_informatics_configuration": "Cannot retrieve Netify Informatics configuration"
+    "cannot_retrieve_netify_informatics_configuration": "Cannot retrieve Netify Informatics configuration",
+    "duplicate_rule": "Rule already exists"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2262,7 +2263,9 @@
       "disable_rule": "Disable rule",
       "rules_table": "Rules table",
       "rule_id": "Rule GID:SID",
-      "rule_description": "Description"
+      "rule_description": "Description",
+      "rule_gid": "GID",
+      "rule_sid": "SID"
     }
   },
   "controller": {

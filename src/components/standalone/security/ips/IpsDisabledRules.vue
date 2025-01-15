@@ -24,8 +24,10 @@ import {
 import type { AxiosResponse } from 'axios'
 import { faMagnifyingGlass, faShield, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
-type Rule = {
+export type Rule = {
   description: string
   id: string
 }
@@ -34,13 +36,15 @@ type ListRuleResponse = AxiosResponse<{
   rules: Rule[]
 }>
 
+const changes = useUciPendingChangesStore()
+
 const { t } = useI18n()
 
 const error = ref<Error>()
 const loading = ref(false)
 const rules = ref<Rule[]>([])
 
-onMounted(() => {
+function listDisabledRules() {
   ubusCall('ns.snort', 'list-disabled-rules', {})
     .then((response: ListRuleResponse) => {
       rules.value = response.data.rules
@@ -51,6 +55,10 @@ onMounted(() => {
     .finally(() => {
       loading.value = false
     })
+}
+
+onMounted(() => {
+  listDisabledRules()
 })
 
 const filter = ref('')
@@ -73,6 +81,13 @@ const { currentPage, paginatedItems } = useItemPagination(sortedItems, {
 const onSort = (payload: any) => {
   sortKey.value = payload.key
   sortDescending.value = payload.descending
+}
+
+const disablingRule = ref(false)
+function handleSave() {
+  listDisabledRules()
+  changes.getChanges()
+  disablingRule.value = false
 }
 </script>
 
@@ -98,8 +113,12 @@ const onSort = (payload: any) => {
               <FontAwesomeIcon :icon="faMagnifyingGlass" aria-hidden="true" class="h-4 w-4" />
             </template>
           </NeTextInput>
-          <!-- FIXME: Add event to add a rule -->
-          <NeButton v-if="rules.length > 0" kind="secondary" size="lg">
+          <NeButton
+            v-if="rules.length > 0"
+            kind="secondary"
+            size="lg"
+            @click="disablingRule = true"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
             </template>
@@ -162,8 +181,7 @@ const onSort = (payload: any) => {
         :icon="faShield"
         :title="t('standalone.ips.no_disabled_rules')"
       >
-        <!-- FIXME: Add event to add a rule -->
-        <NeButton kind="primary" size="lg">
+        <NeButton kind="primary" size="lg" @click="disablingRule = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
           </template>
@@ -171,5 +189,10 @@ const onSort = (payload: any) => {
         </NeButton>
       </NeEmptyState>
     </div>
+    <IpsDisableRuleDrawer
+      @save="handleSave"
+      :visible="disablingRule"
+      @close="disablingRule = false"
+    />
   </div>
 </template>

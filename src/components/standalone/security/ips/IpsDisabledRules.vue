@@ -7,6 +7,7 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeDropdown,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -26,10 +27,13 @@ import { faMagnifyingGlass, faShield, faXmarkCircle } from '@fortawesome/free-so
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import IpsEnableRuleModal from '@/components/standalone/security/ips/IpsEnableRuleModal.vue'
 
 export type Rule = {
   description: string
   id: string
+  gid: string
+  sid: string
 }
 
 type ListRuleResponse = AxiosResponse<{
@@ -89,6 +93,27 @@ function handleSave() {
   changes.getChanges()
   disablingRule.value = false
 }
+
+function dropDownActions(rule: Rule): NeDropdownItem[] {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      danger: true,
+      action: () => {
+        ruleToEnable.value = rule
+      }
+    }
+  ]
+}
+const ruleToEnable = ref<Rule>()
+function handleEnabled() {
+  listDisabledRules()
+  changes.getChanges()
+  ruleToEnable.value = undefined
+}
 </script>
 
 <template>
@@ -105,94 +130,92 @@ function handleSave() {
       kind="error"
     />
     <NeSkeleton v-if="loading" :lines="10" />
-    <div v-else class="space-y-4">
-      <template v-if="rules.length > 0">
-        <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
-          <NeTextInput v-model="filter" :placeholder="t('common.filter')">
-            <template #prefix>
-              <FontAwesomeIcon :icon="faMagnifyingGlass" aria-hidden="true" class="h-4 w-4" />
-            </template>
-          </NeTextInput>
-          <NeButton
-            v-if="rules.length > 0"
-            kind="secondary"
-            size="lg"
-            @click="disablingRule = true"
-          >
-            <template #prefix>
-              <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
-            </template>
-            {{ t('standalone.ips.disable_rule') }}
-          </NeButton>
-        </div>
-        <NeTable
-          :ariaLabel="t('standalone.ips.rules_table')"
-          :skeleton-columns="7"
-          :skeleton-rows="5"
-          :sortDescending="sortDescending"
-          :sortKey="sortKey"
-          card-breakpoint="xl"
-        >
-          <NeTableHead>
-            <NeTableHeadCell column-key="description" sortable @sort="onSort">
-              {{ t('standalone.ips.rule_description') }}
-            </NeTableHeadCell>
-            <NeTableHeadCell column-key="id" sortable @sort="onSort">
-              {{ t('standalone.ips.rule_id') }}
-            </NeTableHeadCell>
-            <NeTableHeadCell>
-              <!-- no header for actions -->
-            </NeTableHeadCell>
-          </NeTableHead>
-          <NeTableBody>
-            <NeTableRow v-for="item in paginatedItems" :key="`${item.id}`">
-              <NeTableCell :data-label="t('standalone.ips.rule_description')">
-                {{ item.description }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.ips.rule_id')">
-                {{ item.id }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('common.actions')">
-                <div class="flex justify-end">
-                  <NeDropdown :align-to-right="true" :items="{}" />
-                </div>
-              </NeTableCell>
-            </NeTableRow>
-          </NeTableBody>
-          <template #paginator>
-            <NePaginator
-              :current-page="currentPage"
-              :nav-pagination-label="t('ne_table.pagination')"
-              :next-label="t('ne_table.go_to_next_page')"
-              :page-size="pageSize"
-              :page-size-label="t('ne_table.show')"
-              :previous-label="t('ne_table.go_to_previous_page')"
-              :range-of-total-label="t('ne_table.of')"
-              :total-rows="rules.length"
-              @selectPageSize="(size: number) => { pageSize = size }"
-              @select-page="(page: number) => { currentPage = page }"
-            />
+    <template v-else-if="rules.length > 0">
+      <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
+        <NeTextInput v-model="filter" :placeholder="t('common.filter')">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faMagnifyingGlass" aria-hidden="true" class="h-4 w-4" />
           </template>
-        </NeTable>
-      </template>
-      <NeEmptyState
-        v-else
-        :description="t('standalone.ips.no_disabled_rules_description')"
-        :icon="faShield"
-        :title="t('standalone.ips.no_disabled_rules')"
-      >
-        <NeButton kind="primary" size="lg" @click="disablingRule = true">
+        </NeTextInput>
+        <NeButton v-if="rules.length > 0" kind="secondary" size="lg" @click="disablingRule = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
           </template>
           {{ t('standalone.ips.disable_rule') }}
         </NeButton>
-      </NeEmptyState>
-    </div>
+      </div>
+      <NeTable
+        :ariaLabel="t('standalone.ips.rules_table')"
+        :skeleton-columns="7"
+        :skeleton-rows="5"
+        :sortDescending="sortDescending"
+        :sortKey="sortKey"
+        card-breakpoint="xl"
+      >
+        <NeTableHead>
+          <NeTableHeadCell column-key="description" sortable @sort="onSort">
+            {{ t('standalone.ips.rule_description') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell column-key="id" sortable @sort="onSort">
+            {{ t('standalone.ips.rule_id') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
+            <!-- no header for actions -->
+          </NeTableHeadCell>
+        </NeTableHead>
+        <NeTableBody>
+          <NeTableRow v-for="item in paginatedItems" :key="`${item.id}`">
+            <NeTableCell :data-label="t('standalone.ips.rule_description')">
+              {{ item.description }}
+            </NeTableCell>
+            <NeTableCell :data-label="t('standalone.ips.rule_id')">
+              {{ item.id }}
+            </NeTableCell>
+            <NeTableCell :data-label="t('common.actions')">
+              <div class="flex justify-end">
+                <NeDropdown :align-to-right="true" :items="dropDownActions(item)" />
+              </div>
+            </NeTableCell>
+          </NeTableRow>
+        </NeTableBody>
+        <template #paginator>
+          <NePaginator
+            :current-page="currentPage"
+            :nav-pagination-label="t('ne_table.pagination')"
+            :next-label="t('ne_table.go_to_next_page')"
+            :page-size="pageSize"
+            :page-size-label="t('ne_table.show')"
+            :previous-label="t('ne_table.go_to_previous_page')"
+            :range-of-total-label="t('ne_table.of')"
+            :total-rows="rules.length"
+            @selectPageSize="(size: number) => { pageSize = size }"
+            @select-page="(page: number) => { currentPage = page }"
+          />
+        </template>
+      </NeTable>
+    </template>
+    <NeEmptyState
+      v-else
+      :description="t('standalone.ips.no_disabled_rules_description')"
+      :icon="faShield"
+      :title="t('standalone.ips.no_disabled_rules')"
+    >
+      <NeButton kind="primary" size="lg" @click="disablingRule = true">
+        <template #prefix>
+          <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
+        </template>
+        {{ t('standalone.ips.disable_rule') }}
+      </NeButton>
+    </NeEmptyState>
     <IpsDisableRuleDrawer
       @save="handleSave"
       :visible="disablingRule"
       @close="disablingRule = false"
+    />
+    <IpsEnableRuleModal
+      :rule="ruleToEnable"
+      @enabled="handleEnabled"
+      @close="ruleToEnable = undefined"
     />
   </div>
 </template>

@@ -2265,7 +2265,10 @@
       "rule_id": "Rule GID:SID",
       "rule_description": "Description",
       "rule_gid": "GID",
-      "rule_sid": "SID"
+      "rule_sid": "SID",
+      "enable_rule_modal_title": "Enable rule",
+      "enable_rule_modal_description": "Enable the rule '{description}' identified by '{id}'?",
+      "enable_rule_error": "Error enabling rule"
     }
   },
   "controller": {

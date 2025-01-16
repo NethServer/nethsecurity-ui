@@ -98,8 +98,6 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
       console.error(err)
       errorListDnsSettings.value = t(getAxiosErrorMessage(err))
       errorListDnsSettingsDetails.value = err.toString()
-
-      console.log('errrrrrr', err) ////
     } finally {
       loadingListDnsSettings.value = false
     }

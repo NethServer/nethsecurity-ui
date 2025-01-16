@@ -1448,7 +1448,7 @@
       "title": "Security"
     },
     "flashstart": {
-      "title": "FlashStart filter",
+      "title": "FlashStart DNS",
       "content_title": "Settings",
       "content_description": "FlashStart doesn't require any DNS configuration neither in the firewall itself nor inside the clients. Before using FlashStart you need to {createAccount}",
       "content_link": "create an account",
@@ -1463,8 +1463,10 @@
       "sourcebypass": "Bypass source IPs or networks",
       "sourcebypass_helper": "Enter IP addresses or networks in CIDR format. The addresses entered won't be subject to the DNS filter",
       "add_sourcebypass": "Add source bypass",
-      "flashstart_disabled": "FlashStart is disabled",
-      "flashstart_disabled_description": "FlashStart filter is available only with a {product} subscription"
+      "flashstart_disabled": "FlashStart DNS is disabled",
+      "flashstart_disabled_description": "FlashStart filter is available only with a {product} subscription",
+      "flashstart_disabled_threat_shield_enabled": "To enable it, you must first disable Threat shield DNS",
+      "flashstart_configuration_saved": "FlashStart configuration saved"
     },
     "dpi": {
       "title": "DPI filter",
@@ -1620,7 +1622,8 @@
       "bypasses": "Bypasses",
       "confirm_delete_bypass": "Delete bypass {name}?",
       "add_bypass": "Add bypass",
-      "ip_address_or_network_cidr": "IP address or network (CIDR)"
+      "ip_address_or_network_cidr": "IP address or network (CIDR)",
+      "threat_shield_dns_is_disabled_description": "To enable it, you must first disable FlashStart DNS"
     },
     "vpn": {
       "title": "VPN"

@@ -116,18 +116,6 @@ function clearFilter() {
           {{ tsStore.errorEditDnsBlocklistDetails }}
         </template>
       </NeInlineNotification>
-      <!-- dns-list-settings error notification -->
-      <!-- <NeInlineNotification //// 
-        v-if="errorListDnsSettings"
-        kind="error"
-        :title="t('error.cannot_retrieve_threat_shield_settings')"
-        :description="errorListDnsSettings"
-        class="mb-5"
-      >
-        <template #details v-if="errorListDnsSettingsDetails">
-          {{ errorListDnsSettingsDetails }}
-        </template>
-      </NeInlineNotification> -->
       <template v-else>
         <!-- threat shield is disabled -->
         <NeEmptyState

@@ -2257,7 +2257,7 @@
       "delete_bypass_modal_wo_description": "Delete bypass with IP address '{ip}' and direction '{direction}'?",
       "delete_bypass_error": "Cannot delete bypass",
       "disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
-      "error_loading_disabled_rules": "Error loading disabled rules",
+      "error_loading_disabled_rules": "Cannot load disabled rules",
       "no_disabled_rules": "No disabled rules",
       "no_disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam laoreet nibh mi, id sodales turpis tempus ut.",
       "disable_rule": "Disable rule",
@@ -2268,7 +2268,9 @@
       "rule_sid": "SID",
       "enable_rule_modal_title": "Enable rule",
       "enable_rule_modal_description": "Enable the rule '{description}' identified by '{id}'?",
-      "enable_rule_error": "Error enabling rule"
+      "enable_rule_error": "Cannot enable rule",
+      "no_rules_found": "No rules found",
+      "no_bypasses_found": "No bypasses found"
     }
   },
   "controller": {

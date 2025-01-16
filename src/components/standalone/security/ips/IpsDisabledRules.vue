@@ -23,7 +23,7 @@ import {
   useSort
 } from '@nethesis/vue-components'
 import type { AxiosResponse } from 'axios'
-import { faMagnifyingGlass, faShield, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faShield, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -45,10 +45,11 @@ const changes = useUciPendingChangesStore()
 const { t } = useI18n()
 
 const error = ref<Error>()
-const loading = ref(false)
+const loading = ref(true)
 const rules = ref<Rule[]>([])
 
 function listDisabledRules() {
+  loading.value = true
   ubusCall('ns.snort', 'list-disabled-rules', {})
     .then((response: ListRuleResponse) => {
       rules.value = response.data.rules
@@ -132,11 +133,7 @@ function handleEnabled() {
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else-if="rules.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
-        <NeTextInput v-model="filter" :placeholder="t('common.filter')">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faMagnifyingGlass" aria-hidden="true" class="h-4 w-4" />
-          </template>
-        </NeTextInput>
+        <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
         <NeButton v-if="rules.length > 0" kind="secondary" size="lg" @click="disablingRule = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
@@ -164,7 +161,21 @@ function handleEnabled() {
           </NeTableHeadCell>
         </NeTableHead>
         <NeTableBody>
-          <NeTableRow v-for="item in paginatedItems" :key="`${item.id}`">
+          <NeTableRow v-if="filteredRules.length < 1">
+            <NeTableCell colspan="4">
+              <NeEmptyState
+                :description="t('common.try_changing_search_filters')"
+                :icon="faCircleInfo"
+                :title="t('standalone.ips.no_rules_found')"
+                class="bg-white dark:bg-gray-950"
+              >
+                <NeButton kind="tertiary" @click="filter = ''">
+                  {{ t('common.clear_filters') }}
+                </NeButton>
+              </NeEmptyState>
+            </NeTableCell>
+          </NeTableRow>
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}`">
             <NeTableCell :data-label="t('standalone.ips.rule_description')">
               {{ item.description }}
             </NeTableCell>

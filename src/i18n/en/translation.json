@@ -2270,7 +2270,15 @@
       "enable_rule_modal_description": "Enable the rule '{description}' identified by '{id}'?",
       "enable_rule_error": "Cannot enable rule",
       "no_rules_found": "No rules found",
-      "no_bypasses_found": "No bypasses found"
+      "no_bypasses_found": "No bypasses found",
+      "suppressed_alerts_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
+      "error_loading_suppressed_alerts": "Cannot load suppressed alerts",
+      "no_suppressed_alerts": "No suppressed alerts found",
+      "add_suppressed_alert": "Suppress alert",
+      "suppressed_alert_description": "Description",
+      "suppressed_alert_id": "@:standalone.ips.rule_id",
+      "suppressed_alert_direction": "@:standalone.ip.direction",
+      "address": "Address"
     }
   },
   "controller": {

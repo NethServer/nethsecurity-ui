@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.4](https://github.com/NethServer/nethsecurity-ui/compare/1.17.3...1.17.4) (2025-01-16)
+
+
+### Bug Fixes
+
+* **controller:** improve version mismatch message ([#486](https://github.com/NethServer/nethsecurity-ui/issues/486)) ([5c3d1e0](https://github.com/NethServer/nethsecurity-ui/commit/5c3d1e091778b7ca0db60bce13e142fe5dc9fc19))
+* **port forward:** adding tooltip for disabled port forwards ([#482](https://github.com/NethServer/nethsecurity-ui/issues/482)) ([27a7e64](https://github.com/NethServer/nethsecurity-ui/commit/27a7e64a5958130452ed94595ac2ee2312a9aa3e))
+
 ## [1.17.3](https://github.com/NethServer/nethsecurity-ui/compare/1.17.2...1.17.3) (2025-01-09)
 
 

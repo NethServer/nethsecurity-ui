@@ -5,14 +5,19 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeHeading, NeTabs } from '@nethesis/vue-components'
+import { NeHeading, NeInlineNotification, NeTabs } from '@nethesis/vue-components'
 import { useTabs } from '@/composables/useTabs'
 import BlocklistSourcesPanel from '@/components/standalone/security/threat_shield_dns/BlocklistSourcesPanel.vue'
-import FilterBypassPanel from '@/components/standalone/security/threat_shield_dns/FilterBypassPanel.vue' ////
+import FilterBypassPanel from '@/components/standalone/security/threat_shield_dns/FilterBypassPanel.vue'
 import SettingsPanel from '@/components/standalone/security/threat_shield_dns/SettingsPanel.vue'
+import { onMounted } from 'vue'
+import { useThreatShieldStore } from '@/stores/standalone/threatShield'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 // import LocalBlocklistPanel from '@/components/standalone/security/threat_shield_dns/LocalBlocklistPanel.vue'
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
+const tsStore = useThreatShieldStore()
 
 const { tabs, selectedTab } = useTabs([
   {
@@ -32,11 +37,30 @@ const { tabs, selectedTab } = useTabs([
     label: t('standalone.threat_shield_dns.settings')
   }
 ])
+
+onMounted(() => {
+  console.log('view mounted') ////
+
+  tsStore.listDnsSettings()
+  uciChangesStore.getChanges()
+})
 </script>
 
 <template>
-  <NeHeading tag="h3" class="mb-7">{{ t('standalone.threat_shield_dns.title') }}</NeHeading>
   <div>
+    <NeHeading tag="h3" class="mb-7">{{ t('standalone.threat_shield_dns.title') }}</NeHeading>
+    <!-- dns-list-settings error notification -->
+    <NeInlineNotification
+      v-if="tsStore.errorListDnsSettings"
+      kind="error"
+      :title="t('error.cannot_retrieve_threat_shield_settings')"
+      :description="tsStore.errorListDnsSettings"
+      class="mb-5"
+    >
+      <template #details v-if="tsStore.errorListDnsSettingsDetails">
+        {{ tsStore.errorListDnsSettingsDetails }}
+      </template>
+    </NeInlineNotification>
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

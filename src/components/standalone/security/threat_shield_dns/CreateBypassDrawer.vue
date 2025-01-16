@@ -16,6 +16,7 @@ import {
 import { ref, watch } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateIpOrCidr, validateRequired } from '@/lib/validation'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const props = defineProps<{
   isShown: boolean
@@ -24,6 +25,7 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 const bypass = ref('')
 const bypassRef = ref()
 const errorBag = ref(new MessageBag())
@@ -92,6 +94,7 @@ async function saveBypass() {
 
   try {
     await ubusCall('ns.threatshield', 'dns-add-bypass', { address: bypass.value })
+    uciChangesStore.getChanges()
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {

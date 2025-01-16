@@ -1,10 +1,11 @@
-//  Copyright (C) 2024 Nethesis S.r.l.
+//  Copyright (C) 2025 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { getAxiosErrorMessage, sortByProperty } from '@nethesis/vue-components'
+import { defineStore } from 'pinia'
 
 export type Blocklist = {
   name: string
@@ -14,22 +15,14 @@ export type Blocklist = {
   description: string
 }
 
-// export type DnsBypass = {
-//   //// todo
-// }
-
 export type DnsSettings = {
   enabled: boolean
   zones: string[]
   ports: string[]
 }
 
-/**
- * Composable that handles threat shield configuration
- */
-export function useThreatShield() {
+export const useThreatShieldStore = defineStore('threatShield', () => {
   const { t, te } = useI18n()
-
   const dnsBlocklists = ref<Blocklist[]>([])
   const dnsSettings = ref<DnsSettings>()
   const dnsBypasses = ref<string[]>([])
@@ -84,7 +77,6 @@ export function useThreatShield() {
     try {
       const res = await ubusCall('ns.threatshield', 'dns-list-bypass')
       dnsBypasses.value = res.data.data as string[]
-      // dnsBypasses.value = bypasses.sort(sortByProperty('name')) //// check sort
     } catch (err: any) {
       console.error(err)
       errorListDnsBypass.value = t(getAxiosErrorMessage(err))
@@ -106,6 +98,8 @@ export function useThreatShield() {
       console.error(err)
       errorListDnsSettings.value = t(getAxiosErrorMessage(err))
       errorListDnsSettingsDetails.value = err.toString()
+
+      console.log('errrrrrr', err) ////
     } finally {
       loadingListDnsSettings.value = false
     }
@@ -208,4 +202,4 @@ export function useThreatShield() {
     listDnsBypass,
     searchStringInDnsBlocklist
   }
-}
+})

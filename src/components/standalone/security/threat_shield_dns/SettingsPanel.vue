@@ -18,24 +18,13 @@ import {
   validateRequired,
   validateRequiredOption
 } from '@/lib/validation'
-import { useThreatShield } from '@/composables/useThreatShield'
 import { useFirewallStore } from '@/stores/standalone/firewall'
+import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
-const firewallConfig = useFirewallStore()
-const {
-  dnsSettings,
-  loadingListDnsSettings,
-  loadingEditDnsSettings,
-  errorListDnsSettings,
-  errorListDnsSettingsDetails,
-  errorEditDnsSettings,
-  errorEditDnsSettingsDetails,
-  listDnsSettings,
-  editDnsSettings
-} = useThreatShield()
-
+const fwStore = useFirewallStore()
+const tsStore = useThreatShieldStore()
 const isThreatShieldEnabled = ref(false)
 const selectedZones = ref<NeComboboxOption[]>([])
 const ports = ref([''])
@@ -43,7 +32,7 @@ const errorBag = ref(new MessageBag())
 const portsErrors = ref<string[]>([])
 
 const zonesOptions = computed(() => {
-  return firewallConfig.zones.map((zone) => ({
+  return fwStore.zones.map((zone) => ({
     id: zone.name,
     label: zone.name
   }))
@@ -51,14 +40,14 @@ const zonesOptions = computed(() => {
 
 // update form when dns settings are loaded
 watch(
-  dnsSettings,
+  () => tsStore.dnsSettings,
   () => {
-    if (!dnsSettings.value) {
+    if (!tsStore.dnsSettings) {
       return
     }
-    isThreatShieldEnabled.value = dnsSettings.value.enabled
-    ports.value = dnsSettings.value.ports
-    selectedZones.value = dnsSettings.value.zones.map((zone) => {
+    isThreatShieldEnabled.value = tsStore.dnsSettings.enabled
+    ports.value = tsStore.dnsSettings.ports
+    selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
       return zonesOptions.value.find((z) => z.id === zone)
     })
   },
@@ -66,14 +55,13 @@ watch(
 )
 
 async function loadData() {
-  firewallConfig.fetch()
-  uciChangesStore.getChanges()
-  listDnsSettings()
+  fwStore.fetch()
+  tsStore.listDnsSettings()
 }
 
 function validate() {
-  errorEditDnsSettings.value = ''
-  errorEditDnsSettingsDetails.value = ''
+  tsStore.errorEditDnsSettings = ''
+  tsStore.errorEditDnsSettingsDetails = ''
   errorBag.value.clear()
 
   portsErrors.value = []
@@ -125,7 +113,7 @@ async function saveSettings() {
   }
 
   try {
-    await editDnsSettings({
+    await tsStore.editDnsSettings({
       enabled: isThreatShieldEnabled.value,
       zones: selectedZones.value.map((zone: NeComboboxOption) => zone.id),
       ports: ports.value
@@ -133,7 +121,7 @@ async function saveSettings() {
     loadData()
     uciChangesStore.getChanges()
   } catch (err: unknown) {
-    // exception already handled in useThreatShield composable
+    // exception already handled in threat shield store
   }
 }
 
@@ -148,13 +136,13 @@ onMounted(() => {
       <div class="space-y-8">
         <!-- dns-list-settings error -->
         <NeInlineNotification
-          v-if="errorListDnsSettings"
+          v-if="tsStore.errorListDnsSettings"
           kind="error"
           :title="t('error.cannot_retrieve_threat_shield_settings')"
-          :description="errorListDnsSettings"
+          :description="tsStore.errorListDnsSettings"
         >
-          <template #details v-if="errorListDnsSettingsDetails">
-            {{ errorListDnsSettingsDetails }}
+          <template #details v-if="tsStore.errorListDnsSettingsDetails">
+            {{ tsStore.errorListDnsSettingsDetails }}
           </template>
         </NeInlineNotification>
         <template v-else>
@@ -163,7 +151,7 @@ onMounted(() => {
             :description="t('standalone.threat_shield_dns.threat_shield_settings_description')"
           >
             <div class="space-y-8">
-              <NeSkeleton :lines="4" v-if="loadingListDnsSettings" size="lg" />
+              <NeSkeleton :lines="11" v-if="tsStore.loadingListDnsSettings" size="lg" />
               <template v-else>
                 <!-- status -->
                 <NeToggle
@@ -178,12 +166,12 @@ onMounted(() => {
                     v-model="selectedZones"
                     :options="zonesOptions"
                     :placeholder="
-                      firewallConfig.loading || loadingListDnsSettings
+                      fwStore.loading || tsStore.loadingListDnsSettings
                         ? t('common.loading')
                         : t('ne_combobox.choose_multiple')
                     "
                     multiple
-                    :disabled="loadingEditDnsSettings || firewallConfig.loading"
+                    :disabled="tsStore.loadingEditDnsSettings || fwStore.loading"
                     :invalidMessage="errorBag.getFirstFor('zones')"
                     :optionalLabel="t('common.optional')"
                     :noResultsLabel="t('ne_combobox.no_results')"
@@ -206,7 +194,7 @@ onMounted(() => {
                     :add-item-label="t('standalone.threat_shield_dns.add_port')"
                     :title="t('standalone.threat_shield_dns.redirected_ports')"
                     required
-                    :disabledInputs="loadingEditDnsSettings"
+                    :disabledInputs="tsStore.loadingEditDnsSettings"
                     :invalid-messages="portsErrors"
                   >
                     <template #tooltip>
@@ -226,20 +214,20 @@ onMounted(() => {
             <div class="space-y-8">
               <!-- dns-edit-settings error -->
               <NeInlineNotification
-                v-if="errorEditDnsSettings"
+                v-if="tsStore.errorEditDnsSettings"
                 kind="error"
                 :title="t('error.cannot_save_threat_shield_settings')"
-                :description="errorEditDnsSettings"
+                :description="tsStore.errorEditDnsSettings"
               >
-                <template #details v-if="errorEditDnsSettingsDetails">
-                  {{ errorEditDnsSettingsDetails }}
+                <template #details v-if="tsStore.errorEditDnsSettingsDetails">
+                  {{ tsStore.errorEditDnsSettingsDetails }}
                 </template>
               </NeInlineNotification>
               <!-- save button -->
               <NeButton
                 kind="primary"
-                :disabled="loadingEditDnsSettings || loadingListDnsSettings"
-                :loading="loadingEditDnsSettings"
+                :disabled="tsStore.loadingEditDnsSettings || tsStore.loadingListDnsSettings"
+                :loading="tsStore.loadingEditDnsSettings"
                 @click="saveSettings()"
               >
                 <template #prefix>

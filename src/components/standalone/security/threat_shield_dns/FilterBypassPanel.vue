@@ -14,30 +14,17 @@ import {
   NeTextInput
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteModal from '@/components/DeleteModal.vue'
-import { useThreatShield } from '@/composables/useThreatShield'
 import { faCheck, faShield, faArrowRight, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
 import BypassCard from './BypassCard.vue'
 import CreateBypassDrawer from './CreateBypassDrawer.vue'
+import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const { t } = useI18n()
-const uciChangesStore = useUciPendingChangesStore()
-const {
-  dnsBypasses,
-  dnsSettings,
-  loadingListDnsSettings,
-  loadingListDnsBypass,
-  errorListDnsBypass,
-  errorListDnsBypassDetails,
-  errorListDnsSettings,
-  errorListDnsSettingsDetails,
-  listDnsBypass,
-  listDnsSettings
-} = useThreatShield()
+const tsStore = useThreatShieldStore()
 const router = useRouter()
 const currentBypass = ref('')
 const isShownCreateBypassDrawer = ref(false)
@@ -46,11 +33,11 @@ const textFilter = ref('')
 
 const filteredBypasses = computed(() => {
   if (!textFilter.value) {
-    return dnsBypasses.value
+    return tsStore.dnsBypasses
   }
 
   const queryText = textFilter.value.trim()
-  return dnsBypasses.value.filter((dnsBypass) => {
+  return tsStore.dnsBypasses.filter((dnsBypass) => {
     return dnsBypass.includes(queryText)
   })
 })
@@ -60,9 +47,7 @@ onMounted(() => {
 })
 
 function loadData() {
-  listDnsSettings()
-  listDnsBypass()
-  uciChangesStore.getChanges()
+  tsStore.listDnsBypass()
 }
 
 function showCreateBypassDrawer() {
@@ -90,7 +75,7 @@ function clearFilter() {
           </p>
         </div>
         <NeBadge
-          v-if="dnsSettings?.enabled"
+          v-if="tsStore.dnsSettings?.enabled"
           :icon="faCheck"
           :text="t('standalone.threat_shield_dns.threat_shield_dns_enabled')"
           kind="success"
@@ -100,32 +85,32 @@ function clearFilter() {
     <div class="space-y-6">
       <!-- dns-list-settings error notification -->
       <NeInlineNotification
-        v-if="errorListDnsSettings"
+        v-if="tsStore.errorListDnsSettings"
         kind="error"
         :title="t('error.cannot_retrieve_threat_shield_settings')"
-        :description="errorListDnsSettings"
+        :description="tsStore.errorListDnsSettings"
         class="mb-5"
       >
-        <template #details v-if="errorListDnsSettingsDetails">
-          {{ errorListDnsSettingsDetails }}
+        <template #details v-if="tsStore.errorListDnsSettingsDetails">
+          {{ tsStore.errorListDnsSettingsDetails }}
         </template>
       </NeInlineNotification>
       <!-- dns-list-bypass error notification -->
       <NeInlineNotification
-        v-if="errorListDnsBypass"
+        v-if="tsStore.errorListDnsBypass"
         kind="error"
         :title="t('error.cannot_retrieve_bypasses')"
-        :description="errorListDnsBypass"
+        :description="tsStore.errorListDnsBypass"
         class="mb-5"
       >
-        <template #details v-if="errorListDnsBypassDetails">
-          {{ errorListDnsBypassDetails }}
+        <template #details v-if="tsStore.errorListDnsBypassDetails">
+          {{ tsStore.errorListDnsBypassDetails }}
         </template>
       </NeInlineNotification>
       <template v-else>
         <!-- threat shield is disabled -->
         <NeEmptyState
-          v-if="!loadingListDnsSettings && !dnsSettings?.enabled"
+          v-if="!tsStore.loadingListDnsSettings && !tsStore.dnsSettings?.enabled"
           :title="t('standalone.threat_shield_dns.threat_shield_dns_disabled')"
           :icon="faShield"
           class="pb-8"
@@ -146,14 +131,14 @@ function clearFilter() {
         </NeEmptyState>
         <template v-else>
           <div
-            v-if="dnsBypasses.length && !loadingListDnsBypass"
+            v-if="tsStore.dnsBypasses.length && !tsStore.loadingListDnsBypass"
             class="flex flex-col-reverse items-start justify-between gap-6 sm:flex-row sm:items-center"
           >
             <NeTextInput
               :placeholder="t('common.filter')"
               v-model.trim="textFilter"
               is-search
-              :disabled="loadingListDnsBypass || loadingListDnsSettings"
+              :disabled="tsStore.loadingListDnsBypass || tsStore.loadingListDnsSettings"
               class="max-w-xs sm:max-w-sm"
             />
             <NeButton kind="secondary" size="lg" @click="showCreateBypassDrawer">
@@ -165,7 +150,7 @@ function clearFilter() {
           </div>
           <!-- empty state -->
           <NeEmptyState
-            v-if="!dnsBypasses.length && !loadingListDnsBypass"
+            v-if="!tsStore.dnsBypasses.length && !tsStore.loadingListDnsBypass"
             :title="t('standalone.threat_shield_dns.no_filter_bypasses_configured')"
             :icon="['fas', 'circle-info']"
             class="mt-4"
@@ -179,7 +164,7 @@ function clearFilter() {
           </NeEmptyState>
           <!-- no bypasses matching filter -->
           <NeEmptyState
-            v-else-if="!filteredBypasses.length && !loadingListDnsBypass"
+            v-else-if="!filteredBypasses.length && !tsStore.loadingListDnsBypass"
             :title="t('standalone.threat_shield_dns.no_filter_bypasses_found')"
             :description="t('common.try_changing_search_filters')"
             :icon="['fas', 'circle-info']"
@@ -191,11 +176,11 @@ function clearFilter() {
           </NeEmptyState>
           <!-- bypasses card grid -->
           <div
-            v-if="dnsBypasses.length || loadingListDnsBypass"
+            v-if="tsStore.dnsBypasses.length || tsStore.loadingListDnsBypass"
             class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 4xl:grid-cols-5 6xl:grid-cols-6"
           >
             <!-- skeleton -->
-            <template v-if="loadingListDnsBypass">
+            <template v-if="tsStore.loadingListDnsBypass">
               <NeCard v-for="index in 8" :key="index" loading :skeletonLines="2" />
             </template>
             <BypassCard

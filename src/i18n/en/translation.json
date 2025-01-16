@@ -2282,7 +2282,9 @@
       "address": "Address",
       "gid_label": "Rule Generator ID (GID)",
       "sid_label": "Rule Signature ID (SID)",
-      "address_helper": "IPv4 address or CIDR"
+      "address_helper": "IPv4 address or CIDR",
+      "delete_suppressed_alert_modal_title": "Delete alert suppression",
+      "delete_suppressed_alert_description": "Delete alert suppression for ID '{id}' with '{ip}' and  direction '{direction}'?"
     }
   },
   "controller": {

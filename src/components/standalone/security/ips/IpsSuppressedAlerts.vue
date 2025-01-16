@@ -6,6 +6,7 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeDropdown,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -26,6 +27,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import IpsRestoreSuppressedAlert from '@/components/standalone/security/ips/IpsRestoreSuppressedAlert.vue'
 
 export type Direction = 'by_src' | 'by_dst'
 
@@ -34,7 +36,7 @@ export type SuppressedAlert = {
   gid: string
   sid: string
   direction: Direction
-  address: string
+  ip: string
   description: string
 }
 
@@ -95,6 +97,27 @@ function handleSuppress() {
   changes.getChanges()
   loadSuppressedAlerts()
   suppressingAlert.value = false
+}
+
+function dropDownActions(suppressedAlert: SuppressedAlert): NeDropdownItem[] {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: 'trash',
+      iconStyle: 'fas',
+      danger: true,
+      action: () => {
+        suppressionToDelete.value = suppressedAlert
+      }
+    }
+  ]
+}
+const suppressionToDelete = ref<SuppressedAlert>()
+function handleDeleted() {
+  loadSuppressedAlerts()
+  suppressionToDelete.value = undefined
+  changes.getChanges()
 }
 </script>
 
@@ -182,7 +205,7 @@ function handleSuppress() {
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
               <div class="flex justify-end">
-                <!-- TODO: Add dropdown -->
+                <NeDropdown :items="dropDownActions(item)" :align-to-right="true" />
               </div>
             </NeTableCell>
           </NeTableRow>
@@ -216,5 +239,10 @@ function handleSuppress() {
     @suppress="handleSuppress()"
     :visible="suppressingAlert"
     @close="suppressingAlert = false"
+  />
+  <IpsRestoreSuppressedAlert
+    :alert="suppressionToDelete"
+    @close="suppressionToDelete = undefined"
+    @restored="handleDeleted()"
   />
 </template>

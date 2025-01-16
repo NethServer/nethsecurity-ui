@@ -627,12 +627,12 @@ function showRemoveUnitModal(unit: Unit) {
     </NeModal>
     <!-- Modal that shows a warning if the API version is newer than the required one -->
     <NeModal
-      :primaryLabel="t('controller.units.open_anyway')"
+      :primaryLabel="t('controller.units.open_unit')"
       :cancelLabel="t('common.close')"
       :closeAriaLabel="t('common.close')"
       :title="t('controller.units.warning_open_unit')"
       :visible="showGreaterApiModal"
-      kind="warning"
+      kind="info"
       @close="showGreaterApiModal = false"
       @primaryClick="openUnit(currentUnit!, false)"
     >

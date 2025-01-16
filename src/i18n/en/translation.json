@@ -388,7 +388,8 @@
     "cannot_retrieve_latency_and_quality_report": "Cannot retrieve latency and quality report",
     "invalid_space": "Field cannot contain spaces",
     "cannot_retrieve_netify_informatics_configuration": "Cannot retrieve Netify Informatics configuration",
-    "duplicate_rule": "Rule already exists"
+    "duplicate_rule": "Rule already exists",
+    "duplicate_suppression": "Suppression already exists"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2278,7 +2279,10 @@
       "suppressed_alert_description": "Description",
       "suppressed_alert_id": "@:standalone.ips.rule_id",
       "suppressed_alert_direction": "@:standalone.ip.direction",
-      "address": "Address"
+      "address": "Address",
+      "gid_label": "Rule Generator ID (GID)",
+      "sid_label": "Rule Signature ID (SID)",
+      "address_helper": "IPv4 address or CIDR"
     }
   },
   "controller": {

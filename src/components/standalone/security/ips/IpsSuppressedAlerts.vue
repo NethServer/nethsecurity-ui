@@ -24,6 +24,8 @@ import { faCircleInfo, faCirclePlus, faShield } from '@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
+import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type Direction = 'by_src' | 'by_dst'
 
@@ -40,6 +42,7 @@ type Response = AxiosResponse<{
   alerts: SuppressedAlert[]
 }>
 
+const changes = useUciPendingChangesStore()
 const { t } = useI18n()
 
 const suppressedAlerts = ref<SuppressedAlert[]>([])
@@ -87,7 +90,12 @@ const onSort = (payload: any) => {
   sortDescending.value = payload.descending
 }
 
-const suppressingRule = ref(false)
+const suppressingAlert = ref(false)
+function handleSuppress() {
+  changes.getChanges()
+  loadSuppressedAlerts()
+  suppressingAlert.value = false
+}
 </script>
 
 <template>
@@ -107,7 +115,7 @@ const suppressingRule = ref(false)
     <template v-else-if="suppressedAlerts.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
-        <NeButton kind="secondary" size="lg" @click="suppressingRule = true">
+        <NeButton kind="secondary" size="lg" @click="suppressingAlert = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
           </template>
@@ -196,7 +204,7 @@ const suppressingRule = ref(false)
       </NeTable>
     </template>
     <NeEmptyState v-else :icon="faShield" :title="t('standalone.ips.no_suppressed_alerts')">
-      <NeButton kind="primary" size="lg" @click="suppressingRule = true">
+      <NeButton kind="primary" size="lg" @click="suppressingAlert = true">
         <template #prefix>
           <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
         </template>
@@ -204,4 +212,9 @@ const suppressingRule = ref(false)
       </NeButton>
     </NeEmptyState>
   </div>
+  <IpsSuppressAlertDrawer
+    @suppress="handleSuppress()"
+    :visible="suppressingAlert"
+    @close="suppressingAlert = false"
+  />
 </template>

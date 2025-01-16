@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag } from '@/lib/validation'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'

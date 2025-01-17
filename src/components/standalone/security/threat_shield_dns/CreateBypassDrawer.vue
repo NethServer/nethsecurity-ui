@@ -8,15 +8,14 @@ import { useI18n } from 'vue-i18n'
 import {
   NeInlineNotification,
   NeButton,
-  getAxiosErrorMessage,
   NeSideDrawer,
   NeTextInput,
   focusElement
 } from '@nethesis/vue-components'
 import { ref, watch } from 'vue'
-import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateIpOrCidr, validateRequired } from '@/lib/validation'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const props = defineProps<{
   isShown: boolean
@@ -25,19 +24,10 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
-const uciChangesStore = useUciPendingChangesStore()
+const tsStore = useThreatShieldStore()
 const bypass = ref('')
 const bypassRef = ref()
 const errorBag = ref(new MessageBag())
-
-const loading = ref({
-  dnsAddBypass: false
-})
-
-const error = ref({
-  dnsAddBypass: '',
-  dnsAddBypassDetails: ''
-})
 
 watch(
   () => props.isShown,
@@ -54,13 +44,8 @@ function closeDrawer() {
   emit('close')
 }
 
-function clearErrors() {
-  errorBag.value.clear()
-  error.value.dnsAddBypass = ''
-  error.value.dnsAddBypassDetails = ''
-}
-
 function validate() {
+  clearErrors()
   let isValidationOk = true
 
   const requiredValidator = validateRequired(bypass.value)
@@ -84,17 +69,13 @@ function validate() {
 }
 
 async function saveBypass() {
-  clearErrors()
-
   const isValidationOk = validate()
   if (!isValidationOk) {
     return
   }
-  loading.value.dnsAddBypass = true
 
   try {
-    await ubusCall('ns.threatshield', 'dns-add-bypass', { address: bypass.value })
-    uciChangesStore.getChanges()
+    await tsStore.addDnsBypass(bypass.value)
     emit('reloadData')
     closeDrawer()
   } catch (err: any) {
@@ -102,13 +83,14 @@ async function saveBypass() {
 
     if (err instanceof ValidationError) {
       errorBag.value = err.errorBag
-    } else {
-      error.value.dnsAddBypass = t(getAxiosErrorMessage(err))
-      error.value.dnsAddBypassDetails = err.toString()
     }
-  } finally {
-    loading.value.dnsAddBypass = false
   }
+}
+
+function clearErrors() {
+  errorBag.value.clear()
+  tsStore.errorAddDnsBypass = ''
+  tsStore.errorAddDnsBypassDetails = ''
 }
 </script>
 
@@ -125,18 +107,18 @@ async function saveBypass() {
           :label="t('standalone.threat_shield_dns.ip_address_or_network_cidr')"
           v-model.trim="bypass"
           :invalidMessage="t(errorBag.getFirstI18nKeyFor('address'))"
-          :disabled="loading.dnsAddBypass"
+          :disabled="tsStore.loadingAddDnsBypass"
           ref="bypassRef"
         />
         <!-- dns-add-bypass error notification -->
         <NeInlineNotification
-          v-if="error.dnsAddBypass"
+          v-if="tsStore.errorAddDnsBypass"
           kind="error"
           :title="t('error.cannot_create_bypass')"
-          :description="error.dnsAddBypass"
+          :description="tsStore.errorAddDnsBypass"
         >
-          <template #details v-if="error.dnsAddBypassDetails">
-            {{ error.dnsAddBypassDetails }}
+          <template #details v-if="tsStore.errorAddDnsBypassDetails">
+            {{ tsStore.errorAddDnsBypassDetails }}
           </template>
         </NeInlineNotification>
       </div>
@@ -147,7 +129,7 @@ async function saveBypass() {
           kind="tertiary"
           size="lg"
           @click.prevent="closeDrawer"
-          :disabled="loading.dnsAddBypass"
+          :disabled="tsStore.loadingAddDnsBypass"
           class="mr-3"
         >
           {{ t('common.cancel') }}
@@ -156,8 +138,8 @@ async function saveBypass() {
           kind="primary"
           size="lg"
           @click.prevent="saveBypass"
-          :disabled="loading.dnsAddBypass"
-          :loading="loading.dnsAddBypass"
+          :disabled="tsStore.loadingAddDnsBypass"
+          :loading="tsStore.loadingAddDnsBypass"
         >
           {{ t('standalone.threat_shield_dns.add_bypass') }}
         </NeButton>

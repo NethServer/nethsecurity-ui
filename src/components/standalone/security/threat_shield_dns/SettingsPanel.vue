@@ -10,7 +10,6 @@ import { NeButton, NeSkeleton, NeInlineNotification } from '@nethesis/vue-compon
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { onMounted } from 'vue'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import NeMultiTextInput from '../../NeMultiTextInput.vue'
 import {
   MessageBag,
@@ -22,7 +21,6 @@ import { useFirewallStore } from '@/stores/standalone/firewall'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const { t } = useI18n()
-const uciChangesStore = useUciPendingChangesStore()
 const fwStore = useFirewallStore()
 const tsStore = useThreatShieldStore()
 const isThreatShieldEnabled = ref(false)
@@ -107,7 +105,6 @@ function validate() {
 
 async function saveSettings() {
   const isValidationOk = validate()
-
   if (!isValidationOk) {
     return
   }
@@ -119,7 +116,6 @@ async function saveSettings() {
       ports: ports.value
     })
     loadData()
-    uciChangesStore.getChanges()
   } catch (err: unknown) {
     // exception already handled in threat shield store
   }

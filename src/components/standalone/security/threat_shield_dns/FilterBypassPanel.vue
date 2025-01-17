@@ -14,18 +14,15 @@ import {
   NeTextInput
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteModal from '@/components/DeleteModal.vue'
-import { faCheck, faShield, faArrowRight, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { getStandaloneRoutePrefix } from '@/lib/router'
-import { useRouter } from 'vue-router'
+import { faCheck, faShield, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import BypassCard from './BypassCard.vue'
 import CreateBypassDrawer from './CreateBypassDrawer.vue'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
+import TsDisabledEmptyState from './TsDisabledEmptyState.vue'
 
 const { t } = useI18n()
 const tsStore = useThreatShieldStore()
-const router = useRouter()
 const currentBypass = ref('')
 const isShownCreateBypassDrawer = ref(false)
 const isShownDeleteBypassModal = ref(false)
@@ -83,18 +80,6 @@ function clearFilter() {
       </div>
     </div>
     <div class="space-y-6">
-      <!-- dns-list-settings error notification -->
-      <NeInlineNotification
-        v-if="tsStore.errorListDnsSettings"
-        kind="error"
-        :title="t('error.cannot_retrieve_threat_shield_settings')"
-        :description="tsStore.errorListDnsSettings"
-        class="mb-5"
-      >
-        <template #details v-if="tsStore.errorListDnsSettingsDetails">
-          {{ tsStore.errorListDnsSettingsDetails }}
-        </template>
-      </NeInlineNotification>
       <!-- dns-list-bypass error notification -->
       <NeInlineNotification
         v-if="tsStore.errorListDnsBypass"
@@ -109,26 +94,9 @@ function clearFilter() {
       </NeInlineNotification>
       <template v-else>
         <!-- threat shield is disabled -->
-        <NeEmptyState
+        <TsDisabledEmptyState
           v-if="!tsStore.loadingListDnsSettings && !tsStore.dnsSettings?.enabled"
-          :title="t('standalone.threat_shield_dns.threat_shield_dns_disabled')"
-          :icon="faShield"
-          class="pb-8"
-        >
-          <NeButton
-            kind="primary"
-            @click="
-              () => {
-                router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-dns?tab=settings`)
-              }
-            "
-          >
-            <template #prefix>
-              <font-awesome-icon :icon="faArrowRight" class="h-4 w-4" aria-hidden="true" />
-            </template>
-            {{ t('standalone.threat_shield_dns.go_to_settings') }}
-          </NeButton>
-        </NeEmptyState>
+        />
         <template v-else>
           <div
             v-if="tsStore.dnsBypasses.length && !tsStore.loadingListDnsBypass"
@@ -152,7 +120,7 @@ function clearFilter() {
           <NeEmptyState
             v-if="!tsStore.dnsBypasses.length && !tsStore.loadingListDnsBypass"
             :title="t('standalone.threat_shield_dns.no_filter_bypasses_configured')"
-            :icon="['fas', 'circle-info']"
+            :icon="faShield"
             class="mt-4"
           >
             <NeButton kind="primary" size="lg" @click="showCreateBypassDrawer">
@@ -206,12 +174,7 @@ function clearFilter() {
       :title="t('standalone.threat_shield_dns.delete_bypass')"
       :deleteButtonLabel="t('standalone.threat_shield_dns.delete_bypass')"
       :errorNotificationTitle="t('error.cannot_delete_bypass')"
-      :deleteFunction="
-        () =>
-          ubusCall('ns.threatshield', 'dns-delete-bypass', {
-            address: currentBypass
-          })
-      "
+      :deleteFunction="() => tsStore.deleteDnsBypass(currentBypass)"
       @close="isShownDeleteBypassModal = false"
       @reloadData="loadData"
     >

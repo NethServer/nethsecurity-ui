@@ -4,7 +4,6 @@
 -->
 
 <script setup lang="ts">
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
   NeBadge,
   NeButton,
@@ -14,16 +13,13 @@ import {
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { getStandaloneRoutePrefix } from '@/lib/router'
-import { faCircleInfo, faCheck, faShield, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faCheck } from '@fortawesome/free-solid-svg-icons'
 import BlocklistTable from '../threat_shield/BlocklistTable.vue'
 import { useThreatShieldStore, type Blocklist } from '@/stores/standalone/threatShield'
+import TsDisabledEmptyState from './TsDisabledEmptyState.vue'
 
 const { t } = useI18n()
-const uciChangesStore = useUciPendingChangesStore()
 const tsStore = useThreatShieldStore()
-const router = useRouter()
 const textFilter = ref('')
 // show table skeleton only on first load
 const firstLoadingListDnsBlocklists = ref(true)
@@ -54,7 +50,6 @@ async function toggleBlocklist(blocklist: Blocklist) {
   try {
     await tsStore.editDnsBlocklist(blocklist.name, blocklist.enabled)
     tsStore.listDnsBlocklist()
-    uciChangesStore.getChanges()
   } catch (err: unknown) {
     // exception already handled in threat shield store
   }
@@ -118,26 +113,9 @@ function clearFilter() {
       </NeInlineNotification>
       <template v-else>
         <!-- threat shield is disabled -->
-        <NeEmptyState
+        <TsDisabledEmptyState
           v-if="!tsStore.loadingListDnsSettings && !tsStore.dnsSettings?.enabled"
-          :title="t('standalone.threat_shield_dns.threat_shield_dns_disabled')"
-          :icon="faShield"
-          class="pb-8"
-        >
-          <NeButton
-            kind="primary"
-            @click="
-              () => {
-                router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-dns?tab=settings`)
-              }
-            "
-          >
-            <template #prefix>
-              <font-awesome-icon :icon="faArrowRight" class="h-4 w-4" aria-hidden="true" />
-            </template>
-            {{ t('standalone.threat_shield_dns.go_to_settings') }}
-          </NeButton>
-        </NeEmptyState>
+        />
         <template v-else>
           <NeTextInput
             :placeholder="t('standalone.threat_shield.filter_blocklists')"

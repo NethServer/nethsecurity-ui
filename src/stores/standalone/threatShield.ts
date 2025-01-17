@@ -3,9 +3,11 @@
 
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { getAxiosErrorMessage, sortByProperty } from '@nethesis/vue-components'
 import { defineStore } from 'pinia'
+import { useUciPendingChangesStore } from './uciPendingChanges'
+import { useNotificationsStore } from '../notifications'
 
 export type Blocklist = {
   name: string
@@ -21,18 +23,33 @@ export type DnsSettings = {
   ports: string[]
 }
 
+export type DnsBlockedDomain = {
+  address: string
+  description?: string
+}
+
 export const useThreatShieldStore = defineStore('threatShield', () => {
   const { t, te } = useI18n()
+  const uciChangesStore = useUciPendingChangesStore()
+  const notificationsStore = useNotificationsStore()
   const dnsBlocklists = ref<Blocklist[]>([])
   const dnsSettings = ref<DnsSettings>()
   const dnsBypasses = ref<string[]>([])
+  const dnsBlockedDomains = ref<DnsBlockedDomain[]>([])
   const loadingListDnsBlocklists = ref(false)
+  const loadingListDnsBlockedDomains = ref(false)
   const loadingListDnsSettings = ref(false)
   const loadingEditDnsSettings = ref(false)
   const loadingEditDnsBlocklist = ref(false)
   const loadingListDnsBypass = ref(false)
+  const loadingAddDnsBypass = ref(false)
+  const loadingDeleteDnsBypass = ref(false)
+  const loadingSaveDnsBlockedDomain = ref(false)
+  const loadingDeleteDnsBlockedDomain = ref(false)
   const errorListDnsBlocklists = ref('')
   const errorListDnsBlocklistsDetails = ref('')
+  const errorListDnsBlockedDomains = ref('')
+  const errorListDnsBlockedDomainsDetails = ref('')
   const errorListDnsSettings = ref('')
   const errorListDnsSettingsDetails = ref('')
   const errorEditDnsSettings = ref('')
@@ -41,6 +58,14 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   const errorEditDnsBlocklistDetails = ref('')
   const errorListDnsBypass = ref('')
   const errorListDnsBypassDetails = ref('')
+  const errorAddDnsBypass = ref('')
+  const errorAddDnsBypassDetails = ref('')
+  const errorDeleteDnsBypass = ref('')
+  const errorDeleteDnsBypassDetails = ref('')
+  const errorSaveDnsBlockedDomain = ref('')
+  const errorSaveDnsBlockedDomainDetails = ref('')
+  const errorDeleteDnsBlockedDomain = ref('')
+  const errorDeleteDnsBlockedDomainDetails = ref('')
 
   const isEnterprise = computed(() => {
     return dnsBlocklists.value.some((x) => x.type === 'enterprise')
@@ -86,6 +111,127 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     }
   }
 
+  async function addDnsBypass(address: string) {
+    loadingAddDnsBypass.value = true
+    errorAddDnsBypass.value = ''
+    errorAddDnsBypassDetails.value = ''
+
+    try {
+      await ubusCall('ns.threatshield', 'dns-add-bypass', { address })
+      uciChangesStore.getChanges()
+    } catch (err: any) {
+      console.error(err)
+
+      if (!(err instanceof ValidationError)) {
+        errorAddDnsBypass.value = t(getAxiosErrorMessage(err))
+        errorAddDnsBypassDetails.value = err.toString()
+      }
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingAddDnsBypass.value = false
+    }
+  }
+
+  async function listDnsBlockedDomains() {
+    loadingListDnsBlockedDomains.value = true
+    errorListDnsBlockedDomains.value = ''
+    errorListDnsBlockedDomainsDetails.value = ''
+
+    try {
+      const res = await ubusCall('ns.threatshield', 'dns-list-blocked')
+      dnsBlockedDomains.value = res.data.data as DnsBlockedDomain[]
+    } catch (err: any) {
+      console.error(err)
+      errorListDnsBlockedDomains.value = t(getAxiosErrorMessage(err))
+      errorListDnsBlockedDomainsDetails.value = err.toString()
+    } finally {
+      loadingListDnsBlockedDomains.value = false
+    }
+  }
+
+  async function saveDnsBlockedDomain(domain: DnsBlockedDomain, isEditing = false) {
+    loadingSaveDnsBlockedDomain.value = true
+    errorSaveDnsBlockedDomain.value = ''
+    errorSaveDnsBlockedDomainDetails.value = ''
+    const method = isEditing ? 'dns-edit-blocked' : 'dns-add-blocked'
+
+    try {
+      await ubusCall('ns.threatshield', method, domain)
+
+      if (!isEditing) {
+        // applied instantly, show notification (only if creating)
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.threat_shield_dns.blocked_domain_added_title'),
+          description: t('standalone.threat_shield_dns.blocked_domain_added_description', {
+            domain: domain.address
+          })
+        })
+      }
+    } catch (err: any) {
+      console.error(err)
+
+      if (!(err instanceof ValidationError)) {
+        errorSaveDnsBlockedDomain.value = t(getAxiosErrorMessage(err))
+        errorSaveDnsBlockedDomainDetails.value = err.toString()
+      }
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingSaveDnsBlockedDomain.value = false
+    }
+  }
+
+  async function deleteDnsBypass(bypass: string) {
+    loadingDeleteDnsBypass.value = true
+    errorDeleteDnsBypass.value = ''
+    errorDeleteDnsBypassDetails.value = ''
+
+    try {
+      await ubusCall('ns.threatshield', 'dns-delete-bypass', {
+        address: bypass
+      })
+      uciChangesStore.getChanges()
+    } catch (err: any) {
+      console.error(err)
+      errorDeleteDnsBypass.value = t(getAxiosErrorMessage(err))
+      errorDeleteDnsBypassDetails.value = err.toString()
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingDeleteDnsBypass.value = false
+    }
+  }
+
+  async function deleteDnsBlockedDomain(domain: string) {
+    loadingDeleteDnsBlockedDomain.value = true
+    errorDeleteDnsBlockedDomain.value = ''
+    errorDeleteDnsBlockedDomainDetails.value = ''
+
+    try {
+      await ubusCall('ns.threatshield', 'dns-delete-blocked', {
+        address: domain
+      })
+      // applied instantly, show notification
+      notificationsStore.createNotification({
+        kind: 'success',
+        title: t('standalone.threat_shield_dns.blocked_domain_deleted_title'),
+        description: t('standalone.threat_shield_dns.blocked_domain_deleted_description', {
+          domain
+        })
+      })
+    } catch (err: any) {
+      console.error(err)
+      errorDeleteDnsBlockedDomain.value = t(getAxiosErrorMessage(err))
+      errorDeleteDnsBlockedDomainDetails.value = err.toString()
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingDeleteDnsBlockedDomain.value = false
+    }
+  }
+
   async function listDnsSettings() {
     loadingListDnsSettings.value = true
     errorListDnsSettings.value = ''
@@ -110,10 +256,14 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
 
     try {
       await ubusCall('ns.threatshield', 'dns-edit-settings', settings)
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
-      errorEditDnsSettings.value = t(getAxiosErrorMessage(err))
-      errorEditDnsSettingsDetails.value = err.toString()
+
+      if (!(err instanceof ValidationError)) {
+        errorEditDnsSettings.value = t(getAxiosErrorMessage(err))
+        errorEditDnsSettingsDetails.value = err.toString()
+      }
       // rethrow error so it can be caught by the caller
       throw err
     } finally {
@@ -131,6 +281,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
         blocklist: blocklist,
         enabled: enabled
       })
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
       errorEditDnsBlocklist.value = t(getAxiosErrorMessage(err))
@@ -173,16 +324,33 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     return false
   }
 
+  function searchStringInDnsBlockedDomain(domain: DnsBlockedDomain, queryText: string) {
+    const regex = /[^a-zA-Z0-9-_\\.]/g
+    queryText = queryText.replace(regex, '')
+
+    // search in domain name and description
+
+    return ['address', 'description'].some((attrName) => {
+      const attrValue = domain[attrName as keyof DnsBlockedDomain] as string
+      return new RegExp(queryText, 'i').test(attrValue?.replace(regex, ''))
+    })
+  }
+
   return {
     dnsBlocklists,
     dnsSettings,
     dnsBypasses,
+    dnsBlockedDomains,
     isEnterprise,
     loadingListDnsBlocklists,
     loadingListDnsSettings,
     loadingEditDnsSettings,
     loadingEditDnsBlocklist,
     loadingListDnsBypass,
+    loadingAddDnsBypass,
+    loadingDeleteDnsBypass,
+    loadingListDnsBlockedDomains,
+    loadingSaveDnsBlockedDomain,
     errorListDnsBlocklists,
     errorListDnsBlocklistsDetails,
     errorListDnsSettings,
@@ -193,11 +361,27 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     errorEditDnsBlocklistDetails,
     errorListDnsBypass,
     errorListDnsBypassDetails,
+    errorListDnsBlockedDomains,
+    errorListDnsBlockedDomainsDetails,
+    errorAddDnsBypass,
+    errorDeleteDnsBypass,
+    errorDeleteDnsBypassDetails,
+    errorAddDnsBypassDetails,
+    errorSaveDnsBlockedDomain,
+    errorSaveDnsBlockedDomainDetails,
     listDnsBlocklist,
     listDnsSettings,
+    listDnsBlockedDomains,
     editDnsSettings,
+    addDnsBypass,
+    deleteDnsBypass,
     editDnsBlocklist,
     listDnsBypass,
-    searchStringInDnsBlocklist
+    saveDnsBlockedDomain,
+    deleteDnsBlockedDomain,
+    searchStringInDnsBlocklist,
+    searchStringInDnsBlockedDomain,
+    errorDeleteDnsBlockedDomain,
+    errorDeleteDnsBlockedDomainDetails
   }
 })

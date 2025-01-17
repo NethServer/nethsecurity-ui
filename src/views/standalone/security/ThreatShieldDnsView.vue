@@ -11,12 +11,12 @@ import {
   NeEmptyState,
   NeHeading,
   NeInlineNotification,
-  NeSkeleton,
   NeTabs
 } from '@nethesis/vue-components'
 import { useTabs } from '@/composables/useTabs'
 import BlocklistSourcesPanel from '@/components/standalone/security/threat_shield_dns/BlocklistSourcesPanel.vue'
 import FilterBypassPanel from '@/components/standalone/security/threat_shield_dns/FilterBypassPanel.vue'
+import LocalBlocklistPanel from '@/components/standalone/security/threat_shield_dns/LocalBlocklistPanel.vue'
 import SettingsPanel from '@/components/standalone/security/threat_shield_dns/SettingsPanel.vue'
 import { onMounted, ref } from 'vue'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
@@ -25,7 +25,6 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { faShield, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
-// import LocalBlocklistPanel from '@/components/standalone/security/threat_shield_dns/LocalBlocklistPanel.vue'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -84,7 +83,7 @@ async function getFlashstartConfig() {
 <template>
   <div>
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.threat_shield_dns.title') }}</NeHeading>
-    <!-- dns-list-settings error notification -->
+    <!-- dns-list-settings error -->
     <NeInlineNotification
       v-if="tsStore.errorListDnsSettings"
       kind="error"
@@ -130,7 +129,7 @@ async function getFlashstartConfig() {
       />
       <BlocklistSourcesPanel v-if="selectedTab === 'blocklistSources'" />
       <FilterBypassPanel v-if="selectedTab === 'filterBypass'" />
-      <!-- <LocalBlocklistPanel v-if="selectedTab === 'localBlocklist'" /> //// -->
+      <LocalBlocklistPanel v-if="selectedTab === 'localBlocklist'" />
       <SettingsPanel v-if="selectedTab === 'settings'" />
     </template>
   </div>

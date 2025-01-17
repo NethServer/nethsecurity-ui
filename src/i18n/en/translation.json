@@ -392,7 +392,11 @@
     "cannot_retrieve_bypasses": "Cannot retrieve bypasses",
     "cannot_create_bypass": "Cannot create bypass",
     "address_already_present": "Address already present",
-    "cannot_edit_blocklist": "Cannot edit blocklist"
+    "cannot_edit_blocklist": "Cannot edit blocklist",
+    "cannot_retrieve_blocked_domains": "Cannot retrieve blocked domains",
+    "cannot_delete_blocked_domain": "Cannot delete blocked domain",
+    "cannot_save_blocked_domain": "Cannot save blocked domain",
+    "invalid_domain_name": "Invalid domain name"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1620,10 +1624,24 @@
       "no_filter_bypasses_found": "No filter bypasses found",
       "delete_bypass": "Delete bypass",
       "bypasses": "Bypasses",
-      "confirm_delete_bypass": "Delete bypass {name}?",
+      "confirm_delete_bypass": "Delete bypass '{name}'?",
       "add_bypass": "Add bypass",
       "ip_address_or_network_cidr": "IP address or network (CIDR)",
-      "threat_shield_dns_is_disabled_description": "To enable it, you must first disable FlashStart DNS"
+      "threat_shield_dns_is_disabled_description": "To enable it, you must first disable FlashStart DNS",
+      "add_domain": "Add domain",
+      "local_blocklist_is_empty": "Local blocklist is empty",
+      "no_domain_found": "No domain found",
+      "delete_domain": "Delete domain",
+      "confirm_delete_domain": "Delete blocked domain '{name}'?",
+      "blocked_domains": "Blocked domains",
+      "domain": "Domain",
+      "description": "Description",
+      "edit_domain": "Edit domain",
+      "save_domain": "Save domain",
+      "blocked_domain_added_title": "Blocked domain added",
+      "blocked_domain_added_description": "'{domain}' has been added to local DNS blocklist",
+      "blocked_domain_deleted_title": "Blocked domain deleted",
+      "blocked_domain_deleted_description": "'{domain}' has been deleted from local DNS blocklist"
     },
     "vpn": {
       "title": "VPN"

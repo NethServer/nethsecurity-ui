@@ -28,10 +28,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsEnableRuleModal from '@/components/standalone/security/ips/IpsEnableRuleModal.vue'
+import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
 
 export type Rule = {
   description: string
-  id: string
   gid: string
   sid: string
 }
@@ -69,11 +69,13 @@ onMounted(() => {
 const filter = ref('')
 const filteredRules = computed((): Rule[] => {
   return rules.value.filter((rule) => {
-    return rule.description.includes(filter.value) || rule.id.includes(filter.value)
+    return Object.values(rule).some((value) => {
+      return value?.toLowerCase().includes(filter.value.toLowerCase() ?? false)
+    })
   })
 })
 
-const sortKey = ref<keyof Rule>('id')
+const sortKey = ref<keyof Rule>('sid')
 const sortDescending = ref(false)
 const { sortedItems } = useSort(filteredRules, sortKey, sortDescending, {})
 
@@ -151,10 +153,10 @@ function handleEnabled() {
       >
         <NeTableHead>
           <NeTableHeadCell column-key="description" sortable @sort="onSort">
-            {{ t('standalone.ips.rule_description') }}
+            {{ t('standalone.ips.description') }}
           </NeTableHeadCell>
-          <NeTableHeadCell column-key="id" sortable @sort="onSort">
-            {{ t('standalone.ips.rule_id') }}
+          <NeTableHeadCell column-key="sid" sortable @sort="onSort">
+            {{ t('standalone.ips.table_id_description') }}
           </NeTableHeadCell>
           <NeTableHeadCell>
             <!-- no header for actions -->
@@ -176,11 +178,11 @@ function handleEnabled() {
             </NeTableCell>
           </NeTableRow>
           <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}`">
-            <NeTableCell :data-label="t('standalone.ips.rule_description')">
+            <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>
-            <NeTableCell :data-label="t('standalone.ips.rule_id')">
-              {{ item.id }}
+            <NeTableCell :data-label="t('standalone.ips.table_id_description')">
+              <IpsSnortDocLink :gid="item.gid" :sid="item.sid" />
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
               <div class="flex justify-end">

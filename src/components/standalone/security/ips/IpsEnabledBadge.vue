@@ -3,15 +3,10 @@ import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { NeBadge } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { onMounted } from 'vue'
 
 const { t } = useI18n()
 
 const ips = useIpsStatusStore()
-
-onMounted(() => {
-  ips.fetchStatus()
-})
 </script>
 
 <template>

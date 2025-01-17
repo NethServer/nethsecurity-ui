@@ -167,7 +167,7 @@ function handleDeleted() {
           <NeTableHeadCell column-key="direction" sortable @sort="onSort">
             {{ t('standalone.ips.bypass_direction') }}
           </NeTableHeadCell>
-          <NeTableHeadCell>{{ t('standalone.ips.bypass_description') }}</NeTableHeadCell>
+          <NeTableHeadCell>{{ t('standalone.ips.description') }}</NeTableHeadCell>
           <NeTableHeadCell>
             <!-- no header for actions -->
           </NeTableHeadCell>
@@ -199,7 +199,7 @@ function handleDeleted() {
                 {{ t('standalone.ips.destination') }}
               </template>
             </NeTableCell>
-            <NeTableCell :data-label="t('standalone.ips.bypass_description')">
+            <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">

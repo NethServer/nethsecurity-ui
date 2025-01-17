@@ -28,11 +28,11 @@ import type { AxiosResponse } from 'axios'
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsRestoreSuppressedAlertModal from '@/components/standalone/security/ips/IpsRestoreSuppressedAlertModal.vue'
+import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
 
 export type Direction = 'by_src' | 'by_dst'
 
 export type SuppressedAlert = {
-  id: string
   gid: string
   sid: string
   direction: Direction
@@ -78,7 +78,7 @@ const filteredAlerts = computed((): SuppressedAlert[] => {
   })
 })
 
-const sortKey = ref<keyof SuppressedAlert>('id')
+const sortKey = ref<keyof SuppressedAlert>('sid')
 const sortDescending = ref(false)
 const { sortedItems } = useSort(filteredAlerts, sortKey, sortDescending, {})
 
@@ -155,10 +155,10 @@ function handleDeleted() {
       >
         <NeTableHead>
           <NeTableHeadCell column-key="description" sortable @sort="onSort">
-            {{ t('standalone.ips.suppressed_alert_description') }}
+            {{ t('standalone.ips.description') }}
           </NeTableHeadCell>
-          <NeTableHeadCell column-key="id" sortable @sort="onSort">
-            {{ t('standalone.ips.suppressed_alert_id') }}
+          <NeTableHeadCell column-key="sid" sortable @sort="onSort">
+            {{ t('standalone.ips.table_id_description') }}
           </NeTableHeadCell>
           <NeTableHeadCell column-key="direction" sortable @sort="onSort">
             {{ t('standalone.ips.direction') }}
@@ -186,11 +186,11 @@ function handleDeleted() {
             </NeTableCell>
           </NeTableRow>
           <NeTableRow v-else v-for="item in paginatedItems" :key="`${item.ip}-${item.direction}`">
-            <NeTableCell :data-label="t('standalone.ips.suppressed_alert_description')">
+            <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>
-            <NeTableCell :data-label="t('standalone.ips.suppressed_alert_id')">
-              {{ item.id }}
+            <NeTableCell :data-label="t('standalone.ips.table_id_description')">
+              <IpsSnortDocLink :gid="item.gid" :sid="item.sid" />
             </NeTableCell>
             <NeTableCell :data-label="t('standalone.ips.direction')">
               <template v-if="item.direction == 'by_src'">

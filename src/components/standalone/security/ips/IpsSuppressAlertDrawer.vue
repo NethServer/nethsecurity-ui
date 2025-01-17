@@ -10,13 +10,17 @@ import {
 import { useI18n } from 'vue-i18n'
 import { ref, watchEffect } from 'vue'
 import { MessageBag } from '@/lib/validation'
-import type { Direction } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
+import type {
+  Direction,
+  SuppressedAlert
+} from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 
 const { t } = useI18n()
 
-const { visible } = defineProps<{
+const { visible, alert } = defineProps<{
   visible: boolean
+  alert?: SuppressedAlert
 }>()
 
 const emit = defineEmits(['close', 'suppress'])
@@ -34,11 +38,11 @@ const directionOptions: RadioOption[] = [
 
 watchEffect(() => {
   if (visible) {
-    gid.value = ''
-    sid.value = ''
-    direction.value = 'by_src'
-    ip.value = ''
-    description.value = ''
+    gid.value = alert?.gid ?? ''
+    sid.value = alert?.sid ?? ''
+    direction.value = alert?.direction ?? 'by_src'
+    ip.value = alert?.ip ?? ''
+    description.value = alert?.description ?? ''
   }
 })
 
@@ -99,7 +103,7 @@ function suppressAlert() {
       />
       <NeTextInput
         v-model="gid"
-        :disabled="loading"
+        :disabled="loading || alert != undefined"
         :label="t('standalone.ips.gid_label')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('gid'))"
         required
@@ -107,7 +111,7 @@ function suppressAlert() {
       />
       <NeTextInput
         v-model="sid"
-        :disabled="loading"
+        :disabled="loading || alert != undefined"
         :label="t('standalone.ips.sid_label')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('sid'))"
         required
@@ -115,13 +119,13 @@ function suppressAlert() {
       />
       <NeRadioSelection
         v-model="direction"
-        :disabled="loading"
+        :disabled="loading || alert != undefined"
         :label="t('standalone.ips.direction')"
         :options="directionOptions"
       />
       <NeTextInput
         v-model="ip"
-        :disabled="loading"
+        :disabled="loading || alert != undefined"
         :label="t('standalone.ips.address')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ip'))"
         :helper-text="t('standalone.ips.address_helper')"
@@ -130,7 +134,7 @@ function suppressAlert() {
       <NeTextInput
         v-model="description"
         :disabled="loading"
-        :label="t('standalone.ips.suppressed_alert_description')"
+        :label="t('standalone.ips.description')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('description'))"
       />
       <hr />

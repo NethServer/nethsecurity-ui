@@ -118,7 +118,7 @@ function closeHandler() {
       <NeTextInput
         v-model="description"
         :disabled="loading"
-        :label="t('standalone.ips.bypass_description')"
+        :label="t('standalone.ips.description')"
         optional
       />
       <hr />

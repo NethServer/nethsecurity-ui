@@ -47,7 +47,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.dns_dhcp.scan_results')"
+    :ariaLabel="t('standalone.nat_helpers.title')"
     cardBreakpoint="xl"
     :loading="loading"
     :skeletonColumns="4"

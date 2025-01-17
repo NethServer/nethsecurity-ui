@@ -13,9 +13,8 @@ import {
   NeTextInput
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
 import DeleteModal from '@/components/DeleteModal.vue'
-import { faCheck, faShield, faCirclePlus, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faShield, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { useThreatShieldStore, type DnsBlockedDomain } from '@/stores/standalone/threatShield'
 import TsDisabledEmptyState from './TsDisabledEmptyState.vue'
 import CreateOrEditBlockedDomainDrawer from './CreateOrEditBlockedDomainDrawer.vue'
@@ -98,7 +97,7 @@ function clearFilter() {
       <template v-else>
         <!-- threat shield is disabled -->
         <TsDisabledEmptyState
-          v-if="!tsStore.loadingListDnsBlockedDomains && !tsStore.dnsSettings?.enabled"
+          v-if="!tsStore.loadingListDnsSettings && !tsStore.dnsSettings?.enabled"
         />
         <template v-else>
           <div
@@ -133,18 +132,6 @@ function clearFilter() {
                 <font-awesome-icon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('standalone.threat_shield_dns.add_domain') }}
-            </NeButton>
-          </NeEmptyState>
-          <!-- no domains matching filter -->
-          <NeEmptyState
-            v-else-if="!filteredDomains.length && !tsStore.loadingListDnsBlockedDomains"
-            :title="t('standalone.threat_shield_dns.no_domain_found')"
-            :description="t('common.try_changing_search_filter')"
-            :icon="faCircleInfo"
-            class="mt-4"
-          >
-            <NeButton kind="tertiary" @click="clearFilter">
-              {{ t('common.clear_filter') }}
             </NeButton>
           </NeEmptyState>
           <!-- blocked domains table -->

@@ -397,7 +397,8 @@
     "cannot_delete_blocked_domain": "Cannot delete blocked domain",
     "cannot_save_blocked_domain": "Cannot save blocked domain",
     "invalid_domain_name": "Invalid domain name",
-    "duplicate_rule": "Rule already exists"
+    "duplicate_rule": "Rule already exists",
+    "duplicate_suppression": "Suppression already exists"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2339,7 +2340,22 @@
       "enable_rule_modal_description": "Enable the rule '{description}' identified by '{id}'?",
       "enable_rule_error": "Cannot enable rule",
       "no_rules_found": "No rules found",
-      "no_bypasses_found": "No bypasses found"
+      "no_bypasses_found": "No bypasses found",
+      "suppressed_alerts_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
+      "error_loading_suppressed_alerts": "Cannot load suppressed alerts",
+      "no_suppressed_alerts_found": "No suppressed alerts found",
+      "no_suppressed_alerts": "No suppressed alerts",
+      "add_suppressed_alert": "Suppress alert",
+      "suppressed_alert_description": "Description",
+      "suppressed_alert_id": "@:standalone.ips.rule_id",
+      "address": "Address",
+      "gid_label": "Rule Generator ID (GID)",
+      "sid_label": "Rule Signature ID (SID)",
+      "address_helper": "IPv4 address or CIDR",
+      "delete_suppressed_alert_modal_title": "Delete alert suppression",
+      "delete_suppressed_alert_description": "Delete alert suppression for ID '{id}' with '{ip}' and  direction '{direction}'?",
+      "delete_suppressed_alert_error": "Cannot delete suppressed alert",
+      "error_suppressing_alert": "Cannot suppress alert"
     }
   },
   "controller": {

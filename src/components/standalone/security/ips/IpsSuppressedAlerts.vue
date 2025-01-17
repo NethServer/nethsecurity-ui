@@ -27,7 +27,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import IpsRestoreSuppressedAlert from '@/components/standalone/security/ips/IpsRestoreSuppressedAlert.vue'
+import IpsRestoreSuppressedAlertModal from '@/components/standalone/security/ips/IpsRestoreSuppressedAlertModal.vue'
 
 export type Direction = 'by_src' | 'by_dst'
 
@@ -134,7 +134,7 @@ function handleDeleted() {
       :title="t('standalone.ips.error_loading_suppressed_alerts')"
       kind="error"
     />
-    <NeSkeleton v-if="loading" :lines="10" />
+    <NeSkeleton v-if="loading" size="lg" :lines="10" />
     <template v-else-if="suppressedAlerts.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
@@ -172,11 +172,11 @@ function handleDeleted() {
         </NeTableHead>
         <NeTableBody>
           <NeTableRow v-if="filteredAlerts.length < 1">
-            <NeTableCell colspan="4">
+            <NeTableCell colspan="5">
               <NeEmptyState
                 :description="t('common.try_changing_search_filters')"
                 :icon="faCircleInfo"
-                :title="t('standalone.ips.no_suppressed_alerts')"
+                :title="t('standalone.ips.no_suppressed_alerts_found')"
                 class="bg-white dark:bg-gray-950"
               >
                 <NeButton kind="tertiary" @click="filter = ''">
@@ -240,7 +240,7 @@ function handleDeleted() {
     :visible="suppressingAlert"
     @close="suppressingAlert = false"
   />
-  <IpsRestoreSuppressedAlert
+  <IpsRestoreSuppressedAlertModal
     :alert="suppressionToDelete"
     @close="suppressionToDelete = undefined"
     @restored="handleDeleted()"

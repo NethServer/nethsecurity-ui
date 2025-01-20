@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.18.1](https://github.com/NethServer/nethsecurity-ui/compare/1.18.0...1.18.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* **lang:** translations update from Hosted Weblate ([#494](https://github.com/NethServer/nethsecurity-ui/issues/494)) ([d84b4d2](https://github.com/NethServer/nethsecurity-ui/commit/d84b4d2cd116905cf7ee685e2d1c839f82a777c7))
+* **lang:** translations update from Hosted Weblate ([#495](https://github.com/NethServer/nethsecurity-ui/issues/495)) ([ebd1d9a](https://github.com/NethServer/nethsecurity-ui/commit/ebd1d9a014ec941833727bdfbd06fbeeee66a1d2))
+* **threat shield:** add i18n strings ([#492](https://github.com/NethServer/nethsecurity-ui/issues/492)) ([019476f](https://github.com/NethServer/nethsecurity-ui/commit/019476f5aac4e48341705aa24f5b4909a14004be))
+
 ## [1.18.0](https://github.com/NethServer/nethsecurity-ui/compare/1.17.5...1.18.0) (2025-01-20)
 
 

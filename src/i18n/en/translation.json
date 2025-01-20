@@ -2366,9 +2366,7 @@
       "date": "Date",
       "protocol": "Protocol",
       "source_suppress_alert": "Suppress alert for source",
-      "destination_suppress_alert": "Suppress alert for destination",
-      "notification_rule_disabled": "Rule disabled successfully",
-      "notification_alert_suppressed": "Alert suppressed successfully"
+      "destination_suppress_alert": "Suppress alert for destination"
     }
   },
   "controller": {

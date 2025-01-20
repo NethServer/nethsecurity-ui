@@ -193,22 +193,12 @@ const ruleToDisable = ref<Rule>()
 function disabledRuleHandler() {
   ruleToDisable.value = undefined
   changes.getChanges()
-  notifications.addNotification({
-    kind: 'success',
-    id: 'disabled-rule',
-    title: t('standalone.ips.notification_rule_disabled')
-  })
 }
 
 const alertToSuppress = ref<SuppressedAlert>()
 function suppressedAlertHandler() {
   alertToSuppress.value = undefined
   changes.getChanges()
-  notifications.addNotification({
-    kind: 'success',
-    id: 'suppressed-alert',
-    title: t('standalone.ips.notification_alert_suppressed')
-  })
 }
 </script>
 
@@ -278,7 +268,6 @@ function suppressedAlertHandler() {
           </NeTableHead>
           <NeTableBody>
             <NeTableRow v-if="filteredEvents.length < 1">
-              <!-- FIXME: Add correct colspan -->
               <NeTableCell colspan="8">
                 <NeEmptyState
                   :description="t('common.try_changing_search_filters')"
@@ -328,7 +317,7 @@ function suppressedAlertHandler() {
                 <IpsSnortDocLink :gid="item.gid" :sid="item.sid" />
               </NeTableCell>
               <NeTableCell :data-label="t('common.actions')">
-                <div class="flex justify-end">
+                <div class="-ml-2.5 flex justify-start xl:ml-0 xl:justify-end">
                   <NeDropdown :align-to-right="true" :items="dropDownActions(item)" />
                 </div>
               </NeTableCell>

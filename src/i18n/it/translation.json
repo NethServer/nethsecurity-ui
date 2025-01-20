@@ -2224,7 +2224,14 @@
       "description_yoroi_susp_level2": "Yoroi suspicious - Livello 2",
       "no_filter_bypasses_found": "Nessun bypass filtro trovato",
       "description_malware_privacy_lvl4": "Multi Pro: malware e privacy",
-      "delete_bypass": "Elimina bypass"
+      "delete_bypass": "Elimina bypass",
+      "blocklist_sources_description": "Le blocklist sono liste di domini utilizzati per identificare e bloccare annunci, siti di malware, tracker e altri elementi indesiderati.",
+      "filter_bypass_description": "Il bypass del filtro può essere utilizzato per evitare il blocco di contenuti su specifici IP o sottoreti.",
+      "local_blocklist_description": "Blocca sempre i contenuti da domini specifici.",
+      "threat_shield_settings_description": "Abilita o disabilita Threat Shield DNS e configura le sue impostazioni.",
+      "redirected_ports_tooltip": "Inserisci uno o più porte da reindirizzare a Threat Shield DNS.",
+      "zones_tooltip": "Il traffico su queste zone verrà reindirizzato a Threat Shield DNS.",
+      "page_description": " Threat Shield DNS è un servizio che blocca l'accesso a siti web maligni o indesiderati impedendo la risoluzione DNS per domini specifici, bloccando così l'accesso degli utenti a siti dannosi."
     }
   },
   "controller": {

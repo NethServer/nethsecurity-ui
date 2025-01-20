@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0](https://github.com/NethServer/nethsecurity-ui/compare/1.17.5...1.18.0) (2025-01-20)
+
+
+### Features
+
+* add threat shield dns ([#479](https://github.com/NethServer/nethsecurity-ui/issues/479)) ([8513354](https://github.com/NethServer/nethsecurity-ui/commit/85133543903a6d593410842237dc39ec3620ac6d))
+
 ## [1.17.5](https://github.com/NethServer/nethsecurity-ui/compare/1.17.4...1.17.5) (2025-01-20)
 
 

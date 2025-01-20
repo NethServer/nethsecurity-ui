@@ -21,7 +21,7 @@ import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 
-export type IpsStatus = {
+export type IpsSettings = {
   enabled: boolean
   ns_policy: Policy
   oinkcode: string
@@ -65,7 +65,7 @@ const oinkcode = ref('')
 function fetch() {
   error.value = undefined
   ubusCall('ns.snort', 'settings', {})
-    .then((response: AxiosResponse<IpsStatus>) => {
+    .then((response: AxiosResponse<IpsSettings>) => {
       enabled.value = response.data.enabled
       policy.value = response.data.ns_policy
       oinkcode.value = response.data.oinkcode

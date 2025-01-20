@@ -283,7 +283,9 @@ function suppressedAlertHandler() {
             </NeTableRow>
             <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}-${item.timestamp}`">
               <NeTableCell :data-label="t('standalone.ips.date')" class="text-nowrap">
-                {{ item.timestamp }}
+                <span :title="item.timestamp">
+                  {{ new Date(item.timestamp).toLocaleString() }}
+                </span>
               </NeTableCell>
               <NeTableCell :data-label="t('standalone.ips.type')">
                 <span class="flex items-center gap-2">

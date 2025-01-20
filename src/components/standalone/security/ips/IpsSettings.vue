@@ -10,7 +10,8 @@ import {
   NeRadioSelection,
   NeTextInput,
   NeToggle,
-  NeTooltip
+  NeTooltip,
+  NeSkeleton
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
@@ -63,7 +64,7 @@ const oinkcode = ref('')
 
 function fetch() {
   error.value = undefined
-  ubusCall('ns.snort', 'status', {})
+  ubusCall('ns.snort', 'settings', {})
     .then((response: AxiosResponse<IpsStatus>) => {
       enabled.value = response.data.enabled
       policy.value = response.data.ns_policy
@@ -87,7 +88,7 @@ const saveError = ref<Error>()
 function save() {
   saving.value = true
   saveError.value = undefined
-  ubusCall('ns.snort', 'save', {
+  ubusCall('ns.snort', 'save-settings', {
     enabled: enabled.value,
     ns_policy: policy.value,
     oinkcode: oinkcode.value
@@ -145,7 +146,8 @@ function checkOinkcode() {
       :description="t('standalone.ips.ips_settings_description')"
       :title="t('standalone.ips.ips_status')"
     >
-      <form class="space-y-8" @submit.prevent="save">
+      <NeSkeleton v-if="loading" :lines="10" />
+      <form v-else class="space-y-8" @submit.prevent="save">
         <NeInlineNotification
           v-if="saveError"
           :description="t(getAxiosErrorMessage(saveError))"

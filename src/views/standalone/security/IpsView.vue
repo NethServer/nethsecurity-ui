@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs'
 import IpsSettings from '@/components/standalone/security/ips/IpsSettings.vue'
 import IpsFilterBypass from '@/components/standalone/security/ips/IpsFilterBypass.vue'
+import IpsDisabledRules from '@/components/standalone/security/ips/IpsDisabledRules.vue'
 
 const { t } = useI18n()
 const { tabs, selectedTab } = useTabs([
@@ -26,6 +27,7 @@ const { tabs, selectedTab } = useTabs([
       @selectTab="selectedTab = $event"
     />
     <IpsFilterBypass v-if="selectedTab == 'filter_bypass'" />
+    <IpsDisabledRules v-if="selectedTab == 'disabled_rules'" />
     <IpsSettings v-if="selectedTab == 'settings'" />
   </div>
 </template>

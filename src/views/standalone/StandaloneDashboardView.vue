@@ -83,6 +83,16 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </OpenVpnTunnelOrIpsecCard>
+    <!-- threat shield IP / banIP -->
+    <ThreatShieldIpCard />
+    <!-- threat shield dns -->
+    <ServiceCard serviceName="threat_shield_dns" hasStatus :icon="['fas', 'shield']">
+      <template #title>
+        <NeLink @click="goTo('/security/threat-shield-dns')">
+          {{ t('standalone.threat_shield_dns.title') }}
+        </NeLink>
+      </template>
+    </ServiceCard>
     <!-- hotspot -->
     <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
       <template #title>
@@ -91,8 +101,6 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </ServiceCard>
-    <!-- threat shield / banIP -->
-    <ThreatShieldIpCard />
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"

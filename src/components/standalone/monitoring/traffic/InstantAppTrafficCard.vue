@@ -20,7 +20,7 @@ import {
 } from '@nethesis/vue-components'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type TopHost, type TopItem } from '@/composables/useTopTalkers'
+import { type TopItem } from '@/composables/useTopTalkers'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { refDebounced } from '@vueuse/core'

@@ -31,8 +31,10 @@ import {
 } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { useNotificationsStore } from '@/stores/notifications'
+
 const { t } = useI18n()
+const notificationsStore = useNotificationsStore()
 
 const form = ref({
   status: false,
@@ -45,7 +47,6 @@ const form = ref({
 let isError = ref(false)
 let loading = ref(false)
 let saving = ref(false)
-let successSaving = ref(false)
 let zones = ref<NeComboboxOption[]>([])
 let usernameRef = ref()
 let passwordRef = ref()
@@ -70,7 +71,6 @@ onMounted(() => {
 })
 
 async function getZones() {
-  loading.value = true
   errorLoadingZones.value = { ...objError }
 
   // Retrieve firewall zones
@@ -92,6 +92,8 @@ async function getZones() {
 }
 
 async function getConfiguration() {
+  loading.value = true
+
   try {
     let getDataConfiguration = await ubusCall('ns.flashstart', 'get-config', {})
     if (getDataConfiguration && getDataConfiguration.data && getDataConfiguration.data.values) {
@@ -204,13 +206,11 @@ function save() {
     }
 
     ubusCall('ns.flashstart', 'set-config', payload)
-      .then((response) => {
-        if (response.data && response.data.message && response.data.message === 'success') {
-          successSaving.value = true
-          setTimeout(function () {
-            successSaving.value = false
-          }, 5000)
-        }
+      .then(() => {
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.flashstart.flashstart_configuration_saved')
+        })
       })
       .catch((exception: AxiosError) => {
         errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
@@ -330,24 +330,13 @@ function save() {
             :description="errorSaving.notificationDescription"
           />
         </template>
-        <div class="flex justify-end py-6">
-          <div>
-            <FontAwesomeIcon
-              v-if="successSaving"
-              :icon="faCircleCheck"
-              class="mr-2 text-green-500"
-            />
-            <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
-              <template #prefix>
-                <FontAwesomeIcon
-                  :icon="['fas', 'floppy-disk']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
-              </template>
-              {{ t('common.save') }}
-            </NeButton>
-          </div>
+        <div class="mt-6">
+          <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+            </template>
+            {{ t('common.save') }}
+          </NeButton>
         </div>
       </div>
     </FormLayout>

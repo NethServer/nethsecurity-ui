@@ -1355,9 +1355,7 @@
       "restricted_object": "Restricted object",
       "restricted_object_tooltip": "All objects supported, except host sets with IP ranges",
       "no_object": "No object",
-      "port_forwards_for_destination_name": "Port forwards for destination '{name}'",
-      "inactive": "Inactive",
-      "range_object_not_compatible": "This port forward is inactive because host set '{name}' includes an IP range"
+      "port_forwards_for_destination_name": "Port forwards for destination '{name}'"
     },
     "firewall_rules": {
       "title": "Firewall rules",

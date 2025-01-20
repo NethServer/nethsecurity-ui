@@ -19,7 +19,7 @@ import {
   useSort
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { faCirclePlus, faMagnifyingGlass, faShield } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref } from 'vue'
 import IpsCreateBypassDrawer from '@/components/standalone/security/ips/IpsCreateBypassDrawer.vue'
@@ -137,13 +137,9 @@ function handleDeleted() {
       kind="error"
     />
     <NeSkeleton v-if="loading" :lines="10" />
-    <div v-else class="space-y-4">
+    <template v-else-if="bypasses.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
-        <NeTextInput v-model="filter" :placeholder="t('common.filter')">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faMagnifyingGlass" aria-hidden="true" class="h-4 w-4" />
-          </template>
-        </NeTextInput>
+        <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
         <NeButton
           kind="secondary"
           v-if="bypasses.length > 0"
@@ -157,7 +153,6 @@ function handleDeleted() {
         </NeButton>
       </div>
       <NeTable
-        v-if="bypasses.length > 0"
         :ariaLabel="t('standalone.ips.title')"
         :skeleton-columns="7"
         :skeleton-rows="5"
@@ -178,7 +173,21 @@ function handleDeleted() {
           </NeTableHeadCell>
         </NeTableHead>
         <NeTableBody>
-          <NeTableRow v-for="item in paginatedItems" :key="`${item.ip}-${item.direction}`">
+          <NeTableRow v-if="filteredByPasses.length < 1">
+            <NeTableCell colspan="4">
+              <NeEmptyState
+                :description="t('common.try_changing_search_filters')"
+                :icon="faCircleInfo"
+                :title="t('standalone.ips.no_bypasses_found')"
+                class="bg-white dark:bg-gray-950"
+              >
+                <NeButton kind="tertiary" @click="filter = ''">
+                  {{ t('common.clear_filters') }}
+                </NeButton>
+              </NeEmptyState>
+            </NeTableCell>
+          </NeTableRow>
+          <NeTableRow v-else v-for="item in paginatedItems" :key="`${item.ip}-${item.direction}`">
             <NeTableCell :data-label="t('standalone.ips.bypass_address')">
               {{ item.ip }}
             </NeTableCell>
@@ -215,24 +224,24 @@ function handleDeleted() {
           />
         </template>
       </NeTable>
-      <NeEmptyState v-else :icon="faShield" :title="t('standalone.ips.no_filter_bypass')">
-        <NeButton kind="primary" size="lg" @click="creatingBypass = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
-          </template>
-          {{ t('standalone.ips.add_bypass') }}
-        </NeButton>
-      </NeEmptyState>
-      <IpsCreateBypassDrawer
-        :visible="creatingBypass"
-        @close="creatingBypass = false"
-        @save="savedBypass()"
-      />
-      <IpsDeleteBypassModal
-        @close="bypassToDelete = undefined"
-        :bypass="bypassToDelete"
-        @deleted="handleDeleted()"
-      />
-    </div>
+    </template>
+    <NeEmptyState v-else :icon="faShield" :title="t('standalone.ips.no_filter_bypass')">
+      <NeButton kind="primary" size="lg" @click="creatingBypass = true">
+        <template #prefix>
+          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+        </template>
+        {{ t('standalone.ips.add_bypass') }}
+      </NeButton>
+    </NeEmptyState>
+    <IpsCreateBypassDrawer
+      :visible="creatingBypass"
+      @close="creatingBypass = false"
+      @save="savedBypass()"
+    />
+    <IpsDeleteBypassModal
+      :bypass="bypassToDelete"
+      @close="bypassToDelete = undefined"
+      @deleted="handleDeleted()"
+    />
   </div>
 </template>

@@ -396,7 +396,8 @@
     "cannot_retrieve_blocked_domains": "Cannot retrieve blocked domains",
     "cannot_delete_blocked_domain": "Cannot delete blocked domain",
     "cannot_save_blocked_domain": "Cannot save blocked domain",
-    "invalid_domain_name": "Invalid domain name"
+    "invalid_domain_name": "Invalid domain name",
+    "duplicate_rule": "Rule already exists"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2323,7 +2324,22 @@
       "delete_bypass_modal_title": "Delete bypass",
       "delete_bypass_modal_w_description": "Delete bypass '{description}'?",
       "delete_bypass_modal_wo_description": "Delete bypass with IP address '{ip}' and direction '{direction}'?",
-      "delete_bypass_error": "Cannot delete bypass"
+      "delete_bypass_error": "Cannot delete bypass",
+      "disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
+      "error_loading_disabled_rules": "Cannot load disabled rules",
+      "no_disabled_rules": "No disabled rules",
+      "no_disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam laoreet nibh mi, id sodales turpis tempus ut.",
+      "disable_rule": "Disable rule",
+      "rules_table": "Rules table",
+      "rule_id": "Rule GID:SID",
+      "rule_description": "Description",
+      "rule_gid": "GID",
+      "rule_sid": "SID",
+      "enable_rule_modal_title": "Enable rule",
+      "enable_rule_modal_description": "Enable the rule '{description}' identified by '{id}'?",
+      "enable_rule_error": "Cannot enable rule",
+      "no_rules_found": "No rules found",
+      "no_bypasses_found": "No bypasses found"
     }
   },
   "controller": {

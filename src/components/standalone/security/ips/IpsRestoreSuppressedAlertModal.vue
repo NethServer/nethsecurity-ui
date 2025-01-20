@@ -73,7 +73,7 @@ function deleteAlertSuppression() {
       <p>
         {{
           t('standalone.ips.delete_suppressed_alert_description', {
-            id: _alert!.id,
+            id: `${_alert!.gid}:${_alert!.sid}`,
             ip: _alert!.ip,
             direction:
               _alert!.direction == 'by_src'

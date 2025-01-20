@@ -75,7 +75,7 @@ function enableRule() {
       <p>
         {{
           t('standalone.ips.enable_rule_modal_description', {
-            id: _rule!.id,
+            id: `${_rule!.gid}:${_rule!.sid}`,
             description: _rule!.description
           })
         }}

@@ -383,7 +383,16 @@
     "invalid_space": "Il campo non può contenere spazi",
     "total_chars_exceeded": "Ci sono troppi domini. Rimuovine alcuni e includili in un nuovo set di domini.",
     "cannot_retrieve_latency_and_quality_report": "Impossibile recuperare il report sulla latenza e sulla qualità",
-    "cannot_retrieve_netify_informatics_configuration": "Impossibile caricare la configurazione di Netify Informatics"
+    "cannot_retrieve_netify_informatics_configuration": "Impossibile caricare la configurazione di Netify Informatics",
+    "cannot_retrieve_bypasses": "Impossibile recuperare i bypass",
+    "address_already_present": "Indirizzo già presente",
+    "cannot_edit_blocklist": "Impossibile modificare la blocklist",
+    "cannot_retrieve_blocked_domains": "Impossibile recuperare i domini bloccati",
+    "cannot_delete_blocked_domain": "Impossibile eliminare i domini bloccati",
+    "cannot_save_blocked_domain": "Impossibile salvare il dominio bloccato",
+    "invalid_domain_name": "Nome dominio non valido",
+    "cannot_delete_bypass": "Impossibile eliminare il bypass",
+    "cannot_create_bypass": "Impossibile creare il bypass"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1101,9 +1110,11 @@
       "sourcebypass_helper": "Inserisci indirizzi IP o reti in formato CIDR. Gli indirizzi inseriti non saranno soggetti al filtro DNS",
       "username_helper": "Inserisci il nome utente o l'indirizzo email registrato su {flashstartUrl}",
       "add_sourcebypass": "Aggiungi bypass sorgente",
-      "title": "Filtro FlashStart",
-      "flashstart_disabled": "FlashStart è disattivato",
-      "flashstart_disabled_description": "Il filtro FlashStart è disponibile solo con un abbonamento {product}"
+      "title": "FlashStart DNS",
+      "flashstart_disabled": "FlashStart DNS è disattivato",
+      "flashstart_disabled_description": "Il filtro FlashStart è disponibile solo con un abbonamento {product}",
+      "flashstart_configuration_saved": "Configurazione FlashStart salvata",
+      "flashstart_disabled_threat_shield_enabled": "Per abilitarlo, prima è necessario disabilitare Threat shield DNS"
     },
     "hotspot": {
       "settings": {
@@ -1834,7 +1845,7 @@
       "log_forward_chain": "Log dei pacchetti bloccati nella chain di forward",
       "log_forward_lan_chain": "Log dei pacchetti bloccati inoltrati dalla LAN",
       "ban_after_n_attempts_tooltip": "Il numero di volte che un IP deve apparire nel log prima di essere contrassegnato come sospetto e bloccato.",
-      "block_dos_description": "DoS (Denial of Serevice) limita richieste sospette eccessive da un'unica fonte. La fonte sarà bloccata se le soglie saranno superate. ",
+      "block_dos_description": "DoS (Denial of Service) limita richieste sospette eccessive da un'unica fonte. La fonte sarà bloccata se le soglie saranno superate. ",
       "threats_monitoring_disabled": "Monitoraggio delle minacce disabilitato",
       "threats_monitoring_disabled_message": "Il monitoraggio delle minacce mostra solo minacce registrate nel log. Attivare il log su almeno una chain per consentire il monitoraggio delle minacce.",
       "ban_time_tooltip": "Dopo il periodo di timeout, l'IP bloccato verrà sbloccato automaticamente, ripristinando l'accesso al sistema.",
@@ -1847,7 +1858,8 @@
       "twelve_hours": "12 ore",
       "one_day": "1 giorno",
       "three_days": "3 giorni",
-      "logging": "Log"
+      "logging": "Log",
+      "filter_blocklists": "Filtra blocklist"
     },
     "two_fa": {
       "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
@@ -2042,7 +2054,7 @@
     },
     "real_time_monitor": {
       "traffic": "Traffico",
-      "connectivity": "Connettività",
+      "connectivity": "Connettività WAN",
       "today_top_remote_hosts": "Host remoti",
       "no_applications": "Nessuna applicazione",
       "today_top_protocols": "Protocolli",
@@ -2060,7 +2072,7 @@
       "interface_name_traffic": "Traffico {name}",
       "site_to_site_vpn": "VPN Site-to-Site",
       "rw_openvpn": "OpenVPN RW",
-      "instant_traffic": "Traffico istantaneo",
+      "instant_traffic": "Traffico in tempo reale",
       "recent_traffic": "Traffico recente",
       "wan_events": "Eventi WAN",
       "blocked_threats": "Minacce bloccate",
@@ -2123,7 +2135,7 @@
       "title": "Monitor latenza ping",
       "add_host": "Aggiungi host",
       "host_to_monitor": "Host da monitorare",
-      "description": "Impostare lo strumento di monitoraggio per valutare il round-trip time e la perdita di pacchetti inviando messaggi ping agli host della rete. Questo strumento è utilizzato per monitorare la qualità della connettività di rete. È possibile aggiungere uno o più host da monitorare. È anche possibile aggiungere indirizzi IP in una VPN per valutare la qualità del tunnel."
+      "description": "Misura il tempo di round-trip e il packet delivery rate effettuando il ping di host di rete. Aggiungi uno o più host, inclusi IP VPN, per monitorare la qualità del tunnel. I grafici sulla latenza e sulla consegna dei pacchetti sono disponibili sotto Monitoraggio > Monitor in tempo reale > Connettività WAN."
     },
     "nat_helpers": {
       "status": "Stato",
@@ -2160,6 +2172,59 @@
       "enable_metadata_sending": "Assicurarsi di attivare l'invio di metadati prima di effettuare il provisioning dell'agent",
       "content_description": "Netify Informatics è un servizio cloud di terze parti che utilizza analisi e AI per convertire i metadati DPI locali ottenuti da NethSecurity in network intelligence di alto livello. Abilitare l'invio di metadati e salvare la configurazione. Copiare l'agent UUID, quindi accedere al sito Netify e procedere con la procedura di provisioning dell'agent.",
       "uuid": "Agent UUID"
+    },
+    "threat_shield_dns": {
+      "title": "Threat shield DNS",
+      "blocklist_sources": "Sorgenti blocklist",
+      "filter_bypass": "Bypass filtro",
+      "local_blocklist": "Blocklist locale",
+      "settings": "Impostazioni",
+      "blocklist_subscription_description": "Le blocklist di Nethesis e Yoroi sono disponibili solamente se la unità ha una subscription che include il servizio Threat shield.",
+      "threat_shield_dns_enabled": "Threat shield DNS abilitato",
+      "threat_shield_dns_disabled": "Threat shield DNS disabilitato",
+      "go_to_settings": "Vai a Impostazioni",
+      "threat_shield_settings": "Impostazioni Threat shield",
+      "status": "Stato",
+      "add_port": "Aggiungi porta",
+      "redirected_ports": "Porte redirezionate",
+      "zones": "Forza la redirezione DNS in queste zone",
+      "dns_blocklists": "Blocklist DNS",
+      "description_malware_lvl2": "Threat Intelligence Feed",
+      "description_malware_privacy_lvl2": "Multi Light: malware & privacy",
+      "description_malware_privacy_lvl3": "Multi Normal: malware e privacy",
+      "description_adult": "Contenuti sessuali espliciti",
+      "description_doh_vpn_tor_proxy": "Impedisci bypass DNS",
+      "description_gambling": "Gioco d'azzardo online, scommesse o casinò",
+      "description_piracy": "Distribuzione illegale di contenuti protetti da copyright",
+      "description_yoroi_malware_level1": "Yoroi malware - Livello 1",
+      "description_yoroi_malware_level2": "Yoroi malware - Livello 2",
+      "description_yoroi_susp_level1": "Yoroi suspicious - Livello 1",
+      "no_blocklists": "Nessuna blocklist",
+      "no_blocklists_found": "Nessuna blocklist trovata",
+      "no_filter_bypasses_configured": "Nessun bypass filtro configurato",
+      "bypasses": "Bypass",
+      "confirm_delete_bypass": "Eliminare il bypass '{name}'?",
+      "add_bypass": "Aggiungi bypass",
+      "ip_address_or_network_cidr": "Indirizzo IP o rete (CIDR)",
+      "threat_shield_dns_is_disabled_description": "Per abilitarlo, è necessario prima disattivare FlashStart DNS",
+      "add_domain": "Aggiungi dominio",
+      "local_blocklist_is_empty": "La blocklist locale è vuota",
+      "no_domain_found": "Nessun dominion trovato",
+      "delete_domain": "Elimina dominio",
+      "confirm_delete_domain": "Eliminare il dominio bloccato '{name}'?",
+      "blocked_domains": "Domini bloccati",
+      "domain": "Dominio",
+      "description": "Descrizione",
+      "edit_domain": "Modifica dominio",
+      "save_domain": "Salva dominio",
+      "blocked_domain_added_title": "Dominio bloccato aggiunto",
+      "blocked_domain_added_description": "'{domain}' è stato aggiunto alla blocklist DNS locale",
+      "blocked_domain_deleted_title": "Dominio bloccato eliminato",
+      "blocked_domain_deleted_description": "'{domain}' è stato eliminato dalla blocklist DNS locale",
+      "description_yoroi_susp_level2": "Yoroi suspicious - Livello 2",
+      "no_filter_bypasses_found": "Nessun bypass filtro trovato",
+      "description_malware_privacy_lvl4": "Multi Pro: malware e privacy",
+      "delete_bypass": "Elimina bypass"
     }
   },
   "controller": {

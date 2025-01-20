@@ -1591,7 +1591,7 @@
       "settings": "Settings",
       "blocklist_sources_description": "Blocklists are sets of domains used to identify and block ads, malware sites, trackers, and other unwanted elements.",
       "filter_bypass_description": "Filter bypass can be used to avoid blocking any content on specific IPs or subnets.",
-      "local_blocklist_description": "Consistently block content from specific domains.",
+      "local_blocklist_description": "Always block content from specific domains.",
       "blocklist_subscription_description": "Nethesis and Yoroi blocklists are available only if the unit has a valid subscription that includes Threat shield service.",
       "threat_shield_dns_enabled": "Threat shield DNS enabled",
       "threat_shield_dns_disabled": "Threat shield DNS is disabled",

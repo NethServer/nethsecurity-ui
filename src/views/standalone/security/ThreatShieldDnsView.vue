@@ -83,6 +83,9 @@ async function getFlashstartConfig() {
 <template>
   <div>
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.threat_shield_dns.title') }}</NeHeading>
+    <div class="mb-4 max-w-2xl text-gray-500 dark:text-gray-400">
+      {{ t('standalone.threat_shield_dns.page_description') }}
+    </div>
     <!-- dns-list-settings error -->
     <NeInlineNotification
       v-if="tsStore.errorListDnsSettings"

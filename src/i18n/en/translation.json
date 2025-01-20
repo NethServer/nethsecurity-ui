@@ -2366,7 +2366,9 @@
       "date": "Date",
       "protocol": "Protocol",
       "source_suppress_alert": "Suppress alert for source",
-      "destination_suppress_alert": "Suppress alert for destination"
+      "destination_suppress_alert": "Suppress alert for destination",
+      "max_detect_info": "Policy `max-detect` is enabled.",
+      "max_detect_description": "Please refer to the manual for more information."
     }
   },
   "controller": {

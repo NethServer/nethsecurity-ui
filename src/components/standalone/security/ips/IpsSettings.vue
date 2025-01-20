@@ -168,7 +168,12 @@ function checkOinkcode() {
           >
             <template #label>{{ t('standalone.ips.policy') }}</template>
           </NeRadioSelection>
-          <!-- FIXME: If the value is max-detect, show a disabled input -->
+          <NeInlineNotification
+            v-else
+            kind="info"
+            :title="t('standalone.ips.max_detect_info')"
+            :description="t('standalone.ips.max_detect_description')"
+          />
           <div class="space-y-2">
             <NeTextInput
               v-model="oinkcode"

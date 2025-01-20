@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.5](https://github.com/NethServer/nethsecurity-ui/compare/1.17.4...1.17.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* **port forward:** removing tooltip for disabled port forwards ([#489](https://github.com/NethServer/nethsecurity-ui/issues/489)) ([4a3930a](https://github.com/NethServer/nethsecurity-ui/commit/4a3930a65cf6b00adda4f429775e445099760121)), closes [#482](https://github.com/NethServer/nethsecurity-ui/issues/482)
+
 ## [1.17.4](https://github.com/NethServer/nethsecurity-ui/compare/1.17.3...1.17.4) (2025-01-16)
 
 

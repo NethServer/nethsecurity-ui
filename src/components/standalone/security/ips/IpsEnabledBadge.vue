@@ -17,6 +17,6 @@ const ips = useIpsStatusStore()
       :text="t('standalone.ips.ips_enabled')"
       kind="success"
     />
-    <NeBadge v-else :icon="faXmark" :text="t('standalone.ips.ips_disabled')" kind="error" />
+    <NeBadge v-else :icon="faXmark" :text="t('standalone.ips.ips_disabled')" kind="secondary" />
   </template>
 </template>

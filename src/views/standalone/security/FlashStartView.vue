@@ -100,7 +100,7 @@ onMounted(() => {
       >
       <!-- threat shield dns is enabled -->
       <NeEmptyState
-        v-if="tsStore.dnsSettings?.enabled"
+        v-else-if="tsStore.dnsSettings?.enabled"
         :title="t('standalone.flashstart.flashstart_disabled')"
         :description="t('standalone.flashstart.flashstart_disabled_threat_shield_enabled')"
         :icon="['fas', 'shield']"

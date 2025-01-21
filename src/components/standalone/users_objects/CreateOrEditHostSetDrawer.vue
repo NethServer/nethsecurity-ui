@@ -111,7 +111,7 @@ watch(
   () => props.currentHostSet?.matches,
   async () => {
     if (props.currentHostSet?.matches) {
-      redirect_name.value = await getMatchedItemName(props.currentHostSet.matches)
+      redirect_name.value = await getMatchedItemsName(props.currentHostSet.matches)
     }
   }
 )
@@ -145,7 +145,7 @@ function runFieldValidators(
   return validators.every((validator) => validator.valid)
 }
 
-async function getMatchedItemName(matches: string[]): Promise<string> {
+async function getMatchedItemsName(matches: string[]): Promise<string> {
   try {
     const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
     const names = []
@@ -156,7 +156,7 @@ async function getMatchedItemName(matches: string[]): Promise<string> {
     }
     return names.join(' ')
   } catch (error: any) {
-    console.error('Error fetching getMatchedItemName:', error)
+    console.error('Error fetching getMatchedItemsName:', error)
     return ''
   }
 }

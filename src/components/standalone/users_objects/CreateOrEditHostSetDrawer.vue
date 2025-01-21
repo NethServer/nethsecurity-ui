@@ -45,6 +45,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'reloadData'])
 
+const redirect_name = ref('')
 const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
@@ -105,7 +106,18 @@ watch(
   }
 )
 
+// compute redirect_name the name of the portforward rule using this object
+watch(
+  () => props.currentHostSet?.matches,
+  async () => {
+    if (props.currentHostSet?.matches) {
+      redirect_name.value = await getMatchedItemName(props.currentHostSet.matches)
+    }
+  }
+)
+
 function closeDrawer() {
+  emit('reloadData')
   emit('close')
 }
 
@@ -133,6 +145,36 @@ function runFieldValidators(
   return validators.every((validator) => validator.valid)
 }
 
+async function getMatchedItemName(matches: string[]): Promise<string> {
+  try {
+    const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
+    const names = []
+    for (const match of Object.values(res.data.info) as any[]) {
+      if (match.type === 'redirect') {
+        names.push(match.name)
+      }
+    }
+    return names.join(' ')
+  } catch (error: any) {
+    console.error('Error fetching getMatchedItemName:', error)
+    return ''
+  }
+}
+
+function noIpRangeWithPortForward(records: Array<string>) {
+  for (const record of records) {
+    if (record.includes('-') && redirect_name.value) {
+      return {
+        valid: false,
+        errMessage: 'standalone.objects.range_not_compatible_with_port_forward'
+      }
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
 function validateHostSetNotExists(value: string) {
   if (allObjectsButCurrent.value?.find((obj) => obj.name === value && obj.subtype === 'host_set')) {
     return {
@@ -158,7 +200,11 @@ function validate() {
       nameRef
     ],
     // records
-    [[validateRequired(records.value[0])], 'ipaddr', recordRef]
+    [
+      [noIpRangeWithPortForward(records.value), validateRequired(records.value[0])],
+      'ipaddr',
+      recordRef
+    ]
   ]
 
   // reset firstErrorRef for focus management
@@ -296,7 +342,7 @@ function deleteRecord(index: number) {
               v-if="errorBag.getFirstI18nKeyFor('ipaddr')"
               :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
             >
-              {{ t(errorBag.getFirstI18nKeyFor('ipaddr')) }}
+              {{ t(errorBag.getFirstI18nKeyFor('ipaddr'), { name: redirect_name }) }}
             </p>
             <NeButton class="mt-4" size="md" @click="addRecord" kind="secondary">
               <template #prefix>

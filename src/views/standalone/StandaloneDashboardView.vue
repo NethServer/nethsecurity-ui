@@ -14,6 +14,7 @@ import { useRoute } from 'vue-router'
 import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
 import InternetConnectionCard from '@/components/standalone/dashboard/InternetConnectionCard.vue'
 import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIpCard.vue'
+import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -85,6 +86,8 @@ function goTo(path: string) {
     </OpenVpnTunnelOrIpsecCard>
     <!-- threat shield IP / banIP -->
     <ThreatShieldIpCard />
+    <!-- IPS -->
+    <IpsServiceCard />
     <!-- threat shield dns -->
     <ServiceCard serviceName="threat_shield_dns" hasStatus :icon="['fas', 'shield']">
       <template #title>

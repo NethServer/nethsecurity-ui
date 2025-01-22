@@ -112,6 +112,8 @@ watch(
   async () => {
     if (props.currentHostSet?.matches) {
       portForwardsUsingHostSet.value = await getMatchedItemsName(props.currentHostSet.matches)
+    } else {
+      portForwardsUsingHostSet.value = ''
     }
   }
 )

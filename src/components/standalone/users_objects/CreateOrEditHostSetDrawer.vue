@@ -44,11 +44,11 @@ const props = defineProps({
 })
 
 interface MatchInfo {
-  database: string;
-  family: string;
-  id: string;
-  name: string;
-  type: string;
+  database: string
+  family: string
+  id: string
+  name: string
+  type: string
 }
 
 const emit = defineEmits(['close', 'reloadData'])
@@ -158,7 +158,7 @@ function runFieldValidators(
 async function getMatchedItemsName(matches: string[]): Promise<string> {
   try {
     const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
-    const names: string[] = [];
+    const names: string[] = []
     for (const match of Object.values(res.data.info) as MatchInfo[]) {
       if (match.type === 'redirect') {
         names.push(match.name)

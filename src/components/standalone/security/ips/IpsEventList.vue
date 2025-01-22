@@ -8,6 +8,7 @@ import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
   type FilterOption,
+  formatDateLoc,
   getAxiosErrorMessage,
   NeButton,
   NeDropdown,
@@ -208,8 +209,8 @@ function suppressedAlertHandler() {
       <p class="max-w-lg">{{ t('standalone.ips.event_list_description') }}</p>
       <IpsEnabledBadge v-if="ipsStatus.enabled" />
     </div>
-    <IpsDisabledEmptyState v-if="ipsStatus.enabled == false" />
-    <NeSkeleton v-else-if="loading" :lines="8" size="lg" />
+    <NeSkeleton v-if="loading" :lines="8" size="lg" />
+    <IpsDisabledEmptyState v-else-if="ipsStatus.enabled == false" />
     <template v-else>
       <NeInlineNotification
         v-if="error"
@@ -284,7 +285,7 @@ function suppressedAlertHandler() {
             <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}-${item.timestamp}`">
               <NeTableCell :data-label="t('standalone.ips.date')" class="text-nowrap">
                 <span :title="item.timestamp">
-                  {{ new Date(item.timestamp).toLocaleString() }}
+                  {{ formatDateLoc(new Date(item.timestamp), 'PPpp') }}
                 </span>
               </NeTableCell>
               <NeTableCell :data-label="t('standalone.ips.type')">

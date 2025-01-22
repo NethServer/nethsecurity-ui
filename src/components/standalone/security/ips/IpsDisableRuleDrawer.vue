@@ -4,18 +4,20 @@ import { ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag } from '@/lib/validation'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { Rule } from '@/components/standalone/security/ips/IpsDisabledRules.vue'
 
-const { visible = false } = defineProps<{
+const { visible = false, rule } = defineProps<{
   visible: boolean
+  rule?: Rule
 }>()
 
 const emit = defineEmits(['close', 'save'])
 
 const { t } = useI18n()
 
-const gid = ref('')
-const sid = ref('')
-const description = ref('')
+const _gid = ref('')
+const _sid = ref('')
+const _description = ref('')
 const validationErrors = ref(new MessageBag())
 const loading = ref(false)
 const error = ref<Error>()
@@ -31,9 +33,9 @@ function save() {
   error.value = undefined
   validationErrors.value.clear()
   ubusCall('ns.snort', 'disable-rule', {
-    gid: gid.value,
-    sid: sid.value,
-    description: description.value
+    gid: _gid.value,
+    sid: _sid.value,
+    description: _description.value
   })
     .then(() => {
       emit('save')
@@ -52,9 +54,9 @@ function save() {
 
 watchEffect(() => {
   if (visible) {
-    gid.value = ''
-    sid.value = ''
-    description.value = ''
+    _gid.value = rule?.gid ?? ''
+    _sid.value = rule?.sid ?? ''
+    _description.value = rule?.description ?? ''
   }
 })
 </script>
@@ -63,26 +65,26 @@ watchEffect(() => {
   <NeSideDrawer :is-shown="visible" :title="t('standalone.ips.disable_rule')" @close="closeHandler">
     <form class="space-y-8" @submit.prevent="save">
       <NeTextInput
-        v-model="gid"
-        :disabled="loading"
+        v-model="_gid"
+        :disabled="loading || rule != undefined"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('gid'))"
         :label="t('standalone.ips.rule_gid')"
         required
         type="number"
       />
       <NeTextInput
-        v-model="sid"
-        :disabled="loading"
+        v-model="_sid"
+        :disabled="loading || rule != undefined"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('sid'))"
         :label="t('standalone.ips.rule_sid')"
         required
         type="number"
       />
       <NeTextInput
-        v-model="description"
+        v-model="_description"
         :disabled="loading"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('description'))"
-        :label="t('standalone.ips.rule_description')"
+        :label="t('standalone.ips.description')"
         required
       />
       <hr />

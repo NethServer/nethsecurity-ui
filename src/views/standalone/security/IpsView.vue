@@ -6,6 +6,7 @@ import IpsSettings from '@/components/standalone/security/ips/IpsSettings.vue'
 import IpsFilterBypass from '@/components/standalone/security/ips/IpsFilterBypass.vue'
 import IpsDisabledRules from '@/components/standalone/security/ips/IpsDisabledRules.vue'
 import IpsSuppressedAlerts from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
+import IpsEventList from '@/components/standalone/security/ips/IpsEventList.vue'
 
 const { t } = useI18n()
 const { tabs, selectedTab } = useTabs([
@@ -27,6 +28,7 @@ const { tabs, selectedTab } = useTabs([
       :tabs="tabs"
       @selectTab="selectedTab = $event"
     />
+    <IpsEventList v-if="selectedTab == 'event_list'" />
     <IpsFilterBypass v-if="selectedTab == 'filter_bypass'" />
     <IpsDisabledRules v-if="selectedTab == 'disabled_rules'" />
     <IpsSuppressedAlerts v-if="selectedTab == 'suppressed_alerts'" />

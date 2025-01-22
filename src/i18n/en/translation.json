@@ -2330,7 +2330,6 @@
       "disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet lorem vel diam eleifend auctor. In massa dolor, finibus sit amet hendrerit nec, feugiat in sem.",
       "error_loading_disabled_rules": "Cannot load disabled rules",
       "no_disabled_rules": "No disabled rules",
-      "no_disabled_rules_description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam laoreet nibh mi, id sodales turpis tempus ut.",
       "disable_rule": "Disable rule",
       "rules_table": "Rules table",
       "table_id_description": "Rule GID:SID",

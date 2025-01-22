@@ -44,7 +44,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
 import type { Rule } from '@/components/standalone/security/ips/IpsDisabledRules.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { useNotificationsStore } from '@/stores/notifications'
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import type { SuppressedAlert } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
@@ -73,7 +72,6 @@ type EventResponse = AxiosResponse<{
 const { t } = useI18n()
 const ipsStatus = useIpsStatusStore()
 const changes = useUciPendingChangesStore()
-const notifications = useNotificationsStore()
 
 const loading = ref(true)
 const events = ref<Event[]>([])

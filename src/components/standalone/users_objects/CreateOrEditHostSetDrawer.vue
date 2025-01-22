@@ -161,7 +161,7 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
   }
 }
 
-function noIpRangeWithPortForward(records: Array<string>) {
+function validateNoIpRangeWithPortForward(records: Array<string>) {
   for (const record of records) {
     if (record.includes('-') && portForwardsUsingHostSet.value) {
       return {
@@ -201,7 +201,7 @@ function validate() {
     ],
     // records
     [
-      [noIpRangeWithPortForward(records.value), validateRequired(records.value[0])],
+      [validateNoIpRangeWithPortForward(records.value), validateRequired(records.value[0])],
       'ipaddr',
       recordRef
     ]

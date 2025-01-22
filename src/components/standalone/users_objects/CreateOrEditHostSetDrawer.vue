@@ -43,6 +43,14 @@ const props = defineProps({
   }
 })
 
+interface MatchInfo {
+  database: string;
+  family: string;
+  id: string;
+  name: string;
+  type: string;
+}
+
 const emit = defineEmits(['close', 'reloadData'])
 
 const portForwardsUsingHostSet = ref('')
@@ -150,8 +158,8 @@ function runFieldValidators(
 async function getMatchedItemsName(matches: string[]): Promise<string> {
   try {
     const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
-    const names = []
-    for (const match of Object.values(res.data.info) as any[]) {
+    const names: string[] = [];
+    for (const match of Object.values(res.data.info) as MatchInfo[]) {
       if (match.type === 'redirect') {
         names.push(match.name)
       }

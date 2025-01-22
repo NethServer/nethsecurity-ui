@@ -45,7 +45,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'reloadData'])
 
-const redirectItemsName = ref('')
+const portForwardsUsingHostSet = ref('')
 const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
@@ -106,12 +106,12 @@ watch(
   }
 )
 
-// compute redirectItemsName the name of the portforward rule using this object
+// compute portForwardsUsingHostSet the name of the portforward rule using this object
 watch(
   () => props.currentHostSet?.matches,
   async () => {
     if (props.currentHostSet?.matches) {
-      redirectItemsName.value = await getMatchedItemsName(props.currentHostSet.matches)
+      portForwardsUsingHostSet.value = await getMatchedItemsName(props.currentHostSet.matches)
     }
   }
 )
@@ -163,7 +163,7 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
 
 function noIpRangeWithPortForward(records: Array<string>) {
   for (const record of records) {
-    if (record.includes('-') && redirectItemsName.value) {
+    if (record.includes('-') && portForwardsUsingHostSet.value) {
       return {
         valid: false,
         errMessage: 'standalone.objects.range_not_compatible_with_port_forward'
@@ -342,7 +342,7 @@ function deleteRecord(index: number) {
               v-if="errorBag.getFirstI18nKeyFor('ipaddr')"
               :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
             >
-              {{ t(errorBag.getFirstI18nKeyFor('ipaddr'), { name: redirectItemsName }) }}
+              {{ t(errorBag.getFirstI18nKeyFor('ipaddr'), { name: portForwardsUsingHostSet }) }}
             </p>
             <NeButton class="mt-4" size="md" @click="addRecord" kind="secondary">
               <template #prefix>

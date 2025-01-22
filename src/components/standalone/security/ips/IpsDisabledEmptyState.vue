@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2025 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import { NeButton, NeEmptyState } from '@nethesis/vue-components'
 import { faArrowRight, faShield } from '@fortawesome/free-solid-svg-icons'

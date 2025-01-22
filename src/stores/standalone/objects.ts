@@ -1,3 +1,6 @@
+//  Copyright (C) 2025 Nethesis S.r.l.
+//  SPDX-License-Identifier: GPL-3.0-or-later
+
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { IpVersion } from '@/composables/useObjects'

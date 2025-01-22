@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2025 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'

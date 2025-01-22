@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2025 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'

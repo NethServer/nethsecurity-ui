@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2025 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
 import { useI18n } from 'vue-i18n'

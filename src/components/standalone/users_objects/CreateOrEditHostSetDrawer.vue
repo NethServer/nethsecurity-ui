@@ -154,7 +154,7 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
         names.push(match.name)
       }
     }
-    return names.join(' ')
+    return names.join(', ')
   } catch (error: any) {
     console.error('Error fetching getMatchedItemsName:', error)
     return ''

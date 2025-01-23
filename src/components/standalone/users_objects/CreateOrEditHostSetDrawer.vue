@@ -118,9 +118,9 @@ watch(
 // compute portForwardsUsingHostSet the name of the portforward rule using this object
 watch(
   () => props.currentHostSet?.matches,
-  async () => {
-    if (props.currentHostSet?.matches) {
-      portForwardsUsingHostSet.value = await getMatchedItemsName(props.currentHostSet.matches)
+  async (matches) => {
+    if (matches) {
+      portForwardsUsingHostSet.value = await getMatchedItemsName(matches)
     } else {
       portForwardsUsingHostSet.value = ''
     }

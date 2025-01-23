@@ -18,8 +18,10 @@ import FlashstartContent from '@/components/standalone/security/FlashstartConten
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const { t } = useI18n()
+const tsStore = useThreatShieldStore()
 const router = useRouter()
 const activeSubscription = ref(false)
 const loading = ref({
@@ -35,8 +37,11 @@ async function fetchSubscriptionInfo() {
 
   try {
     const res = await ubusCall('ns.subscription', 'info')
-
     activeSubscription.value = (res.data?.systemd_id && res.data?.active) || false
+
+    if (activeSubscription.value) {
+      tsStore.listDnsSettings()
+    }
   } catch (err: any) {
     error.value.getSubscriptionInfo = t(getAxiosErrorMessage(err))
     error.value.getSubscriptionInfoDetails = err.toString()
@@ -44,6 +49,7 @@ async function fetchSubscriptionInfo() {
     loading.value.getSubscriptionInfo = false
   }
 }
+
 onMounted(() => {
   fetchSubscriptionInfo()
 })
@@ -59,38 +65,63 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     />
-    <NeSkeleton v-if="loading.getSubscriptionInfo" :lines="7" size="lg" />
+    <NeSkeleton
+      v-if="loading.getSubscriptionInfo || tsStore.loadingListDnsSettings"
+      :lines="7"
+      size="lg"
+    />
     <template v-else>
-      <div v-if="activeSubscription">
-        <FlashstartContent />
-      </div>
-      <div v-else>
-        <NeEmptyState
-          :title="t('standalone.flashstart.flashstart_disabled')"
-          :description="
-            t('standalone.flashstart.flashstart_disabled_description', {
-              product: getProductName()
-            })
+      <!-- no active subscription -->
+      <NeEmptyState
+        v-if="!activeSubscription"
+        :title="t('standalone.flashstart.flashstart_disabled')"
+        :description="
+          t('standalone.flashstart.flashstart_disabled_description', {
+            product: getProductName()
+          })
+        "
+        :icon="['fas', 'shield']"
+        class="pb-8"
+        ><NeButton
+          kind="primary"
+          @click="
+            () => {
+              router.push(`${getStandaloneRoutePrefix()}/system/subscription`)
+            }
           "
-          :icon="['fas', 'shield']"
-          class="pb-8"
-          ><NeButton
-            kind="primary"
-            @click="
-              () => {
-                router.push(`${getStandaloneRoutePrefix()}/system/subscription`)
-              }
-            "
-            ><template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'arrow-right']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              /> </template
-            >{{ t('common.go_to_page', { page: t('standalone.subscription.title') }) }}</NeButton
-          ></NeEmptyState
+          ><template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'arrow-right']"
+              class="h-4 w-4"
+              aria-hidden="true"
+            /> </template
+          >{{ t('common.go_to_page', { page: t('standalone.subscription.title') }) }}</NeButton
+        ></NeEmptyState
+      >
+      <!-- threat shield dns is enabled -->
+      <NeEmptyState
+        v-else-if="tsStore.dnsSettings?.enabled"
+        :title="t('standalone.flashstart.flashstart_disabled')"
+        :description="t('standalone.flashstart.flashstart_disabled_threat_shield_enabled')"
+        :icon="['fas', 'shield']"
+        class="pb-8"
+      >
+        <NeButton
+          kind="primary"
+          @click="
+            () => {
+              router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-dns?tab=settings`)
+            }
+          "
         >
-      </div>
+          <template #prefix>
+            <font-awesome-icon :icon="['fas', 'arrow-right']" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('common.go_to_page', { page: t('standalone.threat_shield_dns.title') }) }}
+        </NeButton>
+      </NeEmptyState>
+      <!-- flash start UI -->
+      <FlashstartContent v-else />
     </template>
   </div>
 </template>

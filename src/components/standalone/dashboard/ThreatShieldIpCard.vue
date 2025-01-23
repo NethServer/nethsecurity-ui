@@ -177,7 +177,7 @@ function goTo(path: string) {
   >
     <!-- title slot -->
     <template #title>
-      <NeLink @click="goTo('/security/threat-shield')">
+      <NeLink @click="goTo('/security/threat-shield-ip')">
         {{ t('standalone.dashboard.thread_shield_ip') }}
       </NeLink>
     </template>
@@ -200,7 +200,7 @@ function goTo(path: string) {
         <template #content>
           <i18n-t keypath="standalone.dashboard.monitoring_disabled_tooltip" tag="p" scope="global">
             <template #page>
-              <NeLink invertedTheme @click="goTo('/security/threat-shield?tab=settings')">
+              <NeLink invertedTheme @click="goTo('/security/threat-shield-ip?tab=settings')">
                 {{ t('standalone.threat_shield.settings') }}
               </NeLink>
             </template>

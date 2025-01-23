@@ -49,7 +49,12 @@ const isThreatShieldEnabled = ref(false)
 
 const filteredBlocklists = computed(() => {
   return filter.value
-    ? blocklists.value.filter((x) => x.name.includes(filter.value))
+    ? blocklists.value.filter(
+        (x) =>
+          x.name.includes(filter.value) ||
+          x.description.includes(filter.value) ||
+          x.type.includes(filter.value)
+      )
     : blocklists.value
 })
 
@@ -160,7 +165,7 @@ onMounted(() => {
           kind="primary"
           @click="
             () => {
-              router.push(`${getStandaloneRoutePrefix()}/security/threat-shield?tab=settings`)
+              router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-ip?tab=settings`)
             }
           "
           ><template #prefix>
@@ -172,13 +177,18 @@ onMounted(() => {
           >{{ t('standalone.threat_shield.go_to_settings') }}</NeButton
         ></NeEmptyState
       >
-      <template v-else
-        ><NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+      <template v-else>
+        <NeTextInput
+          class="max-w-xs sm:max-w-sm"
+          :placeholder="t('standalone.threat_shield.filter_blocklists')"
+          v-model="filter"
+          is-search />
         <BlocklistTable
           :blocklists="filteredBlocklists"
           v-if="filteredBlocklists.length > 0"
-          :disable-toggle="isTogglingBlocklistEnabled"
-          @enable-disable="toggleBlocklistEnable" />
+          :disable-toggles="isTogglingBlocklistEnabled"
+          kind="ip"
+          @toggle-blocklist="toggleBlocklistEnable" />
         <NeEmptyState
           v-else
           :title="t('standalone.threat_shield.no_blacklists_found')"

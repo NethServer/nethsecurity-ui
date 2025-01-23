@@ -635,21 +635,6 @@ function validate() {
     }
   }
 
-  // ensure source zone != destination zone
-
-  if (props.ruleType === 'forward') {
-    if (sourceZone.value === destinationZone.value) {
-      errorBag.value.set('src', [
-        t('standalone.firewall_rules.source_and_destination_zones_must_be_different')
-      ])
-      errorBag.value.set('dest', [
-        t('standalone.firewall_rules.source_and_destination_zones_must_be_different')
-      ])
-      isValidationOk = false
-      focusElement(sourceZoneRef)
-    }
-  }
-
   // service
 
   const serviceValidation = validateRequired(service.value)

@@ -1417,7 +1417,6 @@
       "service_ports": "{protocols} any port | {protocols} port {ports} | {protocols} ports {ports}",
       "invalid_source_address_value": "Invalid source address: {value}",
       "invalid_destination_address_value": "Invalid destination address: {value}",
-      "source_and_destination_zones_must_be_different": "Source and destination zones must be different",
       "firewall": "Firewall",
       "delete_rule": "Delete rule",
       "confirm_delete_rule": "Are you sure you want to delete '{name}' rule?",

@@ -212,12 +212,7 @@ function handleEnabled() {
         </template>
       </NeTable>
     </template>
-    <NeEmptyState
-      v-else
-      :description="t('standalone.ips.no_disabled_rules_description')"
-      :icon="faShield"
-      :title="t('standalone.ips.no_disabled_rules')"
-    >
+    <NeEmptyState v-else :icon="faShield" :title="t('standalone.ips.no_disabled_rules')">
       <NeButton kind="primary" size="lg" @click="disablingRule = true">
         <template #prefix>
           <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />

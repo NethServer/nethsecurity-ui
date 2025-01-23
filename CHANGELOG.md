@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.19.0](https://github.com/NethServer/nethsecurity-ui/compare/1.18.1...1.19.0) (2025-01-23)
+
+
+### Features
+
+* added IPS management ([#498](https://github.com/NethServer/nethsecurity-ui/issues/498)) ([f018a2a](https://github.com/NethServer/nethsecurity-ui/commit/f018a2a4d73267899fbd310287b5610aa8c759b1))
+
+
+### Bug Fixes
+
+* **flashstart:** fix empty state ([773020f](https://github.com/NethServer/nethsecurity-ui/commit/773020fe8d3df517cc61964288fbc1e622a4f1d4))
+
+## [1.18.1](https://github.com/NethServer/nethsecurity-ui/compare/1.18.0...1.18.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* **lang:** translations update from Hosted Weblate ([#494](https://github.com/NethServer/nethsecurity-ui/issues/494)) ([d84b4d2](https://github.com/NethServer/nethsecurity-ui/commit/d84b4d2cd116905cf7ee685e2d1c839f82a777c7))
+* **lang:** translations update from Hosted Weblate ([#495](https://github.com/NethServer/nethsecurity-ui/issues/495)) ([ebd1d9a](https://github.com/NethServer/nethsecurity-ui/commit/ebd1d9a014ec941833727bdfbd06fbeeee66a1d2))
+* **threat shield:** add i18n strings ([#492](https://github.com/NethServer/nethsecurity-ui/issues/492)) ([019476f](https://github.com/NethServer/nethsecurity-ui/commit/019476f5aac4e48341705aa24f5b4909a14004be))
+
+## [1.18.0](https://github.com/NethServer/nethsecurity-ui/compare/1.17.5...1.18.0) (2025-01-20)
+
+
+### Features
+
+* add threat shield dns ([#479](https://github.com/NethServer/nethsecurity-ui/issues/479)) ([8513354](https://github.com/NethServer/nethsecurity-ui/commit/85133543903a6d593410842237dc39ec3620ac6d))
+
+## [1.17.5](https://github.com/NethServer/nethsecurity-ui/compare/1.17.4...1.17.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* **port forward:** removing tooltip for disabled port forwards ([#489](https://github.com/NethServer/nethsecurity-ui/issues/489)) ([4a3930a](https://github.com/NethServer/nethsecurity-ui/commit/4a3930a65cf6b00adda4f429775e445099760121)), closes [#482](https://github.com/NethServer/nethsecurity-ui/issues/482)
+
 ## [1.17.4](https://github.com/NethServer/nethsecurity-ui/compare/1.17.3...1.17.4) (2025-01-16)
 
 

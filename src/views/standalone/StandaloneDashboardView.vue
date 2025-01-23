@@ -14,6 +14,7 @@ import { useRoute } from 'vue-router'
 import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue'
 import InternetConnectionCard from '@/components/standalone/dashboard/InternetConnectionCard.vue'
 import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIpCard.vue'
+import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -83,6 +84,18 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </OpenVpnTunnelOrIpsecCard>
+    <!-- threat shield IP / banIP -->
+    <ThreatShieldIpCard />
+    <!-- IPS -->
+    <IpsServiceCard />
+    <!-- threat shield dns -->
+    <ServiceCard serviceName="threat_shield_dns" hasStatus :icon="['fas', 'shield']">
+      <template #title>
+        <NeLink @click="goTo('/security/threat-shield-dns')">
+          {{ t('standalone.threat_shield_dns.title') }}
+        </NeLink>
+      </template>
+    </ServiceCard>
     <!-- hotspot -->
     <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
       <template #title>
@@ -91,8 +104,6 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </ServiceCard>
-    <!-- threat shield / banIP -->
-    <ThreatShieldIpCard />
     <!-- known hosts -->
     <ServiceCard
       serviceName="hosts"

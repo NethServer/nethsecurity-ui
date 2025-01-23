@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.19.0](https://github.com/NethServer/nethsecurity-ui/compare/1.18.1...1.19.0) (2025-01-23)
+
+
+### Features
+
+* added IPS management ([#498](https://github.com/NethServer/nethsecurity-ui/issues/498)) ([f018a2a](https://github.com/NethServer/nethsecurity-ui/commit/f018a2a4d73267899fbd310287b5610aa8c759b1))
+
+
+### Bug Fixes
+
+* **flashstart:** fix empty state ([773020f](https://github.com/NethServer/nethsecurity-ui/commit/773020fe8d3df517cc61964288fbc1e622a4f1d4))
+
 ## [1.18.1](https://github.com/NethServer/nethsecurity-ui/compare/1.18.0...1.18.1) (2025-01-20)
 
 

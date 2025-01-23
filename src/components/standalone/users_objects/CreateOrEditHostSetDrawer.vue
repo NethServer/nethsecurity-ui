@@ -104,7 +104,7 @@ watch(
         // editing host or host set
         name.value = props.currentHostSet.name
         ipVersion.value = props.currentHostSet.family as IpVersion
-        records.value = cloneDeep(props.currentHostSet.ipaddr)  // deep clone to avoid modifying the original array
+        records.value = cloneDeep(props.currentHostSet.ipaddr) // deep clone to avoid modifying the original array
       } else {
         // creating host or host set, reset form to defaults
         name.value = ''

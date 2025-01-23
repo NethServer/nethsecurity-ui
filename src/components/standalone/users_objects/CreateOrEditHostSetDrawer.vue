@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { cloneDeep } from 'lodash-es'
 import {
   NeInlineNotification,
   type NeComboboxOption,
@@ -103,7 +104,7 @@ watch(
         // editing host or host set
         name.value = props.currentHostSet.name
         ipVersion.value = props.currentHostSet.family as IpVersion
-        records.value = props.currentHostSet.ipaddr
+        records.value = cloneDeep(props.currentHostSet.ipaddr)  // deep clone to avoid modifying the original array
       } else {
         // creating host or host set, reset form to defaults
         name.value = ''
@@ -127,7 +128,6 @@ watch(
 )
 
 function closeDrawer() {
-  emit('reloadData')
   emit('close')
 }
 

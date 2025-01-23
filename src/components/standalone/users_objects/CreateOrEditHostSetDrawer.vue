@@ -44,7 +44,7 @@ const props = defineProps({
   }
 })
 
-interface MatchInfo {
+type MatchInfo = {
   database: string
   family: string
   id: string

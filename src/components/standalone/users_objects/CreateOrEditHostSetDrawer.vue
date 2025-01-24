@@ -21,6 +21,7 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
 import {
   MessageBag,
   validateAlphanumeric,
@@ -46,11 +47,15 @@ const props = defineProps({
 
 type MatchInfo = {
   database: string
-  family: string
+  family: 'ipv4' | 'ipv6'
   id: string
   name: string
   type: string
 }
+
+type MatchInfoResponse = AxiosResponse<{
+  info: MatchInfo[]
+}>
 
 const emit = defineEmits(['close', 'reloadData'])
 
@@ -171,7 +176,7 @@ function runFieldValidators(
 
 async function getMatchedItemsName(matches: string[]): Promise<string> {
   try {
-    const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
+    const res: MatchInfoResponse = await ubusCall('ns.objects', 'get-info', { ids: matches })
     const names: string[] = []
     for (const match of Object.values(res.data.info) as MatchInfo[]) {
       if (match.type === 'redirect') {
@@ -184,11 +189,12 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
     return ''
   }
 }
+
 async function getMatchedObjectName(
   matches: string[]
 ): Promise<{ portForwards: string; objects: string }> {
   try {
-    const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
+    const res: MatchInfoResponse = await ubusCall('ns.objects', 'get-info', { ids: matches })
     const matchedPortForwardNames: string[] = []
     const objectsUsingPortForward: string[] = []
     for (const match of Object.values(res.data.info) as MatchInfo[]) {

@@ -54,7 +54,7 @@ type MatchInfo = {
 }
 
 type MatchInfoResponse = AxiosResponse<{
-  info: MatchInfo[]
+  info: Record<string, MatchInfo>
 }>
 
 const emit = defineEmits(['close', 'reloadData'])
@@ -178,8 +178,8 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
   try {
     const res: MatchInfoResponse = await ubusCall('ns.objects', 'get-info', { ids: matches })
     const names: string[] = []
-    for (const match of Object.values(res.data.info) as MatchInfo[]) {
-      if (match.type === 'redirect') {
+    for (const match of Object.values(res.data.info)) {
+      if (match.type == 'redirect') {
         names.push(match.name)
       }
     }
@@ -197,8 +197,8 @@ async function getMatchedObjectName(
     const res: MatchInfoResponse = await ubusCall('ns.objects', 'get-info', { ids: matches })
     const matchedPortForwardNames: string[] = []
     const objectsUsingPortForward: string[] = []
-    for (const match of Object.values(res.data.info) as MatchInfo[]) {
-      if (match.database === 'objects') {
+    for (const match of Object.values(res.data.info)) {
+      if (match.database == 'objects') {
         //from match.database+/+match.id retrieves the matches of the object in allObjects
         const objectsMatched = allObjectsButCurrent.value?.find(
           (obj) => obj.id === `${match.database}/${match.id}`

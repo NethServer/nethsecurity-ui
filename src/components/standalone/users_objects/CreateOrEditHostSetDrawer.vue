@@ -55,6 +55,10 @@ type MatchInfo = {
 const emit = defineEmits(['close', 'reloadData'])
 
 const portForwardsUsingHostSet = ref('')
+const objectsUsingHostSet = ref<{ portForwards: string; objects: string }>({
+  portForwards: '',
+  objects: ''
+})
 const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
@@ -86,7 +90,15 @@ const ipVersionOptions = ref([
 ])
 
 const recordOptionsButCurrent = computed(() => {
-  return props.recordOptions?.filter((option) => option.id !== props.currentHostSet?.id)
+  // Filter out objects from recordOptions based on the presence of an IP address with a hyphen in allObjects
+  const objectsWithHyphenIp = props.allObjects
+    .filter((obj) => obj.ipaddr.some((ip: string) => ip.includes('-')))
+    .map((obj) => obj.name)
+
+  return props.recordOptions?.filter(
+    (option) =>
+      option.id !== props.currentHostSet?.id && !objectsWithHyphenIp.includes(option.label)
+  )
 })
 
 const allObjectsButCurrent = computed(() => {
@@ -121,8 +133,10 @@ watch(
   async (matches) => {
     if (matches) {
       portForwardsUsingHostSet.value = await getMatchedItemsName(matches)
+      objectsUsingHostSet.value = await getMatchedObjectName(matches)
     } else {
       portForwardsUsingHostSet.value = ''
+      objectsUsingHostSet.value = { portForwards: '', objects: '' }
     }
   }
 )
@@ -170,6 +184,34 @@ async function getMatchedItemsName(matches: string[]): Promise<string> {
     return ''
   }
 }
+async function getMatchedObjectName(
+  matches: string[]
+): Promise<{ portForwards: string; objects: string }> {
+  try {
+    const res = await ubusCall('ns.objects', 'get-info', { ids: matches })
+    const matchedPortForwardNames: string[] = []
+    const objectsUsingPortForward: string[] = []
+    for (const match of Object.values(res.data.info) as MatchInfo[]) {
+      if (match.database === 'objects') {
+        //from match.database+/+match.id retrieves the matches of the object in allObjects
+        const objectsMatched = allObjectsButCurrent.value?.find(
+          (obj) => obj.id === `${match.database}/${match.id}`
+        )
+        if (objectsMatched?.matches) {
+          matchedPortForwardNames.push(...objectsMatched.matches)
+          objectsUsingPortForward.push(objectsMatched.name)
+        }
+      }
+    }
+    return {
+      portForwards: await getMatchedItemsName(matchedPortForwardNames.flat()),
+      objects: objectsUsingPortForward.join(', ')
+    }
+  } catch (error: any) {
+    console.error('Error fetching getMatchedObjectName:', error)
+    return { portForwards: '', objects: '' }
+  }
+}
 
 function validateNoIpRangeWithPortForward(records: Array<string>) {
   for (const record of records) {
@@ -177,6 +219,20 @@ function validateNoIpRangeWithPortForward(records: Array<string>) {
       return {
         valid: false,
         errMessage: 'standalone.objects.range_not_compatible_with_port_forward'
+      }
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
+function validateNoIpRangeWithObjects(records: Array<string>) {
+  for (const record of records) {
+    if (record.includes('-') && objectsUsingHostSet.value && objectsUsingHostSet.value['objects']) {
+      return {
+        valid: false,
+        errMessage: 'standalone.objects.range_not_compatible_with_object_and_port_forward'
       }
     }
   }
@@ -211,7 +267,11 @@ function validate() {
     ],
     // records
     [
-      [validateNoIpRangeWithPortForward(records.value), validateRequired(records.value[0])],
+      [
+        validateNoIpRangeWithObjects(records.value),
+        validateNoIpRangeWithPortForward(records.value),
+        validateRequired(records.value[0])
+      ],
       'ipaddr',
       recordRef
     ]
@@ -352,7 +412,12 @@ function deleteRecord(index: number) {
               v-if="errorBag.getFirstI18nKeyFor('ipaddr')"
               :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
             >
-              {{ t(errorBag.getFirstI18nKeyFor('ipaddr'), { name: portForwardsUsingHostSet }) }}
+              {{
+                t(errorBag.getFirstI18nKeyFor('ipaddr'), {
+                  name: portForwardsUsingHostSet || objectsUsingHostSet['portForwards'],
+                  object: objectsUsingHostSet['objects']
+                })
+              }}
             </p>
             <NeButton class="mt-4" size="md" @click="addRecord" kind="secondary">
               <template #prefix>

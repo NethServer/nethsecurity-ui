@@ -247,6 +247,20 @@ function validateNoIpRangeWithObjects(records: Array<string>) {
   }
 }
 
+function validateNoObjectsWithPortForward(records: Array<string>) {
+  for (const record of records) {
+    if (record.includes('objects/') && portForwardsUsingHostSet.value) {
+      return {
+        valid: false,
+        errMessage: 'standalone.objects.objects_are_not_compatible_with_port_forward'
+      }
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
 function validateHostSetNotExists(value: string) {
   if (allObjectsButCurrent.value?.find((obj) => obj.name === value && obj.subtype === 'host_set')) {
     return {
@@ -274,6 +288,7 @@ function validate() {
     // records
     [
       [
+        validateNoObjectsWithPortForward(records.value),
         validateNoIpRangeWithObjects(records.value),
         validateNoIpRangeWithPortForward(records.value),
         validateRequired(records.value[0])

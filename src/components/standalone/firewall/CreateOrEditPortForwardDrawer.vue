@@ -171,14 +171,17 @@ const restrictObjectsComboboxOptions = computed(() => {
     label: t('standalone.port_forward.no_object')
   }
 
-  const restrictOptions = props.restrictObjectSuggestions.map((obj) => {
-    return {
-      id: obj.id,
-      label: obj.name,
-      description: t(`standalone.objects.subtype_${obj.subtype}`),
-      icon: getObjectIcon(obj.subtype)
-    }
-  })
+  // filter out objects that contain other objects in their ipaddr
+  const restrictOptions = props.restrictObjectSuggestions
+    .filter((obj) => !obj.ipaddr?.some((ip: string) => ip.includes('objects/')))
+    .map((obj) => {
+      return {
+        id: obj.id,
+        label: obj.name,
+        description: t(`standalone.objects.subtype_${obj.subtype}`),
+        icon: getObjectIcon(obj.subtype)
+      }
+    })
 
   return [noObjectOption, ...restrictOptions]
 })

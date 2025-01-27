@@ -1364,7 +1364,7 @@
       "enter_restricted_addresses": "Enter restricted addresses",
       "restricted_addresses": "Restricted addresses",
       "restricted_object": "Restricted object",
-      "restricted_object_tooltip": "All objects supported, except host sets with IP ranges",
+      "restricted_object_tooltip": "All objects supported, except host sets with IP ranges or with nested objects",
       "no_object": "No object",
       "port_forwards_for_destination_name": "Port forwards for destination '{name}'"
     },

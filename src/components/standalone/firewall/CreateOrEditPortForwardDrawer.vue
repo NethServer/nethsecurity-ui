@@ -670,7 +670,15 @@ async function createOrEditPortForward() {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         ref="destinationObjectRef"
-      />
+      >
+        <template #tooltip>
+          <NeTooltip
+            ><template #content>{{
+              t('standalone.port_forward.restricted_object_tooltip')
+            }}</template></NeTooltip
+          >
+        </template>
+      </NeCombobox>
       <NeTextInput
         v-if="!anyProtocolSelected"
         :label="t('standalone.port_forward.destination_port')"

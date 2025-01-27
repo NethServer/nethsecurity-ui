@@ -1691,7 +1691,6 @@
       "clear_filter": "Rimuovi filtro",
       "no_rule_found": "Nessuna regola trovata",
       "try_changing_search_filter": "Prova a cambiare il filtro di ricerca",
-      "source_and_destination_zones_must_be_different": "La zone sorgente e destinazione devono essere differenti",
       "editing_system_rule_warning_title": "Stai modificando una regola di sistema",
       "editing_system_rule_warning_description": "Procedi solo se sai cosa stai facendo",
       "add_output_rule": "Aggiungi regola output",

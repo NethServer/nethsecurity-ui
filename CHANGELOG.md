@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.1](https://github.com/NethServer/nethsecurity-ui/compare/1.19.0...1.19.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* **firewall:** allow rules with same src/dest zone ([#500](https://github.com/NethServer/nethsecurity-ui/issues/500)) ([b48f6d5](https://github.com/NethServer/nethsecurity-ui/commit/b48f6d5811b086ad84ce31832a4c4a905bda0a67))
+* **lang:** translations update from Hosted Weblate ([#502](https://github.com/NethServer/nethsecurity-ui/issues/502)) ([061e78c](https://github.com/NethServer/nethsecurity-ui/commit/061e78c6f537be5afca3b454d44d0cf28ecfd340))
+
 ## [1.19.0](https://github.com/NethServer/nethsecurity-ui/compare/1.18.1...1.19.0) (2025-01-23)
 
 

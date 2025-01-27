@@ -2360,7 +2360,7 @@
       "filter_events": "Filter events",
       "event_list_date": "Date",
       "no_events_found": "No events found",
-      "drop": "Drop",
+      "block": "Block",
       "alert": "Alert",
       "allow": "Allow",
       "date": "Date",

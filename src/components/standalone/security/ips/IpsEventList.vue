@@ -18,7 +18,7 @@ import {
   NeButton,
   NeDropdown,
   NeDropdownFilter,
-  NeDropdownItem,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -48,7 +48,7 @@ import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSupp
 import type { SuppressedAlert } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
 
-type EventType = 'drop' | 'alert' | 'allow'
+type EventType = 'block' | 'alert' | 'allow'
 
 type FilterEventType = EventType | 'any'
 
@@ -101,8 +101,8 @@ const typeFilterOptions = ref<CustomFilter[]>([
     label: t('common.any')
   },
   {
-    id: 'drop',
-    label: t('standalone.ips.drop')
+    id: 'block',
+    label: t('standalone.ips.block')
   },
   {
     id: 'alert',
@@ -297,9 +297,9 @@ function suppressedAlertHandler() {
                     <FontAwesomeIcon :icon="faArrowRight" class="text-green-500" />
                     {{ t('standalone.ips.allow') }}
                   </template>
-                  <template v-else-if="item.action == 'drop'">
+                  <template v-else-if="item.action == 'block'">
                     <FontAwesomeIcon :icon="faBan" class="text-red-500" />
-                    {{ t('standalone.ips.drop') }}
+                    {{ t('standalone.ips.block') }}
                   </template>
                   <template v-else>
                     <FontAwesomeIcon :icon="faWarning" class="text-amber-700 dark:text-amber-500" />

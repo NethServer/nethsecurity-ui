@@ -2279,7 +2279,7 @@
       "delete_domain_set": "Delete domain set",
       "database_mwan3": "MultiWAN",
       "range_not_compatible_with_port_forward": "IP range is not compatible with port forwards. This object is currently used by: {name}",
-      "objects_are_not_compatible_with_port_forward": "Objects are not compatible with port forwards. This object is currently used by: {name}"
+      "objects_are_not_compatible_with_port_forward": "Objects are not compatible with port forwards. This host set is currently used by: {name}"
     },
     "ips": {
       "title": "Intrusion Prevention System",

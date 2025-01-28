@@ -94,11 +94,9 @@ const recordOptionsButCurrent = computed(() => {
   // Filter out objects from recordOptions based on the presence of an IP address with a hyphen in allObjects
   const objectsWithHyphenIp = props.allObjects
     .filter((obj) => obj.ipaddr.some((ip: string) => ip.includes('-')))
-    .map((obj) => obj.name)
-
+    .map((obj) => obj.id)
   return props.recordOptions?.filter(
-    (option) =>
-      option.id !== props.currentHostSet?.id && !objectsWithHyphenIp.includes(option.label)
+    (option) => option.id !== props.currentHostSet?.id && !objectsWithHyphenIp.includes(option.id)
   )
 })
 

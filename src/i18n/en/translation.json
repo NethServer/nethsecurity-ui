@@ -1364,7 +1364,7 @@
       "enter_restricted_addresses": "Enter restricted addresses",
       "restricted_addresses": "Restricted addresses",
       "restricted_object": "Restricted object",
-      "restricted_object_tooltip": "All objects supported, except host sets with IP ranges or with nested objects",
+      "restricted_object_tooltip": "All objects supported, except host sets containing IP ranges or nested objects",
       "no_object": "No object",
       "port_forwards_for_destination_name": "Port forwards for destination '{name}'"
     },
@@ -2278,7 +2278,7 @@
       "domain_set_already_exists": "Domain set already exists",
       "delete_domain_set": "Delete domain set",
       "database_mwan3": "MultiWAN",
-      "range_not_compatible_with_port_forward": "IP range is not compatible with port forwards. This object is currently used by: {name}",
+      "range_not_compatible_with_port_forward": "IP range is not compatible with port forwards. This host set is currently used by: {name}",
       "objects_are_not_compatible_with_port_forward": "Objects are not compatible with port forwards. This host set is currently used by: {name}"
     },
     "ips": {

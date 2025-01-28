@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/NethServer/nethsecurity-ui/compare/1.19.1...1.20.0) (2025-01-28)
+
+
+### Features
+
+* **host set:** add validation for IP range compatibility with port forwards ([#496](https://github.com/NethServer/nethsecurity-ui/issues/496)) ([5cab769](https://github.com/NethServer/nethsecurity-ui/commit/5cab769134e51225ff084d6752be740f47463f23))
+
 ## [1.19.1](https://github.com/NethServer/nethsecurity-ui/compare/1.19.0...1.19.1) (2025-01-27)
 
 

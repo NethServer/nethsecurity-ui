@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { cloneDeep } from 'lodash-es'
 import {
   NeInlineNotification,
   type NeComboboxOption,
@@ -20,6 +21,7 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType, watch, type Ref, computed } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
 import {
   MessageBag,
   validateAlphanumeric,
@@ -43,8 +45,21 @@ const props = defineProps({
   }
 })
 
+type MatchInfo = {
+  database: string
+  family: 'ipv4' | 'ipv6'
+  id: string
+  name: string
+  type: string
+}
+
+type MatchInfoResponse = AxiosResponse<{
+  info: Record<string, MatchInfo>
+}>
+
 const emit = defineEmits(['close', 'reloadData'])
 
+const portForwardsUsingHostSet = ref('')
 const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
@@ -76,7 +91,13 @@ const ipVersionOptions = ref([
 ])
 
 const recordOptionsButCurrent = computed(() => {
-  return props.recordOptions?.filter((option) => option.id !== props.currentHostSet?.id)
+  // Filter out objects from recordOptions based on the presence of an IP address with a hyphen in allObjects
+  const objectsWithHyphenIp = props.allObjects
+    .filter((obj) => obj.ipaddr.some((ip: string) => ip.includes('-')))
+    .map((obj) => obj.id)
+  return props.recordOptions?.filter(
+    (option) => option.id !== props.currentHostSet?.id && !objectsWithHyphenIp.includes(option.id)
+  )
 })
 
 const allObjectsButCurrent = computed(() => {
@@ -94,13 +115,25 @@ watch(
         // editing host or host set
         name.value = props.currentHostSet.name
         ipVersion.value = props.currentHostSet.family as IpVersion
-        records.value = props.currentHostSet.ipaddr
+        records.value = cloneDeep(props.currentHostSet.ipaddr) // deep clone to avoid modifying the original array
       } else {
         // creating host or host set, reset form to defaults
         name.value = ''
         ipVersion.value = 'ipv4'
         records.value = ['']
       }
+    }
+  }
+)
+
+// compute portForwardsUsingHostSet the name of the portforward rule using this object
+watch(
+  () => props.currentHostSet?.matches,
+  async (matches) => {
+    if (matches) {
+      portForwardsUsingHostSet.value = await getMatchedItemsName(matches)
+    } else {
+      portForwardsUsingHostSet.value = ''
     }
   }
 )
@@ -133,6 +166,50 @@ function runFieldValidators(
   return validators.every((validator) => validator.valid)
 }
 
+async function getMatchedItemsName(matches: string[]): Promise<string> {
+  try {
+    const res: MatchInfoResponse = await ubusCall('ns.objects', 'get-info', { ids: matches })
+    const names: string[] = []
+    for (const match of Object.values(res.data.info)) {
+      if (match.type == 'redirect') {
+        names.push(match.name)
+      }
+    }
+    return names.join(', ')
+  } catch (error: any) {
+    console.error('Error fetching getMatchedItemsName:', error)
+    return ''
+  }
+}
+
+function validateNoIpRangeWithPortForward(records: Array<string>) {
+  for (const record of records) {
+    if (record.includes('-') && portForwardsUsingHostSet.value) {
+      return {
+        valid: false,
+        errMessage: 'standalone.objects.range_not_compatible_with_port_forward'
+      }
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
+function validateNoObjectsWithPortForward(records: Array<string>) {
+  for (const record of records) {
+    if (record.includes('objects/') && portForwardsUsingHostSet.value) {
+      return {
+        valid: false,
+        errMessage: 'standalone.objects.objects_are_not_compatible_with_port_forward'
+      }
+    }
+  }
+  return {
+    valid: true
+  }
+}
+
 function validateHostSetNotExists(value: string) {
   if (allObjectsButCurrent.value?.find((obj) => obj.name === value && obj.subtype === 'host_set')) {
     return {
@@ -158,7 +235,15 @@ function validate() {
       nameRef
     ],
     // records
-    [[validateRequired(records.value[0])], 'ipaddr', recordRef]
+    [
+      [
+        validateNoObjectsWithPortForward(records.value),
+        validateNoIpRangeWithPortForward(records.value),
+        validateRequired(records.value[0])
+      ],
+      'ipaddr',
+      recordRef
+    ]
   ]
 
   // reset firstErrorRef for focus management
@@ -296,7 +381,11 @@ function deleteRecord(index: number) {
               v-if="errorBag.getFirstI18nKeyFor('ipaddr')"
               :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'"
             >
-              {{ t(errorBag.getFirstI18nKeyFor('ipaddr')) }}
+              {{
+                t(errorBag.getFirstI18nKeyFor('ipaddr'), {
+                  name: portForwardsUsingHostSet
+                })
+              }}
             </p>
             <NeButton class="mt-4" size="md" @click="addRecord" kind="secondary">
               <template #prefix>

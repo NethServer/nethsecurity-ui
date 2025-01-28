@@ -23,6 +23,7 @@ export type ObjectReference = {
   family: IpVersion
   used: boolean
   matches: string[]
+  ipaddr?: string[]
 }
 
 /**

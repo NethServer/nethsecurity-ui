@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.1](https://github.com/NethServer/nethsecurity-ui/compare/1.20.0...1.20.1) (2025-01-29)
+
+
+### Bug Fixes
+
+* **ips:** fixed styling ([#506](https://github.com/NethServer/nethsecurity-ui/issues/506)) ([c1d90a0](https://github.com/NethServer/nethsecurity-ui/commit/c1d90a02c0cd27c62bc6c1394a40f285ec6139e3))
+
 ## [1.20.0](https://github.com/NethServer/nethsecurity-ui/compare/1.19.1...1.20.0) (2025-01-28)
 
 

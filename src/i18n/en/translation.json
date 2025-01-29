@@ -2283,7 +2283,7 @@
     "ips": {
       "title": "Intrusion Prevention System",
       "sidebar_title": "IPS",
-      "event_list_tab": "Event list",
+      "event_list_tab": "Today event list",
       "filter_bypass_tab": "Filter bypass",
       "disabled_rules_tab": "Disabled rules",
       "suppressed_alerts_tab": "Suppressed alerts",
@@ -2356,7 +2356,7 @@
       "error_suppressing_alert": "Cannot suppress alert",
       "event_list_description": "The IPS analyzes network traffic and checks it against a rule set to identify matches. Matched traffic may be blocked or generate an alert. This page displays all events related to blocked traffic and alerts.",
       "error_loading_events": "Cannot load events",
-      "event_list_no_events": "No events, all good",
+      "event_list_no_events": "No events today, all good",
       "type": "Type",
       "filter_events": "Filter events",
       "event_list_date": "Date",
@@ -2370,8 +2370,7 @@
       "destination_suppress_alert": "Suppress alert for destination",
       "max_detect_info": "Policy 'max-detect' is enabled.",
       "max_detect_description": "Please refer to the manual for more information.",
-      "alerts_today": "alert today | alerts today",
-      "drops_today": "connection dropped today | connections dropped today"
+      "events_today": "event today | events today"
     }
   },
   "controller": {

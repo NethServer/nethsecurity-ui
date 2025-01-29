@@ -6,15 +6,13 @@ import type { AxiosResponse } from 'axios'
 type IpsStatus = AxiosResponse<{
   status: {
     enabled: boolean
-    alerts: number
-    drops: number
+    events: number
   }
 }>
 
 export const useIpsStatusStore = defineStore('ipsStatus', () => {
   const enabled = ref<boolean>(false)
-  const alerts = ref<number>(0)
-  const drops = ref<number>(0)
+  const events = ref<number>(0)
   const loading = ref(true)
   const error = ref<Error>()
 
@@ -22,8 +20,7 @@ export const useIpsStatusStore = defineStore('ipsStatus', () => {
     ubusCall('ns.snort', 'status', {})
       .then((response: IpsStatus) => {
         enabled.value = response.data.status.enabled
-        alerts.value = response.data.status.alerts
-        drops.value = response.data.status.drops
+        events.value = response.data.status.events
       })
       .catch((reason: Error) => {
         error.value = reason
@@ -41,8 +38,7 @@ export const useIpsStatusStore = defineStore('ipsStatus', () => {
     enabled,
     loading,
     error,
-    alerts,
-    drops,
+    events,
     fetchStatus
   }
 })

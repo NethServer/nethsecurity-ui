@@ -14,6 +14,7 @@ const errorTitle = ref<string>()
 const errorDescription = ref<string>()
 
 onMounted(() => {
+  ips.fetchStatus()
   intervalId.value = setInterval(ips.fetchStatus, REFRESH_INTERVAL)
 })
 
@@ -58,12 +59,8 @@ watch(
       />
       <div>
         <p>
-          <span class="mr-1 text-xl">{{ ips.alerts }}</span>
-          {{ t('standalone.ips.alerts_today', ips.alerts) }}
-        </p>
-        <p>
-          <span class="mr-1 text-xl">{{ ips.drops }}</span>
-          {{ t('standalone.ips.drops_today', ips.drops) }}
+          <span class="mr-1 text-xl">{{ ips.events }}</span>
+          {{ t('standalone.ips.events_today', ips.events) }}
         </p>
       </div>
     </div>

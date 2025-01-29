@@ -209,7 +209,9 @@ function suppressedAlertHandler() {
 <template>
   <div class="space-y-8">
     <div class="flex flex-wrap items-start justify-between gap-4">
-      <p class="max-w-lg">{{ t('standalone.ips.event_list_description') }}</p>
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.ips.event_list_description') }}
+      </p>
       <IpsEnabledBadge v-if="ipsStatus.enabled" />
     </div>
     <NeSkeleton v-if="loading" :lines="8" size="lg" />

@@ -25,7 +25,7 @@ const { tabs, selectedTab } = useTabs([
 
 <template>
   <div class="space-y-8">
-    <NeHeading>{{ t('standalone.ips.title') }}</NeHeading>
+    <NeHeading tag="h3">{{ t('standalone.ips.title') }}</NeHeading>
     <NeTabs
       :selected="selectedTab"
       :srSelectTabLabel="t('ne_tabs.select_a_tab')"

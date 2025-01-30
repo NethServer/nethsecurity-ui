@@ -8,7 +8,6 @@ import { onMounted, ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { AxiosError, type AxiosResponse } from 'axios'
 import {
-  focusElement,
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
@@ -22,6 +21,8 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import { MessageBag } from '@/lib/validation'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useNotificationsStore } from '@/stores/notifications'
+import AskPasswordModal from '@/components/standalone/AskPasswordModal.vue'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
 type SshKey = {
   type: string
@@ -33,6 +34,7 @@ type SshKeysResponse = AxiosResponse<{
   keys: SshKey[]
 }>
 
+const standaloneLoginStore = useLoginStore()
 const notifications = useNotificationsStore()
 const { t } = useI18n()
 const uploadSshKey = ref('')
@@ -45,6 +47,8 @@ const validationErrors = ref(new MessageBag())
 const error = ref<Error>()
 
 const keyToDelete = ref<SshKey>()
+
+const askPassword = ref(false)
 
 onMounted(() => {
   load()
@@ -65,14 +69,17 @@ function load() {
     })
 }
 
-function addKey() {
+function addKey(password: string) {
   submitting.value = true
   validationErrors.value.clear()
   error.value = undefined
   ubusCall('ns.ssh', 'add-key', {
+    username: standaloneLoginStore.username,
+    password: password,
     key: uploadSshKey.value
   })
     .then(() => {
+      askPassword.value = false
       uploadSshKey.value = ''
       load()
       notifications.addNotification({
@@ -84,9 +91,12 @@ function addKey() {
     .catch((reason: Error) => {
       if (reason instanceof ValidationError) {
         validationErrors.value = reason.errorBag
-        focusElement('uploadSshKeyInput')
+        if (!reason.errorBag.has('password')) {
+          askPassword.value = false
+        }
       } else {
         error.value = reason
+        askPassword.value = false
       }
     })
     .finally(() => {
@@ -172,7 +182,7 @@ function deleteKey() {
         </li>
       </ul>
       <!-- Add Key form -->
-      <form class="flex flex-col gap-y-4" @submit.prevent="addKey()">
+      <form class="flex flex-col gap-y-4" @submit.prevent="askPassword = true">
         <NeTextInput
           ref="uploadSshKeyInput"
           v-model="uploadSshKey"
@@ -196,4 +206,11 @@ function deleteKey() {
       </form>
     </div>
   </FormLayout>
+  <AskPasswordModal
+    :invalid-message="t(validationErrors.getFirstI18nKeyFor('password'))"
+    :visible="askPassword"
+    :loading="submitting"
+    @close="askPassword = false"
+    @confirm="addKey($event)"
+  />
 </template>

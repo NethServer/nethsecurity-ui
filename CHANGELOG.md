@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.2](https://github.com/NethServer/nethsecurity-ui/compare/1.20.1...1.20.2) (2025-01-30)
+
+
+### Bug Fixes
+
+* **threat shield:** load ts dns zones from api ([#509](https://github.com/NethServer/nethsecurity-ui/issues/509)) ([330e90a](https://github.com/NethServer/nethsecurity-ui/commit/330e90ae73cb5f010fbd9d95154d6e216a974fb2))
+
 ## [1.20.1](https://github.com/NethServer/nethsecurity-ui/compare/1.20.0...1.20.1) (2025-01-29)
 
 

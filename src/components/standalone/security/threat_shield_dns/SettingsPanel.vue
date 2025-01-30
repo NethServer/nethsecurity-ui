@@ -30,10 +30,12 @@ const errorBag = ref(new MessageBag())
 const portsErrors = ref<string[]>([])
 
 const zonesOptions = computed(() => {
-  return fwStore.zones.map((zone) => ({
-    id: zone.name,
-    label: zone.name
-  }))
+  return fwStore.zones
+    .filter((zone) => zone.name !== 'wan')
+    .map((zone) => ({
+      id: zone.name,
+      label: zone.name
+    }))
 })
 
 // update form when dns settings are loaded

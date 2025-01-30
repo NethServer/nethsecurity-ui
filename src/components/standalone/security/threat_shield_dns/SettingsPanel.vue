@@ -17,11 +17,9 @@ import {
   validateRequired,
   validateRequiredOption
 } from '@/lib/validation'
-import { useFirewallStore } from '@/stores/standalone/firewall'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 
 const { t } = useI18n()
-const fwStore = useFirewallStore()
 const tsStore = useThreatShieldStore()
 const isThreatShieldEnabled = ref(false)
 const selectedZones = ref<NeComboboxOption[]>([])
@@ -30,9 +28,9 @@ const errorBag = ref(new MessageBag())
 const portsErrors = ref<string[]>([])
 
 const zonesOptions = computed(() => {
-  return fwStore.zones.map((zone) => ({
-    id: zone.name,
-    label: zone.name
+  return tsStore.dnsZones.map((zone) => ({
+    id: zone,
+    label: zone
   }))
 })
 
@@ -45,16 +43,33 @@ watch(
     }
     isThreatShieldEnabled.value = tsStore.dnsSettings.enabled
     ports.value = tsStore.dnsSettings.ports
-    selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
-      return zonesOptions.value.find((z) => z.id === zone)
-    })
+
+    // set selected zones if dns zones have been loaded
+    if (tsStore.dnsZones.length) {
+      selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
+        return zonesOptions.value.find((z) => z.id === zone)
+      })
+    }
+  },
+  { immediate: true }
+)
+
+// set selected zones when dns zones are loaded
+watch(
+  () => tsStore.dnsZones,
+  () => {
+    if (tsStore.dnsSettings) {
+      selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
+        return zonesOptions.value.find((z) => z.id === zone)
+      })
+    }
   },
   { immediate: true }
 )
 
 async function loadData() {
-  fwStore.fetch()
   tsStore.listDnsSettings()
+  tsStore.listDnsZones()
 }
 
 function validate() {
@@ -162,12 +177,12 @@ onMounted(() => {
                     v-model="selectedZones"
                     :options="zonesOptions"
                     :placeholder="
-                      fwStore.loading || tsStore.loadingListDnsSettings
+                      tsStore.loadingListDnsZones || tsStore.loadingListDnsSettings
                         ? t('common.loading')
                         : t('ne_combobox.choose_multiple')
                     "
                     multiple
-                    :disabled="tsStore.loadingEditDnsSettings || fwStore.loading"
+                    :disabled="tsStore.loadingEditDnsSettings || tsStore.loadingListDnsZones"
                     :invalidMessage="errorBag.getFirstFor('zones')"
                     :optionalLabel="t('common.optional')"
                     :noResultsLabel="t('ne_combobox.no_results')"

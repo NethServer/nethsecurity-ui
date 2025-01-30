@@ -34,11 +34,13 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   const notificationsStore = useNotificationsStore()
   const dnsBlocklists = ref<Blocklist[]>([])
   const dnsSettings = ref<DnsSettings>()
+  const dnsZones = ref<string[]>([])
   const dnsBypasses = ref<string[]>([])
   const dnsBlockedDomains = ref<DnsBlockedDomain[]>([])
   const loadingListDnsBlocklists = ref(false)
   const loadingListDnsBlockedDomains = ref(false)
   const loadingListDnsSettings = ref(false)
+  const loadingListDnsZones = ref(false)
   const loadingEditDnsSettings = ref(false)
   const loadingEditDnsBlocklist = ref(false)
   const loadingListDnsBypass = ref(false)
@@ -52,6 +54,8 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   const errorListDnsBlockedDomainsDetails = ref('')
   const errorListDnsSettings = ref('')
   const errorListDnsSettingsDetails = ref('')
+  const errorListDnsZones = ref('')
+  const errorListDnsZonesDetails = ref('')
   const errorEditDnsSettings = ref('')
   const errorEditDnsSettingsDetails = ref('')
   const errorEditDnsBlocklist = ref('')
@@ -249,6 +253,23 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     }
   }
 
+  async function listDnsZones() {
+    loadingListDnsZones.value = true
+    errorListDnsZones.value = ''
+    errorListDnsZonesDetails.value = ''
+
+    try {
+      const res = await ubusCall('ns.threatshield', 'dns-list-zones')
+      dnsZones.value = res.data.data as string[]
+    } catch (err: any) {
+      console.error(err)
+      errorListDnsZones.value = t(getAxiosErrorMessage(err))
+      errorListDnsZonesDetails.value = err.toString()
+    } finally {
+      loadingListDnsZones.value = false
+    }
+  }
+
   async function editDnsSettings(settings: DnsSettings) {
     loadingEditDnsSettings.value = true
     errorEditDnsSettings.value = ''
@@ -339,11 +360,13 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   return {
     dnsBlocklists,
     dnsSettings,
+    dnsZones,
     dnsBypasses,
     dnsBlockedDomains,
     isEnterprise,
     loadingListDnsBlocklists,
     loadingListDnsSettings,
+    loadingListDnsZones,
     loadingEditDnsSettings,
     loadingEditDnsBlocklist,
     loadingListDnsBypass,
@@ -355,6 +378,8 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     errorListDnsBlocklistsDetails,
     errorListDnsSettings,
     errorListDnsSettingsDetails,
+    errorListDnsZones,
+    errorListDnsZonesDetails,
     errorEditDnsSettings,
     errorEditDnsSettingsDetails,
     errorEditDnsBlocklist,
@@ -371,6 +396,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     errorSaveDnsBlockedDomainDetails,
     listDnsBlocklist,
     listDnsSettings,
+    listDnsZones,
     listDnsBlockedDomains,
     editDnsSettings,
     addDnsBypass,

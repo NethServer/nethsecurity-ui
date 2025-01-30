@@ -57,7 +57,9 @@
     "type": "Type",
     "unknown": "Unknown",
     "confirm": "Confirm",
-    "ip_address": "IP address"
+    "ip_address": "IP address",
+    "password_confirmation_required": "Password confirmation required",
+    "password_confirmation_required_description": "Please confirm your password to proceed"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -401,7 +403,8 @@
     "duplicate_suppression": "Suppression already exists",
     "key_already_exists": "Key already exists",
     "key_invalid_format": "Invalid key format",
-    "invalid_old_password": "Old password doesn't match"
+    "invalid_old_password": "Old password doesn't match",
+    "invalid_password": "Authentication failed"
   },
   "ne_text_input": {
     "show_password": "Show password",

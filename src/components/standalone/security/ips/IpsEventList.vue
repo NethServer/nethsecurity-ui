@@ -18,7 +18,7 @@ import {
   NeButton,
   NeDropdown,
   NeDropdownFilter,
-  NeDropdownItem,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -236,6 +236,8 @@ function suppressedAlertHandler() {
             :label="t('standalone.ips.type')"
             :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
             :options="typeFilterOptions"
+            :noOptionsLabel="t('ne_dropdown_filter.no_options')"
+            :moreOptionsHiddenLabel="t('ne_dropdown_filter.more_options_hidden')"
             kind="radio"
           />
           <NeButton kind="tertiary" @click="clearFilters">
@@ -287,7 +289,11 @@ function suppressedAlertHandler() {
                 </NeEmptyState>
               </NeTableCell>
             </NeTableRow>
-            <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}-${item.timestamp}`">
+            <NeTableRow
+              v-for="item in paginatedItems"
+              v-else
+              :key="`${item.gid}-${item.timestamp}`"
+            >
               <NeTableCell :data-label="t('standalone.ips.date')" class="text-nowrap">
                 <span :title="item.timestamp">
                   {{ formatDateLoc(new Date(item.timestamp), 'PPpp') }}

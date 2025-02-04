@@ -273,6 +273,8 @@ watch(timeRangeFilter, () => {
         :options="timeRangeFilterOptions"
         :clearFilterLabel="t('ne_dropdown_filter.clear_selection')"
         :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+        :noOptionsLabel="t('ne_dropdown_filter.no_options')"
+        :moreOptionsHiddenLabel="t('ne_dropdown_filter.more_options_hidden')"
       />
       <NeDropdownFilter
         v-model="accountsFilter"

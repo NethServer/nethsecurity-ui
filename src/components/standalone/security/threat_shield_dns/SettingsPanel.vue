@@ -46,8 +46,8 @@ watch(
 
     // set selected zones if dns zones have been loaded
     if (tsStore.dnsZones.length) {
-      selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
-        return zonesOptions.value.find((z) => z.id === zone)
+      selectedZones.value = zonesOptions.value.filter((zone) => {
+        return tsStore.dnsSettings?.zones.find((z) => z == zone.id)
       })
     }
   },
@@ -59,8 +59,8 @@ watch(
   () => tsStore.dnsZones,
   () => {
     if (tsStore.dnsSettings) {
-      selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
-        return zonesOptions.value.find((z) => z.id === zone)
+      selectedZones.value = zonesOptions.value.filter((zone) => {
+        return tsStore.dnsSettings?.zones.find((z) => z == zone.id)
       })
     }
   },

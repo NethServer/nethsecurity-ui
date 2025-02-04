@@ -30,7 +30,7 @@ const props = defineProps<{
 
 const pageSize = ref(10)
 
-const sortKey = ref('startTime')
+const sortKey = ref<keyof ConnectionsRecord>('startTime')
 const sortDescending = ref(true)
 
 function compareIpAddresses(ip1: string, ip2: string): number {

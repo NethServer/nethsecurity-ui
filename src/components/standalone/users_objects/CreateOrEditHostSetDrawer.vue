@@ -41,7 +41,8 @@ const props = defineProps({
     required: true
   },
   recordOptions: {
-    type: Array as PropType<NeComboboxOption[]>
+    type: Array as PropType<NeComboboxOption[]>,
+    default: () => []
   }
 })
 
@@ -64,7 +65,7 @@ const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
 const ipVersion = ref<IpVersion>('ipv4')
-const records = ref<NeComboboxOption[]>([''])
+const records = ref<string[]>([''])
 const recordRef = ref()
 const errorBag = ref(new MessageBag())
 // contains the first invalid field ref

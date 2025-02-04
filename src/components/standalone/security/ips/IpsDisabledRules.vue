@@ -184,7 +184,7 @@ function handleEnabled() {
               </NeEmptyState>
             </NeTableCell>
           </NeTableRow>
-          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}`">
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.gid}-${item.sid}`">
             <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>

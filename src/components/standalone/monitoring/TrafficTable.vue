@@ -56,7 +56,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
         </template>
       </NeTextInput>
     </div>
-    <NeTable :aria-label="title">
+    <NeTable :ariaLabel="title">
       <NeTableHead>
         <NeTableHeadCell>{{ title }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.traffic') }}</NeTableHeadCell>

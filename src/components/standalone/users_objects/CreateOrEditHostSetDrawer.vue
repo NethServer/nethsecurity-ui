@@ -41,7 +41,8 @@ const props = defineProps({
     required: true
   },
   recordOptions: {
-    type: Array as PropType<NeComboboxOption[]>
+    type: Array as PropType<NeComboboxOption[]>,
+    default: () => []
   }
 })
 

@@ -19,7 +19,7 @@ import {
   useItemPagination
 } from '@nethesis/vue-components'
 import { range } from 'lodash-es'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps<{
   blocklists: Blocklist[]
@@ -34,7 +34,16 @@ defineEmits<{
 
 const { t, te } = useI18n()
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.blocklists, {
+const sortedBlocklists = computed(() => {
+  return [...props.blocklists].sort((a, b) => {
+    if (a.type === b.type) {
+      return b.confidence - a.confidence
+    }
+    return a.type === 'enterprise' ? -1 : 1
+  })
+})
+
+const { currentPage, paginatedItems } = useItemPagination(() => sortedBlocklists.value, {
   itemsPerPage: pageSize
 })
 
@@ -100,7 +109,7 @@ function getBlocklistName(blocklist: Blocklist) {
           {{
             te(`standalone.threat_shield_dns.description_${item.name}`)
               ? t(`standalone.threat_shield_dns.description_${item.name}`)
-              : t('standalone.threat_shield.unknown')
+              : item.description
           }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">

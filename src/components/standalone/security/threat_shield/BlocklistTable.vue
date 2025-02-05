@@ -100,7 +100,7 @@ function getBlocklistName(blocklist: Blocklist) {
           {{
             te(`standalone.threat_shield_dns.description_${item.name}`)
               ? t(`standalone.threat_shield_dns.description_${item.name}`)
-              : t('standalone.threat_shield.unknown')
+              : item.description
           }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">

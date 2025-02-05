@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.3](https://github.com/NethServer/nethsecurity-ui/compare/1.20.2...1.20.3) (2025-02-05)
+
+
+### Bug Fixes
+
+* **ts-dns:** improve blocklist table output ([#511](https://github.com/NethServer/nethsecurity-ui/issues/511)) ([e6816c6](https://github.com/NethServer/nethsecurity-ui/commit/e6816c6ed2f882ce3c29fdde8612b39e3a83c32f))
+
 ## [1.20.2](https://github.com/NethServer/nethsecurity-ui/compare/1.20.1...1.20.2) (2025-01-30)
 
 

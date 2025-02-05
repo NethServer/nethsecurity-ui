@@ -19,7 +19,7 @@ import {
   useItemPagination
 } from '@nethesis/vue-components'
 import { range } from 'lodash-es'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   blocklists: Blocklist[]
@@ -34,16 +34,7 @@ defineEmits<{
 
 const { t, te } = useI18n()
 const pageSize = ref(10)
-const sortedBlocklists = computed(() => {
-  return [...props.blocklists].sort((a, b) => {
-    if (a.type === b.type) {
-      return b.confidence - a.confidence
-    }
-    return a.type === 'enterprise' ? -1 : 1
-  })
-})
-
-const { currentPage, paginatedItems } = useItemPagination(() => sortedBlocklists.value, {
+const { currentPage, paginatedItems } = useItemPagination(() => props.blocklists, {
   itemsPerPage: pageSize
 })
 

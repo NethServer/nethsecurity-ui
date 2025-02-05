@@ -83,11 +83,11 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     try {
       const res = await ubusCall('ns.threatshield', 'dns-list-blocklist')
       const blocklists = res.data.data as Blocklist[]
-      // sort by confidence in descending order and then alphabetically
+      // show enterprise lists first, then sort alphabetically
       dnsBlocklists.value = blocklists
         .sort(sortByProperty('name'))
         .reverse()
-        .sort(sortByProperty('confidence'))
+        .sort(sortByProperty('type'))
         .reverse()
     } catch (err: any) {
       console.error(err)

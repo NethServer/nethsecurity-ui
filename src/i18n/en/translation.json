@@ -405,7 +405,8 @@
     "key_already_exists": "Key already exists",
     "key_invalid_format": "Invalid key format",
     "dhcp_range_cannot_contain_interface": "The firewall IP address must be outside the DHCP range.",
-    "invalid_password": "Authentication failed"
+    "invalid_password": "Authentication failed",
+    "unauthorized_action": "Unauthorized action"
   },
   "ne_text_input": {
     "show_password": "Show password",

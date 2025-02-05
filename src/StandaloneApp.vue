@@ -8,19 +8,22 @@ import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
-import axios, { CanceledError } from 'axios'
+import axios, { type AxiosRequestConfig, CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
 import { useNotificationsStore } from './stores/notifications'
+import { UnauthorizedAction, useSudoStore } from '@/stores/sudo'
+import AskPasswordModal from '@/components/standalone/AskPasswordModal.vue'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale } = useI18n({ useScope: 'global' })
 const route = useRoute()
+const sudoStore = useSudoStore()
 
 const isLoaded = ref(false)
 
@@ -69,6 +72,35 @@ function configureAxios() {
       return config
     },
     function (error: any) {
+      return Promise.reject(error)
+    }
+  )
+
+  /**
+   * Interceptor used to handle sudo mode
+   */
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status == 403 && error.response?.data?.message == 'sudo mode required') {
+        console.warn('[interceptor]', 'Detected error 403, asking for sudo to request new token')
+        sudoStore.askingSudo = true
+        return new Promise((resolve, reject) => {
+          const interval = setInterval(() => {
+            // check if sudo has been granted
+            if (sudoStore.askingSudo == false) {
+              clearInterval(interval)
+              if (sudoStore.sudoGranted) {
+                const config: AxiosRequestConfig = error.config
+                config.headers!['Authorization'] = `Bearer ${loginStore.token}`
+                resolve(axios(config))
+              } else {
+                reject(new UnauthorizedAction())
+              }
+            }
+          }, 200)
+        })
+      }
       return Promise.reject(error)
     }
   )
@@ -135,6 +167,7 @@ function configureAxios() {
   <template v-if="isLoaded">
     <template v-if="loginStore.isLoggedIn">
       <StandaloneAppShell />
+      <AskPasswordModal />
     </template>
     <template v-else>
       <StandaloneAppLogin />

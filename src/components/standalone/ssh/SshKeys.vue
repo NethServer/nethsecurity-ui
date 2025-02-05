@@ -8,6 +8,7 @@ import { onMounted, ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { AxiosError, type AxiosResponse } from 'axios'
 import {
+  focusElement,
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
@@ -21,8 +22,7 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import { MessageBag } from '@/lib/validation'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useNotificationsStore } from '@/stores/notifications'
-import AskPasswordModal from '@/components/standalone/AskPasswordModal.vue'
-import { useLoginStore } from '@/stores/standalone/standaloneLogin'
+import { UnauthorizedAction } from '@/stores/sudo'
 
 type SshKey = {
   type: string
@@ -34,7 +34,6 @@ type SshKeysResponse = AxiosResponse<{
   keys: SshKey[]
 }>
 
-const standaloneLoginStore = useLoginStore()
 const notifications = useNotificationsStore()
 const { t } = useI18n()
 const uploadSshKey = ref('')
@@ -44,11 +43,10 @@ const loading = ref(true)
 const submitting = ref(false)
 const deleting = ref(false)
 const validationErrors = ref(new MessageBag())
-const error = ref<Error>()
+const error = ref<string>()
+const deleteError = ref<string>()
 
 const keyToDelete = ref<SshKey>()
-
-const askPassword = ref(false)
 
 onMounted(() => {
   load()
@@ -62,23 +60,20 @@ function load() {
       sshKeys.value = response.data.keys
     })
     .catch((reason: AxiosError) => {
-      error.value = reason
+      error.value = t(getAxiosErrorMessage(reason))
     })
     .finally(() => {
       loading.value = false
     })
 }
 
-function addKey(password: string) {
+function addKey() {
   submitting.value = true
   validationErrors.value.clear()
   ubusCall('ns.ssh', 'add-key', {
-    username: standaloneLoginStore.username,
-    password: password,
     key: uploadSshKey.value
   })
     .then(() => {
-      askPassword.value = false
       uploadSshKey.value = ''
       load()
       notifications.addNotification({
@@ -90,12 +85,11 @@ function addKey(password: string) {
     .catch((reason: Error) => {
       if (reason instanceof ValidationError) {
         validationErrors.value = reason.errorBag
-        if (!reason.errorBag.has('password')) {
-          askPassword.value = false
-        }
+        focusElement('uploadSshKeyInput')
+      } else if (reason instanceof UnauthorizedAction) {
+        error.value = t(reason.message)
       } else {
-        error.value = reason
-        askPassword.value = false
+        error.value = t(getAxiosErrorMessage(reason))
       }
     })
     .finally(() => {
@@ -105,6 +99,7 @@ function addKey(password: string) {
 
 function deleteKey() {
   deleting.value = true
+  deleteError.value = undefined
   ubusCall('ns.ssh', 'delete-key', {
     key: keyToDelete.value?.key
   })
@@ -118,11 +113,21 @@ function deleteKey() {
       })
     })
     .catch((reason) => {
-      error.value = reason
+      if (reason instanceof UnauthorizedAction) {
+        deleteError.value = t(reason.message)
+      } else {
+        deleteError.value = t(getAxiosErrorMessage(reason))
+      }
     })
     .finally(() => {
       deleting.value = false
     })
+}
+
+function handleCloseDeleteModal() {
+  if (!deleting.value) {
+    keyToDelete.value = undefined
+  }
 }
 </script>
 
@@ -132,20 +137,28 @@ function deleteKey() {
     :primary-label="t('standalone.ssh.ssh_keys.delete_key_modal.button')"
     :title="t('standalone.ssh.ssh_keys.delete_key_modal.title')"
     :visible="keyToDelete != undefined"
-    @close="keyToDelete = undefined"
+    @close="handleCloseDeleteModal()"
     @primary-click="deleteKey()"
     :primary-button-loading="deleting"
     :primary-button-disabled="deleting"
     :close-aria-label="t('common.close')"
   >
-    <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
-    <code class="my-1 break-all">
-      {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
-    </code>
+    <div class="space-y-4">
+      <NeInlineNotification
+        v-if="deleteError != undefined"
+        :description="deleteError"
+        kind="error"
+        :title="t('error.generic_error')"
+      />
+      <p>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</p>
+      <code class="my-1 break-all">
+        {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
+      </code>
+    </div>
   </NeModal>
   <NeInlineNotification
     v-if="error != undefined"
-    :description="t(getAxiosErrorMessage(error))"
+    :description="error"
     kind="error"
     :title="t('error.generic_error')"
   />
@@ -180,7 +193,7 @@ function deleteKey() {
         </li>
       </ul>
       <!-- Add Key form -->
-      <form class="flex flex-col gap-y-4" @submit.prevent="askPassword = true">
+      <form class="flex flex-col gap-y-4" @submit.prevent="addKey()">
         <NeTextInput
           ref="uploadSshKeyInput"
           v-model="uploadSshKey"
@@ -204,11 +217,4 @@ function deleteKey() {
       </form>
     </div>
   </FormLayout>
-  <AskPasswordModal
-    :invalid-message="t(validationErrors.getFirstI18nKeyFor('password'))"
-    :visible="askPassword"
-    :loading="submitting"
-    @close="askPassword = false"
-    @confirm="addKey($event)"
-  />
 </template>

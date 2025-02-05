@@ -404,7 +404,8 @@
     "key_already_exists": "Key already exists",
     "key_invalid_format": "Invalid key format",
     "invalid_old_password": "Old password doesn't match",
-    "invalid_password": "Authentication failed"
+    "invalid_password": "Authentication failed",
+    "unauthorized_action": "Unauthorized action"
   },
   "ne_text_input": {
     "show_password": "Show password",

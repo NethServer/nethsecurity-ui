@@ -5,56 +5,56 @@
 
 <script setup lang="ts">
 import {
-  NeLink,
-  NeInlineNotification,
-  NeHeading,
-  NeButton,
-  NeTextInput,
+  deleteFromStorage,
   focusElement,
   getAxiosErrorMessage,
-  deleteFromStorage,
   getStringFromStorage,
+  NeButton,
+  NeHeading,
+  NeInlineNotification,
+  NeLink,
+  NeTextInput,
   saveToStorage
 } from '@nethesis/vue-components'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { onMounted, ref, watch } from 'vue'
-import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/validation'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
+import { MessageBag, validateRequired } from '@/lib/validation'
 import { useI18n } from 'vue-i18n'
-import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/config'
-import { jwtDecode } from 'jwt-decode'
-import { verifyTwoFaOtp } from '@/lib/twoFa'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { getCompanyName, getPrivacyPolicyUrl, getProductName } from '@/lib/config'
+import axios from 'axios'
 
 const username = ref('')
-const usernameRef = ref()
 const password = ref('')
-const passwordRef = ref()
 const rememberMe = ref(false)
-const jwtToken = ref('')
 const twoFaOtp = ref('')
-const twoFaOtpRef = ref()
-const step = ref('login')
-const errorBag = ref(new MessageBag())
 
-const loading = ref({
-  login: false,
-  verifyOtp: false
-})
+const step = ref<'login' | '2fa'>('login')
+const validationBag = ref(new MessageBag())
 
-const error = ref({
-  username: '',
-  password: '',
-  otp: '',
-  login: '',
-  verifyOtp: '',
-  verifyOtpDetails: ''
-})
+const usernameRef = useTemplateRef('username-ref')
+const passwordRef = useTemplateRef('password-ref')
+const twoFaOtpRef = useTemplateRef('two-fa-otp-ref')
+
+type ValidationResponse = {
+  data: {
+    validation: {
+      errors: Array<{
+        message: string
+        parameter: string
+        value: string
+      }>
+    }
+  }
+}
+
+const loading = ref(false)
+const error = ref<Error>()
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
 
 watch(step, () => {
-  if (step.value === '2fa') {
+  if (step.value == '2fa') {
     focusElement(twoFaOtpRef)
   }
 })
@@ -73,14 +73,14 @@ onMounted(() => {
 })
 
 async function login() {
-  const isValidationOk = validate()
-  if (!isValidationOk) {
+  error.value = undefined
+  if (invalidForm()) {
     return
   }
-  loading.value.login = true
 
+  loading.value = true
   try {
-    jwtToken.value = await loginStore.login(username.value, password.value)
+    const token = await loginStore.login(username.value, password.value, twoFaOtp.value)
 
     // set or remove username to/from local storage
     if (rememberMe.value) {
@@ -88,107 +88,57 @@ async function login() {
     } else {
       deleteFromStorage('standaloneUsername')
     }
-
-    // check if 2fa is enabled
-    const tokenDecoded: any = jwtDecode(jwtToken.value)
-
-    if (tokenDecoded['2fa']) {
-      step.value = '2fa'
-    } else {
-      loginStore.loginSuccessful(username.value, jwtToken.value)
-    }
+    loginStore.loginSuccessful(username.value, token)
   } catch (err: any) {
-    console.error('login error', err)
-
-    if (err?.response?.status == 401) {
-      error.value.login = 'login.incorrect_username_or_password'
-      focusElement(passwordRef)
-    } else {
-      error.value.login = getAxiosErrorMessage(err)
-    }
-  } finally {
-    loading.value.login = false
-  }
-}
-
-function validate() {
-  error.value.username = ''
-  error.value.password = ''
-  error.value.login = ''
-  errorBag.value.clear()
-  let isValidationOk = true
-
-  // username
-
-  {
-    // check required
-    const { valid, errMessage } = validateRequired(username.value)
-    if (!valid) {
-      error.value.username = errMessage as string
-
-      if (isValidationOk) {
-        isValidationOk = false
-        focusElement(usernameRef)
-      }
-    }
-  }
-
-  // password
-
-  {
-    // check required
-    const { valid, errMessage } = validateRequired(password.value)
-    if (!valid) {
-      error.value.password = errMessage as string
-
-      if (isValidationOk) {
-        isValidationOk = false
+    if (axios.isAxiosError<ValidationResponse>(err) && err.response != undefined) {
+      // error has returned successfully from server, parse validation errors
+      err.response.data.data.validation.errors.forEach((item) => {
+        validationBag.value.set(item.parameter, item.message)
+      })
+      if (validationBag.value.has('password')) {
         focusElement(passwordRef)
+      } else if (validationBag.value.has('two_fa')) {
+        if (step.value == 'login') {
+          step.value = '2fa'
+          validationBag.value.delete('two_fa')
+        }
+        focusElement(twoFaOtpRef)
+      }
+    } else {
+      error.value = err
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+function invalidForm(): boolean {
+  validationBag.value.clear()
+  if (step.value == '2fa') {
+    {
+      // check required
+      let { valid, errMessage } = validateRequired(twoFaOtp.value)
+      if (!valid) {
+        validationBag.value.set('two_fa', errMessage as string)
+      }
+    }
+  } else {
+    {
+      // check required
+      let { valid, errMessage } = validateRequired(username.value)
+      if (!valid) {
+        validationBag.value.set('username', errMessage as string)
+      }
+    }
+    {
+      // check required
+      let { valid, errMessage } = validateRequired(password.value)
+      if (!valid) {
+        validationBag.value.set('password', errMessage as string)
       }
     }
   }
-  return isValidationOk
-}
-
-function validateOtp() {
-  error.value.otp = ''
-  error.value.verifyOtp = ''
-  error.value.verifyOtpDetails = ''
-  errorBag.value.clear()
-  let isValidationOk = true
-
-  const otpValidation = validateSixDigitCode(twoFaOtp.value)
-  if (!otpValidation.valid) {
-    errorBag.value.set('otp', [String(otpValidation.errMessage)])
-    if (isValidationOk) {
-      isValidationOk = false
-      focusElement(twoFaOtpRef)
-    }
-  }
-  return isValidationOk
-}
-
-async function verifyOtp() {
-  const isValidationOk = validateOtp()
-  if (!isValidationOk) {
-    return
-  }
-  loading.value.verifyOtp = true
-
-  try {
-    await verifyTwoFaOtp(username.value, jwtToken.value, twoFaOtp.value)
-    loginStore.loginSuccessful(username.value, jwtToken.value)
-  } catch (err: any) {
-    console.error(err)
-    if (err instanceof ValidationError) {
-      errorBag.value = err.errorBag
-    } else {
-      error.value.verifyOtp = t(getAxiosErrorMessage(err))
-      error.value.verifyOtpDetails = err.toString()
-    }
-  } finally {
-    loading.value.verifyOtp = false
-  }
+  return validationBag.value.size > 0
 }
 </script>
 
@@ -200,15 +150,15 @@ async function verifyOtp() {
       <div class="mx-auto w-full max-w-md">
         <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
           <NeHeading tag="h4" class="mb-4">
-            <template v-if="step === 'login'">
+            <template v-if="step == 'login'">
               {{ t('login.welcome_title_standalone', { product: getProductName() }) }}
             </template>
-            <template v-if="step === '2fa'">
+            <template v-if="step == '2fa'">
               {{ t('standalone.two_fa.title') }}
             </template>
           </NeHeading>
           <div class="mb-6 text-sm text-gray-700 dark:text-gray-100">
-            <template v-if="step === 'login'">
+            <template v-if="step == 'login'">
               {{ t('login.welcome_description_standalone', { product: getProductName() }) }}
               <!-- session expired notification -->
               <NeInlineNotification
@@ -220,7 +170,7 @@ async function verifyOtp() {
                 class="mt-6"
               />
             </template>
-            <template v-if="step === '2fa'">
+            <template v-if="step == '2fa'">
               <p>
                 {{ t('standalone.two_fa.enter_otp_login_1') }}
               </p>
@@ -235,29 +185,29 @@ async function verifyOtp() {
             </div>
           </div>
           <form class="space-y-6">
-            <template v-if="step === 'login'">
-              <NeInlineNotification
-                v-if="error.login"
-                kind="error"
-                :title="t('login.cannot_login')"
-                :description="t(error.login)"
-              />
+            <NeInlineNotification
+              v-if="error != undefined"
+              :description="t(getAxiosErrorMessage(error))"
+              :title="t('login.cannot_login')"
+              kind="error"
+            />
+            <template v-if="step == 'login'">
               <NeTextInput
-                ref="usernameRef"
-                v-model.trim="username"
                 :label="t('login.username')"
-                :invalid-message="t(error.username)"
+                v-model.trim="username"
+                :invalidMessage="t(validationBag.getFirstI18nKeyFor('username'))"
                 autocomplete="username"
+                ref="username-ref"
               />
               <NeTextInput
-                ref="passwordRef"
-                v-model="password"
                 :label="t('login.password')"
-                is-password
-                :show-password-label="t('ne_text_input.show_password')"
-                :hide-password-label="t('ne_text_input.hide_password')"
-                :invalid-message="t(error.password)"
+                v-model="password"
+                isPassword
+                :showPasswordLabel="t('ne_text_input.show_password')"
+                :hidePasswordLabel="t('ne_text_input.hide_password')"
+                :invalidMessage="t(validationBag.getFirstI18nKeyFor('password'))"
                 autocomplete="current-password"
+                ref="password-ref"
               />
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -289,41 +239,30 @@ async function verifyOtp() {
                   kind="primary"
                   size="lg"
                   type="submit"
-                  :disabled="loading.login"
-                  :loading="loading.login"
+                  :disabled="loading"
+                  :loading="loading"
                   class="w-full"
                   @click.prevent="login"
                   >{{ t('login.sign_in') }}</NeButton
                 >
               </div>
             </template>
-            <template v-if="step === '2fa'">
-              <!-- verifyOtp error notification -->
-              <NeInlineNotification
-                v-if="error.verifyOtp"
-                kind="error"
-                :title="t('error.cannot_verify_otp')"
-                :description="error.verifyOtp"
-              >
-                <template v-if="error.verifyOtpDetails" #details>
-                  {{ error.verifyOtpDetails }}
-                </template>
-              </NeInlineNotification>
+            <template v-if="step == '2fa'">
               <!-- 2fa otp -->
               <NeTextInput
-                ref="twoFaOtpRef"
-                v-model.trim="twoFaOtp"
                 :label="t('standalone.two_fa.otp')"
-                :invalid-message="t(errorBag.getFirstI18nKeyFor('otp'))"
+                v-model.trim="twoFaOtp"
+                :invalidMessage="t(validationBag.getFirstI18nKeyFor('two_fa'))"
+                ref="two-fa-otp-ref"
               />
               <NeButton
                 kind="primary"
                 size="lg"
+                @click.prevent="login"
                 type="submit"
-                :disabled="loading.verifyOtp"
-                :loading="loading.verifyOtp"
+                :disabled="loading"
+                :loading="loading"
                 class="w-full"
-                @click.prevent="verifyOtp"
                 >{{ t('standalone.two_fa.verify_code') }}</NeButton
               >
             </template>

@@ -406,7 +406,8 @@
     "key_invalid_format": "Invalid key format",
     "dhcp_range_cannot_contain_interface": "The firewall IP address must be outside the DHCP range.",
     "invalid_password": "Authentication failed",
-    "unauthorized_action": "Unauthorized action"
+    "unauthorized_action": "Unauthorized action",
+    "invalid_credentials": "Invalid credentials"
   },
   "ne_text_input": {
     "show_password": "Show password",

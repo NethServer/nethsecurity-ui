@@ -8,10 +8,16 @@ import { useLoginStore as useControllerLoginStore } from '@/stores/controller/co
 import { getValidationErrorsFromAxiosError } from '@/lib/validation'
 import { ValidationError } from '@/lib/standalone/ubus'
 
+export type TwoFaStatus = {
+  data: {
+    enabled: boolean
+  }
+}
+
 export async function getTwoFaStatus() {
   const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
   const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
-  const res = await axios.get(`${endpoint}/2fa`, {
+  const res = await axios.get<TwoFaStatus>(`${endpoint}/2fa`, {
     headers: {
       Authorization: `Bearer ${loginStore.token}`
     }
@@ -30,14 +36,27 @@ export async function getTwoFaQrCode() {
   return res.data
 }
 
-export async function verifyTwoFaOtp(username: string, token: string, otp: string) {
+export type VerifyTwoFaOtpResponse = {
+  data: {
+    recovery_codes: string[]
+  }
+}
+
+export async function verifyTwoFaOtp(otp: string) {
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
   const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
   try {
-    const res = await axios.post(`${endpoint}/2fa/otp-verify`, {
-      otp,
-      username,
-      token
-    })
+    const res = await axios.post<VerifyTwoFaOtpResponse>(
+      `${endpoint}/2fa`,
+      {
+        otp: otp
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${loginStore.token}`
+        }
+      }
+    )
     return res.data
   } catch (err: any) {
     const errorBag = getValidationErrorsFromAxiosError(err)

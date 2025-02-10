@@ -5,46 +5,33 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { getTwoFaStatus } from '@/lib/twoFa'
 import {
   getAxiosErrorMessage,
-  getPreference,
   NeButton,
-  NeFormItemLabel,
   NeInlineNotification,
-  NeSkeleton,
-  NeTextArea,
-  NeTooltip,
-  savePreference
+  NeSkeleton
 } from '@nethesis/vue-components'
 import ConfigureTwoFaDrawer from '@/components/two_fa/ConfigureTwoFaDrawer.vue'
 import RevokeTwoFaModal from '@/components/two_fa/RevokeTwoFaModal.vue'
+import { faCircleCheck, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import axios from 'axios'
+import { getControllerApiEndpoint, getStandaloneApiEndpoint, isStandaloneMode } from '@/lib/config'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { isStandaloneMode } from '@/lib/config'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 
 const { t } = useI18n()
-const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 const isTwoFaEnabled = ref(false)
 const isShownConfigureTwoFaDrawer = ref(false)
 const isShownRevokeTwoFaModal = ref(false)
-const isShownRecoveryCodes = ref(false)
-const recoveryCodes = ref<string[]>([])
-const recoveryCodesStored = ref(false)
-const recoveryCodesJustCopied = ref(false)
 
-const loading = ref({
-  getTwoFaStatus: false
-})
+const loading = ref(false)
 
 const error = ref({
   getTwoFaStatus: '',
   getTwoFaStatusDetails: ''
-})
-
-const recoveryCodesText = computed(() => {
-  return recoveryCodes.value.join('\n')
 })
 
 onMounted(() => {
@@ -53,11 +40,6 @@ onMounted(() => {
 
 function loadData() {
   loadTwoFaStatus()
-  loadRecoveryCodesStored()
-}
-
-function loadRecoveryCodesStored() {
-  recoveryCodesStored.value = getPreference('twoFaRecoveryCodesStored', loginStore.username)
 }
 
 function showConfigureTwoFaDrawer() {
@@ -73,36 +55,34 @@ function showRevokeTwoFaModal() {
 }
 
 async function loadTwoFaStatus() {
-  loading.value.getTwoFaStatus = true
+  loading.value = true
   error.value.getTwoFaStatus = ''
   error.value.getTwoFaStatusDetails = ''
 
   try {
     const res = await getTwoFaStatus()
-    isTwoFaEnabled.value = res.data.status
-    recoveryCodes.value = res.data.recovery_codes
+    isTwoFaEnabled.value = res.data.enabled
   } catch (err: any) {
     console.error(err)
     error.value.getTwoFaStatus = t(getAxiosErrorMessage(err))
     error.value.getTwoFaStatusDetails = err.toString()
   } finally {
-    loading.value.getTwoFaStatus = false
+    loading.value = false
   }
 }
 
-function copyRecoveryCodes() {
-  navigator.clipboard.writeText(recoveryCodesText.value)
-
-  recoveryCodesJustCopied.value = true
-
-  setTimeout(() => {
-    recoveryCodesJustCopied.value = false
-  }, 3000)
-}
-
-function hideStoreRecoveryCodesReminder() {
-  savePreference('twoFaRecoveryCodesStored', true, loginStore.username)
-  loadRecoveryCodesStored()
+function disableTwoFa() {
+  const endpoint = isStandaloneMode() ? getStandaloneApiEndpoint() : getControllerApiEndpoint()
+  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+  axios
+    .delete(`${endpoint}/2fa`, {
+      headers: {
+        Authorization: `Bearer ${loginStore.token}`
+      }
+    })
+    .then(() => {
+      loadData()
+    })
 }
 </script>
 
@@ -120,12 +100,12 @@ function hideStoreRecoveryCodesReminder() {
       </template>
     </NeInlineNotification>
     <!-- skeleton -->
-    <NeSkeleton v-if="loading.getTwoFaStatus" :lines="4" size="lg" />
+    <NeSkeleton v-if="loading" :lines="4" size="lg" />
     <!-- 2fa status -->
     <template v-else>
       <div class="flex items-center">
-        <font-awesome-icon
-          :icon="['fas', isTwoFaEnabled ? 'circle-check' : 'circle-info']"
+        <FontAwesomeIcon
+          :icon="isTwoFaEnabled ? faCircleCheck : faCircleInfo"
           :class="[
             'mr-2',
             'h-4',
@@ -147,85 +127,9 @@ function hideStoreRecoveryCodesReminder() {
       <!-- buttons -->
       <template v-if="isTwoFaEnabled">
         <div class="flex gap-6">
-          <NeButton kind="secondary" size="lg" @click="showConfigureTwoFaDrawer">
-            <template #prefix>
-              <font-awesome-icon :icon="['fas', 'wrench']" aria-hidden="true" />
-            </template>
-            {{ t('standalone.two_fa.reconfigure_two_fa') }}
-          </NeButton>
-          <NeButton kind="tertiary" size="lg" @click="showRevokeTwoFaModal">
+          <NeButton kind="tertiary" size="lg" @click="isShownRevokeTwoFaModal = true">
             {{ t('standalone.two_fa.revoke_two_fa') }}
           </NeButton>
-        </div>
-        <!-- reminder to store recovery codes in a safe place -->
-        <NeInlineNotification
-          v-if="!recoveryCodesStored"
-          kind="warning"
-          :title="t('standalone.two_fa.store_recovery_codes_title')"
-          :description="t('standalone.two_fa.store_recovery_codes_description')"
-          :primary-button-label="t('standalone.two_fa.i_have_stored_recovery_codes')"
-          @primary-click="hideStoreRecoveryCodesReminder"
-        />
-        <!-- few recovery codes warning -->
-        <NeInlineNotification
-          v-if="recoveryCodes.length < 3"
-          kind="warning"
-          :title="t('standalone.two_fa.few_recovery_codes_title')"
-          :description="t('standalone.two_fa.few_recovery_codes_description')"
-        />
-        <!-- show recovery codes -->
-        <div>
-          <div class="flex gap-2">
-            <NeFormItemLabel>
-              {{ t('standalone.two_fa.recovery_otp_codes') }}
-            </NeFormItemLabel>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.two_fa.recovery_otp_codes_tooltip') }}
-              </template>
-            </NeTooltip>
-          </div>
-          <NeButton
-            kind="tertiary"
-            class="-ml-2.5"
-            @click="isShownRecoveryCodes = !isShownRecoveryCodes"
-          >
-            {{ t('standalone.two_fa.show_codes') }}
-            <template #suffix>
-              <font-awesome-icon
-                :icon="['fas', isShownRecoveryCodes ? 'chevron-up' : 'chevron-down']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
-            </template>
-          </NeButton>
-          <Transition name="slide-down">
-            <div v-show="isShownRecoveryCodes">
-              <!-- recovery codes -->
-              <NeTextArea
-                v-show="isShownRecoveryCodes"
-                v-model="recoveryCodesText"
-                :rows="6"
-                disabled
-                class="mt-2"
-              />
-              <!-- copy all codes -->
-              <NeButton kind="tertiary" size="lg" class="-ml-2.5 mt-2" @click="copyRecoveryCodes">
-                <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', recoveryCodesJustCopied ? 'check' : 'copy']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                </template>
-                {{
-                  recoveryCodesJustCopied
-                    ? t('common.copied')
-                    : t('standalone.two_fa.copy_all_codes')
-                }}
-              </NeButton>
-            </div>
-          </Transition>
         </div>
       </template>
       <NeButton v-else kind="secondary" @click="showConfigureTwoFaDrawer">

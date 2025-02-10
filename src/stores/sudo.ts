@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '@/lib/config'
 import { saveToStorage } from '@nethesis/vue-components'
-import { ValidationError } from '@/lib/standalone/ubus'
 import { getValidationErrorsFromAxiosError } from '@/lib/validation'
+import { getTwoFaStatus } from '@/lib/twoFa'
+
+type AskSudoData = {
+  password?: string
+  two_fa?: string
+}
 
 export const useSudoStore = defineStore('sudo', () => {
   const loginStore = useLoginStore()
@@ -14,6 +19,17 @@ export const useSudoStore = defineStore('sudo', () => {
   const loading = ref(false)
   const error = ref<Error>()
   const invalidText = ref<string>()
+
+  const needs2fa = ref(false)
+  onMounted(() => {
+    // This setTimeout is cause the token from the login store is not yet set, no clue why.
+    // FIXME: remove this, try to get this info from token.
+    setTimeout(() => {
+      getTwoFaStatus().then((response) => {
+        needs2fa.value = response.data.enabled
+      })
+    }, 500)
+  })
 
   /**
    * This variable is due to allow the axios interceptor to know if the sudo token has been granted
@@ -29,7 +45,7 @@ export const useSudoStore = defineStore('sudo', () => {
     }
   })
 
-  function askSudoToken(password: string) {
+  function askSudoToken(data: AskSudoData) {
     loading.value = true
     invalidText.value = undefined
     error.value = undefined
@@ -38,17 +54,11 @@ export const useSudoStore = defineStore('sudo', () => {
         data: {
           token: string
         }
-      }>(
-        `${getStandaloneApiEndpoint()}/sudo`,
-        {
-          password: password
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${loginStore.token}`
-          }
+      }>(`${getStandaloneApiEndpoint()}/sudo`, data, {
+        headers: {
+          Authorization: `Bearer ${loginStore.token}`
         }
-      )
+      })
       .then((res) => {
         loginStore.token = res.data.data.token
         loginStore.tokenRefreshedTime = new Date().getTime()
@@ -63,7 +73,11 @@ export const useSudoStore = defineStore('sudo', () => {
       .catch((reason) => {
         const errorBag = getValidationErrorsFromAxiosError(reason)
         if (errorBag.size) {
-          invalidText.value = errorBag.getFirstI18nKeyFor('password')
+          if (errorBag.has('two_fa')) {
+            invalidText.value = errorBag.getFirstI18nKeyFor('two_fa')
+          } else {
+            invalidText.value = errorBag.getFirstI18nKeyFor('password')
+          }
         } else {
           error.value = reason
         }
@@ -73,12 +87,28 @@ export const useSudoStore = defineStore('sudo', () => {
       })
   }
 
-  const needs2fa = computed<boolean>(() => {
-    const claims = JSON.parse(atob(loginStore.token.split('.')[1]))
-    return claims['2fa']
-  })
+  function askTwoFaSudoToken(code: string) {
+    askSudoToken({
+      two_fa: code
+    })
+  }
 
-  return { askingSudo, askSudoToken, loading, sudoGranted, needs2fa, error, invalidText }
+  function askPasswordSudoToken(password: string) {
+    askSudoToken({
+      password: password
+    })
+  }
+
+  return {
+    askingSudo,
+    askPasswordSudoToken,
+    askTwoFaSudoToken,
+    loading,
+    sudoGranted,
+    needs2fa,
+    error,
+    invalidText
+  }
 })
 
 export class UnauthorizedAction extends Error {

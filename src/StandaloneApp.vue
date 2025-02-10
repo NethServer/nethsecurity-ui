@@ -76,35 +76,6 @@ function configureAxios() {
     }
   )
 
-  /**
-   * Interceptor used to handle sudo mode
-   */
-  axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status == 403 && error.response?.data?.message == 'sudo mode required') {
-        console.warn('[interceptor]', 'Detected error 403, asking for sudo to request new token')
-        sudoStore.askingSudo = true
-        return new Promise((resolve, reject) => {
-          const interval = setInterval(() => {
-            // check if sudo has been granted
-            if (sudoStore.askingSudo == false) {
-              clearInterval(interval)
-              if (sudoStore.sudoGranted) {
-                const config: AxiosRequestConfig = error.config
-                config.headers!['Authorization'] = `Bearer ${loginStore.token}`
-                resolve(axios(config))
-              } else {
-                reject(new UnauthorizedAction())
-              }
-            }
-          }, 200)
-        })
-      }
-      return Promise.reject(error)
-    }
-  )
-
   // response interceptor
   axios.interceptors.response.use(
     function (response) {
@@ -132,6 +103,27 @@ function configureAxios() {
           const unitId = route.params.unitId
           unitsStore.retrieveAndSaveUnitToken(unitId as string)
         }
+      } else if (
+        error.response?.status == 403 &&
+        error.response?.data?.message == 'sudo mode required'
+      ) {
+        console.warn('[interceptor]', 'Detected error 403, asking for sudo to request new token')
+        sudoStore.askingSudo = true
+        return new Promise((resolve, reject) => {
+          const interval = setInterval(() => {
+            // check if sudo has been granted
+            if (sudoStore.askingSudo == false) {
+              clearInterval(interval)
+              if (sudoStore.sudoGranted) {
+                const config: AxiosRequestConfig = error.config
+                config.headers!['Authorization'] = `Bearer ${loginStore.token}`
+                resolve(axios(config))
+              } else {
+                reject(new UnauthorizedAction())
+              }
+            }
+          }, 200)
+        })
       } else {
         // show error notification only if error is not caused from cancellation
         // and if it isn't a validation error

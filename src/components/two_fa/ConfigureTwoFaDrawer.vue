@@ -11,7 +11,8 @@ import {
   NeTextInput,
   getAxiosErrorMessage,
   focusElement,
-  savePreference
+  savePreference,
+  NeModal
 } from '@nethesis/vue-components'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -23,6 +24,9 @@ import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/st
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useNotificationsStore } from '@/stores/notifications'
 import { isStandaloneMode } from '@/lib/config'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons'
+import { useSudoStore } from '@/stores/sudo'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false }
@@ -32,6 +36,7 @@ const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const sudoStore = useSudoStore()
 const otp = ref('')
 const otpRef = ref()
 const qrCodeUrl = ref('')
@@ -48,6 +53,8 @@ const error = ref({
   verifyOtp: '',
   verifyOtpDetails: ''
 })
+
+const recoveryTokens = ref<string[]>()
 
 watch(
   () => props.isShown,
@@ -112,30 +119,37 @@ function validate() {
   return isValidationOk
 }
 
+function closeRecoveryTokensModal() {
+  recoveryTokens.value = undefined
+  // show toast notification
+  notificationsStore.createNotification({
+    title: t('standalone.two_fa.two_fa_configured'),
+    kind: 'success'
+  })
+}
+
+const recoveryCodesJustCopied = ref(false)
+function copyRecoveryCodes() {
+  navigator.clipboard.writeText(recoveryTokens.value?.join('\n') || '')
+  recoveryCodesJustCopied.value = true
+  setTimeout(() => {
+    recoveryCodesJustCopied.value = false
+  }, 3000)
+}
+
 async function verifyOtp() {
   const isValidationOk = validate()
   if (!isValidationOk) {
     return
   }
   loading.value.verifyOtp = true
-  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 
   try {
-    await verifyTwoFaOtp(loginStore.username, loginStore.token, otp.value)
-
-    // show reminder to store recovery codes
-    savePreference('twoFaRecoveryCodesStored', false, loginStore.username)
-
-    // show toast notification
-    setTimeout(() => {
-      notificationsStore.createNotification({
-        title: t('standalone.two_fa.two_fa_configured'),
-        kind: 'success'
-      })
-    }, 500)
-
-    emit('reloadData')
+    const response = await verifyTwoFaOtp(otp.value)
+    recoveryTokens.value = response.data.recovery_codes
     closeDrawer()
+    emit('reloadData')
+    sudoStore.needs2fa = true
   } catch (err: any) {
     console.error(err)
     if (err instanceof ValidationError) {
@@ -151,6 +165,34 @@ async function verifyOtp() {
 </script>
 
 <template>
+  <NeModal
+    :title="t('standalone.two_fa.store_recovery_codes_title')"
+    :close-aria-label="t('common.close')"
+    kind="info"
+    :visible="recoveryTokens != undefined"
+    :primary-label="t('standalone.two_fa.i_have_stored_recovery_codes')"
+    @primary-click="closeRecoveryTokensModal()"
+  >
+    <div class="space-y-4">
+      <p>{{ t('standalone.two_fa.store_recovery_codes_description') }}</p>
+      <code>
+        <template v-for="(recoveryToken, index) in recoveryTokens" :key="index">
+          {{ recoveryToken }}
+          <br />
+        </template>
+      </code>
+      <NeButton kind="tertiary" size="lg" @click="copyRecoveryCodes" class="-ml-2.5 mt-2">
+        <template #prefix>
+          <FontAwesomeIcon
+            :icon="recoveryCodesJustCopied ? faCheck : faCopy"
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
+        </template>
+        {{ recoveryCodesJustCopied ? t('common.copied') : t('standalone.two_fa.copy_all_codes') }}
+      </NeButton>
+    </div>
+  </NeModal>
   <NeSideDrawer
     :isShown="isShown"
     :title="t('standalone.two_fa.configure_two_fa')"

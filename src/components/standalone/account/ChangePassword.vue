@@ -99,7 +99,6 @@ function updatePassword() {
       .catch((reason: Error) => {
         if (reason instanceof ValidationError) {
           validationBag.value = reason.errorBag
-          console.log(validationBag.value)
         } else {
           error.value = reason
         }

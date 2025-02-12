@@ -399,9 +399,7 @@
     "invalid_domain_name": "Invalid domain name",
     "duplicate_rule": "Rule already exists",
     "duplicate_suppression": "Suppression already exists",
-    "key_already_exists": "Key already exists",
-    "key_invalid_format": "Invalid key format",
-    "invalid_old_password": "Old password doesn't match"
+    "invalid_old_password": "Old password is incorrect"
   },
   "ne_text_input": {
     "show_password": "Show password",

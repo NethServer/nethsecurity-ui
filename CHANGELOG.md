@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.4](https://github.com/NethServer/nethsecurity-ui/compare/1.20.3...1.20.4) (2025-02-12)
+
+
+### Bug Fixes
+
+* **account:** added old password input ([#513](https://github.com/NethServer/nethsecurity-ui/issues/513)) ([b0b0bbd](https://github.com/NethServer/nethsecurity-ui/commit/b0b0bbdee86579c327591a7b406a2e3918183d4b))
+
 ## [1.20.3](https://github.com/NethServer/nethsecurity-ui/compare/1.20.2...1.20.3) (2025-02-05)
 
 

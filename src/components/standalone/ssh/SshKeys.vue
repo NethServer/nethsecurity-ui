@@ -4,48 +4,47 @@
 -->
 
 <script lang="ts" setup>
-import type { Ref } from 'vue'
 import { onMounted, ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import { AxiosError } from 'axios'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { AxiosError, type AxiosResponse } from 'axios'
 import {
-  NeInlineNotification,
-  NeButton,
-  NeSkeleton,
-  NeTextInput,
   focusElement,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeButton,
+  NeInlineNotification,
+  NeModal,
+  NeSkeleton,
+  NeTextInput
 } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import { MessageBag, ValidationError } from '@/lib/validation'
-import { SshKey } from '@/lib/standalone/sshKey'
+import { MessageBag } from '@/lib/validation'
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { useNotificationsStore } from '@/stores/notifications'
 
-type SshKeyError = {
-  code: number
-  data: string
-  message: string
+type SshKey = {
+  type: string
+  key: string
+  comment: string
 }
 
-type SshKeysResponse = {
-  data: {
-    keys: string
-  }
-}
+type SshKeysResponse = AxiosResponse<{
+  keys: SshKey[]
+}>
 
+const notifications = useNotificationsStore()
 const { t } = useI18n()
 const uploadSshKey = ref('')
-const sshKeys = ref(new Array<SshKey>())
+const sshKeys = ref<SshKey[]>([])
 
 const loading = ref(true)
 const submitting = ref(false)
 const deleting = ref(false)
 const validationErrors = ref(new MessageBag())
-const error: Ref<Error | undefined> = ref(undefined)
+const error = ref<Error>()
 
-const keyToDelete: Ref<SshKey | undefined> = ref(undefined)
+const keyToDelete = ref<SshKey>()
 
 onMounted(() => {
   load()
@@ -56,31 +55,10 @@ function load() {
   loading.value = true
   ubusCall('ns.ssh', 'list-keys')
     .then((response: SshKeysResponse) => {
-      sshKeys.value = new Array<SshKey>()
-      // the response will be a string with all the keys separated by a newline
-      response.data.keys.split('\n').forEach((line) => {
-        // final end line, skipping
-        if (line.length == 0) {
-          return
-        }
-        // If the key retrieved is invalid there's nothing we can do, so we just ignore it
-        try {
-          sshKeys.value.push(new SshKey(line))
-        } catch (exception: any) {
-          console.error("There's an issue with the SSH key: " + exception.message)
-        }
-      })
+      sshKeys.value = response.data.keys
     })
-    .catch((exception: AxiosError<SshKeyError>) => {
-      // if file is empty or not present, the response is exit status 4
-      if (exception.response?.data.data != 'exit status 4') {
-        // otherwise it's a real axios error
-        if (error.value instanceof AxiosError) {
-          error.value = new Error(getAxiosErrorMessage(exception))
-        } else {
-          error.value = exception
-        }
-      }
+    .catch((reason: AxiosError) => {
+      error.value = reason
     })
     .finally(() => {
       loading.value = false
@@ -88,89 +66,55 @@ function load() {
 }
 
 function addKey() {
-  validate()
-  if (validationErrors.value.size == 0) {
-    const keys = sshKeys.value
-      .map((key) => {
-        let string = key.type + ' ' + key.key
-        if (key.comment != undefined) {
-          string = string + ' ' + key.comment
-        }
-        return string
-      })
-      .join('\n')
-      .concat('\n')
-      .concat(uploadSshKey.value)
-      .concat('\n')
-    submitting.value = true
-    writeKeys(keys)
-      .then(() => {
-        uploadSshKey.value = ''
-      })
-      .finally(() => {
-        submitting.value = false
-      })
-  } else {
-    focusElement('uploadSshKeyInput')
-    error.value = new ValidationError()
-  }
-}
-
-function validate() {
-  validationErrors.value = new MessageBag()
-  try {
-    const parsedSshKey = new SshKey(uploadSshKey.value)
-    if (sshKeys.value.some((key) => key.key == parsedSshKey.key)) {
-      validationErrors.value.set('uploadSshKey', [
-        t('standalone.ssh.ssh_keys.validation.duplicate')
-      ])
-    }
-  } catch (exception: any) {
-    validationErrors.value.set('uploadSshKey', [t('standalone.ssh.ssh_keys.validation.invalid')])
-  }
-}
-
-/**
- * Method that sends the keys to the server
- * @param mappedKeys string containing all the keys separated by a newline
- */
-function writeKeys(mappedKeys: string): Promise<any> {
+  submitting.value = true
+  validationErrors.value.clear()
   error.value = undefined
-  return ubusCall('file', 'write', {
-    path: '/etc/dropbear/authorized_keys',
-    mode: 384, // 0600
-    data: mappedKeys
+  ubusCall('ns.ssh', 'add-key', {
+    key: uploadSshKey.value
   })
     .then(() => {
+      uploadSshKey.value = ''
       load()
+      notifications.addNotification({
+        kind: 'success',
+        id: 'added-ssh-key',
+        title: t('standalone.ssh.ssh_keys.key_added_notification')
+      })
     })
-    .catch((exception: AxiosError) => {
-      error.value = new Error(getAxiosErrorMessage(exception))
+    .catch((reason: Error) => {
+      if (reason instanceof ValidationError) {
+        validationErrors.value = reason.errorBag
+        focusElement('uploadSshKeyInput')
+      } else {
+        error.value = reason
+      }
+    })
+    .finally(() => {
+      submitting.value = false
     })
 }
 
 function deleteKey() {
-  if (keyToDelete.value == undefined) {
-    return
-  }
-  // mapping the keys to a string, excluding the selected one
-  const mappedKeys = sshKeys.value
-    .filter((key) => key.key != keyToDelete.value?.key)
-    .map((key) => {
-      let string = key.type + ' ' + key.key
-      if (key.comment != undefined) {
-        string = string + ' ' + key.comment
-      }
-      return string
-    })
-    .join('\n')
-    .concat('\n')
-
   deleting.value = true
-  writeKeys(mappedKeys).finally(() => {
-    keyToDelete.value = undefined
-    deleting.value = false
+  error.value = undefined
+  ubusCall('ns.ssh', 'delete-key', {
+    key: keyToDelete.value?.key
   })
+    .then(() => {
+      keyToDelete.value = undefined
+      load()
+      notifications.addNotification({
+        kind: 'success',
+        id: 'deleted-ssh-key',
+        title: t('standalone.ssh.ssh_keys.key_deleted_notification')
+      })
+    })
+    .catch((reason) => {
+      error.value = reason
+    })
+    .finally(() => {
+      deleting.value = false
+    })
 }
 </script>
 
@@ -192,9 +136,10 @@ function deleteKey() {
     </code>
   </NeModal>
   <NeInlineNotification
-    v-if="error != undefined && !(error instanceof ValidationError)"
-    :title="t(error.message)"
+    v-if="error != undefined"
+    :description="t(getAxiosErrorMessage(error))"
     kind="error"
+    :title="t('error.generic_error')"
   />
   <NeSkeleton v-if="loading" :lines="10" />
   <FormLayout
@@ -202,46 +147,53 @@ function deleteKey() {
     :description="t('standalone.ssh.ssh_keys.description')"
     :title="t('standalone.ssh.ssh_keys.title')"
   >
-    <div class="mb-4">
-      <!-- Key Element -->
-      <div v-for="key in sshKeys" :key="key.key" class="mb-2 flex gap-x-2 last:mb-0">
-        <div class="w-10/12 rounded border border-gray-200 p-3 text-xs dark:border-gray-700">
-          <p class="mb-1 font-bold">
-            {{ key.comment ?? t('standalone.ssh.ssh_keys.unnamed_key') }}
-          </p>
-          <p class="mb-1">{{ key.type }}</p>
-          <code class="truncate">
-            {{ key.key }}
-          </code>
-        </div>
-        <div class="grid w-2/12 place-content-center">
-          <NeButton kind="tertiary" size="lg" @click.prevent="keyToDelete = key">
-            <font-awesome-icon :icon="['fas', 'trash']" aria-hidden="true" class="h-4 w-4" />
+    <div class="space-y-4">
+      <ul class="space-y-2">
+        <li v-for="key in sshKeys" :key="key.key" class="flex items-center gap-2">
+          <div
+            class="min-w-0 flex-grow rounded border border-gray-200 p-3 text-xs dark:border-gray-700"
+          >
+            <p class="mb-1 font-bold">
+              <template v-if="key.comment != ''">
+                {{ key.comment }}
+              </template>
+              <template v-else>
+                {{ t('standalone.ssh.ssh_keys.unnamed_key') }}
+              </template>
+            </p>
+            <p class="mb-1">{{ key.type }}</p>
+            <code class="truncate">
+              {{ key.key }}
+            </code>
+          </div>
+          <NeButton kind="tertiary" size="lg" @click="keyToDelete = key">
+            <FontAwesomeIcon :icon="faTrash" class="h-4 w-4" />
           </NeButton>
-        </div>
-      </div>
+        </li>
+      </ul>
+      <!-- Add Key form -->
+      <form class="flex flex-col gap-y-4" @submit.prevent="addKey()">
+        <NeTextInput
+          ref="uploadSshKeyInput"
+          v-model="uploadSshKey"
+          :disabled="submitting"
+          :invalid-message="t(validationErrors.getFirstI18nKeyFor('key'))"
+          :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
+          :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
+        />
+        <NeButton
+          :disabled="submitting"
+          :loading="submitting"
+          class="self-start"
+          size="lg"
+          type="submit"
+        >
+          <template #prefix>
+            <FontAwesomeIcon :icon="faPlus" aria-hidden="true" />
+          </template>
+          {{ t('standalone.ssh.ssh_keys.add_key_button') }}
+        </NeButton>
+      </form>
     </div>
-    <!-- Add Key form -->
-    <form class="flex flex-col gap-y-4">
-      <NeTextInput
-        ref="uploadSshKeyInput"
-        v-model="uploadSshKey"
-        :invalid-message="validationErrors.get('uploadSshKey')?.[0]"
-        :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
-        :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
-      ></NeTextInput>
-      <NeButton
-        :disabled="submitting"
-        :loading="submitting"
-        size="lg"
-        class="self-start"
-        @click.prevent="addKey()"
-      >
-        <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'plus']" aria-hidden="true" />
-        </template>
-        {{ t('standalone.ssh.ssh_keys.add_key_button') }}
-      </NeButton>
-    </form>
   </FormLayout>
 </template>

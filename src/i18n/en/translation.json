@@ -399,7 +399,9 @@
     "invalid_domain_name": "Invalid domain name",
     "duplicate_rule": "Rule already exists",
     "duplicate_suppression": "Suppression already exists",
-    "invalid_old_password": "Old password is incorrect"
+    "invalid_old_password": "Old password is incorrect",
+    "key_already_exists": "Key already exists",
+    "key_invalid_format": "Invalid key format"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -611,7 +613,9 @@
           "required": "Required",
           "invalid": "Invalid key",
           "duplicate": "Key already exists"
-        }
+        },
+        "key_deleted_notification": "SSH key deleted successfully",
+        "key_added_notification": "SSH key added successfully"
       }
     },
     "backup_and_restore": {

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.5](https://github.com/NethServer/nethsecurity-ui/compare/1.20.4...1.20.5) (2025-02-12)
+
+
+### Code Refactoring
+
+* **ssh:** removing old api calls ([#515](https://github.com/NethServer/nethsecurity-ui/issues/515)) ([dcdfc01](https://github.com/NethServer/nethsecurity-ui/commit/dcdfc01ddf5dde232f4257d17db367b09bb3f4ec))
+
 ## [1.20.4](https://github.com/NethServer/nethsecurity-ui/compare/1.20.3...1.20.4) (2025-02-12)
 
 

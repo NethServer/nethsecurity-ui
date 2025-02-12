@@ -398,7 +398,8 @@
     "cannot_save_blocked_domain": "Cannot save blocked domain",
     "invalid_domain_name": "Invalid domain name",
     "duplicate_rule": "Rule already exists",
-    "duplicate_suppression": "Suppression already exists"
+    "duplicate_suppression": "Suppression already exists",
+    "invalid_old_password": "Old password is incorrect"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2096,7 +2097,8 @@
       "password_rules": "Must be 8 characters or longer, contain at least one lowercase letter, one uppercase letter, a number and a symbol",
       "new_password": "New password",
       "confirm_password": "Confirm password",
-      "success_message": "Password changed successfully"
+      "success_message": "Password changed successfully",
+      "old_password": "Old password"
     },
     "two_fa": {
       "title": "Two-factor authentication",

@@ -20,13 +20,13 @@ import {
   validateStringEqual
 } from '@/lib/validation'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosError } from 'axios'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 
 const { t } = useI18n()
 
 const loginStore = useLoginStore()
 
+const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 
@@ -36,6 +36,7 @@ const loading = ref(false)
 const error = ref<Error>()
 const success = ref(false)
 
+const oldPasswordHtmlRef = ref<HTMLElement | null>()
 const newPasswordHtmlRef = ref<HTMLElement | null>()
 const confirmPasswordHtmlRef = ref<HTMLElement | null>()
 
@@ -51,6 +52,9 @@ watch(
         case 'confirm_password':
           confirmPasswordHtmlRef.value?.focus()
           break
+        case 'old_password':
+          oldPasswordHtmlRef.value?.focus()
+          break
       }
     }
   }
@@ -58,7 +62,11 @@ watch(
 
 function validate(): boolean {
   validationBag.value.clear()
-  let errMessage = validateRequired(newPassword.value).errMessage
+  let errMessage = validateRequired(oldPassword.value).errMessage
+  if (errMessage) {
+    validationBag.value.set('old_password', String(errMessage))
+  }
+  errMessage = validateRequired(newPassword.value).errMessage
   if (errMessage) {
     validationBag.value.set('new_password', String(errMessage))
   }
@@ -78,15 +86,23 @@ function updatePassword() {
     loading.value = true
     success.value = false
     ubusCall('ns.account', 'set-password', {
+      old_password: oldPassword.value,
       username: loginStore.username,
       password: newPassword.value
     })
       .then(() => {
         success.value = true
+        oldPassword.value = ''
         newPassword.value = ''
         confirmPassword.value = ''
       })
-      .catch((reason: AxiosError) => (error.value = reason))
+      .catch((reason: Error) => {
+        if (reason instanceof ValidationError) {
+          validationBag.value = reason.errorBag
+        } else {
+          error.value = reason
+        }
+      })
       .finally(() => (loading.value = false))
   }
 }
@@ -99,6 +115,14 @@ function updatePassword() {
       v-if="success"
       :title="t('standalone.change_password.success_message')"
       kind="success"
+    />
+    <NeTextInput
+      ref="oldPasswordHtmlRef"
+      v-model="oldPassword"
+      :disabled="loading"
+      :invalid-message="t(validationBag.getFirstI18nKeyFor('old_password'))"
+      :label="t('standalone.change_password.old_password')"
+      is-password
     />
     <NeTextInput
       ref="newPasswordHtmlRef"

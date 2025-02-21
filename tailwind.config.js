@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
+import twFormsPlugin from '@tailwindcss/forms'
+
 export default {
   content: [
     './index.html',
@@ -43,6 +45,6 @@ export default {
       textColor: ['group-hover']
     }
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [twFormsPlugin],
   darkMode: 'class'
 }

@@ -401,7 +401,8 @@
     "duplicate_suppression": "Suppression already exists",
     "invalid_old_password": "Old password is incorrect",
     "key_already_exists": "Key already exists",
-    "key_invalid_format": "Invalid key format"
+    "key_invalid_format": "Invalid key format",
+    "dhcp_range_cannot_contain_interface": "The firewall IP address must be outside the DHCP range."
   },
   "ne_text_input": {
     "show_password": "Show password",

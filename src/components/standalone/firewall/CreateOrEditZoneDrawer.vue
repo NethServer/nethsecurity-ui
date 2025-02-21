@@ -192,8 +192,8 @@ function editZone() {
     input: mapRadioIdToTrafficPolicy(trafficInput.value),
     forward: mapRadioIdToTrafficPolicy(trafficForward.value),
     traffic_to_wan: trafficToWan.value,
-    forwards_to: forwardsTo.value.map((item) => item.id),
-    forwards_from: forwardsFrom.value.map((item) => item.id),
+    forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
+    forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
     log: enableLogging.value
   })
     .then(() => {
@@ -214,8 +214,8 @@ function addZone() {
       input: mapRadioIdToTrafficPolicy(trafficInput.value),
       forward: mapRadioIdToTrafficPolicy(trafficForward.value),
       traffic_to_wan: trafficToWan.value,
-      forwards_to: forwardsTo.value.map((item) => item.id),
-      forwards_from: forwardsFrom.value.map((item) => item.id),
+      forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
+      forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
       log: enableLogging.value
     })
       .then(() => {

@@ -153,14 +153,14 @@ async function listDevices() {
       // editing rule
       if (props.currentRule.device_in?.length) {
         inboundDevices.value = props.currentRule.device_in.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
         })
         isExpandedAdvancedSettings.value = true
       }
 
       if (props.currentRule.device_out) {
         outboundDevices.value = props.currentRule.device_out.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
         })
         isExpandedAdvancedSettings.value = true
       }
@@ -248,8 +248,8 @@ async function saveRule() {
     dest: destinationNetwork.value,
     map_from: mapFrom.value,
     map_to: mapTo.value,
-    device_in: inboundDevices.value.map((dev) => dev.id),
-    device_out: outboundDevices.value.map((dev) => dev.id)
+    device_in: inboundDevices.value.map((dev: NeComboboxOption) => dev.id),
+    device_out: outboundDevices.value.map((dev: NeComboboxOption) => dev.id)
   }
 
   if (props.currentRule) {

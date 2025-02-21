@@ -58,7 +58,7 @@ function updateUnits() {
   loading.value = true
   someUnitsFailed.value = false
   Promise.allSettled(
-    selectedUnits.value.map((unit) => {
+    selectedUnits.value.map((unit: NeComboboxOption) => {
       if (updateMode.value === 'now') {
         return upgradeUnitImage(unit).then(() => {
           unitsStore.addUnitUpgradingImage(unit.id)
@@ -68,7 +68,7 @@ function updateUnits() {
       }
     })
   )
-    .then(async (results) => {
+    .then(async (results: PromiseSettledResult<any>[]) => {
       // load again the info of the units
       for (const unit of selectedUnits.value) {
         await unitsStore.getUnitInfo(unit.id)

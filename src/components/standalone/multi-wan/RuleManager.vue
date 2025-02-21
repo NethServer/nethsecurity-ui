@@ -139,7 +139,7 @@ function saveState(): void {
           </tr>
         </template>
         <template v-else>
-          <template v-for="(item, index) in data" :key="item.key">
+          <template v-for="(item, index) in data" :key="index">
             <tr
               :class="[
                 indexOver == index ? 'drop-over drop-target' : '',

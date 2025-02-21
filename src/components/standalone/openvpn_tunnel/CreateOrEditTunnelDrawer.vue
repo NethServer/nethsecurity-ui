@@ -457,7 +457,9 @@ function validate() {
         .every((result) => result) && validRemoteHosts
   } else {
     // server form fields validation
-    const localNetworksCidrValidation = localNetworks.value.map((x) => validateIp4Cidr(x.id))
+    const localNetworksCidrValidation = localNetworks.value.map((x: NeComboboxOption) =>
+      validateIp4Cidr(x.id)
+    )
     const vpnNetworkValidator: [validationOutput[], string][] = [
       [[validateRequired(vpnNetwork.value), validateIp4Cidr(vpnNetwork.value)], 'vpnNetwork']
     ]
@@ -467,7 +469,7 @@ function validate() {
       [
         [
           validateRequiredOption(localNetworks.value),
-          localNetworksCidrValidation.find((x) => !x.valid) ?? { valid: true }
+          localNetworksCidrValidation.find((x: validationOutput) => !x.valid) ?? { valid: true }
         ],
         'localNetworks'
       ]
@@ -550,7 +552,7 @@ async function createOrEditTunnel() {
 
         const payload: ServerTunnelPayload = {
           ...sharedFieldsPayload,
-          local: localNetworks.value.map((option) => option.id),
+          local: localNetworks.value.map((option: NeComboboxOption) => option.id),
           topology: topology.value,
           ns_public_ip: publicEndpoints.value,
           tls_version_min: minimumTLSVersion.value === 'auto' ? '' : minimumTLSVersion.value,

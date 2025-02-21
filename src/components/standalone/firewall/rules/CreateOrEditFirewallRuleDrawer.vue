@@ -232,7 +232,7 @@ const zoneOptions = computed(() => {
 })
 
 const isTcpOrUdpProtocolSelected = computed(() => {
-  return protocols.value.some((protocol) => {
+  return protocols.value.some((protocol: NeComboboxOption) => {
     return protocol.id === 'tcp' || protocol.id === 'udp'
   })
 })
@@ -752,7 +752,7 @@ async function saveRule() {
 
   // custom service
   if (service.value === 'custom') {
-    ruleData.proto = protocols.value.map((protocol) => {
+    ruleData.proto = protocols.value.map((protocol: NeComboboxOption) => {
       return protocol.id
     })
 

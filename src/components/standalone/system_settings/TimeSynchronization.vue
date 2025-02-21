@@ -26,21 +26,21 @@ import NeMultiTextInput from '../NeMultiTextInput.vue'
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let enableNtpClient = ref(false)
-let provideNtpServer = ref(false)
-let useDhcpAdvertisedServers = ref(false)
-let ntpServerInterface = ref('')
-let interfaces: Ref<NeComboboxOption[]> = ref([])
-let ntpServerCandidates: Ref<string[]> = ref([])
-let ntpConfig: Ref<any> = ref({})
+const enableNtpClient = ref(false)
+const provideNtpServer = ref(false)
+const useDhcpAdvertisedServers = ref(false)
+const ntpServerInterface = ref('')
+const interfaces: Ref<NeComboboxOption[]> = ref([])
+const ntpServerCandidates: Ref<string[]> = ref([])
+const ntpConfig: Ref<any> = ref({})
 
-let loading = ref({
+const loading = ref({
   systemConfig: true,
   networkInterfaces: true,
   save: false
 })
 
-let error = ref({
+const error = ref({
   ntpServerCandidate: [''],
   notificationTitle: '',
   notificationDescription: ''
@@ -132,7 +132,7 @@ async function getNetworkInterfaces() {
 
   try {
     const res = await ubusCall('network.interface', 'dump')
-    let interfacesList: NeComboboxOption[] = [
+    const interfacesList: NeComboboxOption[] = [
       { id: 'all', label: t('standalone.system_settings.all_interfaces') }
     ]
 
@@ -211,7 +211,7 @@ function validate() {
 
     {
       // check required
-      let { valid, errMessage } = validateRequired(ntpServer)
+      const { valid, errMessage } = validateRequired(ntpServer)
 
       if (!valid) {
         error.value.ntpServerCandidate[index] = t(errMessage as string)
@@ -219,7 +219,7 @@ function validate() {
       } else {
         {
           // check syntax
-          let { valid, errMessage } = validateHost(ntpServer)
+          const { valid, errMessage } = validateHost(ntpServer)
           if (!valid) {
             error.value.ntpServerCandidate[index] = t(errMessage as string)
             isValidationOk = false
@@ -294,13 +294,13 @@ function resetNtpServerErrors() {
                     v-model="ntpServerInterface"
                     :options="interfaces"
                     :label="t('standalone.system_settings.provide_ntp_server_to_interface')"
-                    :noResultsLabel="t('ne_combobox.no_results')"
-                    :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+                    :no-results-label="t('ne_combobox.no_results')"
+                    :limited-options-label="t('ne_combobox.limited_options_label')"
                     :disabled="loading.save"
-                    :noOptionsLabel="t('ne_combobox.no_options_label')"
+                    :no-options-label="t('ne_combobox.no_options_label')"
                     :selected-label="t('ne_combobox.selected')"
                     :user-input-label="t('ne_combobox.user_input_label')"
-                    :optionalLabel="t('common.optional')"
+                    :optional-label="t('common.optional')"
                   />
                 </div>
               </Transition>
@@ -320,11 +320,11 @@ function resetNtpServerErrors() {
           <hr class="my-8" />
           <FormLayout :title="t('standalone.system_settings.ntp_server_candidates')">
             <NeMultiTextInput
+              v-model="ntpServerCandidates"
               :add-item-label="t('standalone.system_settings.add_ntp_server')"
               :invalid-messages="error.ntpServerCandidate"
               :disable-inputs="loading.save"
               :disable-add-button="loading.save"
-              v-model="ntpServerCandidates"
               @delete-item="resetNtpServerErrors()"
             />
           </FormLayout>
@@ -335,9 +335,9 @@ function resetNtpServerErrors() {
         <NeButton
           kind="primary"
           size="lg"
-          @click="save"
           :loading="loading.save"
           :disabled="loading.save"
+          @click="save"
         >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />

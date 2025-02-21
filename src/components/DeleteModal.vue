@@ -39,11 +39,11 @@ const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 
-let loading = ref({
+const loading = ref({
   delete: false
 })
 
-let error = ref({
+const error = ref({
   delete: '',
   deleteDetails: ''
 })
@@ -82,14 +82,14 @@ async function doDelete() {
     :visible="visible"
     :title="title"
     kind="warning"
-    :primaryLabel="deleteButtonLabel"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.delete"
-    :primaryButtonLoading="loading.delete"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="deleteButtonLabel"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.delete"
+    :primary-button-loading="loading.delete"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="doDelete"
+    @primary-click="doDelete"
   >
     <slot></slot>
     <NeInlineNotification
@@ -99,7 +99,7 @@ async function doDelete() {
       :description="error.delete"
       class="mt-4"
     >
-      <template #details v-if="error.deleteDetails">
+      <template v-if="error.deleteDetails" #details>
         {{ error.deleteDetails }}
       </template>
     </NeInlineNotification>

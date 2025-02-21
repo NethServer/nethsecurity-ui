@@ -171,10 +171,10 @@ onMounted(() => {
       </div>
       <div class="flex flex-row items-center">
         <NeButton
-          kind="tertiary"
-          @click="showEditDatabaseDrawer = true"
-          class="mr-2"
           v-if="database.type === 'ldap'"
+          kind="tertiary"
+          class="mr-2"
+          @click="showEditDatabaseDrawer = true"
         >
           <template #prefix>
             <font-awesome-icon
@@ -212,8 +212,8 @@ onMounted(() => {
         </p>
       </div>
       <NeButton
-        kind="secondary"
         v-if="database.type === 'local' && users.length > 0"
+        kind="secondary"
         @click="openCreateEditUserDrawer()"
         ><template #prefix>
           <font-awesome-icon
@@ -231,7 +231,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -243,8 +243,8 @@ onMounted(() => {
         :icon="['fas', 'user-group']"
         :class="[database.type == 'local' ? '' : 'pb-3']"
         ><NeButton
-          kind="secondary"
           v-if="database.type === 'local'"
+          kind="secondary"
           @click="openCreateEditUserDrawer()"
           ><template #prefix>
             <font-awesome-icon
@@ -261,8 +261,8 @@ onMounted(() => {
         :users="users"
         @delete="openDeleteUserModal"
         @edit="openCreateEditUserDrawer"
-        @setAdmin="setAdmin"
-        @removeAdmin="removeAdmin"
+        @set-admin="setAdmin"
+        @remove-admin="removeAdmin"
       />
     </template>
   </div>

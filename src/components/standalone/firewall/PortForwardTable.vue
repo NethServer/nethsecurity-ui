@@ -83,8 +83,8 @@ function getCellClasses(item: PortForward) {
       {{ t('standalone.port_forward.destination') }}: <strong>{{ header }}</strong>
     </p>
     <NeTable
-      :ariaLabel="t('standalone.port_forward.port_forwards_for_destination_name', { name: header })"
-      cardBreakpoint="xl"
+      :aria-label="t('standalone.port_forward.port_forwards_for_destination_name', { name: header })"
+      card-breakpoint="xl"
       class="z-10"
     >
       <NeTableHead>
@@ -150,7 +150,7 @@ function getCellClasses(item: PortForward) {
                 }}<span v-if="item.restrict.length > 2">...</span>
               </p>
             </template>
-            <p :class="[...getCellClasses(item)]" v-else>-</p>
+            <p v-else :class="[...getCellClasses(item)]">-</p>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.status')">
             <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">

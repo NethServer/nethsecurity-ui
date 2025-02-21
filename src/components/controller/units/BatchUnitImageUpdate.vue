@@ -148,16 +148,16 @@ const someUnitsFailed = ref(false)
 
 <template>
   <NeSideDrawer
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
-    :isShown="show"
+    :close-aria-label="t('common.shell.close_side_drawer')"
+    :is-shown="show"
     :title="t('standalone.update.update_system', 2)"
     @close="close"
   >
     <div class="space-y-4">
       <NeInlineNotification
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
         :description="t('controller.units.batch_update_system')"
-        :showDetailsLabel="t('notifications.show_details')"
+        :show-details-label="t('notifications.show_details')"
         :title="t('standalone.update.update_system', 2)"
         kind="info"
       />
@@ -177,12 +177,12 @@ const someUnitsFailed = ref(false)
         ref="selectedUnitsRef"
         v-model="selectedUnits"
         :disabled="loading"
-        :invalidMessage="t(errorBag.getFirstI18nKeyFor('units'))"
+        :invalid-message="t(errorBag.getFirstI18nKeyFor('units'))"
         :label="t('controller.units.units')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('controller.units.no_unit_is_currently_connected')"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :optionalLabel="t('common.optional')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('controller.units.no_unit_is_currently_connected')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :optional-label="t('common.optional')"
         :options="unitsAvailableForUpdate"
         :placeholder="t('ne_combobox.choose_multiple')"
         :selected-label="t('ne_combobox.selected')"

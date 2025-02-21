@@ -138,33 +138,27 @@ onMounted(() => {
     <div class="space-y-4">
       <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
         <NeCombobox
+          v-if="useKeyInput && keyInputType === 'combobox'"
           :options="keyOptions"
           :model-value="keys[i]"
-          @update:model-value="(e: any) => updateModelKey(i, e)"
           :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
           :placeholder="keyInputPlaceholder"
-          v-if="useKeyInput && keyInputType === 'combobox'"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
         />
         <NeTextInput
           v-else-if="useKeyInput && keyInputType === 'text'"
           :model-value="keys[i]"
-          @update:model-value="(e: any) => updateModelKey(i, e)"
           :placeholder="keyInputPlaceholder"
           :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
+          @update:model-value="(e: any) => updateModelKey(i, e)"
         />
         <NeTextInput
-          :value="items[i]"
-          @input="updateModelValue(i, $event.target.value)"
-          class="grow"
-          :invalid-message="invalidMessages ? invalidMessages[i] : ''"
-          :disabled="disableInputs"
-          :placeholder="placeholder"
           :ref="
             (r: any) => {
               if (i == 0) {
@@ -172,8 +166,14 @@ onMounted(() => {
               }
             }
           "
+          :value="items[i]"
+          class="grow"
+          :invalid-message="invalidMessages ? invalidMessages[i] : ''"
+          :disabled="disableInputs"
+          :placeholder="placeholder"
+          @input="updateModelValue(i, $event.target.value)"
         />
-        <NeButton kind="tertiary" size="md" @click="deleteItem(i)" :disabled="i === 0 && required">
+        <NeButton kind="tertiary" size="md" :disabled="i === 0 && required" @click="deleteItem(i)">
           <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
         </NeButton>
       </div>
@@ -183,9 +183,9 @@ onMounted(() => {
       <NeButton
         class="mt-4"
         size="md"
-        @click="addItem"
         :disabled="disableAddButton"
         kind="secondary"
+        @click="addItem"
       >
         <template #prefix>
           <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />

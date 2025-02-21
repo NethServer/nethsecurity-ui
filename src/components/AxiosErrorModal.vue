@@ -90,7 +90,7 @@ function copyCommandToClipboard() {
           <li>
             <i18n-t keypath="error_modal.report_issue_step_1" tag="span" scope="global">
               <template #copyTheCommand>
-                <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
+                <NeTooltip v-if="justCopied" trigger-event="mouseenter focus" placement="top-start">
                   <template #trigger>
                     <NeLink @click="copyCommandToClipboard">
                       {{ t('error_modal.copy_the_command') }}

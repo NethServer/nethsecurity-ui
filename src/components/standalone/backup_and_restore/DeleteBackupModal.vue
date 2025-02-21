@@ -28,14 +28,14 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-let loadingDelete = ref(false)
+const loadingDelete = ref(false)
 
-let objNotification = {
+const objNotification = {
   notificationTitle: '',
   notificationDescription: ''
 }
 
-let errorDeleteBackup = ref({ ...objNotification })
+const errorDeleteBackup = ref({ ...objNotification })
 
 async function deleteBackup() {
   try {
@@ -50,7 +50,7 @@ async function deleteBackup() {
       }
     }
 
-    let res = await ubusCall('ns.backup', methodCall, payload)
+    const res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.result === 'success') {
       emit('close')
     }

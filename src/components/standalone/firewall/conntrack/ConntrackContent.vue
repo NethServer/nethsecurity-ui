@@ -141,15 +141,15 @@ function onRecordDeleted() {
           v-if="conntrackRecords.length > 0"
           kind="tertiary"
           size="lg"
-          @click="deleteAll()"
           class="ml-4 shrink-0"
+          @click="deleteAll()"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="fetchConntrack()" class="ml-2 shrink-0">
+        <NeButton kind="secondary" size="lg" class="ml-2 shrink-0" @click="fetchConntrack()">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
           </template>
@@ -158,18 +158,18 @@ function onRecordDeleted() {
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
-      <NeButton kind="tertiary" @click="filter = ''" :disabled="isLoading || !filter">
+      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+      <NeButton kind="tertiary" :disabled="isLoading || !filter" @click="filter = ''">
         {{ t('common.clear_filter') }}
       </NeButton>
     </div>
     <NeInlineNotification
+      v-if="error.notificationDescription"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -203,8 +203,8 @@ function onRecordDeleted() {
   </div>
   <DeleteConntrackRecordModal
     :visible="showDeleteModal"
+    :item-to-delete="selectedItem"
     @close="closeDeleteModal"
     @record-deleted="onRecordDeleted"
-    :item-to-delete="selectedItem"
   />
 </template>

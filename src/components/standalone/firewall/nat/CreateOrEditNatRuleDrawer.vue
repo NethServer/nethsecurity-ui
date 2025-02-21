@@ -63,13 +63,13 @@ const errorBag = ref(new MessageBag())
 // contains the first invalid field ref
 const firstErrorRef = ref()
 
-let loading = ref({
+const loading = ref({
   listHostSuggestions: false,
   listProtocols: false,
   saveRule: false
 })
 
-let error = ref({
+const error = ref({
   listHostSuggestions: '',
   listHostSuggestionsDetails: '',
   saveRule: '',
@@ -230,7 +230,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -347,20 +347,20 @@ async function saveRule() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="isEditingRule ? t('standalone.nat.edit_nat_rule') : t('standalone.nat.add_nat_rule')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
       <div class="space-y-6">
         <!-- rule name -->
         <NeTextInput
-          :label="t('standalone.nat.rule_name')"
-          v-model.trim="ruleName"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('name'))"
-          :disabled="loading.saveRule"
           ref="ruleNameRef"
+          v-model.trim="ruleName"
+          :label="t('standalone.nat.rule_name')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
+          :disabled="loading.saveRule"
         />
         <!-- listHostSuggestions error notification -->
         <NeInlineNotification
@@ -369,12 +369,13 @@ async function saveRule() {
           :title="t('error.cannot_retrieve_host_suggestions')"
           :description="error.listHostSuggestions"
         >
-          <template #details v-if="error.listHostSuggestionsDetails">
+          <template v-if="error.listHostSuggestionsDetails" #details>
             {{ error.listHostSuggestionsDetails }}
           </template>
         </NeInlineNotification>
         <!-- source address -->
         <NeCombobox
+          ref="sourceAddressRef"
           v-model="sourceAddress"
           :disabled="loading.saveRule || loading.listHostSuggestions"
           :label="t('standalone.nat.source_address')"
@@ -382,16 +383,15 @@ async function saveRule() {
           :placeholder="
             loading.listHostSuggestions ? t('common.loading') : t('ne_combobox.choose_or_enter')
           "
-          :helperText="t('standalone.nat.address_helper')"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('src_ip'))"
-          acceptUserInput
-          :optionalLabel="t('common.optional')"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :helper-text="t('standalone.nat.address_helper')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('src_ip'))"
+          accept-user-input
+          :optional-label="t('common.optional')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
-          :userInputLabel="t('ne_combobox.user_input_label')"
-          ref="sourceAddressRef"
+          :user-input-label="t('ne_combobox.user_input_label')"
         >
           <template #tooltip>
             <NeTooltip placement="top-start">
@@ -401,38 +401,38 @@ async function saveRule() {
         </NeCombobox>
         <!-- outbound zone -->
         <NeCombobox
+          ref="outboundZoneRef"
           v-model="outboundZone"
           :disabled="loading.saveRule"
           :label="t('standalone.nat.outbound_zone')"
           :options="zoneOptions"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('zone'))"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :selectedLabel="t('ne_combobox.selected')"
-          :userInputLabel="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
-          ref="outboundZoneRef"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('zone'))"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :optional-label="t('common.optional')"
         />
         <!-- destination address -->
         <NeCombobox
+          ref="destinationAddressRef"
           v-model="destinationAddress"
           :disabled="loading.saveRule || loading.listHostSuggestions"
           :label="t('standalone.nat.destination_address')"
-          :helperText="t('standalone.nat.address_helper')"
+          :helper-text="t('standalone.nat.address_helper')"
           :options="destinationAddressOptions"
           :placeholder="
             loading.listHostSuggestions ? t('common.loading') : t('ne_combobox.choose_or_enter')
           "
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('dest_ip'))"
-          acceptUserInput
-          :optionalLabel="t('common.optional')"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('dest_ip'))"
+          accept-user-input
+          :optional-label="t('common.optional')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          ref="destinationAddressRef"
         >
           <template #tooltip>
             <NeTooltip placement="top-start">
@@ -450,11 +450,11 @@ async function saveRule() {
         <!-- rewrite ip address -->
         <NeTextInput
           v-if="action === 'SNAT'"
-          :label="t('standalone.nat.rewrite_ip_address')"
-          v-model.trim="rewriteIpAddress"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('snat_ip'))"
-          :disabled="loading.saveRule"
           ref="rewriteIpAddressRef"
+          v-model.trim="rewriteIpAddress"
+          :label="t('standalone.nat.rewrite_ip_address')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('snat_ip'))"
+          :disabled="loading.saveRule"
         />
         <!-- saveRule error notification -->
         <NeInlineNotification
@@ -463,7 +463,7 @@ async function saveRule() {
           :title="t('error.cannot_save_nat_rule')"
           :description="error.saveRule"
         >
-          <template #details v-if="error.saveRuleDetails">
+          <template v-if="error.saveRuleDetails" #details>
             {{ error.saveRuleDetails }}
           </template>
         </NeInlineNotification>
@@ -474,18 +474,18 @@ async function saveRule() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.saveRule"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveRule"
           :disabled="loading.saveRule"
           :loading="loading.saveRule"
+          @click.prevent="saveRule"
         >
           {{
             isCreatingRule ? t('standalone.nat.add_nat_rule') : t('standalone.nat.save_nat_rule')

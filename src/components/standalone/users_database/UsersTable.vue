@@ -76,7 +76,7 @@ function getDropdownItems(item: User) {
 </script>
 
 <template>
-  <NeTable :ariaLabel="t('standalone.users_database.users')" cardBreakpoint="xl">
+  <NeTable :aria-label="t('standalone.users_database.users')" card-breakpoint="xl">
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.users_database.username') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.users_database.display_name') }}</NeTableHeadCell>
@@ -93,7 +93,7 @@ function getDropdownItems(item: User) {
         <NeTableCell :data-label="t('standalone.users_database.username')">
           <div :class="['flex', 'flex-row', 'items-center']">
             {{ item.name }}
-            <NeTooltip interactive v-if="item.admin">
+            <NeTooltip v-if="item.admin" interactive>
               <template #trigger>
                 <FontAwesomeIcon
                   v-if="item.admin"
@@ -163,7 +163,7 @@ function getDropdownItems(item: User) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

@@ -81,7 +81,7 @@ function openRenewCertificateDrawer(item: RWAccount) {
 }
 
 function createDownloadableFile(content: string, filename: string) {
-  let downloadElement = document.createElement('a')
+  const downloadElement = document.createElement('a')
   downloadElement.setAttribute(
     'href',
     'data:text/json;charset=utf-8,' + encodeURIComponent(content)
@@ -156,7 +156,7 @@ async function downloadCertificate(account: RWAccount) {
 async function downloadAllConfigurations() {
   cleanError()
   try {
-    let res = await ubusCall('ns.ovpnrw', 'download_all_user_configurations', {
+    const res = await ubusCall('ns.ovpnrw', 'download_all_user_configurations', {
       instance: props.instanceName
     })
     if (res?.data?.archive_path) {
@@ -164,7 +164,7 @@ async function downloadAllConfigurations() {
       res.data.archive_path = res.data.archive_path.replace('/var/run/ns-api-server/downloads/', '')
       const file = await downloadFile(res.data.archive_path)
       const fileURL = URL.createObjectURL(file)
-      let link = document.createElement('a')
+      const link = document.createElement('a')
       link.href = fileURL
       link.download =
         res.data.archive_path.replace('.tar.gz', '') + '-' + Date.now().toString() + '.tar.gz'
@@ -272,7 +272,7 @@ function clearFilters() {
     class="mb-6"
     kind="error"
   >
-    <template #details v-if="error.notificationDetails">
+    <template v-if="error.notificationDetails" #details>
       {{ error.notificationDetails }}
     </template></NeInlineNotification
   >
@@ -298,16 +298,16 @@ function clearFilters() {
           kind="radio"
           :label="t('standalone.openvpn_rw.expiration')"
           :options="expirationFilterOptions"
-          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
-          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         />
         <NeDropdownFilter
           v-model="connectionFilter"
           kind="radio"
           :label="t('standalone.openvpn_rw.connection')"
           :options="connectionFilterOptions"
-          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
-          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         />
         <NeButton kind="tertiary" @click="clearFilters">
           {{ t('common.clear_filters') }}
@@ -405,15 +405,15 @@ function clearFilters() {
     :visible="showConfirmDisableModal"
     kind="warning"
     :title="t('standalone.openvpn_rw.disable_account')"
-    :primaryLabel="t('common.disable')"
+    :primary-label="t('common.disable')"
     primary-button-kind="danger"
-    @primaryClick="
+    :close-aria-label="t('common.close')"
+    @primary-click="
       () => {
         showConfirmDisableModal = false
         toggleAccountEnable(selectedAccount as RWAccount)
       }
     "
-    :close-aria-label="t('common.close')"
     @close="showConfirmDisableModal = false"
   >
     {{ t('standalone.openvpn_rw.disable_account_message') }}

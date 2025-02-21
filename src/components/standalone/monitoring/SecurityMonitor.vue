@@ -66,13 +66,13 @@ const mostBlockedIpsChartDatasets = ref<any[]>([])
 const blockedIpsByHourChartLabels = ref<string[]>([])
 const blockedIpsByHourChartDatasets = ref<any[]>([])
 
-let loading = ref({
+const loading = ref({
   getMalwareReport: false,
   getAttackReport: false,
   getThreatShieldSettings: false
 })
 
-let error = ref({
+const error = ref({
   getMalwareReport: '',
   getMalwareReportDetails: '',
   getAttackReport: '',
@@ -300,7 +300,7 @@ async function getAttackReport() {
       kind="error"
       :title="t('error.cannot_retrieve_threat_shield_settings')"
       :description="error.getThreatShieldSettings"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getThreatShieldSettingsDetails" #details>
@@ -313,7 +313,7 @@ async function getAttackReport() {
       kind="error"
       :title="t('error.cannot_retrieve_attack_report')"
       :description="error.getAttackReport"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getAttackReportDetails" #details>
@@ -326,7 +326,7 @@ async function getAttackReport() {
       kind="error"
       :title="t('error.cannot_retrieve_malware_report')"
       :description="error.getMalwareReport"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getMalwareReportDetails" #details>
@@ -370,10 +370,10 @@ async function getAttackReport() {
         <!-- blocked threats -->
         <NeCard
           :title="t('standalone.real_time_monitor.blocked_threats')"
-          :skeletonLines="2"
+          :skeleton-lines="2"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getMalwareReport"
-          :errorDescription="error.getMalwareReportDetails"
+          :error-title="error.getMalwareReport"
+          :error-description="error.getMalwareReportDetails"
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
         >
           <SimpleStat class="mt-1">
@@ -384,8 +384,8 @@ async function getAttackReport() {
         <NeCard
           :title="t('standalone.real_time_monitor.blocked_threats_by_hour')"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getMalwareReport"
-          :errorDescription="error.getMalwareReportDetails"
+          :error-title="error.getMalwareReport"
+          :error-description="error.getMalwareReportDetails"
           class="row-span-2 sm:col-span-12 xl:col-span-9 2xl:col-span-9"
         >
           <BlockedPacketsByHourChart
@@ -397,10 +397,10 @@ async function getAttackReport() {
         <!-- threats by direction -->
         <NeCard
           :title="t('standalone.real_time_monitor.threats_by_direction')"
-          :skeletonLines="4"
+          :skeleton-lines="4"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getMalwareReport"
-          :errorDescription="error.getMalwareReportDetails"
+          :error-title="error.getMalwareReport"
+          :error-description="error.getMalwareReportDetails"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->
@@ -420,10 +420,10 @@ async function getAttackReport() {
         <!-- threats by category -->
         <NeCard
           :title="t('standalone.real_time_monitor.threats_by_category')"
-          :skeletonLines="4"
+          :skeleton-lines="4"
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getMalwareReport"
-          :errorDescription="error.getMalwareReportDetails"
+          :error-title="error.getMalwareReport"
+          :error-description="error.getMalwareReportDetails"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->
@@ -449,10 +449,10 @@ async function getAttackReport() {
         <!-- blocked ip addresses -->
         <NeCard
           :title="t('standalone.real_time_monitor.blocked_ip_addresses')"
-          :skeletonLines="2"
+          :skeleton-lines="2"
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getAttackReport"
-          :errorDescription="error.getAttackReportDetails"
+          :error-title="error.getAttackReport"
+          :error-description="error.getAttackReportDetails"
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
         >
           <SimpleStat class="mt-1">
@@ -462,10 +462,10 @@ async function getAttackReport() {
         <!-- blocked ip addresses per hour -->
         <NeCard
           :title="t('standalone.real_time_monitor.blocked_ip_addresses_by_hour')"
-          :skeletonLines="5"
+          :skeleton-lines="5"
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getAttackReport"
-          :errorDescription="error.getAttackReportDetails"
+          :error-title="error.getAttackReport"
+          :error-description="error.getAttackReportDetails"
           class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 2xl:col-span-9 5xl:col-span-3"
         >
           <BlockedIpsByHourChart
@@ -477,10 +477,10 @@ async function getAttackReport() {
         <!-- most frequently blocked IP addresses -->
         <NeCard
           :title="t('standalone.real_time_monitor.most_frequently_blocked_ip_addresses')"
-          :skeletonLines="5"
+          :skeleton-lines="5"
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
-          :errorTitle="error.getAttackReport"
-          :errorDescription="error.getAttackReportDetails"
+          :error-title="error.getAttackReport"
+          :error-description="error.getAttackReportDetails"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->

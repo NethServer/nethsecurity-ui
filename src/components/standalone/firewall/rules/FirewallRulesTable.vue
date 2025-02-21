@@ -262,7 +262,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :description="errorListHostSets"
       class="mb-5"
     >
-      <template #details v-if="errorListHostSetsDetails">
+      <template v-if="errorListHostSetsDetails" #details>
         {{ errorListHostSetsDetails }}
       </template>
     </NeInlineNotification>
@@ -274,7 +274,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :description="errorListDomainSets"
       class="mb-5"
     >
-      <template #details v-if="errorListDomainSetsDetails">
+      <template v-if="errorListDomainSetsDetails" #details>
         {{ errorListDomainSetsDetails }}
       </template>
     </NeInlineNotification>
@@ -335,7 +335,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 </td>
                 <!-- cannot drag & drop rules with active text filter -->
                 <td v-else :class="!isEnabled(rule) ? disabledRuleClasses : ''">
-                  <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
+                  <NeTooltip trigger-event="mouseenter focus" placement="top-start">
                     <template #trigger>
                       <FontAwesomeIcon
                         :icon="faGripVertical"
@@ -357,7 +357,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                         {{ rule.name }}
                       </div>
                       <div v-if="!rule.active_zone">
-                        <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
+                        <NeTooltip trigger-event="mouseenter focus" placement="top-start">
                           <template #trigger>
                             <NeBadge
                               kind="warning"
@@ -373,7 +373,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                         </NeTooltip>
                       </div>
                       <div v-else-if="!rule.enabled">
-                        <NeTooltip triggerEvent="mouseenter focus" placement="top-start">
+                        <NeTooltip trigger-event="mouseenter focus" placement="top-start">
                           <template #trigger>
                             <NeBadge
                               kind="secondary"
@@ -413,24 +413,24 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
-                    columnType="source"
-                    :rulesType="rulesType"
+                    column-type="source"
+                    :rules-type="rulesType"
                     :enabled="isEnabled(rule)"
-                    :hostSets="hostSets"
-                    :domainSets="domainSets"
-                    :loadingObjects="loadingListHostSets || loadingListDomainSets"
+                    :host-sets="hostSets"
+                    :domain-sets="domainSets"
+                    :loading-objects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- destination -->
                 <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <SourceOrDestinationRuleColumn
                     :rule="rule"
-                    columnType="destination"
-                    :rulesType="rulesType"
+                    column-type="destination"
+                    :rules-type="rulesType"
                     :enabled="isEnabled(rule)"
-                    :hostSets="hostSets"
-                    :domainSets="domainSets"
-                    :loadingObjects="loadingListHostSets || loadingListDomainSets"
+                    :host-sets="hostSets"
+                    :domain-sets="domainSets"
+                    :loading-objects="loadingListHostSets || loadingListDomainSets"
                   />
                 </td>
                 <!-- service -->
@@ -462,7 +462,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                       </template>
                       {{ t('common.edit') }}
                     </NeButton>
-                    <NeDropdown :items="getRuleKebabMenuItems(rule)" :alignToRight="true" />
+                    <NeDropdown :items="getRuleKebabMenuItems(rule)" :align-to-right="true" />
                   </div>
                 </td>
               </tr>

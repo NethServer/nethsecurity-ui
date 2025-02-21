@@ -213,15 +213,15 @@ function getBulkActionsKebabMenuItems() {
       <!-- text filter -->
       <div class="flex items-center gap-4">
         <NeTextInput
-          :placeholder="t('controller.units.filter_units')"
           v-model.trim="textFilter"
+          :placeholder="t('controller.units.filter_units')"
           :disabled="isShownUnitsSkeleton"
           class="max-w-xs"
         />
         <NeButton
           kind="tertiary"
-          @click="textFilter = ''"
           :disabled="isShownUnitsSkeleton || !textFilter"
+          @click="textFilter = ''"
         >
           {{ t('common.clear_filter') }}
         </NeButton>
@@ -233,9 +233,9 @@ function getBulkActionsKebabMenuItems() {
           <NeButton
             kind="tertiary"
             size="lg"
-            @click="isShownAddUnitModal = true"
             :disabled="isAddUnitDisabled"
             class="shrink-0"
+            @click="isShownAddUnitModal = true"
           >
             <template #prefix>
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -245,8 +245,8 @@ function getBulkActionsKebabMenuItems() {
           <!-- bulk actions -->
           <NeDropdown
             :items="getBulkActionsKebabMenuItems()"
-            :openMenuAriaLabel="t('controller.units.open_actions_menu')"
-            alignToRight
+            :open-menu-aria-label="t('controller.units.open_actions_menu')"
+            align-to-right
           >
             <template #button>
               <NeButton kind="secondary">
@@ -301,12 +301,12 @@ function getBulkActionsKebabMenuItems() {
         <!-- units table -->
         <UnitsTable
           v-else
-          :filteredUnits="filteredUnits"
-          @reloadData="loadData"
-          @openSshModal="showOpenSshModal"
-          @scheduleUpdate="unitToUpdate = $event"
-          @abortUpdate="unitToAbortUpdate = $event"
-          @upgradeUnitPackages="unitToUpgradePackages = $event"
+          :filtered-units="filteredUnits"
+          @reload-data="loadData"
+          @open-ssh-modal="showOpenSshModal"
+          @schedule-update="unitToUpdate = $event"
+          @abort-update="unitToAbortUpdate = $event"
+          @upgrade-unit-packages="unitToUpgradePackages = $event"
         />
       </template>
     </div>
@@ -315,7 +315,7 @@ function getBulkActionsKebabMenuItems() {
     <AddUnitModal
       :visible="isShownAddUnitModal"
       @close="isShownAddUnitModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
 
     <!-- open ssh modal -->
@@ -327,7 +327,7 @@ function getBulkActionsKebabMenuItems() {
 
     <!-- send/revoke ssh key drawer -->
     <SendOrRevokeSshKeyDrawer
-      :isShown="isShownSendOrRevokeSshKeyDrawer"
+      :is-shown="isShownSendOrRevokeSshKeyDrawer"
       :action="sendOrRevokeAction"
       @close="isShownSendOrRevokeSshKeyDrawer = false"
     />

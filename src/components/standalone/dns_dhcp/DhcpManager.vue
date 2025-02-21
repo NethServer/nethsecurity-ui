@@ -83,8 +83,8 @@ function closeEditInterfaceDrawer() {
 }
 
 function toggleExpandAllCards() {
-  let newInterfaceCardExpandedValues: Record<string, boolean> = {}
-  for (let key of Object.keys(isInterfaceCardExpanded.value)) {
+  const newInterfaceCardExpandedValues: Record<string, boolean> = {}
+  for (const key of Object.keys(isInterfaceCardExpanded.value)) {
     newInterfaceCardExpandedValues[key] = areAllCardsExpanded.value ? false : true
   }
 
@@ -110,6 +110,7 @@ onMounted(() => {
 
 <template>
   <NeInlineNotification
+    v-if="error.notificationDescription || firewallConfig.error"
     kind="error"
     :title="
       firewallConfig.error
@@ -121,20 +122,19 @@ onMounted(() => {
         ? t(getAxiosErrorMessage(firewallConfig.error))
         : error.notificationDescription
     "
-    v-if="error.notificationDescription || firewallConfig.error"
   >
-    <template #details v-if="error.notificationDetails || firewallConfig.error">
+    <template v-if="error.notificationDetails || firewallConfig.error" #details>
       {{ firewallConfig.error ? firewallConfig.error.toString() : error.notificationDetails }}
     </template>
   </NeInlineNotification>
-  <NeSkeleton :lines="10" v-if="loading || firewallConfig.loading" />
+  <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
   <template v-else-if="!firewallConfig.error">
     <div class="mb-4 flex flex-row items-center justify-between">
       <NeHeading tag="h6" class="mb-1.5 grow">{{ t('standalone.dns_dhcp.interfaces') }}</NeHeading>
       <NeButton
+        v-if="Object.keys(interfaces).length > 0"
         kind="tertiary"
         @click="toggleExpandAllCards()"
-        v-if="Object.keys(interfaces).length > 0"
       >
         <template #prefix>
           <font-awesome-icon
@@ -159,7 +159,7 @@ onMounted(() => {
       :title="t('standalone.dns_dhcp.no_interface_configured')"
       :icon="['fas', 'circle-info']"
     />
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3" v-else>
+    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
       <div
         v-for="(iface, ifaceName) in interfaces"
         :key="ifaceName"
@@ -214,9 +214,9 @@ onMounted(() => {
             <template v-if="isInterfaceCardExpanded[ifaceName]"
               ><div class="flex flex-col gap-y-2">
                 <div
-                  class="text-sm"
                   v-for="(ifaceOption, optionName) in iface.options"
                   :key="optionName"
+                  class="text-sm"
                 >
                   <strong>{{ optionName }}:</strong>
                   {{ ifaceOption }}

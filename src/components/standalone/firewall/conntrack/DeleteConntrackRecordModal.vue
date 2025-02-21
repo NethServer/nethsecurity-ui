@@ -63,16 +63,16 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.conntrack.delete_conntrack_record')"
-    :primaryLabel="t('common.delete')"
-    :secondaryLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    secondaryButtonKind="tertiary"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :secondary-label="t('common.cancel')"
+    primary-button-kind="danger"
+    secondary-button-kind="tertiary"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteConntrackRecord()"
+    @primary-click="deleteConntrackRecord()"
     @close="close()"
-    @secondaryClick="close()"
+    @secondary-click="close()"
   >
     <span v-if="itemToDelete !== undefined">
       {{
@@ -91,7 +91,7 @@ function close() {
       :title="t('error.cannot_delete_conntrack_record')"
       :description="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

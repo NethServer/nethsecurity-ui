@@ -18,7 +18,7 @@ defineProps({
     required: true
   },
   usageIds: {
-    type: Array<String>,
+    type: Array<string>,
     required: true
   },
   showGoToObjectsButton: {
@@ -37,12 +37,12 @@ const { t } = useI18n()
     :visible="visible"
     :title="t('standalone.objects.name_usages', { name: objectName })"
     kind="info"
-    :primaryLabel="t('common.close')"
-    cancelLabel=""
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('common.close')"
+    cancel-label=""
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="emit('close')"
+    @primary-click="emit('close')"
   >
-    <ObjectUsages :usageIds="usageIds" :showGoToObjectsButton="showGoToObjectsButton" />
+    <ObjectUsages :usage-ids="usageIds" :show-go-to-objects-button="showGoToObjectsButton" />
   </NeModal>
 </template>

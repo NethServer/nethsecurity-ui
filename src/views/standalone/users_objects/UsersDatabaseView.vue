@@ -109,7 +109,7 @@ async function fetchSubscriptionInfo() {
       >{{ t('standalone.users_database.add_remote_database') }}</NeButton
     >
     <!-- disabled add remote database button for community -->
-    <NeTooltip v-else triggerEvent="mouseenter focus" placement="bottom">
+    <NeTooltip v-else trigger-event="mouseenter focus" placement="bottom">
       <template #trigger>
         <NeButton kind="secondary" disabled>
           <template #prefix>
@@ -131,7 +131,7 @@ async function fetchSubscriptionInfo() {
     class="mb-6"
     kind="error"
   >
-    <template #details v-if="error.listDatabasesDetails">
+    <template v-if="error.listDatabasesDetails" #details>
       {{ error.listDatabasesDetails }}
     </template></NeInlineNotification
   >
@@ -143,7 +143,7 @@ async function fetchSubscriptionInfo() {
     class="mb-6"
     kind="error"
   >
-    <template #details v-if="error.listDatabasesDetails">
+    <template v-if="error.listDatabasesDetails" #details>
       {{ error.listDatabasesDetails }}
     </template></NeInlineNotification
   >
@@ -151,11 +151,11 @@ async function fetchSubscriptionInfo() {
   <div v-else-if="!error.listDatabases && !error.getSubscriptionInfo">
     <NeTabs
       :selected="selectedTab"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      :srTabsLabel="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+      :sr-tabs-label="t('ne_tabs.tabs')"
       :tabs="tabs"
       class="mb-8"
-      @selectTab="selectedTab = $event"
+      @select-tab="selectedTab = $event"
     />
     <UsersDatabaseManager
       :database="databases.find((x) => x.name === selectedTab) as UserDatabase"

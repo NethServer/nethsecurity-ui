@@ -30,7 +30,7 @@ const connectedClientsText = computed(() => {
   <NeCard
     :title="t('standalone.real_time_monitor.connected_clients')"
     :loading="loading"
-    :skeletonLines="2"
+    :skeleton-lines="2"
   >
     <SimpleStat class="mt-1">
       {{ connectedClientsText }}

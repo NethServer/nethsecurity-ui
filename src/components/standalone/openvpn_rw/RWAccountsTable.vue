@@ -120,7 +120,7 @@ function getCellClasses(item: RWAccount) {
 </script>
 
 <template>
-  <NeTable :ariaLabel="t('standalone.openvpn_rw.roadwarrior_accounts')" cardBreakpoint="xl">
+  <NeTable :aria-label="t('standalone.openvpn_rw.roadwarrior_accounts')" card-breakpoint="xl">
     <NeTableHead>
       <NeTableHeadCell>
         {{ t('standalone.openvpn_rw.username') }}
@@ -148,13 +148,13 @@ function getCellClasses(item: RWAccount) {
             </p>
             <!-- password not configured warning -->
             <NeTooltip
-              interactive
               v-if="
                 item.local &&
                 !item.password &&
                 (authenticationMode === 'username_password' ||
                   authenticationMode === 'username_password_certificate')
               "
+              interactive
             >
               <template #trigger>
                 <font-awesome-icon
@@ -175,7 +175,7 @@ function getCellClasses(item: RWAccount) {
             </NeTooltip>
           </div>
           <!-- more info button -->
-          <NeTooltip interactive placement="bottom" v-if="item.connected">
+          <NeTooltip v-if="item.connected" interactive placement="bottom">
             <template #trigger>
               <NeButton size="sm" kind="tertiary" class="-mx-2">{{
                 t('standalone.openvpn_rw.more_info')
@@ -234,7 +234,7 @@ function getCellClasses(item: RWAccount) {
               }}
             </p>
             <!-- certificate expired warning -->
-            <NeTooltip interactive v-if="item.expired">
+            <NeTooltip v-if="item.expired" interactive>
               <template #trigger>
                 <font-awesome-icon
                   :icon="['fas', 'triangle-exclamation']"
@@ -316,7 +316,7 @@ function getCellClasses(item: RWAccount) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

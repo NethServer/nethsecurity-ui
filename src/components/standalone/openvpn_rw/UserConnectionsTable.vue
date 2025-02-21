@@ -91,8 +91,8 @@ function formatDuration(seconds: number): string {
 
 <template>
   <NeSortDropdown
-    v-model:sortKey="sortKey"
-    v-model:sortDescending="sortDescending"
+    v-model:sort-key="sortKey"
+    v-model:sort-descending="sortDescending"
     :label="t('sort.sort')"
     :options="[
       { id: 'account', label: t('standalone.openvpn_rw.history.account') },
@@ -104,38 +104,38 @@ function formatDuration(seconds: number): string {
       { id: 'bytesReceived', label: t('standalone.openvpn_rw.history.bytes_received') },
       { id: 'bytesSent', label: t('standalone.openvpn_rw.history.bytes_sent') }
     ]"
-    :openMenuAriaLabel="t('ne_dropdown.open_menu')"
-    :sortByLabel="t('sort.sort_by')"
-    :sortDirectionLabel="t('sort.direction')"
-    :ascendingLabel="t('sort.ascending')"
-    :descendingLabel="t('sort.descending')"
+    :open-menu-aria-label="t('ne_dropdown.open_menu')"
+    :sort-by-label="t('sort.sort_by')"
+    :sort-direction-label="t('sort.direction')"
+    :ascending-label="t('sort.ascending')"
+    :descending-label="t('sort.descending')"
     class="xl:hidden"
   />
   <NeTable
-    :sortKey="sortKey"
-    :sortDescending="sortDescending"
-    :ariaLabel="t('standalone.openvpn_rw.history.connections_table')"
-    cardBreakpoint="xl"
-    :skeletonColumns="5"
-    :skeletonRows="5"
+    :sort-key="sortKey"
+    :sort-descending="sortDescending"
+    :aria-label="t('standalone.openvpn_rw.history.connections_table')"
+    card-breakpoint="xl"
+    :skeleton-columns="5"
+    :skeleton-rows="5"
   >
     <NeTableHead>
-      <NeTableHeadCell sortable columnKey="account" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="account" @sort="onSort">{{
         t('standalone.openvpn_rw.history.account')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="startTime" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="startTime" @sort="onSort">{{
         t('standalone.openvpn_rw.history.start_time')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="endTime" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="endTime" @sort="onSort">{{
         t('standalone.openvpn_rw.history.end_time')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="duration" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="duration" @sort="onSort">{{
         t('standalone.openvpn_rw.history.duration')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="virtualIpAddress" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="virtualIpAddress" @sort="onSort">{{
         t('standalone.openvpn_rw.history.virtual_ip_address')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="remoteIpAddress" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="remoteIpAddress" @sort="onSort">{{
         t('standalone.openvpn_rw.history.remote_ip_address')
       }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.openvpn_rw.history.received_sent') }}</NeTableHeadCell>
@@ -191,7 +191,7 @@ function formatDuration(seconds: number): string {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

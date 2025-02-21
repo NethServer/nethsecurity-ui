@@ -56,7 +56,7 @@ function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -91,7 +91,7 @@ async function createOrEditException() {
     const requestType = isEditing ? 'edit-exemption' : 'add-exemption'
 
     if (validate()) {
-      let payload: {
+      const payload: {
         'config-name'?: string
         description: string
         criteria: string
@@ -145,9 +145,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.dpi.edit_exception') : t('standalone.dpi.add_exception')"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -156,7 +156,7 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -180,9 +180,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditException()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditException()"
           >{{ id ? t('common.save') : t('standalone.dpi.add_exception') }}</NeButton
         >
       </div>

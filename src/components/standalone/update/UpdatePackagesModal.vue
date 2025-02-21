@@ -92,7 +92,7 @@ async function updatePackages() {
           :description="error.notificationDescription"
           class="my-6"
           kind="error"
-          ><template #details v-if="error.notificationDetails">
+          ><template v-if="error.notificationDetails" #details>
             {{ error.notificationDetails }}
           </template></NeInlineNotification
         ></template

@@ -28,10 +28,10 @@ const { tabs, selectedTab } = useTabs([
     <NeHeading tag="h3">{{ t('standalone.ips.title') }}</NeHeading>
     <NeTabs
       :selected="selectedTab"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      :srTabsLabel="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+      :sr-tabs-label="t('ne_tabs.tabs')"
       :tabs="tabs"
-      @selectTab="selectedTab = $event"
+      @select-tab="selectedTab = $event"
     />
     <IpsEventList v-if="selectedTab == 'event_list'" />
     <IpsFilterBypass v-if="selectedTab == 'filter_bypass'" />

@@ -71,13 +71,13 @@ const {
   errorLatencyAndQualityReportDetails
 } = useLatencyAndQualityReport()
 
-let loading = ref({
+const loading = ref({
   listWans: false,
   getMwanReport: false,
   getMwanPolicies: false
 })
 
-let error = ref({
+const error = ref({
   listWans: '',
   listWansDetails: '',
   getMwanReport: '',
@@ -214,7 +214,7 @@ async function getMwanReport() {
       string,
       any[]
     ][]) {
-      let events = eventsList.map((event: number[]) => {
+      const events = eventsList.map((event: number[]) => {
         return {
           time: event[0],
           status: event[1]
@@ -273,7 +273,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_retrieve_wan_list')"
       :description="error.listWans"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listWansDetails" #details>
@@ -286,7 +286,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_retrieve_mwan_report')"
       :description="error.getMwanReport"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getMwanReportDetails" #details>
@@ -299,7 +299,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_retrieve_wan_list')"
       :description="error.getMwanPolicies"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getMwanPoliciesDetails" #details>
@@ -312,7 +312,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_load_network_devices')"
       :description="errorListDevices"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="errorListDevicesDetails" #details>
@@ -325,7 +325,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_load_network_config')"
       :description="errorNetworkConfig"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="errorNetworkConfigDetails" #details>
@@ -338,7 +338,7 @@ async function getMwanPolicies() {
       kind="error"
       :title="t('error.cannot_retrieve_latency_and_quality_report')"
       :description="errorLatencyAndQualityReport"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="errorLatencyAndQualityReportDetails" #details>
@@ -350,14 +350,14 @@ async function getMwanPolicies() {
       <template v-if="loadingData">
         <NeCard
           loading
-          :skeletonLines="7"
+          :skeleton-lines="7"
           class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
         ></NeCard>
         <NeCard
           v-for="index in 4"
           :key="index"
           loading
-          :skeletonLines="7"
+          :skeleton-lines="7"
           class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         ></NeCard>
       </template>
@@ -365,7 +365,7 @@ async function getMwanPolicies() {
         <!-- connections -->
         <WanConnectionsCard
           v-if="wanConnections.length"
-          :wanConnections="wanConnections"
+          :wan-connections="wanConnections"
           class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
         />
         <!-- wan events -->
@@ -381,11 +381,11 @@ async function getMwanPolicies() {
           />
         </NeCard>
         <WanEventsCard
-          v-else
           v-for="(events, wanName) in mwanEvents"
+          v-else
           :key="wanName"
           :wan="wanName"
-          :wanEvents="events"
+          :wan-events="events"
           class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
         <!-- wans traffic -->
@@ -400,7 +400,7 @@ async function getMwanPolicies() {
         <NeCard
           v-if="loadingLatencyAndQualityReport"
           loading
-          :skeletonLines="7"
+          :skeleton-lines="7"
           class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         ></NeCard>
         <NeCard
@@ -432,7 +432,7 @@ async function getMwanPolicies() {
             </NeButton>
           </NeEmptyState>
         </NeCard>
-        <template v-else v-for="(chart, index) in latencyAndQualityCharts" :key="index">
+        <template v-for="(chart, index) in latencyAndQualityCharts" v-else :key="index">
           <NeCard
             :title="
               chart.type === 'latency'
@@ -447,7 +447,7 @@ async function getMwanPolicies() {
               v-if="chart.type === 'latency'"
               :labels="chart.labels"
               :datasets="chart.datasets"
-              datasetSuffix="ms"
+              dataset-suffix="ms"
               height="30vh"
             />
             <TimeLineChart
@@ -455,7 +455,7 @@ async function getMwanPolicies() {
               :labels="chart.labels"
               :datasets="chart.datasets"
               :options="{ scales: { y: { max: 100 } } }"
-              datasetSuffix="%"
+              dataset-suffix="%"
               height="30vh"
             />
           </NeCard>

@@ -264,13 +264,13 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
 </script>
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       isCreating
         ? t('standalone.zones_and_policies.add_zone')
         : t('standalone.zones_and_policies.edit_zone_name', { name: zoneToEdit?.name })
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="emit('close')"
   >
     <NeInlineNotification
@@ -285,12 +285,12 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         kind="error"
       />
       <NeTextInput
+        ref="nameRef"
         v-model="name"
         :disabled="saving || !isCreating"
         :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.zones_and_policies.name')"
         :placeholder="t('standalone.zones_and_policies.name')"
-        ref="nameRef"
       />
       <NeCombobox
         v-model="forwardsTo"
@@ -299,12 +299,12 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :options="zoneComboboxOptions"
         :placeholder="forwardPlaceholder"
         multiple
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <NeCombobox
         v-model="forwardsFrom"
@@ -313,18 +313,18 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :options="zoneComboboxOptions"
         :placeholder="forwardPlaceholder"
         multiple
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <NeToggle
         v-if="zoneToEdit?.name !== SpecialZones.WAN"
         v-model="trafficToWan"
         :disabled="saving"
-        :topLabel="t('standalone.zones_and_policies.traffic_to_wan')"
+        :top-label="t('standalone.zones_and_policies.traffic_to_wan')"
         :label="trafficToWan ? t('common.enabled') : t('common.disabled')"
       />
       <NeRadioSelection
@@ -342,7 +342,7 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
       <NeToggle
         v-model="enableLogging"
         :disabled="saving"
-        :topLabel="t('standalone.zones_and_policies.logging')"
+        :top-label="t('standalone.zones_and_policies.logging')"
         :label="enableLogging ? t('common.enabled') : t('common.disabled')"
       >
         <template #topTooltip>

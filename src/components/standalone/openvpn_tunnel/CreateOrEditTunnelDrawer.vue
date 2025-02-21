@@ -361,7 +361,7 @@ async function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [t(validator.errMessage as string)])
     }
@@ -402,13 +402,13 @@ function validate() {
 
   // remote networks validation
   let validRemoteNetworks = true
-  for (let [index, remoteNetwork] of remoteNetworks.value.entries()) {
+  for (const [index, remoteNetwork] of remoteNetworks.value.entries()) {
     const isRemoteNetworksOptional = props.isClientTunnel && topology.value == 'subnet'
-    let validators = [
+    const validators = [
       ...(!isRemoteNetworksOptional ? [validateRequired(remoteNetwork)] : []),
       validateIp4Cidr(remoteNetwork)
     ]
-    for (let validator of validators) {
+    for (const validator of validators) {
       if (!validator.valid && (!isRemoteNetworksOptional || remoteNetwork != '')) {
         remoteNetworksValidationErrors.value[index] = t(validator.errMessage as string)
         validRemoteNetworks = false
@@ -440,9 +440,9 @@ function validate() {
 
     // remote hosts validation
     let validRemoteHosts = true
-    for (let [index, remoteHost] of remoteHosts.value.entries()) {
-      let validators = [validateRequired(remoteHost), validateHost(remoteHost)]
-      for (let validator of validators) {
+    for (const [index, remoteHost] of remoteHosts.value.entries()) {
+      const validators = [validateRequired(remoteHost), validateHost(remoteHost)]
+      for (const validator of validators) {
         if (!validator.valid) {
           remoteHostsValidationErrors.value[index] = t(validator.errMessage as string)
           validRemoteHosts = false
@@ -477,9 +477,9 @@ function validate() {
 
     // public endpoints validation
     let validPublicEndpoints = true
-    for (let [index, publicEndpoint] of publicEndpoints.value.entries()) {
-      let validators = [validateRequired(publicEndpoint), validateIpAddressOrFQDN(publicEndpoint)]
-      for (let validator of validators) {
+    for (const [index, publicEndpoint] of publicEndpoints.value.entries()) {
+      const validators = [validateRequired(publicEndpoint), validateIpAddressOrFQDN(publicEndpoint)]
+      for (const validator of validators) {
         if (!validator.valid) {
           publicEndpointsValidationErrors.value[index] = t(validator.errMessage as string)
           validPublicEndpoints = false
@@ -506,7 +506,7 @@ async function createOrEditTunnel() {
   try {
     isSavingChanges.value = true
     if (validate()) {
-      let sharedFieldsPayload: SharedTunnelPayload = {
+      const sharedFieldsPayload: SharedTunnelPayload = {
         ...(isEditing ? { id: id.value } : {}),
         ns_name: name.value,
         port: port.value,
@@ -624,8 +624,7 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       id
         ? isClientTunnel
@@ -635,6 +634,7 @@ watch(
           ? t('standalone.openvpn_tunnel.add_client_tunnel')
           : t('standalone.openvpn_tunnel.add_server_tunnel')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -647,8 +647,8 @@ watch(
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton :lines="20" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="20" />
+    <div v-else class="flex flex-col gap-y-6">
       <div>
         <NeFormItemLabel>{{ t('standalone.openvpn_tunnel.status') }}</NeFormItemLabel>
         <NeToggle
@@ -687,11 +687,11 @@ watch(
           :invalid-message="validationErrorBag.getFirstFor('port')"
         />
         <NeCombobox
+          v-model="localNetworks"
           :label="t('standalone.openvpn_tunnel.local_networks')"
           :placeholder="t('standalone.openvpn_tunnel.choose_network')"
           :multiple="true"
           :options="localNetworksOptions"
-          v-model="localNetworks"
           :invalid-message="validationErrorBag.getFirstFor('localNetworks')"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
@@ -699,8 +699,8 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :accept-user-input="true"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :optionalLabel="t('common.optional')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :optional-label="t('common.optional')"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -738,9 +738,9 @@ watch(
         />
       </template>
       <NeRadioSelection
+        v-model="topology"
         :label="t('standalone.openvpn_tunnel.topology')"
         :options="topologyOptions"
-        v-model="topology"
         ><template #tooltip>
           <NeTooltip
             ><template #content>
@@ -760,16 +760,16 @@ watch(
       >
       <template v-if="topology == 'subnet'">
         <NeTextInput
+          v-if="!isClientTunnel"
           v-model="vpnNetwork"
           :label="t('standalone.openvpn_tunnel.vpn_network')"
           :invalid-message="validationErrorBag.getFirstFor('vpnNetwork')"
-          v-if="!isClientTunnel"
         />
         <template v-else>
           <NeRadioSelection
+            v-model="authentication"
             :label="t('standalone.openvpn_tunnel.authentication')"
             :options="authenticationOptions"
-            v-model="authentication"
           />
           <template v-if="authentication == 'username_password_certificate'">
             <NeTextInput
@@ -846,60 +846,60 @@ watch(
             </template>
           </NeMultiTextInput>
           <NeRadioSelection
+            v-model="mode"
             :label="t('standalone.openvpn_tunnel.mode')"
             :options="modeOptions"
-            v-model="mode"
           />
         </template>
         <NeRadioSelection
+          v-model="protocol"
           :label="t('standalone.openvpn_tunnel.protocol')"
           :options="protocolOptions"
-          v-model="protocol"
         />
         <NeCombobox
+          v-model="compression"
           :label="t('standalone.openvpn_tunnel.compression')"
           :options="compressionOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          v-model="compression"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-model="digest"
           :label="t('standalone.openvpn_tunnel.digest')"
           :options="digestOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          v-model="digest"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-model="cipher"
           :label="t('standalone.openvpn_tunnel.cipher')"
           :options="cipherOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          v-model="cipher"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-if="!isClientTunnel"
+          v-model="minimumTLSVersion"
           :label="t('standalone.openvpn_tunnel.enforce_minimum_tls_version')"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"
-          v-model="minimumTLSVersion"
-          v-if="!isClientTunnel"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
       </template>
       <hr />
@@ -907,9 +907,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditTunnel()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditTunnel()"
           >{{ t('common.save') }}</NeButton
         >
       </div>

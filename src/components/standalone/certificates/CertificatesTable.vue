@@ -132,8 +132,8 @@ const onSort = (payload: any) => {
 
 <template>
   <NeSortDropdown
-    v-model:sortKey="sortKey"
-    v-model:sortDescending="sortDescending"
+    v-model:sort-key="sortKey"
+    v-model:sort-descending="sortDescending"
     :label="t('sort.sort')"
     :options="[
       { id: 'name', label: t('standalone.certificates.name') },
@@ -141,31 +141,31 @@ const onSort = (payload: any) => {
       { id: 'type', label: t('standalone.certificates.type') },
       { id: 'expiration', label: t('standalone.certificates.expire') }
     ]"
-    :openMenuAriaLabel="t('ne_dropdown.open_menu')"
-    :sortByLabel="t('sort.sort_by')"
-    :sortDirectionLabel="t('sort.direction')"
-    :ascendingLabel="t('sort.ascending')"
-    :descendingLabel="t('sort.descending')"
+    :open-menu-aria-label="t('ne_dropdown.open_menu')"
+    :sort-by-label="t('sort.sort_by')"
+    :sort-direction-label="t('sort.direction')"
+    :ascending-label="t('sort.ascending')"
+    :descending-label="t('sort.descending')"
     class="lg:hidden"
   />
   <NeTable
-    :sortKey="sortKey"
-    :sortDescending="sortDescending"
-    :ariaLabel="t('standalone.certificates.title')"
-    cardBreakpoint="lg"
+    :sort-key="sortKey"
+    :sort-descending="sortDescending"
+    :aria-label="t('standalone.certificates.title')"
+    card-breakpoint="lg"
     class="z-10"
   >
     <NeTableHead>
-      <NeTableHeadCell sortable columnKey="name" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="name" @sort="onSort">{{
         t('standalone.certificates.name')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="domains" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="domains" @sort="onSort">{{
         t('standalone.certificates.domains')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="type" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="type" @sort="onSort">{{
         t('standalone.certificates.type')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable columnKey="expiration" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="expiration" @sort="onSort">{{
         t('standalone.certificates.expire')
       }}</NeTableHeadCell>
       <NeTableHeadCell>
@@ -187,7 +187,7 @@ const onSort = (payload: any) => {
               >
             </div>
             <!-- default certificate badge and tooltip -->
-            <NeTooltip interactive v-if="item.default">
+            <NeTooltip v-if="item.default" interactive>
               <template #trigger>
                 <NeBadge
                   kind="success"
@@ -208,7 +208,7 @@ const onSort = (payload: any) => {
           <template v-else>
             <div class="flex flex-col gap-1">
               <p>{{ item.requested_domains!.slice(0, 2).join(', ') }}</p>
-              <NeTooltip interactive placement="bottom" v-if="item.requested_domains!.length > 2">
+              <NeTooltip v-if="item.requested_domains!.length > 2" interactive placement="bottom">
                 <template #trigger>
                   <NeButton size="sm" kind="tertiary" class="-mx-2">{{
                     t('standalone.certificates.plus_n_others', {
@@ -227,7 +227,7 @@ const onSort = (payload: any) => {
           <div class="flex flex-row items-center">
             <p class="mr-6">{{ getCertificateType(item) }}</p>
             <!-- pending badge and tooltip -->
-            <NeTooltip interactive v-if="item.pending">
+            <NeTooltip v-if="item.pending" interactive>
               <template #trigger>
                 <NeBadge kind="warning" :text="t('standalone.certificates.pending')" />
               </template>
@@ -245,7 +245,7 @@ const onSort = (payload: any) => {
               {{ getFormattedExpiration(item) }}
             </p>
             <!-- certificate expired warning -->
-            <NeTooltip interactive v-if="isCertificateExpired(item)">
+            <NeTooltip v-if="isCertificateExpired(item)" interactive>
               <template #trigger>
                 <font-awesome-icon
                   :icon="['fas', 'triangle-exclamation']"
@@ -284,7 +284,7 @@ const onSort = (payload: any) => {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

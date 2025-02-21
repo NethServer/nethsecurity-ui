@@ -58,11 +58,11 @@ function getKebabMenuItems(domain: DnsBlockedDomain) {
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.threat_shield_dns.blocked_domains')"
-    cardBreakpoint="lg"
+    :aria-label="t('standalone.threat_shield_dns.blocked_domains')"
+    card-breakpoint="lg"
     :loading="loading"
-    :skeletonColumns="3"
-    :skeletonRows="6"
+    :skeleton-columns="3"
+    :skeleton-rows="6"
   >
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.threat_shield_dns.domain') }}</NeTableHeadCell>
@@ -87,7 +87,7 @@ function getKebabMenuItems(domain: DnsBlockedDomain) {
           </NeEmptyState>
         </NeTableCell>
       </NeTableRow>
-      <NeTableRow v-else v-for="(item, index) in paginatedItems" :key="index">
+      <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
         <NeTableCell :data-label="t('standalone.threat_shield_dns.domain')">
           {{ item.address }}
         </NeTableCell>
@@ -103,7 +103,7 @@ function getKebabMenuItems(domain: DnsBlockedDomain) {
               {{ t('common.edit') }}
             </NeButton>
             <!-- kebab menu -->
-            <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+            <NeDropdown :items="getKebabMenuItems(item)" :align-to-right="true" />
           </div>
         </NeTableCell>
       </NeTableRow>
@@ -123,7 +123,7 @@ function getKebabMenuItems(domain: DnsBlockedDomain) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

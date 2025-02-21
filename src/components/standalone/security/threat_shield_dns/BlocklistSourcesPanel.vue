@@ -68,7 +68,7 @@ function clearFilter() {
           <p>
             {{ t('standalone.threat_shield_dns.blocklist_sources_description') }}
           </p>
-          <div class="mt-2 flex flex-row gap-x-2" v-if="tsStore.isEnterprise">
+          <div v-if="tsStore.isEnterprise" class="mt-2 flex flex-row gap-x-2">
             <FontAwesomeIcon
               :icon="faCircleInfo"
               class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
@@ -95,7 +95,7 @@ function clearFilter() {
         :description="tsStore.errorListDnsBlocklists"
         class="mb-5"
       >
-        <template #details v-if="tsStore.errorListDnsBlocklistsDetails">
+        <template v-if="tsStore.errorListDnsBlocklistsDetails" #details>
           {{ tsStore.errorListDnsBlocklistsDetails }}
         </template>
       </NeInlineNotification>
@@ -107,7 +107,7 @@ function clearFilter() {
         :description="tsStore.errorEditDnsBlocklist"
         class="mb-5"
       >
-        <template #details v-if="tsStore.errorEditDnsBlocklistDetails">
+        <template v-if="tsStore.errorEditDnsBlocklistDetails" #details>
           {{ tsStore.errorEditDnsBlocklistDetails }}
         </template>
       </NeInlineNotification>
@@ -118,8 +118,8 @@ function clearFilter() {
         />
         <template v-else>
           <NeTextInput
-            :placeholder="t('standalone.threat_shield.filter_blocklists')"
             v-model.trim="textFilter"
+            :placeholder="t('standalone.threat_shield.filter_blocklists')"
             is-search
             :disabled="firstLoadingListDnsBlocklists || tsStore.loadingListDnsSettings"
             class="max-w-xs sm:max-w-sm"

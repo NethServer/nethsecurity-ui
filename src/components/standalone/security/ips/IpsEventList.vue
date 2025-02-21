@@ -232,9 +232,9 @@ function suppressedAlertHandler() {
           />
           <NeDropdownFilter
             v-model="typeFilter"
-            :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
+            :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
             :label="t('standalone.ips.type')"
-            :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+            :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
             :options="typeFilterOptions"
             kind="radio"
           />
@@ -243,9 +243,9 @@ function suppressedAlertHandler() {
           </NeButton>
         </div>
         <NeTable
-          :ariaLabel="t('standalone.ips.event_list_tab')"
-          :sortDescending="sortDescending"
-          :sortKey="sortKey"
+          :aria-label="t('standalone.ips.event_list_tab')"
+          :sort-descending="sortDescending"
+          :sort-key="sortKey"
           card-breakpoint="xl"
         >
           <NeTableHead>
@@ -341,7 +341,7 @@ function suppressedAlertHandler() {
               :previous-label="t('ne_table.go_to_previous_page')"
               :range-of-total-label="t('ne_table.of')"
               :total-rows="filteredEvents.length"
-              @selectPageSize="
+              @select-page-size="
                 (size: number) => {
                   pageSize = size
                 }

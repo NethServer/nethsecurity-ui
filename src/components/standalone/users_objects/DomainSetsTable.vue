@@ -72,10 +72,10 @@ function getKebabMenuItems(domainSet: DomainSet) {
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.objects.domain_sets')"
-    cardBreakpoint="xl"
+    :aria-label="t('standalone.objects.domain_sets')"
+    card-breakpoint="xl"
     :loading="loading"
-    :skeletonRows="6"
+    :skeleton-rows="6"
   >
     <NeTableHead>
       <NeTableHeadCell>
@@ -132,7 +132,7 @@ function getKebabMenuItems(domainSet: DomainSet) {
               {{ t('common.edit') }}
             </NeButton>
             <!-- kebab menu -->
-            <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+            <NeDropdown :items="getKebabMenuItems(item)" :align-to-right="true" />
           </div>
         </NeTableCell>
       </NeTableRow>
@@ -152,7 +152,7 @@ function getKebabMenuItems(domainSet: DomainSet) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

@@ -98,9 +98,9 @@ onMounted(() => {
       </p>
       <div class="ml-2 shrink-0">
         <NeButton
+          v-if="!readonly && items.length > 0"
           kind="secondary"
           @click="openCreateEditDrawer()"
-          v-if="!readonly && items.length > 0"
         >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
@@ -109,14 +109,14 @@ onMounted(() => {
         </NeButton>
       </div>
     </div>
-    <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+    <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
     <NeInlineNotification
+      v-if="error.notificationDescription"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -153,19 +153,19 @@ onMounted(() => {
     </template>
   </div>
   <slot
+    v-if="!readonly"
     name="create-edit-item-drawer"
     :is-drawer-shown="showCreateEditDrawer"
     :item-to-edit="selectedItem"
     :close-drawer="closeCreateEditDrawer"
     :reload-items="reloadItems"
-    v-if="!readonly"
   />
   <slot
+    v-if="!readonly"
     name="delete-item-modal"
     :is-modal-shown="showDeleteModal"
     :close-modal="closeDeleteModal"
     :item-to-delete="selectedItem"
     :reload-items="reloadItems"
-    v-if="!readonly"
   />
 </template>

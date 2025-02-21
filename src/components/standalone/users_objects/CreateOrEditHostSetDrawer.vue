@@ -153,7 +153,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -311,24 +311,24 @@ function deleteRecord(index: number) {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       currentHostSet ? t('standalone.objects.edit_host_set') : t('standalone.objects.add_host_set')
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
       <div class="space-y-6">
         <!-- name -->
         <NeTextInput
-          :label="t('standalone.objects.name')"
+          ref="nameRef"
           v-model.trim="name"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('name'))"
-          :helperText="t('standalone.objects.name_helper')"
+          :label="t('standalone.objects.name')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
+          :helper-text="t('standalone.objects.name_helper')"
           :disabled="loading.saveHostSet"
           maxlength="16"
-          ref="nameRef"
         />
         <!-- ip version -->
         <NeRadioSelection
@@ -359,16 +359,16 @@ function deleteRecord(index: number) {
                 :disabled="loading.saveHostSet"
                 :options="recordOptionsButCurrent"
                 :placeholder="t('ne_combobox.choose_or_enter')"
-                acceptUserInput
-                :optionalLabel="t('common.optional')"
-                :noResultsLabel="t('ne_combobox.no_results')"
-                :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                :noOptionsLabel="t('ne_combobox.no_options_label')"
+                accept-user-input
+                :optional-label="t('common.optional')"
+                :no-results-label="t('ne_combobox.no_results')"
+                :limited-options-label="t('ne_combobox.limited_options_label')"
+                :no-options-label="t('ne_combobox.no_options_label')"
                 :selected-label="t('ne_combobox.selected')"
                 :user-input-label="t('ne_combobox.user_input_label')"
                 class="grow"
               />
-              <NeButton kind="tertiary" size="md" @click="deleteRecord(i)" :disabled="i < 1">
+              <NeButton kind="tertiary" size="md" :disabled="i < 1" @click="deleteRecord(i)">
                 <font-awesome-icon
                   :icon="['fas', 'trash']"
                   class="h-4 w-4 py-1"
@@ -387,7 +387,7 @@ function deleteRecord(index: number) {
                 })
               }}
             </p>
-            <NeButton class="mt-4" size="md" @click="addRecord" kind="secondary">
+            <NeButton class="mt-4" size="md" kind="secondary" @click="addRecord">
               <template #prefix>
                 <font-awesome-icon
                   :icon="['fas', 'circle-plus']"
@@ -406,7 +406,7 @@ function deleteRecord(index: number) {
           :title="t('error.cannot_save_host_set')"
           :description="error.saveHostSet"
         >
-          <template #details v-if="error.saveHostSetDetails">
+          <template v-if="error.saveHostSetDetails" #details>
             {{ error.saveHostSetDetails }}
           </template>
         </NeInlineNotification>
@@ -417,18 +417,18 @@ function deleteRecord(index: number) {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.saveHostSet"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveHostSet"
           :disabled="loading.saveHostSet"
           :loading="loading.saveHostSet"
+          @click.prevent="saveHostSet"
         >
           {{
             currentHostSet

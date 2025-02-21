@@ -153,11 +153,11 @@ function handleDeleted() {
         </NeButton>
       </div>
       <NeTable
-        :ariaLabel="t('standalone.ips.suppressed_alerts_tab')"
+        :aria-label="t('standalone.ips.suppressed_alerts_tab')"
         :skeleton-columns="7"
         :skeleton-rows="5"
-        :sortDescending="sortDescending"
-        :sortKey="sortKey"
+        :sort-descending="sortDescending"
+        :sort-key="sortKey"
         card-breakpoint="xl"
       >
         <NeTableHead>
@@ -192,7 +192,7 @@ function handleDeleted() {
               </NeEmptyState>
             </NeTableCell>
           </NeTableRow>
-          <NeTableRow v-else v-for="item in paginatedItems" :key="`${item.ip}-${item.direction}`">
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.ip}-${item.direction}`">
             <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>
@@ -227,7 +227,7 @@ function handleDeleted() {
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
             :total-rows="suppressedAlerts.length"
-            @selectPageSize="
+            @select-page-size="
               (size: number) => {
                 pageSize = size
               }
@@ -251,8 +251,8 @@ function handleDeleted() {
     </NeEmptyState>
   </div>
   <IpsSuppressAlertDrawer
-    @suppress="handleSuppress()"
     :visible="suppressingAlert"
+    @suppress="handleSuppress()"
     @close="suppressingAlert = false"
   />
   <IpsRestoreSuppressedAlertModal

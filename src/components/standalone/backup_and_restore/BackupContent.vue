@@ -58,7 +58,7 @@ const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
 
-let errorPage = ref({
+const errorPage = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
@@ -71,7 +71,7 @@ onMounted(() => {
 
 async function getSubscription() {
   try {
-    let res = await ubusCall('ns.subscription', 'info', {})
+    const res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.active) {
       isValidSubscription.value = res?.data?.active
       await getBackups()
@@ -86,7 +86,7 @@ async function getSubscription() {
 
 async function getHostname() {
   try {
-    let systemInfo = await ubusCall('system', 'board')
+    const systemInfo = await ubusCall('system', 'board')
     unitName.value = systemInfo.data.hostname
   } catch (exception: any) {
     errorPage.value.notificationTitle = t('error.cannot_retrieve_system_board')
@@ -97,7 +97,7 @@ async function getHostname() {
 async function getIsPassphrase() {
   isSetPassphrase.value = false
   try {
-    let res = await ubusCall('ns.backup', 'is-passphrase-set', {})
+    const res = await ubusCall('ns.backup', 'is-passphrase-set', {})
     if (res?.data?.values?.set) {
       isSetPassphrase.value = true
     }
@@ -112,7 +112,7 @@ async function getIsPassphrase() {
 async function getBackups() {
   if (isValidSubscription.value) {
     try {
-      let res = await ubusCall('ns.backup', 'registered-list-backups')
+      const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
         listBackups.value = res.data.values.backups
         // sort by created date in unix timestamp
@@ -277,8 +277,8 @@ function successDeleteBackup() {
       </NeEmptyState>
       <NeTable
         v-if="listBackups.length"
-        cardBreakpoint="xl"
-        :ariaLabel="t('standalone.backup_and_restore.backup.backups')"
+        card-breakpoint="xl"
+        :aria-label="t('standalone.backup_and_restore.backup.backups')"
       >
         <NeTableHead>
           <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.date') }}</NeTableHeadCell>
@@ -331,31 +331,31 @@ function successDeleteBackup() {
     </div>
   </div>
   <DownloadBackupModal
-    :showDownloadModal="showDownloadModal"
-    :isSetPassphrase="isSetPassphrase"
-    :isValidSubscription="isValidSubscription"
-    :selectedBackupType="selectedBackupType"
-    :selectedBackup="selectedBackup"
-    :selectedBackupTime="selectedBackupTime"
-    :unitName="unitName"
+    :show-download-modal="showDownloadModal"
+    :is-set-passphrase="isSetPassphrase"
+    :is-valid-subscription="isValidSubscription"
+    :selected-backup-type="selectedBackupType"
+    :selected-backup="selectedBackup"
+    :selected-backup-time="selectedBackupTime"
+    :unit-name="unitName"
     @close="showDownloadModal = false"
   />
   <RunBackupModal
-    :showRunBackupModal="showRunBackupModal"
-    :unitName="unitName"
+    :show-run-backup-modal="showRunBackupModal"
+    :unit-name="unitName"
     @success="successRunBackup()"
     @close="showRunBackupModal = false"
   />
   <SetPassphraseDrawer
-    :showPassphraseDrawer="showPassphraseDrawer"
-    :isSetPassphrase="isSetPassphrase"
+    :show-passphrase-drawer="showPassphraseDrawer"
+    :is-set-passphrase="isSetPassphrase"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
   />
   <DeleteBackupModal
-    :showDeleteModal="showDeleteModal"
-    :selectedBackupId="selectedBackupId"
-    :selectedBackupLabel="selectedBackupLabel"
+    :show-delete-modal="showDeleteModal"
+    :selected-backup-id="selectedBackupId"
+    :selected-backup-label="selectedBackupLabel"
     @close="successDeleteBackup()"
   />
 </template>

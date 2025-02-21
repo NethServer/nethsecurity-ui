@@ -112,7 +112,7 @@ function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -136,9 +136,9 @@ function validate() {
   })
 
   let validDomains = true
-  for (let [index, domain] of domains.value.entries()) {
+  for (const [index, domain] of domains.value.entries()) {
     if (domain) {
-      let validator = validateFQDN(domain, validationMethod.value === 'dns')
+      const validator = validateFQDN(domain, validationMethod.value === 'dns')
       if (!validator.valid) {
         domainValidationErrors.value[index] = t(validator.errMessage as string)
         validDomains = false
@@ -155,7 +155,7 @@ function validate() {
   if (validationMethod.value === 'dns') {
     validDnsOptions = runValidators([validateRequired(dnsApi.value)], 'dns_provider')
 
-    for (let [index, dnsApiOption] of dnsApiOptions.value.entries()) {
+    for (const [index, dnsApiOption] of dnsApiOptions.value.entries()) {
       if (!dnsApiOption.key) {
         dnsApiOptionsKeyValidationErrors.value[index] = t('error.required')
         validDnsOptions = false
@@ -224,9 +224,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.certificates.add_lets_encrypt_certificate')"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -238,8 +238,8 @@ watch(
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="10" size="lg" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="10" size="lg" />
+    <div v-else class="flex flex-col gap-y-6">
       <NeTextInput
         v-model="certificateName"
         :label="t('standalone.certificates.certificate_name')"
@@ -267,9 +267,9 @@ watch(
       </div>
       <template v-if="showAdvancedSettings">
         <NeRadioSelection
+          v-model="validationMethod"
           :label="t('standalone.certificates.validation_method')"
           :options="validationMethodOptions"
-          v-model="validationMethod"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -280,15 +280,15 @@ watch(
         >
         <template v-if="validationMethod === 'dns'">
           <NeCombobox
+            v-model="dnsApi"
             :label="t('standalone.certificates.dns_api')"
             :options="dnsApiComboboxOptions"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            v-model="dnsApi"
+            :optional-label="t('common.optional')"
             :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('dns_provider'))"
             :placeholder="t('standalone.certificates.choose_or_type_dns_api')"
             ><template #tooltip>
@@ -301,7 +301,7 @@ watch(
                   >
                     <template #dnsapiurl>
                       <NeLink
-                        invertedTheme
+                        inverted-theme
                         href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi"
                         target="_blank"
                         >https://github.com/acmesh-official/acme.sh/wiki/dnsapi</NeLink
@@ -335,9 +335,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createCertificate()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createCertificate()"
           >{{ t('standalone.certificates.add_certificate') }}</NeButton
         >
       </div>

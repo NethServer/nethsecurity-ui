@@ -173,7 +173,7 @@ async function toggleEnablePortForward(item: PortForward) {
 async function duplicatePortForward(item: PortForward) {
   try {
     cleanError()
-    let payload: CreateEditPortForwardPayload = {
+    const payload: CreateEditPortForwardPayload = {
       dest_ip: item.dest_ip,
       ns_dst: item.ns_dst || '',
       proto: item.protocol,
@@ -250,9 +250,9 @@ onMounted(() => {
       </p>
       <div class="ml-2 shrink-0">
         <NeButton
+          v-if="Object.keys(portForwards).length > 0"
           kind="secondary"
           @click="openCreateEditDrawer(null)"
-          v-if="Object.keys(portForwards).length > 0"
         >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
@@ -262,15 +262,15 @@ onMounted(() => {
       </div>
     </div>
     <NeTextInput
+      v-model="filter"
       class="max-w-xs"
       :placeholder="t('standalone.port_forward.filter')"
-      v-model="filter"
     />
     <NeInlineNotification
+      v-if="error.notificationDescription"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationDescription"
     >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
@@ -283,9 +283,9 @@ onMounted(() => {
     />
     <template v-else>
       <NeEmptyState
+        v-if="Object.keys(portForwards).length == 0"
         :title="t('standalone.port_forward.no_port_forward_found')"
         :icon="['fas', 'circle-info']"
-        v-if="Object.keys(portForwards).length == 0"
         ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
           ><template #prefix>
             <font-awesome-icon
@@ -297,14 +297,14 @@ onMounted(() => {
         ></NeEmptyState
       >
       <NeEmptyState
+        v-else-if="Object.keys(filteredPortForwards).length == 0"
         :title="t('standalone.port_forward.no_port_forward_found')"
         :description="t('standalone.port_forward.filter_change_suggestion')"
         :icon="['fas', 'circle-info']"
-        v-else-if="Object.keys(filteredPortForwards).length == 0"
       />
       <PortForwardTable
-        v-else
         v-for="(portForward, key) in filteredPortForwards"
+        v-else
         :key="key"
         :port-forwards="portForward"
         :header="getPortForwardHeader(portForward, key)"
@@ -327,16 +327,16 @@ onMounted(() => {
   <DeleteModal
     :visible="showDeleteModal"
     :title="t('standalone.port_forward.delete_port_forward')"
-    :deleteButtonLabel="t('standalone.port_forward.delete_port_forward')"
-    :errorNotificationTitle="t('error.cannot_delete_port_forward')"
-    :deleteFunction="
+    :delete-button-label="t('standalone.port_forward.delete_port_forward')"
+    :error-notification-title="t('error.cannot_delete_port_forward')"
+    :delete-function="
       () =>
         ubusCall('ns.redirects', 'delete-redirect', {
           id: selectedItem?.id
         })
     "
     @close="closeDeleteModal()"
-    @reloadData="loadData"
+    @reload-data="loadData"
   >
     {{ t('standalone.port_forward.delete_port_forward_message', { name: selectedItem?.name }) }}
   </DeleteModal>

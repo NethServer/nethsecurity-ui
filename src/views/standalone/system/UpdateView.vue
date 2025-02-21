@@ -219,7 +219,7 @@ onMounted(() => {
     :description="error.notificationDescription"
     class="my-4"
     kind="error"
-    ><template #details v-if="error.notificationDetails">
+    ><template v-if="error.notificationDetails" #details>
       {{ error.notificationDetails }}
     </template></NeInlineNotification
   >
@@ -231,7 +231,7 @@ onMounted(() => {
   >
     <NeSkeleton v-if="loading" :lines="5" />
     <template v-else
-      ><p class="mb-4 text-sm text-gray-500 dark:text-gray-400" v-if="lastPackageUpdateCheck">
+      ><p v-if="lastPackageUpdateCheck" class="mb-4 text-sm text-gray-500 dark:text-gray-400">
         {{
           t('standalone.update.updated_at', {
             lastCheck: lastPackageUpdateCheck.toLocaleString([], {
@@ -245,9 +245,9 @@ onMounted(() => {
         }}
       </p>
       <NeButton
-        @click="checkPackageUpdates"
         :disabled="isCheckingPackageUpdates || disableRemoteUpdates"
         :loading="isCheckingPackageUpdates"
+        @click="checkPackageUpdates"
       >
         <template #prefix>
           <font-awesome-icon
@@ -257,18 +257,18 @@ onMounted(() => {
         >{{ t('standalone.update.check_for_fixes') }}</NeButton
       >
       <NeInlineNotification
+        v-if="noPackageUpdatesAvailable"
         kind="success"
         class="my-6"
-        v-if="noPackageUpdatesAvailable"
         :description="t('standalone.update.all_updates_installed_notification')"
       />
       <div class="mt-6">
         <NeToggle
           v-model="automaticUpdatesEnabled"
           :disabled="!isSubscriptionActive || isChangingAutomaticUpdatesSetting"
-          @update:model-value="handleAutomaticUpdatesToggle"
           :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
           :top-label="t('standalone.update.automatic_updates')"
+          @update:model-value="handleAutomaticUpdatesToggle"
         >
           <template #topTooltip>
             <NeTooltip>
@@ -277,7 +277,7 @@ onMounted(() => {
                   {{ t('standalone.update.automatic_updates_tooltip') }}
                 </p>
                 <NeLink
-                  invertedTheme
+                  inverted-theme
                   @click="
                     () => {
                       router.push(`${getStandaloneRoutePrefix()}/system/subscription`)
@@ -324,9 +324,9 @@ onMounted(() => {
         {{ t('standalone.update.installed_release', { release: systemUpdateData.currentVersion }) }}
       </p>
       <NeInlineNotification
+        v-if="scheduleDate"
         kind="info"
         class="my-6"
-        v-if="scheduleDate"
         :title="t('standalone.update.system_update_scheduled')"
         :description="
           t('standalone.update.system_update_scheduled_description', {
@@ -346,24 +346,24 @@ onMounted(() => {
         @primary-click="showEditScheduleDrawer"
       />
       <NeInlineNotification
-        kind="info"
-        class="my-6"
         v-else-if="
           systemUpdateData?.lastVersion &&
           systemUpdateData.lastVersion != systemUpdateData?.currentVersion
         "
+        kind="info"
+        class="my-6"
         :title="t('standalone.update.new_release_available')"
         :description="systemUpdateData?.lastVersion"
       />
       <div class="mt-4">
         <NeButton
-          kind="primary"
-          class="mb-2 mr-4"
           v-if="
             systemUpdateData?.lastVersion &&
             systemUpdateData.lastVersion != systemUpdateData?.currentVersion &&
             !scheduleDate
           "
+          kind="primary"
+          class="mb-2 mr-4"
           :disabled="disableRemoteUpdates"
           @click="showEditScheduleDrawer"
           ><template #prefix>
@@ -373,7 +373,7 @@ onMounted(() => {
               aria-hidden="true" /></template
           >{{ t('standalone.update.update_system') }}</NeButton
         >
-        <NeButton kind="tertiary" v-if="!scheduleDate" @click="showUploadImageDrawer = true"
+        <NeButton v-if="!scheduleDate" kind="tertiary" @click="showUploadImageDrawer = true"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-arrow-up']"
@@ -410,7 +410,7 @@ onMounted(() => {
       kind="error"
       class="my-6"
     >
-      <template #details v-if="cancelScheduleError.notificationDetails">
+      <template v-if="cancelScheduleError.notificationDetails" #details>
         {{ cancelScheduleError.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -423,9 +423,9 @@ onMounted(() => {
   />
   <ScheduleUpdateDrawer
     :is-shown="showScheduleUpdateDrawer"
-    @close="showScheduleUpdateDrawer = false"
     :update-version="systemUpdateData?.lastVersion ?? ''"
     :schedule-to-edit="scheduleDate"
+    @close="showScheduleUpdateDrawer = false"
     @schedule-saved="fetchUpdatesStatus"
     @system-update-requested="isApplyingSystemUpdate = true"
   />

@@ -57,7 +57,7 @@ function getDropdownItems(item: ControllerAccount) {
 </script>
 
 <template>
-  <NeTable :ariaLabel="t('controller.users.title')" cardBreakpoint="md">
+  <NeTable :aria-label="t('controller.users.title')" card-breakpoint="md">
     <NeTableHead>
       <NeTableHeadCell>
         {{ t('controller.users.username') }}
@@ -124,7 +124,7 @@ function getDropdownItems(item: ControllerAccount) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

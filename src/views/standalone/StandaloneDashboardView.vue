@@ -38,7 +38,7 @@ function goTo(path: string) {
     <!-- internet connection -->
     <InternetConnectionCard />
     <!-- multiwan -->
-    <ServiceCard serviceName="mwan" hasStatus :icon="['fas', 'earth-americas']">
+    <ServiceCard service-name="mwan" has-status :icon="['fas', 'earth-americas']">
       <template #title>
         <NeLink @click="goTo('/network/multi-wan')">
           {{ t('standalone.dashboard.multiwan') }}
@@ -47,15 +47,15 @@ function goTo(path: string) {
     </ServiceCard>
     <!-- dpi-core -->
     <ServiceCard
-      serviceName="netifyd"
-      hasStatus
+      service-name="netifyd"
+      has-status
       :title="t('standalone.dashboard.dpi_core')"
       :icon="['fas', 'bolt']"
     />
     <!-- openvpn rw -->
     <ServiceCard
-      serviceName="openvpn_rw"
-      hasStatus
+      service-name="openvpn_rw"
+      has-status
       :counter="{
         name: 'openvpn_rw',
         label: t('standalone.dashboard.clients_connected')
@@ -89,7 +89,7 @@ function goTo(path: string) {
     <!-- IPS -->
     <IpsServiceCard />
     <!-- threat shield dns -->
-    <ServiceCard serviceName="threat_shield_dns" hasStatus :icon="['fas', 'shield']">
+    <ServiceCard service-name="threat_shield_dns" has-status :icon="['fas', 'shield']">
       <template #title>
         <NeLink @click="goTo('/security/threat-shield-dns')">
           {{ t('standalone.threat_shield_dns.title') }}
@@ -97,7 +97,7 @@ function goTo(path: string) {
       </template>
     </ServiceCard>
     <!-- hotspot -->
-    <ServiceCard serviceName="dedalo" hasStatus :icon="['fas', 'wifi']">
+    <ServiceCard service-name="dedalo" has-status :icon="['fas', 'wifi']">
       <template #title>
         <NeLink @click="goTo('/network/hotspot')">
           {{ t('standalone.dashboard.hotspot') }}
@@ -106,7 +106,7 @@ function goTo(path: string) {
     </ServiceCard>
     <!-- known hosts -->
     <ServiceCard
-      serviceName="hosts"
+      service-name="hosts"
       :counter="{
         name: 'hosts',
         label: ''

@@ -58,11 +58,11 @@ function getDropdownItems(rule: NatRule) {
 <template>
   <div>
     <NeTable
-      :ariaLabel="t('standalone.nat.nat_rules')"
-      cardBreakpoint="xl"
+      :aria-label="t('standalone.nat.nat_rules')"
+      card-breakpoint="xl"
       :loading="loading"
-      :skeletonColumns="6"
-      :skeletonRows="3"
+      :skeleton-columns="6"
+      :skeleton-rows="3"
     >
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.nat.name') }}</NeTableHeadCell>
@@ -89,7 +89,7 @@ function getDropdownItems(rule: NatRule) {
               v-else
               :text="item.src.toUpperCase()"
               kind="custom"
-              :customColorClasses="getZoneColorClasses(item.src)"
+              :custom-color-classes="getZoneColorClasses(item.src)"
             />
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.nat.destination_address')">
@@ -134,7 +134,7 @@ function getDropdownItems(rule: NatRule) {
               currentPage = page
             }
           "
-          @selectPageSize="
+          @select-page-size="
             (size: number) => {
               pageSize = size
             }

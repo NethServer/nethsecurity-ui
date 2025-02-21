@@ -156,14 +156,14 @@ const destinationTypeOptions = ref([
   }
 ])
 
-let loading = ref({
+const loading = ref({
   listServiceSuggestions: false,
   listObjectSuggestions: false,
   listProtocols: false,
   saveRule: false
 })
 
-let error = ref({
+const error = ref({
   listServiceSuggestions: '',
   listServiceSuggestionsDetails: '',
   listObjectSuggestions: '',
@@ -535,7 +535,7 @@ function validate() {
 
   if (props.ruleType !== 'output') {
     if (sourceType.value === 'source_address') {
-      for (let [index, sourceAddress] of sourceAddresses.value.entries()) {
+      for (const [index, sourceAddress] of sourceAddresses.value.entries()) {
         // required
 
         const sourceAddressRequiredValidation = validateRequired(sourceAddress)
@@ -586,7 +586,7 @@ function validate() {
 
   if (props.ruleType !== 'input') {
     if (destinationType.value === 'destination_address') {
-      for (let [index, destinationAddress] of destinationAddresses.value.entries()) {
+      for (const [index, destinationAddress] of destinationAddresses.value.entries()) {
         // required
 
         const destinationAddressRequiredValidation = validateRequired(destinationAddress)
@@ -647,7 +647,7 @@ function validate() {
   if (service.value === 'custom') {
     // protocols
 
-    let protocolsValidation = validateRequiredOption(protocols.value)
+    const protocolsValidation = validateRequiredOption(protocols.value)
     if (!protocolsValidation.valid) {
       errorBag.value.set('proto', [t(String(protocolsValidation.errMessage))])
       isValidationOk = false
@@ -784,9 +784,9 @@ async function saveRule() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="drawerTitle"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
@@ -802,16 +802,16 @@ async function saveRule() {
         <NeToggle
           v-model="isRuleEnabled"
           :label="isRuleEnabled ? t('common.enabled') : t('common.disabled')"
-          :topLabel="t('common.status')"
+          :top-label="t('common.status')"
           :disabled="loading.saveRule"
         />
         <!-- rule name -->
         <NeTextInput
-          :label="t('standalone.firewall_rules.rule_name')"
-          v-model.trim="name"
-          :invalidMessage="errorBag.getFirstFor('name')"
-          :disabled="loading.saveRule"
           ref="nameRef"
+          v-model.trim="name"
+          :label="t('standalone.firewall_rules.rule_name')"
+          :invalid-message="errorBag.getFirstFor('name')"
+          :disabled="loading.saveRule"
         />
         <!-- listObjectSuggestions error notification -->
         <NeInlineNotification
@@ -820,7 +820,7 @@ async function saveRule() {
           :title="t('error.cannot_retrieve_host_suggestions')"
           :description="error.listObjectSuggestions"
         >
-          <template #details v-if="error.listObjectSuggestionsDetails">
+          <template v-if="error.listObjectSuggestionsDetails" #details>
             {{ error.listObjectSuggestionsDetails }}
           </template></NeInlineNotification
         >
@@ -849,7 +849,7 @@ async function saveRule() {
             :invalid-messages="sourceAddressesErrors"
             :general-invalid-message="t(errorBag.getFirstFor('src_ip'))"
             required
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -862,6 +862,7 @@ async function saveRule() {
           <!-- source object -->
           <NeCombobox
             v-show="sourceType === 'source_object'"
+            ref="sourceAddressObjectRef"
             v-model="sourceAddressObject"
             :disabled="loading.saveRule || loading.listObjectSuggestions"
             :label="t('standalone.firewall_rules.source_object')"
@@ -869,29 +870,28 @@ async function saveRule() {
             :placeholder="
               loading.listObjectSuggestions ? t('common.loading') : t('ne_combobox.choose')
             "
-            :invalidMessage="errorBag.getFirstFor('ns_src')"
-            :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :invalid-message="errorBag.getFirstFor('ns_src')"
+            :optional-label="t('common.optional')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            ref="sourceAddressObjectRef"
           />
           <!-- source zone -->
           <NeCombobox
+            ref="sourceZoneRef"
             v-model="sourceZone"
             :disabled="loading.saveRule"
             :label="t('standalone.firewall_rules.source_zone')"
             :options="zoneOptions"
-            :invalidMessage="errorBag.getFirstFor('src')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :invalid-message="errorBag.getFirstFor('src')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="sourceZoneRef"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -928,7 +928,7 @@ async function saveRule() {
             :invalid-messages="destinationAddressesErrors"
             :general-invalid-message="t(errorBag.getFirstFor('dest_ip'))"
             required
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -941,6 +941,7 @@ async function saveRule() {
           <!-- destination object -->
           <NeCombobox
             v-show="destinationType === 'destination_object'"
+            ref="destinationAddressObjectRef"
             v-model="destinationAddressObject"
             :disabled="loading.saveRule || loading.listObjectSuggestions"
             :label="t('standalone.firewall_rules.destination_object')"
@@ -948,29 +949,28 @@ async function saveRule() {
             :placeholder="
               loading.listObjectSuggestions ? t('common.loading') : t('ne_combobox.choose')
             "
-            :invalidMessage="t(errorBag.getFirstI18nKeyFor('ns_dst'))"
-            :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :invalid-message="t(errorBag.getFirstI18nKeyFor('ns_dst'))"
+            :optional-label="t('common.optional')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            ref="destinationAddressObjectRef"
           />
           <!-- destination zone -->
           <NeCombobox
+            ref="destinationZoneRef"
             v-model="destinationZone"
             :disabled="loading.saveRule"
             :label="t('standalone.firewall_rules.destination_zone')"
             :options="zoneOptions"
-            :invalidMessage="errorBag.getFirstFor('dest')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :invalid-message="errorBag.getFirstFor('dest')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="destinationZoneRef"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -989,24 +989,24 @@ async function saveRule() {
           :title="t('error.cannot_retrieve_service_suggestions')"
           :description="error.listServiceSuggestions"
         >
-          <template #details v-if="error.listServiceSuggestionsDetails">
+          <template v-if="error.listServiceSuggestionsDetails" #details>
             {{ error.listServiceSuggestionsDetails }}
           </template></NeInlineNotification
         >
         <!-- service -->
         <NeCombobox
+          ref="serviceRef"
           v-model="service"
           :disabled="loading.saveRule || loading.listServiceSuggestions"
           :label="t('standalone.firewall_rules.destination_service')"
           :options="serviceOptions"
-          :invalidMessage="errorBag.getFirstFor('ns_service')"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :invalid-message="errorBag.getFirstFor('ns_service')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
-          ref="serviceRef"
+          :optional-label="t('common.optional')"
         />
         <template v-if="service === 'custom'">
           <!-- listProtocols error notification -->
@@ -1016,36 +1016,36 @@ async function saveRule() {
             :title="t('error.cannot_retrieve_protocols')"
             :description="error.listProtocols"
           >
-            <template #details v-if="error.listProtocolsDetails">
+            <template v-if="error.listProtocolsDetails" #details>
               {{ error.listProtocolsDetails }}
             </template></NeInlineNotification
           >
           <!-- protocols -->
           <NeCombobox
+            ref="protocolsRef"
             v-model="protocols"
             :disabled="loading.saveRule || loading.listProtocols"
             :label="t('standalone.firewall_rules.protocols')"
             :placeholder="loading.listProtocols ? t('common.loading') : t('ne_combobox.choose')"
             :options="protocolOptions"
-            :invalidMessage="errorBag.getFirstFor('proto')"
+            :invalid-message="errorBag.getFirstFor('proto')"
             multiple
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="protocolsRef"
+            :optional-label="t('common.optional')"
           />
           <!-- ports -->
           <NeTextInput
             v-if="isTcpOrUdpProtocolSelected"
+            ref="portsRef"
+            v-model.trim="ports"
             :label="t('standalone.firewall_rules.ports')"
             :placeholder="t('standalone.firewall_rules.ports_placeholder')"
-            v-model.trim="ports"
             :disabled="loading.saveRule"
-            :invalidMessage="errorBag.getFirstFor('dest_port')"
-            ref="portsRef"
+            :invalid-message="errorBag.getFirstFor('dest_port')"
           >
             <template #tooltip>
               <NeTooltip placement="top-start">
@@ -1073,8 +1073,8 @@ async function saveRule() {
         <NeButton
           kind="tertiary"
           size="sm"
-          @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
           class="-ml-2"
+          @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
         >
           <template #suffix>
             <font-awesome-icon
@@ -1095,12 +1095,12 @@ async function saveRule() {
               :options="knownTags"
               :placeholder="t('ne_combobox.choose_or_enter_multiple')"
               multiple
-              acceptUserInput
+              accept-user-input
               optional
-              :optionalLabel="t('common.optional')"
-              :noResultsLabel="t('ne_combobox.no_results')"
-              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-              :noOptionsLabel="t('ne_combobox.no_options_label')"
+              :optional-label="t('common.optional')"
+              :no-results-label="t('ne_combobox.no_results')"
+              :limited-options-label="t('ne_combobox.limited_options_label')"
+              :no-options-label="t('ne_combobox.no_options_label')"
               :selected-label="t('ne_combobox.selected')"
               :user-input-label="t('ne_combobox.user_input_label')"
             >
@@ -1114,7 +1114,7 @@ async function saveRule() {
             <NeToggle
               v-model="isLoggingEnabled"
               :label="isLoggingEnabled ? t('common.enabled') : t('common.disabled')"
-              :topLabel="t('standalone.firewall_rules.logging')"
+              :top-label="t('standalone.firewall_rules.logging')"
               :disabled="loading.saveRule"
             >
               <template #tooltip>
@@ -1132,7 +1132,7 @@ async function saveRule() {
           :title="t('error.cannot_save_firewall_rule')"
           :description="error.saveRule"
         >
-          <template #details v-if="error.saveRuleDetails">
+          <template v-if="error.saveRuleDetails" #details>
             {{ error.saveRuleDetails }}
           </template></NeInlineNotification
         >
@@ -1143,18 +1143,18 @@ async function saveRule() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.saveRule"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveRule"
           :disabled="loading.saveRule"
           :loading="loading.saveRule"
+          @click.prevent="saveRule"
         >
           {{
             isCreatingRule

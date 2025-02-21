@@ -77,8 +77,8 @@ async function getClientSessions() {
 <template>
   <NeCard :title="t('standalone.real_time_monitor.daily_connections')">
     <NeTable
-      :ariaLabel="t('standalone.real_time_monitor.daily_connections')"
-      cardBreakpoint="sm"
+      :aria-label="t('standalone.real_time_monitor.daily_connections')"
+      card-breakpoint="sm"
       class="mt-2"
     >
       <NeTableHead>
@@ -96,7 +96,7 @@ async function getClientSessions() {
             />
           </NeTableCell>
         </NeTableRow>
-        <NeTableRow v-else v-for="(item, index) in paginatedItems" :key="index">
+        <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
           <NeTableCell :data-label="t('standalone.real_time_monitor.account')">
             {{ item.common_name }}
           </NeTableCell>
@@ -121,7 +121,7 @@ async function getClientSessions() {
               currentPage = page
             }
           "
-          @selectPageSize="
+          @select-page-size="
             (size: number) => {
               pageSize = size
             }

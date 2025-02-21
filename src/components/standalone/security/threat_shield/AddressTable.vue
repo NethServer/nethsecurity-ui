@@ -55,7 +55,7 @@ function getDropdownItems(item: BanIpLocalAddress) {
 
 <template>
   <NeTable
-    :ariaLabel="
+    :aria-label="
       addressKind == 'block'
         ? t('standalone.threat_shield.blocked_addresses')
         : t('standalone.threat_shield.allowed_addresses')
@@ -123,7 +123,7 @@ function getDropdownItems(item: BanIpLocalAddress) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

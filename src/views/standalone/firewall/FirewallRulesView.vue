@@ -36,11 +36,11 @@ const rulesType = computed(() => {
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"
-      :srTabsLabel="t('ne_tabs.tabs')"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      @selectTab="selectedTab = $event"
+      :sr-tabs-label="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
       class="mb-8"
+      @select-tab="selectedTab = $event"
     />
-    <FirewallRulesContent :rulesType="rulesType" />
+    <FirewallRulesContent :rules-type="rulesType" />
   </div>
 </template>

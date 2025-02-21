@@ -62,11 +62,11 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.dpi.delete_exception')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteException()"
+    @primary-click="deleteException()"
     @close="close()"
   >
     {{
@@ -80,7 +80,7 @@ function close() {
       :title="t('error.cannot_delete_dpi_exception')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

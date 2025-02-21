@@ -143,7 +143,7 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
           {{ local }}{{ item.local_network.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
-      <p :class="[...getCellClasses(item)]" v-else>-</p>
+      <p v-else :class="[...getCellClasses(item)]">-</p>
     </template>
     <template #remote_networks="{ item }: { item: ServerTunnel | ClientTunnel }">
       <template v-if="item.remote_network.length > 0">
@@ -155,7 +155,7 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
           {{ remote }}{{ item.remote_network.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
-      <p :class="[...getCellClasses(item)]" v-else>-</p>
+      <p v-else :class="[...getCellClasses(item)]">-</p>
     </template>
     <template v-if="props.isClientTunnel" #remote_hosts="{ item }: { item: ClientTunnel }">
       <template v-if="item.remote_host.length > 0">

@@ -70,7 +70,7 @@ function handleClose() {
     :visible="visible"
     kind="warning"
     @close="handleClose"
-    @primaryClick="submit"
+    @primary-click="submit"
   >
     <div class="space-y-4">
       <NeInlineNotification

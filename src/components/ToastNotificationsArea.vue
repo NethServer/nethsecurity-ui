@@ -33,8 +33,8 @@ const notificationsToShow = computed(() => {
               v-for="notification in notificationsToShow"
               :key="notification.id"
               :notification="notification"
-              :srCloseLabel="t('common.close')"
-              showCloseButton
+              :sr-close-label="t('common.close')"
+              show-close-button
               @close="notificationsStore.hideNotification(notification.id)"
             />
           </TransitionGroup>

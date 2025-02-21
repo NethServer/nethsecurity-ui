@@ -125,33 +125,33 @@ async function saveBlockedDomain() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       currentDomain
         ? t('standalone.threat_shield_dns.edit_domain')
         : t('standalone.threat_shield_dns.add_domain')
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
       <div class="space-y-6">
         <!-- domain -->
         <NeTextInput
-          :label="t('standalone.threat_shield_dns.domain')"
-          v-model.trim="domain"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('address'))"
-          :disabled="tsStore.loadingSaveDnsBlockedDomain || !!currentDomain"
           ref="domainRef"
+          v-model.trim="domain"
+          :label="t('standalone.threat_shield_dns.domain')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('address'))"
+          :disabled="tsStore.loadingSaveDnsBlockedDomain || !!currentDomain"
         />
         <!-- description -->
         <NeTextInput
-          :label="t('standalone.threat_shield_dns.description')"
+          ref="descriptionRef"
           v-model.trim="description"
+          :label="t('standalone.threat_shield_dns.description')"
           :disabled="tsStore.loadingSaveDnsBlockedDomain"
           optional
-          :optionalLabel="t('common.optional')"
-          ref="descriptionRef"
+          :optional-label="t('common.optional')"
         />
         <!-- save error -->
         <NeInlineNotification
@@ -160,7 +160,7 @@ async function saveBlockedDomain() {
           :title="t('error.cannot_save_blocked_domain')"
           :description="tsStore.errorSaveDnsBlockedDomain"
         >
-          <template #details v-if="tsStore.errorSaveDnsBlockedDomainDetails">
+          <template v-if="tsStore.errorSaveDnsBlockedDomainDetails" #details>
             {{ tsStore.errorSaveDnsBlockedDomainDetails }}
           </template>
         </NeInlineNotification>
@@ -171,18 +171,18 @@ async function saveBlockedDomain() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="tsStore.loadingSaveDnsBlockedDomain"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveBlockedDomain"
           :disabled="tsStore.loadingSaveDnsBlockedDomain"
           :loading="tsStore.loadingSaveDnsBlockedDomain"
+          @click.prevent="saveBlockedDomain"
         >
           {{
             currentDomain

@@ -90,7 +90,7 @@ function clearFilter() {
         :title="t('error.cannot_retrieve_blocked_domains')"
         :description="tsStore.errorListDnsBlockedDomains"
       >
-        <template #details v-if="tsStore.errorListDnsBlockedDomainsDetails">
+        <template v-if="tsStore.errorListDnsBlockedDomainsDetails" #details>
           {{ tsStore.errorListDnsBlockedDomainsDetails }}
         </template>
       </NeInlineNotification>
@@ -105,8 +105,8 @@ function clearFilter() {
             class="flex flex-col-reverse items-start justify-between gap-6 sm:flex-row sm:items-center"
           >
             <NeTextInput
-              :placeholder="t('common.filter')"
               v-model.trim="textFilter"
+              :placeholder="t('common.filter')"
               is-search
               :disabled="
                 tsStore.loadingListDnsBlockedDomains || tsStore.loadingListDnsBlockedDomains
@@ -137,32 +137,32 @@ function clearFilter() {
           <!-- blocked domains table -->
           <BlockedDomainsTable
             v-else
-            :filteredDomains="filteredDomains"
+            :filtered-domains="filteredDomains"
             :loading="tsStore.loadingListDnsBlockedDomains"
-            @editDomain="showEditBlockedDomainDrawer"
-            @deleteDomain="showDeleteBlockedDomainModal"
-            @reloadData="loadData"
-            @clearFilters="clearFilter"
+            @edit-domain="showEditBlockedDomainDrawer"
+            @delete-domain="showDeleteBlockedDomainModal"
+            @reload-data="loadData"
+            @clear-filters="clearFilter"
           />
         </template>
       </template>
     </div>
     <!-- create blocked domain -->
     <CreateOrEditBlockedDomainDrawer
-      :isShown="isShownCreateOrEditDomainDrawer"
-      :currentDomain="currentDomain"
+      :is-shown="isShownCreateOrEditDomainDrawer"
+      :current-domain="currentDomain"
       @close="isShownCreateOrEditDomainDrawer = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete blocked domain modal -->
     <DeleteModal
       :visible="isShownDeleteDomainModal"
       :title="t('standalone.threat_shield_dns.delete_domain')"
-      :deleteButtonLabel="t('standalone.threat_shield_dns.delete_domain')"
-      :errorNotificationTitle="t('error.cannot_delete_blocked_domain')"
-      :deleteFunction="() => tsStore.deleteDnsBlockedDomain(currentDomain?.address || '')"
+      :delete-button-label="t('standalone.threat_shield_dns.delete_domain')"
+      :error-notification-title="t('error.cannot_delete_blocked_domain')"
+      :delete-function="() => tsStore.deleteDnsBlockedDomain(currentDomain?.address || '')"
       @close="isShownDeleteDomainModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     >
       {{
         t('standalone.threat_shield_dns.confirm_delete_domain', { name: currentDomain?.address })

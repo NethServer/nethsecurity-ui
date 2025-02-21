@@ -30,13 +30,13 @@ const serviceCounter = ref<any>(null)
 const threatShieldConfig = ref<any>(null)
 const intervalId = ref(0)
 
-let loading = ref({
+const loading = ref({
   getServiceStatus: false,
   getServiceCounter: false,
   getThreatShieldConfig: false
 })
 
-let error = ref({
+const error = ref({
   title: '',
   description: ''
 })
@@ -170,10 +170,10 @@ function goTo(path: string) {
 <template>
   <NeCard
     :icon="['fas', 'shield']"
-    :skeletonLines="2"
+    :skeleton-lines="2"
     :loading="loading.getServiceStatus || loading.getServiceCounter"
-    :errorTitle="error.title"
-    :errorDescription="error.description"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <!-- title slot -->
     <template #title>
@@ -200,7 +200,7 @@ function goTo(path: string) {
         <template #content>
           <i18n-t keypath="standalone.dashboard.monitoring_disabled_tooltip" tag="p" scope="global">
             <template #page>
-              <NeLink invertedTheme @click="goTo('/security/threat-shield-ip?tab=settings')">
+              <NeLink inverted-theme @click="goTo('/security/threat-shield-ip?tab=settings')">
                 {{ t('standalone.threat_shield.settings') }}
               </NeLink>
             </template>

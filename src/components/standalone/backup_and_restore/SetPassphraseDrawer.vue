@@ -49,7 +49,7 @@ const formPassphrase = ref({
 
 const loading = ref(false)
 
-let errorSetPassphrase = ref({
+const errorSetPassphrase = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -58,7 +58,7 @@ let errorSetPassphrase = ref({
 async function setPassphrase() {
   loading.value = true
 
-  let payload = {
+  const payload = {
     passphrase: formPassphrase.value.passphrase
   }
 
@@ -90,8 +90,8 @@ async function setPassphrase() {
       <NeTextInput
         v-model="formPassphrase.passphrase"
         :label="t('standalone.backup_and_restore.backup.passphrase')"
-        isPassword
-        :helperText="t('standalone.backup_and_restore.backup.passphrase_reser_helper')"
+        is-password
+        :helper-text="t('standalone.backup_and_restore.backup.passphrase_reser_helper')"
         :placeholder="isSetPassphrase ? t('standalone.backup_and_restore.backup.unchanged') : ''"
       >
         <template #tooltip>

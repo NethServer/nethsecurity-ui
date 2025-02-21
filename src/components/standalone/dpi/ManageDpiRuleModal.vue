@@ -66,7 +66,7 @@ const selectedAppFlags = ref<Record<string, boolean>>({})
 const appSearchResults = ref<DpiAppOrProtocol[]>([])
 const interfaceRef = ref()
 
-let loading = ref({
+const loading = ref({
   listApplications: false,
   listDevices: false,
   listPopularApps: false,
@@ -74,7 +74,7 @@ let loading = ref({
   editRule: false
 })
 
-let error = ref({
+const error = ref({
   interface: '',
   listApplicationsErrorTitle: '',
   listApplicationsErrorDescription: '',
@@ -453,13 +453,13 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
     :visible="visible"
     size="xxl"
     :title="isCreating ? t('standalone.dpi.create_rule') : t('standalone.dpi.edit_rule')"
-    :primaryLabel="isCreating ? t('standalone.dpi.create_rule') : t('standalone.dpi.save_rule')"
-    :cancelLabel="t('common.cancel')"
-    :primaryButtonDisabled="loading.addRule || loading.editRule"
-    :primaryButtonLoading="loading.addRule || loading.editRule"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="isCreating ? t('standalone.dpi.create_rule') : t('standalone.dpi.save_rule')"
+    :cancel-label="t('common.cancel')"
+    :primary-button-disabled="loading.addRule || loading.editRule"
+    :primary-button-loading="loading.addRule || loading.editRule"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="isCreating ? addRule() : editRule()"
+    @primary-click="isCreating ? addRule() : editRule()"
   >
     <div class="space-y-6">
       <!-- status -->
@@ -471,25 +471,25 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         :title="error.listDevicesErrorTitle"
         :description="error.listDevicesErrorDescription"
       >
-        <template #details v-if="error.listDevicesErrorDetails">
+        <template v-if="error.listDevicesErrorDetails" #details>
           {{ error.listDevicesErrorDetails }}
         </template>
       </NeInlineNotification>
       <!-- source interface -->
       <NeCombobox
+        ref="interfaceRef"
         v-model="sourceIface"
         :options="interfaces"
         :label="t('standalone.dpi.source')"
         :placeholder="t('standalone.dpi.choose_interface')"
         :invalid-message="t(errorBag.getFirstI18nKeyFor('interface'))"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('standalone.dpi.no_interfaces_available')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('standalone.dpi.no_interfaces_available')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
         class="max-w-xs"
-        ref="interfaceRef"
       >
         <template #tooltip>
           <NeTooltip placement="right-end">
@@ -501,8 +501,9 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         <div class="mb-2 flex flex-col justify-between lg:flex-row lg:items-end">
           <div class="flex items-end">
             <NeTextInput
-              :label="t('standalone.dpi.apps_and_protocols')"
+              ref="searchQueryRef"
               v-model.trim="searchQuery"
+              :label="t('standalone.dpi.apps_and_protocols')"
               :disabled="loading.listPopularApps"
               :placeholder="
                 totalNumApps
@@ -510,7 +511,6 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
                   : ''
               "
               class="w-96"
-              ref="searchQueryRef"
             />
           </div>
           <div class="mb-2 mt-4">
@@ -531,7 +531,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
             :title="error.listPopularAppsErrorTitle"
             :description="error.listPopularAppsErrorDescription"
           >
-            <template #details v-if="error.listPopularAppsErrorDetails">
+            <template v-if="error.listPopularAppsErrorDetails" #details>
               {{ error.listPopularAppsErrorDetails }}
             </template>
           </NeInlineNotification>
@@ -542,7 +542,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
             :title="error.listApplicationsErrorTitle"
             :description="error.listApplicationsErrorDescription"
           >
-            <template #details v-if="error.listApplicationsErrorDetails">
+            <template v-if="error.listApplicationsErrorDetails" #details>
               {{ error.listApplicationsErrorDetails }}
             </template>
           </NeInlineNotification>
@@ -581,7 +581,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
                 v-for="app in appsToDisplay"
                 :key="app.id"
                 :class="{ 'opacity-50': app.missing }"
-                alternateBackground
+                alternate-background
               >
                 <div class="flex min-w-0 grow items-center justify-between">
                   <div class="flex min-w-0 items-center gap-4">
@@ -606,10 +606,10 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
                     </div>
                   </div>
                   <NeToggle
-                    :disabled="app.missing"
-                    @change="onChange($event, app)"
                     v-model="selectedAppFlags[app.name]"
+                    :disabled="app.missing"
                     class="relative left-3"
+                    @change="onChange($event, app)"
                   />
                 </div>
               </NeCard>
@@ -638,7 +638,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         :title="error.addRuleErrorTitle"
         :description="error.addRuleErrorDescription"
       >
-        <template #details v-if="error.addRuleErrorDetails">
+        <template v-if="error.addRuleErrorDetails" #details>
           {{ error.addRuleErrorDetails }}
         </template>
       </NeInlineNotification>
@@ -648,7 +648,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
         :title="error.editRuleErrorTitle"
         :description="error.editRuleErrorDescription"
       >
-        <template #details v-if="error.editRuleErrorDetails">
+        <template v-if="error.editRuleErrorDetails" #details>
           {{ error.editRuleErrorDetails }}
         </template>
       </NeInlineNotification>

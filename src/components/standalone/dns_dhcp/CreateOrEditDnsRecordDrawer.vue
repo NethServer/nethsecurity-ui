@@ -70,7 +70,7 @@ function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [t(validator.errMessage as string)])
     }
@@ -104,7 +104,7 @@ async function createOrEditDnsRecord() {
     const requestType = isEditing ? 'edit-record' : 'add-record'
 
     if (validate()) {
-      let payload: {
+      const payload: {
         record?: string
         name: string
         ip: string
@@ -169,15 +169,15 @@ function getDnsRecordsLocation() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.dns_dhcp.edit_dns_record') : t('standalone.dns_dhcp.add_dns_record')"
+    @close="close()"
   >
     <!-- info notification if we are adding a dns record from scan network page -->
     <NeInlineNotification
       v-if="importScanResult"
       kind="info"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-6"
     >
       <template #description>
@@ -196,7 +196,7 @@ function getDnsRecordsLocation() {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -232,9 +232,9 @@ function getDnsRecordsLocation() {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditDnsRecord()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditDnsRecord()"
           >{{ t('common.save') }}</NeButton
         >
       </div>

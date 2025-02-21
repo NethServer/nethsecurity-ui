@@ -64,7 +64,7 @@ function getDropdownItems(item: StaticLease) {
 </script>
 
 <template>
-  <NeTable :ariaLabel="t('standalone.dns_dhcp.tabs.static_leases')" cardBreakpoint="xl">
+  <NeTable :aria-label="t('standalone.dns_dhcp.tabs.static_leases')" card-breakpoint="xl">
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.dns_dhcp.hostname') }}</NeTableHeadCell>
       <NeTableHeadCell v-if="!showDynamicLeases">{{
@@ -140,7 +140,7 @@ function getDropdownItems(item: StaticLease) {
             currentPage = page
           }
         "
-        @selectPageSize="
+        @select-page-size="
           (size: number) => {
             pageSize = size
           }

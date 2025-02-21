@@ -68,7 +68,7 @@ watch(
         const moduleParams = []
 
         if (props.natHelper.params) {
-          for (let [paramName, paramValue] of Object.entries(props.natHelper.params)) {
+          for (const [paramName, paramValue] of Object.entries(props.natHelper.params)) {
             moduleParams.push({
               name: paramName,
               value: paramValue
@@ -88,7 +88,7 @@ function clearErrors() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(label, [validator.errMessage as string])
     }
@@ -107,7 +107,7 @@ function validate() {
 
   const paramValidators: [validationOutput[], string][] = []
 
-  for (let param of params.value) {
+  for (const param of params.value) {
     paramValidators.push([[validateRequired(param.value)], param.name])
   }
 
@@ -206,9 +206,9 @@ function getParamLabel(paramName: string) {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="t('standalone.nat_helpers.edit_nat_helper')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer()"
   >
     <form @submit.prevent>
@@ -216,7 +216,7 @@ function getParamLabel(paramName: string) {
         <NeTextInput v-model="module" :label="t('standalone.nat_helpers.module')" disabled />
         <NeToggle
           v-model="enabled"
-          :topLabel="t('common.status')"
+          :top-label="t('common.status')"
           :label="enabled ? t('common.enabled') : t('common.disabled')"
         />
         <template v-if="enabled">
@@ -226,7 +226,7 @@ function getParamLabel(paramName: string) {
             :key="param.name"
             v-model.trim="param.value"
             :label="getParamLabel(param.name)"
-            :invalidMessage="t(errorBag.getFirstI18nKeyFor(param.name))"
+            :invalid-message="t(errorBag.getFirstI18nKeyFor(param.name))"
           />
         </template>
         <!-- editNatHelper error notification -->
@@ -236,7 +236,7 @@ function getParamLabel(paramName: string) {
           :title="t('error.cannot_save_nat_helper')"
           :description="error.editNatHelper"
         >
-          <template #details v-if="error.editNatHelperDetails">
+          <template v-if="error.editNatHelperDetails" #details>
             {{ error.editNatHelperDetails }}
           </template>
         </NeInlineNotification>
@@ -246,18 +246,18 @@ function getParamLabel(paramName: string) {
           <NeButton
             kind="tertiary"
             size="lg"
-            @click.prevent="closeDrawer"
             :disabled="loading.editNatHelper"
             class="mr-3"
+            @click.prevent="closeDrawer"
           >
             {{ t('common.cancel') }}
           </NeButton>
           <NeButton
             kind="primary"
             size="lg"
-            @click.prevent="editNatHelper"
             :disabled="loading.editNatHelper"
             :loading="loading.editNatHelper"
+            @click.prevent="editNatHelper"
           >
             {{ t('common.save') }}
           </NeButton>

@@ -56,7 +56,7 @@ async function downloadTunnel() {
         const exportedJsonPayload = JSON.stringify(
           (await ubusCall('ns.ovpntunnel', 'export-client', { id: itemToDownload.value.id })).data
         )
-        var downloadElement = document.createElement('a')
+        const downloadElement = document.createElement('a')
         downloadElement.setAttribute(
           'href',
           'data:text/json;charset=utf-8,' + encodeURIComponent(exportedJsonPayload)
@@ -95,18 +95,18 @@ function close() {
     :visible="visible"
     kind="neutral"
     :title="t('standalone.openvpn_tunnel.download')"
-    :primaryLabel="t('standalone.openvpn_tunnel.download')"
-    :primaryButtonDisabled="!downloadMode || isDownloading"
-    :primaryButtonLoading="isDownloading"
+    :primary-label="t('standalone.openvpn_tunnel.download')"
+    :primary-button-disabled="!downloadMode || isDownloading"
+    :primary-button-loading="isDownloading"
     :close-aria-label="t('common.close')"
-    @primaryClick="downloadTunnel()"
+    @primary-click="downloadTunnel()"
     @close="close()"
   >
     {{ t('standalone.openvpn_tunnel.download_tunnel_message', { name: itemToDownload?.ns_name }) }}
     <NeRadioSelection
+      v-model="downloadMode"
       :card="true"
       :options="downloadOptions"
-      v-model="downloadMode"
       :label="''"
       :grid-style="'grid-cols-1 gap-3'"
       class="mt-4"

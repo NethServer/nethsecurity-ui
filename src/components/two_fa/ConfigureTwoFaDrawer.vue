@@ -67,15 +67,10 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.getTwoFaQrCode = ''
+  error.value.getTwoFaQrCodeDetails = ''
+  error.value.verifyOtp = ''
+  error.value.verifyOtpDetails = ''
 }
 
 async function loadQrCode() {

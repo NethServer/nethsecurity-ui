@@ -123,15 +123,11 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  error.value.vlanId = ''
+  error.value.baseDevice = ''
 }
 
 async function createVlanDevice() {

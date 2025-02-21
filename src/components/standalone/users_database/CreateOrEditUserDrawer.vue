@@ -119,7 +119,7 @@ async function createOrEditUser() {
       password?: string
       description: string
       database: string
-      extra: {}
+      extra: object
     } = {
       name: username.value,
       description: displayName.value,

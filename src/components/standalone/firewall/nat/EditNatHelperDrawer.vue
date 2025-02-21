@@ -147,7 +147,7 @@ async function editNatHelper() {
     let toastTitle = ''
     let toastDescription = ''
     let toastKind = ''
-    let toastAction: Function | undefined = undefined
+    let toastAction: (() => void) | undefined = undefined
     let toastActionLabel = ''
 
     if (isRebootNeeded) {

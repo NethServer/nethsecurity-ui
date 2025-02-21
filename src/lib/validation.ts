@@ -19,7 +19,7 @@ export interface validationOutput {
  * @returns a validationOutput object
  */
 export const validateAnyOf = (
-  validators: Function[],
+  validators: ((value: string) => validationOutput)[],
   value: string,
   errMessage: string
 ): validationOutput => {

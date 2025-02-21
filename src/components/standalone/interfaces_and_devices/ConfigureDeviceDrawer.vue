@@ -484,15 +484,24 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  error.value.interfaceName = ''
+  error.value.ipv4Address = ''
+  error.value.ipv4Gateway = ''
+  error.value.ipv6Address = ''
+  error.value.ipv6Gateway = ''
+  error.value.ipv4Mtu = ''
+  error.value.ipv6Mtu = ''
+  error.value.dhcpCustomHostname = ''
+  error.value.dhcpClientId = ''
+  error.value.dhcpVendorClass = ''
+  error.value.pppoeUsername = ''
+  error.value.pppoePassword = ''
+  error.value.selectedDevicesForBridgeOrBond = ''
+  error.value.bondingPolicy = ''
+  error.value.bondPrimaryDevice = ''
 }
 
 function prepareConfigureDeviceData() {

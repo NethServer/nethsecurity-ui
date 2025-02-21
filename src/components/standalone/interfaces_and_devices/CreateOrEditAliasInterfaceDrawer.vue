@@ -110,15 +110,13 @@ function closeDrawer() {
 
 // move to local library util?
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.interfaceName = ''
+  error.value.ipv4Addresses = []
+  error.value.ipv6Addresses = []
+  error.value.ipv4AddressList = ''
+  error.value.ipv6AddressList = ''
 }
 
 function validate() {

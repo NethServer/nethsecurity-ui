@@ -61,15 +61,10 @@ watch(
 )
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.revokeTwoFa = ''
+  error.value.revokeTwoFaDetails = ''
+  error.value.verifyOtp = ''
+  error.value.verifyOtpDetails = ''
 }
 
 function validate() {

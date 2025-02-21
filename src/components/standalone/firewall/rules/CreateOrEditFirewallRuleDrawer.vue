@@ -388,15 +388,14 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.listServiceSuggestions = ''
+  error.value.listServiceSuggestionsDetails = ''
+  error.value.listObjectSuggestions = ''
+  error.value.listObjectSuggestionsDetails = ''
+  error.value.listProtocols = ''
+  error.value.listProtocolsDetails = ''
+  error.value.saveRule = ''
+  error.value.saveRuleDetails = ''
 }
 
 async function listObjectSuggestions() {

@@ -37,6 +37,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   const twoFaActive = computed((): boolean => {
     try {
       return jwtDecode<JwtToken>(token.value)['2fa']
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       return false
     }

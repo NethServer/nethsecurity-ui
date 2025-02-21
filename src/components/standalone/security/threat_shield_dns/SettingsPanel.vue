@@ -131,6 +131,7 @@ async function saveSettings() {
       ports: ports.value
     })
     loadData()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err: unknown) {
     // exception already handled in threat shield store
   }

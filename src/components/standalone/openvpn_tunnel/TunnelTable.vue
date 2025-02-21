@@ -207,8 +207,8 @@ function getCellClasses(item: ServerTunnel | ClientTunnel) {
             item.connected && item.enabled
               ? 'text-green-600 dark:text-green-400'
               : item.enabled
-              ? 'text-red-600 dark:text-red-400'
-              : ''
+                ? 'text-red-600 dark:text-red-400'
+                : ''
           ]"
           aria-hidden="true"
         />

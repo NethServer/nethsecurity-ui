@@ -407,10 +407,12 @@ function clearFilters() {
     :title="t('standalone.openvpn_rw.disable_account')"
     :primaryLabel="t('common.disable')"
     primary-button-kind="danger"
-    @primaryClick="() => {
-      showConfirmDisableModal = false
-      toggleAccountEnable(selectedAccount as RWAccount)
-    }"
+    @primaryClick="
+      () => {
+        showConfirmDisableModal = false
+        toggleAccountEnable(selectedAccount as RWAccount)
+      }
+    "
     :close-aria-label="t('common.close')"
     @close="showConfirmDisableModal = false"
   >

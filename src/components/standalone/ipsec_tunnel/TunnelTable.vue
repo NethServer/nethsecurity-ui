@@ -133,8 +133,8 @@ function getCellClasses(item: IpsecTunnel) {
             item.enabled === '0'
               ? 'text-gray-400 dark:text-gray-700'
               : item.connected
-              ? 'text-green-500'
-              : 'text-rose-500'
+                ? 'text-green-500'
+                : 'text-rose-500'
           ]"
           aria-hidden="true"
         />

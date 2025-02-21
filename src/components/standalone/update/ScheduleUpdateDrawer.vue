@@ -222,8 +222,8 @@ watch(
             scheduleMode === 'now'
               ? t('standalone.update.update_and_reboot')
               : isEditing
-              ? t('common.save')
-              : t('standalone.update.schedule')
+                ? t('common.save')
+                : t('standalone.update.schedule')
           }}</NeButton
         >
       </div>

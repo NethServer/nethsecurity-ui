@@ -370,11 +370,13 @@ function scrollToMainTable() {
               @select-page="
                 (page: number) => {
                   currentPageRoutes = page
-                }"
+                }
+              "
               @selectPageSize="
                 (size: number) => {
                   pageSizeRoutes = size
-                }"
+                }
+              "
             />
           </template>
         </NeTable>
@@ -450,11 +452,13 @@ function scrollToMainTable() {
                 @select-page="
                   (page: number) => {
                     currentPageTable = page
-                  }"
+                  }
+                "
                 @selectPageSize="
                   (size: number) => {
                     pageSizeTable = size
-                  }"
+                  }
+                "
               />
             </template>
           </NeTable>

@@ -596,11 +596,13 @@ function showRemoveUnitModal(unit: Unit) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
+            }
+          "
           @selectPageSize="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

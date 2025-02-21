@@ -149,8 +149,8 @@ async function createOrEditProxy() {
         ? 'edit-domain'
         : 'add-domain'
       : id.value
-      ? 'edit-path'
-      : 'add-path'
+        ? 'edit-path'
+        : 'add-path'
 
   const networksToInclude = allowedNetworks.value.filter(Boolean)
   let payload: CreateOrEditProxyPayload = {

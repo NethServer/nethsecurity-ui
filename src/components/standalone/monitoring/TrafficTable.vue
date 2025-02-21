@@ -107,11 +107,13 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
           @selectPageSize="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

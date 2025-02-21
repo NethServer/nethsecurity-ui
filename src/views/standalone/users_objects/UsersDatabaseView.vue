@@ -158,7 +158,7 @@ async function fetchSubscriptionInfo() {
       @selectTab="selectedTab = $event"
     />
     <UsersDatabaseManager
-      :database="(databases.find(x => x.name === selectedTab) as UserDatabase)"
+      :database="databases.find((x) => x.name === selectedTab) as UserDatabase"
       @database-changed="reloadDatabases()"
       @database-deleted="reloadDatabases(true)"
     />

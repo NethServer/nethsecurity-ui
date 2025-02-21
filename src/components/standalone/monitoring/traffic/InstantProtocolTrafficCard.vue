@@ -101,11 +101,13 @@ function formatTraffic(value: number) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
+            }
+          "
           @selectPageSize="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

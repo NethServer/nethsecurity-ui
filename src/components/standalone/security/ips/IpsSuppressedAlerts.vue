@@ -227,8 +227,16 @@ function handleDeleted() {
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
             :total-rows="suppressedAlerts.length"
-            @selectPageSize="(size: number) => { pageSize = size }"
-            @select-page="(page: number) => { currentPage = page }"
+            @selectPageSize="
+              (size: number) => {
+                pageSize = size
+              }
+            "
+            @select-page="
+              (page: number) => {
+                currentPage = page
+              }
+            "
           />
         </template>
       </NeTable>

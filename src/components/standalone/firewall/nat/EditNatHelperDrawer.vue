@@ -129,10 +129,13 @@ async function editNatHelper() {
     name: natHelperName,
     enabled: enabled.value,
     // convert params array to object
-    params: params.value.reduce((acc, param) => {
-      acc[param.name] = param.value
-      return acc
-    }, {} as Record<string, string>)
+    params: params.value.reduce(
+      (acc, param) => {
+        acc[param.name] = param.value
+        return acc
+      },
+      {} as Record<string, string>
+    )
   }
 
   try {

@@ -148,13 +148,15 @@ function getKebabMenuItems(domainSet: DomainSet) {
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
         @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

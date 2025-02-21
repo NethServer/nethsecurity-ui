@@ -97,11 +97,13 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.tunnels, {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
+            }
+          "
           @selectPageSize="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

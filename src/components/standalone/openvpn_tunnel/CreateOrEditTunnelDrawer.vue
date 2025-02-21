@@ -632,8 +632,8 @@ watch(
           ? t('standalone.openvpn_tunnel.edit_client_tunnel')
           : t('standalone.openvpn_tunnel.edit_server_tunnel')
         : isClientTunnel
-        ? t('standalone.openvpn_tunnel.add_client_tunnel')
-        : t('standalone.openvpn_tunnel.add_server_tunnel')
+          ? t('standalone.openvpn_tunnel.add_client_tunnel')
+          : t('standalone.openvpn_tunnel.add_server_tunnel')
     "
   >
     <NeInlineNotification

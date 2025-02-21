@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.6](https://github.com/NethServer/nethsecurity-ui/compare/1.20.5...1.20.6) (2025-02-21)
+
+
+### Bug Fixes
+
+* adding error for DHCP overlap ([#517](https://github.com/NethServer/nethsecurity-ui/issues/517)) ([60989fa](https://github.com/NethServer/nethsecurity-ui/commit/60989fa807d7270297eb93a8853778e29f104d57))
+
 ## [1.20.5](https://github.com/NethServer/nethsecurity-ui/compare/1.20.4...1.20.5) (2025-02-12)
 
 

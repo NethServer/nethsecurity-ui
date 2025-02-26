@@ -6,22 +6,21 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeBadge,
+  getAxiosErrorMessage,
+  NeEmptyState,
   NeHeading,
   NeInlineNotification,
-  NeButton,
-  NeSkeleton,
-  getAxiosErrorMessage,
-  NeEmptyState
+  NeSkeleton
 } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import EditDhcpInterfaceDrawer from './EditDhcpInterfaceDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { useFirewallStore } from '@/stores/standalone/firewall'
-import { computed } from 'vue'
-import { getZoneBorderColorClasses } from '@/lib/standalone/network'
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import DhcpCard from '@/components/standalone/dns_dhcp/DhcpCard.vue'
+
+type BindingType = 0 | 1 | 2
 
 export type DhcpInterface = {
   device: string
@@ -32,6 +31,7 @@ export type DhcpInterface = {
   zone: string
   first?: string
   last?: string
+  ns_binding?: BindingType
 }
 
 const { t } = useI18n()
@@ -48,10 +48,6 @@ const showEditInterfaceDrawer = ref(false)
 const interfaces = ref<Record<string, DhcpInterface>>({})
 const isInterfaceCardExpanded = ref<Record<string, boolean>>({})
 
-const areAllCardsExpanded = computed(() => {
-  return Object.keys(isInterfaceCardExpanded.value).every((k) => isInterfaceCardExpanded.value[k])
-})
-
 async function fetchDhcpInterfaces() {
   try {
     loading.value = true
@@ -66,12 +62,6 @@ async function fetchDhcpInterfaces() {
   }
 }
 
-function getBorderColorForInterface(iface: string) {
-  const interfaceZone = firewallConfig.zones.find((zone) => zone.interfaces.includes(iface))
-
-  return getZoneBorderColorClasses(interfaceZone?.name ?? '')
-}
-
 function openEditInterfaceDrawer(iface: string) {
   selectedInterface.value = iface
   showEditInterfaceDrawer.value = true
@@ -80,19 +70,6 @@ function openEditInterfaceDrawer(iface: string) {
 function closeEditInterfaceDrawer() {
   selectedInterface.value = ''
   showEditInterfaceDrawer.value = false
-}
-
-function toggleExpandAllCards() {
-  const newInterfaceCardExpandedValues: Record<string, boolean> = {}
-  for (const key of Object.keys(isInterfaceCardExpanded.value)) {
-    newInterfaceCardExpandedValues[key] = areAllCardsExpanded.value ? false : true
-  }
-
-  isInterfaceCardExpanded.value = newInterfaceCardExpandedValues
-}
-
-function toggleExpandSingleCard(interfaceName: string) {
-  isInterfaceCardExpanded.value[interfaceName] = !isInterfaceCardExpanded.value[interfaceName]
 }
 
 async function reloadDhcpInterfaces() {
@@ -129,103 +106,20 @@ onMounted(() => {
   </NeInlineNotification>
   <NeSkeleton v-if="loading || firewallConfig.loading" :lines="10" />
   <template v-else-if="!firewallConfig.error">
-    <div class="mb-4 flex flex-row items-center justify-between">
-      <NeHeading tag="h6" class="mb-1.5 grow">{{ t('standalone.dns_dhcp.interfaces') }}</NeHeading>
-      <NeButton
-        v-if="Object.keys(interfaces).length > 0"
-        kind="tertiary"
-        @click="toggleExpandAllCards()"
-      >
-        <template #prefix>
-          <font-awesome-icon
-            :icon="[
-              'fas',
-              areAllCardsExpanded
-                ? 'down-left-and-up-right-to-center'
-                : 'up-right-and-down-left-from-center'
-            ]"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
-        >{{
-          areAllCardsExpanded
-            ? t('standalone.dns_dhcp.collapse_all_cards')
-            : t('standalone.dns_dhcp.expand_all_cards')
-        }}</NeButton
-      >
-    </div>
+    <NeHeading class="mb-4" tag="h6">{{ t('standalone.dns_dhcp.interfaces') }}</NeHeading>
     <NeEmptyState
       v-if="Object.keys(interfaces).length == 0"
       :title="t('standalone.dns_dhcp.no_interface_configured')"
-      :icon="['fas', 'circle-info']"
+      :icon="faCircleInfo"
     />
     <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
-      <div
+      <DhcpCard
         v-for="(iface, ifaceName) in interfaces"
         :key="ifaceName"
-        :class="`overflow-hidden rounded-md border-l-4 bg-white text-sm text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow ${getBorderColorForInterface(
-          ifaceName
-        )}`"
-      >
-        <div class="flex grow flex-col gap-y-4 p-5">
-          <div class="flex flex-col">
-            <div class="flex flex-row items-start justify-between">
-              <p class="text-sm">
-                <strong>{{ ifaceName }}</strong>
-                <br />
-                {{ iface.device }}
-              </p>
-              <NeBadge
-                size="sm"
-                :text="
-                  iface.active ? t('standalone.dns_dhcp.active') : t('standalone.dns_dhcp.inactive')
-                "
-                :kind="iface.active ? 'success' : 'secondary'"
-              />
-            </div>
-          </div>
-          <div class="flex flex-row content-start items-center">
-            <p class="grow text-sm">{{ iface.first }} - {{ iface.last }}</p>
-            <NeButton size="sm" kind="tertiary" @click="openEditInterfaceDrawer(ifaceName)">
-              <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'pen-to-square']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                /> </template
-              >{{ t('common.edit') }}</NeButton
-            >
-          </div>
-          <div class="flex flex-col gap-y-4 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
-            <div
-              class="flex cursor-pointer flex-row items-center"
-              @click="toggleExpandSingleCard(ifaceName)"
-            >
-              <font-awesome-icon
-                :icon="[
-                  'fas',
-                  isInterfaceCardExpanded[ifaceName] ? 'circle-chevron-up' : 'circle-chevron-down'
-                ]"
-                class="mr-2 h-4 w-4"
-                aria-hidden="true"
-              />
-              <p>{{ t('standalone.dns_dhcp.options') }}</p>
-            </div>
-            <template v-if="isInterfaceCardExpanded[ifaceName]"
-              ><div class="flex flex-col gap-y-2">
-                <div
-                  v-for="(ifaceOption, optionName) in iface.options"
-                  :key="optionName"
-                  class="text-sm"
-                >
-                  <strong>{{ optionName }}:</strong>
-                  {{ ifaceOption }}
-                </div>
-              </div></template
-            >
-          </div>
-        </div>
-      </div>
+        :interface-name="ifaceName"
+        :dhcp-interface="iface"
+        @edit="openEditInterfaceDrawer(ifaceName)"
+      />
     </div>
   </template>
   <EditDhcpInterfaceDrawer

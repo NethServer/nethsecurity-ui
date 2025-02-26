@@ -20,6 +20,20 @@
   }
 }
 
+@layer utilities {
+  .text-offline {
+    @apply dark:text-gray-400 text-gray-700;
+  }
+
+  .text-online {
+    @apply dark:text-green-500 text-green-700;
+  }
+
+  .text-tertiary-neutral {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+}
+
 body {
   @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
 }

@@ -32,6 +32,10 @@
   .text-tertiary-neutral {
     @apply text-gray-600 dark:text-gray-300;
   }
+
+  .text-secondary {
+    @apply dark:text-indigo-500 text-indigo-700;
+  }
 }
 
 body {

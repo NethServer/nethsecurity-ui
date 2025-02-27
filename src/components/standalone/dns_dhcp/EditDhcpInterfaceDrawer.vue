@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref, toRefs, watch } from 'vue'
+import { ref, toRefs, watch, watchEffect } from 'vue'
 import {
   MessageBag,
   validateIpAddress,
@@ -12,21 +12,23 @@ import {
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
-import { watchEffect } from 'vue'
 import {
+  getAxiosErrorMessage,
+  NeButton,
   type NeComboboxOption,
   NeInlineNotification,
+  NeRadioSelection,
   NeSideDrawer,
-  NeButton,
   NeSkeleton,
-  NeTooltip,
   NeTextInput,
-  getAxiosErrorMessage
+  NeToggle,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethesis/vue-components'
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   isShown: boolean
@@ -60,6 +62,28 @@ const rangeIpEnd = ref('')
 const leaseTime = ref('')
 const dhcpOptions = ref<KeyValueItem[]>([])
 const force = ref(true)
+const enableMacIpBinding = ref(false)
+const macIpBindingType = ref<'soft' | 'hard'>('soft')
+
+// TODO: export RadioOption from library
+type RadioOption = {
+  id: typeof macIpBindingType.value
+  label: string
+  description: string
+}
+
+const macIpBindingSelections: RadioOption[] = [
+  {
+    id: 'soft',
+    label: t('standalone.dns_dhcp.soft_binding'),
+    description: t('standalone.dns_dhcp.soft_binding_description')
+  },
+  {
+    id: 'hard',
+    label: t('standalone.dns_dhcp.hard_binding'),
+    description: t('standalone.dns_dhcp.hard_binding_description')
+  }
+]
 
 async function resetForm() {
   if (props.interfaceToEdit) {
@@ -78,6 +102,16 @@ async function resetForm() {
         return { key, value: optionObj[key] }
       })
       force.value = interfaceResponse.force
+      if ('ns_binding' in interfaceResponse) {
+        if (interfaceResponse.ns_binding != 0) {
+          enableMacIpBinding.value = true
+        }
+        if (interfaceResponse.ns_binding == 1) {
+          macIpBindingType.value = 'soft'
+        } else if (interfaceResponse.ns_binding == 2) {
+          macIpBindingType.value = 'hard'
+        }
+      }
       loading.value = false
     } catch (err: any) {
       error.value.notificationTitle = t('error.cannot_retrieve_interface_details')
@@ -95,6 +129,8 @@ async function resetForm() {
     leaseTime.value = ''
     dhcpOptions.value = []
     force.value = true
+    enableMacIpBinding.value = false
+    macIpBindingType.value = 'soft'
   }
 }
 
@@ -183,6 +219,10 @@ async function saveChanges() {
     isSavingChanges.value = true
 
     if (validate()) {
+      let nsBinding = 0
+      if (enableMacIpBinding.value) {
+        nsBinding = macIpBindingType.value == 'soft' ? 1 : 2
+      }
       await ubusCall('ns.dhcp', 'edit-interface', {
         interface: iface.value,
         first: rangeIpStart.value,
@@ -190,7 +230,8 @@ async function saveChanges() {
         active: enableDhcp.value,
         leasetime: leaseTime.value,
         options: dhcpOptions.value.map((option) => ({ [option.key]: option.value })),
-        force: force.value
+        force: force.value,
+        ns_binding: nsBinding
       })
       emit('edit-interface')
       close()
@@ -251,87 +292,128 @@ watch(
     >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="10" />
-    <div v-else class="flex flex-col gap-y-6">
-      <NeToggle v-model="enableDhcp" :label="t('standalone.dns_dhcp.enable_dhcp')" />
-      <NeTextInput
-        v-model="rangeIpStart"
-        :label="t('standalone.dns_dhcp.range_ip_start')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('first'))"
-      />
-      <NeTextInput
-        v-model="rangeIpEnd"
-        :label="t('standalone.dns_dhcp.range_ip_end')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('last'))"
-      />
-      <NeTextInput
-        v-model="leaseTime"
-        :label="t('standalone.dns_dhcp.lease_time')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('leasetime'))"
-        ><template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.dns_dhcp.lease_time_tooltip') }}
+    <div v-else class="space-y-8">
+      <div class="space-y-6">
+        <div class="space-y-4">
+          <h5 class="text-secondary text-lg font-medium">
+            {{ t('standalone.dns_dhcp.mac_binding') }}
+          </h5>
+          <NeToggle
+            v-model="enableMacIpBinding"
+            :label="t('common.enabled')"
+            :top-label="t('common.status')"
+          >
+            <template #topTooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.dns_dhcp.mac_binding_tooltip') }}
+                </template>
+              </NeTooltip>
             </template>
-          </NeTooltip>
-        </template></NeTextInput
-      >
-      <div>
-        <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
-          {{ t('standalone.dns_dhcp.advanced_settings') }}
-          <template #suffix>
-            <font-awesome-icon
-              :icon="['fas', showAdvancedSettings ? 'chevron-up' : 'chevron-down']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
-          </template>
-        </NeButton>
+          </NeToggle>
+          <NeRadioSelection
+            v-if="enableMacIpBinding"
+            v-model="macIpBindingType"
+            :label="t('common.type')"
+            :options="macIpBindingSelections"
+          />
+        </div>
       </div>
-      <template v-if="showAdvancedSettings">
-        <NeToggle v-model="force" :label="t('standalone.dns_dhcp.force_start')">
+      <div class="space-y-6">
+        <div class="space-y-4">
+          <h5 class="text-secondary text-lg font-medium">
+            {{ t('standalone.dns_dhcp.dhcp') }}
+          </h5>
+          <NeToggle
+            v-model="enableDhcp"
+            :label="t('common.enabled')"
+            :top-label="t('common.status')"
+          />
+        </div>
+        <NeTextInput
+          v-model="rangeIpStart"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('first'))"
+          :label="t('standalone.dns_dhcp.range_ip_start')"
+        />
+        <NeTextInput
+          v-model="rangeIpEnd"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('last'))"
+          :label="t('standalone.dns_dhcp.range_ip_end')"
+        />
+        <NeTextInput
+          v-model="leaseTime"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('leasetime'))"
+          :label="t('standalone.dns_dhcp.lease_time')"
+        >
           <template #tooltip>
             <NeTooltip>
               <template #content>
-                {{ t('standalone.dns_dhcp.force_start_tooltip') }}
+                {{ t('standalone.dns_dhcp.lease_time_tooltip') }}
               </template>
             </NeTooltip>
           </template>
-        </NeToggle>
-        <NeMultiTextInput
-          v-model="dhcpOptions"
-          :title="t('standalone.dns_dhcp.dhcp_option')"
-          :use-key-input="true"
-          key-input-type="combobox"
-          :add-item-label="t('standalone.dns_dhcp.add_dhcp_option')"
-          :optional="true"
-          :optional-label="t('common.optional')"
-          :key-options="availableDhcpOptions"
-          :invalid-messages="dhcpOptionValueErrors"
-          :invalid-key-messages="dhcpOptionKeyErrors"
-          :key-input-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
-          ><template #tooltip>
-            <NeTooltip>
-              <template #content>
-                {{ t('standalone.dns_dhcp.dhcp_option_tooltip') }}
-              </template>
-            </NeTooltip>
-          </template></NeMultiTextInput
-        >
-      </template>
-      <hr />
-      <div class="flex justify-end">
-        <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-        <NeButton
-          kind="primary"
-          :disabled="isSavingChanges"
-          :loading="isSavingChanges"
-          @click="saveChanges()"
-          >{{ t('common.save') }}</NeButton
-        >
+        </NeTextInput>
+        <div>
+          <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
+            {{ t('standalone.dns_dhcp.advanced_settings') }}
+            <template #suffix>
+              <FontAwesomeIcon
+                :icon="showAdvancedSettings ? faChevronUp : faChevronDown"
+                aria-hidden="true"
+                class="h-4 w-4"
+              />
+            </template>
+          </NeButton>
+        </div>
+        <template v-if="showAdvancedSettings">
+          <NeToggle v-model="force" :label="t('standalone.dns_dhcp.force_start')">
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.dns_dhcp.force_start_tooltip') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeToggle>
+          <NeMultiTextInput
+            v-model="dhcpOptions"
+            :add-item-label="t('standalone.dns_dhcp.add_dhcp_option')"
+            :invalid-key-messages="dhcpOptionKeyErrors"
+            :invalid-messages="dhcpOptionValueErrors"
+            :key-input-placeholder="t('standalone.dns_dhcp.dhcp_option_combobox_placeholder')"
+            :key-options="availableDhcpOptions"
+            :optional="true"
+            :optional-label="t('common.optional')"
+            :title="t('standalone.dns_dhcp.dhcp_option')"
+            :use-key-input="true"
+            key-input-type="combobox"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.dns_dhcp.dhcp_option_tooltip') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeMultiTextInput>
+        </template>
+        <hr />
+        <div class="flex justify-end">
+          <NeButton class="mr-4" kind="tertiary" @click="close()"
+            >{{ t('common.cancel') }}
+          </NeButton>
+          <NeButton
+            :disabled="isSavingChanges"
+            :loading="isSavingChanges"
+            kind="primary"
+            @click="saveChanges()"
+            >{{ t('common.save') }}
+          </NeButton>
+        </div>
       </div>
-    </div></NeSideDrawer
-  >
+    </div>
+  </NeSideDrawer>
 </template>

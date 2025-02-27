@@ -83,7 +83,9 @@ function getCellClasses(item: PortForward) {
       {{ t('standalone.port_forward.destination') }}: <strong>{{ header }}</strong>
     </p>
     <NeTable
-      :aria-label="t('standalone.port_forward.port_forwards_for_destination_name', { name: header })"
+      :aria-label="
+        t('standalone.port_forward.port_forwards_for_destination_name', { name: header })
+      "
       card-breakpoint="xl"
       class="z-10"
     >

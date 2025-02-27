@@ -179,7 +179,7 @@ function clearFilters() {
 async function downloadAllHistory() {
   cleanError()
   try {
-    let res = await ubusCall('ns.ovpnrw', 'connection-history-csv', {
+    const res = await ubusCall('ns.ovpnrw', 'connection-history-csv', {
       instance: props.instance,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' // get the timezone of the browser
     })
@@ -188,7 +188,7 @@ async function downloadAllHistory() {
       res.data.csv_path = res.data.csv_path.replace('/var/run/ns-api-server/downloads/', '')
       const file = await downloadFile(res.data.csv_path)
       const fileURL = URL.createObjectURL(file)
-      let link = document.createElement('a')
+      const link = document.createElement('a')
       link.href = fileURL
       link.download = res.data.csv_path.replace('.csv', '') + '-' + Date.now().toString() + '.csv'
       link.click()
@@ -245,8 +245,8 @@ watch(timeRangeFilter, () => {
           v-if="connectionsRecords.length > 0"
           kind="secondary"
           size="lg"
-          @click="downloadAllHistory()"
           class="ml-4 shrink-0"
+          @click="downloadAllHistory()"
         >
           <template #prefix>
             <font-awesome-icon
@@ -261,42 +261,42 @@ watch(timeRangeFilter, () => {
     </div>
     <div v-if="connectionsRecords.length > 0" class="flex items-center gap-4">
       <NeTextInput
-        class="max-w-xs"
-        :isSearch="true"
-        :placeholder="t('common.filter')"
         v-model="textFilter"
+        class="max-w-xs"
+        :is-search="true"
+        :placeholder="t('common.filter')"
       />
       <NeDropdownFilter
         v-model="timeRangeFilter"
         kind="radio"
         :label="t('standalone.openvpn_rw.history.time_range')"
         :options="timeRangeFilterOptions"
-        :clearFilterLabel="t('ne_dropdown_filter.clear_selection')"
-        :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+        :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
+        :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
       />
       <NeDropdownFilter
         v-model="accountsFilter"
         kind="checkbox"
         :label="t('standalone.openvpn_rw.history.accounts')"
         :options="accountFilterOptions"
-        :clearFilterLabel="t('ne_dropdown_filter.clear_selection')"
-        :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
-        :showOptionsFilter="true"
-        :noOptionsLabel="t('ne_dropdown_filter.no_options')"
-        :optionsFilterPlaceholder="t('standalone.openvpn_rw.history.filter_accounts')"
-        :moreOptionsHiddenLabel="t('ne_dropdown_filter.more_options_hidden')"
+        :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
+        :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+        :show-options-filter="true"
+        :no-options-label="t('ne_dropdown_filter.no_options')"
+        :options-filter-placeholder="t('standalone.openvpn_rw.history.filter_accounts')"
+        :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
       />
-      <NeButton kind="tertiary" @click="clearFilters" :disabled="isLoading">
+      <NeButton kind="tertiary" :disabled="isLoading" @click="clearFilters">
         {{ t('standalone.openvpn_rw.history.reset_filters') }}
       </NeButton>
     </div>
     <NeInlineNotification
+      v-if="error.notificationDescription"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -315,7 +315,7 @@ watch(timeRangeFilter, () => {
         :icon="['fas', 'clock-rotate-left']"
       >
       </NeEmptyState>
-      <UserConnectionsTable v-if="filteredItems.length > 0" :connectionsRecords="filteredItems" />
+      <UserConnectionsTable v-if="filteredItems.length > 0" :connections-records="filteredItems" />
     </template>
   </div>
 </template>

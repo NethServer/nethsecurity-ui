@@ -99,7 +99,7 @@ function getDropdownItems(rule: NetmapRule) {
     <NeTable :data="rules" :headers="headers" :loading="loading">
       <template #menu="{ item }: { item: NetmapRule }">
         <div class="align-center flex justify-end">
-          <NeButton kind="tertiary" size="lg" @click="emit('editRule', item)" class="mr-2">
+          <NeButton kind="tertiary" size="lg" class="mr-2" @click="emit('editRule', item)">
             <template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'pen-to-square']"

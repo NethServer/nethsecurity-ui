@@ -23,7 +23,7 @@ defineProps({
   <div class="flex flex-wrap gap-3">
     <span v-for="record in records" :key="record">
       <span v-if="record.includes('/ns_')">
-        <HostSetTooltip :hostSetId="record" :allHostSets="allHostSets" />
+        <HostSetTooltip :host-set-id="record" :all-host-sets="allHostSets" />
       </span>
       <span v-else>{{ record }}</span>
     </span>

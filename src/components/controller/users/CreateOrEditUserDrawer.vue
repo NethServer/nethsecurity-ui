@@ -198,9 +198,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="id ? t('controller.users.edit_user') : t('controller.users.add_user')"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -209,31 +209,31 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
     <div class="flex flex-col gap-y-6">
       <NeTextInput
+        ref="usernameRef"
         v-model="username"
         :disabled="Boolean(id)"
         :label="t('controller.users.username')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
-        ref="usernameRef"
       />
       <NeTextInput
+        ref="displayNameRef"
         v-model="displayName"
         :label="t('controller.users.display_name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('display_name'))"
-        ref="displayNameRef"
       />
       <NeTextInput
+        ref="passwordRef"
         v-model="password"
         :label="t('controller.users.user_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('password'))"
         :is-password="true"
         :placeholder="id ? t('controller.users.unchanged') : ''"
-        ref="passwordRef"
       />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.users.password_suggestion_1') }}</li>
@@ -243,21 +243,21 @@ watch(
         <li>{{ t('controller.users.password_suggestion_5') }}</li>
       </ul>
       <NeTextInput
+        ref="confirmPasswordRef"
         v-model="confirmPassword"
         :label="t('controller.users.confirm_user_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirmPassword'))"
         :is-password="true"
         :placeholder="id ? t('controller.users.unchanged') : ''"
-        ref="confirmPasswordRef"
       />
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditUser()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditUser()"
           >{{ id ? t('common.save') : t('controller.users.add_user') }}</NeButton
         >
       </div>

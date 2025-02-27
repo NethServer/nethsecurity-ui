@@ -62,7 +62,7 @@ const expirationDateString = computed(() => {
 function validateAuthToken() {
   errors.value.authToken = ''
 
-  let { valid, errMessage } = validateRequired(authToken.value)
+  const { valid, errMessage } = validateRequired(authToken.value)
 
   if (!valid) {
     errors.value.authToken = t(errMessage as string)
@@ -106,14 +106,14 @@ function showCancelSubscriptionModal() {
     :description="t('standalone.subscription.unit_subscription_description')"
     class="max-w-3xl"
   >
-    <NeSkeleton :lines="5" v-if="loading" />
+    <NeSkeleton v-if="loading" :lines="5" />
     <template v-else>
       <template v-if="subscriptionData">
         <div class="flex flex-col gap-y-8">
           <NeTextInput
             :label="t('standalone.subscription.system_id')"
             :disabled="true"
-            :modelValue="subscriptionData.systemd_id"
+            :model-value="subscriptionData.systemd_id"
           />
           <div>
             <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.subscription.plan') }}</NeHeading>
@@ -159,12 +159,12 @@ function showCancelSubscriptionModal() {
       <template v-else>
         <form @submit.prevent>
           <NeTextInput
+            ref="authTokenRef"
+            v-model.trim="authToken"
             :label="t('standalone.subscription.authentication_token')"
             :placeholder="t('standalone.subscription.authentication_token_placeholder')"
-            :invalidMessage="errors.authToken"
+            :invalid-message="errors.authToken"
             :disabled="isProcessingRequest"
-            v-model.trim="authToken"
-            ref="authTokenRef"
           />
           <NeInlineNotification
             v-if="errors.request"
@@ -177,9 +177,9 @@ function showCancelSubscriptionModal() {
             <NeButton
               type="submit"
               kind="primary"
-              @click="subscribe"
               :disabled="isProcessingRequest"
               :loading="isProcessingRequest"
+              @click="subscribe"
               >{{ t('standalone.subscription.register') }}</NeButton
             >
           </div>

@@ -158,9 +158,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('controller.account_settings.change_password')"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -169,24 +169,24 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
+        ref="oldPasswordRef"
         v-model="oldPassword"
         :label="t('controller.account_settings.current_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('old_password'))"
         :is-password="true"
-        ref="oldPasswordRef"
       />
       <NeTextInput
+        ref="newPasswordRef"
         v-model="newPassword"
         :label="t('controller.account_settings.new_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('new_password'))"
         :is-password="true"
-        ref="newPasswordRef"
       />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.account_settings.password_suggestion_1') }}</li>
@@ -196,20 +196,20 @@ watch(
         <li>{{ t('controller.account_settings.password_suggestion_5') }}</li>
       </ul>
       <NeTextInput
+        ref="confirmPasswordRef"
         v-model="confirmPassword"
         :label="t('controller.account_settings.confirm_password')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_password'))"
         :is-password="true"
-        ref="confirmPasswordRef"
       />
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="performChangePassword()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="performChangePassword()"
           >{{ t('common.save') }}</NeButton
         >
       </div>

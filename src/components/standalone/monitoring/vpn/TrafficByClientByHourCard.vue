@@ -27,11 +27,11 @@ const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
 const selectedClient = ref<string>('')
 
-let loading = ref({
+const loading = ref({
   getClientTraffic: false
 })
 
-let error = ref({
+const error = ref({
   getClientTraffic: '',
   getClientTrafficDescription: ''
 })
@@ -106,21 +106,21 @@ async function getClientTraffic() {
 <template>
   <NeCard
     :title="t('standalone.real_time_monitor.client_traffic_by_hour')"
-    :skeletonLines="9"
+    :skeleton-lines="9"
     :loading="loadingUsers"
-    :errorTitle="error.getClientTraffic"
-    :errorDescription="error.getClientTrafficDescription"
+    :error-title="error.getClientTraffic"
+    :error-description="error.getClientTrafficDescription"
   >
     <NeCombobox
       v-model="selectedClient"
       :options="clientOptions"
       :disabled="loading.getClientTraffic"
-      :noResultsLabel="t('ne_combobox.no_results')"
-      :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-      :noOptionsLabel="t('ne_combobox.no_options_label')"
+      :no-results-label="t('ne_combobox.no_results')"
+      :limited-options-label="t('ne_combobox.limited_options_label')"
+      :no-options-label="t('ne_combobox.no_options_label')"
       :selected-label="t('ne_combobox.selected')"
       :user-input-label="t('ne_combobox.user_input_label')"
-      :optionalLabel="t('common.optional')"
+      :optional-label="t('common.optional')"
       class="mb-4 mt-2"
     />
     <NeSkeleton v-if="loading.getClientTraffic" :lines="7"></NeSkeleton>

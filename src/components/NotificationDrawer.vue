@@ -20,9 +20,9 @@ function closeDrawer() {
 
 <template>
   <NeSideDrawer
-    :isShown="notificationsStore.isNotificationDrawerOpen"
+    :is-shown="notificationsStore.isNotificationDrawerOpen"
     :title="t('notifications.title')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <!-- empty state -->
@@ -38,9 +38,9 @@ function closeDrawer() {
           v-for="notification in notificationsStore.notifications"
           :key="notification.id"
           :notification="notification"
-          fullWidth
-          showTimestamp
-          :srCloseLabel="t('common.close')"
+          full-width
+          show-timestamp
+          :sr-close-label="t('common.close')"
         />
       </TransitionGroup>
     </div>

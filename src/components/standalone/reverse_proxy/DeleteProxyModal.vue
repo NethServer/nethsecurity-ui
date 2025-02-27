@@ -60,11 +60,11 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.reverse_proxy.delete_proxy')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteProxy()"
+    @primary-click="deleteProxy()"
     @close="close()"
   >
     {{
@@ -78,7 +78,7 @@ function close() {
       :title="t('error.cannot_delete_proxy')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

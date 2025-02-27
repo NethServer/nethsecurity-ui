@@ -173,8 +173,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <NeSkeleton :lines="6" v-if="loading.listSettings" size="lg" />
-  <div class="max-w-4xl" v-else>
+  <NeSkeleton v-if="loading.listSettings" :lines="6" size="lg" />
+  <div v-else class="max-w-4xl">
     <div class="space-y-8">
       <!-- list-settings error -->
       <NeInlineNotification
@@ -183,7 +183,7 @@ onMounted(() => {
         :title="t('error.cannot_retrieve_threat_shield_settings')"
         :description="error.listSettings"
       >
-        <template #details v-if="error.listSettingsDetails">
+        <template v-if="error.listSettingsDetails" #details>
           {{ error.listSettingsDetails }}
         </template>
       </NeInlineNotification>
@@ -195,9 +195,9 @@ onMounted(() => {
             :description="t('standalone.threat_shield.threat_shield_status_description')"
           >
             <NeToggle
+              v-model="isThreatShieldEnabled"
               :top-label="t('standalone.threat_shield.status')"
               :label="isThreatShieldEnabled ? t('common.enabled') : t('common.disabled')"
-              v-model="isThreatShieldEnabled"
               :disabled="loading.editSettings"
             />
           </FormLayout>
@@ -222,30 +222,30 @@ onMounted(() => {
                   kind="warning"
                   :title="t('standalone.threat_shield.threats_monitoring_disabled')"
                   :description="t('standalone.threat_shield.threats_monitoring_disabled_message')"
-                  :closeAriaLabel="t('common.close')"
+                  :close-aria-label="t('common.close')"
                 />
                 <NeToggle
+                  v-model="isLogPreroutingEnabled"
                   :top-label="t('standalone.threat_shield.log_prerouting_chain')"
                   :label="isLogPreroutingEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isLogPreroutingEnabled"
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
+                  v-model="isLogInputEnabled"
                   :top-label="t('standalone.threat_shield.log_input_chain')"
                   :label="isLogInputEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isLogInputEnabled"
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
+                  v-model="isLogForwardEnabled"
                   :top-label="t('standalone.threat_shield.log_forward_chain')"
                   :label="isLogForwardEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isLogForwardEnabled"
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
+                  v-model="isLogForwardLanEnabled"
                   :top-label="t('standalone.threat_shield.log_forward_lan_chain')"
                   :label="isLogForwardLanEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isLogForwardLanEnabled"
                   :disabled="loading.editSettings"
                 />
               </div>
@@ -261,9 +261,9 @@ onMounted(() => {
               <div class="mb-8 space-y-6">
                 <!-- block brute force attacks -->
                 <NeToggle
+                  v-model="isBlockBruteForceEnabled"
                   :top-label="t('standalone.threat_shield.block_brute_force')"
                   :label="isBlockBruteForceEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isBlockBruteForceEnabled"
                   :disabled="loading.editSettings"
                 >
                   <template #topTooltip>
@@ -277,13 +277,13 @@ onMounted(() => {
                 <template v-if="isBlockBruteForceEnabled">
                   <!-- ban after N failed accesses -->
                   <NeTextInput
-                    :label="t('standalone.threat_shield.ban_after_n_attempts')"
                     v-model.number="maxFailedAccesses"
+                    :label="t('standalone.threat_shield.ban_after_n_attempts')"
                     type="number"
                     min="1"
                     max="100"
                     :disabled="loading.editSettings"
-                    :invalidMessage="errorBag.getFirstFor('maxFailedAccess')"
+                    :invalid-message="errorBag.getFirstFor('maxFailedAccess')"
                   >
                     <template #tooltip>
                       <NeTooltip>
@@ -300,12 +300,12 @@ onMounted(() => {
                     :label="t('standalone.threat_shield.ban_time')"
                     :options="banTimeOptions"
                     :placeholder="t('ne_combobox.choose')"
-                    :optionalLabel="t('common.optional')"
-                    :noResultsLabel="t('ne_combobox.no_results')"
-                    :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                    :noOptionsLabel="t('ne_combobox.no_options_label')"
+                    :optional-label="t('common.optional')"
+                    :no-results-label="t('ne_combobox.no_results')"
+                    :limited-options-label="t('ne_combobox.limited_options_label')"
+                    :no-options-label="t('ne_combobox.no_options_label')"
                     :selected-label="t('ne_combobox.selected')"
-                    :userInputLabel="t('ne_combobox.user_input_label')"
+                    :user-input-label="t('ne_combobox.user_input_label')"
                   >
                     <template #tooltip>
                       <NeTooltip>
@@ -321,8 +321,8 @@ onMounted(() => {
                     :add-item-label="t('standalone.threat_shield.add_pattern')"
                     :title="t('standalone.threat_shield.attack_patterns')"
                     required
-                    :disabledInputs="loading.editSettings"
-                    :generalInvalidMessage="errorBag.getFirstFor('attackPatterns')"
+                    :disabled-inputs="loading.editSettings"
+                    :general-invalid-message="errorBag.getFirstFor('attackPatterns')"
                   >
                     <template #tooltip>
                       <NeTooltip>
@@ -346,23 +346,23 @@ onMounted(() => {
               <div class="mb-8 space-y-6">
                 <!-- block icmp dos -->
                 <NeToggle
+                  v-model="isBlockIcmpDosEnabled"
                   :top-label="t('standalone.threat_shield.block_icmp_dos')"
                   :label="isBlockIcmpDosEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isBlockIcmpDosEnabled"
                   :disabled="loading.editSettings"
                 />
                 <!-- block syn dos -->
                 <NeToggle
+                  v-model="isBlockSynDosEnabled"
                   :top-label="t('standalone.threat_shield.block_syn_dos')"
                   :label="isBlockSynDosEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isBlockSynDosEnabled"
                   :disabled="loading.editSettings"
                 />
                 <!-- block udp dos -->
                 <NeToggle
+                  v-model="isBlockUdpDosEnabled"
                   :top-label="t('standalone.threat_shield.block_udp_dos')"
                   :label="isBlockUdpDosEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isBlockUdpDosEnabled"
                   :disabled="loading.editSettings"
                 />
               </div>
@@ -379,7 +379,7 @@ onMounted(() => {
               :title="t('error.cannot_save_threat_shield_settings')"
               :description="error.editSettings"
             >
-              <template #details v-if="error.editSettingsDetails">
+              <template v-if="error.editSettingsDetails" #details>
                 {{ error.editSettingsDetails }}
               </template>
             </NeInlineNotification>

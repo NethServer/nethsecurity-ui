@@ -94,7 +94,7 @@ async function getFlashstartConfig() {
       :description="tsStore.errorListDnsSettings"
       class="mb-5"
     >
-      <template #details v-if="tsStore.errorListDnsSettingsDetails">
+      <template v-if="tsStore.errorListDnsSettingsDetails" #details>
         {{ tsStore.errorListDnsSettingsDetails }}
       </template>
     </NeInlineNotification>
@@ -124,11 +124,11 @@ async function getFlashstartConfig() {
     <template v-else>
       <NeTabs
         :selected="selectedTab"
-        :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-        :srTabsLabel="t('ne_tabs.tabs')"
+        :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+        :sr-tabs-label="t('ne_tabs.tabs')"
         :tabs="tabs"
         class="mb-8"
-        @selectTab="selectedTab = $event"
+        @select-tab="selectedTab = $event"
       />
       <BlocklistSourcesPanel v-if="selectedTab === 'blocklistSources'" />
       <FilterBypassPanel v-if="selectedTab === 'filterBypass'" />

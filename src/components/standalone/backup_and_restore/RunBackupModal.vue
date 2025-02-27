@@ -25,17 +25,17 @@ defineProps({
 const emit = defineEmits(['success', 'close'])
 const loading = ref(false)
 
-let objNotification = {
+const objNotification = {
   notificationTitle: '',
   notificationDescription: ''
 }
 
-let errorRunBackup = ref({ ...objNotification })
+const errorRunBackup = ref({ ...objNotification })
 
 async function runBackup() {
   loading.value = true
   try {
-    let res = await ubusCall('ns.backup', 'registered-backup')
+    const res = await ubusCall('ns.backup', 'registered-backup')
     if (res?.data?.message && res?.data?.message === 'success') {
       emit('success')
     }

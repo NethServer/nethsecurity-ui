@@ -99,7 +99,7 @@ async function updateUnit() {
     await unitsStore.getUnitInfo(_unit.value!.id)
     await unitsStore.getUnits()
 
-    let notification: NeNotification = {
+    const notification: NeNotification = {
       kind: 'success'
     }
     if (updateMode.value == 'now') {
@@ -128,8 +128,8 @@ function close() {
 
 <template>
   <NeSideDrawer
-    :isShown="unit != undefined"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :is-shown="unit != undefined"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.update.update_system')"
     @close="close"
   >

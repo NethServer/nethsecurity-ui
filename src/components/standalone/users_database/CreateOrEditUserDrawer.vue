@@ -119,7 +119,7 @@ async function createOrEditUser() {
       password?: string
       description: string
       database: string
-      extra: {}
+      extra: object
     } = {
       name: username.value,
       description: displayName.value,
@@ -170,9 +170,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="id ? t('standalone.users_database.edit_user') : t('standalone.users_database.add_user')"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -181,7 +181,7 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -226,7 +226,7 @@ watch(
       />
       <NeToggle
         v-model="admin"
-        :topLabel="t('standalone.users_database.administrator')"
+        :top-label="t('standalone.users_database.administrator')"
         :label="admin ? t('common.enabled') : t('common.disabled')"
       >
         <template #topTooltip>
@@ -242,9 +242,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditUser()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditUser()"
           >{{ id ? t('common.save') : t('standalone.users_database.add_user') }}</NeButton
         >
       </div>

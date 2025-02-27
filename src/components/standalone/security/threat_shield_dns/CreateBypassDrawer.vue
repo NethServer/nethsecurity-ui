@@ -96,19 +96,19 @@ function clearErrors() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="t('standalone.threat_shield_dns.add_bypass')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
       <div class="space-y-6">
         <NeTextInput
-          :label="t('standalone.threat_shield_dns.ip_address_or_network_cidr')"
-          v-model.trim="bypass"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('address'))"
-          :disabled="tsStore.loadingAddDnsBypass"
           ref="bypassRef"
+          v-model.trim="bypass"
+          :label="t('standalone.threat_shield_dns.ip_address_or_network_cidr')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('address'))"
+          :disabled="tsStore.loadingAddDnsBypass"
         />
         <!-- dns-add-bypass error notification -->
         <NeInlineNotification
@@ -117,7 +117,7 @@ function clearErrors() {
           :title="t('error.cannot_create_bypass')"
           :description="tsStore.errorAddDnsBypass"
         >
-          <template #details v-if="tsStore.errorAddDnsBypassDetails">
+          <template v-if="tsStore.errorAddDnsBypassDetails" #details>
             {{ tsStore.errorAddDnsBypassDetails }}
           </template>
         </NeInlineNotification>
@@ -128,18 +128,18 @@ function clearErrors() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="tsStore.loadingAddDnsBypass"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveBypass"
           :disabled="tsStore.loadingAddDnsBypass"
           :loading="tsStore.loadingAddDnsBypass"
+          @click.prevent="saveBypass"
         >
           {{ t('standalone.threat_shield_dns.add_bypass') }}
         </NeButton>

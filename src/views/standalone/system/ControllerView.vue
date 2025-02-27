@@ -141,7 +141,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -260,12 +260,12 @@ function promptConnectUnit() {
   </div>
   <div class="flex flex-col gap-y-6">
     <NeInlineNotification
+      v-if="error.notificationDescription"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -274,14 +274,14 @@ function promptConnectUnit() {
       :description="t('standalone.controller.connect_unit_description')"
       class="max-w-3xl"
     >
-      <NeSkeleton :lines="10" v-if="loading"></NeSkeleton>
-      <div class="flex flex-col gap-y-6" v-else>
+      <NeSkeleton v-if="loading" :lines="10"></NeSkeleton>
+      <div v-else class="flex flex-col gap-y-6">
         <NeTextInput
+          ref="unitNameRef"
           v-model="unitName"
           :disabled="status !== 'unregistered'"
           :label="t('standalone.controller.unit_name')"
-          ref="unitNameRef"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('unit_name'))"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('unit_name'))"
         >
           <template #tooltip>
             <NeTooltip v-if="status === 'unregistered'">
@@ -293,10 +293,10 @@ function promptConnectUnit() {
         </NeTextInput>
         <NeTextArea
           v-if="status === 'unregistered'"
+          ref="controllerJoinCodeRef"
           v-model="controllerJoinCode"
           :label="t('standalone.controller.controller_join_code')"
-          ref="controllerJoinCodeRef"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('join_code'))"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('join_code'))"
         >
           <template #tooltip>
             <NeTooltip>
@@ -381,25 +381,25 @@ function promptConnectUnit() {
           </div>
         </template>
         <div v-if="status === 'unregistered'">
-          <NeButton kind="primary" @click="promptConnectUnit" :disabled="isPerformingAction">
+          <NeButton kind="primary" :disabled="isPerformingAction" @click="promptConnectUnit">
             <template #prefix>
               <font-awesome-icon :icon="['fas', 'link']" class="h-4 w-4" aria-hidden="true" />
               {{ t('standalone.controller.connect_unit') }}
             </template>
           </NeButton>
         </div>
-        <div class="-mx-2 flex flex-row gap-x-4" v-else>
+        <div v-else class="-mx-2 flex flex-row gap-x-4">
           <NeButton
             kind="tertiary"
-            @click="showDisconnectUnitModal = true"
             :disabled="isPerformingAction"
+            @click="showDisconnectUnitModal = true"
           >
             <template #prefix>
               <font-awesome-icon :icon="['fas', 'link-slash']" class="h-4 w-4" aria-hidden="true" />
               {{ t('standalone.controller.disconnect_unit') }}
             </template>
           </NeButton>
-          <NeButton kind="secondary" @click="restartConnection" :disabled="isPerformingAction">
+          <NeButton kind="secondary" :disabled="isPerformingAction" @click="restartConnection">
             <template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'arrows-rotate']"
@@ -432,7 +432,7 @@ function promptConnectUnit() {
       :description="disconnectUnitError.notificationDescription"
       kind="error"
     >
-      <template #details v-if="disconnectUnitError.notificationDetails">
+      <template v-if="disconnectUnitError.notificationDetails" #details>
         {{ disconnectUnitError.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -444,9 +444,9 @@ function promptConnectUnit() {
     :title="t('standalone.controller.connect_unit')"
     :primary-label="t('standalone.controller.confirm_and_connect')"
     :close-aria-label="t('common.close')"
+    :secondary-label="t('common.cancel')"
     @primary-click="connectUnit"
     @secondary-click="showConnectUnitModal = false"
-    :secondary-label="t('common.cancel')"
     @close="showConnectUnitModal = false"
   >
     <strong>{{ t('standalone.controller.disclaimer') }}: </strong>

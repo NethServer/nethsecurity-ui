@@ -78,14 +78,14 @@ function getQosRule(item: Wan) {
       kind="error"
       :title="t('error.cannot_retrieve_qos_interfaces')"
       :description="error.listQos"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listQosDetails" #details>
         {{ error.listQosDetails }}
       </template>
     </NeInlineNotification>
-    <NeTable :ariaLabel="t('standalone.real_time_monitor.wans')" cardBreakpoint="md" class="mt-2">
+    <NeTable :aria-label="t('standalone.real_time_monitor.wans')" card-breakpoint="md" class="mt-2">
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.interface') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.real_time_monitor.device') }}</NeTableHeadCell>
@@ -179,11 +179,13 @@ function getQosRule(item: Wan) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

@@ -31,11 +31,11 @@ const isShownManageRuleModal = ref(false)
 const currentRule = ref<DpiRule>()
 const isShownDeleteRuleModal = ref(false)
 
-let loading = ref({
+const loading = ref({
   listRules: true
 })
 
-let error = ref({
+const error = ref({
   listRules: '',
   listRulesDetails: ''
 })
@@ -93,8 +93,8 @@ function showDeleteRuleModal(rule: DpiRule) {
         v-if="rules.length"
         kind="secondary"
         size="lg"
-        @click="showCreateRuleModal"
         class="ml-6 shrink-0"
+        @click="showCreateRuleModal"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -109,7 +109,7 @@ function showDeleteRuleModal(rule: DpiRule) {
       :description="error.listRules"
       class="mb-5"
     >
-      <template #details v-if="error.listRulesDetails">
+      <template v-if="error.listRulesDetails" #details>
         {{ error.listRulesDetails }}
       </template>
     </NeInlineNotification>
@@ -141,26 +141,26 @@ function showDeleteRuleModal(rule: DpiRule) {
           :key="index"
           :rule="rule"
           :zones="firewallConfig.zones"
-          @editRule="showEditRuleModal"
-          @deleteRule="showDeleteRuleModal"
-          @reloadData="loadData"
+          @edit-rule="showEditRuleModal"
+          @delete-rule="showDeleteRuleModal"
+          @reload-data="loadData"
         />
       </div>
     </template>
     <!-- manage dpi rule modal -->
     <ManageDpiRuleModal
       :visible="isShownManageRuleModal"
-      :ruleToEdit="currentRule"
-      :allRules="rules"
+      :rule-to-edit="currentRule"
+      :all-rules="rules"
       @close="isShownManageRuleModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete rule modal -->
     <DeleteDpiRuleModal
       :visible="isShownDeleteRuleModal"
       :rule="currentRule"
       @close="isShownDeleteRuleModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
   </div>
 </template>

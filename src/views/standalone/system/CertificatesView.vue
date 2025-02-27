@@ -126,7 +126,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -207,13 +207,13 @@ onMounted(() => {
   <NeModal
     kind="info"
     :visible="showCertificateDetailsModal"
-    @close="showCertificateDetailsModal = false"
     :primary-label="t('common.close')"
-    @primary-click="showCertificateDetailsModal = false"
     :close-aria-label="t('common.close')"
     :title="selectedCertificate?.name"
     cancel-label=""
     size="xxl"
+    @close="showCertificateDetailsModal = false"
+    @primary-click="showCertificateDetailsModal = false"
   >
     <p class="mb-2 font-semibold">{{ t('standalone.certificates.certificate') }}</p>
     <p

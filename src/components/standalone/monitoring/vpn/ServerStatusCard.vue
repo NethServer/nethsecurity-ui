@@ -18,7 +18,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <NeCard :title="t('common.status')" :loading="loading" :skeletonLines="2">
+  <NeCard :title="t('common.status')" :loading="loading" :skeleton-lines="2">
     <SimpleStat class="mt-1">
       <div class="flex items-center justify-center gap-2">
         <font-awesome-icon

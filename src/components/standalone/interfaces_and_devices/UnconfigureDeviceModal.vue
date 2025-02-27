@@ -25,11 +25,11 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let loading = ref({
+const loading = ref({
   unconfigureDevice: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -76,18 +76,18 @@ async function unconfigureDevice() {
         : t('standalone.interfaces_and_devices.remove_configuration')
     "
     kind="warning"
-    :primaryLabel="
+    :primary-label="
       isBridge(device)
         ? t('standalone.interfaces_and_devices.delete_interface')
         : t('standalone.interfaces_and_devices.remove_configuration')
     "
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.unconfigureDevice"
-    :primaryButtonLoading="loading.unconfigureDevice"
-    :closeAriaLabel="t('common.close')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.unconfigureDevice"
+    :primary-button-loading="loading.unconfigureDevice"
+    :close-aria-label="t('common.close')"
     @close="closeModal"
-    @primaryClick="unconfigureDevice"
+    @primary-click="unconfigureDevice"
   >
     <div v-if="device && iface">
       <template v-if="isBridge(device)">

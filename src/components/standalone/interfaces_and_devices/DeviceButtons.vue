@@ -125,7 +125,7 @@ function getUnconfiguredVlanKebabMenuItems(device: DeviceOrIface) {
       (getInterface(deviceOrIface) && !isBond(deviceOrIface)) || isConfiguredBond(deviceOrIface)
     "
     :items="getConfiguredDeviceKebabMenuItems(deviceOrIface)"
-    :alignToRight="true"
+    :align-to-right="true"
   />
   <NeDropdown
     v-if="isUnconfiguredBond(deviceOrIface)"
@@ -139,12 +139,12 @@ function getUnconfiguredVlanKebabMenuItems(device: DeviceOrIface) {
         danger: true
       }
     ]"
-    :alignToRight="true"
+    :align-to-right="true"
   />
   <!-- actions for unconfigured vlan devices -->
   <NeDropdown
     v-else-if="isVlan(deviceOrIface) && !getInterface(deviceOrIface)"
     :items="getUnconfiguredVlanKebabMenuItems(deviceOrIface)"
-    :alignToRight="true"
+    :align-to-right="true"
   />
 </template>

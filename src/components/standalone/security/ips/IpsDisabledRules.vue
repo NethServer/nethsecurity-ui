@@ -151,11 +151,11 @@ function handleEnabled() {
         </NeButton>
       </div>
       <NeTable
-        :ariaLabel="t('standalone.ips.rules_table')"
+        :aria-label="t('standalone.ips.rules_table')"
         :skeleton-columns="7"
         :skeleton-rows="5"
-        :sortDescending="sortDescending"
-        :sortKey="sortKey"
+        :sort-descending="sortDescending"
+        :sort-key="sortKey"
         card-breakpoint="xl"
       >
         <NeTableHead>
@@ -208,8 +208,16 @@ function handleEnabled() {
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
             :total-rows="rules.length"
-            @selectPageSize="(size: number) => { pageSize = size }"
-            @select-page="(page: number) => { currentPage = page }"
+            @select-page-size="
+              (size: number) => {
+                pageSize = size
+              }
+            "
+            @select-page="
+              (page: number) => {
+                currentPage = page
+              }
+            "
           />
         </template>
       </NeTable>
@@ -223,8 +231,8 @@ function handleEnabled() {
       </NeButton>
     </NeEmptyState>
     <IpsDisableRuleDrawer
-      @save="handleSave"
       :visible="disablingRule"
+      @save="handleSave"
       @close="disablingRule = false"
     />
     <IpsEnableRuleModal

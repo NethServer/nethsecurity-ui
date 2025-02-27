@@ -67,10 +67,10 @@ function getBlocklistName(blocklist: Blocklist) {
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.threat_shield.blocklist')"
-    cardBreakpoint="xl"
-    :skeletonColumns="4"
-    :skeletonRows="8"
+    :aria-label="t('standalone.threat_shield.blocklist')"
+    card-breakpoint="xl"
+    :skeleton-columns="4"
+    :skeleton-rows="8"
     :loading="loading"
     class="z-10"
   >
@@ -105,10 +105,10 @@ function getBlocklistName(blocklist: Blocklist) {
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">
           <p v-if="item.confidence === -1">{{ t('standalone.threat_shield.unknown') }}</p>
-          <div class="max-w-[10rem]" v-else>
+          <div v-else class="max-w-[10rem]">
             <div class="mb-2 flex flex-row">
               <div v-for="i in range(0, 10)" :key="i" class="flex grow basis-0 justify-center">
-                <p class="text-xs font-semibold" v-if="i + 1 == item.confidence">
+                <p v-if="i + 1 == item.confidence" class="text-xs font-semibold">
                   {{ item.confidence }}/10
                 </p>
               </div>
@@ -124,13 +124,13 @@ function getBlocklistName(blocklist: Blocklist) {
         <NeTableCell :data-label="t('common.status')">
           <NeToggle
             v-model="item.enabled"
+            :disabled="disableToggles || item.type === 'unknown'"
+            :label="item.enabled ? t('common.enabled') : t('common.disabled')"
             @change="
               () => {
                 $emit('toggleBlocklist', item)
               }
             "
-            :disabled="disableToggles || item.type === 'unknown'"
-            :label="item.enabled ? t('common.enabled') : t('common.disabled')"
           />
         </NeTableCell>
       </NeTableRow>
@@ -146,13 +146,15 @@ function getBlocklistName(blocklist: Blocklist) {
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
-        @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

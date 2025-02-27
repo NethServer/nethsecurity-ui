@@ -22,12 +22,12 @@ const internetStatus = ref<any>(null)
 const dnsConfiguredStatus = ref<any>(null)
 const statusIntervalId = ref(0)
 
-let loading = ref({
+const loading = ref({
   getInternetStatus: false,
   getDnsConfiguredStatus: false
 })
 
-let error = ref({
+const error = ref({
   title: '',
   description: ''
 })
@@ -138,10 +138,10 @@ function goToDns() {
   <NeCard
     :title="t('standalone.dashboard.internet_connection')"
     :icon="['fas', 'earth-americas']"
-    :skeletonLines="2"
+    :skeleton-lines="2"
     :loading="loading.getInternetStatus || loading.getDnsConfiguredStatus"
-    :errorTitle="error.title"
-    :errorDescription="error.description"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <div class="space-y-4">
       <NeBadge
@@ -165,7 +165,7 @@ function goToDns() {
         <template #content>
           <i18n-t keypath="standalone.dashboard.dns_not_configured_tooltip" tag="p" scope="global">
             <template #dnsLink>
-              <NeLink invertedTheme @click="goToDns">
+              <NeLink inverted-theme @click="goToDns">
                 {{ t('standalone.dns_dhcp.title') }}
               </NeLink>
             </template>

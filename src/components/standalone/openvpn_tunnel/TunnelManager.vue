@@ -180,7 +180,7 @@ onUnmounted(() => {
         }}
       </p>
       <template v-if="tunnels.length > 0">
-        <div class="shrink-0" v-if="!manageClientTunnels">
+        <div v-if="!manageClientTunnels" class="shrink-0">
           <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
             <template #prefix>
               <font-awesome-icon
@@ -193,8 +193,8 @@ onUnmounted(() => {
           </NeButton>
         </div>
         <div
-          class="flex shrink-0 flex-row-reverse items-start justify-end gap-4 xl:flex-row"
           v-else
+          class="flex shrink-0 flex-row-reverse items-start justify-end gap-4 xl:flex-row"
         >
           <NeButton kind="tertiary" @click="openCreateEditDrawer(null)">
             <template #prefix>
@@ -220,10 +220,10 @@ onUnmounted(() => {
       </template>
     </div>
     <NeInlineNotification
+      v-if="error.notificationTitle"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationTitle"
     >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
@@ -285,10 +285,10 @@ onUnmounted(() => {
   </div>
   <CreateOrEditTunnelDrawer
     :item-to-edit="selectedTunnel"
-    @close="closeModalsAndDrawers"
-    @add-edit-tunnel="reloadTunnels"
     :is-shown="showCreateEditDrawer"
     :is-client-tunnel="manageClientTunnels"
+    @close="closeModalsAndDrawers"
+    @add-edit-tunnel="reloadTunnels"
   />
   <DeleteTunnelModal
     :visible="showDeleteModal"

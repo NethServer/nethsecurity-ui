@@ -17,7 +17,7 @@ function copyValue() {
 
 <template>
   <div>
-    <p class="mb-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200" v-if="label">
+    <p v-if="label" class="mb-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
       {{ label }}
     </p>
     <div

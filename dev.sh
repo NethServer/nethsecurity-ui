@@ -2,7 +2,7 @@
 
 set -e
 
-dev_image=${DEV_IMAGE:-"nethsecurity-ui:dev-20.9.0"}
+dev_image=${DEV_IMAGE:-"nethsecurity-ui:dev-22.14.0"}
 container_name=nethsecurity-ui-dev
 
 build_image() {

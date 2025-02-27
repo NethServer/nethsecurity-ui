@@ -44,16 +44,16 @@ const form = ref({
   zones: []
 })
 
-let isError = ref(false)
-let loading = ref(false)
-let saving = ref(false)
-let zones = ref<NeComboboxOption[]>([])
-let usernameRef = ref()
-let passwordRef = ref()
-let zonesRef = ref()
-let bypassSourceRef = ref()
+const isError = ref(false)
+const loading = ref(false)
+const saving = ref(false)
+const zones = ref<NeComboboxOption[]>([])
+const usernameRef = ref()
+const passwordRef = ref()
+const zonesRef = ref()
+const bypassSourceRef = ref()
 
-let objError = {
+const objError = {
   notificationTitle: '',
   notificationDescription: '',
   username: '',
@@ -61,10 +61,10 @@ let objError = {
   zones: '',
   bypassSource: ['']
 }
-let error = ref({ ...objError })
-let errorLoadingZones = ref({ ...objError })
-let errorLoadingConfiguration = ref({ ...objError })
-let errorSaving = ref({ ...objError })
+const error = ref({ ...objError })
+const errorLoadingZones = ref({ ...objError })
+const errorLoadingConfiguration = ref({ ...objError })
+const errorSaving = ref({ ...objError })
 
 onMounted(() => {
   getConfiguration()
@@ -75,7 +75,7 @@ async function getZones() {
 
   // Retrieve firewall zones
   try {
-    let getZones = await ubusCall('ns.flashstart', 'list-zones', {})
+    const getZones = await ubusCall('ns.flashstart', 'list-zones', {})
     if (getZones?.data?.values?.length) {
       zones.value = getZones.data.values.map((item: any) => ({
         id: item.label,
@@ -95,9 +95,9 @@ async function getConfiguration() {
   loading.value = true
 
   try {
-    let getDataConfiguration = await ubusCall('ns.flashstart', 'get-config', {})
+    const getDataConfiguration = await ubusCall('ns.flashstart', 'get-config', {})
     if (getDataConfiguration && getDataConfiguration.data && getDataConfiguration.data.values) {
-      let configuration = getDataConfiguration.data.values
+      const configuration = getDataConfiguration.data.values
       form.value.status = configuration.enabled
       form.value.username = configuration.username
       form.value.password = configuration.password
@@ -138,7 +138,7 @@ function validate() {
   let isFocusInput = false
 
   if (!form.value.username) {
-    let { valid, errMessage } = validateRequired(form.value.username)
+    const { valid, errMessage } = validateRequired(form.value.username)
     if (!valid) {
       error.value.username = t(errMessage as string)
       isValidationOk = false
@@ -151,7 +151,7 @@ function validate() {
   }
 
   if (!form.value.password) {
-    let { valid, errMessage } = validateRequired(form.value.password)
+    const { valid, errMessage } = validateRequired(form.value.password)
     if (!valid) {
       error.value.password = t(errMessage as string)
       isValidationOk = false
@@ -164,7 +164,7 @@ function validate() {
   }
 
   if (!form.value.zones.length) {
-    let { valid, errMessage } = validateRequiredOption(form.value.zones)
+    const { valid, errMessage } = validateRequiredOption(form.value.zones)
     if (!valid) {
       error.value.zones = t(errMessage as string)
       isValidationOk = false
@@ -175,10 +175,10 @@ function validate() {
     focusElement(zonesRef)
   }
 
-  for (let [index, item] of form.value.bypassSource.entries()) {
+  for (const [index, item] of form.value.bypassSource.entries()) {
     if (item) {
-      let validator = [validateIp4Address(item), validateIp4Cidr(item)]
-      let allInvalid = validator.every((obj) => !obj.valid)
+      const validator = [validateIp4Address(item), validateIp4Cidr(item)]
+      const allInvalid = validator.every((obj) => !obj.valid)
       if (allInvalid) {
         error.value.bypassSource[index] = t(validator[0].errMessage as string)
         isValidationOk = false
@@ -195,7 +195,7 @@ function save() {
     saving.value = true
 
     // create payload
-    let payload = {
+    const payload = {
       enabled: form.value.status,
       username: form.value.username,
       password: form.value.password,
@@ -262,17 +262,17 @@ function save() {
         </div>
         <template v-if="form.status">
           <NeTextInput
+            ref="usernameRef"
             v-model="form.username"
             :invalid-message="error.username"
             :label="t('standalone.flashstart.username')"
-            ref="usernameRef"
           >
             <template #tooltip>
               <NeTooltip>
                 <template #content>
                   <i18n-t keypath="standalone.flashstart.username_helper" tag="span" scope="global">
                     <template #flashstartUrl>
-                      <NeLink invertedTheme href="https://flashstart.nethesis.it/" target="_blank">
+                      <NeLink inverted-theme href="https://flashstart.nethesis.it/" target="_blank">
                         https://flashstart.nethesis.it/
                       </NeLink>
                     </template>
@@ -282,28 +282,29 @@ function save() {
             </template>
           </NeTextInput>
           <NeTextInput
+            ref="passwordRef"
             v-model="form.password"
-            isPassword
+            is-password
             :invalid-message="error.password"
             :label="t('standalone.flashstart.password')"
-            ref="passwordRef"
           />
           <NeCombobox
+            ref="zonesRef"
             v-model="form.zones"
             :label="t('standalone.flashstart.zones')"
             :placeholder="t('standalone.flashstart.zones_placeholder')"
             multiple
             :options="zones"
             :invalid-message="error.zones"
-            ref="zonesRef"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <NeMultiTextInput
+            ref="bypassSourceRef"
             v-model="form.bypassSource"
             :title="t('standalone.flashstart.sourcebypass')"
             :add-item-label="t('standalone.flashstart.add_sourcebypass')"
@@ -311,8 +312,7 @@ function save() {
             :disable-inputs="saving"
             :disable-add-button="saving"
             optional
-            :optionalLabel="t('common.optional')"
-            ref="bypassSourceRef"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip>

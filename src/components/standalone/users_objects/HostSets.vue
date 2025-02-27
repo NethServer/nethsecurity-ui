@@ -178,9 +178,9 @@ function clearFilters() {
         v-if="loadingListHostSets || hostSets.length"
         kind="secondary"
         size="lg"
-        @click="showCreateHostSetDrawer"
         class="shrink-0"
         :disabled="loadingListHostSets"
+        @click="showCreateHostSetDrawer"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -198,15 +198,15 @@ function clearFilters() {
         :description="errorListHostSets"
         class="mb-5"
       >
-        <template #details v-if="errorListHostSetsDetails">
+        <template v-if="errorListHostSetsDetails" #details>
           {{ errorListHostSetsDetails }}
         </template>
       </NeInlineNotification>
       <!-- text filter -->
       <div class="flex items-center gap-4">
         <NeTextInput
-          :placeholder="t('standalone.objects.filter_host_sets')"
           v-model.trim="textFilter"
+          :placeholder="t('standalone.objects.filter_host_sets')"
           :disabled="loadingListHostSets"
           class="max-w-xs"
         />
@@ -215,18 +215,18 @@ function clearFilters() {
           kind="checkbox"
           :label="t('standalone.objects.type')"
           :options="objectTypeFilterOptions"
-          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
-          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         />
         <NeDropdownFilter
           v-model="ipVersionFilter"
           kind="radio"
           :label="t('standalone.objects.ip_version')"
           :options="ipVersionFilterOptions"
-          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
-          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         />
-        <NeButton kind="tertiary" @click="clearFilters" :disabled="loadingListHostSets">
+        <NeButton kind="tertiary" :disabled="loadingListHostSets" @click="clearFilters">
           {{ t('common.clear_filters') }}
         </NeButton>
       </div>
@@ -240,9 +240,9 @@ function clearFilters() {
         <NeButton
           kind="secondary"
           size="lg"
-          @click="showCreateHostSetDrawer"
           class="shrink-0"
           :disabled="loadingListHostSets"
+          @click="showCreateHostSetDrawer"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -264,53 +264,53 @@ function clearFilters() {
       <HostSetsTable
         v-else
         :loading="loadingListHostSets"
-        :filteredHostSets="filteredHostSets"
-        :allHostSets="hostSets"
-        @editHostSet="showEditHostSetDrawer"
-        @deleteHostSet="showDeleteHostSetModal"
-        @showUsagesHostSet="showUsagesModal"
+        :filtered-host-sets="filteredHostSets"
+        :all-host-sets="hostSets"
+        @edit-host-set="showEditHostSetDrawer"
+        @delete-host-set="showDeleteHostSetModal"
+        @show-usages-host-set="showUsagesModal"
       />
     </div>
     <!-- create/edit host set -->
     <CreateOrEditHostSetDrawer
-      :isShown="isShownCreateOrEditHostSetDrawer"
-      :currentHostSet="currentHostSet"
-      :allObjects="hostSets"
-      :recordOptions="hostSetsComboboxOptions"
+      :is-shown="isShownCreateOrEditHostSetDrawer"
+      :current-host-set="currentHostSet"
+      :all-objects="hostSets"
+      :record-options="hostSetsComboboxOptions"
       @close="isShownCreateOrEditHostSetDrawer = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete host set modal -->
     <DeleteModal
       :visible="isShownDeleteHostSetModal"
       :title="t('standalone.objects.delete_host_set')"
-      :deleteButtonLabel="t('standalone.objects.delete_host_set')"
-      :errorNotificationTitle="t('error.cannot_delete_host_set')"
-      :deleteFunction="
+      :delete-button-label="t('standalone.objects.delete_host_set')"
+      :error-notification-title="t('error.cannot_delete_host_set')"
+      :delete-function="
         () =>
           ubusCall('ns.objects', 'delete-host-set', {
             id: currentHostSet?.id.replace('objects/', '')
           })
       "
       @close="isShownDeleteHostSetModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     >
       {{ t('standalone.objects.confirm_delete_host_set', { name: currentHostSet?.name }) }}
     </DeleteModal>
     <!-- cannot delete modal -->
     <CannotDeleteObjectModal
       :visible="isShownCannotDeleteObjectModal"
-      :objectName="currentHostSetName"
-      :usageIds="currentUsageIds"
-      :showGoToObjectsButton="false"
+      :object-name="currentHostSetName"
+      :usage-ids="currentUsageIds"
+      :show-go-to-objects-button="false"
       @close="isShownCannotDeleteObjectModal = false"
     />
     <!-- usages modal -->
     <ObjectUsagesModal
       :visible="isShownUsagesModal"
-      :objectName="currentHostSetName"
-      :usageIds="currentUsageIds"
-      :showGoToObjectsButton="false"
+      :object-name="currentHostSetName"
+      :usage-ids="currentUsageIds"
+      :show-go-to-objects-button="false"
       @close="isShownUsagesModal = false"
     />
   </div>

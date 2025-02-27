@@ -43,14 +43,14 @@ const props = defineProps({
 
 const emit = defineEmits(['success', 'close'])
 
-let loadingDownload = ref(false)
+const loadingDownload = ref(false)
 
-let objNotification = {
+const objNotification = {
   notificationTitle: '',
   notificationDescription: ''
 }
 
-let errorDownloadBackup = ref({ ...objNotification })
+const errorDownloadBackup = ref({ ...objNotification })
 
 function getBackupName() {
   if (props.selectedBackupTime) {
@@ -73,7 +73,7 @@ async function downloadBackup() {
       }
     }
 
-    let res = await ubusCall('ns.backup', methodCall, payload)
+    const res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.backup) {
       const file = await downloadFile(res.data.backup)
       const fileURL = URL.createObjectURL(file)
@@ -93,7 +93,7 @@ async function downloadBackup() {
           extension += '.gpg'
         }
       }
-      let link = document.createElement('a')
+      const link = document.createElement('a')
       link.href = fileURL
       if (props.selectedBackupTime) {
         link.download = 'backup-' + props.unitName + '-' + props.selectedBackupTime + extension
@@ -120,7 +120,7 @@ async function downloadBackup() {
     :primary-button-disabled="loadingDownload"
     :primary-button-loading="loadingDownload"
     :primary-label="t('standalone.backup_and_restore.backup.download')"
-    :cancelLabel="t('common.cancel')"
+    :cancel-label="t('common.cancel')"
     :title="t('standalone.backup_and_restore.backup.download_backup')"
     :visible="showDownloadModal"
     kind="info"

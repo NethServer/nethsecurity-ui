@@ -48,12 +48,12 @@ const freeDataStorage = ref(0)
 const totalDataStorage = ref(0)
 const dataStorageUsagePerc = ref(0)
 
-let loading = ref({
+const loading = ref({
   getSystemInfo: true,
   getUpdatesStatus: true
 })
 
-let error = ref({
+const error = ref({
   title: '',
   description: ''
 })
@@ -152,10 +152,10 @@ async function getUpdatesStatus() {
 <template>
   <NeCard
     :title="t('standalone.dashboard.system')"
-    :skeletonLines="5"
+    :skeleton-lines="5"
     :loading="loading.getSystemInfo"
-    :errorTitle="error.title"
-    :errorDescription="error.description"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <div class="mb-2 mt-3 flex items-center">
       <div
@@ -186,7 +186,7 @@ async function getUpdatesStatus() {
                 scope="global"
               >
                 <template #systemSettingsLink>
-                  <NeLink invertedTheme @click="goToSystemSettings">
+                  <NeLink inverted-theme @click="goToSystemSettings">
                     {{ t('standalone.system_settings.title') }}
                   </NeLink>
                 </template>
@@ -211,7 +211,7 @@ async function getUpdatesStatus() {
             </template>
             <template #content>
               {{ t('standalone.update.new_release_available') }}.
-              <NeLink invertedTheme @click="goToUpdates">
+              <NeLink inverted-theme @click="goToUpdates">
                 {{ t('common.go_to_page', { page: t('standalone.update.title') }) }}
               </NeLink>
             </template>

@@ -19,7 +19,7 @@ defineProps({
     required: true
   },
   usageIds: {
-    type: Array<String>,
+    type: Array<string>,
     required: true
   },
   showGoToObjectsButton: {
@@ -45,11 +45,11 @@ function closeModal() {
     :visible="visible"
     :title="t('standalone.objects.cannot_delete_object_name', { name: objectName })"
     kind="warning"
-    :primaryLabel="t('common.close')"
-    cancelLabel=""
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('common.close')"
+    cancel-label=""
+    :close-aria-label="t('common.close')"
     @close="closeModal"
-    @primaryClick="closeModal"
+    @primary-click="closeModal"
   >
     <div class="space-y-4">
       <div>
@@ -57,10 +57,10 @@ function closeModal() {
       </div>
       <NeExpandable
         :label="t('standalone.objects.show_usages')"
-        :isExpanded="isExpandedShowUsages"
-        @setExpanded="(ev: boolean) => (isExpandedShowUsages = ev)"
+        :is-expanded="isExpandedShowUsages"
+        @set-expanded="(ev: boolean) => (isExpandedShowUsages = ev)"
       >
-        <ObjectUsages :usageIds="usageIds" :showGoToObjectsButton="showGoToObjectsButton" />
+        <ObjectUsages :usage-ids="usageIds" :show-go-to-objects-button="showGoToObjectsButton" />
       </NeExpandable>
     </div>
   </NeModal>

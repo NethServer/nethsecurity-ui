@@ -36,12 +36,12 @@ const serviceCounter = ref<any>(null)
 const statusIntervalId = ref(0)
 const counterIntervalId = ref(0)
 
-let loading = ref({
+const loading = ref({
   getServiceStatus: false,
   getServiceCounter: false
 })
 
-let error = ref({
+const error = ref({
   title: '',
   description: ''
 })
@@ -156,10 +156,10 @@ function getBadgeIcon(status: string) {
   <NeCard
     :title="title"
     :icon="icon"
-    :skeletonLines="2"
+    :skeleton-lines="2"
     :loading="loading.getServiceStatus || loading.getServiceCounter"
-    :errorTitle="error.title"
-    :errorDescription="error.description"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <!-- title slot (if present) -->
     <template #title>

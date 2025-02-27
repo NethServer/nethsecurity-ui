@@ -67,9 +67,9 @@ function close() {
     <CannotDeleteObjectModal
       v-if="itemToDelete?.used"
       :visible="visible"
-      :objectName="itemToDelete?.name"
-      :usageIds="itemToDelete?.matches"
-      :showGoToObjectsButton="true"
+      :object-name="itemToDelete?.name"
+      :usage-ids="itemToDelete?.matches"
+      :show-go-to-objects-button="true"
       @close="close"
     />
     <!-- delete dn record modal -->
@@ -78,11 +78,11 @@ function close() {
       :visible="visible"
       kind="warning"
       :title="t('standalone.dns_dhcp.delete_dns_record')"
-      :primaryLabel="t('common.delete')"
-      :primaryButtonDisabled="isDeleting"
-      :primaryButtonLoading="isDeleting"
+      :primary-label="t('common.delete')"
+      :primary-button-disabled="isDeleting"
+      :primary-button-loading="isDeleting"
       :close-aria-label="t('common.close')"
-      @primaryClick="deleteDnsRecord()"
+      @primary-click="deleteDnsRecord()"
       @close="close()"
     >
       {{
@@ -96,7 +96,7 @@ function close() {
         :title="t('error.cannot_delete_dns_record')"
         :description="error.notificationDescription"
       >
-        <template #details v-if="error.notificationDetails">
+        <template v-if="error.notificationDetails" #details>
           {{ error.notificationDetails }}
         </template></NeInlineNotification
       >

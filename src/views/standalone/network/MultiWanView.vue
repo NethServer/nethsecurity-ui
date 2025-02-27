@@ -29,11 +29,11 @@ const { tabs, selectedTab } = useTabs([
   <div>
     <NeTabs
       :selected="selectedTab"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      :srTabsLabel="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+      :sr-tabs-label="t('ne_tabs.tabs')"
       :tabs="tabs"
       class="mb-8"
-      @selectTab="selectedTab = $event"
+      @select-tab="selectedTab = $event"
     />
     <MultiWanManager v-if="selectedTab == 'multi-wan-manager'" />
     <MultiWanGeneralSettings v-if="selectedTab == 'general-settings'" />

@@ -87,7 +87,7 @@ async function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -178,11 +178,11 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       itemToEdit ? t('standalone.qos.edit_qos_interface') : t('standalone.qos.add_qos_interface')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -194,21 +194,21 @@ watch(
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="20" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="20" />
+    <div v-else class="flex flex-col gap-y-6">
       <div>
         <NeFormItemLabel>{{ t('standalone.qos.status') }}</NeFormItemLabel>
         <NeToggle v-model="enabled" :label="enabled ? t('common.enabled') : t('common.disabled')" />
       </div>
       <NeCombobox
+        v-model="iface"
         :label="t('standalone.qos.interface')"
         :disabled="Boolean(itemToEdit)"
         :options="ifaceOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
         :placeholder="t('standalone.qos.choose_interface')"
-        v-model="iface"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
       <NeTextInput
@@ -244,9 +244,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditQosInterface()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditQosInterface()"
           >{{
             Boolean(itemToEdit) ? t('common.save') : t('standalone.qos.add_interface')
           }}</NeButton

@@ -284,8 +284,8 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
         v-if="loading.listRules || rules.length"
         kind="secondary"
         size="lg"
-        @click="showCreateRuleDrawer"
         class="ml-6 shrink-0"
+        @click="showCreateRuleDrawer"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -301,7 +301,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :description="error.listRules"
       class="mb-5"
     >
-      <template #details v-if="error.listRulesDetails">
+      <template v-if="error.listRulesDetails" #details>
         {{ error.listRulesDetails }}
       </template>
     </NeInlineNotification>
@@ -313,7 +313,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :description="error.enableOrDisableRule"
       class="mb-5"
     >
-      <template #details v-if="error.enableOrDisableRuleDetails">
+      <template v-if="error.enableOrDisableRuleDetails" #details>
         {{ error.enableOrDisableRuleDetails }}
       </template>
     </NeInlineNotification>
@@ -325,7 +325,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :description="error.orderRules"
       class="mb-5"
     >
-      <template #details v-if="error.orderRulesDetails">
+      <template v-if="error.orderRulesDetails" #details>
         {{ error.orderRulesDetails }}
       </template>
     </NeInlineNotification>
@@ -334,15 +334,15 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       <!-- text filter -->
       <div class="mb-5 flex items-center gap-4">
         <NeTextInput
-          :placeholder="t('standalone.firewall_rules.filter_rules')"
           v-model.trim="textFilter"
+          :placeholder="t('standalone.firewall_rules.filter_rules')"
           :disabled="loading.listRules"
           class="max-w-xs"
         />
         <NeButton
           kind="tertiary"
-          @click="textFilter = ''"
           :disabled="loading.listRules || !textFilter"
+          @click="textFilter = ''"
         >
           {{ t('standalone.firewall_rules.clear_filter') }}
         </NeButton>
@@ -373,34 +373,34 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       </template>
       <!-- rules -->
       <FirewallRulesTable
-        :rulesType="rulesType"
+        :rules-type="rulesType"
         :rules="rules"
-        :textFilter="textFilter"
-        :loadingRules="loading.listRules"
-        @reloadRules="loadData"
-        @editRule="showEditRuleDrawer"
-        @duplicateRule="showDuplicateRuleDrawer"
-        @deleteRule="showDeleteRuleModal"
-        @orderRules="orderRules"
-        @toggleRule="toggleRule"
+        :text-filter="textFilter"
+        :loading-rules="loading.listRules"
+        @reload-rules="loadData"
+        @edit-rule="showEditRuleDrawer"
+        @duplicate-rule="showDuplicateRuleDrawer"
+        @delete-rule="showDeleteRuleModal"
+        @order-rules="orderRules"
+        @toggle-rule="toggleRule"
       />
     </template>
     <!-- create/edit rule drawer -->
     <CreateOrEditFirewallRuleDrawer
-      :ruleType="rulesType"
-      :currentRule="currentRule"
-      :isDuplicatingRule="isDuplicatingRule"
-      :isShown="isShownCreateOrEditRuleDrawer"
-      :knownTags="knownTags"
+      :rule-type="rulesType"
+      :current-rule="currentRule"
+      :is-duplicating-rule="isDuplicatingRule"
+      :is-shown="isShownCreateOrEditRuleDrawer"
+      :known-tags="knownTags"
       @close="hideCreateOrEditRuleDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete rule modal -->
     <DeleteFirewallRuleModal
       :visible="isShownDeleteRuleModal"
       :rule="currentRule"
       @close="isShownDeleteRuleModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
   </div>
 </template>

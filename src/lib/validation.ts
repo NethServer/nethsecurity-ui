@@ -4,9 +4,9 @@
 import { type NeComboboxOption } from '@nethesis/vue-components'
 
 export interface validationOutput {
-  valid: Boolean
-  errMessage?: String
-  i18Params?: Object
+  valid: boolean
+  errMessage?: string
+  i18Params?: object
 }
 
 /**
@@ -19,9 +19,9 @@ export interface validationOutput {
  * @returns a validationOutput object
  */
 export const validateAnyOf = (
-  validators: Function[],
-  value: String,
-  errMessage: String
+  validators: ((value: string) => validationOutput)[],
+  value: string,
+  errMessage: string
 ): validationOutput => {
   for (const validator of validators) {
     const validation = validator(value)
@@ -33,14 +33,14 @@ export const validateAnyOf = (
   return { valid: false, errMessage }
 }
 
-export const validateRequired = (value: String): validationOutput => {
+export const validateRequired = (value: string): validationOutput => {
   if (value) {
     return { valid: true }
   }
   return { valid: false, errMessage: 'error.required' }
 }
 
-export const validateHostname = (hostname: String): validationOutput => {
+export const validateHostname = (hostname: string): validationOutput => {
   if (hostname.length <= 253) {
     const isValid =
       hostname.match(/^[a-zA-Z0-9_]+$/) != null ||
@@ -55,7 +55,7 @@ export const validateHostname = (hostname: String): validationOutput => {
   return { valid: false, errMessage: 'error.hostname_is_too_long' }
 }
 
-export const validateDomainName = (value: String): validationOutput => {
+export const validateDomainName = (value: string): validationOutput => {
   const isValid =
     value.match(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$/) != null
 
@@ -66,7 +66,7 @@ export const validateDomainName = (value: String): validationOutput => {
   }
 }
 
-export const validateMacAddress = (macAddress: String): validationOutput => {
+export const validateMacAddress = (macAddress: string): validationOutput => {
   const isValid = macAddress.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/) != null
 
   if (isValid) {
@@ -76,7 +76,7 @@ export const validateMacAddress = (macAddress: String): validationOutput => {
   }
 }
 
-export const validateHost = (host: String): validationOutput => {
+export const validateHost = (host: string): validationOutput => {
   const validHostname = validateHostname(host)
 
   if (validHostname.valid) {
@@ -91,7 +91,7 @@ export const validateHost = (host: String): validationOutput => {
   return { valid: false, errMessage: 'error.invalid_host' }
 }
 
-export const validateIpAddress = (ipAddr: String): validationOutput => {
+export const validateIpAddress = (ipAddr: string): validationOutput => {
   const validIp4Addr = validateIp4Address(ipAddr)
 
   if (validIp4Addr.valid) {
@@ -132,7 +132,7 @@ export const validateAddress = (value: string): validationOutput => {
  * @param value string to validate
  * @returns a validationOutput object
  */
-export const validateIpAddressRange = (value: String): validationOutput => {
+export const validateIpAddressRange = (value: string): validationOutput => {
   if (!validateIp4AddressRange(value).valid && !validateIp6AddressRange(value).valid) {
     return { valid: false, errMessage: 'error.invalid_ip_address_range' }
   }
@@ -149,7 +149,7 @@ export const validateIpAddressRange = (value: String): validationOutput => {
  * @param value string to validate
  * @returns a validationOutput object
  */
-export const validateIp4AddressRange = (value: String): validationOutput => {
+export const validateIp4AddressRange = (value: string): validationOutput => {
   if (!value.includes('-')) {
     return { valid: false, errMessage: 'error.invalid_ip_v4_address_range' }
   }
@@ -178,7 +178,7 @@ export const validateIp4AddressRange = (value: String): validationOutput => {
  * @param value string to validate
  * @returns a validationOutput object
  */
-export const validateIp6AddressRange = (value: String): validationOutput => {
+export const validateIp6AddressRange = (value: string): validationOutput => {
   if (!value.includes('-')) {
     return { valid: false, errMessage: 'error.invalid_ip_v6_address_range' }
   }
@@ -207,7 +207,7 @@ export const validateIp6AddressRange = (value: String): validationOutput => {
  * @param ipAddr string to validate
  * @returns a validationOutput object
  */
-export const validateIp4Address = (ipAddr: String): validationOutput => {
+export const validateIp4Address = (ipAddr: string): validationOutput => {
   const re = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/
   const match = ipAddr.match(re)
 
@@ -227,7 +227,7 @@ export const validateIp4Address = (ipAddr: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateIp4Cidr = (ip4Cidr: String): validationOutput => {
+export const validateIp4Cidr = (ip4Cidr: string): validationOutput => {
   const re = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/
   const match = ip4Cidr.match(re)
 
@@ -256,7 +256,7 @@ export const validateIp4OrCidr = (value: string): validationOutput => {
   return { valid: true }
 }
 
-export const validateIp6Cidr = (ip4Cidr: String): validationOutput => {
+export const validateIp6Cidr = (ip4Cidr: string): validationOutput => {
   const re =
     /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\/(?:12[0-8]|1[01][0-9]|[1-9]?[0-9])$/
   const match = ip4Cidr.match(re)
@@ -294,7 +294,7 @@ export const validateIpOrCidr = (value: string): validationOutput => {
  * @param ipAddr string to validate
  * @returns a validationOutput object
  */
-export const validateIp6Address = (ipAddr: String): validationOutput => {
+export const validateIp6Address = (ipAddr: string): validationOutput => {
   const re =
     /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
 
@@ -306,7 +306,7 @@ export const validateIp6Address = (ipAddr: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateIpv4SubnetMask = (subnetMask: String): validationOutput => {
+export const validateIpv4SubnetMask = (subnetMask: string): validationOutput => {
   const re =
     /^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$/
 
@@ -318,7 +318,7 @@ export const validateIpv4SubnetMask = (subnetMask: String): validationOutput => 
   return { valid: true }
 }
 
-export const validateIpv4Mtu = (mtu: String): validationOutput => {
+export const validateIpv4Mtu = (mtu: string): validationOutput => {
   // mtu: maximum transmission unit
 
   const mtuNum = Number(mtu)
@@ -329,7 +329,7 @@ export const validateIpv4Mtu = (mtu: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateIpv6Mtu = (mtu: String): validationOutput => {
+export const validateIpv6Mtu = (mtu: string): validationOutput => {
   // mtu: maximum transmission unit
 
   const mtuNum = Number(mtu)
@@ -340,7 +340,7 @@ export const validateIpv6Mtu = (mtu: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateHexadecimalString = (hexValue: String): validationOutput => {
+export const validateHexadecimalString = (hexValue: string): validationOutput => {
   const re = /^([a-f0-9][a-f0-9]|[A-F0-9][A-F0-9])+$/
   const match = hexValue.match(re)
 
@@ -350,7 +350,7 @@ export const validateHexadecimalString = (hexValue: String): validationOutput =>
   return { valid: true }
 }
 
-export const validateUciName = (value: String, maxLength = 0): validationOutput => {
+export const validateUciName = (value: string, maxLength = 0): validationOutput => {
   // only alphanumeric and underscore characters allowed
   const re = /^[a-zA-Z0-9_]+$/
 
@@ -371,7 +371,7 @@ export const validateUciName = (value: String, maxLength = 0): validationOutput 
 }
 
 export const validateAlphanumeric = (
-  value: String,
+  value: string,
   mustStartWithLetter = false
 ): validationOutput => {
   const re = mustStartWithLetter ? /^[a-zA-Z][a-zA-Z0-9]*$/ : /^[a-zA-Z0-9]+$/
@@ -386,7 +386,7 @@ export const validateAlphanumeric = (
   return { valid: true }
 }
 
-export const validateVlanId = (value: String): validationOutput => {
+export const validateVlanId = (value: string): validationOutput => {
   const vlanId = Number(value)
 
   if (isNaN(vlanId) || !Number.isInteger(vlanId) || vlanId < 1 || vlanId > 4094) {
@@ -532,7 +532,7 @@ export const validateLeaseTime = (value: string): validationOutput => {
   return { valid: true }
 }
 
-export const validatePassword = (value: String): validationOutput => {
+export const validatePassword = (value: string): validationOutput => {
   if (value.length < 8) {
     return { valid: false, errMessage: 'error.password_too_short' }
   }
@@ -551,7 +551,7 @@ export const validatePassword = (value: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateStringEqual = (value: String, otherValue: String): validationOutput => {
+export const validateStringEqual = (value: string, otherValue: string): validationOutput => {
   if (value != otherValue) {
     return { valid: false, errMessage: 'error.invalid_equal' }
   }
@@ -744,7 +744,7 @@ export function validateNoSpaces(value: string): validationOutput {
  * @param value string to validate
  * @returns a validationOutput object
  */
-export const validateSixDigitCode = (value: String): validationOutput => {
+export const validateSixDigitCode = (value: string): validationOutput => {
   if (value.length !== 6) {
     return { valid: false, errMessage: 'error.enter_six_digit_code' }
   }
@@ -756,7 +756,7 @@ export const validateSixDigitCode = (value: String): validationOutput => {
   return { valid: true }
 }
 
-export const validateSshKeyPassphrase = (value: String): validationOutput => {
+export const validateSshKeyPassphrase = (value: string): validationOutput => {
   if (value.length < 8) {
     return { valid: false, errMessage: 'error.passphrase_too_short' }
   }

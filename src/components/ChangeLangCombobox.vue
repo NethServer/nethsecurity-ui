@@ -26,10 +26,10 @@ watch(locale, () => {
 <template>
   <NeCombobox
     v-model="locale"
-    :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-    :noOptionsLabel="t('ne_combobox.dpi.no_options_label')"
-    :noResultsLabel="t('ne_combobox.no_results')"
-    :optionalLabel="t('common.optional')"
+    :limited-options-label="t('ne_combobox.limited_options_label')"
+    :no-options-label="t('ne_combobox.dpi.no_options_label')"
+    :no-results-label="t('ne_combobox.no_results')"
+    :optional-label="t('common.optional')"
     :options="supportedLanguages"
     :selected-label="t('ne_combobox.selected')"
     :user-input-label="t('ne_combobox.user_input_label')"

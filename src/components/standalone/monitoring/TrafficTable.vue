@@ -104,14 +104,16 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
           :previous-label="t('ne_table.go_to_previous_page')"
           :range-of-total-label="t('ne_table.of')"
           :total-rows="trafficEntriesFiltered.length"
-          @selectPageSize="
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 <template>
   <NeCard
-    :menuItems="[
+    :menu-items="[
       {
         id: 'delete',
         label: t('common.delete'),

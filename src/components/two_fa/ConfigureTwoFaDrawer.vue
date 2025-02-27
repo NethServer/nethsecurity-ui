@@ -67,15 +67,10 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.getTwoFaQrCode = ''
+  error.value.getTwoFaQrCodeDetails = ''
+  error.value.verifyOtp = ''
+  error.value.verifyOtpDetails = ''
 }
 
 async function loadQrCode() {
@@ -152,9 +147,9 @@ async function verifyOtp() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="t('standalone.two_fa.configure_two_fa')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
@@ -177,7 +172,7 @@ async function verifyOtp() {
           :title="t('error.cannot_retrieve_qr_code')"
           :description="error.getTwoFaQrCode"
         >
-          <template #details v-if="error.getTwoFaQrCodeDetails">
+          <template v-if="error.getTwoFaQrCodeDetails" #details>
             {{ error.getTwoFaQrCodeDetails }}
           </template>
         </NeInlineNotification>
@@ -186,15 +181,15 @@ async function verifyOtp() {
           <div class="h-72 w-72 bg-gray-300 dark:bg-gray-700"></div>
         </div>
         <!-- qr code -->
-        <QRCodeVue3 v-else :value="qrCodeUrl" :dotsOptions="{ type: 'dots', color: '#000' }" />
+        <QRCodeVue3 v-else :value="qrCodeUrl" :dots-options="{ type: 'dots', color: '#000' }" />
         <!-- otp -->
         <NeTextInput
+          ref="otpRef"
+          v-model.trim="otp"
           :label="t('standalone.two_fa.otp')"
           :placeholder="t('common.eg_value', { value: '123456' })"
-          v-model.trim="otp"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('otp'))"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('otp'))"
           :disabled="loading.verifyOtp"
-          ref="otpRef"
         />
         <!-- verifyOtp error notification -->
         <NeInlineNotification
@@ -203,7 +198,7 @@ async function verifyOtp() {
           :title="t('error.cannot_verify_otp')"
           :description="error.verifyOtp"
         >
-          <template #details v-if="error.verifyOtpDetails">
+          <template v-if="error.verifyOtpDetails" #details>
             {{ error.verifyOtpDetails }}
           </template>
         </NeInlineNotification>
@@ -214,19 +209,19 @@ async function verifyOtp() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.verifyOtp"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="verifyOtp"
           :disabled="loading.verifyOtp"
           :loading="loading.verifyOtp"
           type="submit"
+          @click.prevent="verifyOtp"
         >
           {{ t('standalone.two_fa.configure') }}
         </NeButton>

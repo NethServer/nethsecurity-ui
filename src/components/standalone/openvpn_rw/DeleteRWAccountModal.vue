@@ -62,9 +62,9 @@ function close() {
     <CannotDeleteObjectModal
       v-if="account?.used"
       :visible="visible"
-      :objectName="account?.name"
-      :usageIds="account?.matches"
-      :showGoToObjectsButton="true"
+      :object-name="account?.name"
+      :usage-ids="account?.matches"
+      :show-go-to-objects-button="true"
       @close="close"
     />
     <!-- delete rw account modal -->
@@ -73,12 +73,12 @@ function close() {
       :visible="visible"
       kind="warning"
       :title="t('standalone.openvpn_rw.delete_account')"
-      :primaryLabel="t('common.delete')"
-      :primaryButtonDisabled="isDeleting"
-      :primaryButtonLoading="isDeleting"
+      :primary-label="t('common.delete')"
+      :primary-button-disabled="isDeleting"
+      :primary-button-loading="isDeleting"
       primary-button-kind="danger"
       :close-aria-label="t('common.close')"
-      @primaryClick="deleteAccount()"
+      @primary-click="deleteAccount()"
       @close="close()"
     >
       {{ t('standalone.openvpn_rw.delete_account_message', { name: account?.name }) }}
@@ -88,7 +88,7 @@ function close() {
         :title="t('error.cannot_delete_account')"
         :description="error.notificationDescription"
         class="my-2"
-        ><template #details v-if="error.notificationDetails">
+        ><template v-if="error.notificationDetails" #details>
           {{ error.notificationDetails }}
         </template></NeInlineNotification
       >

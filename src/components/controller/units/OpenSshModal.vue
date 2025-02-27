@@ -51,13 +51,13 @@ const usePassphrase = ref(false)
 const passphrase = ref('')
 const passphraseRef = ref()
 
-let loading = ref({
+const loading = ref({
   getXsrfToken: false,
   getWebsocketId: false,
   sshKeys: false
 })
 
-let error = ref({
+const error = ref({
   unitUsername: '',
   unitPassword: '',
   passphrase: '',
@@ -266,14 +266,14 @@ async function retrieveWebsocketId() {
     :visible="visible"
     :title="t('controller.units.open_ssh_terminal')"
     kind="info"
-    :primaryLabel="t('controller.units.open_terminal')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="primary"
-    :primaryButtonLoading="loading.getWebsocketId"
-    :primaryButtonDisabled="isLoading"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('controller.units.open_terminal')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="primary"
+    :primary-button-loading="loading.getWebsocketId"
+    :primary-button-disabled="isLoading"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="retrieveWebsocketId"
+    @primary-click="retrieveWebsocketId"
   >
     <div class="space-y-6">
       <NeInlineNotification
@@ -281,9 +281,9 @@ async function retrieveWebsocketId() {
         kind="info"
         :title="t('controller.units.popup_permission_title')"
         :description="t('controller.units.popup_permission_description')"
-        :primaryButtonLabel="t('common.dont_show_again')"
-        @primaryClick="dontShowAgainHideOpenSshPopupsTooltip"
-        :closeAriaLabel="t('common.close')"
+        :primary-button-label="t('common.dont_show_again')"
+        :close-aria-label="t('common.close')"
+        @primary-click="dontShowAgainHideOpenSshPopupsTooltip"
       />
       <!-- getXsrfToken error notification -->
       <NeInlineNotification
@@ -291,7 +291,7 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('error.cannot_retrieve_xsrf_token')"
         :description="error.getXsrfToken"
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
       >
         <template v-if="error.getXsrfTokenDetails" #details>
           {{ error.getXsrfTokenDetails }}
@@ -303,7 +303,7 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('error.cannot_retrieve_websocket_id')"
         :description="error.getWebsocketId"
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
       >
         <template v-if="error.getWebsocketIdDetails" #details>
           {{ error.getWebsocketIdDetails }}
@@ -315,9 +315,9 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('error.cannot_retrieve_ssh_keys')"
         :description="accountsStore.listSshKeysError.notificationDescription"
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
       >
-        <template #details v-if="accountsStore.listSshKeysError.notificationDetails">
+        <template v-if="accountsStore.listSshKeysError.notificationDetails" #details>
           {{ accountsStore.listSshKeysError.notificationDetails }}
         </template>
       </NeInlineNotification>
@@ -327,7 +327,7 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('error.cannot_retrieve_unit_ssh_keys')"
         :description="error.getUnitSshKeys"
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
       >
         <template v-if="error.getUnitSshKeysDetails" #details>
           {{ error.getUnitSshKeysDetails }}
@@ -339,29 +339,29 @@ async function retrieveWebsocketId() {
         kind="error"
         :title="t('controller.units.auth_error')"
         :description="error.authError"
-        :closeAriaLabel="t('common.close')"
+        :close-aria-label="t('common.close')"
       />
       <!-- skeleton -->
       <NeSkeleton v-if="isLoading" size="lg" :lines="4" />
       <template v-else>
         <!-- unit username -->
         <NeTextInput
-          :label="t('controller.units.unit_username')"
-          v-model.trim="unitUsername"
-          :invalidMessage="t(error.unitUsername)"
-          autocomplete="username"
           ref="unitUsernameRef"
+          v-model.trim="unitUsername"
+          :label="t('controller.units.unit_username')"
+          :invalid-message="t(error.unitUsername)"
+          autocomplete="username"
         />
         <template v-if="usePassphrase">
           <!-- passphrase -->
           <NeTextInput
-            :label="t('controller.units.passphrase')"
-            v-model.trim="passphrase"
-            :invalidMessage="t(error.passphrase)"
-            isPassword
-            :showPasswordLabel="t('ne_text_input.show_password')"
-            :hidePasswordLabel="t('ne_text_input.hide_password')"
             ref="passphraseRef"
+            v-model.trim="passphrase"
+            :label="t('controller.units.passphrase')"
+            :invalid-message="t(error.passphrase)"
+            is-password
+            :show-password-label="t('ne_text_input.show_password')"
+            :hide-password-label="t('ne_text_input.hide_password')"
           >
             <template #tooltip>
               <NeTooltip>
@@ -375,14 +375,14 @@ async function retrieveWebsocketId() {
         <template v-else>
           <!-- unit password -->
           <NeTextInput
-            :label="t('controller.units.unit_password')"
-            v-model="unitPassword"
-            isPassword
-            :showPasswordLabel="t('ne_text_input.show_password')"
-            :hidePasswordLabel="t('ne_text_input.hide_password')"
-            :invalidMessage="t(error.unitPassword)"
-            autocomplete="current-password"
             ref="unitPasswordRef"
+            v-model="unitPassword"
+            :label="t('controller.units.unit_password')"
+            is-password
+            :show-password-label="t('ne_text_input.show_password')"
+            :hide-password-label="t('ne_text_input.hide_password')"
+            :invalid-message="t(error.unitPassword)"
+            autocomplete="current-password"
           />
         </template>
       </template>

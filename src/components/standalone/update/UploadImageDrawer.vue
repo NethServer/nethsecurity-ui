@@ -106,30 +106,30 @@ async function updateImageAndReboot() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="!isRequestingUpdate ? close() : undefined"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.update.update_with_image_file')"
+    @close="!isRequestingUpdate ? close() : undefined"
   >
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
-        kind="error"
         v-if="error.notificationTitle"
+        kind="error"
         :title="error.notificationTitle"
         :description="error.notificationDescription"
       >
-        <template #details v-if="error.notificationDetails">
+        <template v-if="error.notificationDetails" #details>
           {{ error.notificationDetails }}
         </template>
       </NeInlineNotification>
       <div>
         <NeFileInput
+          v-model="fileToUpload"
           :label="`${t('standalone.update.image_file')} (*.img.gz)`"
-          @select="handleFileUpload"
           :invalid-message="fileInputValidationError"
           :show-progress="isUploadingImage"
           :progress="uploadProgress"
-          :dropzoneLabel="t('ne_file_input.dropzone_label')"
-          v-model="fileToUpload"
+          :dropzone-label="t('ne_file_input.dropzone_label')"
+          @select="handleFileUpload"
         />
       </div>
       <hr />
@@ -139,9 +139,9 @@ async function updateImageAndReboot() {
         }}</NeButton>
         <NeButton
           kind="primary"
-          @click="updateImageAndReboot()"
           :disabled="isRequestingUpdate || !isReadyToUpdate"
           :loading="isRequestingUpdate"
+          @click="updateImageAndReboot()"
           >{{ t('standalone.update.update_and_reboot') }}</NeButton
         >
       </div>

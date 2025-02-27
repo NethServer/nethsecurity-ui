@@ -42,12 +42,12 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanEvents,
     "
   >
     <NeTable
-      :ariaLabel="
+      :aria-label="
         t('standalone.real_time_monitor.wan_name_events', {
           name: props.wan
         })
       "
-      cardBreakpoint="sm"
+      card-breakpoint="sm"
       class="mt-2"
     >
       <NeTableHead>
@@ -94,11 +94,13 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.wanEvents,
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

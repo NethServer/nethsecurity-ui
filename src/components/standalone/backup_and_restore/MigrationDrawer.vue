@@ -66,21 +66,21 @@ const { startTimer, currentProgress, clearTimer } = useTimer({
   }
 })
 
-let errorMigration = ref({
+const errorMigration = ref({
   file: '',
   devices: ['']
 })
-let errorMigrationFile = ref({
+const errorMigrationFile = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorMigrationBackup = ref({
+const errorMigrationBackup = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorLoadDevices = ref({
+const errorLoadDevices = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -107,7 +107,7 @@ async function handleFileUpload() {
     })
     uploadedMigrationFileName.value = uploadResult.data.data
 
-    let res = await ubusCall('ns.migration', 'list-source-devices', {
+    const res = await ubusCall('ns.migration', 'list-source-devices', {
       archive: uploadedMigrationFileName.value
     })
     if (res?.data?.devices?.length) {
@@ -137,7 +137,7 @@ onMounted(() => {
 async function getListDevices() {
   loading.value = true
   try {
-    let res = await ubusCall('ns.migration', 'list-target-devices', {})
+    const res = await ubusCall('ns.migration', 'list-target-devices', {})
     if (res?.data?.devices?.length) {
       listDevices.value = res.data.devices.map((item: any) => ({
         id: item.hwaddr,
@@ -161,7 +161,7 @@ async function getListDevices() {
 function validateMigration(): boolean {
   let isValidationOk = true
 
-  let { valid, errMessage } = validateRequired(
+  const { valid, errMessage } = validateRequired(
     formMigration?.value?.file ? formMigration.value.file.name : ''
   )
   if (!valid) {
@@ -170,9 +170,9 @@ function validateMigration(): boolean {
   }
 
   if (listDevicesMigration.value.length) {
-    for (let [index, item] of listDevicesMigration.value.entries()) {
+    for (const [index, item] of listDevicesMigration.value.entries()) {
       if (!item.selected) {
-        let { valid, errMessage } = validateRequired(item.selected)
+        const { valid, errMessage } = validateRequired(item.selected)
         if (!valid) {
           errorMigration.value.devices[index] = t(errMessage as string)
           isValidationOk = false
@@ -198,9 +198,9 @@ async function startMigration() {
   if (validateMigration()) {
     loadingMigration.value = true
     try {
-      let devices = []
+      const devices = []
       if (listDevicesMigration.value.length) {
-        for (let item of listDevicesMigration.value) {
+        for (const item of listDevicesMigration.value) {
           devices.push({
             old: item.id,
             new: item.selected
@@ -208,7 +208,7 @@ async function startMigration() {
         }
       }
 
-      let payload = {
+      const payload = {
         mappings: devices,
         archive: uploadedMigrationFileName.value
       }
@@ -217,7 +217,7 @@ async function startMigration() {
       isMigrating.value = true
       startTimer()
 
-      let res = await ubusCall('ns.migration', 'migrate', payload)
+      const res = await ubusCall('ns.migration', 'migrate', payload)
       if (res?.data?.result && res?.data?.result === 'success') {
         isMigrating.value = false
         clearTimer()
@@ -270,13 +270,13 @@ watch(
         <NeSkeleton v-if="isUploadingMigrationFile" :lines="5" />
         <NeFileInput
           v-else
+          ref="fileRef"
+          v-model="formMigration.file"
           :label="t('standalone.backup_and_restore.migration.input_upload_file')"
           :progress="uploadProgress"
-          @select="handleFileUpload"
-          :dropzoneLabel="t('ne_file_input.dropzone_label')"
+          :dropzone-label="t('ne_file_input.dropzone_label')"
           :invalid-message="errorMigration.file"
-          v-model="formMigration.file"
-          ref="fileRef"
+          @select="handleFileUpload"
         />
         <NeInlineNotification
           v-if="errorMigrationFile.notificationTitle"
@@ -307,17 +307,17 @@ watch(
               </div>
               <div class="flex-grow">
                 <NeCombobox
+                  :ref="'deviceMigration' + index"
                   v-model="deviceMigration.selected"
                   class="grow"
                   :options="listDevices"
                   :invalid-message="errorMigration.devices[index]"
-                  :ref="'deviceMigration' + index"
-                  :noResultsLabel="t('ne_combobox.no_results')"
-                  :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                  :noOptionsLabel="t('ne_combobox.no_options_label')"
+                  :no-results-label="t('ne_combobox.no_results')"
+                  :limited-options-label="t('ne_combobox.limited_options_label')"
+                  :no-options-label="t('ne_combobox.no_options_label')"
                   :selected-label="t('ne_combobox.selected')"
                   :user-input-label="t('ne_combobox.user_input_label')"
-                  :optionalLabel="t('common.optional')"
+                  :optional-label="t('common.optional')"
                 />
               </div>
             </div>

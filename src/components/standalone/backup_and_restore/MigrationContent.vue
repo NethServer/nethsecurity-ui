@@ -13,8 +13,8 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 
 const { t } = useI18n()
 
-let showMigrationDrawer = ref(false)
-let successNotificationMigration = ref(false)
+const showMigrationDrawer = ref(false)
+const successNotificationMigration = ref(false)
 
 function successMigration() {
   successNotificationMigration.value = true
@@ -61,7 +61,7 @@ function successMigration() {
         </div>
       </div>
       <MigrationDrawer
-        :showMigrationDrawer="showMigrationDrawer"
+        :show-migration-drawer="showMigrationDrawer"
         @success="successMigration()"
         @close="showMigrationDrawer = false"
       />

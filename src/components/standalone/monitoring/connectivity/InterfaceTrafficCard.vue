@@ -26,11 +26,11 @@ const chartLabels = ref<any[]>([])
 const chartDatasets = ref<any[]>([])
 const intervalId = ref(0)
 
-let loading = ref({
+const loading = ref({
   getInterfaceTraffic: false
 })
 
-let error = ref({
+const error = ref({
   getInterfaceTraffic: '',
   getInterfaceTrafficDescription: ''
 })
@@ -99,10 +99,10 @@ async function getInterfaceTraffic() {
         name: props.iface || props.device
       })
     "
-    :skeletonLines="8"
+    :skeleton-lines="8"
     :loading="loading.getInterfaceTraffic"
-    :errorTitle="error.getInterfaceTraffic"
-    :errorDescription="error.getInterfaceTrafficDescription"
+    :error-title="error.getInterfaceTraffic"
+    :error-description="error.getInterfaceTrafficDescription"
   >
     <NeSkeleton v-if="loading.getInterfaceTraffic" :lines="6"></NeSkeleton>
     <InterfaceTrafficChart v-else :labels="chartLabels" :datasets="chartDatasets" height="30vh" />

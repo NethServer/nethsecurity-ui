@@ -263,7 +263,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_retrieve_rw_server')"
       :description="error.listOvpnInstances"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listOvpnInstancesDetails" #details>
@@ -276,7 +276,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_retrieve_users')"
       :description="error.listUsers"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listUsersDetails" #details>
@@ -289,7 +289,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_retrieve_ovpn_tunnels')"
       :description="error.listOvpnTunnels"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listOvpnTunnelsDetails" #details>
@@ -302,7 +302,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_retrieve_ipsec_tunnels')"
       :description="error.listIpsecTunnels"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listIpsecTunnelsDetails" #details>
@@ -315,7 +315,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_load_network_devices')"
       :description="error.listDevices"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.listDevicesDetails" #details>
@@ -328,7 +328,7 @@ function getTunnelName(tunnelId: string) {
       kind="error"
       :title="t('error.cannot_retrieve_rw_server')"
       :description="error.getOvpnConfiguration"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-4"
     >
       <template v-if="error.getOvpnConfigurationDetails" #details>
@@ -362,8 +362,8 @@ function getTunnelName(tunnelId: string) {
         ></NeCard>
       </template>
       <template
-        v-else-if="ovpnServerConfigured"
         v-for="ovpnInstance in ovpnInstances"
+        v-else-if="ovpnServerConfigured"
         :key="ovpnInstance"
       >
         <!-- rw server title -->
@@ -376,41 +376,41 @@ function getTunnelName(tunnelId: string) {
         </NeHeading>
         <!-- server status -->
         <ServerStatusCard
-          :ovpnConfiguration="ovpnConfiguration[ovpnInstance]"
+          :ovpn-configuration="ovpnConfiguration[ovpnInstance]"
           :loading="!ovpnConfiguration[ovpnInstance]"
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
         />
         <!-- clients traffic by hour -->
         <ClientsTrafficByHourCard
-          :ovpnInstance="ovpnInstance"
+          :ovpn-instance="ovpnInstance"
           :day="today"
           class="row-span-2 sm:col-span-12 xl:col-span-9 2xl:col-span-9"
         ></ClientsTrafficByHourCard>
         <!-- connected clients -->
         <CurrentlyConnectedClientsCard
-          :ovpnInstance="ovpnInstance"
-          :ovpnUsers="ovpnUsers[ovpnInstance] || []"
+          :ovpn-instance="ovpnInstance"
+          :ovpn-users="ovpnUsers[ovpnInstance] || []"
           :loading="loading.listUsers"
           class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"
         ></CurrentlyConnectedClientsCard>
         <!-- client sessions -->
         <ClientSessionsCard
-          :ovpnInstance="ovpnInstance"
+          :ovpn-instance="ovpnInstance"
           :day="today"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></ClientSessionsCard>
         <!-- connected clients by hour -->
         <ConnectedClientsByHourCard
-          :ovpnInstance="ovpnInstance"
+          :ovpn-instance="ovpnInstance"
           :day="today"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></ConnectedClientsByHourCard>
         <!-- client traffic by hour -->
         <TrafficByClientByHourCard
-          :ovpnInstance="ovpnInstance"
-          :ovpnUsers="ovpnUsers[ovpnInstance] || []"
+          :ovpn-instance="ovpnInstance"
+          :ovpn-users="ovpnUsers[ovpnInstance] || []"
           :day="today"
-          :loadingUsers="loading.listUsers"
+          :loading-users="loading.listUsers"
           class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></TrafficByClientByHourCard>
       </template>
@@ -431,7 +431,7 @@ function getTunnelName(tunnelId: string) {
         <!-- configured tunnels -->
         <ConfiguredTunnelsCard
           :tunnels="enabledTunnels"
-          :tunnelDevices="tunnelDevices"
+          :tunnel-devices="tunnelDevices"
           class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 3xl:col-span-5"
         ></ConfiguredTunnelsCard>
         <!-- tunnels traffic -->

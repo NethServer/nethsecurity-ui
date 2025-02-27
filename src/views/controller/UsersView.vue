@@ -61,9 +61,9 @@ onMounted(() => {
       </p>
       <div class="ml-2 shrink-0">
         <NeButton
+          v-if="accountsStore.accounts.length > 0"
           kind="secondary"
           @click="openCreateEditDrawer()"
-          v-if="accountsStore.accounts.length > 0"
         >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
@@ -72,14 +72,14 @@ onMounted(() => {
         </NeButton>
       </div>
     </div>
-    <NeTextInput class="max-w-xs" :placeholder="t('common.filter')" v-model="filter" />
+    <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
     <NeInlineNotification
+      v-if="accountsStore.listAccountsError.notificationDescription"
       kind="error"
       :title="t('error.cannot_retrieve_users')"
       :description="accountsStore.listAccountsError.notificationDescription"
-      v-if="accountsStore.listAccountsError.notificationDescription"
     >
-      <template #details v-if="accountsStore.listAccountsError.notificationDetails">
+      <template v-if="accountsStore.listAccountsError.notificationDetails" #details>
         {{ accountsStore.listAccountsError.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -114,6 +114,7 @@ onMounted(() => {
   </div>
   <CreateOrEditUserDrawer
     :is-shown="showCreateEditDrawer"
+    :item-to-edit="selectedItem"
     @add-user="
       () => {
         accountsStore.loadAccounts()
@@ -135,7 +136,6 @@ onMounted(() => {
       }
     "
     @close="showCreateEditDrawer = false"
-    :item-to-edit="selectedItem"
   />
   <DeleteUserModal
     :visible="showDeleteModal"

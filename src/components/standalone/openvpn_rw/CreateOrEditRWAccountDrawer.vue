@@ -86,7 +86,7 @@ async function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -198,13 +198,13 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       itemToEdit
         ? t('standalone.openvpn_rw.edit_vpn_account')
         : t('standalone.openvpn_rw.add_vpn_account')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -216,21 +216,21 @@ watch(
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="20" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="20" />
+    <div v-else class="flex flex-col gap-y-6">
       <div>
         <NeFormItemLabel>{{ t('standalone.openvpn_rw.status') }}</NeFormItemLabel>
         <NeToggle v-model="enabled" :label="enabled ? t('common.enabled') : t('common.disabled')" />
       </div>
       <NeCombobox
+        v-model="username"
         :label="t('standalone.openvpn_rw.user')"
         :disabled="Boolean(itemToEdit)"
         :options="usernameOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
         :placeholder="t('standalone.openvpn_rw.choose_user_from_database')"
-        v-model="username"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
       />
       <NeInlineNotification
@@ -242,7 +242,7 @@ watch(
       <NeTextInput
         v-model="reservedIp"
         :label="t('standalone.openvpn_rw.reserved_ip')"
-        :helperText="
+        :helper-text="
           t('standalone.openvpn_rw.reserved_ip_helper', {
             range: instanceData.ifconfig_pool
               ? `${instanceData.ifconfig_pool[0]}-${instanceData.ifconfig_pool[1]}`
@@ -265,9 +265,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditAccount()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditAccount()"
           >{{
             Boolean(itemToEdit)
               ? t('standalone.openvpn_rw.edit_account')

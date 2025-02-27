@@ -53,9 +53,9 @@ function getBorderColorForInterface(iface: string) {
           </p>
           <NeButton
             kind="tertiary"
-            @click="emit('startScan', iface)"
             :loading="scanButtonLoading"
             :disabled="scanButtonDisabled"
+            @click="emit('startScan', iface)"
           >
             <template #prefix>
               <font-awesome-icon

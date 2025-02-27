@@ -50,7 +50,7 @@ async function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -112,9 +112,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="closeDrawer()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.openvpn_rw.renew_certificate')"
+    @close="closeDrawer()"
   >
     <div class="flex flex-col gap-y-6">
       <NeTextInput
@@ -152,11 +152,11 @@ watch(
     :visible="showConfirmModal"
     kind="warning"
     :title="t('standalone.openvpn_rw.renew_certificate')"
-    :primaryLabel="t('standalone.openvpn_rw.renew')"
-    :primaryButtonDisabled="isRenewingCertificate"
-    :primaryButtonLoading="isRenewingCertificate"
+    :primary-label="t('standalone.openvpn_rw.renew')"
+    :primary-button-disabled="isRenewingCertificate"
+    :primary-button-loading="isRenewingCertificate"
     :close-aria-label="t('common.close')"
-    @primaryClick="renewUserCertificate()"
+    @primary-click="renewUserCertificate()"
     @close="closeConfirmModal()"
   >
     {{ t('standalone.openvpn_rw.renew_certificate_confirm_message', { username: username }) }}
@@ -166,7 +166,7 @@ watch(
       :title="t('error.cannot_renew_certificate')"
       :description="modalError.notificationDescription"
       class="my-2"
-      ><template #details v-if="modalError.notificationDetails">
+      ><template v-if="modalError.notificationDetails" #details>
         {{ modalError.notificationDetails }}
       </template></NeInlineNotification
     >

@@ -23,7 +23,7 @@ const emit = defineEmits<{
 
 <template>
   <NeCard
-    :menuItems="[
+    :menu-items="[
       {
         id: 'delete',
         label: t('common.delete'),
@@ -68,7 +68,7 @@ const emit = defineEmits<{
         <span>{{ t('common.disabled') }}</span>
       </div>
       <!-- exception criteria -->
-      <NeCard alternateBackground class="mt-4">
+      <NeCard alternate-background class="mt-4">
         <div class="divide-y divide-gray-300 dark:divide-gray-600">
           <p>{{ exception.criteria }}</p>
         </div>

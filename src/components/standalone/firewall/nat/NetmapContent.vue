@@ -110,7 +110,7 @@ function hideCreateOrEditRuleDrawer() {
           </template>
           {{ t('standalone.netmap.add_source_netmap') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="showCreateRuleDrawer('dest')" class="ml-4">
+        <NeButton kind="secondary" size="lg" class="ml-4" @click="showCreateRuleDrawer('dest')">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
           </template>
@@ -126,7 +126,7 @@ function hideCreateOrEditRuleDrawer() {
       :description="error.listRules"
       class="mb-5"
     >
-      <template #details v-if="error.listRulesDetails">
+      <template v-if="error.listRulesDetails" #details>
         {{ error.listRulesDetails }}
       </template>
     </NeInlineNotification>
@@ -151,8 +151,8 @@ function hideCreateOrEditRuleDrawer() {
               <NeButton
                 kind="secondary"
                 size="lg"
-                @click="showCreateRuleDrawer('dest')"
                 class="mt-4"
+                @click="showCreateRuleDrawer('dest')"
               >
                 <template #prefix>
                   <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -169,37 +169,37 @@ function hideCreateOrEditRuleDrawer() {
             netmap-type="src"
             :rules="sourceNetmaps"
             :loading="loading.listRules"
-            @reloadRules="loadData"
-            @editRule="showEditRuleDrawer"
-            @deleteRule="showDeleteRuleModal"
+            @reload-rules="loadData"
+            @edit-rule="showEditRuleDrawer"
+            @delete-rule="showDeleteRuleModal"
           />
           <NetmapTable
             v-if="destinationNetmaps.length"
             netmap-type="dest"
             :rules="destinationNetmaps"
             :loading="loading.listRules"
-            @reloadRules="loadData"
-            @editRule="showEditRuleDrawer"
-            @deleteRule="showDeleteRuleModal"
             class="mt-8"
+            @reload-rules="loadData"
+            @edit-rule="showEditRuleDrawer"
+            @delete-rule="showDeleteRuleModal"
           />
         </template>
       </template>
     </template>
     <!-- create/edit rule drawer -->
     <CreateOrEditNetmapRuleDrawer
-      :currentRule="currentRule"
-      :netmapType="netmapType"
-      :isShown="isShownCreateOrEditRuleDrawer"
+      :current-rule="currentRule"
+      :netmap-type="netmapType"
+      :is-shown="isShownCreateOrEditRuleDrawer"
       @close="hideCreateOrEditRuleDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete rule modal -->
     <DeleteNetmapModal
       :visible="isShownDeleteRuleModal"
       :rule="currentRule"
       @close="isShownDeleteRuleModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
   </div>
 </template>

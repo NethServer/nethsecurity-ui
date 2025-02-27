@@ -67,17 +67,17 @@ const isUploadingBackupFile = ref(false)
 const uploadedBackupFileName = ref('')
 const canRestoreBackupFile = ref(false)
 
-let errorPage = ref({
+const errorPage = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorRestoreBackup = ref({
+const errorRestoreBackup = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorRestore = ref({
+const errorRestore = ref({
   passphrase: '',
   file: '',
   backup: ''
@@ -89,7 +89,7 @@ onMounted(() => {
 
 async function getSubscription() {
   try {
-    let res = await ubusCall('ns.subscription', 'info', {})
+    const res = await ubusCall('ns.subscription', 'info', {})
     if (res?.data?.systemd_id && res?.data?.active) {
       isValidSubscription.value = true
       typeRestore.value = isValidSubscription.value ? 'from_backup' : 'upload_file'
@@ -107,7 +107,7 @@ async function getSubscription() {
 async function getBackups() {
   if (isValidSubscription.value) {
     try {
-      let res = await ubusCall('ns.backup', 'registered-list-backups')
+      const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
         listBackups.value = res.data.values.backups?.map((item: any) => ({
           id: item.id,
@@ -128,10 +128,10 @@ async function getBackups() {
 
 function validateRestore(): boolean {
   let isValidationOk = true
-  let isFocusInput = false
+  const isFocusInput = false
 
   if (typeRestore.value === 'upload_file') {
-    let { valid, errMessage } = validateRequired(
+    const { valid, errMessage } = validateRequired(
       formRestore?.value?.file ? formRestore.value.file : ''
     )
     if (!valid) {
@@ -139,7 +139,7 @@ function validateRestore(): boolean {
       isValidationOk = false
     }
   } else if (isValidSubscription.value && typeRestore.value === 'from_backup') {
-    let { valid, errMessage } = validateRequired(formRestore.value.backup)
+    const { valid, errMessage } = validateRequired(formRestore.value.backup)
     if (!valid) {
       errorRestore.value.backup = t(errMessage as string)
       isValidationOk = false
@@ -187,9 +187,9 @@ async function restoreBackup() {
   clearErrors()
   if (validateRestore()) {
     loadingRestore.value = true
-    let error = false
+    const error = false
     try {
-      let payload = {}
+      const payload = {}
       let methodCall = 'restore'
 
       if (formRestore.value.passphrase) {
@@ -204,7 +204,7 @@ async function restoreBackup() {
       }
 
       if (!error && methodCall) {
-        let res = await ubusCall('ns.backup', methodCall, payload)
+        const res = await ubusCall('ns.backup', methodCall, payload)
         if (res?.data?.message && res?.data?.message === 'success') {
           isRestoring.value = true
           showRestoreDrawer.value = false
@@ -317,44 +317,44 @@ function setRestoreTimer() {
           />
           <template v-if="typeRestore === 'from_backup'">
             <NeCombobox
+              ref="backupRef"
               v-model="formRestore.backup"
               :options="listBackups"
               :label="t('standalone.backup_and_restore.restore.backup')"
               :invalid-message="errorRestore.backup"
-              :noResultsLabel="t('ne_combobox.no_results')"
-              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-              :noOptionsLabel="t('ne_combobox.no_options_label')"
+              :no-results-label="t('ne_combobox.no_results')"
+              :limited-options-label="t('ne_combobox.limited_options_label')"
+              :no-options-label="t('ne_combobox.no_options_label')"
               :selected-label="t('ne_combobox.selected')"
               :user-input-label="t('ne_combobox.user_input_label')"
-              :optionalLabel="t('common.optional')"
+              :optional-label="t('common.optional')"
               class="grow"
-              ref="backupRef"
             />
           </template>
         </template>
         <template v-if="typeRestore === 'upload_file'">
           <NeFileInput
+            ref="fileRef"
+            v-model="formRestore.file"
             :label="
               t('standalone.backup_and_restore.restore.upload_file', {
                 extensions: '*.tar.gz, *.tar.gz.gpg, *.bin'
               })
             "
-            :dropzoneLabel="t('ne_file_input.dropzone_label')"
+            :dropzone-label="t('ne_file_input.dropzone_label')"
             :invalid-message="errorRestore.file"
-            @select="handleFileUpload"
-            v-model="formRestore.file"
             accept=".tar.gz,.tar.gz.gpg,.bin"
-            ref="fileRef"
+            @select="handleFileUpload"
           />
         </template>
         <NeTextInput
+          ref="passphraseRef"
           v-model="formRestore.passphrase"
           :invalid-message="errorRestore.passphrase"
           :label="t('standalone.backup_and_restore.restore.passphrase')"
-          isPassword
+          is-password
           optional
-          :optionalLabel="t('common.optional')"
-          ref="passphraseRef"
+          :optional-label="t('common.optional')"
         >
           <template #tooltip>
             <NeTooltip>

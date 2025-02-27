@@ -22,17 +22,17 @@ const emit = defineEmits(['close'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let loading = ref({
+const loading = ref({
   isApplyingChanges: false,
   isRevertingChanges: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
 
-let expandedChanges: Ref<any> = ref({})
+const expandedChanges: Ref<any> = ref({})
 
 watch(
   () => props.visible,
@@ -154,27 +154,27 @@ async function revertChanges() {
     :visible="visible"
     size="lg"
     :title="t('standalone.uci_changes.configuration_changes')"
-    :primaryLabel="t('standalone.uci_changes.apply')"
-    :secondaryLabel="t('standalone.uci_changes.revert')"
-    :cancelLabel="t('common.close')"
-    :primaryButtonDisabled="loading.isApplyingChanges || loading.isRevertingChanges"
-    :primaryButtonLoading="loading.isApplyingChanges"
-    secondaryButtonKind="danger"
-    :secondaryButtonDisabled="loading.isApplyingChanges || loading.isRevertingChanges"
-    :secondaryButtonLoading="loading.isRevertingChanges"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.uci_changes.apply')"
+    :secondary-label="t('standalone.uci_changes.revert')"
+    :cancel-label="t('common.close')"
+    :primary-button-disabled="loading.isApplyingChanges || loading.isRevertingChanges"
+    :primary-button-loading="loading.isApplyingChanges"
+    secondary-button-kind="danger"
+    :secondary-button-disabled="loading.isApplyingChanges || loading.isRevertingChanges"
+    :secondary-button-loading="loading.isRevertingChanges"
+    :close-aria-label="t('common.close')"
     @close="onClose"
-    @primaryClick="applyChanges"
-    @secondaryClick="revertChanges"
+    @primary-click="applyChanges"
+    @secondary-click="revertChanges"
   >
     <div class="space-y-2">
       <NeExpandable
         v-for="config in Object.keys(uciChangesStore.changes)"
         :key="config"
         :label="`/etc/config/${config} (${uciChangesStore.changes[config].length})`"
-        :isExpanded="expandedChanges[config]"
-        @setExpanded="(ev: boolean) => setExpanded(config, ev)"
-        fullWidth
+        :is-expanded="expandedChanges[config]"
+        full-width
+        @set-expanded="(ev: boolean) => setExpanded(config, ev)"
       >
         <div class="-mt-4">
           <div

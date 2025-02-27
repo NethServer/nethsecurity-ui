@@ -25,11 +25,11 @@ const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
 const counters = ref<TunnelCounters>({ enabled: 0, connected: 0 })
 const counterIntervalId = ref(0)
 
-let loading = ref({
+const loading = ref({
   getCounters: false
 })
 
-let error = ref({
+const error = ref({
   title: '',
   description: ''
 })
@@ -71,10 +71,10 @@ async function getCounters() {
 <template>
   <NeCard
     :icon="['fas', 'globe']"
-    :skeletonLines="2"
+    :skeleton-lines="2"
     :loading="loading.getCounters"
-    :errorTitle="error.title"
-    :errorDescription="error.description"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <!-- title slot -->
     <template #title>

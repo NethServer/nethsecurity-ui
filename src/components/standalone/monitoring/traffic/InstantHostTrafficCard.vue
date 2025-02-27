@@ -60,8 +60,8 @@ function formatTraffic(value: number) {
       </NeTextInput>
     </div>
     <NeTable
-      :ariaLabel="t('standalone.real_time_monitor.local_hosts')"
-      cardBreakpoint="sm"
+      :aria-label="t('standalone.real_time_monitor.local_hosts')"
+      card-breakpoint="sm"
       class="mt-2"
     >
       <NeTableHead>
@@ -78,7 +78,7 @@ function formatTraffic(value: number) {
             />
           </NeTableCell>
         </NeTableRow>
-        <NeTableRow v-else v-for="(item, index) in paginatedItems" :key="index">
+        <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
           <NeTableCell :data-label="t('standalone.real_time_monitor.host')">
             {{ item.host }}
           </NeTableCell>
@@ -101,11 +101,13 @@ function formatTraffic(value: number) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

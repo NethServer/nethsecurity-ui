@@ -29,10 +29,13 @@ export function useTimer({ duration, progressStep, onProgressStep, onTimerFinish
   function startTimer() {
     timeTimeoutRef.value = setTimeout(onTimerFinish ?? (() => {}), duration)
 
-    timerIntervalRef.value = setInterval(() => {
-      currentProgress.value += progressStep
-      onProgressStep?.(currentProgress.value)
-    }, (duration * progressStep) / 100)
+    timerIntervalRef.value = setInterval(
+      () => {
+        currentProgress.value += progressStep
+        onProgressStep?.(currentProgress.value)
+      },
+      (duration * progressStep) / 100
+    )
   }
 
   function clearTimer() {

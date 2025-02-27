@@ -73,7 +73,7 @@ async function getOvpnTrafficByHour() {
   <NeCard
     :title="t('standalone.real_time_monitor.total_traffic_by_hour')"
     :loading="loading"
-    :skeletonLines="5"
+    :skeleton-lines="5"
   >
     <TrafficByHourChart :labels="chartLabels" :datasets="chartDatasets" height="25vh" />
   </NeCard>

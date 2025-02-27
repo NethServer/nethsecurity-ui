@@ -99,12 +99,12 @@ const zone = computed(() => {
     <!-- host set object -->
     <template v-else-if="hostSetObject">
       <NeSkeleton v-if="loadingObjects" />
-      <HostSetTooltip :hostSetId="hostSetObject.id" :allHostSets="hostSets" />
+      <HostSetTooltip :host-set-id="hostSetObject.id" :all-host-sets="hostSets" />
     </template>
     <!-- domain set object -->
     <template v-else-if="domainSetObject">
       <NeSkeleton v-if="loadingObjects" />
-      <DomainSetTooltip :domainSetId="domainSetObject.id" :allDomainSets="domainSets" />
+      <DomainSetTooltip :domain-set-id="domainSetObject.id" :all-domain-sets="domainSets" />
     </template>
     <template v-else-if="addresses.length">
       <!-- show addresses -->
@@ -170,7 +170,7 @@ const zone = computed(() => {
       v-if="zone && zone != '*'"
       :text="zone.toUpperCase()"
       :kind="enabled ? 'custom' : 'secondary'"
-      :customColorClasses="getZoneColorClasses(zone)"
+      :custom-color-classes="getZoneColorClasses(zone)"
     />
   </div>
 </template>

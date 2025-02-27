@@ -111,9 +111,9 @@ onMounted(() => {
         {{ t('standalone.qos.description') }}
       </p>
       <NeButton
+        v-if="qosInterfaces.length > 0"
         kind="secondary"
         @click="openCreateEditInterfaceDrawer()"
-        v-if="qosInterfaces.length > 0"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -136,7 +136,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ firewallConfig.error ? firewallConfig.error.toString() : error.notificationDetails }}
       </template></NeInlineNotification
     >

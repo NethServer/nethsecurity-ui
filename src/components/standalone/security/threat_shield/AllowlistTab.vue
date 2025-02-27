@@ -75,7 +75,7 @@ onMounted(() => {
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.threat_shield.allowlist_description') }}
       </p>
-      <NeButton kind="secondary" @click="openCreateEditAddressDrawer()" v-if="allowlist.length > 0"
+      <NeButton v-if="allowlist.length > 0" kind="secondary" @click="openCreateEditAddressDrawer()"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -92,7 +92,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -114,8 +114,8 @@ onMounted(() => {
       >
       <AddressTable
         v-else
-        :addressList="allowlist"
-        addressKind="allow"
+        :address-list="allowlist"
+        address-kind="allow"
         @delete="openDeleteAddressModal"
         @edit="openCreateEditAddressDrawer"
       />
@@ -124,7 +124,7 @@ onMounted(() => {
   <DeleteAddressModal
     :visible="showDeleteAddressModal"
     :item-to-delete="selectedAddress"
-    addressKind="allow"
+    address-kind="allow"
     @address-deleted="
       () => {
         notificationsStore.createNotification({
@@ -139,7 +139,7 @@ onMounted(() => {
   <CreateOrEditAddressDrawer
     :is-shown="showCreateOrEditAddressDrawer"
     :item-to-edit="selectedAddress"
-    addressKind="allow"
+    address-kind="allow"
     @close="showCreateOrEditAddressDrawer = false"
     @add-address="
       () => {

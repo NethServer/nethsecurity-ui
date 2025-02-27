@@ -96,7 +96,7 @@ function hideEditNatHelperDrawer() {
       :description="error.listNatHelpers"
       class="mb-5"
     >
-      <template #details v-if="error.listNatHelpersDetails">
+      <template v-if="error.listNatHelpersDetails" #details>
         {{ error.listNatHelpersDetails }}
       </template>
     </NeInlineNotification>
@@ -107,32 +107,32 @@ function hideEditNatHelperDrawer() {
       <div class="flex items-center gap-4">
         <!-- text filter -->
         <NeTextInput
-          :placeholder="t('standalone.nat_helpers.filter_nat_helpers')"
           v-model.trim="textFilter"
+          :placeholder="t('standalone.nat_helpers.filter_nat_helpers')"
           :disabled="loading.listNatHelpers"
           class="max-w-[12rem] sm:max-w-sm"
         />
         <!-- clear filters -->
-        <NeButton kind="tertiary" @click="clearFilters" :disabled="loading.listNatHelpers">
+        <NeButton kind="tertiary" :disabled="loading.listNatHelpers" @click="clearFilters">
           {{ t('common.clear_filters') }}
         </NeButton>
       </div>
       <!-- nat helpers table -->
       <NatHelpersTable
-        :filteredNatHelpers="filteredNatHelpers"
-        :totalNatHelpers="natHelpers.length"
+        :filtered-nat-helpers="filteredNatHelpers"
+        :total-nat-helpers="natHelpers.length"
         :loading="loading.listNatHelpers"
-        @reloadNatHelpers="loadData"
-        @editNatHelper="showEditNatHelper"
-        @clearFilters="clearFilters"
+        @reload-nat-helpers="loadData"
+        @edit-nat-helper="showEditNatHelper"
+        @clear-filters="clearFilters"
       />
     </div>
     <!-- edit rule drawer -->
     <EditNatHelperDrawer
-      :natHelper="currentNatHelper"
-      :isShown="isShownEditNatHelper"
+      :nat-helper="currentNatHelper"
+      :is-shown="isShownEditNatHelper"
       @close="hideEditNatHelperDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
   </div>
 </template>

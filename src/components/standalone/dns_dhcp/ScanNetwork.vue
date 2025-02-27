@@ -134,7 +134,7 @@ function addDnsRecord(scanResult: ScanResult) {
         :description="error.listInterfaces"
         class="mb-4"
       >
-        <template #details v-if="error.listInterfacesDetails">
+        <template v-if="error.listInterfacesDetails" #details>
           {{ error.listInterfacesDetails }}
         </template>
       </NeInlineNotification>
@@ -149,7 +149,7 @@ function addDnsRecord(scanResult: ScanResult) {
           :description="error.scanNetwork"
           class="mb-4"
         >
-          <template #details v-if="error.scanNetworkDetails">
+          <template v-if="error.scanNetworkDetails" #details>
             {{ error.scanNetworkDetails }}
           </template>
         </NeInlineNotification>
@@ -172,9 +172,9 @@ function addDnsRecord(scanResult: ScanResult) {
               v-for="(iface, ifaceName) in interfaces"
               :key="ifaceName"
               :iface="iface"
-              :scanButtonLoading="loading.scanNetwork && scanningInterface === iface.name"
-              :scanButtonDisabled="loading.scanNetwork && scanningInterface === iface.name"
-              @startScan="scanNetwork"
+              :scan-button-loading="loading.scanNetwork && scanningInterface === iface.name"
+              :scan-button-disabled="loading.scanNetwork && scanningInterface === iface.name"
+              @start-scan="scanNetwork"
             />
           </template>
         </div>
@@ -208,23 +208,23 @@ function addDnsRecord(scanResult: ScanResult) {
           <ScanResultsTable
             :results="scanResults"
             :loading="loading.scanNetwork"
-            @addIpReservation="addIpReservation"
-            @addDnsRecord="addDnsRecord"
+            @add-ip-reservation="addIpReservation"
+            @add-dns-record="addDnsRecord"
           />
         </template>
       </div>
     </div>
     <!-- add reservation drawer -->
     <CreateOrEditStaticLeaseDrawer
-      :isShown="isAddReservationDrawerShown"
-      :importScanResult="currentScanResult"
+      :is-shown="isAddReservationDrawerShown"
+      :import-scan-result="currentScanResult"
       @close="isAddReservationDrawerShown = false"
       @add-edit-lease="uciChangesStore.getChanges()"
     />
     <!-- add dns record drawer -->
     <CreateOrEditDnsRecordDrawer
-      :isShown="isAddDnsRecordDrawerShown"
-      :importScanResult="currentScanResult"
+      :is-shown="isAddDnsRecordDrawerShown"
+      :import-scan-result="currentScanResult"
       @close="isAddDnsRecordDrawerShown = false"
       @add-edit-record="uciChangesStore.getChanges()"
     />

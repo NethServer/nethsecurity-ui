@@ -119,11 +119,11 @@ onMounted(() => {
       </template>
     </div>
     <NeInlineNotification
+      v-if="error.notificationTitle"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      v-if="error.notificationTitle"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

@@ -100,7 +100,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const setNotificationShown = (notificationId: string, isShown: boolean) => {
-    const notification = notifications.value.find((n) => n.id === notificationId)
+    const notification = notifications.value.find((n: NeNotification) => n.id === notificationId)
 
     if (notification) {
       notification.isShown = isShown
@@ -183,7 +183,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const hideNotification = (notificationId: string) => {
-    const notification = notifications.value.find((n) => n.id === notificationId)
+    const notification = notifications.value.find((n: NeNotification) => n.id === notificationId)
 
     if (notification) {
       setNotificationShown(notificationId, false)

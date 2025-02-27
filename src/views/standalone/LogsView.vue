@@ -143,12 +143,12 @@ function fetchData() {
         :invalid-message="errorBag.getFirstFor('limits')"
         :label="t('standalone.logs.limit_rows')"
         :options="logLimitComboboxOption"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <div class="col-span-1 flex gap-8 sm:col-span-2">
         <NeToggle v-model="wrapRow" :label="t('standalone.logs.wrap_row')" />

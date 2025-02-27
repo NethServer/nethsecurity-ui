@@ -116,7 +116,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -206,13 +206,13 @@ function deselectAllUnits() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       props.action === 'send'
         ? t('controller.units.send_ssh_public_key')
         : t('controller.units.revoke_ssh_public_key')
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
@@ -224,10 +224,10 @@ function deselectAllUnits() {
           kind="warning"
           :title="t('controller.units.ssh_key_not_generated')"
           :description="t('controller.units.ssh_key_not_generated_description')"
-          :closeAriaLabel="t('common.close')"
-          :showDetailsLabel="t('notifications.show_details')"
-          :primaryButtonLabel="t('controller.units.go_to_account_settings')"
-          @primaryClick="goToAccountSettings"
+          :close-aria-label="t('common.close')"
+          :show-details-label="t('notifications.show_details')"
+          :primary-button-label="t('controller.units.go_to_account_settings')"
+          @primary-click="goToAccountSettings"
         />
         <!-- ssh key configured -->
         <div v-else class="space-y-6">
@@ -243,38 +243,38 @@ function deselectAllUnits() {
                 ? t('controller.units.send_ssh_key_description')
                 : t('controller.units.revoke_ssh_key_description')
             "
-            :closeAriaLabel="t('common.close')"
-            :showDetailsLabel="t('notifications.show_details')"
+            :close-aria-label="t('common.close')"
+            :show-details-label="t('notifications.show_details')"
           />
           <div>
             <!-- select all / deselect all -->
             <NeButton
               v-if="allUnitsSelected"
               kind="tertiary"
-              @click="deselectAllUnits"
               class="-mx-2"
+              @click="deselectAllUnits"
             >
               {{ t('controller.units.deselect_all_units') }}
             </NeButton>
-            <NeButton v-else kind="tertiary" @click="selectAllUnits" class="-mx-2">
+            <NeButton v-else kind="tertiary" class="-mx-2" @click="selectAllUnits">
               {{ t('controller.units.select_all_units') }}
             </NeButton>
             <!-- units -->
             <NeCombobox
-              :label="t('controller.units.units')"
+              ref="selectedUnitsRef"
               v-model="selectedUnits"
+              :label="t('controller.units.units')"
               :options="unitsOptions"
               :placeholder="t('ne_combobox.choose_multiple')"
               multiple
-              :invalidMessage="t(errorBag.getFirstI18nKeyFor('units'))"
+              :invalid-message="t(errorBag.getFirstI18nKeyFor('units'))"
               :disabled="loading.sendOrRevokeSshKey"
-              :optionalLabel="t('common.optional')"
-              :noResultsLabel="t('ne_combobox.no_results')"
-              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-              :noOptionsLabel="t('controller.units.no_unit_is_currently_connected')"
+              :optional-label="t('common.optional')"
+              :no-results-label="t('ne_combobox.no_results')"
+              :limited-options-label="t('ne_combobox.limited_options_label')"
+              :no-options-label="t('controller.units.no_unit_is_currently_connected')"
               :selected-label="t('ne_combobox.selected')"
               :user-input-label="t('ne_combobox.user_input_label')"
-              ref="selectedUnitsRef"
               class="mt-2"
             />
           </div>
@@ -284,7 +284,7 @@ function deselectAllUnits() {
             kind="error"
             :title="error.sendOrRevokeSshKey"
           >
-            <template #details v-if="error.sshKeyUnits.length">
+            <template v-if="error.sshKeyUnits.length" #details>
               <ul class="list-inside list-disc">
                 <li v-for="unit in error.sshKeyUnits" :key="unit">
                   {{ unit }}
@@ -297,13 +297,12 @@ function deselectAllUnits() {
       <!-- footer -->
       <hr class="my-8 border-gray-200 dark:border-gray-700" />
       <div class="flex justify-end">
-        <NeButton kind="tertiary" size="lg" @click.prevent="closeDrawer" class="mr-3">
+        <NeButton kind="tertiary" size="lg" class="mr-3" @click.prevent="closeDrawer">
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="sendOrRevokeSshKey"
           :disabled="
             loading.sendOrRevokeSshKey ||
             accountsStore.listSshKeysLoading ||
@@ -311,6 +310,7 @@ function deselectAllUnits() {
           "
           :loading="loading.sendOrRevokeSshKey"
           type="submit"
+          @click.prevent="sendOrRevokeSshKey"
         >
           {{
             props.action === 'send'

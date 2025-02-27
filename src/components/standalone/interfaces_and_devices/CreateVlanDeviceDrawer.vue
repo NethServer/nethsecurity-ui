@@ -40,17 +40,17 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let vlanType = ref('8021q')
-let vlanTypeRef = ref()
-let vlanId = ref('')
-let vlanIdRef = ref()
-let baseDevice = ref('')
-let baseDeviceRef = ref()
-let internalAllDevices = ref<any[]>([])
+const vlanType = ref('8021q')
+const vlanTypeRef = ref()
+const vlanId = ref('')
+const vlanIdRef = ref()
+const baseDevice = ref('')
+const baseDeviceRef = ref()
+const internalAllDevices = ref<any[]>([])
 
 const showAdvancedSettings = ref(false)
 
-let vlanTypeOptions = [
+const vlanTypeOptions = [
   {
     id: '8021q',
     label: t('standalone.interfaces_and_devices.vlan_8021q')
@@ -61,11 +61,11 @@ let vlanTypeOptions = [
   }
 ]
 
-let loading = ref({
+const loading = ref({
   create: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: '',
@@ -123,15 +123,11 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  error.value.vlanId = ''
+  error.value.baseDevice = ''
 }
 
 async function createVlanDevice() {
@@ -172,7 +168,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(vlanId.value)
+    const { valid, errMessage } = validateRequired(vlanId.value)
     if (!valid) {
       error.value.vlanId = t(errMessage as string)
       if (isValidationOk) {
@@ -182,7 +178,7 @@ function validate() {
     } else {
       // check syntax
       {
-        let { valid, errMessage, i18Params } = validateVlanId(vlanId.value)
+        const { valid, errMessage, i18Params } = validateVlanId(vlanId.value)
         if (!valid) {
           error.value.vlanId = t(errMessage as string, i18Params as any)
           if (isValidationOk) {
@@ -210,7 +206,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(baseDevice.value)
+    const { valid, errMessage } = validateRequired(baseDevice.value)
     if (!valid) {
       error.value.baseDevice = t(errMessage as string)
       if (isValidationOk) {
@@ -225,39 +221,39 @@ function validate() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="t('standalone.interfaces_and_devices.create_vlan_device')"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
       <div class="space-y-6">
         <!-- vlan id -->
         <NeTextInput
-          :label="t('standalone.interfaces_and_devices.vlan_id')"
-          :helperText="t('standalone.interfaces_and_devices.vlan_id_helper')"
+          ref="vlanIdRef"
           v-model.number="vlanId"
+          :label="t('standalone.interfaces_and_devices.vlan_id')"
+          :helper-text="t('standalone.interfaces_and_devices.vlan_id_helper')"
           type="number"
           min="1"
           max="4094"
-          :invalidMessage="t(error.vlanId)"
+          :invalid-message="t(error.vlanId)"
           :disabled="loading.create"
-          ref="vlanIdRef"
         />
         <!-- base device -->
         <NeCombobox
+          ref="baseDeviceRef"
           v-model="baseDevice"
           :options="baseDeviceOptions"
           :label="t('standalone.interfaces_and_devices.base_device')"
-          :invalidMessage="error.baseDevice"
-          :noResultsLabel="t('ne_combobox.no_results')"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :invalid-message="error.baseDevice"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :disabled="loading.create"
-          ref="baseDeviceRef"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
+          :no-options-label="t('ne_combobox.no_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">
           {{ t('common.advanced_settings') }}
@@ -272,10 +268,10 @@ function validate() {
         <template v-if="showAdvancedSettings">
           <!-- vlan type -->
           <NeRadioSelection
+            ref="vlanTypeRef"
             v-model="vlanType"
             :label="t('standalone.interfaces_and_devices.device_type')"
             :options="vlanTypeOptions"
-            ref="vlanTypeRef"
           />
         </template>
         <NeInlineNotification
@@ -284,7 +280,7 @@ function validate() {
           :title="error.notificationTitle"
           :description="error.notificationDescription"
         >
-          <template #details v-if="error.notificationDetails">
+          <template v-if="error.notificationDetails" #details>
             {{ error.notificationDetails }}
           </template>
         </NeInlineNotification>
@@ -295,18 +291,18 @@ function validate() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.create"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="createVlanDevice"
           :disabled="loading.create"
           :loading="loading.create"
+          @click.prevent="createVlanDevice"
         >
           {{ t('standalone.interfaces_and_devices.create_device') }}
         </NeButton>

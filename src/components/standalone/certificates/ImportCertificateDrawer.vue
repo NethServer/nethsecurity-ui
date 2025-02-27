@@ -55,7 +55,7 @@ function close() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -144,14 +144,14 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.certificates.import_certificate')"
+    @close="close()"
   >
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
-        kind="error"
         v-if="importCertificateError.notificationDescription"
+        kind="error"
         :title="t('error.cannot_import_certificate')"
         :description="importCertificateError.notificationDescription"
         ><template v-if="importCertificateError.notificationDetails" #details>
@@ -159,37 +159,37 @@ watch(
         </template></NeInlineNotification
       >
       <NeTextInput
+        v-model="certificateName"
         :label="t('standalone.certificates.certificate_name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
-        v-model="certificateName"
       />
       <NeFileInput
+        v-model="certificateFile"
         :label="t('standalone.certificates.certificate')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('certificate_path'))"
-        :dropzoneLabel="t('ne_file_input.dropzone_label')"
-        v-model="certificateFile"
+        :dropzone-label="t('ne_file_input.dropzone_label')"
       />
       <NeFileInput
+        v-model="privateKeyFile"
         :label="t('standalone.certificates.private_key')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('key_path'))"
-        :dropzoneLabel="t('ne_file_input.dropzone_label')"
-        v-model="privateKeyFile"
+        :dropzone-label="t('ne_file_input.dropzone_label')"
       />
       <div>
         <div class="flex flex-row justify-between">
           <NeFormItemLabel>{{ t('standalone.certificates.chain_file') }}</NeFormItemLabel>
           <NeFormItemLabel>{{ t('common.optional') }}</NeFormItemLabel>
         </div>
-        <NeFileInput :dropzoneLabel="t('ne_file_input.dropzone_label')" v-model="chainFile" />
+        <NeFileInput v-model="chainFile" :dropzone-label="t('ne_file_input.dropzone_label')" />
       </div>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="importCertificate()"
           :disabled="isImporting"
           :loading="isImporting"
+          @click="importCertificate()"
           >{{ t('standalone.certificates.import') }}</NeButton
         >
       </div>

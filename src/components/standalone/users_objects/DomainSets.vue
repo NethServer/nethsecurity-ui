@@ -128,9 +128,9 @@ function clearFilters() {
         v-if="loadingListDomainSets || domainSets.length"
         kind="secondary"
         size="lg"
-        @click="showCreateDomainSetDrawer"
         :disabled="loadingListDomainSets"
         class="shrink-0"
+        @click="showCreateDomainSetDrawer"
       >
         <template #prefix>
           <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -148,15 +148,15 @@ function clearFilters() {
         :description="errorListDomainSets"
         class="mb-5"
       >
-        <template #details v-if="errorListDomainSetsDetails">
+        <template v-if="errorListDomainSetsDetails" #details>
           {{ errorListDomainSetsDetails }}
         </template>
       </NeInlineNotification>
       <!-- text filter -->
       <div class="flex items-center gap-4">
         <NeTextInput
-          :placeholder="t('standalone.objects.filter_domain_sets')"
           v-model.trim="textFilter"
+          :placeholder="t('standalone.objects.filter_domain_sets')"
           :disabled="loadingListDomainSets"
           class="max-w-xs"
         />
@@ -165,10 +165,10 @@ function clearFilters() {
           kind="radio"
           :label="t('standalone.objects.ip_version')"
           :options="ipVersionFilterOptions"
-          :clearFilterLabel="t('ne_dropdown_filter.clear_filter')"
-          :openMenuAriaLabel="t('ne_dropdown_filter.open_filter')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         />
-        <NeButton kind="tertiary" @click="clearFilters" :disabled="loadingListDomainSets">
+        <NeButton kind="tertiary" :disabled="loadingListDomainSets" @click="clearFilters">
           {{ t('common.clear_filters') }}
         </NeButton>
       </div>
@@ -182,9 +182,9 @@ function clearFilters() {
         <NeButton
           kind="secondary"
           size="lg"
-          @click="showCreateDomainSetDrawer"
           class="shrink-0"
           :disabled="loadingListDomainSets"
+          @click="showCreateDomainSetDrawer"
         >
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -208,51 +208,51 @@ function clearFilters() {
       <DomainSetsTable
         v-else
         :loading="loadingListDomainSets"
-        :filteredDomainSets="filteredDomainSets"
-        @editDomainSet="showEditDomainSetDrawer"
-        @deleteDomainSet="showDeleteDomainSetModal"
-        @showUsagesDomainSet="showUsagesModal"
+        :filtered-domain-sets="filteredDomainSets"
+        @edit-domain-set="showEditDomainSetDrawer"
+        @delete-domain-set="showDeleteDomainSetModal"
+        @show-usages-domain-set="showUsagesModal"
       />
     </div>
     <!-- create/edit domain set -->
     <CreateOrEditDomainSetDrawer
-      :isShown="isShownCreateOrEditDomainSetDrawer"
-      :currentDomainSet="currentDomainSet"
-      :allDomainSets="domainSets"
+      :is-shown="isShownCreateOrEditDomainSetDrawer"
+      :current-domain-set="currentDomainSet"
+      :all-domain-sets="domainSets"
       @close="isShownCreateOrEditDomainSetDrawer = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete domain set modal -->
     <DeleteModal
       :visible="isShownDeleteDomainSetModal"
       :title="t('standalone.objects.delete_domain_set')"
-      :deleteButtonLabel="t('standalone.objects.delete_domain_set')"
-      :errorNotificationTitle="t('error.cannot_delete_domain_set')"
-      :deleteFunction="
+      :delete-button-label="t('standalone.objects.delete_domain_set')"
+      :error-notification-title="t('error.cannot_delete_domain_set')"
+      :delete-function="
         () =>
           ubusCall('ns.objects', 'delete-domain-set', {
             id: currentDomainSet?.id
           })
       "
       @close="isShownDeleteDomainSetModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     >
       {{ t('standalone.objects.confirm_delete_domain_set', { name: currentDomainSet?.name }) }}
     </DeleteModal>
     <!-- cannot delete modal -->
     <CannotDeleteObjectModal
       :visible="isShownCannotDeleteObjectModal"
-      :objectName="currentDomainSetName"
-      :usageIds="currentUsageIds"
-      :showGoToObjectsButton="false"
+      :object-name="currentDomainSetName"
+      :usage-ids="currentUsageIds"
+      :show-go-to-objects-button="false"
       @close="isShownCannotDeleteObjectModal = false"
     />
     <!-- usages modal -->
     <ObjectUsagesModal
       :visible="isShownUsagesModal"
-      :objectName="currentDomainSetName"
-      :usageIds="currentUsageIds"
-      :showGoToObjectsButton="false"
+      :object-name="currentDomainSetName"
+      :usage-ids="currentUsageIds"
+      :show-go-to-objects-button="false"
       @close="isShownUsagesModal = false"
     />
   </div>

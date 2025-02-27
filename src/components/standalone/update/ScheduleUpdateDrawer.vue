@@ -146,11 +146,11 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       !isEditing ? t('standalone.update.update_system') : t('standalone.update.edit_scheduled_date')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -158,7 +158,7 @@ watch(
       :description="error.notificationDescription"
       class="mb-6"
       kind="error"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -169,9 +169,9 @@ watch(
         :disabled="true"
       />
       <NeRadioSelection
+        v-model="scheduleMode"
         :options="scheduleModeOptions"
         :label="t('standalone.update.choose_when_to_update')"
-        v-model="scheduleMode"
         ><template #tooltip>
           <NeTooltip>
             <template #content>
@@ -215,15 +215,15 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="saveScheduleOrBeginUpdate()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="saveScheduleOrBeginUpdate()"
           >{{
             scheduleMode === 'now'
               ? t('standalone.update.update_and_reboot')
               : isEditing
-              ? t('common.save')
-              : t('standalone.update.schedule')
+                ? t('common.save')
+                : t('standalone.update.schedule')
           }}</NeButton
         >
       </div>

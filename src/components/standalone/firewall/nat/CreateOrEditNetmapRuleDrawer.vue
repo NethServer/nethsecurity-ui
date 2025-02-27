@@ -59,12 +59,12 @@ const errorBag = ref(new MessageBag())
 // contains the first invalid field ref
 const firstErrorRef = ref()
 
-let loading = ref({
+const loading = ref({
   listDevices: false,
   saveRule: false
 })
 
-let error = ref({
+const error = ref({
   listDevices: '',
   listDevicesDetails: '',
   saveRule: '',
@@ -153,14 +153,14 @@ async function listDevices() {
       // editing rule
       if (props.currentRule.device_in?.length) {
         inboundDevices.value = props.currentRule.device_in.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
         })
         isExpandedAdvancedSettings.value = true
       }
 
       if (props.currentRule.device_out) {
         outboundDevices.value = props.currentRule.device_out.map((deviceId) => {
-          return devicesOptions.value.find((dev) => dev.id === deviceId)
+          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
         })
         isExpandedAdvancedSettings.value = true
       }
@@ -179,7 +179,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -248,8 +248,8 @@ async function saveRule() {
     dest: destinationNetwork.value,
     map_from: mapFrom.value,
     map_to: mapTo.value,
-    device_in: inboundDevices.value.map((dev) => dev.id),
-    device_out: outboundDevices.value.map((dev) => dev.id)
+    device_in: inboundDevices.value.map((dev: NeComboboxOption) => dev.id),
+    device_out: outboundDevices.value.map((dev: NeComboboxOption) => dev.id)
   }
 
   if (props.currentRule) {
@@ -279,65 +279,65 @@ async function saveRule() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="drawerTitle"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
       <div class="space-y-6">
         <!-- rule name -->
         <NeTextInput
-          :label="t('common.name')"
-          v-model.trim="ruleName"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('name'))"
-          :disabled="loading.saveRule"
           ref="ruleNameRef"
+          v-model.trim="ruleName"
+          :label="t('common.name')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
+          :disabled="loading.saveRule"
         />
         <!-- source network, show only for destination netmap -->
         <NeTextInput
           v-if="netmapType === 'dest'"
-          :label="t('standalone.netmap.source_network')"
-          v-model.trim="sourceNetwork"
-          :helperText="t('standalone.netmap.network_cidr')"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('src'))"
-          :disabled="loading.saveRule"
           ref="sourceNetworkRef"
+          v-model.trim="sourceNetwork"
+          :label="t('standalone.netmap.source_network')"
+          :helper-text="t('standalone.netmap.network_cidr')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('src'))"
+          :disabled="loading.saveRule"
         />
         <!-- destination network, show only for source netmap -->
         <NeTextInput
           v-else
-          :label="t('standalone.netmap.destination_network')"
-          v-model.trim="destinationNetwork"
-          :helperText="t('standalone.netmap.network_cidr')"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('dest'))"
-          :disabled="loading.saveRule"
           ref="destinationNetworkRef"
+          v-model.trim="destinationNetwork"
+          :label="t('standalone.netmap.destination_network')"
+          :helper-text="t('standalone.netmap.network_cidr')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('dest'))"
+          :disabled="loading.saveRule"
         />
         <div class="flex items-center">
           <!-- mapFrom -->
           <NeTextInput
+            ref="mapFromRef"
+            v-model.trim="mapFrom"
             :label="
               netmapType == 'src'
                 ? t('standalone.netmap.source_network')
                 : t('standalone.netmap.destination_network')
             "
-            v-model.trim="mapFrom"
-            :helperText="t('standalone.netmap.network_cidr')"
-            :invalidMessage="t(errorBag.getFirstI18nKeyFor('map_from'))"
+            :helper-text="t('standalone.netmap.network_cidr')"
+            :invalid-message="t(errorBag.getFirstI18nKeyFor('map_from'))"
             :disabled="loading.saveRule"
-            ref="mapFromRef"
           />
           <!-- arrow icon -->
           <FontAwesomeIcon :icon="['fas', 'arrow-right']" class="px-4" />
           <!-- mapFrom -->
           <NeTextInput
-            :label="t('standalone.netmap.mapped_network')"
-            v-model.trim="mapTo"
-            :helperText="t('standalone.netmap.network_cidr')"
-            :invalidMessage="t(errorBag.getFirstI18nKeyFor('map_to'))"
-            :disabled="loading.saveRule"
             ref="mapToRef"
+            v-model.trim="mapTo"
+            :label="t('standalone.netmap.mapped_network')"
+            :helper-text="t('standalone.netmap.network_cidr')"
+            :invalid-message="t(errorBag.getFirstI18nKeyFor('map_to'))"
+            :disabled="loading.saveRule"
           />
         </div>
         <!-- listDevices error notification -->
@@ -347,58 +347,58 @@ async function saveRule() {
           :title="t('error.cannot_retrieve_devices')"
           :description="error.listDevices"
         >
-          <template #details v-if="error.listDevicesDetails">
+          <template v-if="error.listDevicesDetails" #details>
             {{ error.listDevicesDetails }}
           </template>
         </NeInlineNotification>
         <!-- advanced settings -->
         <NeExpandable
           :label="t('common.advanced_settings')"
-          :isExpanded="isExpandedAdvancedSettings"
-          @setExpanded="(ev: boolean) => (isExpandedAdvancedSettings = ev)"
+          :is-expanded="isExpandedAdvancedSettings"
+          @set-expanded="(ev: boolean) => (isExpandedAdvancedSettings = ev)"
         >
           <div class="space-y-6">
             <!-- inbound devices -->
             <NeCombobox
-              :label="t('standalone.netmap.inbound_devices')"
+              ref="inboundDevicesRef"
               v-model="inboundDevices"
+              :label="t('standalone.netmap.inbound_devices')"
               :options="devicesOptions"
               :placeholder="
                 loading.listDevices ? t('common.loading') : t('ne_combobox.choose_multiple')
               "
               multiple
               :helper-text="t('standalone.netmap.device_helper')"
-              :invalidMessage="t(errorBag.getFirstI18nKeyFor('device_in'))"
+              :invalid-message="t(errorBag.getFirstI18nKeyFor('device_in'))"
               :disabled="loading.saveRule || loading.listDevices"
               :optional="true"
-              :optionalLabel="t('common.optional')"
-              :noResultsLabel="t('ne_combobox.no_results')"
-              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-              :noOptionsLabel="t('ne_combobox.no_options_label')"
+              :optional-label="t('common.optional')"
+              :no-results-label="t('ne_combobox.no_results')"
+              :limited-options-label="t('ne_combobox.limited_options_label')"
+              :no-options-label="t('ne_combobox.no_options_label')"
               :selected-label="t('ne_combobox.selected')"
               :user-input-label="t('ne_combobox.user_input_label')"
-              ref="inboundDevicesRef"
             />
             <!-- outbound devices -->
             <NeCombobox
-              :label="t('standalone.netmap.outbound_devices')"
+              ref="outboundDevicesRef"
               v-model="outboundDevices"
+              :label="t('standalone.netmap.outbound_devices')"
               :options="devicesOptions"
               :placeholder="
                 loading.listDevices ? t('common.loading') : t('ne_combobox.choose_multiple')
               "
               multiple
               :helper-text="t('standalone.netmap.device_helper')"
-              :invalidMessage="t(errorBag.getFirstI18nKeyFor('device_out'))"
+              :invalid-message="t(errorBag.getFirstI18nKeyFor('device_out'))"
               :disabled="loading.saveRule || loading.listDevices"
               :optional="true"
-              :optionalLabel="t('common.optional')"
-              :noResultsLabel="t('ne_combobox.no_results')"
-              :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-              :noOptionsLabel="t('ne_combobox.no_options_label')"
+              :optional-label="t('common.optional')"
+              :no-results-label="t('ne_combobox.no_results')"
+              :limited-options-label="t('ne_combobox.limited_options_label')"
+              :no-options-label="t('ne_combobox.no_options_label')"
               :selected-label="t('ne_combobox.selected')"
               :user-input-label="t('ne_combobox.user_input_label')"
-              ref="outboundDevicesRef"
             />
           </div>
         </NeExpandable>
@@ -409,7 +409,7 @@ async function saveRule() {
           :title="t('error.cannot_save_netmap')"
           :description="error.saveRule"
         >
-          <template #details v-if="error.saveRuleDetails">
+          <template v-if="error.saveRuleDetails" #details>
             {{ error.saveRuleDetails }}
           </template>
         </NeInlineNotification>
@@ -420,18 +420,18 @@ async function saveRule() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.saveRule"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveRule"
           :disabled="loading.saveRule || loading.listDevices"
           :loading="loading.saveRule"
+          @click.prevent="saveRule"
         >
           {{
             isCreatingRule ? t('standalone.netmap.add_netmap') : t('standalone.netmap.save_netmap')

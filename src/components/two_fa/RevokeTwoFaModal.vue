@@ -36,12 +36,12 @@ const otp = ref('')
 const otpRef = ref()
 const errorBag = ref(new MessageBag())
 
-let loading = ref({
+const loading = ref({
   revokeTwoFa: false,
   verifyOtp: false
 })
 
-let error = ref({
+const error = ref({
   revokeTwoFa: '',
   revokeTwoFaDetails: '',
   verifyOtp: '',
@@ -61,15 +61,10 @@ watch(
 )
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.revokeTwoFa = ''
+  error.value.revokeTwoFaDetails = ''
+  error.value.verifyOtp = ''
+  error.value.verifyOtpDetails = ''
 }
 
 function validate() {
@@ -145,25 +140,25 @@ async function revoke() {
     :visible="visible"
     :title="t('standalone.two_fa.revoke_two_fa')"
     kind="warning"
-    :primaryLabel="t('standalone.two_fa.revoke_two_fa')"
+    :primary-label="t('standalone.two_fa.revoke_two_fa')"
     :primary-button-disabled="loading.verifyOtp || loading.revokeTwoFa"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonLoading="loading.verifyOtp || loading.revokeTwoFa"
-    :closeAriaLabel="t('common.close')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-loading="loading.verifyOtp || loading.revokeTwoFa"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="verifyOtp"
+    @primary-click="verifyOtp"
   >
     {{ t('standalone.two_fa.revoke_two_fa_message') }}
     <!-- otp -->
     <NeTextInput
+      ref="otpRef"
+      v-model.trim="otp"
       :label="t('standalone.two_fa.otp')"
       :placeholder="t('common.eg_value', { value: '123456' })"
-      v-model.trim="otp"
-      :invalidMessage="t(errorBag.getFirstI18nKeyFor('otp'))"
+      :invalid-message="t(errorBag.getFirstI18nKeyFor('otp'))"
       :disabled="loading.verifyOtp || loading.revokeTwoFa"
       class="mt-5"
-      ref="otpRef"
     />
     <!-- verifyOtp error notification -->
     <NeInlineNotification
@@ -173,7 +168,7 @@ async function revoke() {
       :description="error.verifyOtp"
       class="mt-4"
     >
-      <template #details v-if="error.verifyOtpDetails">
+      <template v-if="error.verifyOtpDetails" #details>
         {{ error.verifyOtpDetails }}
       </template>
     </NeInlineNotification>
@@ -185,7 +180,7 @@ async function revoke() {
       :description="error.revokeTwoFa"
       class="mt-4"
     >
-      <template #details v-if="error.revokeTwoFaDetails">
+      <template v-if="error.revokeTwoFaDetails" #details>
         {{ error.revokeTwoFaDetails }}
       </template>
     </NeInlineNotification>

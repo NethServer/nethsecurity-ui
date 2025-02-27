@@ -104,7 +104,7 @@ function isFormInvalid() {
   if (loginStore.twoFaActive) {
     {
       // otp
-      let { valid, errMessage } = validateSixDigitCode(twoFaOtp.value)
+      const { valid, errMessage } = validateSixDigitCode(twoFaOtp.value)
       if (!valid) {
         validationErrors.value.set('otp', errMessage as string)
         formRefs.twoFaOtp.value?.focus()
@@ -113,7 +113,7 @@ function isFormInvalid() {
   } else {
     {
       // username
-      let { valid, errMessage } = validateRequired(username.value)
+      const { valid, errMessage } = validateRequired(username.value)
       if (!valid) {
         validationErrors.value.set('username', errMessage as string)
         formRefs.username.value?.focus()
@@ -121,7 +121,7 @@ function isFormInvalid() {
     }
     {
       // password
-      let { valid, errMessage } = validateRequired(password.value)
+      const { valid, errMessage } = validateRequired(password.value)
       if (!valid) {
         validationErrors.value.set('password', errMessage as string)
         formRefs.password.value?.focus()
@@ -150,7 +150,7 @@ function isFormInvalid() {
               kind="info"
               :title="t('login.session_has_expired')"
               :description="t('login.please_sign_in_again')"
-              :closeAriaLabel="t('common.close')"
+              :close-aria-label="t('common.close')"
               class="mt-6"
             />
           </div>
@@ -170,7 +170,7 @@ function isFormInvalid() {
               ref="two-fa-otp-ref"
               v-model.trim="twoFaOtp"
               :disabled="loading"
-              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('otp'))"
+              :invalid-message="t(validationErrors.getFirstI18nKeyFor('otp'))"
               :label="t('standalone.two_fa.otp')"
               :loading="loading"
             />
@@ -193,23 +193,23 @@ function isFormInvalid() {
               :description="t(error.message)"
             />
             <NeTextInput
-              :label="t('login.username')"
-              v-model.trim="username"
               ref="username-ref"
+              v-model.trim="username"
+              :label="t('login.username')"
               :disabled="loading"
-              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('username'))"
+              :invalid-message="t(validationErrors.getFirstI18nKeyFor('username'))"
               autocomplete="username"
               :loading="loading"
             />
             <NeTextInput
-              :label="t('login.password')"
-              v-model="password"
-              isPassword
               ref="password-ref"
+              v-model="password"
+              :label="t('login.password')"
+              is-password
               :disabled="loading"
-              :showPasswordLabel="t('ne_text_input.show_password')"
-              :hidePasswordLabel="t('ne_text_input.hide_password')"
-              :invalidMessage="t(validationErrors.getFirstI18nKeyFor('password'))"
+              :show-password-label="t('ne_text_input.show_password')"
+              :hide-password-label="t('ne_text_input.hide_password')"
+              :invalid-message="t(validationErrors.getFirstI18nKeyFor('password'))"
               autocomplete="current-password"
               :loading="loading"
             />
@@ -217,9 +217,9 @@ function isFormInvalid() {
               <div class="flex items-center">
                 <input
                   id="remember-me"
+                  v-model="rememberMe"
                   name="remember-me"
                   type="checkbox"
-                  v-model="rememberMe"
                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                 />
                 <label
@@ -240,11 +240,11 @@ function isFormInvalid() {
               <NeButton
                 kind="primary"
                 size="lg"
-                @click.prevent="login"
                 :disabled="loading"
                 :loading="loading"
                 type="submit"
                 class="w-full"
+                @click.prevent="login"
                 >{{ t('login.sign_in') }}</NeButton
               >
             </div>

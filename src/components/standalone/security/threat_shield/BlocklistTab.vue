@@ -106,7 +106,7 @@ async function toggleBlocklistEnable(blocklist: Blocklist) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
 
-    let blocklistToRevert =
+    const blocklistToRevert =
       blocklists.value[blocklists.value.findIndex((x) => x.name === blocklist.name)]
     blocklistToRevert.enabled = !blocklistToRevert.enabled
   } finally {
@@ -121,14 +121,14 @@ onMounted(() => {
 
 <template>
   <NeSkeleton v-if="loading" :lines="8" size="lg" />
-  <div class="flex flex-col gap-y-6" v-else>
+  <div v-else class="flex flex-col gap-y-6">
     <NeInlineNotification
       v-if="error.notificationTitle"
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -138,7 +138,7 @@ onMounted(() => {
           <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
             {{ t('standalone.threat_shield.blocklist_description') }}
           </p>
-          <div class="mt-2 flex flex-row gap-x-2" v-if="isEnterprise">
+          <div v-if="isEnterprise" class="mt-2 flex flex-row gap-x-2">
             <FontAwesomeIcon
               :icon="['fas', 'circle-info']"
               class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
@@ -179,13 +179,13 @@ onMounted(() => {
       >
       <template v-else>
         <NeTextInput
+          v-model="filter"
           class="max-w-xs sm:max-w-sm"
           :placeholder="t('standalone.threat_shield.filter_blocklists')"
-          v-model="filter"
           is-search />
         <BlocklistTable
-          :blocklists="filteredBlocklists"
           v-if="filteredBlocklists.length > 0"
+          :blocklists="filteredBlocklists"
           :disable-toggles="isTogglingBlocklistEnabled"
           kind="ip"
           @toggle-blocklist="toggleBlocklistEnable" />

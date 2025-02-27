@@ -90,7 +90,7 @@ function clearValidationErrors() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -106,7 +106,7 @@ function validate() {
   })
 
   let validAllowedNetworks = true
-  for (let [index, network] of allowedNetworks.value.entries()) {
+  for (const [index, network] of allowedNetworks.value.entries()) {
     const cidrValidator = validateIpCidr(network)
     if (network != '' && !cidrValidator.valid) {
       allowedNetworksValidationErrors.value[index] = t(cidrValidator.errMessage as string)
@@ -149,11 +149,11 @@ async function createOrEditProxy() {
         ? 'edit-domain'
         : 'add-domain'
       : id.value
-      ? 'edit-path'
-      : 'add-path'
+        ? 'edit-path'
+        : 'add-path'
 
   const networksToInclude = allowedNetworks.value.filter(Boolean)
-  let payload: CreateOrEditProxyPayload = {
+  const payload: CreateOrEditProxyPayload = {
     destination: destinationURL.value,
     description: description.value
   }
@@ -259,13 +259,13 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       id
         ? t('standalone.reverse_proxy.edit_reverse_proxy')
         : t('standalone.reverse_proxy.add_reverse_proxy')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -274,16 +274,16 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="20" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="20" />
+    <div v-else class="flex flex-col gap-y-6">
       <NeRadioSelection
+        v-model="type"
         :label="t('standalone.reverse_proxy.type')"
         :options="typeOptions"
-        v-model="type"
         :disabled="Boolean(itemToEdit)"
       />
       <NeTextInput
@@ -316,14 +316,14 @@ watch(
         <NeCombobox
           v-model="certificate"
           :label="t('standalone.reverse_proxy.certificate')"
-          :invalidMessage="t(validationErrorBag.getFirstI18nKeyFor('certificate'))"
-          :noOptionsLabel="t('ne_combobox.no_options_label')"
-          :noResultsLabel="t('ne_combobox.no_results')"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('certificate'))"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
           :options="certificateOptions"
-          :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
-          :optionalLabel="t('common.optional')"
+          :optional-label="t('common.optional')"
         />
         <NeInlineNotification
           v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
@@ -374,9 +374,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditProxy()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditProxy()"
           >{{ id ? t('common.save') : t('standalone.reverse_proxy.add_reverse_proxy') }}</NeButton
         >
       </div>

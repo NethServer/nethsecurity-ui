@@ -24,7 +24,7 @@ const emit = defineEmits(['editRule', 'deleteRule', 'reloadData'])
 const { t } = useI18n()
 const MAX_APPS_TO_DISPLAY = 8
 
-let loading = ref({
+const loading = ref({
   editRule: false
 })
 
@@ -83,7 +83,7 @@ async function toggleRule() {
 
 <template>
   <NeCard
-    :menuItems="[
+    :menu-items="[
       {
         id: 'enable_disable',
         label: rule.enabled ? t('common.disable') : t('common.enable'),
@@ -100,8 +100,8 @@ async function toggleRule() {
         danger: true
       }
     ]"
-    :errorTitle="errorTitle"
-    :errorDescription="errorDescription"
+    :error-title="errorTitle"
+    :error-description="errorDescription"
     :class="['border-l-4', zone?.name ? getZoneBorderColorClasses(zone?.name) : '']"
   >
     <template #title>
@@ -138,7 +138,7 @@ async function toggleRule() {
         <span>{{ t('common.disabled') }}</span>
       </div>
       <!-- blocked apps -->
-      <NeCard alternateBackground class="mt-4">
+      <NeCard alternate-background class="mt-4">
         <div class="divide-y divide-gray-300 dark:divide-gray-600">
           <div class="pb-3 font-semibold">
             {{ t('standalone.dpi.blocked_apps_and_protocols') }}
@@ -155,8 +155,8 @@ async function toggleRule() {
           v-if="rule.criteria.length > appsToDisplay.length"
           kind="tertiary"
           size="sm"
-          @click="emit('editRule', rule)"
           class="-ml-2 mt-3"
+          @click="emit('editRule', rule)"
         >
           {{
             t('standalone.dpi.plus_num_others', {

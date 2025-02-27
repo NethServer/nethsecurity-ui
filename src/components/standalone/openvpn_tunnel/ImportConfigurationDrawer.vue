@@ -75,14 +75,14 @@ async function importConfiguration() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.openvpn_tunnel.import_configuration')"
+    @close="close()"
   >
     <div class="flex flex-col gap-y-6">
       <NeInlineNotification
-        kind="error"
         v-if="importConfigurationError.notificationDescription"
+        kind="error"
         :title="t('error.cannot_import_configuration')"
         :description="importConfigurationError.notificationDescription"
         ><template v-if="importConfigurationError.notificationDetails" #details>
@@ -91,12 +91,12 @@ async function importConfiguration() {
       >
       <div>
         <NeFileInput
+          v-model="fileToUpload"
           :label="`${t('standalone.openvpn_tunnel.nethsecurity_client_configuration', {
             product: getProductName()
           })} (*.json)`"
           :invalid-message="fileInputValidationError"
-          :dropzoneLabel="t('ne_file_input.dropzone_label')"
-          v-model="fileToUpload"
+          :dropzone-label="t('ne_file_input.dropzone_label')"
         />
       </div>
       <hr />
@@ -104,9 +104,9 @@ async function importConfiguration() {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="importConfiguration()"
           :disabled="isImporting"
           :loading="isImporting"
+          @click="importConfiguration()"
           >{{ t('standalone.openvpn_tunnel.import') }}</NeButton
         >
       </div>

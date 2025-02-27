@@ -1,13 +1,14 @@
+name: Release Please
+
 on:
   push:
     branches:
       - main
-
-name: Release Please
+  workflow_dispatch:
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
+  run:
+    runs-on: ubuntu-22.04
     steps:
       - uses: googleapis/release-please-action@v4
         with:

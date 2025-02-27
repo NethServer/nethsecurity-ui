@@ -63,7 +63,7 @@ onMounted(() => {
         class="mb-6"
         kind="error"
       >
-        <template #details v-if="accountsStore.listSshKeysError.notificationDetails">
+        <template v-if="accountsStore.listSshKeysError.notificationDetails" #details>
           {{ accountsStore.listSshKeysError.notificationDetails }}
         </template>
       </NeInlineNotification>
@@ -77,9 +77,9 @@ onMounted(() => {
           /><span>{{ t('controller.account_settings.passphrase_enabled') }}</span>
         </div>
         <NeTextArea
+          v-model="accountsStore.sshKeys.key_pub"
           :label="t('controller.account_settings.ssh_public_key')"
           class="mb-6"
-          v-model="accountsStore.sshKeys.key_pub"
           :disabled="true"
         />
         <NeButton kind="tertiary" class="-mx-2" @click="showRemoveKeyModal = true">

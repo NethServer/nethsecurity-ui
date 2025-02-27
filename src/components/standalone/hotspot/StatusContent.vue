@@ -24,10 +24,10 @@ import NeTable from '@/components/standalone/NeTable.vue'
 const { t } = useI18n()
 const emit = defineEmits(['goToSetting'])
 
-let hotspotSession: any = ref({})
-let loading = ref(true)
-let activeConfiguration = ref(false)
-let error = ref({
+const hotspotSession: any = ref({})
+const loading = ref(true)
+const activeConfiguration = ref(false)
+const error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
@@ -40,7 +40,7 @@ onMounted(async () => {
 
 async function getConfiguration() {
   try {
-    let res = await ubusCall('ns.dedalo', 'get-configuration', {})
+    const res = await ubusCall('ns.dedalo', 'get-configuration', {})
     activeConfiguration.value = res.data.configuration.hotspot_id != ''
   } catch (exception: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_configuration')

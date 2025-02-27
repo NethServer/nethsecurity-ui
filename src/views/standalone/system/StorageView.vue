@@ -109,12 +109,12 @@ onMounted(() => {
       {{ t('standalone.storage.description') }}
     </p>
     <NeInlineNotification
+      v-if="error.fetchError"
       kind="error"
       :title="t('error.cannot_retrieve_storage_configuration')"
       :description="error.fetchError"
-      v-if="error.fetchError"
     />
-    <NeSkeleton :lines="10" v-if="loading" />
+    <NeSkeleton v-if="loading" :lines="10" />
     <template v-else-if="currentStorageConfiguration?.name">
       <div>
         <NeHeading tag="h6" class="mb-1.5">{{
@@ -166,7 +166,7 @@ onMounted(() => {
 
             <!-- Remove storage button -->
             <div>
-              <NeButton kind="danger" @click="showDeleteModal = true" class="mt-2 sm:mt-0">
+              <NeButton kind="danger" class="mt-2 sm:mt-0" @click="showDeleteModal = true">
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', 'trash']"
@@ -184,9 +184,9 @@ onMounted(() => {
       <div class="max-w-5xl">
         <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.storage.select_device') }}</NeHeading>
         <NeRadioSelection
+          v-model="selectedDevicePath"
           :options="deviceOptions"
           :grid-style="'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3'"
-          v-model="selectedDevicePath"
           :card="true"
           :label="''"
           card-size="lg"

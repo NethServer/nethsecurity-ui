@@ -24,11 +24,11 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let loading = ref({
+const loading = ref({
   deleteDevice: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -77,14 +77,14 @@ async function deleteDevice() {
     :visible="visible"
     :title="t('standalone.interfaces_and_devices.delete_device')"
     kind="warning"
-    :primaryLabel="t('standalone.interfaces_and_devices.delete_device')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.deleteDevice"
-    :primaryButtonLoading="loading.deleteDevice"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.interfaces_and_devices.delete_device')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.deleteDevice"
+    :primary-button-loading="loading.deleteDevice"
+    :close-aria-label="t('common.close')"
     @close="closeModal"
-    @primaryClick="deleteDevice"
+    @primary-click="deleteDevice"
   >
     <div>
       {{ t('standalone.interfaces_and_devices.delete_device_name', { name: device.name }) }}
@@ -96,7 +96,7 @@ async function deleteDevice() {
       :description="error.notificationDescription"
       class="mt-4"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>

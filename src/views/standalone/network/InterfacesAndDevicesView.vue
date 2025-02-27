@@ -63,29 +63,29 @@ import type { UciNetworkConfig } from '@/composables/useUciNetworkConfig'
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
 // used for setInterval
-let devicesIntervalId = ref(0)
-let allDevices: Ref<DeviceOrIface[]> = ref([])
-let devicesByZone: Ref<ZoneWithDeviceNames[]> = ref([])
-let firewallConfig: Ref<any> = ref({})
-let networkConfig: Ref<any> = ref({})
-let currentDevice: Ref<any> = ref({})
-let currentInterface: Ref<any> = ref({})
-let isShownCreateOrEditAliasInterfaceDrawer = ref(false)
-let isExpandedAlias: Ref<{ [index: string]: boolean }> = ref({})
-let isExpandedBridge: Ref<{ [index: string]: boolean }> = ref({})
-let isExpandedBond: Ref<{ [index: string]: boolean }> = ref({})
-let isShownDeleteAliasModal = ref(false)
-let currentAlias: Ref<any> = ref({})
-let currentParentInterface: Ref<any> = ref({})
-let aliasToEdit: Ref<any> = ref(null)
-let isShownConfigureDeviceDrawer = ref(false)
-let interfaceToEdit: Ref<any> = ref(null)
-let currentNetworkConfigDevice: Ref<any> = ref({})
-let isShownUnconfigureDeviceModal = ref(false)
-let isShownCreateVlanDeviceDrawer = ref(false)
-let isShownDeleteDeviceModal = ref(false)
-let deviceToConfigureType = ref('physical' as DeviceType)
-let isShownDeleteBondModal = ref(false)
+const devicesIntervalId = ref(0)
+const allDevices: Ref<DeviceOrIface[]> = ref([])
+const devicesByZone: Ref<ZoneWithDeviceNames[]> = ref([])
+const firewallConfig: Ref<any> = ref({})
+const networkConfig: Ref<any> = ref({})
+const currentDevice: Ref<any> = ref({})
+const currentInterface: Ref<any> = ref({})
+const isShownCreateOrEditAliasInterfaceDrawer = ref(false)
+const isExpandedAlias: Ref<{ [index: string]: boolean }> = ref({})
+const isExpandedBridge: Ref<{ [index: string]: boolean }> = ref({})
+const isExpandedBond: Ref<{ [index: string]: boolean }> = ref({})
+const isShownDeleteAliasModal = ref(false)
+const currentAlias: Ref<any> = ref({})
+const currentParentInterface: Ref<any> = ref({})
+const aliasToEdit: Ref<any> = ref(null)
+const isShownConfigureDeviceDrawer = ref(false)
+const interfaceToEdit: Ref<any> = ref(null)
+const currentNetworkConfigDevice: Ref<any> = ref({})
+const isShownUnconfigureDeviceModal = ref(false)
+const isShownCreateVlanDeviceDrawer = ref(false)
+const isShownDeleteDeviceModal = ref(false)
+const deviceToConfigureType = ref('physical' as DeviceType)
+const isShownDeleteBondModal = ref(false)
 const vpnNetworks = ref<DeviceVpnNetworks>({
   openvpn: {},
   openvpnRw: {},
@@ -93,13 +93,13 @@ const vpnNetworks = ref<DeviceVpnNetworks>({
 })
 const ipsecTunnelNames = ref<Record<string, string>>({})
 
-let loading = ref({
+const loading = ref({
   networkDevices: true,
   networkConfig: true,
   firewallConfig: true
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: '',
@@ -561,7 +561,7 @@ function formatPackets(packets: number) {
       :description="error.notificationDescription"
       class="mb-4"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -572,7 +572,7 @@ function formatPackets(packets: number) {
       :description="error.getVpnNetworks"
       class="mb-4"
     >
-      <template #details v-if="error.getVpnNetworksDetails">
+      <template v-if="error.getVpnNetworksDetails" #details>
         {{ error.getVpnNetworksDetails }}
       </template>
     </NeInlineNotification>
@@ -601,7 +601,7 @@ function formatPackets(packets: number) {
           ></div>
         </div>
       </div>
-      <template v-else-if="!error.notificationTitle" v-for="zone in sortedZonesAndDevices">
+      <template v-for="zone in sortedZonesAndDevices" v-else-if="!error.notificationTitle">
         <template v-if="!isEmpty(zone.devices)">
           <div :key="zone.name">
             <NeHeading tag="h6" class="mb-1.5">{{
@@ -626,15 +626,15 @@ function formatPackets(packets: number) {
                       class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
                     >
                       <DeviceButtons
-                        :deviceOrIface="device"
-                        :networkConfig="networkConfig"
-                        :firewallConfig="firewallConfig"
-                        @showConfigureDeviceDrawer="showConfigureDeviceDrawer"
-                        @configureBond="configureBond"
-                        @showCreateAliasInterfaceDrawer="showCreateAliasInterfaceDrawer"
-                        @showUnconfigureDeviceModal="showUnconfigureDeviceModal"
-                        @showDeleteBondModal="showDeleteBondModal"
-                        @showDeleteDeviceModal="showDeleteDeviceModal"
+                        :device-or-iface="device"
+                        :network-config="networkConfig"
+                        :firewall-config="firewallConfig"
+                        @show-configure-device-drawer="showConfigureDeviceDrawer"
+                        @configure-bond="configureBond"
+                        @show-create-alias-interface-drawer="showCreateAliasInterfaceDrawer"
+                        @show-unconfigure-device-modal="showUnconfigureDeviceModal"
+                        @show-delete-bond-modal="showDeleteBondModal"
+                        @show-delete-device-modal="showDeleteDeviceModal"
                       />
                     </div>
                     <div
@@ -686,8 +686,8 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              @click="toggleExpandAlias(device)"
                               class="-mr-2 -mt-2"
+                              @click="toggleExpandAlias(device)"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -713,8 +713,8 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              @click="toggleExpandBridge(device)"
                               class="-mr-2 -mt-2"
+                              @click="toggleExpandBridge(device)"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -736,8 +736,8 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              @click="toggleExpandBond(device)"
                               class="-mr-2 -mt-2"
+                              @click="toggleExpandBond(device)"
                             >
                               <template #suffix>
                                 <font-awesome-icon
@@ -856,8 +856,8 @@ function formatPackets(packets: number) {
                             />
                             <!-- remote networks -->
                             <div
-                              v-else
                               v-for="network in vpnNetworks.ipsec[device.ns_link as string]"
+                              v-else
                               :key="network"
                             >
                               {{ network }}
@@ -872,8 +872,8 @@ function formatPackets(packets: number) {
                             <div v-if="isEmpty(vpnNetworks.openvpn[device.openvpn.ns_name])">-</div>
                             <!-- remote networks -->
                             <div
-                              v-else
                               v-for="network in vpnNetworks.openvpn[device.openvpn.ns_name]"
+                              v-else
                               :key="network"
                             >
                               {{ network }}
@@ -928,15 +928,15 @@ function formatPackets(packets: number) {
                         class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
                       >
                         <DeviceButtons
-                          :deviceOrIface="device"
-                          :networkConfig="networkConfig"
-                          :firewallConfig="firewallConfig"
-                          @showConfigureDeviceDrawer="showConfigureDeviceDrawer"
-                          @configureBond="configureBond"
-                          @showCreateAliasInterfaceDrawer="showCreateAliasInterfaceDrawer"
-                          @showUnconfigureDeviceModal="showUnconfigureDeviceModal"
-                          @showDeleteBondModal="showDeleteBondModal"
-                          @showDeleteDeviceModal="showDeleteDeviceModal"
+                          :device-or-iface="device"
+                          :network-config="networkConfig"
+                          :firewall-config="firewallConfig"
+                          @show-configure-device-drawer="showConfigureDeviceDrawer"
+                          @configure-bond="configureBond"
+                          @show-create-alias-interface-drawer="showCreateAliasInterfaceDrawer"
+                          @show-unconfigure-device-modal="showUnconfigureDeviceModal"
+                          @show-delete-bond-modal="showDeleteBondModal"
+                          @show-delete-device-modal="showDeleteDeviceModal"
                         />
                       </div>
                     </div>
@@ -970,8 +970,8 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="lg"
-                              @click="showEditAliasInterfaceDrawer(alias, device)"
                               :disabled="!getFirewallZone(getInterface(device), firewallConfig)"
+                              @click="showEditAliasInterfaceDrawer(alias, device)"
                             >
                               <template #prefix>
                                 <font-awesome-icon
@@ -984,7 +984,7 @@ function formatPackets(packets: number) {
                             </NeButton>
                             <NeDropdown
                               :items="getAliasKebabMenuItems(alias, device)"
-                              :alignToRight="true"
+                              :align-to-right="true"
                             />
                           </div>
                           <div class="flex flex-wrap justify-between gap-8">
@@ -1018,8 +1018,8 @@ function formatPackets(packets: number) {
                               <NeButton
                                 kind="tertiary"
                                 size="lg"
-                                @click="showEditAliasInterfaceDrawer(alias, device)"
                                 :disabled="!getFirewallZone(getInterface(device), firewallConfig)"
+                                @click="showEditAliasInterfaceDrawer(alias, device)"
                               >
                                 <template #prefix>
                                   <font-awesome-icon
@@ -1033,7 +1033,7 @@ function formatPackets(packets: number) {
                               <!-- overflow menu for larger screens -->
                               <NeDropdown
                                 :items="getAliasKebabMenuItems(alias, device)"
-                                :alignToRight="true"
+                                :align-to-right="true"
                               />
                             </div>
                           </div>
@@ -1140,54 +1140,54 @@ function formatPackets(packets: number) {
     <!-- create/edit alias interface drawer -->
     <CreateOrEditAliasInterfaceDrawer
       :iface="currentInterface"
-      :networkConfigDevice="currentNetworkConfigDevice"
-      :networkConfig="networkConfig"
-      :isShown="isShownCreateOrEditAliasInterfaceDrawer"
-      :aliasToEdit="aliasToEdit"
+      :network-config-device="currentNetworkConfigDevice"
+      :network-config="networkConfig"
+      :is-shown="isShownCreateOrEditAliasInterfaceDrawer"
+      :alias-to-edit="aliasToEdit"
       @close="hideCreateOrEditAliasInterfaceDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete alias modal -->
     <DeleteAliasModal
       :visible="isShownDeleteAliasModal"
       :alias="currentAlias"
-      :parentInterface="currentParentInterface"
+      :parent-interface="currentParentInterface"
       @close="isShownDeleteAliasModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- configure interface drawer -->
     <ConfigureDeviceDrawer
       :device="currentDevice"
-      :deviceType="deviceToConfigureType"
-      :allDevices="allDevices"
-      :networkConfig="networkConfig"
-      :isShown="isShownConfigureDeviceDrawer"
-      :interfaceToEdit="interfaceToEdit"
+      :device-type="deviceToConfigureType"
+      :all-devices="allDevices"
+      :network-config="networkConfig"
+      :is-shown="isShownConfigureDeviceDrawer"
+      :interface-to-edit="interfaceToEdit"
       @close="hideConfigureDeviceDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- unconfigure device modal -->
     <UnconfigureDeviceModal
       :visible="isShownUnconfigureDeviceModal"
       :device="currentDevice"
-      :networkConfig="networkConfig"
+      :network-config="networkConfig"
       @close="isShownUnconfigureDeviceModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- create vlan device drawer -->
     <CreateVlanDeviceDrawer
-      :networkConfig="networkConfig"
-      :allDevices="allDevices"
-      :isShown="isShownCreateVlanDeviceDrawer"
+      :network-config="networkConfig"
+      :all-devices="allDevices"
+      :is-shown="isShownCreateVlanDeviceDrawer"
       @close="hideCreateVlanDeviceDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete device modal -->
     <DeleteDeviceModal
       :visible="isShownDeleteDeviceModal"
       :device="currentDevice"
       @close="isShownDeleteDeviceModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete bond -->
     <DeleteBondModal

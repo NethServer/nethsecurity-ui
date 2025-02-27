@@ -56,12 +56,12 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('controller.users.delete_user')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
-    primaryButtonKind="danger"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
+    primary-button-kind="danger"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteUser()"
+    @primary-click="deleteUser()"
     @close="close()"
   >
     {{
@@ -75,7 +75,7 @@ function close() {
       :title="t('error.cannot_delete_user')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

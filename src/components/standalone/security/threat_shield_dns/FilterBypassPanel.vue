@@ -88,7 +88,7 @@ function clearFilter() {
         :description="tsStore.errorListDnsBypass"
         class="mb-5"
       >
-        <template #details v-if="tsStore.errorListDnsBypassDetails">
+        <template v-if="tsStore.errorListDnsBypassDetails" #details>
           {{ tsStore.errorListDnsBypassDetails }}
         </template>
       </NeInlineNotification>
@@ -103,8 +103,8 @@ function clearFilter() {
             class="flex flex-col-reverse items-start justify-between gap-6 sm:flex-row sm:items-center"
           >
             <NeTextInput
-              :placeholder="t('common.filter')"
               v-model.trim="textFilter"
+              :placeholder="t('common.filter')"
               is-search
               :disabled="tsStore.loadingListDnsBypass || tsStore.loadingListDnsSettings"
               class="max-w-xs sm:max-w-sm"
@@ -149,11 +149,11 @@ function clearFilter() {
           >
             <!-- skeleton -->
             <template v-if="tsStore.loadingListDnsBypass">
-              <NeCard v-for="index in 8" :key="index" loading :skeletonLines="2" />
+              <NeCard v-for="index in 8" :key="index" loading :skeleton-lines="2" />
             </template>
             <BypassCard
-              v-else
               v-for="(bypass, index) in filteredBypasses"
+              v-else
               :key="index"
               :bypass="bypass"
               @delete="showDeleteBypassModal"
@@ -164,19 +164,19 @@ function clearFilter() {
     </div>
     <!-- create bypass -->
     <CreateBypassDrawer
-      :isShown="isShownCreateBypassDrawer"
+      :is-shown="isShownCreateBypassDrawer"
       @close="isShownCreateBypassDrawer = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- delete bypass modal -->
     <DeleteModal
       :visible="isShownDeleteBypassModal"
       :title="t('standalone.threat_shield_dns.delete_bypass')"
-      :deleteButtonLabel="t('standalone.threat_shield_dns.delete_bypass')"
-      :errorNotificationTitle="t('error.cannot_delete_bypass')"
-      :deleteFunction="() => tsStore.deleteDnsBypass(currentBypass)"
+      :delete-button-label="t('standalone.threat_shield_dns.delete_bypass')"
+      :error-notification-title="t('error.cannot_delete_bypass')"
+      :delete-function="() => tsStore.deleteDnsBypass(currentBypass)"
       @close="isShownDeleteBypassModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     >
       {{ t('standalone.threat_shield_dns.confirm_delete_bypass', { name: currentBypass }) }}
     </DeleteModal>

@@ -25,15 +25,15 @@ import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 
-let username = ref('')
-let usernameRef = ref()
-let password = ref('')
-let passwordRef = ref()
-let rememberMe = ref(false)
+const username = ref('')
+const usernameRef = ref()
+const password = ref('')
+const passwordRef = ref()
+const rememberMe = ref(false)
 const jwtToken = ref('')
 const twoFaOtp = ref('')
 const twoFaOtpRef = ref()
-let step = ref('login')
+const step = ref('login')
 const errorBag = ref(new MessageBag())
 
 const loading = ref({
@@ -41,7 +41,7 @@ const loading = ref({
   verifyOtp: false
 })
 
-let error = ref({
+const error = ref({
   username: '',
   password: '',
   otp: '',
@@ -122,7 +122,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(username.value)
+    const { valid, errMessage } = validateRequired(username.value)
     if (!valid) {
       error.value.username = errMessage as string
 
@@ -137,7 +137,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(password.value)
+    const { valid, errMessage } = validateRequired(password.value)
     if (!valid) {
       error.value.password = errMessage as string
 
@@ -216,7 +216,7 @@ async function verifyOtp() {
                 kind="info"
                 :title="t('login.session_has_expired')"
                 :description="t('login.please_sign_in_again')"
-                :closeAriaLabel="t('common.close')"
+                :close-aria-label="t('common.close')"
                 class="mt-6"
               />
             </template>
@@ -243,29 +243,29 @@ async function verifyOtp() {
                 :description="t(error.login)"
               />
               <NeTextInput
-                :label="t('login.username')"
-                v-model.trim="username"
-                :invalidMessage="t(error.username)"
-                autocomplete="username"
                 ref="usernameRef"
+                v-model.trim="username"
+                :label="t('login.username')"
+                :invalid-message="t(error.username)"
+                autocomplete="username"
               />
               <NeTextInput
-                :label="t('login.password')"
-                v-model="password"
-                isPassword
-                :showPasswordLabel="t('ne_text_input.show_password')"
-                :hidePasswordLabel="t('ne_text_input.hide_password')"
-                :invalidMessage="t(error.password)"
-                autocomplete="current-password"
                 ref="passwordRef"
+                v-model="password"
+                :label="t('login.password')"
+                is-password
+                :show-password-label="t('ne_text_input.show_password')"
+                :hide-password-label="t('ne_text_input.hide_password')"
+                :invalid-message="t(error.password)"
+                autocomplete="current-password"
               />
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <input
                     id="remember-me"
+                    v-model="rememberMe"
                     name="remember-me"
                     type="checkbox"
-                    v-model="rememberMe"
                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                   />
                   <label
@@ -288,11 +288,11 @@ async function verifyOtp() {
                 <NeButton
                   kind="primary"
                   size="lg"
-                  @click.prevent="login"
                   type="submit"
                   :disabled="loading.login"
                   :loading="loading.login"
                   class="w-full"
+                  @click.prevent="login"
                   >{{ t('login.sign_in') }}</NeButton
                 >
               </div>
@@ -305,25 +305,25 @@ async function verifyOtp() {
                 :title="t('error.cannot_verify_otp')"
                 :description="error.verifyOtp"
               >
-                <template #details v-if="error.verifyOtpDetails">
+                <template v-if="error.verifyOtpDetails" #details>
                   {{ error.verifyOtpDetails }}
                 </template>
               </NeInlineNotification>
               <!-- 2fa otp -->
               <NeTextInput
-                :label="t('standalone.two_fa.otp')"
-                v-model.trim="twoFaOtp"
-                :invalidMessage="t(errorBag.getFirstI18nKeyFor('otp'))"
                 ref="twoFaOtpRef"
+                v-model.trim="twoFaOtp"
+                :label="t('standalone.two_fa.otp')"
+                :invalid-message="t(errorBag.getFirstI18nKeyFor('otp'))"
               />
               <NeButton
                 kind="primary"
                 size="lg"
-                @click.prevent="verifyOtp"
                 type="submit"
                 :disabled="loading.verifyOtp"
                 :loading="loading.verifyOtp"
                 class="w-full"
+                @click.prevent="verifyOtp"
                 >{{ t('standalone.two_fa.verify_code') }}</NeButton
               >
             </template>

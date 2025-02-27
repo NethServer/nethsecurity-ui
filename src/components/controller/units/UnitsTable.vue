@@ -80,7 +80,7 @@ const loadingOpenUnit = ref(false)
 const showObsoleteApiModal = ref(false)
 const showGreaterApiModal = ref(false)
 
-let error = ref({
+const error = ref({
   openUnit: ''
 })
 
@@ -286,10 +286,10 @@ function showRemoveUnitModal(unit: Unit) {
       kind="error"
       :title="t('error.cannot_open_unit')"
       :description="error.openUnit"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-6"
     />
-    <NeTable :ariaLabel="t('controller.units.units')" cardBreakpoint="xl">
+    <NeTable :aria-label="t('controller.units.units')" card-breakpoint="xl">
       <NeTableHead>
         <NeTableHeadCell>
           {{ t('controller.units.unit_name') }}
@@ -335,7 +335,7 @@ function showRemoveUnitModal(unit: Unit) {
               </div>
               <!-- more info button -->
               <div v-if="item.registered">
-                <NeTooltip interactive :maxWidth="450">
+                <NeTooltip interactive :max-width="450">
                   <template #trigger>
                     <NeButton size="sm" kind="tertiary" class="-mx-2">
                       {{ t('common.more_info') }}
@@ -536,8 +536,8 @@ function showRemoveUnitModal(unit: Unit) {
                   :disabled="loadingOpenUnit && currentUnit?.id == item.id"
                   :loading="loadingOpenUnit && currentUnit?.id == item.id"
                   kind="tertiary"
-                  @click="openUnit(item)"
                   class="shrink-0"
+                  @click="openUnit(item)"
                 >
                   <template #prefix>
                     <font-awesome-icon
@@ -551,7 +551,7 @@ function showRemoveUnitModal(unit: Unit) {
                 <!-- show popups warning tooltip -->
                 <NeTooltip
                   v-else
-                  triggerEvent="mouseenter focus"
+                  trigger-event="mouseenter focus"
                   placement="top-end"
                   class="shrink-0"
                 >
@@ -571,14 +571,14 @@ function showRemoveUnitModal(unit: Unit) {
                     <div>
                       {{ t('controller.units.open_unit_tooltip') }}
                     </div>
-                    <NeLink invertedTheme @click="dontShowAgainHideOpenUnitPopupsTooltip">
+                    <NeLink inverted-theme @click="dontShowAgainHideOpenUnitPopupsTooltip">
                       {{ t('common.dont_show_again') }}
                     </NeLink>
                   </template>
                 </NeTooltip>
               </template>
               <!-- kebab menu -->
-              <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+              <NeDropdown :items="getKebabMenuItems(item)" :align-to-right="true" />
             </div>
           </NeTableCell>
         </NeTableRow>
@@ -596,11 +596,13 @@ function showRemoveUnitModal(unit: Unit) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>
@@ -609,17 +611,17 @@ function showRemoveUnitModal(unit: Unit) {
       :visible="isShownRemoveUnitModal"
       :unit="currentUnit"
       @close="isShownRemoveUnitModal = false"
-      @reloadData="emit('reloadData')"
+      @reload-data="emit('reloadData')"
     />
     <!-- Modal that forbids opening units with obsolete API -->
     <NeModal
-      :primaryLabel="t('common.close')"
-      :closeAriaLabel="t('common.close')"
+      :primary-label="t('common.close')"
+      :close-aria-label="t('common.close')"
       :title="t('controller.units.cannot_open_unit')"
       :visible="showObsoleteApiModal"
       kind="info"
       @close="showObsoleteApiModal = false"
-      @primaryClick="showObsoleteApiModal = false"
+      @primary-click="showObsoleteApiModal = false"
     >
       {{
         t('controller.units.cannot_open_unit_description', { name: currentUnit?.info.unit_name })
@@ -627,14 +629,14 @@ function showRemoveUnitModal(unit: Unit) {
     </NeModal>
     <!-- Modal that shows a warning if the API version is newer than the required one -->
     <NeModal
-      :primaryLabel="t('controller.units.open_unit')"
-      :cancelLabel="t('common.close')"
-      :closeAriaLabel="t('common.close')"
+      :primary-label="t('controller.units.open_unit')"
+      :cancel-label="t('common.close')"
+      :close-aria-label="t('common.close')"
       :title="t('controller.units.warning_open_unit')"
       :visible="showGreaterApiModal"
       kind="info"
       @close="showGreaterApiModal = false"
-      @primaryClick="openUnit(currentUnit!, false)"
+      @primary-click="openUnit(currentUnit!, false)"
     >
       {{ t('controller.units.warning_open_unit_description') }}
     </NeModal>

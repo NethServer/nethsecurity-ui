@@ -50,11 +50,11 @@ const { tabs, selectedTab } = useTabs([
 const isLinkedToController = ref(false)
 const controllerUrl = ref('')
 
-let loading = ref({
+const loading = ref({
   getControllerSettings: false
 })
 
-let error = ref({
+const error = ref({
   getControllerSettings: '',
   getControllerSettingsDescription: ''
 })
@@ -109,7 +109,7 @@ function openGrafana() {
           {{ t('standalone.real_time_monitor.open_report') }}
         </NeButton>
         <!-- cannot open netdata from a controlled unit -->
-        <NeTooltip v-else triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip v-else trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <NeButton kind="tertiary" size="lg" disabled>
               <template #prefix>
@@ -136,7 +136,7 @@ function openGrafana() {
           {{ t('standalone.real_time_monitor.view_all_on_grafana') }}
         </NeButton>
         <!-- cannot open grafana if unit is not linked to a controller -->
-        <NeTooltip v-else triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip v-else trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <NeButton kind="secondary" size="lg" disabled>
               <template #prefix>
@@ -157,10 +157,10 @@ function openGrafana() {
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"
-      :srTabsLabel="t('ne_tabs.tabs')"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      @selectTab="selectedTab = $event"
+      :sr-tabs-label="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
       class="mb-8"
+      @select-tab="selectedTab = $event"
     />
     <TrafficMonitor v-if="selectedTab === 'traffic'" />
     <ConnectivityMonitor v-else-if="selectedTab === 'connectivity'" />

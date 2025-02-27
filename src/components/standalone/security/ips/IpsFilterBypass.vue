@@ -148,8 +148,8 @@ function handleDeleted() {
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
         <NeButton
-          kind="secondary"
           v-if="bypasses.length > 0"
+          kind="secondary"
           size="lg"
           @click="creatingBypass = true"
         >
@@ -160,11 +160,11 @@ function handleDeleted() {
         </NeButton>
       </div>
       <NeTable
-        :ariaLabel="t('standalone.ips.title')"
+        :aria-label="t('standalone.ips.title')"
         :skeleton-columns="7"
         :skeleton-rows="5"
-        :sortDescending="sortDescending"
-        :sortKey="sortKey"
+        :sort-descending="sortDescending"
+        :sort-key="sortKey"
         card-breakpoint="xl"
       >
         <NeTableHead>
@@ -194,7 +194,7 @@ function handleDeleted() {
               </NeEmptyState>
             </NeTableCell>
           </NeTableRow>
-          <NeTableRow v-else v-for="item in paginatedItems" :key="`${item.ip}-${item.direction}`">
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.ip}-${item.direction}`">
             <NeTableCell :data-label="t('standalone.ips.bypass_address')">
               {{ item.ip }}
             </NeTableCell>
@@ -226,8 +226,16 @@ function handleDeleted() {
             :previous-label="t('ne_table.go_to_previous_page')"
             :range-of-total-label="t('ne_table.of')"
             :total-rows="bypasses.length"
-            @selectPageSize="(size: number) => { pageSize = size }"
-            @select-page="(page: number) => { currentPage = page }"
+            @select-page-size="
+              (size: number) => {
+                pageSize = size
+              }
+            "
+            @select-page="
+              (page: number) => {
+                currentPage = page
+              }
+            "
           />
         </template>
       </NeTable>

@@ -52,7 +52,7 @@ watch(
       </NeLink>
     </template>
     <NeSkeleton v-if="ips.loading" />
-    <div class="space-y-3" v-else>
+    <div v-else class="space-y-3">
       <IpsEnabledBadge
         :disabled-label="t('standalone.dashboard.inactive')"
         :enabled-label="t('standalone.dashboard.active')"

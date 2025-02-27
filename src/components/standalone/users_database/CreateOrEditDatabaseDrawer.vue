@@ -144,7 +144,7 @@ function close() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -239,7 +239,7 @@ async function createOrEditDatabase() {
     const requestType = isEditing.value ? 'edit-ldap-database' : 'add-ldap-database'
 
     if (validate()) {
-      let payload: LDAPDatabasePayload = {
+      const payload: LDAPDatabasePayload = {
         name: name.value,
         uri: ldapUri.value,
         schema: type.value,
@@ -287,13 +287,13 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       isEditing
         ? t('standalone.users_database.edit_remote_database')
         : t('standalone.users_database.add_remote_database')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -302,7 +302,7 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -314,9 +314,9 @@ watch(
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
       <NeRadioSelection
+        v-model="type"
         :label="t('standalone.users_database.type')"
         :options="typeOptions"
-        v-model="type"
       />
       <NeTextInput
         v-model="ldapUri"
@@ -465,9 +465,9 @@ watch(
         >
         <NeButton
           kind="primary"
-          @click="createOrEditDatabase()"
           :disabled="isSavingChanges || isTestingConfiguration"
           :loading="isSavingChanges"
+          @click="createOrEditDatabase()"
           >{{
             isEditing ? t('common.save') : t('standalone.users_database.add_database')
           }}</NeButton

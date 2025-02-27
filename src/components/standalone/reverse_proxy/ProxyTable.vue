@@ -75,7 +75,7 @@ function getDropdownItems(item: ReverseProxy) {
     </template>
     <template #allow="{ item }: { item: ReverseProxy }">
       <p>{{ item.allow?.slice(0, 2)?.join(', ') ?? '-' }}</p>
-      <p class="text-primary-800 dark:text-primary-400" v-if="item.allow && item.allow.length > 2">
+      <p v-if="item.allow && item.allow.length > 2" class="text-primary-800 dark:text-primary-400">
         {{ t('standalone.reverse_proxy.and_n_others', { n: item.allow.length - 2 }) }}
       </p>
     </template>

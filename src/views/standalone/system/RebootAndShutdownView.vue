@@ -45,7 +45,7 @@ const { startTimer, currentProgress } = useTimer({
 
 async function getHostname() {
   try {
-    let systemInfo = await ubusCall('system', 'board')
+    const systemInfo = await ubusCall('system', 'board')
     hostname.value = systemInfo.data.hostname
     loading.value = false
   } catch (err: any) {

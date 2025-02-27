@@ -131,14 +131,14 @@ const logoFilename = computed(() => {
     </div>
 
     <div class="lg:pl-72">
-      <StandaloneTopBar @openSidebar="sidebarOpen = true" />
+      <StandaloneTopBar @open-sidebar="sidebarOpen = true" />
       <main class="py-10">
         <div class="px-4 sm:px-6 lg:px-8">
           <RouterView />
         </div>
       </main>
     </div>
-    <NotificationDrawer :closeOnClickOutside="true" />
+    <NotificationDrawer :close-on-click-outside="true" />
     <ToastNotificationsArea />
   </div>
 </template>

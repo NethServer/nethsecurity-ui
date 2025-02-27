@@ -21,11 +21,11 @@ const emit = defineEmits(['close', 'subscription-update'])
 
 const { t } = useI18n()
 
-let loading = ref({
+const loading = ref({
   unregister: false
 })
 
-let error = ref({
+const error = ref({
   unregister: '',
   unregisterDetails: ''
 })
@@ -64,14 +64,14 @@ async function cancelSubscription() {
     :title="t('standalone.subscription.cancel_registration')"
     kind="warning"
     size="lg"
-    :primaryLabel="t('standalone.subscription.cancel_registration')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.unregister"
-    :primaryButtonLoading="loading.unregister"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.subscription.cancel_registration')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.unregister"
+    :primary-button-loading="loading.unregister"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="cancelSubscription"
+    @primary-click="cancelSubscription"
   >
     <div class="space-y-2">
       <p>{{ t('standalone.subscription.confirm_cancel_subscription') }}:</p>
@@ -92,7 +92,7 @@ async function cancelSubscription() {
         :description="error.unregister"
         class="!my-4"
       >
-        <template #details v-if="error.unregisterDetails">
+        <template v-if="error.unregisterDetails" #details>
           {{ error.unregisterDetails }}
         </template>
       </NeInlineNotification>

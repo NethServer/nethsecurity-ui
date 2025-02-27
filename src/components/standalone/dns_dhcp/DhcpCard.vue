@@ -115,7 +115,7 @@ const visibleOptions = computed(() => {
     </div>
     <div class="space-y-1 text-sm">
       <p class="flex items-center">
-        {{ t('standalone.dns_dhcp.tabs.dhcp') }}
+        {{ t('standalone.dns_dhcp.dhcp') }}
         <NeBadge
           v-if="dhcpInterface.active"
           :icon="faCheck"
@@ -133,7 +133,7 @@ const visibleOptions = computed(() => {
           size="xs"
         />
       </p>
-      <div class="space-y-1 font-normal">
+      <div v-if="dhcpInterface.active" class="space-y-1 font-normal">
         <p v-if="range != undefined">{{ t('standalone.dns_dhcp.ip_range') }}: {{ range }}</p>
         <p v-if="leaseTime != undefined">
           {{ t('standalone.dns_dhcp.lease_time') }}: {{ leaseTime }}

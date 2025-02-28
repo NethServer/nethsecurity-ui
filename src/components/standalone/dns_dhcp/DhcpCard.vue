@@ -99,17 +99,17 @@ const visibleOptions = computed(() => {
           </template>
           <template v-else>
             <FontAwesomeIcon :icon="faCircleCheck" class="text-online" />
-            <span>{{ t('common.enabled') }}</span>
+            <span>
+              {{ t('common.enabled') }}
+              <template v-if="dhcpInterface.ns_binding == 1">
+                ({{ t('standalone.dns_dhcp.soft') }})
+              </template>
+              <template v-else-if="dhcpInterface.ns_binding == 2">
+                ({{ t('standalone.dns_dhcp.hard') }})
+              </template>
+            </span>
           </template>
         </span>
-      </p>
-      <p v-if="dhcpInterface.ns_binding != undefined">
-        <template v-if="dhcpInterface.ns_binding == 1">
-          {{ t('standalone.dns_dhcp.soft_mac_binding') }}
-        </template>
-        <template v-else-if="dhcpInterface.ns_binding == 2">
-          {{ t('standalone.dns_dhcp.hard_mac_binding') }}
-        </template>
       </p>
       <hr />
     </div>

@@ -112,7 +112,7 @@ onMounted(() => {
       :title="t('standalone.dns_dhcp.no_interface_configured')"
       :icon="faCircleInfo"
     />
-    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+    <div v-else class="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
       <DhcpCard
         v-for="(iface, ifaceName) in interfaces"
         :key="ifaceName"

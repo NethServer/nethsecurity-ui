@@ -63,7 +63,7 @@ const leaseTime = ref('')
 const dhcpOptions = ref<KeyValueItem[]>([])
 const force = ref(true)
 const enableMacIpBinding = ref(false)
-const macIpBindingType = ref<'soft' | 'hard'>('soft')
+const macIpBindingType = ref<'soft' | 'strict'>('soft')
 
 // TODO: export RadioOption from library
 type RadioOption = {
@@ -79,9 +79,9 @@ const macIpBindingSelections: RadioOption[] = [
     description: t('standalone.dns_dhcp.soft_binding_description')
   },
   {
-    id: 'hard',
-    label: t('standalone.dns_dhcp.hard_binding'),
-    description: t('standalone.dns_dhcp.hard_binding_description')
+    id: 'strict',
+    label: t('standalone.dns_dhcp.strict_binding'),
+    description: t('standalone.dns_dhcp.strict_binding_description')
   }
 ]
 
@@ -109,7 +109,7 @@ async function resetForm() {
         if (interfaceResponse.ns_binding == 1) {
           macIpBindingType.value = 'soft'
         } else if (interfaceResponse.ns_binding == 2) {
-          macIpBindingType.value = 'hard'
+          macIpBindingType.value = 'strict'
         }
       }
       loading.value = false

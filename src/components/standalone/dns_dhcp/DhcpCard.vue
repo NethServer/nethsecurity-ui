@@ -8,7 +8,6 @@ import {
 } from '@/lib/standalone/network.ts'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed } from 'vue'
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faCircleCheck,
@@ -105,7 +104,7 @@ const visibleOptions = computed(() => {
                 ({{ t('standalone.dns_dhcp.soft') }})
               </template>
               <template v-else-if="dhcpInterface.ns_binding == 2">
-                ({{ t('standalone.dns_dhcp.hard') }})
+                ({{ t('standalone.dns_dhcp.strict') }})
               </template>
             </span>
           </template>

@@ -94,7 +94,7 @@ const pieLabels = computed(() => {
 <template>
   <NeCard v-if="data" :title="title">
     <div v-if="data.length > 0" class="space-y-6">
-      <BasicPieChart :datasets="pieDatasets" :labels="pieLabels" byteFormat height="25vh" />
+      <BasicPieChart :datasets="pieDatasets" :labels="pieLabels" byte-format height="25vh" />
       <TrafficTable
         :filterable="filterable"
         :filterable-key="filterableKey"

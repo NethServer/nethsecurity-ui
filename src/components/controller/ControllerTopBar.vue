@@ -103,7 +103,7 @@ function openNotificationsDrawer() {
         />
 
         <!-- help -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <a
               href="https://docs.nethsecurity.org/"
@@ -124,7 +124,7 @@ function openNotificationsDrawer() {
         </NeTooltip>
 
         <!-- notifications -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <button
               type="button"
@@ -146,13 +146,13 @@ function openNotificationsDrawer() {
         </NeTooltip>
 
         <!-- profile dropdown -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <NeDropdown
               :items="accountMenuOptions"
-              :alignToRight="true"
-              :openMenuAriaLabel="t('common.shell.open_user_menu')"
-              menuClasses="!z-[150]"
+              :align-to-right="true"
+              :open-menu-aria-label="t('common.shell.open_user_menu')"
+              menu-classes="!z-[150]"
             >
               <template #button>
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">

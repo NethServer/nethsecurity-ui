@@ -91,17 +91,17 @@ const originalForm = {
 
 const form = ref<Form>({ ...originalForm })
 
-let routeInterfaces = ref<Array<RouteInterface>>()
-let routeTypes = ref<Array<RouteType>>()
-let loading = ref(false)
-let saving = ref(false)
-let isExpandedAdvancedSettings = ref(false)
-let networkAddressRef = ref()
-let gatewayRef = ref()
-let metricRef = ref()
-let mtuRef = ref()
+const routeInterfaces = ref<Array<RouteInterface>>()
+const routeTypes = ref<Array<RouteType>>()
+const loading = ref(false)
+const saving = ref(false)
+const isExpandedAdvancedSettings = ref(false)
+const networkAddressRef = ref()
+const gatewayRef = ref()
+const metricRef = ref()
+const mtuRef = ref()
 
-let objError = {
+const objError = {
   notificationTitle: '',
   notificationDescription: '',
   networkAddress: '',
@@ -124,7 +124,7 @@ watch(
     errorLoadingData = ref({ ...objError })
 
     if (props.editRoute) {
-      let selectedRoute = props.editRoute
+      const selectedRoute = props.editRoute
       if (selectedRoute && selectedRoute.item) {
         if (selectedRoute.item.id) {
           form.value.id = selectedRoute.item.id
@@ -198,7 +198,7 @@ async function getFirewallData() {
 
   // retrieve list interfaces && route types
   try {
-    let getInterfaces = await ubusCall('ns.routes', 'list-interfaces', {})
+    const getInterfaces = await ubusCall('ns.routes', 'list-interfaces', {})
     if (
       getInterfaces &&
       getInterfaces.data &&
@@ -224,7 +224,7 @@ async function getFirewallData() {
     errorLoadingData.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
     try {
-      let getRouteTypes = await ubusCall('ns.routes', 'list-route-types', {})
+      const getRouteTypes = await ubusCall('ns.routes', 'list-route-types', {})
       if (
         getRouteTypes &&
         getRouteTypes.data &&
@@ -255,20 +255,20 @@ function validate(): boolean {
   // NETWORK ADDRESS
   if (form.value.network_address) {
     if (props.protocol === 'ipv4') {
-      let { valid, errMessage } = validateIp4Cidr(form.value.network_address)
+      const { valid, errMessage } = validateIp4Cidr(form.value.network_address)
       if (!valid) {
         error.value.networkAddress = t(errMessage as string)
         isValidationOk = false
       }
     } else if (props.protocol === 'ipv6') {
-      let { valid, errMessage } = validateIp6Cidr(form.value.network_address)
+      const { valid, errMessage } = validateIp6Cidr(form.value.network_address)
       if (!valid) {
         error.value.networkAddress = t(errMessage as string)
         isValidationOk = false
       }
     }
   } else {
-    let { valid, errMessage } = validateRequired(form.value.network_address)
+    const { valid, errMessage } = validateRequired(form.value.network_address)
     if (!valid) {
       error.value.networkAddress = t(errMessage as string)
       isValidationOk = false
@@ -283,13 +283,13 @@ function validate(): boolean {
   // GATEWAY
   if (form.value.gateway) {
     if (props.protocol === 'ipv4') {
-      let { valid, errMessage } = validateIp4Address(form.value.gateway)
+      const { valid, errMessage } = validateIp4Address(form.value.gateway)
       if (!valid) {
         error.value.gateway = t(errMessage as string)
         isValidationOk = false
       }
     } else if (props.protocol === 'ipv6') {
-      let { valid, errMessage } = validateIp6Address(form.value.gateway)
+      const { valid, errMessage } = validateIp6Address(form.value.gateway)
       if (!valid) {
         error.value.gateway = t(errMessage as string)
         isValidationOk = false
@@ -315,7 +315,7 @@ function validate(): boolean {
       isValidationOk = false
     }
   } else {
-    let { valid, errMessage } = validateRequired(form.value.metric)
+    const { valid, errMessage } = validateRequired(form.value.metric)
     if (!valid) {
       error.value.metric = t(errMessage as string)
       isValidationOk = false
@@ -330,14 +330,14 @@ function validate(): boolean {
   // MTU
   if (form.value.mtu) {
     if (props.protocol === 'ipv4') {
-      let { valid, errMessage } = validateIpv4Mtu(form.value.mtu)
+      const { valid, errMessage } = validateIpv4Mtu(form.value.mtu)
       if (!valid) {
         error.value.mtu = t(errMessage as string)
         isValidationOk = false
         isExpandedAdvancedSettings.value = true
       }
     } else if (props.protocol === 'ipv6') {
-      let { valid, errMessage } = validateIpv6Mtu(form.value.mtu)
+      const { valid, errMessage } = validateIpv6Mtu(form.value.mtu)
       if (!valid) {
         error.value.mtu = t(errMessage as string)
         isValidationOk = false
@@ -345,7 +345,7 @@ function validate(): boolean {
       }
     }
   } else {
-    let { valid, errMessage } = validateRequired(form.value.mtu)
+    const { valid, errMessage } = validateRequired(form.value.mtu)
     if (!valid) {
       error.value.mtu = t(errMessage as string)
       isValidationOk = false
@@ -368,7 +368,7 @@ function createRoute() {
     saving.value = true
 
     // create payload
-    let payload = {
+    const payload = {
       disabled: form.value.status ? 1 : 0,
       target: form.value.network_address,
       gateway: form.value.gateway,
@@ -417,7 +417,7 @@ function submit() {
     saving.value = true
 
     // create payload
-    let payload = {
+    const payload = {
       id: form.value.id,
       disabled: form.value.status ? 1 : 0,
       target: form.value.network_address,
@@ -476,7 +476,7 @@ function submit() {
     <div v-else class="space-y-8">
       <NeToggle
         v-model="form.status"
-        :topLabel="t('common.status')"
+        :top-label="t('common.status')"
         :label="
           form.status
             ? t('standalone.routes.route_status_enabled')
@@ -490,10 +490,10 @@ function submit() {
         :optional="true"
       />
       <NeTextInput
+        ref="networkAddressRef"
         v-model="form.network_address"
         :invalid-message="error.networkAddress"
         :label="t('standalone.routes.route_network_address_cidr')"
-        ref="networkAddressRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -508,12 +508,12 @@ function submit() {
         </template>
       </NeTextInput>
       <NeTextInput
+        ref="gatewayRef"
         v-model="form.gateway"
         :invalid-message="error.gateway"
         :label="t('standalone.routes.route_gateway')"
         optional
-        :optionalLabel="t('common.optional')"
-        ref="gatewayRef"
+        :optional-label="t('common.optional')"
       >
         <template #tooltip>
           <NeTooltip>
@@ -524,11 +524,11 @@ function submit() {
         </template>
       </NeTextInput>
       <NeTextInput
+        ref="metricRef"
         v-model="form.metric"
         :invalid-message="error.metric"
         placeholder="0"
         :label="t('standalone.routes.route_metric')"
-        ref="metricRef"
       />
       <NeCombobox
         v-model="form.routeInterface"
@@ -536,18 +536,18 @@ function submit() {
         :label="t('standalone.routes.route_interface')"
         :placeholder="t('standalone.routes.route_choose_interface')"
         class="grow"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <NeButton
         kind="tertiary"
         size="sm"
-        @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
         class="-ml-2"
+        @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
       >
         <template #suffix>
           <FontAwesomeIcon
@@ -566,19 +566,19 @@ function submit() {
             :label="t('standalone.routes.route_type')"
             :placeholder="t('standalone.routes.route_choose_type')"
             class="grow"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <NeTextInput
+            ref="mtuRef"
             v-model="form.mtu"
             :invalid-message="error.mtu"
             placeholder="1500"
             :label="t('standalone.routes.route_mtu')"
-            ref="mtuRef"
           />
           <NeToggle v-model="form.onlink" :label="t('standalone.routes.route_onlink')" />
           <NeInlineNotification

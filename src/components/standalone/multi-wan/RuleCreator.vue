@@ -165,12 +165,12 @@ function save() {
         :options="policyDropdownOptions"
         :placeholder="policyDropdownPlaceholder"
         name="policy"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <NeCombobox
         v-model="protocol"
@@ -180,12 +180,12 @@ function save() {
         :options="protocolOptions"
         :placeholder="protocolOptions[0].label"
         name="protocol"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
       />
       <NeRadioSelection
         v-model="srcType"
@@ -209,10 +209,10 @@ function save() {
         :options="srcObjectOptions"
         :placeholder="objectsLoading ? t('common.loading') : t('ne_combobox.choose')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ns_src'))"
-        :optionalLabel="t('common.optional')"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :optional-label="t('common.optional')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
       />
@@ -255,10 +255,10 @@ function save() {
         :options="dstObjectOptions"
         :placeholder="objectsLoading ? t('common.loading') : t('ne_combobox.choose')"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ns_dst'))"
-        :optionalLabel="t('common.optional')"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :optional-label="t('common.optional')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
       />
@@ -281,7 +281,7 @@ function save() {
       </NeTextInput>
       <NeToggle
         v-model="sticky"
-        :topLabel="t('standalone.multi_wan.sticky')"
+        :top-label="t('standalone.multi_wan.sticky')"
         :label="sticky ? t('common.enabled') : t('common.disabled')"
       >
         <template #topTooltip>

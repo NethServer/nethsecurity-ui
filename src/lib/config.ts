@@ -75,36 +75,36 @@ export const getUnitManagementApiEndpoint = (unitId?: string) => {
 }
 
 export const getProductName = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.PRODUCT_NAME
 }
 
 export const getProductUrl = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.PRODUCT_URL
 }
 
 export const getCompanyName = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.COMPANY_NAME
 }
 
 export const getCompanyUrl = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.COMPANY_URL
 }
 
 export const getDocsUrl = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.DOCS_URL
 }
 
 export const getHelpdeskUrl = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.HELPDESK_URL
 }
 
 export const getPrivacyPolicyUrl = () => {
-  // @ts-ignore
+  // @ts-expect-error branding.js should be always be present
   return window.BRANDING.PRIVACY_POLICY_URL
 }

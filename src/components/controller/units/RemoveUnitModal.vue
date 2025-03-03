@@ -32,11 +32,11 @@ const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 
-let loading = ref({
+const loading = ref({
   removeUnit: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -98,14 +98,14 @@ async function removeUnit() {
     :visible="visible"
     :title="t('controller.units.remove_unit')"
     kind="warning"
-    :primaryLabel="t('controller.units.remove_unit')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.removeUnit"
-    :primaryButtonLoading="loading.removeUnit"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('controller.units.remove_unit')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.removeUnit"
+    :primary-button-loading="loading.removeUnit"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="removeUnit"
+    @primary-click="removeUnit"
   >
     {{ t('controller.units.confirm_remove_unit', { name: unitName }) }}
     <NeInlineNotification
@@ -113,10 +113,10 @@ async function removeUnit() {
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mt-4"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>

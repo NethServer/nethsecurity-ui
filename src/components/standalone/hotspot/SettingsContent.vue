@@ -79,30 +79,30 @@ const configurationForm = ref<Configuration>({
   maxClientsAllowed: ''
 })
 
-let isError = ref(false)
-let isLoggedIn = ref(false)
-let viewConfiguration = ref(false)
-let activeConfiguration = ref(false)
-let loadingParentHotspot = ref(false)
-let loadingListDevices = ref(false)
-let logging = ref(false)
-let loadingUnregister = ref(false)
-let loadingDhcpRange = ref(false)
-let showUnregisterModal = ref(false)
-let emptyDevices = ref(false)
-let saving = ref(false)
-let hostnameRef = ref()
-let usernameRef = ref()
-let passwordRef = ref()
-let unitNameRef = ref()
-let unitDescriptionRef = ref()
-let networkDeviceRef = ref()
-let networkAddressRef = ref()
-let dhcpLimitRef = ref()
-let parentHotspotList = ref<Array<ParentHotspot>>()
-let networkDeviceList = ref<Array<NetworkDevice>>()
+const isError = ref(false)
+const isLoggedIn = ref(false)
+const viewConfiguration = ref(false)
+const activeConfiguration = ref(false)
+const loadingParentHotspot = ref(false)
+const loadingListDevices = ref(false)
+const logging = ref(false)
+const loadingUnregister = ref(false)
+const loadingDhcpRange = ref(false)
+const showUnregisterModal = ref(false)
+const emptyDevices = ref(false)
+const saving = ref(false)
+const hostnameRef = ref()
+const usernameRef = ref()
+const passwordRef = ref()
+const unitNameRef = ref()
+const unitDescriptionRef = ref()
+const networkDeviceRef = ref()
+const networkAddressRef = ref()
+const dhcpLimitRef = ref()
+const parentHotspotList = ref<Array<ParentHotspot>>()
+const networkDeviceList = ref<Array<NetworkDevice>>()
 
-let objError = {
+const objError = {
   notificationTitle: '',
   notificationDescription: '',
   hostname: '',
@@ -115,14 +115,14 @@ let objError = {
   dhcpLimit: '',
   maxClientsAllowed: ''
 }
-let error = ref({ ...objError })
-let errorListParents = ref({ ...objError })
-let errorListDevices = ref({ ...objError })
-let errorGetConfiguration = ref({ ...objError })
-let errorSave = ref({ ...objError })
-let errorUnregister = ref({ ...objError })
-let errorDhcpRange = ref({ ...objError })
-let errorHostname = ref({ ...objError })
+const error = ref({ ...objError })
+const errorListParents = ref({ ...objError })
+const errorListDevices = ref({ ...objError })
+const errorGetConfiguration = ref({ ...objError })
+const errorSave = ref({ ...objError })
+const errorUnregister = ref({ ...objError })
+const errorDhcpRange = ref({ ...objError })
+const errorHostname = ref({ ...objError })
 
 onMounted(() => {
   errorListParents.value = { ...objError }
@@ -139,7 +139,7 @@ async function getListParents() {
 
   // Retrieve parent hotspot
   try {
-    let res = await ubusCall('ns.dedalo', 'list-parents', {})
+    const res = await ubusCall('ns.dedalo', 'list-parents', {})
     if (res?.data?.parents?.length) {
       isLoggedIn.value = true
       parentHotspotList.value = res.data.parents.map((item: ParentHotspot) => ({
@@ -164,7 +164,7 @@ async function getListDevices() {
 
   // Retrieve list devices
   try {
-    let res = await ubusCall('ns.dedalo', 'list-devices', {})
+    const res = await ubusCall('ns.dedalo', 'list-devices', {})
     if (res?.data?.devices?.length) {
       networkDeviceList.value = res.data.devices.map((item: NetworkDevice) => ({
         id: item,
@@ -185,9 +185,9 @@ async function getListDevices() {
 
 async function getConfiguration() {
   try {
-    let res = await ubusCall('ns.dedalo', 'get-configuration', {})
+    const res = await ubusCall('ns.dedalo', 'get-configuration', {})
     if (res?.data?.configuration) {
-      let configuration = res.data.configuration
+      const configuration = res.data.configuration
       if (configuration.connected) {
         activeConfiguration.value = configuration.hotspot_id != ''
         viewConfiguration.value = true
@@ -218,7 +218,7 @@ async function getConfiguration() {
 
 async function getHostname() {
   try {
-    let systemInfo = await ubusCall('system', 'board')
+    const systemInfo = await ubusCall('system', 'board')
     configurationForm.value.unitName = systemInfo.data.hostname
   } catch (exception: any) {
     isError.value = true
@@ -232,7 +232,7 @@ function validateLogin(): boolean {
   let isFocusInput = false
 
   if (!loginForm.value.hostname) {
-    let { valid, errMessage } = validateRequired(loginForm.value.hostname)
+    const { valid, errMessage } = validateRequired(loginForm.value.hostname)
     if (!valid) {
       error.value.hostname = t(errMessage as string)
       isValidationOk = false
@@ -245,7 +245,7 @@ function validateLogin(): boolean {
   }
 
   if (!loginForm.value.username) {
-    let { valid, errMessage } = validateRequired(loginForm.value.username)
+    const { valid, errMessage } = validateRequired(loginForm.value.username)
     if (!valid) {
       error.value.username = t(errMessage as string)
       isValidationOk = false
@@ -258,7 +258,7 @@ function validateLogin(): boolean {
   }
 
   if (!loginForm.value.password) {
-    let { valid, errMessage } = validateRequired(loginForm.value.password)
+    const { valid, errMessage } = validateRequired(loginForm.value.password)
     if (!valid) {
       error.value.password = t(errMessage as string)
       isValidationOk = false
@@ -276,7 +276,7 @@ function login() {
   if (validateLogin()) {
     logging.value = true
 
-    let payload = {
+    const payload = {
       host: loginForm.value.hostname,
       username: loginForm.value.username,
       password: loginForm.value.password
@@ -328,7 +328,7 @@ function validateConfiguration(): boolean {
   let isFocusInput = false
 
   if (!configurationForm.value.unitName) {
-    let { valid, errMessage } = validateRequired(configurationForm.value.unitName)
+    const { valid, errMessage } = validateRequired(configurationForm.value.unitName)
     if (!valid) {
       error.value.unitName = t(errMessage as string)
       isValidationOk = false
@@ -341,7 +341,7 @@ function validateConfiguration(): boolean {
   }
 
   if (!configurationForm.value.unitDescription) {
-    let { valid, errMessage } = validateRequired(configurationForm.value.unitDescription)
+    const { valid, errMessage } = validateRequired(configurationForm.value.unitDescription)
     if (!valid) {
       error.value.unitDescription = t(errMessage as string)
       isValidationOk = false
@@ -354,7 +354,7 @@ function validateConfiguration(): boolean {
   }
 
   if (!configurationForm.value.networkDevice) {
-    let { valid, errMessage } = validateRequired(configurationForm.value.networkDevice)
+    const { valid, errMessage } = validateRequired(configurationForm.value.networkDevice)
     if (!valid) {
       error.value.networkDevice = t(errMessage as string)
       isValidationOk = false
@@ -367,13 +367,13 @@ function validateConfiguration(): boolean {
   }
 
   if (configurationForm.value.networkAddress) {
-    let { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
+    const { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
     if (!valid) {
       error.value.networkAddress = t(errMessage as string)
       isValidationOk = false
     }
   } else {
-    let { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
+    const { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
     if (!valid) {
       error.value.networkAddress = t(errMessage as string)
       isValidationOk = false
@@ -400,7 +400,7 @@ function validateConfiguration(): boolean {
       isValidationOk = false
     }
   } else {
-    let { valid, errMessage } = validateRequired(configurationForm.value.dhcpLimit)
+    const { valid, errMessage } = validateRequired(configurationForm.value.dhcpLimit)
     if (!valid) {
       error.value.dhcpLimit = t(errMessage as string)
       isValidationOk = false
@@ -419,7 +419,7 @@ function saveConfiguration() {
   if (validateConfiguration()) {
     saving.value = true
 
-    let payload = {
+    const payload = {
       network: configurationForm.value.networkAddress,
       hotspot_id: String(configurationForm.value.parentHotspot),
       unit_name: configurationForm.value.unitName,
@@ -478,13 +478,13 @@ function getDhcpRange(skipDhcpLimit: boolean) {
   let isValidationOk = true
 
   if (configurationForm.value.networkAddress) {
-    let { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
+    const { valid, errMessage } = validateIp4Cidr(configurationForm.value.networkAddress)
     if (!valid) {
       error.value.networkAddress = t(errMessage as string)
       isValidationOk = false
     }
   } else {
-    let { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
+    const { valid, errMessage } = validateRequired(configurationForm.value.networkAddress)
     if (!valid) {
       error.value.networkAddress = t(errMessage as string)
       isValidationOk = false
@@ -495,7 +495,7 @@ function getDhcpRange(skipDhcpLimit: boolean) {
     focusElement(networkAddressRef)
     loadingDhcpRange.value = false
   } else {
-    let payload = {
+    const payload = {
       network: configurationForm.value.networkAddress
     }
     ubusCall('ns.dedalo', 'get-dhcp-range', payload)
@@ -537,16 +537,16 @@ function goToInterfaces() {
       <form @submit="login()">
         <div class="mb-8 flex flex-col gap-y-4">
           <NeTextInput
+            ref="hostnameRef"
             v-model="loginForm.hostname"
             :invalid-message="error.hostname"
             :label="t('standalone.hotspot.settings.login_hostname')"
-            ref="hostnameRef"
           />
           <NeTextInput
+            ref="usernameRef"
             v-model="loginForm.username"
             :invalid-message="error.username"
             :label="t('standalone.hotspot.settings.login_username')"
-            ref="usernameRef"
           >
             <template #tooltip>
               <NeTooltip>
@@ -557,11 +557,11 @@ function goToInterfaces() {
             </template>
           </NeTextInput>
           <NeTextInput
+            ref="passwordRef"
             v-model="loginForm.password"
-            isPassword
+            is-password
             :invalid-message="error.password"
             :label="t('standalone.hotspot.settings.login_password')"
-            ref="passwordRef"
           />
         </div>
         <NeInlineNotification
@@ -593,8 +593,8 @@ function goToInterfaces() {
         kind="warning"
         :title="t('error.empty_network_device')"
         :description="t('error.empty_network_device_description')"
-        :primaryButtonLabel="t('standalone.hotspot.settings.empty_network_device_link')"
-        @primaryClick="goToInterfaces"
+        :primary-button-label="t('standalone.hotspot.settings.empty_network_device_link')"
+        @primary-click="goToInterfaces"
       />
       <NeInlineNotification
         v-if="errorHostname.notificationTitle"
@@ -633,22 +633,23 @@ function goToInterfaces() {
             :label="t('standalone.hotspot.settings.configuration_parent_hotspot')"
             class="grow"
             :disabled="!isLoggedIn || activeConfiguration"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <NeTextInput
+            ref="unitNameRef"
             v-model="configurationForm.unitName"
             :invalid-message="error.unitName"
             :placeholder="t('standalone.hotspot.settings.configuration_unit_name_placeholder')"
             :label="t('standalone.hotspot.settings.configuration_unit_name')"
             disabled
-            ref="unitNameRef"
           />
           <NeTextInput
+            ref="unitDescriptionRef"
             v-model="configurationForm.unitDescription"
             :invalid-message="error.unitDescription"
             :placeholder="
@@ -656,9 +657,9 @@ function goToInterfaces() {
             "
             :label="t('standalone.hotspot.settings.configuration_unit_description')"
             :disabled="!isLoggedIn || activeConfiguration"
-            ref="unitDescriptionRef"
           />
           <NeCombobox
+            ref="networkDeviceRef"
             v-model="configurationForm.networkDevice"
             :options="networkDeviceList"
             :placeholder="t('standalone.hotspot.settings.configuration_network_device_placeholder')"
@@ -666,13 +667,12 @@ function goToInterfaces() {
             :label="t('standalone.hotspot.settings.configuration_network_device')"
             :disabled="!isLoggedIn"
             class="grow"
-            ref="networkDeviceRef"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           >
             <template #tooltip>
               <NeTooltip>
@@ -683,13 +683,13 @@ function goToInterfaces() {
             </template>
           </NeCombobox>
           <NeTextInput
+            ref="networkAddressRef"
             v-model="configurationForm.networkAddress"
             :invalid-message="error.networkAddress"
             placeholder="192.168.0.0/24"
             :label="t('standalone.hotspot.settings.configuration_network_address')"
             :disabled="!isLoggedIn"
-            ref="networkAddressRef"
-            :helperText="
+            :helper-text="
               t('standalone.hotspot.settings.configuration_max_client_allowed') +
               ' ' +
               configurationForm.maxClientsAllowed
@@ -712,16 +712,16 @@ function goToInterfaces() {
             :description="errorDhcpRange.notificationDescription"
           />
           <NeTextInput
+            ref="dhcpLimitRef"
             v-model="configurationForm.dhcpLimit"
             :invalid-message="error.dhcpLimit"
             :label="t('standalone.hotspot.settings.configuration_dhcp_limit')"
             :disabled="!isLoggedIn"
-            :helperText="
+            :helper-text="
               t('standalone.hotspot.settings.configuration_dhcp_start') +
               ' ' +
               configurationForm.dhcpRangeStart
             "
-            ref="dhcpLimitRef"
           >
             <template #tooltip>
               <NeTooltip>

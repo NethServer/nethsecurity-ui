@@ -37,13 +37,13 @@ const resetProgress = ref(0)
 const resetInterval = ref<number | undefined>()
 const resetTimeout = ref<number | undefined>()
 
-let errorSystemInfo = ref({
+const errorSystemInfo = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
 
-let errorResetting = ref({
+const errorResetting = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -55,7 +55,7 @@ onMounted(() => {
 
 async function getConfiguration() {
   try {
-    let res = await ubusCall('ns.dashboard', 'system-info', {})
+    const res = await ubusCall('ns.dashboard', 'system-info', {})
     if (res?.data?.result) {
       if (res?.data?.result?.hostname) {
         unitName.value = res.data.result.hostname
@@ -76,7 +76,7 @@ async function getConfiguration() {
 async function startFactoryReset() {
   loadingReset.value = true
   try {
-    let res = await ubusCall('ns.factoryreset', 'reset', {})
+    const res = await ubusCall('ns.factoryreset', 'reset', {})
     if (res?.data?.result && res?.data?.result === 'success') {
       isResetting.value = true
       showModalFactoryReset.value = false
@@ -158,15 +158,15 @@ function setResetTimer() {
       primary-button-kind="danger"
       :close-aria-label="t('common.close')"
       @close="showModalFactoryReset = false"
-      @primaryClick="startFactoryReset()"
+      @primary-click="startFactoryReset()"
     >
       {{ t('standalone.factory_reset.perform_factory_reset_description') }}
       <NeTextInput
-        class="mt-4"
+        ref="unitNameRef"
         v-model="formReset.unit_name"
+        class="mt-4"
         :disabled="loadingReset"
         :label="t('standalone.factory_reset.type_unit_name', { unit: unitName })"
-        ref="unitNameRef"
       />
       <NeInlineNotification
         v-if="errorResetting.notificationTitle"

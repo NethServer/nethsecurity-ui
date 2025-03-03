@@ -1,0 +1,36 @@
+name: Scans
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+jobs:
+  sbom:
+    name: SBOM
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate
+        uses: anchore/sbom-action@v0
+        with:
+          output-file: sbom.spdx.json
+          dependency-snapshot: true
+      - name: Scan
+        uses: anchore/scan-action@v6
+        id: scan
+        with:
+          sbom: sbom.spdx.json
+          fail-build: false
+      - name: Upload report to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ steps.scan.outputs.sarif }}
+          name: sarif-report

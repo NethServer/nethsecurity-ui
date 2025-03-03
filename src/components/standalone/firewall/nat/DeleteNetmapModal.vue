@@ -24,11 +24,11 @@ const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 
-let loading = ref({
+const loading = ref({
   deleteRule: false
 })
 
-let error = ref({
+const error = ref({
   deleteRule: '',
   deleteRuleDetails: ''
 })
@@ -72,14 +72,14 @@ async function deleteRule() {
     :visible="visible"
     :title="t('standalone.netmap.delete_netmap')"
     kind="warning"
-    :primaryLabel="t('standalone.netmap.delete_netmap')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.deleteRule"
-    :primaryButtonLoading="loading.deleteRule"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.netmap.delete_netmap')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.deleteRule"
+    :primary-button-loading="loading.deleteRule"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="deleteRule"
+    @primary-click="deleteRule"
   >
     {{ t('standalone.netmap.confirm_delete_rule', { name: rule?.name }) }}
     <NeInlineNotification
@@ -89,7 +89,7 @@ async function deleteRule() {
       :description="error.deleteRule"
       class="mt-4"
     >
-      <template #details v-if="error.deleteRuleDetails">
+      <template v-if="error.deleteRuleDetails" #details>
         {{ error.deleteRuleDetails }}
       </template>
     </NeInlineNotification>

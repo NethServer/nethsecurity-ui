@@ -163,12 +163,12 @@ function submit() {
                 :options="availableGateways"
                 :placeholder="t('standalone.multi_wan.choose_gateway')"
                 class="grow"
-                :noResultsLabel="t('ne_combobox.no_results')"
-                :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                :noOptionsLabel="t('ne_combobox.no_options_label')"
+                :no-results-label="t('ne_combobox.no_results')"
+                :limited-options-label="t('ne_combobox.limited_options_label')"
+                :no-options-label="t('ne_combobox.no_options_label')"
                 :selected-label="t('ne_combobox.selected')"
                 :user-input-label="t('ne_combobox.user_input_label')"
-                :optionalLabel="t('common.optional')"
+                :optional-label="t('common.optional')"
               />
               <NeTextInput
                 v-if="policyForm.selection != 'backup'"

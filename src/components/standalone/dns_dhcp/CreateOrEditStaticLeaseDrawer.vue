@@ -77,7 +77,7 @@ function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -111,7 +111,7 @@ async function createOrEditStaticLease() {
     const requestType = isEditing ? 'edit-static-lease' : 'add-static-lease'
 
     if (validate()) {
-      let payload: {
+      const payload: {
         lease?: string
         hostname: string
         ipaddr: string
@@ -181,17 +181,17 @@ function getReservationLocation() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       id ? t('standalone.dns_dhcp.edit_reservation') : t('standalone.dns_dhcp.add_reservation')
     "
+    @close="close()"
   >
     <!-- info notification if we are adding a static lease from dynamic leases or scan network pages -->
     <NeInlineNotification
       v-if="importDynamicLease || importScanResult"
       kind="info"
-      :closeAriaLabel="t('common.close')"
+      :close-aria-label="t('common.close')"
       class="mb-6"
     >
       <template #description>
@@ -210,7 +210,7 @@ function getReservationLocation() {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -241,9 +241,9 @@ function getReservationLocation() {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditStaticLease()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditStaticLease()"
           >{{ t('common.save') }}</NeButton
         >
       </div>

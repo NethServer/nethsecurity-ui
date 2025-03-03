@@ -76,9 +76,9 @@ onMounted(() => {
         {{ t('standalone.threat_shield.local_blocklist_description') }}
       </p>
       <NeButton
+        v-if="localBlocklist.length > 0"
         kind="secondary"
         @click="openCreateEditAddressDrawer()"
-        v-if="localBlocklist.length > 0"
         ><template #prefix>
           <font-awesome-icon
             :icon="['fas', 'circle-plus']"
@@ -95,7 +95,7 @@ onMounted(() => {
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
@@ -117,8 +117,8 @@ onMounted(() => {
       >
       <AddressTable
         v-else
-        :addressList="localBlocklist"
-        addressKind="block"
+        :address-list="localBlocklist"
+        address-kind="block"
         @delete="openDeleteAddressModal"
         @edit="openCreateEditAddressDrawer"
       />
@@ -127,7 +127,7 @@ onMounted(() => {
   <DeleteAddressModal
     :visible="showDeleteAddressModal"
     :item-to-delete="selectedAddress"
-    addressKind="block"
+    address-kind="block"
     @address-deleted="
       () => {
         notificationsStore.createNotification({
@@ -142,7 +142,7 @@ onMounted(() => {
   <CreateOrEditAddressDrawer
     :is-shown="showCreateOrEditAddressDrawer"
     :item-to-edit="selectedAddress"
-    addressKind="block"
+    address-kind="block"
     @close="showCreateOrEditAddressDrawer = false"
     @add-address="
       () => {

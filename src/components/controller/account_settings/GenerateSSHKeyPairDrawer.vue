@@ -149,9 +149,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('controller.account_settings.generate_ssh_key_pair')"
+    @close="close()"
   >
     <div class="space-y-6">
       <!-- generate key pair description -->
@@ -159,8 +159,8 @@ watch(
         kind="info"
         :title="t('controller.account_settings.generate_ssh_key_pair')"
         :description="t('controller.account_settings.generate_ssh_key_pair_description')"
-        :closeAriaLabel="t('common.close')"
-        :showDetailsLabel="t('notifications.show_details')"
+        :close-aria-label="t('common.close')"
+        :show-details-label="t('notifications.show_details')"
       />
       <!-- error notification -->
       <NeInlineNotification
@@ -169,18 +169,18 @@ watch(
         :description="error.notificationDescription"
         kind="error"
       >
-        <template #details v-if="error.notificationDetails">
+        <template v-if="error.notificationDetails" #details>
           {{ error.notificationDetails }}
         </template>
       </NeInlineNotification>
       <div class="flex flex-col gap-y-6">
         <NeTextInput
+          ref="passphraseRef"
           v-model="passphrase"
           :label="t('controller.account_settings.new_passphrase')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('passphrase'))"
           :is-password="true"
           :helper-text="t('controller.account_settings.minimum_characters')"
-          ref="passphraseRef"
         >
           <template #tooltip>
             <NeTooltip>
@@ -191,11 +191,11 @@ watch(
           </template>
         </NeTextInput>
         <NeTextInput
+          ref="confirmPassphraseRef"
           v-model="confirmPassphrase"
           :label="t('controller.account_settings.confirm_passphrase')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirm_passphrase'))"
           :is-password="true"
-          ref="confirmPassphraseRef"
         />
         <hr />
         <div class="flex justify-end">
@@ -204,9 +204,9 @@ watch(
           }}</NeButton>
           <NeButton
             kind="primary"
-            @click="performChangePassword()"
             :disabled="isSavingChanges"
             :loading="isSavingChanges"
+            @click="performChangePassword()"
             >{{ t('controller.account_settings.generate_key') }}</NeButton
           >
         </div>

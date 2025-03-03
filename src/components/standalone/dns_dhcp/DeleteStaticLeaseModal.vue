@@ -67,9 +67,9 @@ function close() {
     <CannotDeleteObjectModal
       v-if="itemToDelete?.used"
       :visible="visible"
-      :objectName="itemToDelete?.hostname"
-      :usageIds="itemToDelete?.matches"
-      :showGoToObjectsButton="true"
+      :object-name="itemToDelete?.hostname"
+      :usage-ids="itemToDelete?.matches"
+      :show-go-to-objects-button="true"
       @close="close"
     />
     <!-- delete static lease modal -->
@@ -78,12 +78,12 @@ function close() {
       :visible="visible"
       kind="warning"
       :title="t('standalone.dns_dhcp.delete_reservation')"
-      :primaryLabel="t('common.delete')"
-      primaryButtonKind="danger"
-      :primaryButtonDisabled="isDeleting"
-      :primaryButtonLoading="isDeleting"
+      :primary-label="t('common.delete')"
+      primary-button-kind="danger"
+      :primary-button-disabled="isDeleting"
+      :primary-button-loading="isDeleting"
       :close-aria-label="t('common.close')"
-      @primaryClick="deleteStaticLease()"
+      @primary-click="deleteStaticLease()"
       @close="close()"
     >
       {{
@@ -97,7 +97,7 @@ function close() {
         :title="t('error.cannot_delete_reservation')"
         :description="error.notificationDescription"
       >
-        <template #details v-if="error.notificationDetails">
+        <template v-if="error.notificationDetails" #details>
           {{ error.notificationDetails }}
         </template></NeInlineNotification
       >

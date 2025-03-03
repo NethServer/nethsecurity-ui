@@ -61,7 +61,6 @@ function submit() {
   <NeModal
     :visible="props.rule != undefined"
     kind="warning"
-    @close="closeHandler()"
     primary-button-kind="danger"
     :title="t('standalone.multi_wan.delete_rule_modal.title', { name: ruleLabel })"
     :primary-label="t('standalone.multi_wan.delete_rule_modal.button')"
@@ -69,8 +68,9 @@ function submit() {
     :primary-button-loading="loading"
     :secondary-button-disabled="loading"
     :close-aria-label="t('common.close')"
+    @close="closeHandler()"
     @primary-click="submit()"
   >
-    <NeInlineNotification kind="error" v-if="error" :title="t(getAxiosErrorMessage(error))" />
+    <NeInlineNotification v-if="error" kind="error" :title="t(getAxiosErrorMessage(error))" />
   </NeModal>
 </template>

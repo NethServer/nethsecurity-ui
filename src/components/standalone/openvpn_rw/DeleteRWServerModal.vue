@@ -57,12 +57,12 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.openvpn_rw.delete_roadwarrior_server')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     primary-button-kind="danger"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteServer()"
+    @primary-click="deleteServer()"
     @close="close()"
   >
     {{ t('standalone.openvpn_rw.delete_roadwarrior_server_message') }}
@@ -72,7 +72,7 @@ function close() {
       :title="t('error.cannot_delete_server')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

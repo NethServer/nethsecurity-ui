@@ -222,27 +222,27 @@ onUnmounted(() => {
     class="mb-6"
     kind="error"
   >
-    <template #details v-if="error.notificationDetails">
+    <template v-if="error.notificationDetails" #details>
       {{ error.notificationDetails }}
     </template></NeInlineNotification
   >
   <NeSkeleton v-if="loading" size="lg" :lines="10" />
-  <div class="flex flex-col" v-else-if="!loadingError">
+  <div v-else-if="!loadingError" class="flex flex-col">
     <div class="flex flex-col gap-y-6">
       <NeTabs
         v-if="instanceData && instanceData.ns_description"
         :selected="selectedTab"
-        :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-        :srTabsLabel="t('ne_tabs.tabs')"
+        :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+        :sr-tabs-label="t('ne_tabs.tabs')"
         :tabs="tabs"
         class="mb-8"
-        @selectTab="selectedTab = $event"
+        @select-tab="selectedTab = $event"
       />
     </div>
-    <div class="flex flex-col gap-y-6" v-if="selectedTab == 'connection-history'">
+    <div v-if="selectedTab == 'connection-history'" class="flex flex-col gap-y-6">
       <ConnectionsHistory :instance="instanceName" />
     </div>
-    <div class="flex flex-col gap-y-6" v-if="selectedTab == 'road-warrior-server'">
+    <div v-if="selectedTab == 'road-warrior-server'" class="flex flex-col gap-y-6">
       <NeHeading tag="h5" class="mb-2">{{
         t('standalone.openvpn_rw.roadwarrior_server')
       }}</NeHeading>
@@ -255,9 +255,9 @@ onUnmounted(() => {
         :icon="['fas', 'globe']"
         ><NeButton
           kind="primary"
-          @click="initAndConfigureServer()"
           :loading="isInitializingInstance"
           :disabled="isInitializingInstance"
+          @click="initAndConfigureServer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'wrench']"

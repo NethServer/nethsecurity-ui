@@ -25,7 +25,7 @@ type ObjectInfo = {
 
 const props = defineProps({
   usageIds: {
-    type: Array<String>,
+    type: Array<string>,
     required: true
   },
   showGoToObjectsButton: {
@@ -124,7 +124,7 @@ function goToManagementPage(subtype: string) {
       :description="error.getInfo"
       class="mt-4"
     >
-      <template #details v-if="error.getInfoDetails">
+      <template v-if="error.getInfoDetails" #details>
         {{ error.getInfoDetails }}
       </template>
     </NeInlineNotification>
@@ -141,9 +141,9 @@ function goToManagementPage(subtype: string) {
               (kindName !== 'objects_host' && kindName !== 'objects_domain_set')
             "
             size="sm"
-            kindName="tertiary"
-            @click="goToManagementPage(kindName)"
+            kind-name="tertiary"
             class="shrink-0"
+            @click="goToManagementPage(kindName)"
           >
             <template #prefix>
               <font-awesome-icon

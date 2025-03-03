@@ -22,11 +22,11 @@ const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
 
-let loading = ref({
+const loading = ref({
   deleteRule: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -74,14 +74,14 @@ async function deleteRule() {
     :visible="visible"
     :title="t('standalone.dpi.delete_rule')"
     kind="warning"
-    :primaryLabel="t('standalone.dpi.delete_rule')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.deleteRule"
-    :primaryButtonLoading="loading.deleteRule"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.dpi.delete_rule')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.deleteRule"
+    :primary-button-loading="loading.deleteRule"
+    :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primaryClick="deleteRule"
+    @primary-click="deleteRule"
   >
     {{ t('standalone.dpi.confirm_delete_rule', { iface: rule?.interface }) }}
     <NeInlineNotification
@@ -91,7 +91,7 @@ async function deleteRule() {
       :description="error.notificationDescription"
       class="mt-4"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>

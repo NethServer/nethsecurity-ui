@@ -28,11 +28,11 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let loading = ref({
+const loading = ref({
   deleteAlias: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
@@ -84,14 +84,14 @@ async function deleteAlias() {
     :visible="visible"
     :title="t('standalone.interfaces_and_devices.delete_alias')"
     kind="warning"
-    :primaryLabel="t('standalone.interfaces_and_devices.delete_alias')"
-    :cancelLabel="t('common.cancel')"
-    primaryButtonKind="danger"
-    :primaryButtonDisabled="loading.deleteAlias"
-    :primaryButtonLoading="loading.deleteAlias"
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('standalone.interfaces_and_devices.delete_alias')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
+    :primary-button-disabled="loading.deleteAlias"
+    :primary-button-loading="loading.deleteAlias"
+    :close-aria-label="t('common.close')"
     @close="closeModal"
-    @primaryClick="deleteAlias"
+    @primary-click="deleteAlias"
   >
     <div>
       {{
@@ -105,7 +105,7 @@ async function deleteAlias() {
       :description="error.notificationDescription"
       class="mt-4"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>

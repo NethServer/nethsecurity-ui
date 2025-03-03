@@ -25,14 +25,14 @@ const themeStore = useThemeStore()
 const uciChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
 
-let showUciChangesModal = ref(false)
-let isChangesButtonFlashing = ref(false)
+const showUciChangesModal = ref(false)
+const isChangesButtonFlashing = ref(false)
 const unitName = ref('')
 const topBarButtonsColorClasses =
   'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
 const shakeNotificationsIcon = ref(false)
 
-let loading = ref({
+const loading = ref({
   systemBoard: false
 })
 
@@ -138,7 +138,7 @@ function openNotificationsDrawer() {
       <!-- unsaved changes button -->
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <div v-if="uciChangesStore.numChanges">
-          <NeButton kind="primary" size="md" @click="showUciChangesModal = true" class="relative">
+          <NeButton kind="primary" size="md" class="relative" @click="showUciChangesModal = true">
             <template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'pen-to-square']"
@@ -179,7 +179,7 @@ function openNotificationsDrawer() {
         />
 
         <!-- help -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <a
               href="https://docs.nethsecurity.org/"
@@ -200,7 +200,7 @@ function openNotificationsDrawer() {
         </NeTooltip>
 
         <!-- notifications -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <button
               type="button"
@@ -222,13 +222,13 @@ function openNotificationsDrawer() {
         </NeTooltip>
 
         <!-- profile dropdown -->
-        <NeTooltip triggerEvent="mouseenter focus" placement="bottom">
+        <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <NeDropdown
               :items="accountMenuOptions"
-              :alignToRight="true"
-              :openMenuAriaLabel="t('common.shell.open_user_menu')"
-              menuClasses="!z-[150]"
+              :align-to-right="true"
+              :open-menu-aria-label="t('common.shell.open_user_menu')"
+              menu-classes="!z-[150]"
             >
               <template #button>
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">

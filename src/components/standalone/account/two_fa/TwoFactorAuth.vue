@@ -34,7 +34,7 @@ const recoveryCodes = ref<string[]>([])
 const recoveryCodesStored = ref(false)
 const recoveryCodesJustCopied = ref(false)
 
-let loading = ref({
+const loading = ref({
   getTwoFaStatus: false
 })
 
@@ -115,7 +115,7 @@ function hideStoreRecoveryCodesReminder() {
       :title="t('error.cannot_retrieve_two_fa_status')"
       :description="error.getTwoFaStatus"
     >
-      <template #details v-if="error.getTwoFaStatusDetails">
+      <template v-if="error.getTwoFaStatusDetails" #details>
         {{ error.getTwoFaStatusDetails }}
       </template>
     </NeInlineNotification>
@@ -163,8 +163,8 @@ function hideStoreRecoveryCodesReminder() {
           kind="warning"
           :title="t('standalone.two_fa.store_recovery_codes_title')"
           :description="t('standalone.two_fa.store_recovery_codes_description')"
-          :primaryButtonLabel="t('standalone.two_fa.i_have_stored_recovery_codes')"
-          @primaryClick="hideStoreRecoveryCodesReminder"
+          :primary-button-label="t('standalone.two_fa.i_have_stored_recovery_codes')"
+          @primary-click="hideStoreRecoveryCodesReminder"
         />
         <!-- few recovery codes warning -->
         <NeInlineNotification
@@ -187,8 +187,8 @@ function hideStoreRecoveryCodesReminder() {
           </div>
           <NeButton
             kind="tertiary"
-            @click="isShownRecoveryCodes = !isShownRecoveryCodes"
             class="-ml-2.5"
+            @click="isShownRecoveryCodes = !isShownRecoveryCodes"
           >
             {{ t('standalone.two_fa.show_codes') }}
             <template #suffix>
@@ -204,13 +204,13 @@ function hideStoreRecoveryCodesReminder() {
               <!-- recovery codes -->
               <NeTextArea
                 v-show="isShownRecoveryCodes"
-                :rows="6"
                 v-model="recoveryCodesText"
+                :rows="6"
                 disabled
                 class="mt-2"
               />
               <!-- copy all codes -->
-              <NeButton kind="tertiary" size="lg" @click="copyRecoveryCodes" class="-ml-2.5 mt-2">
+              <NeButton kind="tertiary" size="lg" class="-ml-2.5 mt-2" @click="copyRecoveryCodes">
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', recoveryCodesJustCopied ? 'check' : 'copy']"
@@ -234,15 +234,15 @@ function hideStoreRecoveryCodesReminder() {
     </template>
     <!-- configure 2fa drawer -->
     <ConfigureTwoFaDrawer
-      :isShown="isShownConfigureTwoFaDrawer"
+      :is-shown="isShownConfigureTwoFaDrawer"
       @close="hideConfigureTwoFaDrawer"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
     <!-- revoke 2fa modal -->
     <RevokeTwoFaModal
       :visible="isShownRevokeTwoFaModal"
       @close="isShownRevokeTwoFaModal = false"
-      @reloadData="loadData"
+      @reload-data="loadData"
     />
   </div>
 </template>

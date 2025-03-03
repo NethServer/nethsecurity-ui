@@ -25,18 +25,18 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let hostname = ref('')
-let hostnameRef = ref()
-let description = ref('')
-let notes = ref('')
-let localTime: any = ref(null)
-let timezone = ref('')
-let timezoneRef = ref()
-let timezones = ref([])
-let systemConfig: any = ref({})
-let hostnameFromConfig = ref('')
+const hostname = ref('')
+const hostnameRef = ref()
+const description = ref('')
+const notes = ref('')
+const localTime: any = ref(null)
+const timezone = ref('')
+const timezoneRef = ref()
+const timezones = ref([])
+const systemConfig: any = ref({})
+const hostnameFromConfig = ref('')
 
-let loading = ref({
+const loading = ref({
   systemConfig: true,
   systemInfo: true,
   timezones: true,
@@ -45,7 +45,7 @@ let loading = ref({
   save: false
 })
 
-let error = ref({
+const error = ref({
   hostname: '',
   timezone: '',
   notificationTitle: '',
@@ -151,7 +151,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(hostname.value)
+    const { valid, errMessage } = validateRequired(hostname.value)
     if (!valid) {
       error.value.hostname = t(errMessage as string)
       isValidationOk = false
@@ -159,7 +159,7 @@ function validate() {
     } else {
       {
         // check syntax
-        let { valid, errMessage } = validateHostname(hostname.value)
+        const { valid, errMessage } = validateHostname(hostname.value)
         if (!valid) {
           error.value.hostname = t(errMessage as string)
           isValidationOk = false
@@ -253,48 +253,48 @@ async function syncWithNtpServer() {
             kind="warning"
             :title="t('standalone.system_settings.default_hostname')"
             :description="t('standalone.system_settings.default_hostname_description')"
-            :closeAriaLabel="t('common.close')"
+            :close-aria-label="t('common.close')"
           />
           <!-- hostname -->
           <NeTextInput
-            :label="t('standalone.system_settings.hostname')"
-            v-model.trim="hostname"
-            :invalidMessage="error.hostname"
-            :disabled="loading.save"
             ref="hostnameRef"
+            v-model.trim="hostname"
+            :label="t('standalone.system_settings.hostname')"
+            :invalid-message="error.hostname"
+            :disabled="loading.save"
           />
           <!-- description -->
           <NeTextInput
-            :label="t('standalone.system_settings.short_description')"
             v-model.trim="description"
+            :label="t('standalone.system_settings.short_description')"
             :placeholder="t('standalone.system_settings.short_description_placeholder')"
             optional
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
             :disabled="loading.save"
           />
           <!-- notes -->
           <NeTextArea
-            :label="t('standalone.system_settings.notes')"
             v-model.trim="notes"
+            :label="t('standalone.system_settings.notes')"
             :placeholder="t('standalone.system_settings.notes_placeholder')"
             optional
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
             :disabled="loading.save"
           />
           <!-- timezone -->
           <NeCombobox
+            ref="timezoneRef"
             v-model="timezone"
             :options="timezones"
             :label="t('standalone.system_settings.timezone')"
-            :invalidMessage="error.timezone"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :invalid-message="error.timezone"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
             :disabled="loading.save"
-            ref="timezoneRef"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <!-- local time -->
           <div>
@@ -307,11 +307,11 @@ async function syncWithNtpServer() {
           <!-- sync buttons -->
           <div class="-ml-2.5">
             <NeButton
-              @click="syncWithNtpServer"
               kind="tertiary"
               size="lg"
               :loading="loading.syncWithNtpServer"
               :disabled="loading.syncWithNtpServer || loading.save"
+              @click="syncWithNtpServer"
               >{{ t('standalone.system_settings.sync_with_ntp_server') }}</NeButton
             >
           </div>
@@ -322,9 +322,9 @@ async function syncWithNtpServer() {
         <NeButton
           kind="primary"
           size="lg"
-          @click="save"
           :loading="loading.save"
           :disabled="loading.save"
+          @click="save"
         >
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />

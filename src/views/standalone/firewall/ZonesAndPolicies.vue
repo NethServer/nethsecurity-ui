@@ -85,7 +85,7 @@ function editZone(zone: Zone) {
       </p>
       <div>
         <!-- TODO: add settings -->
-        <NeButton kind="secondary" @click="createZone" size="lg">
+        <NeButton kind="secondary" size="lg" @click="createZone">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" />
           </template>
@@ -100,11 +100,11 @@ function editZone(zone: Zone) {
     />
     <NeTable
       v-else
-      :ariaLabel="t('standalone.zones_and_policies.firewall_zones')"
-      cardBreakpoint="2xl"
+      :aria-label="t('standalone.zones_and_policies.firewall_zones')"
+      card-breakpoint="2xl"
       :loading="firewallConfig.loading"
-      :skeletonColumns="6"
-      :skeletonRows="5"
+      :skeleton-columns="6"
+      :skeleton-rows="5"
     >
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.zone') }}</NeTableHeadCell>
@@ -134,7 +134,7 @@ function editZone(zone: Zone) {
             />
           </NeTableCell>
         </NeTableRow>
-        <NeTableRow v-else v-for="item in paginatedItems" :key="item.name">
+        <NeTableRow v-for="item in paginatedItems" v-else :key="item.name">
           <NeTableCell :data-label="t('standalone.zones_and_policies.zone')">
             <div class="flex items-center gap-x-4">
               <div
@@ -155,7 +155,7 @@ function editZone(zone: Zone) {
                 <NeBadge
                   :text="forward.destination.toUpperCase()"
                   kind="custom"
-                  :customColorClasses="getZoneColorClasses(forward.destination)"
+                  :custom-color-classes="getZoneColorClasses(forward.destination)"
                 />
               </template>
               <span v-if="isEmpty(forwardingsToByZone(item, firewallConfig.forwardings))">-</span>
@@ -242,17 +242,19 @@ function editZone(zone: Zone) {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>
     <CreateOrEditZoneDrawer
-      :isShown="creatingOrEditingZone"
-      :zoneToEdit="zoneToEdit"
+      :is-shown="creatingOrEditingZone"
+      :zone-to-edit="zoneToEdit"
       @close="creatingOrEditingZone = false"
       @success="creatingOrEditingZone = false"
     />

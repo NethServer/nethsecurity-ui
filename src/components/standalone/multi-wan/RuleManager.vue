@@ -111,7 +111,7 @@ function saveState(): void {
   <NeInlineNotification v-if="error" :kind="'error'" class="mb-4">
     {{ error.message }}
   </NeInlineNotification>
-  <HorizontalCard class="space-y-4 text-center" v-else-if="!loading && rules.length < 1">
+  <HorizontalCard v-else-if="!loading && rules.length < 1" class="space-y-4 text-center">
     <p>{{ t('standalone.multi_wan.no_rule_found') }}</p>
     <NeButton v-if="policiesExist" :kind="'primary'" @click="$emit('create')">
       <template #prefix>
@@ -139,7 +139,7 @@ function saveState(): void {
           </tr>
         </template>
         <template v-else>
-          <template v-for="(item, index) in data" :key="item.key">
+          <template v-for="(item, index) in data" :key="index">
             <tr
               :class="[
                 indexOver == index ? 'drop-over drop-target' : '',

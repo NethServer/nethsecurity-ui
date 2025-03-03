@@ -277,13 +277,13 @@ function loadMenuItemsExpanded() {
     <!-- open submenu -->
     <template v-else>
       <a
-        @click="toggleExpand(item)"
         :class="[
           isCurrentRoute(item.to)
             ? 'text-gray-900 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
           'group flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
+        @click="toggleExpand(item)"
       >
         <div class="flex items-center gap-x-3">
           <font-awesome-icon

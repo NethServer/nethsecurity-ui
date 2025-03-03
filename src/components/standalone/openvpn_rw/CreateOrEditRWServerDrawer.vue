@@ -273,7 +273,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -291,13 +291,13 @@ function validateMultiTextFields(
   validators: ((value: string) => validationOutput)[],
   values: string[]
 ) {
-  let validationErrorMessages: string[] = []
+  const validationErrorMessages: string[] = []
   values.forEach(() => {
     validationErrorMessages.push('')
   })
 
-  for (let [index, value] of values.entries()) {
-    for (let validator of validators) {
+  for (const [index, value] of values.entries()) {
+    for (const validator of validators) {
       const validationResult = validator(value)
       if (!validationResult.valid) {
         validationErrorMessages[index] = t(validationResult.errMessage as string)
@@ -495,13 +495,13 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       itemToEdit?.ns_description
         ? t('standalone.openvpn_rw.edit_server')
         : t('standalone.openvpn_rw.create_server')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -513,28 +513,28 @@ watch(
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="20" v-if="loading" />
-    <div class="flex flex-col gap-y-6" v-else>
+    <NeSkeleton v-if="loading" :lines="20" />
+    <div v-else class="flex flex-col gap-y-6">
       <div>
         <NeFormItemLabel>{{ t('standalone.openvpn_rw.status') }}</NeFormItemLabel>
         <NeToggle v-model="enabled" :label="enabled ? t('common.enabled') : t('common.disabled')" />
       </div>
       <NeTextInput
+        ref="nameRef"
         v-model="name"
         :label="t('standalone.openvpn_rw.server_name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_description'))"
-        ref="nameRef"
       />
       <NeCombobox
+        ref="userDatabaseRef"
+        v-model="userDatabase"
         :label="t('standalone.openvpn_rw.user_database')"
         :disabled="itemToEdit?.ns_description != '' || false"
         :options="userDatabaseOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
-        :optionalLabel="t('common.optional')"
-        v-model="userDatabase"
+        :optional-label="t('common.optional')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_user_db'))"
-        ref="userDatabaseRef"
       />
       <div v-if="!itemToEdit?.ns_description">
         <NeFormItemLabel
@@ -551,49 +551,49 @@ watch(
         />
       </div>
       <NeCombobox
+        v-model="authMode"
         :label="t('standalone.openvpn_rw.authentication_mode')"
         :options="authModeOptions"
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
-        :optionalLabel="t('common.optional')"
-        v-model="authMode"
+        :optional-label="t('common.optional')"
       />
       <NeRadioSelection
+        v-model="mode"
         :label="t('standalone.openvpn_rw.mode')"
         :options="modeOptions"
-        v-model="mode"
       />
       <template v-if="mode === 'bridged'">
         <NeCombobox
+          ref="bridgeRef"
+          v-model="bridge"
           :label="t('standalone.openvpn_rw.bridge')"
           :options="bridgesOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          :optionalLabel="t('common.optional')"
-          v-model="bridge"
+          :optional-label="t('common.optional')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_bridge'))"
-          ref="bridgeRef"
         />
         <NeTextInput
+          ref="rangeIpStartRef"
           v-model="rangeIpStart"
           :label="t('standalone.openvpn_rw.range_ip_start')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_pool_start'))"
-          ref="rangeIpStartRef"
         />
         <NeTextInput
+          ref="rangeIpEndRef"
           v-model="rangeIpEnd"
           :label="t('standalone.openvpn_rw.range_ip_end')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_pool_end'))"
-          ref="rangeIpEndRef"
         />
       </template>
       <template v-else>
         <!-- routed mode -->
         <NeTextInput
+          ref="vpnNetworkRef"
           v-model="vpnNetwork"
           :label="t('standalone.openvpn_rw.vpn_network')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('server'))"
-          ref="vpnNetworkRef"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{
@@ -606,20 +606,20 @@ watch(
           kind="info"
           :title="t('standalone.openvpn_rw.dynamic_range_ip')"
           :description="t('standalone.openvpn_rw.dynamic_range_ip_message')"
-          :closeAriaLabel="t('common.close')"
+          :close-aria-label="t('common.close')"
           class="mt-2"
         />
         <NeTextInput
+          ref="dynamicRangeIpStartRef"
           v-model="dynamicRangeIpStart"
           :label="t('standalone.openvpn_rw.dynamic_range_ip_start')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ifconfig_pool_start'))"
-          ref="dynamicRangeIpStartRef"
         />
         <NeTextInput
+          ref="dynamicRangeIpEndRef"
           v-model="dynamicRangeIpEnd"
           :label="t('standalone.openvpn_rw.dynamic_range_ip_end')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ifconfig_pool_end'))"
-          ref="dynamicRangeIpEndRef"
         >
         </NeTextInput>
       </template>
@@ -644,15 +644,15 @@ watch(
       </div>
       <template v-if="showAdvancedSettings">
         <NeRadioSelection
+          v-model="protocol"
           :label="t('standalone.openvpn_rw.protocol')"
           :options="protocolOptions"
-          v-model="protocol"
         />
         <NeTextInput
+          ref="portRef"
           v-model="port"
           :label="t('standalone.openvpn_rw.port')"
           :invalid-message="t(validationErrorBag.getFirstFor('port'))"
-          ref="portRef"
         />
         <div>
           <NeFormItemLabel>{{
@@ -679,36 +679,36 @@ watch(
           />
         </div>
         <NeCombobox
+          v-model="compression"
           :label="t('standalone.openvpn_rw.compression')"
           :options="compressionOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          :optionalLabel="t('common.optional')"
-          v-model="compression"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-model="digest"
           :label="t('standalone.openvpn_rw.digest')"
           :options="digestOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          :optionalLabel="t('common.optional')"
-          v-model="digest"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-model="cipher"
           :label="t('standalone.openvpn_rw.cipher')"
           :options="cipherOptions"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
-          :optionalLabel="t('common.optional')"
-          v-model="cipher"
+          :optional-label="t('common.optional')"
         />
         <NeCombobox
+          v-model="minimumTLSVersion"
           :label="t('standalone.openvpn_rw.enforce_minimum_tls_version')"
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"
-          :optionalLabel="t('common.optional')"
-          v-model="minimumTLSVersion"
+          :optional-label="t('common.optional')"
         />
         <NeMultiTextInput
           v-model="customOptions"
@@ -734,9 +734,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditServer()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditServer()"
           >{{
             itemToEdit?.ns_description ? t('common.save') : t('standalone.openvpn_rw.create')
           }}</NeButton

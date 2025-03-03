@@ -120,12 +120,12 @@ async function revokeSshKeyFromUnit(unit: Unit) {
     kind="warning"
     size="lg"
     :title="t('controller.account_settings.remove_key')"
-    :primaryLabel="t('controller.account_settings.remove_key')"
-    :primaryButtonDisabled="isDeleting || isRevoking"
-    :primaryButtonLoading="isDeleting || isRevoking"
+    :primary-label="t('controller.account_settings.remove_key')"
+    :primary-button-disabled="isDeleting || isRevoking"
+    :primary-button-loading="isDeleting || isRevoking"
     primary-button-kind="danger"
     :close-aria-label="t('common.close')"
-    @primaryClick="revokeAndDeleteSshKey"
+    @primary-click="revokeAndDeleteSshKey"
     @close="close()"
   >
     <NeSkeleton v-if="unitsStore.loadingListUnits" :lines="3" />
@@ -136,11 +136,11 @@ async function revokeSshKeyFromUnit(unit: Unit) {
       <NeExpandable
         v-if="connectedUnits.length > 0"
         :label="t('controller.account_settings.show_connected_units')"
-        :isExpanded="showUnits"
-        @setExpanded="(ev: boolean) => (showUnits = ev)"
+        :is-expanded="showUnits"
+        @set-expanded="(ev: boolean) => (showUnits = ev)"
       >
         <ul>
-          <li class="list-inside list-disc" v-for="unit in connectedUnits" :key="unit.id">
+          <li v-for="unit in connectedUnits" :key="unit.id" class="list-inside list-disc">
             {{ unit.info.unit_name ? `${unit.info.unit_name} (${unit.id})` : unit.id }}
           </li>
         </ul>

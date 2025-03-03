@@ -78,12 +78,12 @@ function copyJoinCode() {
     :visible="visible"
     :title="t('controller.units.add_unit')"
     kind="info"
-    :primaryLabel="t('common.close')"
-    cancelLabel=""
-    :closeAriaLabel="t('common.close')"
+    :primary-label="t('common.close')"
+    cancel-label=""
+    :close-aria-label="t('common.close')"
     size="lg"
     @close="emit('close')"
-    @primaryClick="emit('close')"
+    @primary-click="emit('close')"
   >
     <!-- addUnit error notification -->
     <NeInlineNotification
@@ -95,7 +95,7 @@ function copyJoinCode() {
     />
     <ol class="list-inside list-decimal space-y-2">
       <li>
-        <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
+        <NeTooltip v-if="justCopied" trigger-event="mouseenter focus" placement="top-start">
           <template #trigger>
             <NeLink @click="copyJoinCode">
               {{ t('controller.units.add_unit_step_1') }}

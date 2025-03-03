@@ -61,11 +61,11 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.ipsec_tunnel.delete_tunnel')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteTunnel()"
+    @primary-click="deleteTunnel()"
     @close="close()"
   >
     {{
@@ -79,7 +79,7 @@ function close() {
       :title="t('error.cannot_delete_tunnel')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

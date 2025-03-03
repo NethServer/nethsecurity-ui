@@ -24,10 +24,10 @@ const {
     kind="error"
   />
   <div v-else class="grid grid-cols-1 gap-6 xl:grid-cols-2 4xl:grid-cols-3">
-    <InstantHostTrafficCard :topHosts="topHosts" />
+    <InstantHostTrafficCard :top-hosts="topHosts" />
     <!-- instant apps traffic -->
-    <InstantAppTrafficCard :topApps="topApps" />
+    <InstantAppTrafficCard :top-apps="topApps" />
     <!-- instant protocols traffic -->
-    <InstantProtocolTrafficCard :topProtocols="topProtocols" />
+    <InstantProtocolTrafficCard :top-protocols="topProtocols" />
   </div>
 </template>

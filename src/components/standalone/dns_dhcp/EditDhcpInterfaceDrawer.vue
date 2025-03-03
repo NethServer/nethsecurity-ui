@@ -99,7 +99,7 @@ async function resetForm() {
 }
 
 function runValidators(validators: validationOutput[], label: string): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(label, [validator.errMessage as string])
     }
@@ -140,8 +140,8 @@ function validate() {
   })
 
   let validDhcpOptionValues = true
-  for (let [index, dhcpOption] of dhcpOptions.value.entries()) {
-    let dhcpValueValidator = validateRequired(dhcpOption.value)
+  for (const [index, dhcpOption] of dhcpOptions.value.entries()) {
+    const dhcpValueValidator = validateRequired(dhcpOption.value)
     if (!dhcpValueValidator.valid) {
       dhcpOptionValueErrors.value[index] = t(dhcpValueValidator.errMessage as string)
       validDhcpOptionValues = false
@@ -150,8 +150,8 @@ function validate() {
   }
 
   let validDhcpOptionKeys = true
-  for (let [index, dhcpOption] of dhcpOptions.value.entries()) {
-    let dhcpKeyValidator = validateRequired(dhcpOption.key)
+  for (const [index, dhcpOption] of dhcpOptions.value.entries()) {
+    const dhcpKeyValidator = validateRequired(dhcpOption.key)
     if (!dhcpKeyValidator.valid) {
       dhcpOptionKeyErrors.value[index] = t(dhcpKeyValidator.errMessage as string)
       validDhcpOptionKeys = false
@@ -238,9 +238,9 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="t('standalone.dns_dhcp.edit_interface', { interface: iface })"
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationDescription"
@@ -249,11 +249,11 @@ watch(
       class="mb-6"
       kind="error"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >
-    <NeSkeleton :lines="10" v-if="loading" />
+    <NeSkeleton v-if="loading" :lines="10" />
     <div v-else class="flex flex-col gap-y-6">
       <NeToggle v-model="enableDhcp" :label="t('standalone.dns_dhcp.enable_dhcp')" />
       <NeTextInput
@@ -326,9 +326,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="saveChanges()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="saveChanges()"
           >{{ t('common.save') }}</NeButton
         >
       </div>

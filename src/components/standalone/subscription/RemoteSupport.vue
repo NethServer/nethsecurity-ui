@@ -40,7 +40,7 @@ const isProcessingRequest = ref(false)
 const sessionId = ref('')
 
 async function startSession() {
-  let startDonResponse = await makeDonRequest('start')
+  const startDonResponse = await makeDonRequest('start')
   sessionId.value = startDonResponse.data.session_id
 }
 
@@ -64,7 +64,7 @@ async function makeDonRequest(type: DonRequestType) {
   try {
     error.value = ''
     isProcessingRequest.value = true
-    let payload = await ubusCall('ns.don', type)
+    const payload = await ubusCall('ns.don', type)
     return payload
   } catch (e: any) {
     error.value = t(getAxiosErrorMessage(e))
@@ -92,7 +92,7 @@ onMounted(() => {
       :description="error"
       class="mb-4"
     />
-    <NeSkeleton :lines="5" v-if="isLoadingSessionStatus || loading" />
+    <NeSkeleton v-if="isLoadingSessionStatus || loading" :lines="5" />
     <template v-else>
       <NeButton
         v-if="!sessionId"
@@ -113,9 +113,9 @@ onMounted(() => {
         <div class="mt-6 flex justify-end">
           <NeButton
             kind="primary"
-            @click="stopSession()"
             :disabled="isProcessingRequest"
             :loading="isProcessingRequest"
+            @click="stopSession()"
             >{{ t('standalone.subscription.end_session') }}</NeButton
           >
         </div>

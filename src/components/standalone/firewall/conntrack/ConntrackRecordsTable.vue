@@ -37,10 +37,10 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.dns_dhcp.scan_conntrackRecords')"
-    cardBreakpoint="xl"
-    :skeletonColumns="5"
-    :skeletonRows="5"
+    :aria-label="t('standalone.dns_dhcp.scan_conntrackRecords')"
+    card-breakpoint="xl"
+    :skeleton-columns="5"
+    :skeleton-rows="5"
   >
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.conntrack.source') }}</NeTableHeadCell>
@@ -104,13 +104,15 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.conntrackR
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
-        @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

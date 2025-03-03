@@ -25,7 +25,7 @@ const object = computed<HostSet | DomainSet | undefined>(() => {
   return objects.objects.find((o) => o.id === props.objectId)
 })
 
-const multipleEntries = computed<Boolean>(() => {
+const multipleEntries = computed<boolean>(() => {
   if (object.value) {
     if (isHostSet(object.value)) {
       return object.value.ipaddr.length + object.value.children!.length > 1

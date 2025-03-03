@@ -132,13 +132,13 @@ watch(
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       itemToEdit
         ? t('standalone.threat_shield.edit_address')
         : t('standalone.threat_shield.add_address')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle"
@@ -181,9 +181,9 @@ watch(
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditAddress()"
           :disabled="isSavingChanges"
           :loading="isSavingChanges"
+          @click="createOrEditAddress()"
           >{{
             Boolean(itemToEdit) ? t('common.save') : t('standalone.threat_shield.add_address')
           }}</NeButton

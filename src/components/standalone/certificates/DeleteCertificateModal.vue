@@ -57,13 +57,13 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    primaryButtonKind="danger"
+    primary-button-kind="danger"
     :title="t('standalone.certificates.delete_certificate')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteCertificate()"
+    @primary-click="deleteCertificate()"
     @close="close()"
   >
     {{
@@ -77,7 +77,7 @@ function close() {
       :title="t('error.cannot_delete_certificate')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

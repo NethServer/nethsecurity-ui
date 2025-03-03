@@ -47,9 +47,9 @@ onMounted(() => {
 async function getConfiguration() {
   try {
     loading.value = true
-    let getDataConfiguration = await ubusCall('ns.netifyd', 'status', {})
+    const getDataConfiguration = await ubusCall('ns.netifyd', 'status', {})
     if (getDataConfiguration && getDataConfiguration.data) {
-      let configuration = getDataConfiguration.data
+      const configuration = getDataConfiguration.data
       status.value = configuration.enabled
       uuid.value = configuration.uuid
     }
@@ -133,7 +133,7 @@ function copyUuid() {
         <NeToggle
           v-model="status"
           :disabled="error.getNotificationTitle !== ''"
-          :topLabel="t('standalone.netify_informatics.metadata_sending')"
+          :top-label="t('standalone.netify_informatics.metadata_sending')"
           :label="
             status
               ? t('standalone.netify_informatics.status_enabled')
@@ -150,15 +150,15 @@ function copyUuid() {
         </NeToggle>
         <div v-if="status" class="relative flex items-end gap-2">
           <NeTextInput
+            ref="uuidRef"
             v-model="uuid"
             disabled
             :label="t('standalone.netify_informatics.uuid')"
-            ref="uuidRef"
           >
           </NeTextInput>
-          <NeTooltip v-if="justCopied" triggerEvent="mouseenter focus" placement="top-start">
+          <NeTooltip v-if="justCopied" trigger-event="mouseenter focus" placement="top-start">
             <template #trigger>
-              <NeButton kind="secondary" size="md" @click="copyUuid" class="mb-px ml-2.5">
+              <NeButton kind="secondary" size="md" class="mb-px ml-2.5" @click="copyUuid">
                 <template #prefix>
                   <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />
                 </template>
@@ -174,8 +174,8 @@ function copyUuid() {
             :disabled="error.getNotificationTitle !== ''"
             kind="secondary"
             size="md"
-            @click="copyUuid"
             class="mb-px ml-2.5"
+            @click="copyUuid"
           >
             <template #prefix>
               <FontAwesomeIcon :icon="faCopy" class="h-4 w-4" aria-hidden="true" />

@@ -112,7 +112,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref<any>
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       errorBag.value.set(fieldName, [validator.errMessage as string])
 
@@ -224,26 +224,26 @@ async function saveDomainSet() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       props.currentDomainSet
         ? t('standalone.objects.edit_domain_set')
         : t('standalone.objects.add_domain_set')
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form @submit.prevent>
       <div class="space-y-6">
         <!-- name -->
         <NeTextInput
-          :label="t('standalone.objects.name')"
+          ref="nameRef"
           v-model.trim="name"
-          :invalidMessage="t(errorBag.getFirstI18nKeyFor('name'))"
-          :helperText="t('standalone.objects.name_helper')"
+          :label="t('standalone.objects.name')"
+          :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
+          :helper-text="t('standalone.objects.name_helper')"
           :disabled="loading.saveDomainSet"
           maxlength="16"
-          ref="nameRef"
         />
         <!-- ip version -->
         <NeRadioSelection
@@ -262,11 +262,11 @@ async function saveDomainSet() {
         </NeRadioSelection>
         <!-- domains -->
         <NeMultiTextInput
+          v-model="records"
           :title="t('standalone.objects.domains')"
           :add-item-label="t('standalone.objects.add_domain')"
           :disable-inputs="loading.saveDomainSet"
           :disable-add-button="loading.saveDomainSet"
-          v-model="records"
           required
         />
         <!-- records invalid message -->
@@ -283,7 +283,7 @@ async function saveDomainSet() {
           :title="t('error.cannot_save_domain_set')"
           :description="error.saveDomainSet"
         >
-          <template #details v-if="error.saveDomainSetDetails">
+          <template v-if="error.saveDomainSetDetails" #details>
             {{ error.saveDomainSetDetails }}
           </template>
         </NeInlineNotification>
@@ -294,18 +294,18 @@ async function saveDomainSet() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.saveDomainSet"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveDomainSet"
           :disabled="loading.saveDomainSet"
           :loading="loading.saveDomainSet"
+          @click.prevent="saveDomainSet"
         >
           {{
             props.currentDomainSet

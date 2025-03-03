@@ -91,7 +91,7 @@ function validate() {
 
   // zones
 
-  let zonesValidation = validateRequiredOption(selectedZones.value)
+  const zonesValidation = validateRequiredOption(selectedZones.value)
   if (!zonesValidation.valid) {
     errorBag.value.set('zones', [t(String(zonesValidation.errMessage))])
     isValidationOk = false
@@ -131,6 +131,7 @@ async function saveSettings() {
       ports: ports.value
     })
     loadData()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err: unknown) {
     // exception already handled in threat shield store
   }
@@ -152,7 +153,7 @@ onMounted(() => {
           :title="t('error.cannot_retrieve_threat_shield_settings')"
           :description="tsStore.errorListDnsSettings"
         >
-          <template #details v-if="tsStore.errorListDnsSettingsDetails">
+          <template v-if="tsStore.errorListDnsSettingsDetails" #details>
             {{ tsStore.errorListDnsSettingsDetails }}
           </template>
         </NeInlineNotification>
@@ -162,19 +163,19 @@ onMounted(() => {
             :description="t('standalone.threat_shield_dns.threat_shield_settings_description')"
           >
             <div class="space-y-8">
-              <NeSkeleton :lines="11" v-if="tsStore.loadingListDnsSettings" size="lg" />
+              <NeSkeleton v-if="tsStore.loadingListDnsSettings" :lines="11" size="lg" />
               <template v-else>
                 <!-- status -->
                 <NeToggle
+                  v-model="isThreatShieldEnabled"
                   :top-label="t('standalone.threat_shield_dns.status')"
                   :label="isThreatShieldEnabled ? t('common.enabled') : t('common.disabled')"
-                  v-model="isThreatShieldEnabled"
                 />
                 <template v-if="isThreatShieldEnabled">
                   <!-- zones -->
                   <NeCombobox
-                    :label="t('standalone.threat_shield_dns.zones')"
                     v-model="selectedZones"
+                    :label="t('standalone.threat_shield_dns.zones')"
                     :options="zonesOptions"
                     :placeholder="
                       tsStore.loadingListDnsZones || tsStore.loadingListDnsSettings
@@ -183,11 +184,11 @@ onMounted(() => {
                     "
                     multiple
                     :disabled="tsStore.loadingEditDnsSettings || tsStore.loadingListDnsZones"
-                    :invalidMessage="errorBag.getFirstFor('zones')"
-                    :optionalLabel="t('common.optional')"
-                    :noResultsLabel="t('ne_combobox.no_results')"
-                    :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-                    :noOptionsLabel="t('ne_combobox.no_options_label')"
+                    :invalid-message="errorBag.getFirstFor('zones')"
+                    :optional-label="t('common.optional')"
+                    :no-results-label="t('ne_combobox.no_results')"
+                    :limited-options-label="t('ne_combobox.limited_options_label')"
+                    :no-options-label="t('ne_combobox.no_options_label')"
                     :selected-label="t('ne_combobox.selected')"
                     :user-input-label="t('ne_combobox.user_input_label')"
                   >
@@ -205,7 +206,7 @@ onMounted(() => {
                     :add-item-label="t('standalone.threat_shield_dns.add_port')"
                     :title="t('standalone.threat_shield_dns.redirected_ports')"
                     required
-                    :disabledInputs="tsStore.loadingEditDnsSettings"
+                    :disabled-inputs="tsStore.loadingEditDnsSettings"
                     :invalid-messages="portsErrors"
                   >
                     <template #tooltip>
@@ -230,7 +231,7 @@ onMounted(() => {
                 :title="t('error.cannot_save_threat_shield_settings')"
                 :description="tsStore.errorEditDnsSettings"
               >
-                <template #details v-if="tsStore.errorEditDnsSettingsDetails">
+                <template v-if="tsStore.errorEditDnsSettingsDetails" #details>
                   {{ tsStore.errorEditDnsSettingsDetails }}
                 </template>
               </NeInlineNotification>

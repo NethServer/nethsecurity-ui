@@ -77,47 +77,47 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let internalAllDevices = ref<any[]>([])
-let interfaceName = ref('')
-let interfaceNameRef = ref()
-let zone = ref('lan')
-let protocol = ref('static')
-let ipv4Address = ref('')
-let ipv4AddressRef = ref()
-let ipv4Gateway = ref('')
-let ipv4GatewayRef = ref()
-let isIpv6Enabled = ref(false)
-let isExpandedAdvancedSettings = ref(false)
-let ipv6Address = ref('')
-let ipv6AddressRef = ref()
-let ipv6Gateway = ref('')
-let ipv6GatewayRef = ref()
-let ipv4Mtu = ref('')
-let ipv4MtuRef = ref()
-let ipv6Mtu = ref('')
-let ipv6MtuRef = ref()
-let dhcpHostnameToSend = ref('deviceHostname')
-let dhcpCustomHostname = ref('')
-let dhcpCustomHostnameRef = ref()
-let dhcpClientId = ref('')
-let dhcpClientIdRef = ref()
-let dhcpVendorClass = ref('')
-let dhcpVendorClassRef = ref()
-let pppoeUsername = ref('')
-let pppoeUsernameRef = ref()
-let pppoePassword = ref('')
-let pppoePasswordRef = ref()
-let logicalIfaceType = ref('bridge')
-let logicalIfaceTypeRef = ref()
-let selectedDevicesForBridgeOrBond: Ref<NeComboboxOption[]> = ref([])
-let selectedDevicesForBridgeOrBondRef = ref<HTMLDivElement | null>()
-let bondingPolicy = ref('balance-rr')
-let bondingPolicyRef = ref<HTMLDivElement | null>()
-let bondPrimaryDevice = ref('')
-let bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
-let allowedZones = ref<Array<any>>([])
+const internalAllDevices = ref<any[]>([])
+const interfaceName = ref('')
+const interfaceNameRef = ref()
+const zone = ref('lan')
+const protocol = ref('static')
+const ipv4Address = ref('')
+const ipv4AddressRef = ref()
+const ipv4Gateway = ref('')
+const ipv4GatewayRef = ref()
+const isIpv6Enabled = ref(false)
+const isExpandedAdvancedSettings = ref(false)
+const ipv6Address = ref('')
+const ipv6AddressRef = ref()
+const ipv6Gateway = ref('')
+const ipv6GatewayRef = ref()
+const ipv4Mtu = ref('')
+const ipv4MtuRef = ref()
+const ipv6Mtu = ref('')
+const ipv6MtuRef = ref()
+const dhcpHostnameToSend = ref('deviceHostname')
+const dhcpCustomHostname = ref('')
+const dhcpCustomHostnameRef = ref()
+const dhcpClientId = ref('')
+const dhcpClientIdRef = ref()
+const dhcpVendorClass = ref('')
+const dhcpVendorClassRef = ref()
+const pppoeUsername = ref('')
+const pppoeUsernameRef = ref()
+const pppoePassword = ref('')
+const pppoePasswordRef = ref()
+const logicalIfaceType = ref('bridge')
+const logicalIfaceTypeRef = ref()
+const selectedDevicesForBridgeOrBond: Ref<NeComboboxOption[]> = ref([])
+const selectedDevicesForBridgeOrBondRef = ref<HTMLDivElement | null>()
+const bondingPolicy = ref('balance-rr')
+const bondingPolicyRef = ref<HTMLDivElement | null>()
+const bondPrimaryDevice = ref('')
+const bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
+const allowedZones = ref<Array<any>>([])
 
-let protocolBaseOptions = [
+const protocolBaseOptions = [
   {
     id: 'static',
     label: t('standalone.interfaces_and_devices.protocol_static')
@@ -132,7 +132,7 @@ let protocolBaseOptions = [
   }
 ]
 
-let protocolPppoeOption = {
+const protocolPppoeOption = {
   id: 'pppoe',
   label: 'PPPoE'
 }
@@ -189,12 +189,12 @@ const bondingPolicyOptions = [
   }
 ]
 
-let loading = ref({
+const loading = ref({
   configure: false,
   listZonesForDeviceConfig: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: '',
@@ -484,15 +484,24 @@ function closeDrawer() {
 }
 
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.notificationDetails = ''
+  error.value.interfaceName = ''
+  error.value.ipv4Address = ''
+  error.value.ipv4Gateway = ''
+  error.value.ipv6Address = ''
+  error.value.ipv6Gateway = ''
+  error.value.ipv4Mtu = ''
+  error.value.ipv6Mtu = ''
+  error.value.dhcpCustomHostname = ''
+  error.value.dhcpClientId = ''
+  error.value.dhcpVendorClass = ''
+  error.value.pppoeUsername = ''
+  error.value.pppoePassword = ''
+  error.value.selectedDevicesForBridgeOrBond = ''
+  error.value.bondingPolicy = ''
+  error.value.bondPrimaryDevice = ''
 }
 
 function prepareConfigureDeviceData() {
@@ -611,7 +620,7 @@ function validate() {
       // bond primary device
 
       if (['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy.value)) {
-        let { valid, errMessage } = validateRequired(bondPrimaryDevice.value)
+        const { valid, errMessage } = validateRequired(bondPrimaryDevice.value)
         if (!valid) {
           error.value.bondPrimaryDevice = t(errMessage as string)
           if (isValidationOk) {
@@ -643,7 +652,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(interfaceName.value)
+    const { valid, errMessage } = validateRequired(interfaceName.value)
     if (!valid) {
       error.value.interfaceName = t(errMessage as string)
       if (isValidationOk) {
@@ -660,7 +669,7 @@ function validate() {
         if (protocol.value == 'pppoe') {
           maxLen = 5
         }
-        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, maxLen)
+        const { valid, errMessage, i18Params } = validateUciName(interfaceName.value, maxLen)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
           if (isValidationOk) {
@@ -706,7 +715,7 @@ function validate() {
   if (protocol.value === 'static') {
     // ipv4 and/or ipv6 address are required
     if (!isIpv6Enabled.value) {
-      let { valid, errMessage } = validateRequired(ipv4Address.value)
+      const { valid, errMessage } = validateRequired(ipv4Address.value)
       if (!valid) {
         error.value.ipv4Address = t(errMessage as string)
         if (isValidationOk) {
@@ -720,7 +729,7 @@ function validate() {
 
     if (ipv4Address.value) {
       // check syntax
-      let { valid, errMessage } = validateIp4Cidr(ipv4Address.value)
+      const { valid, errMessage } = validateIp4Cidr(ipv4Address.value)
       if (!valid) {
         error.value.ipv4Address = t(errMessage as string)
         if (isValidationOk) {
@@ -734,7 +743,7 @@ function validate() {
 
     if (zone.value === 'wan' && ipv4Address.value) {
       // check required
-      let { valid, errMessage } = validateRequired(ipv4Gateway.value)
+      const { valid, errMessage } = validateRequired(ipv4Gateway.value)
       if (!valid) {
         error.value.ipv4Gateway = t(errMessage as string)
         if (isValidationOk) {
@@ -744,7 +753,7 @@ function validate() {
       } else {
         // check syntax
         {
-          let { valid, errMessage } = validateIp4Address(ipv4Gateway.value)
+          const { valid, errMessage } = validateIp4Address(ipv4Gateway.value)
           if (!valid) {
             error.value.ipv4Gateway = t(errMessage as string)
             if (isValidationOk) {
@@ -761,7 +770,7 @@ function validate() {
 
       if (ipv6Address.value) {
         // check syntax
-        let { valid, errMessage } = validateIp6Address(ipv6Address.value)
+        const { valid, errMessage } = validateIp6Address(ipv6Address.value)
         if (!valid) {
           error.value.ipv6Address = t(errMessage as string)
           if (isValidationOk) {
@@ -775,7 +784,7 @@ function validate() {
 
       if (zone.value === 'wan') {
         // check required
-        let { valid, errMessage } = validateRequired(ipv6Gateway.value)
+        const { valid, errMessage } = validateRequired(ipv6Gateway.value)
         if (!valid) {
           error.value.ipv6Gateway = t(errMessage as string)
           if (isValidationOk) {
@@ -785,7 +794,7 @@ function validate() {
         } else {
           // check syntax
           {
-            let { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
+            const { valid, errMessage } = validateIp6Address(ipv6Gateway.value)
             if (!valid) {
               error.value.ipv6Gateway = t(errMessage as string)
               if (isValidationOk) {
@@ -800,7 +809,7 @@ function validate() {
       // ipv6 mtu
 
       if (ipv6Mtu.value) {
-        let { valid, errMessage } = validateIpv6Mtu(ipv6Mtu.value)
+        const { valid, errMessage } = validateIpv6Mtu(ipv6Mtu.value)
         if (!valid) {
           isExpandedAdvancedSettings.value = true
           error.value.ipv6Mtu = t(errMessage as string)
@@ -815,7 +824,7 @@ function validate() {
     // dhcp client id
 
     if (dhcpClientId.value) {
-      let { valid, errMessage } = validateHexadecimalString(dhcpClientId.value)
+      const { valid, errMessage } = validateHexadecimalString(dhcpClientId.value)
       if (!valid) {
         isExpandedAdvancedSettings.value = true
         error.value.dhcpClientId = t(errMessage as string)
@@ -831,7 +840,7 @@ function validate() {
 
       {
         // check required
-        let { valid, errMessage } = validateRequired(dhcpCustomHostname.value)
+        const { valid, errMessage } = validateRequired(dhcpCustomHostname.value)
         if (!valid) {
           error.value.dhcpCustomHostname = t(errMessage as string)
           if (isValidationOk) {
@@ -841,7 +850,7 @@ function validate() {
         } else {
           // check syntax
           {
-            let { valid, errMessage, i18Params } = validateHostname(dhcpCustomHostname.value)
+            const { valid, errMessage, i18Params } = validateHostname(dhcpCustomHostname.value)
             if (!valid) {
               error.value.dhcpCustomHostname = t(errMessage as string, i18Params as any)
               if (isValidationOk) {
@@ -858,7 +867,7 @@ function validate() {
   // ipv4 mtu
 
   if (ipv4Mtu.value) {
-    let { valid, errMessage } = validateIpv4Mtu(ipv4Mtu.value)
+    const { valid, errMessage } = validateIpv4Mtu(ipv4Mtu.value)
     if (!valid) {
       isExpandedAdvancedSettings.value = true
       error.value.ipv4Mtu = t(errMessage as string)
@@ -894,9 +903,9 @@ async function listZonesForDeviceConfig() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="drawerTitle"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
@@ -904,16 +913,17 @@ async function listZonesForDeviceConfig() {
         <template v-if="deviceType === 'logical'">
           <!-- logical interface type (bridge/bond) -->
           <NeRadioSelection
+            ref="logicalIfaceTypeRef"
             v-model="logicalIfaceType"
             :label="t('standalone.interfaces_and_devices.logical_type')"
             :options="logicalIfaceTypeOptions"
             :disabled="!isConfiguringFromScratch || loading.configure"
-            ref="logicalIfaceTypeRef"
           />
           <!-- bridge / bond devices -->
           <NeCombobox
-            multiple
+            ref="selectedDevicesForBridgeOrBondRef"
             v-model="selectedDevicesForBridgeOrBond"
+            multiple
             :options="bridgeOrBondDevicesOptions"
             :label="t('standalone.interfaces_and_devices.devices')"
             :placeholder="
@@ -921,31 +931,30 @@ async function listZonesForDeviceConfig() {
                 ? t('standalone.interfaces_and_devices.select_devices_for_bond')
                 : t('standalone.interfaces_and_devices.select_devices_for_bridge')
             "
-            :invalidMessage="error.selectedDevicesForBridgeOrBond"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('standalone.interfaces_and_devices.no_devices_available')"
+            :invalid-message="error.selectedDevicesForBridgeOrBond"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('standalone.interfaces_and_devices.no_devices_available')"
             :disabled="loading.configure"
-            ref="selectedDevicesForBridgeOrBondRef"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <!-- bonding policy -->
           <NeCombobox
             v-if="logicalIfaceType === 'bond'"
+            ref="bondingPolicyRef"
             v-model="bondingPolicy"
             :options="bondingPolicyOptions"
             :label="t('standalone.interfaces_and_devices.bonding_policy')"
-            :invalidMessage="error.bondingPolicy"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :invalid-message="error.bondingPolicy"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
-            ref="bondingPolicyRef"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
           <!-- bond primary device -->
           <NeCombobox
@@ -953,31 +962,31 @@ async function listZonesForDeviceConfig() {
               logicalIfaceType === 'bond' &&
               ['active-backup', 'balance-tlb', 'balance-alb'].includes(bondingPolicy)
             "
+            ref="bondPrimaryDeviceRef"
             v-model="bondPrimaryDevice"
             :options="selectedDevicesForBridgeOrBond"
             :label="t('standalone.interfaces_and_devices.bond_primary_device')"
-            :invalidMessage="error.bondPrimaryDevice"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
+            :invalid-message="error.bondPrimaryDevice"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
             :disabled="loading.configure"
-            ref="bondPrimaryDeviceRef"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
+            :optional-label="t('common.optional')"
           />
         </template>
         <!-- name -->
         <NeTextInput
+          ref="interfaceNameRef"
+          v-model.trim="interfaceName"
           :label="
             isCreatingBond
               ? t('standalone.interfaces_and_devices.bond_name')
               : t('standalone.interfaces_and_devices.interface_name')
           "
-          v-model.trim="interfaceName"
-          :invalidMessage="t(error.interfaceName)"
+          :invalid-message="t(error.interfaceName)"
           :disabled="!isConfiguringFromScratch || loading.configure"
-          ref="interfaceNameRef"
         />
         <!-- zone skeleton -->
         <div v-if="loading.listZonesForDeviceConfig">
@@ -985,7 +994,7 @@ async function listZonesForDeviceConfig() {
             {{ t('standalone.interfaces_and_devices.zone') }}
           </NeFormItemLabel>
           <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
-            <NeCard v-for="index in 3" :key="index" :skeletonLines="1">
+            <NeCard v-for="index in 3" :key="index" :skeleton-lines="1">
               <NeSkeleton size="sm" :lines="2" />
             </NeCard>
           </div>
@@ -997,7 +1006,7 @@ async function listZonesForDeviceConfig() {
           card
           :label="t('standalone.interfaces_and_devices.zone')"
           :options="zoneOptions"
-          gridStyle="gap-3 grid-cols-2 lg:grid-cols-3"
+          grid-style="gap-3 grid-cols-2 lg:grid-cols-3"
         />
         <!-- protocol (don't show for bond) -->
         <NeRadioSelection
@@ -1010,15 +1019,15 @@ async function listZonesForDeviceConfig() {
         <div v-show="['static', 'bonding'].includes(protocol)" class="space-y-6">
           <!-- ipv4 address -->
           <NeTextInput
+            ref="ipv4AddressRef"
+            v-model.trim="ipv4Address"
             :label="
               logicalIfaceType === 'bond'
                 ? t('standalone.interfaces_and_devices.management_ipv4_address_cidr')
                 : t('standalone.interfaces_and_devices.ipv4_address_cidr')
             "
-            v-model.trim="ipv4Address"
-            :invalidMessage="t(error.ipv4Address)"
+            :invalid-message="t(error.ipv4Address)"
             :disabled="loading.configure || logicalIfaceType == 'bond'"
-            ref="ipv4AddressRef"
           >
             <template v-if="logicalIfaceType === 'bond'" #tooltip>
               <NeTooltip>
@@ -1031,11 +1040,11 @@ async function listZonesForDeviceConfig() {
           <!-- gateway -->
           <NeTextInput
             v-if="zone === 'wan'"
-            :label="t('standalone.interfaces_and_devices.ipv4_gateway')"
-            v-model.trim="ipv4Gateway"
-            :invalidMessage="t(error.ipv4Gateway)"
-            :disabled="loading.configure"
             ref="ipv4GatewayRef"
+            v-model.trim="ipv4Gateway"
+            :label="t('standalone.interfaces_and_devices.ipv4_gateway')"
+            :invalid-message="t(error.ipv4Gateway)"
+            :disabled="loading.configure"
           />
           <!-- enable ipv6 (don't show for bond) -->
           <div v-if="!(deviceType === 'logical' && logicalIfaceType === 'bond')">
@@ -1050,11 +1059,11 @@ async function listZonesForDeviceConfig() {
           <div v-show="isIpv6Enabled" class="space-y-6">
             <!-- ipv6 address -->
             <NeTextInput
-              :label="t('standalone.interfaces_and_devices.ipv6_address')"
-              v-model.trim="ipv6Address"
-              :invalidMessage="t(error.ipv6Address)"
-              :disabled="loading.configure"
               ref="ipv6AddressRef"
+              v-model.trim="ipv6Address"
+              :label="t('standalone.interfaces_and_devices.ipv6_address')"
+              :invalid-message="t(error.ipv6Address)"
+              :disabled="loading.configure"
             >
               <template #tooltip>
                 <NeTooltip>
@@ -1067,11 +1076,11 @@ async function listZonesForDeviceConfig() {
             <!-- ipv6 gateway -->
             <NeTextInput
               v-if="zone === 'wan'"
-              :label="t('standalone.interfaces_and_devices.ipv6_gateway')"
-              v-model.trim="ipv6Gateway"
-              :invalidMessage="t(error.ipv6Gateway)"
-              :disabled="loading.configure"
               ref="ipv6GatewayRef"
+              v-model.trim="ipv6Gateway"
+              :label="t('standalone.interfaces_and_devices.ipv6_gateway')"
+              :invalid-message="t(error.ipv6Gateway)"
+              :disabled="loading.configure"
             />
           </div>
         </div>
@@ -1088,21 +1097,21 @@ async function listZonesForDeviceConfig() {
           </div>
           <!-- pppoe username -->
           <NeTextInput
-            :label="t('standalone.interfaces_and_devices.pppoe_username')"
-            v-model.trim="pppoeUsername"
-            :invalidMessage="t(error.pppoeUsername)"
-            :disabled="loading.configure"
             ref="pppoeUsernameRef"
+            v-model.trim="pppoeUsername"
+            :label="t('standalone.interfaces_and_devices.pppoe_username')"
+            :invalid-message="t(error.pppoeUsername)"
+            :disabled="loading.configure"
           />
           <!-- pppoe username -->
           <NeTextInput
-            :label="t('standalone.interfaces_and_devices.pppoe_password')"
-            v-model="pppoePassword"
-            isPassword
-            :showPasswordLabel="t('ne_text_input.show_password')"
-            :hidePasswordLabel="t('ne_text_input.hide_password')"
-            :invalidMessage="t(error.pppoePassword)"
             ref="pppoePasswordRef"
+            v-model="pppoePassword"
+            :label="t('standalone.interfaces_and_devices.pppoe_password')"
+            is-password
+            :show-password-label="t('ne_text_input.show_password')"
+            :hide-password-label="t('ne_text_input.hide_password')"
+            :invalid-message="t(error.pppoePassword)"
           />
         </div>
         <!-- fields for dhcp protocol -->
@@ -1116,10 +1125,10 @@ async function listZonesForDeviceConfig() {
           <!-- dhcp custom hostname -->
           <NeTextInput
             v-if="dhcpHostnameToSend === 'customHostname'"
+            ref="dhcpCustomHostnameRef"
             v-model="dhcpCustomHostname"
             :placeholder="t('standalone.interfaces_and_devices.custom_hostname')"
-            :invalidMessage="t(error.dhcpCustomHostname)"
-            ref="dhcpCustomHostnameRef"
+            :invalid-message="t(error.dhcpCustomHostname)"
             class="!mt-4 ml-6"
           />
         </div>
@@ -1130,8 +1139,8 @@ async function listZonesForDeviceConfig() {
           <NeButton
             kind="tertiary"
             size="sm"
-            @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
             class="-ml-2"
+            @click="isExpandedAdvancedSettings = !isExpandedAdvancedSettings"
           >
             <template #suffix>
               <font-awesome-icon
@@ -1146,45 +1155,45 @@ async function listZonesForDeviceConfig() {
             <div v-show="isExpandedAdvancedSettings" class="space-y-6">
               <!-- ipv4 MTU -->
               <NeTextInput
-                :label="t('standalone.interfaces_and_devices.ipv4_mtu_bytes')"
+                ref="ipv4MtuRef"
                 v-model.trim="ipv4Mtu"
+                :label="t('standalone.interfaces_and_devices.ipv4_mtu_bytes')"
                 placeholder="1500"
                 optional
-                :invalidMessage="t(error.ipv4Mtu)"
+                :invalid-message="t(error.ipv4Mtu)"
                 :disabled="loading.configure"
-                ref="ipv4MtuRef"
               />
               <!-- ipv6 MTU -->
               <NeTextInput
                 v-show="isIpv6Enabled"
-                :label="t('standalone.interfaces_and_devices.ipv6_mtu_bytes')"
+                ref="ipv6MtuRef"
                 v-model.trim="ipv6Mtu"
+                :label="t('standalone.interfaces_and_devices.ipv6_mtu_bytes')"
                 placeholder="1500"
                 optional
-                :invalidMessage="t(error.ipv6Mtu)"
+                :invalid-message="t(error.ipv6Mtu)"
                 :disabled="loading.configure"
-                ref="ipv6MtuRef"
               />
               <!-- dhcp client id -->
               <NeTextInput
                 v-show="['dhcp', 'dhcpv6'].includes(protocol)"
-                :label="t('standalone.interfaces_and_devices.client_id_label')"
-                :helperText="t('standalone.interfaces_and_devices.enter_a_hexadecimal_string')"
-                v-model.trim="dhcpClientId"
-                optional
-                :invalidMessage="t(error.dhcpClientId)"
-                :disabled="loading.configure"
                 ref="dhcpClientIdRef"
+                v-model.trim="dhcpClientId"
+                :label="t('standalone.interfaces_and_devices.client_id_label')"
+                :helper-text="t('standalone.interfaces_and_devices.enter_a_hexadecimal_string')"
+                optional
+                :invalid-message="t(error.dhcpClientId)"
+                :disabled="loading.configure"
               />
               <!-- dhcp vendor class -->
               <NeTextInput
                 v-show="protocol === 'dhcp'"
-                :label="t('standalone.interfaces_and_devices.vendor_class_label')"
-                v-model.trim="dhcpVendorClass"
-                optional
-                :invalidMessage="t(error.dhcpVendorClass)"
-                :disabled="loading.configure"
                 ref="dhcpVendorClassRef"
+                v-model.trim="dhcpVendorClass"
+                :label="t('standalone.interfaces_and_devices.vendor_class_label')"
+                optional
+                :invalid-message="t(error.dhcpVendorClass)"
+                :disabled="loading.configure"
               />
             </div>
           </Transition>
@@ -1195,7 +1204,7 @@ async function listZonesForDeviceConfig() {
           :title="error.notificationTitle"
           :description="error.notificationDescription"
         >
-          <template #details v-if="error.notificationDetails">
+          <template v-if="error.notificationDetails" #details>
             {{ error.notificationDetails }}
           </template>
         </NeInlineNotification>
@@ -1206,18 +1215,18 @@ async function listZonesForDeviceConfig() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.configure"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="configureDevice"
           :disabled="loading.configure"
           :loading="loading.configure"
+          @click.prevent="configureDevice"
         >
           {{ primaryButtonLabel }}
         </NeButton>

@@ -351,7 +351,7 @@ function runFieldValidators(
   fieldName: string,
   fieldRef: Ref
 ): boolean {
-  for (let validator of validators) {
+  for (const validator of validators) {
     if (!validator.valid) {
       validationErrorBag.value.set(fieldName, [t(validator.errMessage as string)])
 
@@ -379,9 +379,9 @@ function validate(): boolean {
 
   if (restrictType.value === 'address') {
     // restrict is a list of IP addresses
-    for (let [index, restrictValue] of restrict.value.entries()) {
+    for (const [index, restrictValue] of restrict.value.entries()) {
       if (restrictValue) {
-        let validator = validateIpOrCidr(restrictValue)
+        const validator = validateIpOrCidr(restrictValue)
         if (!validator.valid) {
           restrictIPValidationErrors.value[index] = t(validator.errMessage as string)
           validRestrict = false
@@ -427,7 +427,7 @@ function validate(): boolean {
     ]
   ]
 
-  let validators: [validationOutput[], string, Ref][] = [
+  const validators: [validationOutput[], string, Ref][] = [
     [[validateRequired(name.value)], 'name', nameRef],
     ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
     destinationAddressType.value === 'address'
@@ -530,13 +530,13 @@ async function createOrEditPortForward() {
 <template>
   <NeSideDrawer
     :is-shown="isShown"
-    @close="close()"
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     :title="
       id
         ? t('standalone.port_forward.edit_port_forward')
         : t('standalone.port_forward.add_port_forward')
     "
+    @close="close()"
   >
     <NeInlineNotification
       v-if="error.notificationTitle || firewallConfig.error"
@@ -564,52 +564,52 @@ async function createOrEditPortForward() {
       <div>
         <NeFormItemLabel>{{ t('standalone.port_forward.status') }}</NeFormItemLabel>
         <NeToggle
+          v-model="enabled"
           :label="
             enabled ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
           "
-          v-model="enabled"
         />
       </div>
       <NeTextInput
-        :label="t('standalone.port_forward.name')"
+        ref="nameRef"
         v-model="name"
+        :label="t('standalone.port_forward.name')"
         :disabled="isSubmittingRequest"
         :invalid-message="validationErrorBag.getFirstFor('name')"
-        ref="nameRef"
       />
       <NeCombobox
+        ref="protocolsRef"
+        v-model="protocols"
         :label="t('standalone.port_forward.protocols')"
         :helper-text="t('standalone.port_forward.protocol_helper')"
         :multiple="true"
         :options="supportedProtocols"
-        v-model="protocols"
         :placeholder="t('standalone.port_forward.choose_protocol')"
         :invalid-message="validationErrorBag.getFirstFor('protocols')"
         :disabled="isSubmittingRequest"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        :optionalLabel="t('common.optional')"
-        ref="protocolsRef"
+        :optional-label="t('common.optional')"
       />
       <NeInlineNotification
+        v-if="anyProtocolSelected"
         kind="info"
         :title="t('standalone.port_forward.any_protocol')"
         :description="t('standalone.port_forward.any_protocol_message')"
-        v-if="anyProtocolSelected"
       />
       <NeTextInput
         v-if="!anyProtocolSelected"
-        :label="t('standalone.port_forward.source_port')"
+        ref="sourcePortRef"
         v-model="sourcePort"
+        :label="t('standalone.port_forward.source_port')"
         :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
         :optional="true"
         :disabled="isSubmittingRequest"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
-        ref="sourcePortRef"
       >
         <template #tooltip>
           <NeTooltip>
@@ -626,7 +626,7 @@ async function createOrEditPortForward() {
         :title="t('error.cannot_retrieve_object_suggestions')"
         :description="error.listObjectSuggestions"
       >
-        <template #details v-if="error.listObjectSuggestionsDetails">
+        <template v-if="error.listObjectSuggestionsDetails" #details>
           {{ error.listObjectSuggestionsDetails }}
         </template>
       </NeInlineNotification>
@@ -648,28 +648,28 @@ async function createOrEditPortForward() {
       <!-- destination address -->
       <NeTextInput
         v-show="destinationAddressType === 'address'"
-        :label="t('standalone.port_forward.destination_address')"
+        ref="destinationIpRef"
         v-model="destinationIP"
+        :label="t('standalone.port_forward.destination_address')"
         :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
         :disabled="isSubmittingRequest"
-        ref="destinationIpRef"
       />
       <!-- destination object -->
       <NeCombobox
         v-show="destinationAddressType === 'object'"
+        ref="destinationObjectRef"
         v-model="destinationAddressObject"
         :disabled="isSubmittingRequest"
         :label="t('standalone.port_forward.destination_object')"
         :options="destinationObjectsComboboxOptions"
         :invalid-message="validationErrorBag.getFirstFor('destinationAddressObject')"
         :placeholder="t('ne_combobox.choose')"
-        :optionalLabel="t('common.optional')"
-        :noResultsLabel="t('ne_combobox.no_results')"
-        :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-        :noOptionsLabel="t('ne_combobox.no_options_label')"
+        :optional-label="t('common.optional')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
-        ref="destinationObjectRef"
       >
         <template #tooltip>
           <NeTooltip
@@ -681,14 +681,14 @@ async function createOrEditPortForward() {
       </NeCombobox>
       <NeTextInput
         v-if="!anyProtocolSelected"
-        :label="t('standalone.port_forward.destination_port')"
+        ref="destinationPortRef"
         v-model="destinationPort"
+        :label="t('standalone.port_forward.destination_port')"
         :invalid-message="validationErrorBag.getFirstFor('destinationPort')"
         :optional="true"
-        :optionalLabel="t('common.optional')"
+        :optional-label="t('common.optional')"
         :helper-text="t('standalone.port_forward.source_destination_port_helper')"
         :disabled="isSubmittingRequest"
-        ref="destinationPortRef"
       >
         <template #tooltip
           ><NeTooltip
@@ -701,36 +701,36 @@ async function createOrEditPortForward() {
       <!-- advanced settings -->
       <NeExpandable
         :label="t('common.advanced_settings')"
-        :isExpanded="showAdvancedSettings"
-        @setExpanded="(ev: boolean) => (showAdvancedSettings = ev)"
+        :is-expanded="showAdvancedSettings"
+        @set-expanded="(ev: boolean) => (showAdvancedSettings = ev)"
       >
         <div class="space-y-6">
           <NeCombobox
+            ref="destinationZoneRef"
+            v-model="destinationZone"
             :label="t('standalone.port_forward.destination_zone')"
             :placeholder="t('standalone.port_forward.choose_zone')"
             :options="supportedDestinationZones"
-            v-model="destinationZone"
             :disabled="isSubmittingRequest"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="destinationZoneRef"
+            :optional-label="t('common.optional')"
           />
           <NeCombobox
+            ref="wanRef"
+            v-model="wan"
             :label="t('standalone.port_forward.wan_ip')"
             :options="wanInterfaces"
-            v-model="wan"
             :disabled="isSubmittingRequest"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="wanRef"
+            :optional-label="t('common.optional')"
           />
           <!-- restrict type -->
           <NeRadioSelection
@@ -750,19 +750,20 @@ async function createOrEditPortForward() {
           <!-- restrict addresses -->
           <NeMultiTextInput
             v-show="restrictType === 'address'"
+            ref="restrictRef"
+            v-model="restrict"
             :title="t('standalone.port_forward.restricted_addresses')"
             :optional="true"
             :optional-label="t('common.optional')"
             :add-item-label="t('standalone.port_forward.add_ip_address')"
             :invalid-messages="restrictIPValidationErrors"
-            v-model="restrict"
             :disabled="isSubmittingRequest"
             @delete-item="resetRestrictIPValidationErrors"
-            ref="restrictRef"
           />
           <!-- restrict object -->
           <NeCombobox
             v-show="restrictType === 'object'"
+            ref="restrictObjectRef"
             v-model="restrictObject"
             :optional="true"
             :disabled="isSubmittingRequest"
@@ -770,13 +771,12 @@ async function createOrEditPortForward() {
             :options="restrictObjectsComboboxOptions"
             :invalid-message="validationErrorBag.getFirstFor('restrictObject')"
             :placeholder="t('ne_combobox.choose')"
-            :optionalLabel="t('common.optional')"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :optional-label="t('common.optional')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            ref="restrictObjectRef"
           >
             <template #tooltip>
               <NeTooltip
@@ -787,38 +787,38 @@ async function createOrEditPortForward() {
             </template>
           </NeCombobox>
           <NeToggle
-            :topLabel="t('standalone.port_forward.log')"
+            v-model="log"
+            :top-label="t('standalone.port_forward.log')"
             :label="
               log ? t('standalone.port_forward.enabled') : t('standalone.port_forward.disabled')
             "
-            v-model="log"
             :disabled="isSubmittingRequest"
           />
           <NeToggle
-            :topLabel="t('standalone.port_forward.hairpin_nat')"
+            v-model="reflection"
+            :top-label="t('standalone.port_forward.hairpin_nat')"
             :label="
               reflection
                 ? t('standalone.port_forward.enabled')
                 : t('standalone.port_forward.disabled')
             "
-            v-model="reflection"
             :disabled="isSubmittingRequest"
           />
           <NeCombobox
             v-if="reflection"
+            ref="reflectionZonesRef"
+            v-model="reflectionZones"
             :label="t('standalone.port_forward.hairpin_nat_zones')"
             :placeholder="t('standalone.port_forward.choose_zone')"
             :options="supportedReflectionZones"
-            v-model="reflectionZones"
             :invalid-message="validationErrorBag.getFirstFor('reflectionZones')"
             :multiple="true"
-            :noResultsLabel="t('ne_combobox.no_results')"
-            :limitedOptionsLabel="t('ne_combobox.limited_options_label')"
-            :noOptionsLabel="t('ne_combobox.no_options_label')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            :optionalLabel="t('common.optional')"
-            ref="reflectionZonesRef"
+            :optional-label="t('common.optional')"
           />
         </div>
       </NeExpandable>
@@ -827,9 +827,9 @@ async function createOrEditPortForward() {
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
         <NeButton
           kind="primary"
-          @click="createOrEditPortForward()"
           :disabled="isSubmittingRequest"
           :loading="isSubmittingRequest"
+          @click="createOrEditPortForward()"
           >{{
             id
               ? t('standalone.port_forward.save_port_forward')

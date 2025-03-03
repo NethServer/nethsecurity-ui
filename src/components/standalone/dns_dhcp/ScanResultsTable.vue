@@ -60,11 +60,11 @@ function getKebabMenuItems(scanResult: ScanResult) {
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.dns_dhcp.scan_results')"
-    cardBreakpoint="xl"
+    :aria-label="t('standalone.dns_dhcp.scan_results')"
+    card-breakpoint="xl"
     :loading="loading"
-    :skeletonColumns="5"
-    :skeletonRows="5"
+    :skeleton-columns="5"
+    :skeleton-rows="5"
   >
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.dns_dhcp.ip_address') }}</NeTableHeadCell>
@@ -91,7 +91,7 @@ function getKebabMenuItems(scanResult: ScanResult) {
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="flex justify-end">
-            <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+            <NeDropdown :items="getKebabMenuItems(item)" :align-to-right="true" />
           </div>
         </NeTableCell>
       </NeTableRow>
@@ -107,13 +107,15 @@ function getKebabMenuItems(scanResult: ScanResult) {
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
-        @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

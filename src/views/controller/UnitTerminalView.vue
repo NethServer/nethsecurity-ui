@@ -31,11 +31,11 @@ const unitName = ref('')
 const websocketId = ref('')
 const connectionStatus = ref<ConnectionStatus>('pending')
 
-let loading = ref({
+const loading = ref({
   getDefaults: false
 })
 
-let error = ref({
+const error = ref({
   getDefaults: ''
 })
 

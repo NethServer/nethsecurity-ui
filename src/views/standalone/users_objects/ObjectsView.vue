@@ -30,10 +30,10 @@ const { tabs, selectedTab } = useTabs([
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"
-      :srTabsLabel="t('ne_tabs.tabs')"
-      :srSelectTabLabel="t('ne_tabs.select_a_tab')"
-      @selectTab="selectedTab = $event"
+      :sr-tabs-label="t('ne_tabs.tabs')"
+      :sr-select-tab-label="t('ne_tabs.select_a_tab')"
       class="mb-8"
+      @select-tab="selectedTab = $event"
     />
     <HostSets v-if="selectedTab === 'hostSets'" />
     <DomainSets v-else-if="selectedTab === 'domainSets'" />

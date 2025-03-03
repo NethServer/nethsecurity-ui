@@ -127,10 +127,10 @@ function getManagementPageLabel(subtype: string) {
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.objects.host_sets')"
-    cardBreakpoint="xl"
+    :aria-label="t('standalone.objects.host_sets')"
+    card-breakpoint="xl"
     :loading="loading"
-    :skeletonRows="6"
+    :skeleton-rows="6"
   >
     <NeTableHead>
       <NeTableHeadCell>
@@ -181,7 +181,7 @@ function getManagementPageLabel(subtype: string) {
         </NeTableCell>
         <!-- records -->
         <NeTableCell :data-label="t('standalone.objects.records')">
-          <HostSetRecords :records="item.ipaddr" :allHostSets="allHostSets" />
+          <HostSetRecords :records="item.ipaddr" :all-host-sets="allHostSets" />
         </NeTableCell>
         <!-- actions -->
         <NeTableCell :data-label="t('common.actions')">
@@ -206,8 +206,8 @@ function getManagementPageLabel(subtype: string) {
             <NeButton
               v-else
               kind="tertiary"
-              @click="goToManagementPage(item.subtype)"
               class="shrink-0"
+              @click="goToManagementPage(item.subtype)"
             >
               <template #prefix>
                 <font-awesome-icon
@@ -219,7 +219,7 @@ function getManagementPageLabel(subtype: string) {
               {{ getManagementPageLabel(item.subtype) }}
             </NeButton>
             <!-- kebab menu -->
-            <NeDropdown :items="getKebabMenuItems(item)" :alignToRight="true" />
+            <NeDropdown :items="getKebabMenuItems(item)" :align-to-right="true" />
           </div>
         </NeTableCell>
       </NeTableRow>
@@ -235,13 +235,15 @@ function getManagementPageLabel(subtype: string) {
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
-        @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

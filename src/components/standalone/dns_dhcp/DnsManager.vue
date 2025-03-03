@@ -59,8 +59,8 @@ function validate() {
   })
 
   let validForwardingServers = true
-  for (let [index, server] of dnsForwardingServers.value.entries()) {
-    for (let validator of [validateRequired(server), validateDNSForwardingServer(server)]) {
+  for (const [index, server] of dnsForwardingServers.value.entries()) {
+    for (const validator of [validateRequired(server), validateDNSForwardingServer(server)]) {
       if (!validator.valid) {
         dnsForwardingServersErrors.value[index] = t(validator.errMessage as string)
         validForwardingServers = false
@@ -128,12 +128,12 @@ onMounted(() => {
 <template>
   <div class="flex max-w-xl flex-col gap-y-8">
     <NeInlineNotification
-      kind="error"
       v-if="error.notificationTitle"
+      kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
     >
-      <template #details v-if="error.notificationDetails">
+      <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
@@ -153,8 +153,8 @@ onMounted(() => {
         </template>
       </NeMultiTextInput>
       <NeTextInput
-        :label="t('standalone.dns_dhcp.dns_domain')"
         v-model="dnsDomain"
+        :label="t('standalone.dns_dhcp.dns_domain')"
         :invalid-message="validationErrorBag.getFirstFor('dnsDomain')"
       >
         <template #tooltip
@@ -165,14 +165,14 @@ onMounted(() => {
           ></template
         >
       </NeTextInput>
-      <NeToggle :label="t('standalone.dns_dhcp.log_dns_queries')" v-model="logDnsQueries" />
+      <NeToggle v-model="logDnsQueries" :label="t('standalone.dns_dhcp.log_dns_queries')" />
       <hr />
       <div class="flex justify-end">
         <NeButton
           kind="primary"
-          @click="updateDnsConfig"
           :disabled="isUpdatingDnsConfig"
           :loading="isUpdatingDnsConfig"
+          @click="updateDnsConfig"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'floppy-disk']"

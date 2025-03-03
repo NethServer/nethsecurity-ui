@@ -26,17 +26,17 @@ const formPing = ref({
 const loading = ref(true)
 const saving = ref(false)
 
-let errorConfiguration = ref({
+const errorConfiguration = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorSaving = ref({
+const errorSaving = ref({
   notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
-let errorForm = ref({
+const errorForm = ref({
   hostList: ['']
 })
 
@@ -47,7 +47,7 @@ onMounted(() => {
 async function getConfiguration() {
   loading.value = true
   try {
-    let res = await ubusCall('ns.netdata', 'get-configuration', {})
+    const res = await ubusCall('ns.netdata', 'get-configuration', {})
     if (res?.data?.hosts) {
       formPing.value.hostList = res.data.hosts
     }
@@ -63,9 +63,9 @@ async function getConfiguration() {
 function validate() {
   let isValidationOk = true
 
-  for (let [index, item] of formPing.value.hostList.entries()) {
+  for (const [index, item] of formPing.value.hostList.entries()) {
     if (item) {
-      let { valid, errMessage } = validateHost(item)
+      const { valid, errMessage } = validateHost(item)
 
       if (!valid) {
         errorForm.value.hostList[index] = t(errMessage as string)
@@ -84,7 +84,7 @@ function save() {
   if (validate()) {
     saving.value = true
 
-    let payload = {
+    const payload = {
       hosts: formPing.value.hostList.filter((item) => item)
     }
 
@@ -127,6 +127,7 @@ function save() {
     <template v-if="!loading && !errorConfiguration.notificationTitle">
       <div class="max-w-md">
         <NeMultiTextInput
+          ref="hostListRef"
           v-model="formPing.hostList"
           :title="t('standalone.ping_latency_monitor.host_to_monitor')"
           :add-item-label="t('standalone.ping_latency_monitor.add_host')"
@@ -134,8 +135,7 @@ function save() {
           :disable-inputs="saving"
           :disable-add-button="saving"
           optional
-          :optionalLabel="t('common.optional')"
-          ref="hostListRef"
+          :optional-label="t('common.optional')"
         />
         <div class="mt-6">
           <hr />

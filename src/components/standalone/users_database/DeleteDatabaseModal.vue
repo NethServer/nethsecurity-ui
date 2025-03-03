@@ -83,11 +83,11 @@ const isUsed = computed((): boolean => {
     :visible="visible"
     kind="warning"
     :title="t('standalone.users_database.delete_database')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteDatabase()"
+    @primary-click="deleteDatabase()"
     @close="close()"
   >
     {{
@@ -101,7 +101,7 @@ const isUsed = computed((): boolean => {
       :title="t('error.cannot_delete_database')"
       :description="error.notificationDescription"
       class="my-2"
-      ><template #details v-if="error.notificationDetails">
+      ><template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template></NeInlineNotification
     >

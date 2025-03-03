@@ -41,8 +41,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.tunnels, {
 <template>
   <NeCard :title="t('standalone.real_time_monitor.configured_tunnels')">
     <NeTable
-      :ariaLabel="t('standalone.real_time_monitor.configured_tunnels')"
-      cardBreakpoint="sm"
+      :aria-label="t('standalone.real_time_monitor.configured_tunnels')"
+      card-breakpoint="sm"
       class="mt-2"
     >
       <NeTableHead>
@@ -97,11 +97,13 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.tunnels, {
           @select-page="
             (page: number) => {
               currentPage = page
-            }"
-          @selectPageSize="
+            }
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
-            }"
+            }
+          "
         />
       </template>
     </NeTable>

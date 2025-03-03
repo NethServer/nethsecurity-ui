@@ -47,11 +47,11 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
 
 <template>
   <NeTable
-    :ariaLabel="t('standalone.nat_helpers.title')"
-    cardBreakpoint="xl"
+    :aria-label="t('standalone.nat_helpers.title')"
+    card-breakpoint="xl"
     :loading="loading"
-    :skeletonColumns="4"
-    :skeletonRows="7"
+    :skeleton-columns="4"
+    :skeleton-rows="7"
   >
     <NeTableHead>
       <NeTableHeadCell>{{ t('standalone.nat_helpers.module') }}</NeTableHeadCell>
@@ -87,7 +87,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
           </NeEmptyState>
         </NeTableCell>
       </NeTableRow>
-      <NeTableRow v-else v-for="(item, index) in paginatedItems" :key="index">
+      <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
         <NeTableCell :data-label="t('standalone.nat_helpers.module')">
           {{ item.name }}
         </NeTableCell>
@@ -161,13 +161,15 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
         @select-page="
-            (page: number) => {
-              currentPage = page
-            }"
-        @selectPageSize="
-            (size: number) => {
-              pageSize = size
-            }"
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
       />
     </template>
   </NeTable>

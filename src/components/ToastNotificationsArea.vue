@@ -7,14 +7,16 @@
 import { computed } from 'vue'
 import { useNotificationsStore } from '../stores/notifications'
 import AxiosErrorModal from './AxiosErrorModal.vue'
-import { NeToastNotification } from '@nethesis/vue-components'
+import { type NeNotification, NeToastNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
 
 const notificationsToShow = computed(() => {
-  return notificationsStore.notifications.filter((notification) => notification.isShown)
+  return notificationsStore.notifications.filter(
+    (notification: NeNotification) => notification.isShown
+  )
 })
 </script>
 
@@ -31,8 +33,8 @@ const notificationsToShow = computed(() => {
               v-for="notification in notificationsToShow"
               :key="notification.id"
               :notification="notification"
-              :srCloseLabel="t('common.close')"
-              showCloseButton
+              :sr-close-label="t('common.close')"
+              show-close-button
               @close="notificationsStore.hideNotification(notification.id)"
             />
           </TransitionGroup>

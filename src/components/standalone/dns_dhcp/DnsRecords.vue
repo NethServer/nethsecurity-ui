@@ -69,9 +69,9 @@ async function getUciChanges() {
     <template #delete-item-modal="{ isModalShown, closeModal, itemToDelete, reloadItems }">
       <DeleteDnsRecordModal
         :visible="isModalShown"
+        :item-to-delete="itemToDelete"
         @close="closeModal()"
         @record-deleted="reloadItems()"
-        :item-to-delete="itemToDelete"
       />
     </template>
     <template #create-edit-item-drawer="{ isDrawerShown, itemToEdit, closeDrawer, reloadItems }">

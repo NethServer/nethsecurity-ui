@@ -50,16 +50,16 @@ const props = defineProps({
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 
-let createEditRoute = ref(false)
-let routes: any = ref([])
-let table: any = ref([])
-let loading = ref(true)
-let selectedRoute = ref({})
-let deleting = ref(false)
-let deleteError = ref<Error>()
-let deleteRouteId = ref(undefined)
-let deleteRouteName = ref(undefined)
-let error = ref({
+const createEditRoute = ref(false)
+const routes: any = ref([])
+const table: any = ref([])
+const loading = ref(true)
+const selectedRoute = ref({})
+const deleting = ref(false)
+const deleteError = ref<Error>()
+const deleteRouteId = ref(undefined)
+const deleteRouteName = ref(undefined)
+const error = ref({
   notificationTitle: '',
   notificationDescription: ''
 })
@@ -96,7 +96,7 @@ async function loadRoutes() {
     })
 
     const items: any = []
-    for (let item in res.data.routes) {
+    for (const item in res.data.routes) {
       let obj = {
         id: item
       }
@@ -172,7 +172,7 @@ function deleteRouteHandler() {
 }
 
 function scrollToMainTable() {
-  let element = document.getElementById('divMainTable')
+  const element = document.getElementById('divMainTable')
   if (element) {
     element.scrollIntoView({
       behavior: 'smooth',
@@ -241,11 +241,11 @@ function scrollToMainTable() {
       <NeSkeleton v-if="loading" :lines="3" :size="'sm'" />
       <template v-if="!loading && routes.length > 0">
         <NeTable
-          :ariaLabel="t('standalone.routes.title')"
-          cardBreakpoint="xl"
+          :aria-label="t('standalone.routes.title')"
+          card-breakpoint="xl"
           :loading="loading"
-          :skeletonColumns="7"
-          :skeletonRows="5"
+          :skeleton-columns="7"
+          :skeleton-rows="5"
         >
           <NeTableHead>
             <NeTableHeadCell>{{ t('standalone.routes.route_name') }}</NeTableHeadCell>
@@ -268,7 +268,7 @@ function scrollToMainTable() {
                 />
               </NeTableCell>
             </NeTableRow>
-            <NeTableRow v-else v-for="item in paginatedItemsRoutes" :key="item.id">
+            <NeTableRow v-for="item in paginatedItemsRoutes" v-else :key="item.id">
               <NeTableCell :data-label="t('standalone.routes.route_name')">
                 <div :class="{ 'opacity-30': item.disabled !== '0' }">
                   <span v-if="item.ns_description">{{ item.ns_description }}</span>
@@ -370,11 +370,13 @@ function scrollToMainTable() {
               @select-page="
                 (page: number) => {
                   currentPageRoutes = page
-                }"
-              @selectPageSize="
+                }
+              "
+              @select-page-size="
                 (size: number) => {
                   pageSizeRoutes = size
-                }"
+                }
+              "
             />
           </template>
         </NeTable>
@@ -383,11 +385,11 @@ function scrollToMainTable() {
         <NeHeading tag="h5" class="mb-2">{{ t('standalone.routes.main_table') }}</NeHeading>
         <template v-if="!loading">
           <NeTable
-            :ariaLabel="t('standalone.routes.main_table')"
-            cardBreakpoint="xl"
+            :aria-label="t('standalone.routes.main_table')"
+            card-breakpoint="xl"
             :loading="loading"
-            :skeletonColumns="5"
-            :skeletonRows="5"
+            :skeleton-columns="5"
+            :skeleton-rows="5"
           >
             <NeTableHead>
               <NeTableHeadCell>{{ t('standalone.routes.route_interface') }}</NeTableHeadCell>
@@ -406,7 +408,7 @@ function scrollToMainTable() {
                   />
                 </NeTableCell>
               </NeTableRow>
-              <NeTableRow v-else v-for="item in paginatedItemsTable" :key="item.id">
+              <NeTableRow v-for="item in paginatedItemsTable" v-else :key="item.id">
                 <NeTableCell :data-label="t('standalone.routes.route_interface')">
                   <div>
                     {{ item.interface }}
@@ -450,11 +452,13 @@ function scrollToMainTable() {
                 @select-page="
                   (page: number) => {
                     currentPageTable = page
-                  }"
-                @selectPageSize="
+                  }
+                "
+                @select-page-size="
                   (size: number) => {
                     pageSizeTable = size
-                  }"
+                  }
+                "
               />
             </template>
           </NeTable>
@@ -476,7 +480,7 @@ function scrollToMainTable() {
     :primary-button-disabled="deleting"
     :primary-button-loading="deleting"
     :primary-label="t('common.delete')"
-    :cancelLabel="t('common.cancel')"
+    :cancel-label="t('common.cancel')"
     :title="t('standalone.routes.delete_route')"
     :visible="deleteRouteId !== undefined"
     kind="warning"

@@ -50,20 +50,20 @@ const emit = defineEmits(['close', 'reloadData'])
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 
-let interfaceName = ref('')
-let nameRef = ref()
-let ipv4AddressRef = ref()
-let ipv4Addresses: Ref<string[]> = ref([''])
-let ipv6Addresses: Ref<string[]> = ref([''])
+const interfaceName = ref('')
+const nameRef = ref()
+const ipv4AddressRef = ref()
+const ipv4Addresses: Ref<string[]> = ref([''])
+const ipv6Addresses: Ref<string[]> = ref([''])
 
 const ipv4AddressesNotEmpty = computed(() => ipv4Addresses.value.some((x) => x != ''))
 const ipv6AddressesNotEmpty = computed(() => ipv6Addresses.value.some((x) => x != ''))
 
-let loading = ref({
+const loading = ref({
   create: false
 })
 
-let error = ref({
+const error = ref({
   notificationTitle: '',
   notificationDescription: '',
   interfaceName: '',
@@ -110,15 +110,13 @@ function closeDrawer() {
 
 // move to local library util?
 function clearErrors() {
-  for (const [key, value] of Object.entries(error.value) as [string, any][]) {
-    if (typeof value === 'string') {
-      // @ts-ignore
-      error.value[key] = ''
-    } else if (Array.isArray(value)) {
-      // @ts-ignore
-      error.value[key] = []
-    }
-  }
+  error.value.notificationTitle = ''
+  error.value.notificationDescription = ''
+  error.value.interfaceName = ''
+  error.value.ipv4Addresses = []
+  error.value.ipv6Addresses = []
+  error.value.ipv4AddressList = ''
+  error.value.ipv6AddressList = ''
 }
 
 function validate() {
@@ -130,7 +128,7 @@ function validate() {
 
   {
     // check required
-    let { valid, errMessage } = validateRequired(interfaceName.value)
+    const { valid, errMessage } = validateRequired(interfaceName.value)
     if (!valid) {
       error.value.interfaceName = t(errMessage as string)
       if (isValidationOk) {
@@ -140,7 +138,7 @@ function validate() {
     } else {
       // check syntax
       {
-        let { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
+        const { valid, errMessage, i18Params } = validateUciName(interfaceName.value, 15)
         if (!valid) {
           error.value.interfaceName = t(errMessage as string, i18Params as any)
           if (isValidationOk) {
@@ -206,7 +204,7 @@ function validate() {
 
       {
         // check required
-        let { valid, errMessage } = validateRequired(ipv4Address)
+        const { valid, errMessage } = validateRequired(ipv4Address)
 
         if (!valid) {
           error.value.ipv4Addresses[index] = t(errMessage as string)
@@ -214,7 +212,7 @@ function validate() {
         } else {
           {
             // check syntax
-            let { valid, errMessage } = validateIp4Cidr(ipv4Address)
+            const { valid, errMessage } = validateIp4Cidr(ipv4Address)
             if (!valid) {
               error.value.ipv4Addresses[index] = t(errMessage as string)
               isValidationOk = false
@@ -234,7 +232,7 @@ function validate() {
 
       {
         // check required
-        let { valid, errMessage } = validateRequired(ipv6Address)
+        const { valid, errMessage } = validateRequired(ipv6Address)
 
         if (!valid) {
           error.value.ipv6Addresses[index] = t(errMessage as string)
@@ -242,7 +240,7 @@ function validate() {
         } else {
           {
             // check syntax
-            let { valid, errMessage } = validateIp6Cidr(ipv6Address)
+            const { valid, errMessage } = validateIp6Cidr(ipv6Address)
             if (!valid) {
               error.value.ipv6Addresses[index] = t(errMessage as string)
               isValidationOk = false
@@ -289,7 +287,7 @@ async function saveAliasInterface() {
 
 <template>
   <NeSideDrawer
-    :isShown="isShown"
+    :is-shown="isShown"
     :title="
       isCreating
         ? t('standalone.interfaces_and_devices.create_alias_for_interface', {
@@ -297,34 +295,34 @@ async function saveAliasInterface() {
           })
         : t('standalone.interfaces_and_devices.edit_alias_interface')
     "
-    :closeAriaLabel="t('common.shell.close_side_drawer')"
+    :close-aria-label="t('common.shell.close_side_drawer')"
     @close="closeDrawer"
   >
     <form>
       <div class="space-y-6">
         <NeTextInput
-          :label="t('standalone.interfaces_and_devices.name')"
-          v-model.trim="interfaceName"
-          :invalidMessage="t(error.interfaceName)"
-          :disabled="loading.create || !isCreating"
           ref="nameRef"
+          v-model.trim="interfaceName"
+          :label="t('standalone.interfaces_and_devices.name')"
+          :invalid-message="t(error.interfaceName)"
+          :disabled="loading.create || !isCreating"
         />
         <!-- ip v4 address list -->
         <NeMultiTextInput
+          ref="ipv4AddressRef"
+          v-model="ipv4Addresses"
           :title="t('standalone.interfaces_and_devices.ipv4_address_cidr')"
           :add-item-label="t('standalone.interfaces_and_devices.add_ip_address')"
-          v-model="ipv4Addresses"
           :invalid-messages="error.ipv4Addresses"
           :general-invalid-message="error.ipv4AddressList"
-          ref="ipv4AddressRef"
           :required="true"
         />
         <!-- ip v6 address list (only if ipv6 is enabled) -->
         <NeMultiTextInput
           v-if="ipv6Enabled"
+          v-model="ipv6Addresses"
           :title="t('standalone.interfaces_and_devices.ipv6_address_cidr')"
           :add-item-label="t('standalone.interfaces_and_devices.add_ip_address')"
-          v-model="ipv6Addresses"
           :invalid-messages="error.ipv6Addresses"
           :general-invalid-message="error.ipv6AddressList"
           :required="true"
@@ -342,18 +340,18 @@ async function saveAliasInterface() {
         <NeButton
           kind="tertiary"
           size="lg"
-          @click.prevent="closeDrawer"
           :disabled="loading.create"
           class="mr-3"
+          @click.prevent="closeDrawer"
         >
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton
           kind="primary"
           size="lg"
-          @click.prevent="saveAliasInterface"
           :disabled="loading.create"
           :loading="loading.create"
+          @click.prevent="saveAliasInterface"
         >
           {{
             isCreating

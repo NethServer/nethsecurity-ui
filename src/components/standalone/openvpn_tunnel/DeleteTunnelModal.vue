@@ -56,12 +56,12 @@ function close() {
     :visible="visible"
     kind="warning"
     :title="t('standalone.openvpn_tunnel.delete_tunnel')"
-    :primaryLabel="t('common.delete')"
-    :primaryButtonDisabled="isDeleting"
-    :primaryButtonLoading="isDeleting"
+    :primary-label="t('common.delete')"
+    :primary-button-disabled="isDeleting"
+    :primary-button-loading="isDeleting"
     primary-button-kind="danger"
     :close-aria-label="t('common.close')"
-    @primaryClick="deleteTunnel()"
+    @primary-click="deleteTunnel()"
     @close="close()"
   >
     {{

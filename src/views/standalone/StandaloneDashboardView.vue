@@ -15,6 +15,7 @@ import OpenVpnTunnelOrIpsecCard from '@/components/standalone/dashboard/OpenVpnT
 import InternetConnectionCard from '@/components/standalone/dashboard/InternetConnectionCard.vue'
 import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIpCard.vue'
 import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
+import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingStatusCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -86,6 +87,8 @@ function goTo(path: string) {
     </OpenVpnTunnelOrIpsecCard>
     <!-- threat shield IP / banIP -->
     <ThreatShieldIpCard />
+    <!-- MAC binding -->
+    <MacBindingStatusCard />
     <!-- IPS -->
     <IpsServiceCard />
     <!-- threat shield dns -->

@@ -1068,8 +1068,9 @@
     },
     "dns_dhcp": {
       "title": "DNS and DHCP",
+      "dhcp": "DHCP",
       "tabs": {
-        "dhcp": "DHCP",
+        "dhcp": "DHCP and MAC binding",
         "dns": "DNS",
         "static_leases": "Static leases",
         "dynamic_leases": "Dynamic leases",
@@ -1150,7 +1151,17 @@
       "scan_not_requested_empty_state": "Click 'Scan network' on an interface to discover devices",
       "scan_no_results_empty_state": "No devices found on interface '{iface}'",
       "reservation_location_info_description": "This reservation will appear in:",
-      "dns_record_location_info_description": "This DNS record will appear in:"
+      "dns_record_location_info_description": "This DNS record will appear in:",
+      "mac_binding": "MAC Binding",
+      "mac_binding_tooltip": "Filters traffic based on IP-MAC bindings defined in the static lease configuration.",
+      "soft": "Soft",
+      "strict": "Strict",
+      "ip_range": "IP range",
+      "plus_n_others": "+{n} other | +{n} others",
+      "soft_binding": "Soft binding",
+      "soft_binding_description": "Allows hosts without a reservation, blocks mismatched IP/MAC",
+      "strict_binding": "Strict binding",
+      "strict_binding_description": "Only hosts with a reservation allowed, others are blocked"
     },
     "routes": {
       "title": "Routes",

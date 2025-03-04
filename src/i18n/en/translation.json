@@ -1153,7 +1153,7 @@
       "reservation_location_info_description": "This reservation will appear in:",
       "dns_record_location_info_description": "This DNS record will appear in:",
       "mac_binding": "MAC Binding",
-      "mac_binding_tooltip": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc.",
+      "mac_binding_tooltip": "Filters traffic based on IP-MAC bindings defined in the static lease configuration.",
       "soft": "Soft",
       "strict": "Strict",
       "ip_range": "IP range",

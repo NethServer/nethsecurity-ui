@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/NethServer/nethsecurity-ui/compare/1.20.6...1.21.0) (2025-03-05)
+
+
+### Features
+
+* **dhcp:** MAC-IP Binding ([#520](https://github.com/NethServer/nethsecurity-ui/issues/520)) ([9e65d02](https://github.com/NethServer/nethsecurity-ui/commit/9e65d02f2da980ad8bb73ea9604bdda4a6c78fcc))
+
 ## [1.20.6](https://github.com/NethServer/nethsecurity-ui/compare/1.20.5...1.20.6) (2025-02-21)
 
 

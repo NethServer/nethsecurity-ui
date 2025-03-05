@@ -1,10 +1,23 @@
 //  Copyright (C) 2024 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { SpecialZones, type Forwarding, type Zone } from '@/stores/standalone/firewall'
+import { type Forwarding, SpecialZones, type Zone } from '@/stores/standalone/firewall'
 import { useI18n } from 'vue-i18n'
 import { isEqual, uniqWith } from 'lodash-es'
 import type { UciNetworkConfig } from '@/composables/useUciNetworkConfig'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import {
+  faCircleQuestion,
+  faEarthAmericas,
+  faGlobe,
+  faLocationDot,
+  faShield,
+  faStar,
+  faUnlock,
+  faUsers,
+  faWarning,
+  faWifi
+} from '@fortawesome/free-solid-svg-icons'
 
 export interface DeviceOrIface {
   name?: string
@@ -214,6 +227,44 @@ export function getZoneBorderColorClasses(zoneName: string) {
   }
 }
 
+/**
+ * Get the icon for a specific zone.
+ * @param zone
+ */
+export function getIconFromZone(zone?: string): IconDefinition {
+  switch (zone) {
+    case 'lan':
+      return faLocationDot
+    case 'wan':
+      return faEarthAmericas
+    case 'guest':
+      return faUsers
+    case 'dmz':
+      return faShield
+    case 'hotspot':
+      return faWifi
+    case 'rwopenvpn':
+    case 'openvpn':
+    case 'ipsec':
+    case 'vpn':
+      return faGlobe
+    case 'unassigned':
+      return faUnlock
+    case 'unknown':
+      return faWarning
+    case undefined:
+      return faCircleQuestion
+    default:
+      return faStar
+  }
+}
+
+/**
+ * Get the icon name for a specific zone
+ * @param zoneName
+ * @deprecated Use getIconFromZone instead
+ * @see getIconFromZone
+ */
 export function getZoneIcon(zoneName: string) {
   switch (zoneName) {
     case 'lan':

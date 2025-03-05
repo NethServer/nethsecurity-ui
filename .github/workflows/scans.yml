@@ -33,3 +33,22 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy.sarif.json
+
+  release:
+    name: Release
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate CycloneDX SBOM
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: cyclonedx
+          output: nethsecurity-ui.sbom.json
+      - name: Attach SBOM Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload ${{ github.event.name }} nethsecurity-ui.sbom.json

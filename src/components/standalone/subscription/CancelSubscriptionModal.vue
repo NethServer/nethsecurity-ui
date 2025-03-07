@@ -9,6 +9,7 @@ import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-compon
 import { NeModal } from '@nethesis/vue-components'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const props = defineProps({
   visible: {
@@ -19,6 +20,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'subscription-update'])
 
+const subscriptionStore = useSubscriptionStore()
 const { t } = useI18n()
 
 const loading = ref({
@@ -49,6 +51,7 @@ async function cancelSubscription() {
     await ubusCall('ns.subscription', 'unregister')
     emit('close')
     emit('subscription-update')
+    subscriptionStore.loadData()
   } catch (err: any) {
     error.value.unregister = t(getAxiosErrorMessage(err))
     error.value.unregisterDetails = err.toString()

@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
+import { useBackupsStore } from '@/stores/standalone/backups.ts'
 
 const { t } = useI18n()
 
@@ -18,12 +19,14 @@ defineProps({
     required: true
   },
   unitName: {
-    type: String
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['success', 'close'])
 const loading = ref(false)
+const backups = useBackupsStore()
 
 const objNotification = {
   notificationTitle: '',
@@ -38,6 +41,7 @@ async function runBackup() {
     const res = await ubusCall('ns.backup', 'registered-backup')
     if (res?.data?.message && res?.data?.message === 'success') {
       emit('success')
+      backups.loadData()
     }
   } catch (exception: any) {
     errorRunBackup.value.notificationTitle = t('error.cannot_run_backup')
@@ -59,6 +63,8 @@ async function runBackup() {
     kind="info"
     primary-button-kind="primary"
     :close-aria-label="t('common.close')"
+    :secondary-label="t('common.close')"
+    secondary-button-kind="tertiary"
     @close="$emit('close')"
     @primary-click="runBackup()"
   >

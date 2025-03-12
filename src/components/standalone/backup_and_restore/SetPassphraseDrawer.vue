@@ -4,27 +4,27 @@
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeInlineNotification,
+  getAxiosErrorMessage,
   NeButton,
+  NeInlineNotification,
   NeSideDrawer,
-  NeTooltip,
+  NeSkeleton,
   NeTextInput,
-  getAxiosErrorMessage
+  NeTooltip
 } from '@nethesis/vue-components'
-import { AxiosError } from 'axios'
+import { isAxiosError } from 'axios'
+import { useBackupsStore } from '@/stores/standalone/backups.ts'
+import { MessageBag, validateRequired } from '@/lib/validation.ts'
 
 const { t } = useI18n()
+const backup = useBackupsStore()
 
 const props = defineProps({
   showPassphraseDrawer: {
-    type: Boolean,
-    required: true
-  },
-  isSetPassphrase: {
     type: Boolean,
     required: true
   }
@@ -35,64 +35,85 @@ const emit = defineEmits(['success', 'close'])
 watch(
   () => props.showPassphraseDrawer,
   () => {
-    errorSetPassphrase.value = {
-      notificationTitle: '',
-      notificationDescription: '',
-      notificationDetails: ''
-    }
+    error.value = undefined
+    passphrase.value = ''
   }
 )
 
-const formPassphrase = ref({
-  passphrase: ''
+const title = computed((): string => {
+  if (backup.isPassPhraseSet) {
+    return t('standalone.backup_and_restore.backup.edit_passphrase')
+  } else {
+    return t('standalone.backup_and_restore.backup.configure_passphrase')
+  }
 })
 
+const label = computed((): string => {
+  if (backup.isPassPhraseSet) {
+    return t('standalone.backup_and_restore.backup.new_passphrase')
+  } else {
+    return t('standalone.backup_and_restore.backup.passphrase')
+  }
+})
+
+const passphrase = ref('')
+const error = ref<Error>()
 const loading = ref(false)
+const validation = ref(new MessageBag())
 
-const errorSetPassphrase = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
-})
+function validate(): boolean {
+  validation.value.clear()
+  const { valid, errMessage } = validateRequired(passphrase.value)
+  if (!valid) {
+    validation.value.set('passphrase', errMessage as string)
+  }
+  return validation.value.size == 0
+}
 
 async function setPassphrase() {
-  loading.value = true
-
-  const payload = {
-    passphrase: formPassphrase.value.passphrase
-  }
-
-  ubusCall('ns.backup', 'set-passphrase', payload)
-    .then((response) => {
-      if (response?.data?.message && response.data.message == 'success') {
+  if (validate()) {
+    loading.value = true
+    error.value = undefined
+    ubusCall('ns.backup', 'set-passphrase', {
+      passphrase: passphrase.value
+    })
+      .then(() => {
+        backup.isPassPhraseSet = true
         emit('success')
-      }
-    })
-    .catch((exception: AxiosError) => {
-      errorSetPassphrase.value.notificationTitle = t('error.cannot_set_passphrase')
-      errorSetPassphrase.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorSetPassphrase.value.notificationDetails = exception.toString()
-    })
-    .finally(() => {
-      loading.value = false
-      formPassphrase.value.passphrase = ''
-    })
+      })
+      .catch((exception: Error) => {
+        error.value = exception
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
 }
 </script>
 
 <template>
-  <NeSideDrawer
-    :is-shown="showPassphraseDrawer"
-    :title="t('standalone.backup_and_restore.backup.passphrase_drawer_title')"
-    @close="$emit('close')"
-  >
-    <div class="space-y-8">
+  <NeSideDrawer :is-shown="showPassphraseDrawer" :title="title" @close="$emit('close')">
+    <NeSkeleton v-if="backup.loading" :lines="10" />
+    <form class="space-y-8" @submit.prevent="setPassphrase">
+      <NeInlineNotification
+        v-if="error != undefined"
+        :description="t(getAxiosErrorMessage(error))"
+        :title="t('error.cannot_set_passphrase')"
+        kind="error"
+      >
+        <template v-if="!isAxiosError(error)" #details>
+          {{ error.toString() }}
+        </template>
+      </NeInlineNotification>
+      <input autocomplete="username" hidden name="username" value="firewall-backup-password" />
       <NeTextInput
-        v-model="formPassphrase.passphrase"
-        :label="t('standalone.backup_and_restore.backup.passphrase')"
+        ref="passphrase-field"
+        v-model="passphrase"
+        :invalid-message="t(validation.getFirstI18nKeyFor('passphrase'))"
         is-password
-        :helper-text="t('standalone.backup_and_restore.backup.passphrase_reser_helper')"
-        :placeholder="isSetPassphrase ? t('standalone.backup_and_restore.backup.unchanged') : ''"
+        :label="label"
+        autocomplete="new-password"
+        required
       >
         <template #tooltip>
           <NeTooltip>
@@ -103,25 +124,38 @@ async function setPassphrase() {
         </template>
       </NeTextInput>
       <NeInlineNotification
-        v-if="errorSetPassphrase.notificationTitle"
-        class="my-4"
-        kind="error"
-        :title="errorSetPassphrase.notificationTitle"
-        :description="errorSetPassphrase.notificationDescription"
-      >
-        <template v-if="errorSetPassphrase.notificationDetails" #details>
-          {{ errorSetPassphrase.notificationDetails }}
-        </template>
-      </NeInlineNotification>
+        v-if="backup.isPassPhraseSet"
+        :description="
+          t(
+            'standalone.backup_and_restore.backup.changing_your_passphrase_applies_to_new_backups_description'
+          )
+        "
+        :title="t('standalone.backup_and_restore.backup.passphrase_update_applies_to_new_backups')"
+        kind="info"
+      />
+      <NeInlineNotification
+        v-else
+        :description="
+          t('standalone.backup_and_restore.backup.passphrase_required_for_restore_description')
+        "
+        :title="t('standalone.backup_and_restore.backup.passphrase_required_for_restore')"
+        kind="info"
+      />
+
       <hr />
       <div class="flex justify-end gap-4">
         <NeButton :disabled="loading" :kind="'tertiary'" @click="$emit('close')">
           {{ t('common.cancel') }}
         </NeButton>
-        <NeButton :disabled="loading" :kind="'primary'" :loading="loading" @click="setPassphrase()">
-          {{ t('common.configure') }}
+        <NeButton :disabled="loading" :kind="'primary'" :loading="loading" type="submit">
+          <template v-if="backup.isPassPhraseSet">
+            {{ t('common.save') }}
+          </template>
+          <template v-else>
+            {{ t('common.configure') }}
+          </template>
         </NeButton>
       </div>
-    </div>
+    </form>
   </NeSideDrawer>
 </template>

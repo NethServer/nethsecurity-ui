@@ -29,12 +29,20 @@
     @apply text-green-700 dark:text-green-500;
   }
 
-  .text-tertiary-neutral {
-    @apply text-gray-600 dark:text-gray-300;
+  .text-primary-neutral {
+    @apply text-gray-600 dark:text-gray-50;
   }
 
   .text-secondary {
     @apply text-indigo-700 dark:text-indigo-500;
+  }
+
+  .text-secondary-neutral {
+    @apply dark:text-gray-200;
+  }
+
+  .text-tertiary-neutral {
+    @apply text-gray-600 dark:text-gray-300;
   }
 }
 

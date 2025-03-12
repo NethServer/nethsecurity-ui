@@ -1,23 +1,10 @@
 import { defineStore } from 'pinia'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
 
 type SubscriptionStatusResponse = AxiosResponse<SubscriptionDataType>
 
-/*
-{
-    "active": true,
-    "expiration": 0,
-    "plan": "Nethesis Enterprise",
-    "server_id": 76838,
-    "systemd_id": "EAB54E5B-BD6C-4C1D-8538-3A618E5F72E4",
-    "type": "enterprise"
-}
-{
-    "systemd_id": ""
-}
- */
 export type SubscriptionDataType = {
   server_id?: number
   systemd_id: string
@@ -29,14 +16,14 @@ export type SubscriptionDataType = {
 export const useSubscriptionStore = defineStore('subscription', () => {
   const loading = ref(true)
   const error = ref<Error>()
-  const data = ref<SubscriptionDataType>()
+  const isActive = ref(false)
 
   function loadData() {
     loading.value = true
     error.value = undefined
     ubusCall('ns.subscription', 'info')
       .then((res: SubscriptionStatusResponse) => {
-        data.value = res.data
+        isActive.value = res.data.active ?? false
       })
       .catch((err) => {
         error.value = err
@@ -46,10 +33,6 @@ export const useSubscriptionStore = defineStore('subscription', () => {
       })
   }
 
-  const isActive = computed(() => {
-    return data.value?.active ?? false
-  })
-
   onMounted(() => {
     loadData()
   })
@@ -57,6 +40,7 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   return {
     loading,
     loadData,
-    isActive
+    isActive,
+    error
   }
 })

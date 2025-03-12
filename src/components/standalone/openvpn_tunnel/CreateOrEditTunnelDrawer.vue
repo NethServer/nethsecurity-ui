@@ -363,7 +363,13 @@ async function resetForm() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (const validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      if (validator.i18Params != undefined) {
+        validationErrorBag.value.set(label, [
+          t(validator.errMessage as string, validator.i18Params as Record<string, unknown>)
+        ])
+      } else {
+        validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      }
     }
   }
 
@@ -392,7 +398,7 @@ function validate() {
 
   // shared form fields validation
   const sharedFieldsValidators: [validationOutput[], string][] = [
-    [[validateRequired(name.value), validateUciName(name.value, 10)], 'name'],
+    [[validateRequired(name.value), validateUciName(name.value, 10)], 'ns_name'],
     ...(topology.value === 'p2p' ? p2pValidators : [])
   ]
 
@@ -664,7 +670,7 @@ watch(
         v-model="name"
         :disabled="id != ''"
         :label="t('standalone.openvpn_tunnel.tunnel_name')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_name'))"
+        :invalid-message="validationErrorBag.getFirstFor('ns_name')"
       />
       <template v-if="!isClientTunnel">
         <NeMultiTextInput

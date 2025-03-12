@@ -4,25 +4,25 @@
 -->
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
-  NeInlineNotification,
-  NeButton,
-  NeSkeleton,
-  getAxiosErrorMessage,
-  NeEmptyState,
-  NeTable,
-  NeTableHead,
-  NeTableHeadCell,
-  NeTableBody,
-  NeTableRow,
-  NeTableCell,
   byteFormat1024,
   formatDateLoc,
+  getAxiosErrorMessage,
+  NeBadge,
+  NeButton,
   NeDropdown,
-  NeBadge
+  NeEmptyState,
+  NeInlineNotification,
+  NeSkeleton,
+  NeTable,
+  NeTableBody,
+  NeTableCell,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableRow
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DownloadBackupModal from '@/components/standalone/backup_and_restore/DownloadBackupModal.vue'
@@ -30,8 +30,23 @@ import RunBackupModal from '@/components/standalone/backup_and_restore/RunBackup
 import SetPassphraseDrawer from '@/components/standalone/backup_and_restore/SetPassphraseDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import DeleteBackupModal from '@/components/standalone/backup_and_restore/DeleteBackupModal.vue'
+import {
+  faArrowCircleDown,
+  faBoxArchive,
+  faCheck,
+  faClock,
+  faCog,
+  faEdit,
+  faLock,
+  faPlay,
+  faUnlock
+} from '@fortawesome/free-solid-svg-icons'
+import { useBackupsStore } from '@/stores/standalone/backups.ts'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const { t } = useI18n()
+const backups = useBackupsStore()
+const subscription = useSubscriptionStore()
 
 interface Backup {
   id: string
@@ -41,10 +56,26 @@ interface Backup {
   mimetype: string
 }
 
-const loading = ref(true)
-const loadingPassphrase = ref(true)
-const isValidSubscription = ref(false)
-const isSetPassphrase = ref(false)
+const loading = computed((): boolean => {
+  return [subscription.loading, backups.loading, loadingHostname.value, loadingBackups.value].some(
+    (loading) => loading
+  )
+})
+
+const error = computed((): Error | undefined => {
+  return [
+    subscription.error,
+    backups.error,
+    errorFetchBackups.value,
+    errorFetchHostname.value
+  ].find((error) => error != undefined)
+})
+
+const loadingBackups = ref(false)
+const errorFetchBackups = ref<Error>()
+const loadingHostname = ref(false)
+const errorFetchHostname = ref<Error>()
+
 const showDownloadModal = ref(false)
 const showDeleteModal = ref(false)
 const showPassphraseDrawer = ref(false)
@@ -58,59 +89,37 @@ const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
 
-const errorPage = ref({
-  notificationTitle: '',
-  notificationDescription: ''
-})
-
 onMounted(() => {
-  getSubscription()
   getHostname()
-  getIsPassphrase()
 })
 
-async function getSubscription() {
-  try {
-    const res = await ubusCall('ns.subscription', 'info', {})
-    if (res?.data?.active) {
-      isValidSubscription.value = res?.data?.active
-      await getBackups()
+watch(
+  () => subscription.isActive,
+  function (value) {
+    if (value) {
+      getBackups()
     }
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  } finally {
-    loading.value = false
-  }
-}
+  },
+  { immediate: true }
+)
 
 async function getHostname() {
   try {
+    loadingHostname.value = true
     const systemInfo = await ubusCall('system', 'board')
     unitName.value = systemInfo.data.hostname
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_system_board')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  }
-}
-
-async function getIsPassphrase() {
-  isSetPassphrase.value = false
-  try {
-    const res = await ubusCall('ns.backup', 'is-passphrase-set', {})
-    if (res?.data?.values?.set) {
-      isSetPassphrase.value = true
+  } catch (exception: unknown) {
+    if (exception instanceof Error) {
+      errorFetchHostname.value = exception
     }
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_passphrase')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
   } finally {
-    loadingPassphrase.value = false
+    loadingHostname.value = false
   }
 }
 
 async function getBackups() {
-  if (isValidSubscription.value) {
+  if (subscription.isActive) {
+    loadingBackups.value = true
     try {
       const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
@@ -118,9 +127,12 @@ async function getBackups() {
         // sort by created date in unix timestamp
         listBackups.value.sort((a, b) => Number(b.created) - Number(a.created))
       }
-    } catch (exception: any) {
-      errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
-      errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    } catch (exception: unknown) {
+      if (exception instanceof Error) {
+        errorFetchBackups.value = exception
+      }
+    } finally {
+      loadingBackups.value = false
     }
   }
 }
@@ -149,7 +161,6 @@ function successRunBackup() {
 
 function successSetPassphrase() {
   showPassphraseDrawer.value = false
-  getIsPassphrase()
 }
 
 function getMimetypeDescription(mimetype: string) {
@@ -159,9 +170,9 @@ function getMimetypeDescription(mimetype: string) {
 
 function getMimetypeIcon(mimetype: string) {
   if (mimetype == 'application/pgp-encrypted' || mimetype == 'application/octet-stream') {
-    return ['fa', 'lock']
+    return faLock
   } else {
-    return ['fa', 'unlock']
+    return faUnlock
   }
 }
 
@@ -194,49 +205,107 @@ function successDeleteBackup() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading || loadingPassphrase" :lines="7" size="lg" />
     <NeInlineNotification
-      v-if="!loading && !loadingPassphrase && errorPage.notificationTitle"
-      class="my-4"
-      kind="error"
-      :title="errorPage.notificationTitle"
-      :description="errorPage.notificationDescription"
-    />
-    <NeInlineNotification
-      v-if="!loading && !loadingPassphrase && successNotificationRunBackup"
+      v-if="successNotificationRunBackup"
+      :title="t('standalone.backup_and_restore.backup.success_run_backup')"
       class="my-4"
       kind="success"
-      :title="t('standalone.backup_and_restore.backup.success_run_backup')"
     />
-    <template v-if="!loading && !loadingPassphrase && !errorPage.notificationTitle">
-      <div
-        v-if="isValidSubscription"
-        class="flex flex-col items-start justify-between gap-4 xl:flex-row"
-      >
-        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-          {{ t('standalone.backup_and_restore.backup.description_subscription') }}
-        </p>
-        <div v-if="listBackups.length" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
-          <NeButton kind="tertiary" @click="showPassphraseDrawer = true">
-            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-          </NeButton>
-          <NeButton kind="secondary" @click="showRunBackupModal = true">
-            <template #prefix>
-              <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
-            </template>
-            {{ t('standalone.backup_and_restore.backup.run_backup') }}
-          </NeButton>
+    <NeSkeleton v-if="loading" :lines="7" size="lg" />
+    <NeInlineNotification
+      v-else-if="error != undefined"
+      :description="t(getAxiosErrorMessage(error))"
+      class="my-4"
+      kind="error"
+    >
+      <template #title>
+        <template v-if="subscription.error != undefined">
+          {{ t('error.cannot_retrieve_subscription_info') }}
+        </template>
+        <template v-else-if="backups.error != undefined">
+          {{ t('error.cannot_retrieve_backup_info') }}
+        </template>
+        <template v-else-if="errorFetchBackups != undefined">
+          {{ t('error.cannot_retrieve_backup') }}
+        </template>
+        <template v-else-if="errorFetchHostname != undefined">
+          {{ t('error.cannot_retrieve_system_board') }}
+        </template>
+        <template v-else>
+          {{ t('error.generic_error') }}
+        </template>
+      </template>
+    </NeInlineNotification>
+    <template v-else>
+      <div v-if="subscription.isActive" class="flex flex-col flex-wrap gap-4 xl:flex-row">
+        <div class="mr-auto max-w-2xl space-y-4">
+          <p class="text-secondary-neutral text-sm font-normal">
+            {{ t('standalone.backup_and_restore.backup.description_subscription') }}
+          </p>
+          <template v-if="!backups.isPassPhraseSet">
+            <NeInlineNotification
+              v-if="listBackups.length > 0"
+              :description="t('standalone.backup_and_restore.backup.backups_require_a_passphrase')"
+              :title="t('standalone.backup_and_restore.backup.passphrase_not_configured')"
+              kind="warning"
+              :primary-button-label="t('standalone.backup_and_restore.backup.configure_passphrase')"
+              @primary-click="showPassphraseDrawer = true"
+            />
+            <NeInlineNotification
+              v-else
+              :description="t('standalone.backup_and_restore.backup.backups_require_a_passphrase')"
+              :title="t('standalone.backup_and_restore.backup.passphrase_not_configured')"
+              kind="warning"
+            />
+          </template>
+        </div>
+        <div class="flex flex-col items-start gap-4 xl:items-end">
+          <NeBadge
+            v-if="backups.isPassPhraseSet"
+            :icon="faCheck"
+            :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
+            kind="success"
+          />
+          <div v-if="listBackups.length > 0 || backups.isPassPhraseSet" class="flex gap-4">
+            <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
+              <template #prefix>
+                <template v-if="backups.isPassPhraseSet">
+                  <FontAwesomeIcon :icon="faEdit" aria-hidden="true" />
+                </template>
+                <template v-else>
+                  <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
+                </template>
+              </template>
+              <template v-if="backups.isPassPhraseSet">
+                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
+              </template>
+              <template v-else>
+                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+              </template>
+            </NeButton>
+            <NeButton
+              v-if="listBackups.length > 0"
+              :disabled="!backups.isPassPhraseSet"
+              kind="secondary"
+              @click="showRunBackupModal = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.run_backup') }}
+            </NeButton>
+          </div>
         </div>
       </div>
       <FormLayout
         v-else
         :description="t('standalone.backup_and_restore.backup.description')"
-        class="max-w-12xl"
+        class="max-w-12xl mt-4"
       >
         <div class="flex gap-4">
           <NeButton kind="secondary" size="lg" type="submit" @click="showDownloadModal = true">
             <template #prefix>
-              <FontAwesomeIcon :icon="['fa', 'circle-arrow-down']" />
+              <FontAwesomeIcon :icon="faArrowCircleDown" />
             </template>
             {{ t('standalone.backup_and_restore.backup.download_backup') }}
           </NeButton>
@@ -245,33 +314,36 @@ function successDeleteBackup() {
           </NeButton>
         </div>
       </FormLayout>
-      <NeBadge
-        v-if="isSetPassphrase"
-        :icon="['fas', 'check']"
-        :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
-        kind="success"
-      />
     </template>
-    <div
-      v-if="!loading && !loadingPassphrase && isValidSubscription && !errorPage.notificationTitle"
-      class="mt-5"
-    >
+    <!-- No clue why this double check, however table formats bad if merged with the above template -->
+    <div v-if="!loading && subscription.isActive" class="mt-4">
       <NeEmptyState
         v-if="!listBackups.length"
-        :title="t('standalone.backup_and_restore.backup.no_backups_found')"
-        :icon="['fa', 'box-archive']"
+        :description="
+          backups.isPassPhraseSet
+            ? t('standalone.backup_and_restore.backup.the_system_will_automatically_create_backups')
+            : t('standalone.backup_and_restore.backup.configure_passphrase_to_run')
+        "
+        :icon="faBoxArchive"
+        :title="t('standalone.backup_and_restore.backup.no_backups')"
       >
         <div class="flex justify-center">
-          <NeButton kind="primary" size="lg" @click="showRunBackupModal = true">
+          <NeButton
+            v-if="!backups.isPassPhraseSet"
+            kind="primary"
+            size="lg"
+            @click="showPassphraseDrawer = true"
+          >
             <template #prefix>
-              <FontAwesomeIcon :icon="['fa', 'play']" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
+            </template>
+            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+          </NeButton>
+          <NeButton v-else kind="secondary" size="lg" @click="showRunBackupModal = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
             </template>
             {{ t('standalone.backup_and_restore.backup.run_backup') }}
-          </NeButton>
-        </div>
-        <div class="mt-2 flex justify-center">
-          <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
           </NeButton>
         </div>
       </NeEmptyState>
@@ -282,9 +354,9 @@ function successDeleteBackup() {
       >
         <NeTableHead>
           <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.date') }}</NeTableHeadCell>
-          <NeTableHeadCell>{{
-            t('standalone.backup_and_restore.backup.mimetype')
-          }}</NeTableHeadCell>
+          <NeTableHeadCell>
+            {{ t('standalone.backup_and_restore.backup.mimetype') }}
+          </NeTableHeadCell>
           <NeTableHeadCell>{{ t('standalone.backup_and_restore.backup.size') }}</NeTableHeadCell>
           <NeTableHeadCell>
             <!-- no header for actions -->
@@ -294,7 +366,7 @@ function successDeleteBackup() {
           <NeTableRow v-for="item in listBackups" :key="item.name">
             <NeTableCell :data-label="t('standalone.backup_and_restore.backup.date')">
               <div>
-                <FontAwesomeIcon :icon="['fa', 'clock']" class="mr-2" />
+                <FontAwesomeIcon :icon="faClock" class="mr-2" />
                 {{ formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') }}
               </div>
             </NeTableCell>
@@ -318,7 +390,7 @@ function successDeleteBackup() {
                   @click="openDownloadEnterprise(item.id, item.mimetype, item.created.toString())"
                 >
                   <template #prefix>
-                    <FontAwesomeIcon :icon="['fas', 'arrow-circle-down']" />
+                    <FontAwesomeIcon :icon="faArrowCircleDown" />
                   </template>
                   {{ t('standalone.backup_and_restore.backup.download') }}
                 </NeButton>
@@ -332,8 +404,8 @@ function successDeleteBackup() {
   </div>
   <DownloadBackupModal
     :show-download-modal="showDownloadModal"
-    :is-set-passphrase="isSetPassphrase"
-    :is-valid-subscription="isValidSubscription"
+    :is-set-passphrase="backups.isPassPhraseSet"
+    :is-valid-subscription="subscription.isActive"
     :selected-backup-type="selectedBackupType"
     :selected-backup="selectedBackup"
     :selected-backup-time="selectedBackupTime"
@@ -348,7 +420,6 @@ function successDeleteBackup() {
   />
   <SetPassphraseDrawer
     :show-passphrase-drawer="showPassphraseDrawer"
-    :is-set-passphrase="isSetPassphrase"
     @success="successSetPassphrase()"
     @close="showPassphraseDrawer = false"
   />

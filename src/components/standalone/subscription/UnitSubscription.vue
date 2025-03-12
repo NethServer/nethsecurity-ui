@@ -23,6 +23,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired } from '@/lib/validation'
 import { computed } from 'vue'
 import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const { t } = useI18n()
 
@@ -43,6 +44,7 @@ const authTokenRef = ref()
 const authToken = ref('')
 const isProcessingRequest = ref(false)
 const isShownCancelSubscriptionModal = ref(false)
+const subscriptionStore = useSubscriptionStore()
 
 const errors = ref({
   authToken: '',
@@ -84,6 +86,7 @@ async function subscribe() {
     await ubusCall('ns.subscription', 'register', { secret: authToken.value })
     authToken.value = ''
     emit('subscription-update')
+    subscriptionStore.loadData()
   } catch (e: any) {
     if (e.response.data.message == 'invalid_secret_or_server_not_found') {
       errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')

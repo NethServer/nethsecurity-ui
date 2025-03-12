@@ -16,6 +16,7 @@ import InternetConnectionCard from '@/components/standalone/dashboard/InternetCo
 import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIpCard.vue'
 import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
 import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingStatusCard.vue'
+import BackupStatusCard from '@/components/standalone/dashboard/BackupStatusCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -117,5 +118,6 @@ function goTo(path: string) {
       :title="t('standalone.dashboard.known_hosts')"
       :icon="['fas', 'circle-info']"
     />
+    <BackupStatusCard />
   </div>
 </template>

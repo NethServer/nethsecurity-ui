@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
+import { useBackupsStore } from '@/stores/standalone/backups.ts'
 
 const { t } = useI18n()
 const props = defineProps({
@@ -36,6 +37,7 @@ const objNotification = {
 }
 
 const errorDeleteBackup = ref({ ...objNotification })
+const backups = useBackupsStore()
 
 async function deleteBackup() {
   try {
@@ -53,6 +55,7 @@ async function deleteBackup() {
     const res = await ubusCall('ns.backup', methodCall, payload)
     if (res?.data?.result === 'success') {
       emit('close')
+      backups.loadData()
     }
   } catch (exception: any) {
     errorDeleteBackup.value.notificationTitle = t('error.cannot_delete_backup')

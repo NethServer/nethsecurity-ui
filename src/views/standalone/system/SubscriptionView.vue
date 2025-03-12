@@ -12,6 +12,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { NeInlineNotification, NeHeading, getAxiosErrorMessage } from '@nethesis/vue-components'
 
+/** * @deprecated use SubscriptionDataType in subscription.ts */
 export type SubscriptionDataType = {
   server_id: number
   systemd_id: string
@@ -25,6 +26,7 @@ const loading = ref(true)
 const pageError = ref('')
 const subscriptionData = ref<SubscriptionDataType | null>(null)
 
+/** * @deprecated use subscription.ts store */
 async function fetchSubscription() {
   try {
     loading.value = true

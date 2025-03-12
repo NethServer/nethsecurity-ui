@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.22.0](https://github.com/NethServer/nethsecurity-ui/compare/1.21.0...1.22.0) (2025-03-12)
+
+
+### Features
+
+* **backups:** made passphrase for backups mandatory ([#522](https://github.com/NethServer/nethsecurity-ui/issues/522)) ([399a589](https://github.com/NethServer/nethsecurity-ui/commit/399a58968e01ef8deda8f48be6f12715d08849e6))
+
+
+### Bug Fixes
+
+* **tunnel:** fixed missing validation messages ([#523](https://github.com/NethServer/nethsecurity-ui/issues/523)) ([1bf8588](https://github.com/NethServer/nethsecurity-ui/commit/1bf85880f42d646a39e15e2f1ba57cf8870736c2))
+
 ## [1.21.0](https://github.com/NethServer/nethsecurity-ui/compare/1.20.6...1.21.0) (2025-03-05)
 
 

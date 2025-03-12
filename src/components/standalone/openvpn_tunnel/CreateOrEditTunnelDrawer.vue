@@ -363,9 +363,13 @@ async function resetForm() {
 function runValidators(validators: validationOutput[], label: string): boolean {
   for (const validator of validators) {
     if (!validator.valid) {
-      validationErrorBag.value.set(label, [
-        t(validator.errMessage as string, validator?.i18Params ?? {})
-      ])
+      if (validator.i18Params != undefined) {
+        validationErrorBag.value.set(label, [
+          t(validator.errMessage as string, validator.i18Params as Record<string, unknown>)
+        ])
+      } else {
+        validationErrorBag.value.set(label, [t(validator.errMessage as string)])
+      }
     }
   }
 

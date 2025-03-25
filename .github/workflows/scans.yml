@@ -46,9 +46,9 @@ jobs:
           scan-type: fs
           scan-ref: .
           format: cyclonedx
-          output: nethsecurity-ui.sbom.json
+          output: nethsecurity-ui.cdx.json
       - name: Attach SBOM Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload ${{ github.event.release.tag_name }} nethsecurity-ui.sbom.json
+          gh release upload ${{ github.event.release.tag_name }} nethsecurity-ui.cdx.json

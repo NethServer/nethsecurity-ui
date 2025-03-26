@@ -166,7 +166,6 @@
     "password_lowercase_required": "La password deve contenere almeno una lettera minuscola",
     "cannot_retrieve_server_tunnels": "Impossibile recuperare i tunnel server",
     "cannot_update_packages": "Impossibile aggiornare i pacchetti",
-    "cannot_retrieve_passphrase": "Impossibile recuperare la passphrase di backup",
     "invalid_future_date": "La data non può essere impostata nel passato",
     "cannot_set_passphrase": "Impossibile impostare passphrase",
     "cannot_retrieve_netdata_configuration": "Impossibile recuperare la configurazione Netdata",

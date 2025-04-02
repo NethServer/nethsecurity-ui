@@ -23,8 +23,6 @@ import { useNetworkDevices } from '@/composables/useNetworkDevices'
 import {
   getIpv4Addresses,
   getIpv6Addresses,
-  getName,
-  isDeviceUp,
   isIpv6Enabled,
   type DeviceOrIface
 } from '@/lib/standalone/network'
@@ -48,7 +46,7 @@ export type WanEvent = {
 }
 
 const { t } = useI18n()
-const { allDevices, listDevices, loadingListDevices, errorListDevices, errorListDevicesDetails } =
+const { listDevices, loadingListDevices, errorListDevices, errorListDevicesDetails } =
   useNetworkDevices()
 const {
   networkConfig,
@@ -102,55 +100,18 @@ watchEffect(async () => {
   const wanData: Wan[] = []
 
   for (const wan of wans.value) {
-    // get wan status from policy data
-    let statusFound = false
-
-    if (mwanPolicies.value.length > 0) {
-      // multiwan configured
-      for (const policy of mwanPolicies.value) {
-        if (statusFound) {
-          break
-        }
-
-        for (const policyMembers of Object.values(policy.members)) {
-          if (statusFound) {
-            break
-          }
-
-          for (const policyMember of policyMembers) {
-            if (policyMember.interface == wan.iface) {
-              const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
-
-              if (devFound) {
-                const publicIpAddresses = await retrievePublicIpAddresses(devFound)
-
-                wanData.push({
-                  ...wan,
-                  status: policyMember.status,
-                  ipAddresses: publicIpAddresses
-                })
-                statusFound = true
-                break
-              }
-            }
-          }
-        }
-      }
-    } else {
-      // multiwan not configured
-
-      const devFound = allDevices.value.find((dev) => getName(dev) === wan.device)
-
-      if (devFound) {
-        const publicIpAddresses = await retrievePublicIpAddresses(devFound)
-
-        wanData.push({
-          ...wan,
-          status: isDeviceUp(devFound, allDevices.value) ? 'online' : 'offline',
-          ipAddresses: publicIpAddresses
-        })
-      }
+    let publicIpAddresses: string[] = []
+    let status = getMwanStatus(wan.iface)
+    if (status == 'online') {
+      publicIpAddresses = await retrievePublicIpAddresses(wan)
     }
+    // remap disabled (cable detached) status to offline
+    status = status == 'disabled' ? 'offline' : status
+    wanData.push({
+      ...wan,
+      status: status,
+      ipAddresses: publicIpAddresses
+    })
   }
   wanConnections.value = wanData.sort(sortByProperty('iface'))
 })
@@ -163,6 +124,22 @@ onMounted(() => {
   getNetworkConfig()
 })
 
+function getMwanStatus(iface: string) {
+  if (mwanPolicies.value.length > 0) {
+    // multiwan configured
+    for (const policy of mwanPolicies.value) {
+      for (const policyMembers of Object.values(policy.members)) {
+        for (const policyMember of policyMembers) {
+          if (policyMember.interface == iface) {
+            return policyMember.status
+          }
+        }
+      }
+    }
+  }
+  return '-'
+}
+
 async function retrievePublicIpAddresses(device: DeviceOrIface) {
   let ipAddresses = []
   let publicIpAddresses: string[] = []
@@ -174,7 +151,7 @@ async function retrievePublicIpAddresses(device: DeviceOrIface) {
   } else {
     ipAddresses = getIpv4Addresses(device, networkConfig.value)
   }
-  const ipAddr = ipAddresses[0].split('/')[0]
+  const ipAddr = ipAddresses.length > 0 ? ipAddresses[0].split('/')[0] : ''
   publicIpAddresses = await getPublicIpAddresses(ipAddr)
 
   if (publicIpAddresses.length == 0 || publicIpAddresses[0] == '') {

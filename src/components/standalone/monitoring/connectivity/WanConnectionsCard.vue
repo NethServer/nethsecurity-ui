@@ -104,19 +104,30 @@ function getQosRule(item: Wan) {
           <NeTableCell :data-label="t('common.status')">
             <div class="flex items-center gap-2">
               <font-awesome-icon
-                :icon="['fas', item.status == 'online' ? 'circle-check' : 'circle-xmark']"
+                :icon="[
+                  'fas',
+                  item.status == 'online'
+                    ? 'circle-check'
+                    : item.status == 'offline'
+                      ? 'circle-xmark'
+                      : 'circle-question'
+                ]"
                 :class="[
                   'h-4 w-4',
                   item.status == 'online'
                     ? 'text-green-600 dark:text-green-400'
-                    : 'text-rose-600 dark:text-rose-400'
+                    : item.status == 'offline'
+                      ? 'text-rose-600 dark:text-rose-400'
+                      : 'text-gray-600 dark:text-gray-400'
                 ]"
                 aria-hidden="true"
               />
               {{
                 item.status == 'online'
                   ? t('standalone.real_time_monitor.online')
-                  : t('standalone.real_time_monitor.offline')
+                  : item.status == 'offline'
+                    ? t('standalone.real_time_monitor.offline')
+                    : t('standalone.real_time_monitor.unknown')
               }}
             </div>
           </NeTableCell>

@@ -2107,7 +2107,8 @@
       "public_ip_address": "Public IP address",
       "error_fetching_data": "Error fetching data",
       "remote_hosts": "Remote hosts",
-      "no_data_available": "No data available"
+      "no_data_available": "No data available",
+      "unknown": "Unknown"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

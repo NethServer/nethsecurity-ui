@@ -24,7 +24,7 @@ import type { Wan } from '../ConnectivityMonitor.vue'
 import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faCircleQuestion, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   wanConnections: Wan[]
@@ -117,21 +117,13 @@ function getQosRule(item: Wan) {
                 class="h-4 w-4 text-rose-600 dark:text-rose-400"
                 aria-hidden="true"
               />
-              <FontAwesomeIcon
-                v-else
-                :icon="faCircleQuestion"
-                class="h-4 w-4 text-gray-600 dark:text-gray-400"
-                aria-hidden="true"
-              />
               <template v-if="item.status == 'online'">
                 {{ t('standalone.real_time_monitor.online') }}
               </template>
               <template v-else-if="item.status == 'offline'">
                 {{ t('standalone.real_time_monitor.offline') }}
               </template>
-              <template v-else>
-                {{ t('standalone.real_time_monitor.unknown') }}
-              </template>
+              <template v-else> - </template>
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.public_ip_address')">

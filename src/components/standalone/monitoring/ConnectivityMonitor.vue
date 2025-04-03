@@ -102,7 +102,7 @@ watchEffect(async () => {
   for (const wan of wans.value) {
     let publicIpAddresses: string[] = []
     let status = getMwanStatus(wan.iface)
-    if (status == 'online') {
+    if (status == 'online' || status == '-') {
       publicIpAddresses = await retrievePublicIpAddresses(wan)
     }
     // remap disabled (cable detached) status to offline

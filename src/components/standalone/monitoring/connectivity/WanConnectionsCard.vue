@@ -5,24 +5,26 @@
 
 <script setup lang="ts">
 import {
+  getAxiosErrorMessage,
   NeCard,
+  NeInlineNotification,
+  NePaginator,
+  NeSkeleton,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
-  useItemPagination,
-  getAxiosErrorMessage,
-  NeInlineNotification,
-  NeSkeleton
+  useItemPagination
 } from '@nethesis/vue-components'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Wan } from '../ConnectivityMonitor.vue'
 import type { QoSInterface } from '@/views/standalone/network/QoSView.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   wanConnections: Wan[]
@@ -103,21 +105,25 @@ function getQosRule(item: Wan) {
           </NeTableCell>
           <NeTableCell :data-label="t('common.status')">
             <div class="flex items-center gap-2">
-              <font-awesome-icon
-                :icon="['fas', item.status == 'online' ? 'circle-check' : 'circle-xmark']"
-                :class="[
-                  'h-4 w-4',
-                  item.status == 'online'
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-rose-600 dark:text-rose-400'
-                ]"
+              <FontAwesomeIcon
+                v-if="item.status == 'online'"
+                :icon="faCircleCheck"
+                class="h-4 w-4 text-green-600 dark:text-green-400"
                 aria-hidden="true"
               />
-              {{
-                item.status == 'online'
-                  ? t('standalone.real_time_monitor.online')
-                  : t('standalone.real_time_monitor.offline')
-              }}
+              <FontAwesomeIcon
+                v-else-if="item.status == 'offline'"
+                :icon="faCircleXmark"
+                class="h-4 w-4 text-rose-600 dark:text-rose-400"
+                aria-hidden="true"
+              />
+              <template v-if="item.status == 'online'">
+                {{ t('standalone.real_time_monitor.online') }}
+              </template>
+              <template v-else-if="item.status == 'offline'">
+                {{ t('standalone.real_time_monitor.offline') }}
+              </template>
+              <template v-else> - </template>
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.public_ip_address')">

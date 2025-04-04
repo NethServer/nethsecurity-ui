@@ -166,7 +166,6 @@
     "password_lowercase_required": "La password deve contenere almeno una lettera minuscola",
     "cannot_retrieve_server_tunnels": "Impossibile recuperare i tunnel server",
     "cannot_update_packages": "Impossibile aggiornare i pacchetti",
-    "cannot_retrieve_passphrase": "Impossibile recuperare la passphrase di backup",
     "invalid_future_date": "La data non può essere impostata nel passato",
     "cannot_set_passphrase": "Impossibile impostare passphrase",
     "cannot_retrieve_netdata_configuration": "Impossibile recuperare la configurazione Netdata",
@@ -859,13 +858,13 @@
       "source_object": "Oggetto sorgente"
     },
     "zones_and_policies": {
-      "allow_forwards_to": "Consenti forward a",
+      "allow_forwards_to": "Consenti traffico verso",
       "logging": "Logging",
       "traffic_to_same_zone": "Traffico verso la stessa zona",
       "description": "Il firewall associa zone alle interfacce di rete per controllare il flusso del traffico di rete.",
       "add_new_subnet": "Aggiungi nuova sottorete",
       "name": "Nome",
-      "allow_forwards_from": "Consenti forward da",
+      "allow_forwards_from": "Consenti traffico da",
       "title": "Zone e policy",
       "traffic_to_wan": "Traffico verso WAN",
       "subnet": "Sottorete | Sottoreti",

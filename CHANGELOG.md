@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.1](https://github.com/NethServer/nethsecurity-ui/compare/1.22.0...1.22.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* **monitoring:** improve IP field retrieval ([#526](https://github.com/NethServer/nethsecurity-ui/issues/526)) ([178feb8](https://github.com/NethServer/nethsecurity-ui/commit/178feb8bd73f3f113f8ea4aed74bf07699e55457))
+
 ## [1.22.0](https://github.com/NethServer/nethsecurity-ui/compare/1.21.0...1.22.0) (2025-03-12)
 
 

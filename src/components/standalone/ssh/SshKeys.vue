@@ -22,6 +22,7 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import { MessageBag } from '@/lib/validation'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useNotificationsStore } from '@/stores/notifications'
+import { UnauthorizedAction } from '@/stores/standalone/sudo.ts'
 
 type SshKey = {
   type: string
@@ -42,7 +43,8 @@ const loading = ref(true)
 const submitting = ref(false)
 const deleting = ref(false)
 const validationErrors = ref(new MessageBag())
-const error = ref<Error>()
+const error = ref<string>()
+const deleteError = ref<string>()
 
 const keyToDelete = ref<SshKey>()
 
@@ -58,7 +60,7 @@ function load() {
       sshKeys.value = response.data.keys
     })
     .catch((reason: AxiosError) => {
-      error.value = reason
+      error.value = t(getAxiosErrorMessage(reason))
     })
     .finally(() => {
       loading.value = false
@@ -85,8 +87,10 @@ function addKey() {
       if (reason instanceof ValidationError) {
         validationErrors.value = reason.errorBag
         focusElement('uploadSshKeyInput')
+      } else if (reason instanceof UnauthorizedAction) {
+        error.value = t(reason.message)
       } else {
-        error.value = reason
+        error.value = t(getAxiosErrorMessage(reason))
       }
     })
     .finally(() => {
@@ -96,7 +100,7 @@ function addKey() {
 
 function deleteKey() {
   deleting.value = true
-  error.value = undefined
+  deleteError.value = undefined
   ubusCall('ns.ssh', 'delete-key', {
     key: keyToDelete.value?.key
   })
@@ -110,11 +114,21 @@ function deleteKey() {
       })
     })
     .catch((reason) => {
-      error.value = reason
+      if (reason instanceof UnauthorizedAction) {
+        deleteError.value = t(reason.message)
+      } else {
+        deleteError.value = t(getAxiosErrorMessage(reason))
+      }
     })
     .finally(() => {
       deleting.value = false
     })
+}
+
+function handleCloseDeleteModal() {
+  if (!deleting.value) {
+    keyToDelete.value = undefined
+  }
 }
 </script>
 
@@ -127,17 +141,25 @@ function deleteKey() {
     :primary-button-loading="deleting"
     :primary-button-disabled="deleting"
     :close-aria-label="t('common.close')"
-    @close="keyToDelete = undefined"
+    @close="handleCloseDeleteModal()"
     @primary-click="deleteKey()"
   >
-    <div>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</div>
-    <code class="my-1 break-all">
-      {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
-    </code>
+    <div class="space-y-4">
+      <NeInlineNotification
+        v-if="deleteError != undefined"
+        :description="deleteError"
+        kind="error"
+        :title="t('error.generic_error')"
+      />
+      <p>{{ t('standalone.ssh.ssh_keys.delete_key_modal.body') }}</p>
+      <code class="my-1 break-all">
+        {{ keyToDelete?.type }} {{ keyToDelete?.key }} {{ keyToDelete?.comment }}
+      </code>
+    </div>
   </NeModal>
   <NeInlineNotification
     v-if="error != undefined"
-    :description="t(getAxiosErrorMessage(error))"
+    :description="error"
     kind="error"
     :title="t('error.generic_error')"
   />

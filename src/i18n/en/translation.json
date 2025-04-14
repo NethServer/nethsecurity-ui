@@ -57,7 +57,9 @@
     "type": "Type",
     "unknown": "Unknown",
     "confirm": "Confirm",
-    "ip_address": "IP address"
+    "ip_address": "IP address",
+    "password_confirmation_required": "Password confirmation required",
+    "password_confirmation_required_description": "Please confirm your password to proceed"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -402,7 +404,11 @@
     "invalid_old_password": "Old password is incorrect",
     "key_already_exists": "Key already exists",
     "key_invalid_format": "Invalid key format",
-    "dhcp_range_cannot_contain_interface": "The firewall IP address must be outside the DHCP range."
+    "dhcp_range_cannot_contain_interface": "The firewall IP address must be outside the DHCP range.",
+    "invalid_password": "Authentication failed",
+    "unauthorized_action": "Unauthorized action",
+    "invalid_credentials": "Invalid credentials"
+
   },
   "ne_text_input": {
     "show_password": "Show password",

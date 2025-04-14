@@ -408,7 +408,6 @@
     "invalid_password": "Authentication failed",
     "unauthorized_action": "Unauthorized action",
     "invalid_credentials": "Invalid credentials"
-
   },
   "ne_text_input": {
     "show_password": "Show password",

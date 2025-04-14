@@ -27,7 +27,8 @@ export const useSudoStore = defineStore('sudo', () => {
         const sudoDate = new Date(0)
         sudoDate.setSeconds(payload['sudo'])
         // true if sudo has been enabled in the last 5 minutes
-        return sudoDate.getTime() + 5 * 60 * 1000 > Date.now()
+        // Date.now needs to be divided by 1000 to get seconds
+        return sudoDate.getTime() + 5 * 60 * 1000 > Date.now() / 1000
       }
       return false
     }

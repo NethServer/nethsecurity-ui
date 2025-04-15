@@ -151,7 +151,9 @@ async function loadDhcpOptions() {
     availableDhcpOptions.value = Object.keys(dhcpOptionsResponse).map((dhcpOptionKey) => {
       return {
         id: dhcpOptionKey,
-        label: `${dhcpOptionsResponse[dhcpOptionKey]}: ${dhcpOptionKey}`
+        label: !isNaN(Number(dhcpOptionKey))
+          ? `${dhcpOptionKey}: ${t('standalone.dns_dhcp.custom')}`
+          : `${dhcpOptionsResponse[dhcpOptionKey]}: ${dhcpOptionKey}`
       }
     })
     loading.value = false

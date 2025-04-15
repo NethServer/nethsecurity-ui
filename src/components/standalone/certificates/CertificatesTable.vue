@@ -106,8 +106,8 @@ function getDropdownItems(item: Certificate) {
         emit('setAsDefault', item)
       }
     },
-    // The self-signed system certificate cannot be deleted
-    ...(item.name != '_lan'
+    // The self-signed system certificate cannot be deleted, nor a certificate which is used
+    ...(item.name != '_lan' && item.servers.length <= 0
       ? [
           {
             id: 'delete',
@@ -201,6 +201,12 @@ const onSort = (payload: any) => {
                 </p>
               </template></NeTooltip
             >
+            <NeBadge
+              v-if="item.servers.length <= 0"
+              kind="secondary"
+              class="-mt-2"
+              :text="t('standalone.certificates.not_used')"
+            />
           </div>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.certificates.domains')">

@@ -839,7 +839,8 @@
       "pending_tooltip": "Certificate pending release from the remote server",
       "key": "Key",
       "value": "Value",
-      "plus_n_others": "+{n} others"
+      "plus_n_others": "+{n} others",
+      "not_used": "Not used"
     },
     "controller": {
       "title": "Controller",

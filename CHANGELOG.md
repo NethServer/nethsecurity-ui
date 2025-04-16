@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.22.2](https://github.com/NethServer/nethsecurity-ui/compare/1.22.1...1.22.2) (2025-04-16)
+
+
+### Bug Fixes
+
+* **certificates:** prevent deletion of used certs ([#529](https://github.com/NethServer/nethsecurity-ui/issues/529)) ([a6793ae](https://github.com/NethServer/nethsecurity-ui/commit/a6793ae162cf69fd19242c145f1f25457bec510f))
+* **dhcp:** improve visualization of custom options ([#532](https://github.com/NethServer/nethsecurity-ui/issues/532)) ([fae57e0](https://github.com/NethServer/nethsecurity-ui/commit/fae57e03fbb44834e78b996a5bd3045e281bb3c1))
+* **monitoring:** adjusting public IP resolution ([#531](https://github.com/NethServer/nethsecurity-ui/issues/531)) ([76f9e20](https://github.com/NethServer/nethsecurity-ui/commit/76f9e2076533e26c939510eb7235a8a9ea95a2cd))
+
 ## [1.22.1](https://github.com/NethServer/nethsecurity-ui/compare/1.22.0...1.22.1) (2025-04-08)
 
 

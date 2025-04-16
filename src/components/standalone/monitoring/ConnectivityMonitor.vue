@@ -20,12 +20,6 @@ import { isEmpty } from 'lodash-es'
 import type { Policy } from '@/composables/useMwan'
 import WanConnectionsCard from './connectivity/WanConnectionsCard.vue'
 import { useNetworkDevices } from '@/composables/useNetworkDevices'
-import {
-  getIpv4Addresses,
-  getIpv6Addresses,
-  isIpv6Enabled,
-  type DeviceOrIface
-} from '@/lib/standalone/network'
 import { useUciNetworkConfig } from '@/composables/useUciNetworkConfig'
 import InterfaceTrafficCard from './connectivity/InterfaceTrafficCard.vue'
 import { useLatencyAndQualityReport } from '@/composables/useLatencyAndQualityReport'
@@ -48,13 +42,8 @@ export type WanEvent = {
 const { t } = useI18n()
 const { listDevices, loadingListDevices, errorListDevices, errorListDevicesDetails } =
   useNetworkDevices()
-const {
-  networkConfig,
-  getNetworkConfig,
-  loadingNetworkConfig,
-  errorNetworkConfig,
-  errorNetworkConfigDetails
-} = useUciNetworkConfig()
+const { getNetworkConfig, loadingNetworkConfig, errorNetworkConfig, errorNetworkConfigDetails } =
+  useUciNetworkConfig()
 const router = useRouter()
 
 const wans = ref<Wan[]>([])
@@ -103,7 +92,7 @@ watchEffect(async () => {
     let publicIpAddresses: string[] = []
     let status = getMwanStatus(wan.iface)
     if (status == 'online' || status == '-') {
-      publicIpAddresses = await retrievePublicIpAddresses(wan)
+      publicIpAddresses = await getPublicIpAddresses(wan.device)
     }
     // remap disabled (cable detached) status to offline
     status = status == 'disabled' ? 'offline' : status
@@ -138,27 +127,6 @@ function getMwanStatus(iface: string) {
     }
   }
   return '-'
-}
-
-async function retrievePublicIpAddresses(device: DeviceOrIface) {
-  let ipAddresses = []
-  let publicIpAddresses: string[] = []
-
-  if (isIpv6Enabled(device)) {
-    ipAddresses = getIpv6Addresses(device, networkConfig.value).concat(
-      getIpv4Addresses(device, networkConfig.value)
-    )
-  } else {
-    ipAddresses = getIpv4Addresses(device, networkConfig.value)
-  }
-  const ipAddr = ipAddresses.length > 0 ? ipAddresses[0].split('/')[0] : ''
-  publicIpAddresses = await getPublicIpAddresses(ipAddr)
-
-  if (publicIpAddresses.length == 0 || publicIpAddresses[0] == '') {
-    // cannot retrieve public IP address, using interface IP address as fallback
-    publicIpAddresses = ipAddresses
-  }
-  return publicIpAddresses
 }
 
 async function listWans() {
@@ -208,13 +176,13 @@ async function getMwanReport() {
   }
 }
 
-async function getPublicIpAddresses(privateIpAddr: string) {
+async function getPublicIpAddresses(device: string) {
   error.value.getPublicIpAddresses = ''
   error.value.getPublicIpAddressesDetails = ''
 
   try {
     const res = await ubusCall('ns.report', 'get-public-ip-addresses', {
-      ip_address: privateIpAddr
+      device: device
     })
     return res.data.public_ip_addresses
   } catch (err: any) {

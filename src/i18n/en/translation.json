@@ -598,7 +598,8 @@
         "allow_remote_host_connection": "Allow remote hosts to connect to local SSH forwarded ports",
         "tcp_port_too_low": "TCP port must be greater than 1",
         "tcp_port_too_high": "TCP port must be less than 65535",
-        "tcp_port_invalid": "TCP port is invalid"
+        "tcp_port_invalid": "TCP port is invalid",
+        "ssh_access.main_config_not_found": "Default SSH configuration not found"
       },
       "ssh_keys": {
         "description": "Public keys allow for passwordless SSH logins with a higher security compared to the use of plain passwords",

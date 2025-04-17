@@ -20,7 +20,7 @@ import GenerateSSHKeyPairDrawer from '@/components/controller/account_settings/G
 import DeleteSSHKeyModal from '@/components/controller/account_settings/DeleteSSHKeyModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
-import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
+import TwoFactorAuth from '@/components/controller/account_settings/TwoFactorAuth.vue'
 
 const { t } = useI18n()
 

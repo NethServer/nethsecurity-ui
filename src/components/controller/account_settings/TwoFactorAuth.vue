@@ -18,14 +18,12 @@ import {
   NeTooltip,
   savePreference
 } from '@nethesis/vue-components'
-import ConfigureTwoFaDrawer from '@/components/two_fa/ConfigureTwoFaDrawer.vue'
-import RevokeTwoFaModal from '@/components/two_fa/RevokeTwoFaModal.vue'
-import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { isStandaloneMode } from '@/lib/config'
-import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
+import ConfigureTwoFaDrawer from '@/components/controller/account_settings/two_fa/ConfigureTwoFaDrawer.vue'
+import RevokeTwoFaModal from '@/components/controller/account_settings/two_fa/RevokeTwoFaModal.vue'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 const { t } = useI18n()
-const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+const loginStore = useLoginStore()
 const isTwoFaEnabled = ref(false)
 const isShownConfigureTwoFaDrawer = ref(false)
 const isShownRevokeTwoFaModal = ref(false)

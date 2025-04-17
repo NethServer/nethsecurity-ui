@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import ChangePassword from '@/components/standalone/account/ChangePassword.vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import FormLayout from '@/components/standalone/FormLayout.vue'
-import TwoFactorAuth from '@/components/standalone/account/two_fa/TwoFactorAuth.vue'
+import TwoFactorAuth from '@/components/standalone/account/TwoFactorAuth.vue'
 import ChangeLangCombobox from '@/components/ChangeLangCombobox.vue'
 
 const { t } = useI18n()
@@ -17,9 +17,9 @@ const loginStore = useLoginStore()
 </script>
 
 <template>
-  <NeHeading tag="h3" class="mb-7">{{
-    t('standalone.account_management.title', { name: loginStore.username })
-  }}</NeHeading>
+  <NeHeading tag="h3" class="mb-7">
+    {{ t('standalone.account_management.title', { name: loginStore.username }) }}
+  </NeHeading>
   <div class="max-w-3xl space-y-8">
     <FormLayout :title="t('standalone.account_management.ui_language')">
       <ChangeLangCombobox />

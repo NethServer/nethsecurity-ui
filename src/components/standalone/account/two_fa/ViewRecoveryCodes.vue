@@ -11,13 +11,11 @@ import { ref, watchEffect } from 'vue'
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '@/lib/config.ts'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin.ts'
-import { useNotificationsStore } from '@/stores/notifications.ts'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const loginStore = useLoginStore()
-const notificationsStore = useNotificationsStore()
 
 const model = defineModel<boolean>({ default: false })
 const loading = ref(false)

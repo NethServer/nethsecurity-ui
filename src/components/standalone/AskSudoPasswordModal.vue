@@ -30,6 +30,10 @@ watch(
   (value) => {
     if (value) {
       password.value = ''
+      // need to time out this, the modal has animation and it's not ready yet
+      setTimeout(() => {
+        passwordInput.value?.focus()
+      }, 100)
     }
   }
 )

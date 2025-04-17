@@ -47,6 +47,8 @@ watch(
     :title="t('common.password_confirmation_required')"
     :visible="sudoStore.askingSudo"
     kind="info"
+    :primary-button-disabled="sudoStore.loading"
+    :primary-button-loading="sudoStore.loading"
     @close="closeHandler()"
     @primary-click="sudoStore.askSudoToken(password)"
   >

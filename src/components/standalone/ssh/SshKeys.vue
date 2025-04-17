@@ -87,9 +87,7 @@ function addKey() {
       if (reason instanceof ValidationError) {
         validationErrors.value = reason.errorBag
         focusElement('uploadSshKeyInput')
-      } else if (reason instanceof UnauthorizedAction) {
-        error.value = t(reason.message)
-      } else {
+      } else if (!(reason instanceof UnauthorizedAction)) {
         error.value = t(getAxiosErrorMessage(reason))
       }
     })
@@ -114,9 +112,7 @@ function deleteKey() {
       })
     })
     .catch((reason) => {
-      if (reason instanceof UnauthorizedAction) {
-        deleteError.value = t(reason.message)
-      } else {
+      if (!(reason instanceof UnauthorizedAction)) {
         deleteError.value = t(getAxiosErrorMessage(reason))
       }
     })

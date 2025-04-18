@@ -8,19 +8,22 @@ import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
-import axios, { CanceledError } from 'axios'
+import axios, { type AxiosRequestConfig, CanceledError } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
 import { useNotificationsStore } from './stores/notifications'
+import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
+import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
 const notificationsStore = useNotificationsStore()
 const { locale } = useI18n({ useScope: 'global' })
 const route = useRoute()
+const sudoStore = useSudoStore()
 
 const isLoaded = ref(false)
 
@@ -100,6 +103,38 @@ function configureAxios() {
           const unitId = route.params.unitId
           unitsStore.retrieveAndSaveUnitToken(unitId as string)
         }
+      } else if (
+        error.response?.status == 403 &&
+        error.response?.data?.message == 'sudo mode required'
+      ) {
+        console.warn(
+          '[interceptor]',
+          'Detected sudo mode requirement, asking for sudo to request new token'
+        )
+        // showing the modal that asks for sudo password
+        sudoStore.askingSudo = true
+        // request need to be retried or cancelled based off what happens in the modal
+        // this return allows minimal changes in the functions we want to protect with the sudo form
+        return new Promise((resolve, reject) => {
+          // check if token is granted every 200ms
+          const interval = setInterval(() => {
+            if (sudoStore.askingSudo == false) {
+              // modal closed, stop checking
+              clearInterval(interval)
+              if (sudoStore.sudoEnabled) {
+                // signaling received, stop checking
+                sudoStore.sudoEnabled = false
+                // change the token in the previous request, then send it again
+                const config: AxiosRequestConfig = error.config
+                config.headers!['Authorization'] = `Bearer ${loginStore.token}`
+                resolve(axios(config))
+              } else {
+                // user cancelled the request
+                reject(new UnauthorizedAction())
+              }
+            }
+          }, 200)
+        })
       } else {
         // show error notification only if error is not caused from cancellation
         // and if it isn't a validation error
@@ -135,6 +170,7 @@ function configureAxios() {
   <template v-if="isLoaded">
     <template v-if="loginStore.isLoggedIn">
       <StandaloneAppShell />
+      <AskSudoPasswordModal />
     </template>
     <template v-else>
       <StandaloneAppLogin />

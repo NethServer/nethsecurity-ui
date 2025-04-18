@@ -415,7 +415,6 @@ onMounted(() => {
       </template>
     </NeInlineNotification>
   </NeModal>
-
   <UpdatePackagesModal
     :package-updates="packageUpdates"
     @close="packageUpdates = []"

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/NethServer/nethsecurity-ui/compare/1.22.2...1.23.0) (2025-04-18)
+
+
+### Features
+
+* sudo mode ([#528](https://github.com/NethServer/nethsecurity-ui/issues/528)) ([b6503eb](https://github.com/NethServer/nethsecurity-ui/commit/b6503eb525cb7a96c57ffe516a75f8d581949a9c))
+
 ## [1.22.2](https://github.com/NethServer/nethsecurity-ui/compare/1.22.1...1.22.2) (2025-04-16)
 
 

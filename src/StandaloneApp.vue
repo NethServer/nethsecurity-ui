@@ -122,6 +122,8 @@ function configureAxios() {
               // modal closed, stop checking
               clearInterval(interval)
               if (sudoStore.sudoEnabled) {
+                // signaling received, stop checking
+                sudoStore.sudoEnabled = false
                 // change the token in the previous request, then send it again
                 const config: AxiosRequestConfig = error.config
                 config.headers!['Authorization'] = `Bearer ${loginStore.token}`

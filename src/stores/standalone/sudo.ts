@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watchEffect } from 'vue'
+import { ref } from 'vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin.ts'
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '@/lib/config.ts'
@@ -20,16 +20,6 @@ export const useSudoStore = defineStore('sudo', () => {
   const loading = ref(false)
   const invalidText = ref('')
   const error = ref<Error>()
-
-  watchEffect(() => {
-    // This is a workaround to make sure that we notify the axios interceptor to retry the request
-    // when the sudo token is received
-    if (sudoEnabled.value) {
-      setTimeout(() => {
-        sudoEnabled.value = false
-      }, 5000)
-    }
-  })
 
   function askSudoToken(password: string) {
     loading.value = true

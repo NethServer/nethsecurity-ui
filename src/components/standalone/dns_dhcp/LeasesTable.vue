@@ -135,9 +135,6 @@ const onSort = (payload: any) => {
       <NeTableHeadCell sortable column-key="hostname" @sort="onSort">{{
         t('standalone.dns_dhcp.hostname')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="reservation" @sort="onSort" v-if="!showDynamicLeases">{{
-        t('standalone.dns_dhcp.reservation_name')
-      }}</NeTableHeadCell>
       <NeTableHeadCell sortable column-key="interface" @sort="onSort">{{
         t('standalone.dns_dhcp.interface')
       }}</NeTableHeadCell>
@@ -148,6 +145,9 @@ const onSort = (payload: any) => {
       <NeTableHeadCell sortable column-key="expiration" @sort="onSort" v-if="showDynamicLeases">{{
         t('standalone.dns_dhcp.lease_expiration')
       }}</NeTableHeadCell>
+      <NeTableHeadCell sortable column-key="reservation" @sort="onSort" v-if="!showDynamicLeases">{{
+        t('standalone.dns_dhcp.reservation_name')
+      }}</NeTableHeadCell>
       <NeTableHeadCell>
         <!-- no header for actions -->
       </NeTableHeadCell>
@@ -156,12 +156,6 @@ const onSort = (payload: any) => {
       <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
         <NeTableCell :data-label="t('standalone.dns_dhcp.hostname')">
           {{ item.hostname }}
-        </NeTableCell>
-        <NeTableCell
-          v-if="!showDynamicLeases"
-          :data-label="t('standalone.dns_dhcp.reservation_name')"
-        >
-          {{ item.description ? item.description : '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.dns_dhcp.interface')">
           <p v-if="!item.interface && !item.device">-</p>
@@ -179,6 +173,12 @@ const onSort = (payload: any) => {
         >
           {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
           {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
+        </NeTableCell>
+        <NeTableCell
+          v-if="!showDynamicLeases"
+          :data-label="t('standalone.dns_dhcp.reservation_name')"
+        >
+          {{ item.description ? item.description : '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">

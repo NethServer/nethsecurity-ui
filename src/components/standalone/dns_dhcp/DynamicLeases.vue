@@ -47,7 +47,8 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
       dynamicLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
       dynamicLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
       dynamicLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
-      dynamicLease.interface.toLowerCase().includes(lowerCaseFilter)
+      dynamicLease.interface.toLowerCase().includes(lowerCaseFilter) ||
+      dynamicLease.device.toLowerCase().includes(lowerCaseFilter)
   )
 }
 </script>
@@ -58,6 +59,7 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: strin
     :fetch-error-notification-title="t('error.cannot_retrieve_dynamic_leases')"
     :apply-filter-to-items-function="applyFilterToDynamicLeases"
     :readonly="true"
+    :sort-by-device="true"
     :no-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
     :no-filtered-items-found-message="t('standalone.dns_dhcp.no_dynamic_lease_found')"
     :no-filtered-items-found-description="t('standalone.dns_dhcp.filter_change_suggestion')"

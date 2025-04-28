@@ -39,7 +39,8 @@ function applyFilterToStaticLeases(staticLeases: StaticLease[], filter: string) 
       staticLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
       staticLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
       staticLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
-      staticLease.interface.toLowerCase().includes(lowerCaseFilter)
+      staticLease.interface.toLowerCase().includes(lowerCaseFilter) ||
+      staticLease.device.toLowerCase().includes(lowerCaseFilter)
   )
 }
 
@@ -55,6 +56,7 @@ async function getUciChanges() {
     :fetch-error-notification-title="t('error.cannot_retrieve_reservations')"
     :apply-filter-to-items-function="applyFilterToStaticLeases"
     :readonly="false"
+    :sort-by-device="true"
     :no-items-found-message="t('standalone.dns_dhcp.no_reservation_configured')"
     :no-filtered-items-found-message="t('standalone.dns_dhcp.no_reservation_found')"
     :no-filtered-items-found-description="t('standalone.dns_dhcp.filter_change_suggestion')"

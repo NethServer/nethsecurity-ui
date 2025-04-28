@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeDropdown } from '@nethesis/vue-components'
 import {
   NeButton,
+  NeDropdown,
+  NeSortDropdown,
   NeTable,
   NeTableHead,
   NeTableHeadCell,
@@ -11,12 +12,11 @@ import {
   NeTableCell,
   NePaginator,
   useItemPagination,
-  NeSortDropdown,
   useSort
 } from '@nethesis/vue-components'
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const { t } = useI18n()
 
@@ -28,7 +28,7 @@ const props = defineProps<{
 const emit = defineEmits(['lease-delete', 'lease-edit', 'create-static-lease-from-dynamic'])
 
 const pageSize = ref(10)
-const sortKey = ref('hostname')
+const sortKey = ref<keyof StaticLease | keyof DynamicLease>('hostname')
 const sortDescending = ref(false)
 
 function compareIpAddresses(ip1: string, ip2: string): number {
@@ -42,31 +42,15 @@ function compareIpAddresses(ip1: string, ip2: string): number {
   }
   return 0
 }
-const { showDynamicLeases } = props
 
-// Custom sorting functions
-const sortFunctions = !showDynamicLeases
-  ? {
-      hostname: (a: StaticLease, b: StaticLease) => a.hostname.localeCompare(b.hostname),
-      reservation: (a: StaticLease, b: StaticLease) => a.description.localeCompare(b.description),
-      interface: (a: StaticLease, b: StaticLease) => a.interface.localeCompare(b.interface),
-      address: (a: StaticLease, b: StaticLease) => compareIpAddresses(a.ipaddr, b.ipaddr)
-    }
-  : {
-      hostname: (a: DynamicLease, b: DynamicLease) => a.hostname.localeCompare(b.hostname),
-      interface: (a: DynamicLease, b: DynamicLease) => a.interface.localeCompare(b.interface),
-      address: (a: DynamicLease, b: DynamicLease) => compareIpAddresses(a.ipaddr, b.ipaddr),
-      expiration: (a: DynamicLease, b: DynamicLease) =>
-        (Number(a.timestamp) ?? 0) - (Number(b.timestamp) ?? 0)
-    }
+function sortAddresses<T extends StaticLease | DynamicLease>(a: T, b: T) {
+  return compareIpAddresses(a.ipaddr, b.ipaddr)
+}
 
 // Declare sortedItems before useItemPagination
-const { sortedItems } = useSort(
-  computed(() => props.leases),
-  sortKey,
-  sortDescending,
-  sortFunctions
-)
+const { sortedItems } = useSort(props.leases, sortKey, sortDescending, {
+  address: sortAddresses
+})
 
 // Now use sortedItems in useItemPagination
 const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
@@ -100,6 +84,7 @@ function getDropdownItems(item: StaticLease) {
       ]
 }
 
+// FIXME: return typed event from NeTableHeadCell
 const onSort = (payload: any) => {
   sortKey.value = payload.key
   sortDescending.value = payload.descending
@@ -132,22 +117,22 @@ const onSort = (payload: any) => {
     card-breakpoint="xl"
   >
     <NeTableHead>
-      <NeTableHeadCell sortable column-key="hostname" @sort="onSort">{{
-        t('standalone.dns_dhcp.hostname')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="interface" @sort="onSort">{{
-        t('standalone.dns_dhcp.interface')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="address" @sort="onSort">{{
-        t('standalone.dns_dhcp.ip_address')
-      }}</NeTableHeadCell>
+      <NeTableHeadCell column-key="hostname" sortable @sort="onSort">
+        {{ t('standalone.dns_dhcp.hostname') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell column-key="interface" sortable @sort="onSort">
+        {{ t('standalone.dns_dhcp.interface') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell column-key="address" sortable @sort="onSort">
+        {{ t('standalone.dns_dhcp.ip_address') }}
+      </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.dns_dhcp.mac_address') }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="expiration" @sort="onSort" v-if="showDynamicLeases">{{
-        t('standalone.dns_dhcp.lease_expiration')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="reservation" @sort="onSort" v-if="!showDynamicLeases">{{
-        t('standalone.dns_dhcp.reservation_name')
-      }}</NeTableHeadCell>
+      <NeTableHeadCell v-if="showDynamicLeases" column-key="expiration" sortable @sort="onSort">
+        {{ t('standalone.dns_dhcp.lease_expiration') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell v-if="!showDynamicLeases" column-key="reservation" sortable @sort="onSort">
+        {{ t('standalone.dns_dhcp.reservation_name') }}
+      </NeTableHeadCell>
       <NeTableHeadCell>
         <!-- no header for actions -->
       </NeTableHeadCell>

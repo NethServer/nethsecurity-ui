@@ -2,7 +2,7 @@
   Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<script setup lang="ts" generic="T extends { device?: string }">
+<script setup lang="ts" generic="T">
 import { computed, onMounted, watch, type Ref } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -49,17 +49,20 @@ const selectedItem = ref<T>() as Ref<T | undefined>
 const devices = ref<string[]>([])
 const deviceFilterOptions = ref<FilterOption[]>([])
 
+// Define the type of the items in the list (device is optional and not present in dns records)
+function hasDeviceProperty(item: unknown): item is { device?: string } {
+  return typeof item === 'object' && item !== null && 'device' in item
+}
+
 // filter the table items based on the filter value
 const filteredItems = computed<T[]>(() => {
   let result =
     filter.value === '' ? items.value : props.applyFilterToItemsFunction(items.value, filter.value)
 
-  // Transform deviceFilter.value to a string
-  const deviceFilterValue = Object.values(deviceFilter.value)[0]
+  const deviceFilterValue = deviceFilter.value[0] // Transform deviceFilter.value to a string
 
-  // Apply deviceFilter if it's not 'all'
-  if (deviceFilterValue !== 'all') {
-    result = result.filter((item) => item.device === deviceFilterValue)
+  if (sortByDevice.value && deviceFilterValue !== 'all') {
+    result = result.filter((item) => hasDeviceProperty(item) && item.device === deviceFilterValue)
   }
   return result
 })
@@ -80,13 +83,16 @@ async function fetchItems() {
 watch(items, (newItems) => {
   const uniqueDevices = new Set(
     newItems.map((item) => {
-      return item.device || '-' // Use '-' as a fallback for missing devices
+      if (hasDeviceProperty(item)) {
+        return item.device || '-' // Use '-' if missing
+      }
+      return '-' // Default when item has no device field
     })
   )
-  devices.value = Array.from(uniqueDevices).sort() // Update devices with unique, sorted values
+  devices.value = Array.from(uniqueDevices).sort()
 })
 
-// Watch the devices array and update deviceFilterOptions
+// Watch the devices array and update deviceFilterOptions for the dropdown filter
 watch(devices, (newDevices) => {
   deviceFilterOptions.value = [
     {
@@ -154,7 +160,6 @@ function clearFilters() {
     </div>
     <div class="flex flex-row gap-x-3">
       <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
-      {{ deviceFilter }}
       <NeDropdownFilter
         v-if="sortByDevice"
         v-model="deviceFilter"

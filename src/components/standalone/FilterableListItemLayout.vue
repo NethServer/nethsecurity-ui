@@ -2,9 +2,8 @@
   Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
-
-<script setup lang="ts" generic="T">
-import { computed, onMounted, type Ref } from 'vue'
+<script setup lang="ts" generic="T extends { device?: string }">
+import { computed, onMounted, watch, type Ref } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
@@ -13,7 +12,9 @@ import {
   NeSkeleton,
   NeEmptyState,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  type FilterOption,
+  NeDropdownFilter
 } from '@nethesis/vue-components'
 
 const props = defineProps<{
@@ -26,6 +27,7 @@ const props = defineProps<{
   noItemsFoundMessage: string
   noFilteredItemsFoundMessage: string
   noFilteredItemsFoundDescription?: string
+  sortByDevice?: boolean
 }>()
 const emit = defineEmits(['reload-items'])
 
@@ -38,16 +40,28 @@ const error = ref({
   notificationDetails: ''
 })
 const items = ref<T[]>([]) as Ref<T[]>
-
+const sortByDevice = ref(props.sortByDevice ?? false)
 const filter = ref('')
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
+const deviceFilter = ref<string[]>(['all'])
 const selectedItem = ref<T>() as Ref<T | undefined>
+const devices = ref<string[]>([])
+const deviceFilterOptions = ref<FilterOption[]>([])
 
+// filter the table items based on the filter value
 const filteredItems = computed<T[]>(() => {
-  return filter.value === ''
-    ? items.value
-    : props.applyFilterToItemsFunction(items.value, filter.value)
+  let result =
+    filter.value === '' ? items.value : props.applyFilterToItemsFunction(items.value, filter.value)
+
+  // Transform deviceFilter.value to a string
+  const deviceFilterValue = Object.values(deviceFilter.value)[0]
+
+  // Apply deviceFilter if it's not 'all'
+  if (deviceFilterValue !== 'all') {
+    result = result.filter((item) => item.device === deviceFilterValue)
+  }
+  return result
 })
 
 async function fetchItems() {
@@ -61,6 +75,30 @@ async function fetchItems() {
     error.value.notificationDetails = err.toString()
   }
 }
+
+// Watch the items array and update devices with unique values
+watch(items, (newItems) => {
+  const uniqueDevices = new Set(
+    newItems.map((item) => {
+      return item.device || '-' // Use '-' as a fallback for missing devices
+    })
+  )
+  devices.value = Array.from(uniqueDevices).sort() // Update devices with unique, sorted values
+})
+
+// Watch the devices array and update deviceFilterOptions
+watch(devices, (newDevices) => {
+  deviceFilterOptions.value = [
+    {
+      id: 'all',
+      label: t('common.any')
+    },
+    ...newDevices.map((device) => ({
+      id: device,
+      label: device === '-' ? t('common.unknown') : device
+    }))
+  ]
+})
 
 function openCreateEditDrawer(itemToEdit?: T) {
   selectedItem.value = itemToEdit
@@ -88,6 +126,11 @@ async function reloadItems() {
 onMounted(() => {
   fetchItems()
 })
+// clear the filter
+function clearFilters() {
+  filter.value = ''
+  deviceFilter.value = ['all']
+}
 </script>
 
 <template>
@@ -109,7 +152,22 @@ onMounted(() => {
         </NeButton>
       </div>
     </div>
-    <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+    <div class="flex flex-row gap-x-3">
+      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+      {{ deviceFilter }}
+      <NeDropdownFilter
+        v-if="sortByDevice"
+        v-model="deviceFilter"
+        kind="radio"
+        :label="t('standalone.dns_dhcp.device')"
+        :options="deviceFilterOptions"
+        :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+        :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+      />
+      <NeButton kind="tertiary" @click="clearFilters">
+        {{ t('common.clear_filters') }}
+      </NeButton>
+    </div>
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"

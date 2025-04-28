@@ -15,7 +15,7 @@ interface TunnelCounters {
 }
 
 const props = defineProps({
-  method: { type: String }
+  method: { type: String, required: true }
 })
 
 const { t } = useI18n()

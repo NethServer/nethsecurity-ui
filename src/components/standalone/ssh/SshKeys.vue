@@ -198,6 +198,7 @@ function handleCloseDeleteModal() {
           :invalid-message="t(validationErrors.getFirstI18nKeyFor('key'))"
           :label="t('standalone.ssh.ssh_keys.add_new_ssh_key.label')"
           :placeholder="t('standalone.ssh.ssh_keys.add_new_ssh_key.placeholder')"
+          required
         />
         <NeButton
           :disabled="submitting"

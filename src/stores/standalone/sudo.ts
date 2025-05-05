@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin.ts'
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '@/lib/config.ts'
@@ -20,6 +20,12 @@ export const useSudoStore = defineStore('sudo', () => {
   const loading = ref(false)
   const invalidText = ref('')
   const error = ref<Error>()
+
+  watchEffect(() => {
+    if (askingSudo.value) {
+      invalidText.value = ''
+    }
+  })
 
   function askSudoToken(password: string) {
     loading.value = true

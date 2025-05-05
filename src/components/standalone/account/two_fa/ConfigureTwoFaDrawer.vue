@@ -75,7 +75,9 @@ function getQrCode() {
       configuringTwoFa.value = true
     })
     .catch((reason) => {
-      error.value = reason
+      if (!(reason instanceof UnauthorizedAction)) {
+        error.value = reason
+      }
     })
     .finally(() => {
       loading.value = false

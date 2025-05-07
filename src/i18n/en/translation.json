@@ -1633,7 +1633,12 @@
       "unban_ip_modal_description": "Removing the address {ip} from the blocklist allows it to resume activity on the network.",
       "cannot_unban_ip": "Unable to unban IP",
       "ip_unbanned_title": "IP unbanned",
-      "ip_unbanned_description": "The address {ip} has been removed from the blocklist "
+      "ip_unbanned_description": "The address {ip} has been removed from the blocklist",
+      "search_ip_in_blocklists": "Search IP in blocklists",
+      "ipv4_or_ipv6_address": "IPv4 or IPv6 address",
+      "ip_address_found": "IP address found",
+      "ip_address_found_description": "The IP {ip} is listed in the following blocklist: {blocklist}",
+      "the_ip_is_not_in_any_blocklist": "The IP {ip} is not listed in any active blocklist"
     },
     "threat_shield_dns": {
       "title": "Threat shield DNS",

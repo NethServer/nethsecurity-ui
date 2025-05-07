@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.24.0](https://github.com/NethServer/nethsecurity-ui/compare/1.23.0...1.24.0) (2025-05-07)
+
+
+### Features
+
+* **dhcp:** sorting functionality, column reordering ([#535](https://github.com/NethServer/nethsecurity-ui/issues/535)) ([2ad2b69](https://github.com/NethServer/nethsecurity-ui/commit/2ad2b694fefe08b486fb9f40214fb4910b466c4c))
+
+
+### Bug Fixes
+
+* **ssh:** configure only main dropbear server ([#541](https://github.com/NethServer/nethsecurity-ui/issues/541)) ([ccb4844](https://github.com/NethServer/nethsecurity-ui/commit/ccb4844e866180c12c86aa3db5dc0190ebfeb916))
+* **sudo:** fixed some corner cases ([#540](https://github.com/NethServer/nethsecurity-ui/issues/540)) ([c8bff45](https://github.com/NethServer/nethsecurity-ui/commit/c8bff451fbf2583e3ba531cadff6e450ba64fec7))
+
 ## [1.23.0](https://github.com/NethServer/nethsecurity-ui/compare/1.22.2...1.23.0) (2025-04-18)
 
 

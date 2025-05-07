@@ -32,6 +32,7 @@ type SshConfigResponse = {
       PasswordAuth: string
       RootPasswordAuth: string
       GatewayPorts: string
+      '.name': string
     }
   ]
 }
@@ -58,7 +59,7 @@ function submit() {
     submitting.value = true
     ubusCall('uci', 'set', {
       config: 'dropbear',
-      section: '@dropbear[0]',
+      section: 'dropbear.main',
       values: {
         Port: port.value,
         PasswordAuth: passwordAuth.value ? 'on' : 'off',
@@ -96,10 +97,15 @@ function load() {
   loading.value = true
   getUciConfig('dropbear')
     .then((response: SshConfigResponse) => {
-      port.value = response.dropbear[0].Port
-      passwordAuth.value = response.dropbear[0].PasswordAuth == 'on'
-      rootPasswordAuth.value = response.dropbear[0].RootPasswordAuth == 'on'
-      gatewayPorts.value = response.dropbear[0].GatewayPorts == 'on'
+      const mainConfig = response.dropbear.find((config) => config['.name'] === 'main')
+      if (mainConfig) {
+        port.value = mainConfig.Port
+        passwordAuth.value = mainConfig.PasswordAuth == 'on'
+        rootPasswordAuth.value = mainConfig.RootPasswordAuth == 'on'
+        gatewayPorts.value = mainConfig.GatewayPorts == 'on'
+      } else {
+        error.value = new Error(t('standalone.ssh.ssh_access.main_config_not_found'))
+      }
     })
     .catch((exception: AxiosError) => {
       error.value = new Error(getAxiosErrorMessage(exception))

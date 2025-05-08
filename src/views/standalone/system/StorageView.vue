@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ubusCall } from '@/lib/standalone/ubus'
+import { faDatabase, faHardDrive } from '@fortawesome/free-solid-svg-icons'
 import {
   NeHeading,
   NeInlineNotification,
@@ -42,7 +43,7 @@ const deviceOptions = computed(() =>
   availableDevices.value.map((storage) => ({
     id: storage.path!,
     label: storage.name!,
-    icon: storage.type == 'disk' ? 'database' : 'hard-drive',
+    icon: storage.type == 'disk' ? faDatabase : faHardDrive,
     type: storage.type!
   }))
 )

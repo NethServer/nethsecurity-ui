@@ -5,10 +5,10 @@
 
 <script setup lang="ts">
 import {
+  getIconFromZone,
   getInterface,
   getName,
   getZoneColor,
-  getZoneIcon,
   isBond,
   isBridge,
   isUnconfiguredBond
@@ -221,7 +221,7 @@ const zoneOptions = computed(() => {
       id: zone.name,
       label: toUpper(zone.name),
       description: getZoneColor(zone.name),
-      icon: getZoneIcon(zone.name)
+      icon: getIconFromZone(zone.name)
     }
   })
 })

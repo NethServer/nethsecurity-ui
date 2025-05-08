@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.24.1](https://github.com/NethServer/nethsecurity-ui/compare/1.24.0...1.24.1) (2025-05-08)
+
+
+### Bug Fixes
+
+* **dhcp:** correct reservation name sorting ([#543](https://github.com/NethServer/nethsecurity-ui/issues/543)) ([343ed99](https://github.com/NethServer/nethsecurity-ui/commit/343ed99107efaede993d41718692c3484cdd3461))
+* **two fa:** remove error in case of unauthorized action ([#542](https://github.com/NethServer/nethsecurity-ui/issues/542)) ([f78b8b9](https://github.com/NethServer/nethsecurity-ui/commit/f78b8b9c4a8dcb740dbc659b7aaec28f614843e3))
+
 ## [1.24.0](https://github.com/NethServer/nethsecurity-ui/compare/1.23.0...1.24.0) (2025-05-07)
 
 

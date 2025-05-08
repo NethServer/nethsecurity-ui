@@ -400,7 +400,7 @@
     "welcome_title_standalone": "Benvenuti",
     "welcome_description_standalone": "Accedi a {product}, proteggi la tua rete e accedi rapidamente al cloud.",
     "welcome_title_controller": "Benvenuti",
-    "welcome_description_controller": "{product} Controller consente di gestire le unit di {prodotto} in modo rapido e semplice.",
+    "welcome_description_controller": "{product} Controller consente di gestire le unità di {prodotto} in modo rapido e semplice.",
     "username": "Nome utente",
     "password": "Password",
     "remember_me": "Ricordami",
@@ -1964,7 +1964,7 @@
       "last_sent": "Ultimo invio: {date}",
       "sending_data_to_controller_tooltip": "Monitoraggio completo disponibile su Grafana con NethSecurity {subscription_link}",
       "no_last_sent": "Dai in preparazione per la trasmissione",
-      "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unit al Controller."
+      "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unità al Controller."
     },
     "conntrack": {
       "delete_all": "Elimina tutte le connessioni",
@@ -2446,6 +2446,7 @@
   "error_modal": {
     "ubus_request_failed": "Richiesta Ubus fallita",
     "request_failed": "Richiesta fallita",
+    "make_sure_unit_is_updated": "Assicurati che la unità sia aggiornata alla versione più recente.",
     "report_issue_step_2": "Incolla il comando nel terminale di {product} ed eseguilo",
     "api_request_failed": "Richiesta API fallita",
     "copy_command": "Copia comando",

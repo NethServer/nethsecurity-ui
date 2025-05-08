@@ -10,9 +10,12 @@ import { computed, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/notifications'
 import { getProductName } from '@/lib/config'
+import { getStandaloneRoutePrefix } from '@/lib/router'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const router = useRouter()
 const justCopied = ref(false)
 const isExpandedRequest = ref(false)
 const isExpandedResponse = ref(false)
@@ -62,6 +65,11 @@ function copyCommandToClipboard() {
     }, 3000)
   }
 }
+
+function goToUpdates() {
+  notificationsStore.setAxiosErrorModalOpen(false)
+  router.push(`${getStandaloneRoutePrefix()}/system/update`)
+}
 </script>
 <template>
   <NeModal
@@ -75,7 +83,7 @@ function copyCommandToClipboard() {
     @close="notificationsStore.setAxiosErrorModalOpen(false)"
     @primary-click="notificationsStore.setAxiosErrorModalOpen(false)"
   >
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div>
         <NeFormItemLabel class="!mb-1">
           {{ t('error_modal.request_failed') }}
@@ -83,6 +91,12 @@ function copyCommandToClipboard() {
         <div class="font-mono">
           {{ callFailed }}
         </div>
+      </div>
+      <div class="mb-2">
+        {{ t('error_modal.make_sure_unit_is_updated') }}
+        <NeLink @click="goToUpdates">
+          {{ t('common.go_to_page', { page: t('standalone.update.title') }) }}
+        </NeLink>
       </div>
       <div>
         <div class="mb-1">{{ t('error_modal.report_issue_description') }}:</div>

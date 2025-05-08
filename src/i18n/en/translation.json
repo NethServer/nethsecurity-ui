@@ -2595,6 +2595,7 @@
     "api_request_failed": "API request failed",
     "copy_command": "Copy command",
     "request_failed": "Request failed",
+    "make_sure_unit_is_updated": "Make sure the unit is updated to the most recent version.",
     "report_issue_description": "If the issue persists and you want to report it, please follow these steps",
     "copy_the_command": "Copy the command",
     "report_issue_step_1": "{copyTheCommand} that failed",

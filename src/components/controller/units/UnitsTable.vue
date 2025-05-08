@@ -26,7 +26,8 @@ import {
   NeTooltip,
   NeBadge,
   savePreference,
-  useItemPagination
+  useItemPagination,
+  type NeDropdownItem
 } from '@nethesis/vue-components'
 import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { useDefaultsStore } from '@/stores/controller/defaults'
@@ -37,10 +38,18 @@ import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
 import { coerce, outside, satisfies } from 'semver'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faArrowsRotate,
+  faArrowUpRightFromSquare,
   faCalendarXmark,
+  faCircleArrowUp,
+  faCircleXmark,
   faClock,
   faCloudArrowUp,
+  faCopy,
+  faPenToSquare,
   faSync,
+  faTerminal,
+  faTrash,
   faWarning
 } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -124,29 +133,26 @@ async function openUnit(unit: Unit, versionCheck = true) {
 }
 
 function getKebabMenuItems(unit: Unit) {
-  const menuItems: Array<any> = []
+  const menuItems: Array<NeDropdownItem> = []
   if (unit.registered) {
     menuItems.push(
       {
         id: 'openMetrics',
         label: t('controller.units.open_metrics'),
-        icon: 'arrow-up-right-from-square',
-        iconStyle: 'fas',
+        icon: faArrowUpRightFromSquare,
         action: () => openMetrics(unit)
       },
       {
         id: 'openLogs',
         label: t('controller.units.open_logs'),
-        icon: 'arrow-up-right-from-square',
-        iconStyle: 'fas',
+        icon: faArrowUpRightFromSquare,
         action: () => openLogs(unit),
         disabled: !unit.info.fqdn
       },
       {
         id: 'openSsh',
         label: t('controller.units.open_ssh_terminal'),
-        icon: 'terminal',
-        iconStyle: 'fas',
+        icon: faTerminal,
         action: () => emit('openSshModal', unit),
         disabled: !unit.connected
       }
@@ -155,8 +161,7 @@ function getKebabMenuItems(unit: Unit) {
     menuItems.push({
       id: 'copyJoinCode',
       label: t('controller.units.copy_join_code'),
-      icon: 'copy',
-      iconStyle: 'fas',
+      icon: faCopy,
       action: () => copyJoinCode(unit)
     })
   }
@@ -167,8 +172,7 @@ function getKebabMenuItems(unit: Unit) {
         unit.info.scheduled_update > 0
           ? t('controller.units.edit_scheduled_image_update')
           : t('standalone.update.update_system'),
-      icon: unit.info.scheduled_update > 0 ? 'pen-to-square' : 'circle-arrow-up',
-      iconStyle: 'fas',
+      icon: unit.info.scheduled_update > 0 ? faPenToSquare : faCircleArrowUp,
       action: () => emit('scheduleUpdate', unit),
       disabled: !unit.connected || unitsStore.unitUpgradingImage.find((id) => id == unit.id)
     })
@@ -177,8 +181,7 @@ function getKebabMenuItems(unit: Unit) {
     menuItems.push({
       id: 'cancelScheduledUpdate',
       label: t('controller.units.cancel_scheduled_image_update'),
-      icon: 'circle-xmark',
-      iconStyle: 'fas',
+      icon: faCircleXmark,
       action: () => emit('abortUpdate', unit),
       disabled: !unit.connected
     })
@@ -188,16 +191,14 @@ function getKebabMenuItems(unit: Unit) {
     {
       id: 'upgradeUnitPackages',
       label: t('controller.units.check_packages_updates'),
-      icon: 'arrows-rotate',
-      iconStyle: 'fas',
+      icon: faArrowsRotate,
       action: () => emit('upgradeUnitPackages', unit),
       disabled: !unit.connected || unitsStore.unitUpdatingPackages.find((id) => id == unit.id)
     },
     {
       id: 'refreshUnitInfo',
       label: t('controller.units.sync_unit_info'),
-      icon: 'cloud-arrow-up',
-      iconStyle: 'fas',
+      icon: faCloudArrowUp,
       action: () => refreshUnitInfo(unit),
       disabled: !unit.connected
     },
@@ -207,8 +208,7 @@ function getKebabMenuItems(unit: Unit) {
     {
       id: 'removeUnit',
       label: t('controller.units.remove_unit'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => maybeShowRemoveUnitModal(unit),
       danger: true
     }

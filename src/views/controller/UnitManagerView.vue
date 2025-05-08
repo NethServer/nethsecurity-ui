@@ -29,6 +29,7 @@ import ScheduleUpdateDrawer from '@/components/controller/units/ScheduleUpdateDr
 import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vue'
 import UpdateUnitsPackagesModal from '@/components/controller/units/UpdateUnitsPackagesModal.vue'
 import BatchUnitImageUpdate from '@/components/controller/units/BatchUnitImageUpdate.vue'
+import { faArrowsRotate, faCircleMinus, faKey } from '@fortawesome/free-solid-svg-icons'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -136,22 +137,19 @@ function getBulkActionsKebabMenuItems() {
     {
       id: 'scheduleSystemUpdate',
       label: t('standalone.update.update_system', 2),
-      iconStyle: 'fas',
-      icon: 'arrows-rotate',
+      icon: faArrowsRotate,
       action: () => (showBatchUnitImageUpdate.value = true)
     },
     {
       id: 'sendSshKey',
       label: t('controller.units.send_ssh_public_key'),
-      iconStyle: 'fas',
-      icon: 'key',
+      icon: faKey,
       action: () => showSendSshKeyDrawer()
     },
     {
       id: 'revokeSshKey',
       label: t('controller.units.revoke_ssh_public_key'),
-      iconStyle: 'fas',
-      icon: 'circle-minus',
+      icon: faCircleMinus,
       action: () => showRevokeSshKeyDrawer()
     }
   ]

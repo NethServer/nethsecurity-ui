@@ -28,7 +28,7 @@ import {
   useSort
 } from '@nethesis/vue-components'
 import type { AxiosResponse } from 'axios'
-import { faCircleInfo, faShield, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faShield, faTrash, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisableRuleDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -107,8 +107,7 @@ function dropDownActions(rule: Rule): NeDropdownItem[] {
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => {
         ruleToEnable.value = rule

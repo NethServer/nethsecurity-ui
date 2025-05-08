@@ -23,6 +23,7 @@ import {
 } from '@nethesis/vue-components'
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 import { ref } from 'vue'
+import { faCircleCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -99,9 +100,8 @@ function getDropdownItems(item: Certificate) {
     {
       id: 'set_as_default',
       label: t('standalone.certificates.set_as_default'),
-      iconStyle: 'fas',
       disabled: isCertificateExpired(item) || item.pending,
-      icon: 'circle-check',
+      icon: faCircleCheck,
       action: () => {
         emit('setAsDefault', item)
       }
@@ -112,8 +112,7 @@ function getDropdownItems(item: Certificate) {
           {
             id: 'delete',
             label: t('common.delete'),
-            iconStyle: 'fas',
-            icon: 'trash',
+            icon: faTrash,
             danger: true,
             action: () => {
               emit('delete', item)

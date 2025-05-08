@@ -24,7 +24,7 @@ import {
   useSort
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { faCircleInfo, faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faCirclePlus, faShield, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref } from 'vue'
 import IpsCreateBypassDrawer from '@/components/standalone/security/ips/IpsCreateBypassDrawer.vue'
@@ -108,8 +108,7 @@ function dropDownActions(bypass: Bypass): NeDropdownItem[] {
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => {
         bypassToDelete.value = bypass

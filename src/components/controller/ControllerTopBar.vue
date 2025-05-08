@@ -12,6 +12,7 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
+import { faCircleUser, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -28,22 +29,19 @@ const accountMenuOptions = computed(() => {
     {
       id: 'account',
       label: t('common.shell.account_settings'),
-      icon: 'circle-user',
-      iconStyle: 'fas',
+      icon: faCircleUser,
       action: () => router.push(`${getControllerRoutePrefix()}/account`)
     },
     {
       id: 'theme',
       label: t('common.shell.toggle_theme'),
-      icon: themeStore.isLight ? 'moon' : 'sun',
-      iconStyle: 'fas',
+      icon: themeStore.isLight ? faMoon : faSun,
       action: themeStore.toggleTheme
     },
     {
       id: 'logout',
       label: t('common.shell.sign_out'),
-      icon: 'right-from-bracket',
-      iconStyle: 'fas',
+      icon: faRightFromBracket,
       action: loginStore.logout
     }
   ]

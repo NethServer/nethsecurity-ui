@@ -9,6 +9,7 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { ReverseProxy } from '@/views/standalone/network/ReverseProxyView.vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -49,8 +50,7 @@ function getDropdownItems(item: ReverseProxy) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)

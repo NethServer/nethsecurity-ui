@@ -18,6 +18,7 @@ import {
 import { ref, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ScanResult } from './ScanNetwork.vue'
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   results: {
@@ -43,15 +44,13 @@ function getKebabMenuItems(scanResult: ScanResult) {
     {
       id: 'addIpReservation',
       label: t('standalone.dns_dhcp.add_reservation'),
-      icon: 'circle-plus',
-      iconStyle: 'fas',
+      icon: faCirclePlus,
       action: () => emit('addIpReservation', scanResult)
     },
     {
       id: 'addDnsRecord',
       label: t('standalone.dns_dhcp.add_dns_record'),
-      icon: 'circle-plus',
-      iconStyle: 'fas',
+      icon: faCirclePlus,
       action: () => emit('addDnsRecord', scanResult)
     }
   ]

@@ -37,6 +37,8 @@ import {
   faArrowRight,
   faBan,
   faCircleInfo,
+  faCircleXmark,
+  faEyeSlash,
   faShield,
   faWarning
 } from '@fortawesome/free-solid-svg-icons'
@@ -151,8 +153,7 @@ function dropDownActions(item: Event): NeDropdownItem[] {
     {
       id: 'disable-rule',
       label: t('standalone.ips.disable_rule'),
-      icon: 'circle-xmark',
-      iconStyle: 'fas',
+      icon: faCircleXmark,
       action: () => {
         ruleToDisable.value = {
           gid: item.gid.toString(),
@@ -164,8 +165,7 @@ function dropDownActions(item: Event): NeDropdownItem[] {
     {
       id: 'source-suppress-alert',
       label: t('standalone.ips.source_suppress_alert'),
-      icon: 'eye-slash',
-      iconStyle: 'fas',
+      icon: faEyeSlash,
       action: () => {
         alertToSuppress.value = {
           gid: item.gid.toString(),
@@ -179,8 +179,7 @@ function dropDownActions(item: Event): NeDropdownItem[] {
     {
       id: 'destination-suppress-alert',
       label: t('standalone.ips.destination_suppress_alert'),
-      icon: 'eye-slash',
-      iconStyle: 'fas',
+      icon: faEyeSlash,
       action: () => {
         alertToSuppress.value = {
           gid: item.gid.toString(),

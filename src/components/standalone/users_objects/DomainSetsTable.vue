@@ -20,7 +20,7 @@ import {
 } from '@nethesis/vue-components'
 import { ref, type PropType } from 'vue'
 import { library as faLibrary } from '@fortawesome/fontawesome-svg-core'
-import { faCloud } from '@fortawesome/free-solid-svg-icons'
+import { faCloud, faMagnifyingGlassPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import type { DomainSet } from '@/composables/useDomainSets'
 
 const props = defineProps({
@@ -53,16 +53,14 @@ function getKebabMenuItems(domainSet: DomainSet) {
     {
       id: 'showUsagesDomainSet',
       label: t('standalone.objects.show_usages'),
-      icon: 'magnifying-glass-plus',
-      iconStyle: 'fas',
+      icon: faMagnifyingGlassPlus,
       action: () => emit('showUsagesDomainSet', domainSet),
       disabled: !domainSet.used
     },
     {
       id: 'deleteDomainSet',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => emit('deleteDomainSet', domainSet)
     }

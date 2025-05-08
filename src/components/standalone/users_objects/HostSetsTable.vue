@@ -24,7 +24,9 @@ import {
   faArrowsLeftRightToLine,
   faAddressCard,
   faDesktop,
-  faBoxArchive
+  faBoxArchive,
+  faMagnifyingGlassPlus,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import HostSetRecords from './HostSetRecords.vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -71,8 +73,7 @@ function getKebabMenuItems(hostSet: HostSet) {
     {
       id: 'showUsagesHostSet',
       label: t('standalone.objects.show_usages'),
-      icon: 'magnifying-glass-plus',
-      iconStyle: 'fas',
+      icon: faMagnifyingGlassPlus,
       action: () => emit('showUsagesHostSet', hostSet),
       disabled: !hostSet.used,
       danger: false
@@ -83,8 +84,7 @@ function getKebabMenuItems(hostSet: HostSet) {
     kebabItems.push({
       id: 'deleteHostSet',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => emit('deleteHostSet', hostSet),
       disabled: false

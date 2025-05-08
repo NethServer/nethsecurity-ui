@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NeCard } from '@nethesis/vue-components'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 defineProps<{
   bypass: string
@@ -24,8 +25,7 @@ const emit = defineEmits<{
       {
         id: 'delete',
         label: t('common.delete'),
-        icon: 'trash',
-        iconStyle: 'fas',
+        icon: faTrash,
         action: () => emit('delete', bypass),
         danger: true
       }

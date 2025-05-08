@@ -9,6 +9,7 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { DnsRecord } from './DnsRecords.vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -46,8 +47,7 @@ function getDropdownItems(item: DnsRecord) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('record-delete', item)

@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -86,8 +87,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
             {
               id: 'delete',
               label: t('common.delete'),
-              iconStyle: 'fas',
-              icon: 'trash',
+              icon: faTrash,
               danger: true,
               action: () => {
                 emit('delete-server')

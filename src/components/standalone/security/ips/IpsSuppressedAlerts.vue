@@ -26,7 +26,7 @@ import {
   useItemPagination,
   useSort
 } from '@nethesis/vue-components'
-import { faCircleInfo, faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faCirclePlus, faShield, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
@@ -109,8 +109,7 @@ function dropDownActions(suppressedAlert: SuppressedAlert): NeDropdownItem[] {
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => {
         suppressionToDelete.value = suppressedAlert

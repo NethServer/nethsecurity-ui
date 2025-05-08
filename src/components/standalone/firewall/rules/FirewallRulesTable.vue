@@ -12,7 +12,13 @@ import NeTable from '@/components/standalone/NeTable.vue'
 import { isEmpty } from 'lodash-es'
 import { type FirewallRule, type RuleType } from '@/stores/standalone/firewall'
 import SourceOrDestinationRuleColumn from './SourceOrDestinationRuleColumn.vue'
-import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faCopy,
+  faGripVertical,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 import { useHostSets } from '@/composables/useHostSets'
 import { useDomainSets } from '@/composables/useDomainSets'
 
@@ -149,22 +155,19 @@ function getRuleKebabMenuItems(rule: FirewallRule) {
     {
       id: 'enableOrDisable',
       label: rule.enabled ? t('common.disable') : t('common.enable'),
-      iconStyle: 'fas',
-      icon: rule.enabled ? 'circle-xmark' : 'circle-check',
+      icon: rule.enabled ? faCircleXmark : faCircleCheck,
       action: () => emit('toggleRule', rule)
     },
     {
       id: 'duplicate',
       label: t('standalone.firewall_rules.duplicate'),
-      icon: 'copy',
-      iconStyle: 'fas',
+      icon: faCopy,
       action: () => emit('duplicateRule', rule)
     },
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => emit('deleteRule', rule),
       danger: true
     }

@@ -19,6 +19,7 @@ import {
 } from '@nethesis/vue-components'
 import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import { ref } from 'vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -42,8 +43,7 @@ function getDropdownItems(item: BanIpLocalAddress) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)

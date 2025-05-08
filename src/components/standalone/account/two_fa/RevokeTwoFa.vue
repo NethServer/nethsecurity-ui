@@ -51,7 +51,9 @@ function revoke() {
       }, 300)
     })
     .catch((reason) => {
-      error.value = reason
+      if (!(reason instanceof UnauthorizedAction)) {
+        error.value = reason
+      }
     })
     .finally(() => (loading.value = false))
 }

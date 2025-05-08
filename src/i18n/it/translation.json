@@ -2446,6 +2446,7 @@
   "error_modal": {
     "ubus_request_failed": "Richiesta Ubus fallita",
     "request_failed": "Richiesta fallita",
+    "make_sure_unit_is_updated": "Assicurati che la unità sia aggiornato alla versione più recente.",
     "report_issue_step_2": "Incolla il comando nel terminale di {product} ed eseguilo",
     "api_request_failed": "Richiesta API fallita",
     "copy_command": "Copia comando",

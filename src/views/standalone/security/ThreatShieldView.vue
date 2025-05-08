@@ -11,6 +11,7 @@ import AllowlistTab from '@/components/standalone/security/threat_shield/Allowli
 import BlocklistTab from '@/components/standalone/security/threat_shield/BlocklistTab.vue'
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
 import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
+import BannedIpsTab from '@/components/standalone/security/threat_shield/BannedIpsTab.vue'
 
 export type BanIpLocalAddress = {
   address: string
@@ -33,6 +34,10 @@ const { tabs, selectedTab } = useTabs([
     label: t('standalone.threat_shield.local_blocklist')
   },
   {
+    name: 'bannedIps',
+    label: t('standalone.threat_shield.banned_ips')
+  },
+  {
     name: 'settings',
     label: t('standalone.threat_shield.settings')
   }
@@ -53,6 +58,7 @@ const { tabs, selectedTab } = useTabs([
     <BlocklistTab v-if="selectedTab === 'blocklist'" />
     <AllowlistTab v-if="selectedTab === 'allowlist'" />
     <LocalBlocklistTab v-if="selectedTab === 'localBlocklist'" />
+    <BannedIpsTab v-if="selectedTab === 'bannedIps'" />
     <SettingsTab v-if="selectedTab === 'settings'" />
   </div>
 </template>

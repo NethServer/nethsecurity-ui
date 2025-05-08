@@ -10,8 +10,8 @@ import {
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { ref, watch } from 'vue'
+import { faCirclePlus, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { ref, watch, watchEffect } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
 import { MessageBag } from '@/lib/validation.ts'
@@ -33,6 +33,12 @@ watch(ip, () => {
   validationBag.value.clear()
 })
 
+watchEffect(() => {
+  if (drawerOpen.value) {
+    ip.value = ''
+  }
+})
+
 function search() {
   searching.value = true
   error.value = undefined
@@ -51,6 +57,38 @@ function search() {
     })
     .finally(() => {
       searching.value = false
+    })
+}
+
+const unblocking = ref(false)
+const errorUnblocking = ref<Error>()
+const successUnblocking = ref(false)
+watchEffect(() => {
+  if (successUnblocking.value) {
+    setTimeout(() => {
+      successUnblocking.value = false
+    }, 2000)
+  }
+})
+
+function allowIp() {
+  unblocking.value = true
+  errorUnblocking.value = undefined
+  ubusCall('ns.threatshield', 'add-allowed', {
+    address: ip.value,
+    description: ''
+  })
+    .then(() => {
+      successUnblocking.value = true
+    })
+    .catch((reason: Error) => {
+      if (reason instanceof ValidationError && reason.errorBag.has('address')) {
+        successUnblocking.value = true
+      }
+      errorUnblocking.value = reason
+    })
+    .finally(() => {
+      unblocking.value = false
     })
 }
 </script>
@@ -95,22 +133,45 @@ function search() {
         </div>
         <NeSkeleton v-if="searching" :lines="2" />
         <template v-else-if="result != undefined">
-          <NeInlineNotification
-            v-if="result.found"
-            :title="t('standalone.threat_shield.ip_address_found')"
-            kind="info"
-          >
-            <template #description>
-              <p>
-                {{
-                  t('standalone.threat_shield.ip_address_found_description', {
-                    ip: ip,
-                    blocklist: result.list
-                  })
-                }}
-              </p>
-            </template>
-          </NeInlineNotification>
+          <div v-if="result.found" class="space-y-4">
+            <NeInlineNotification
+              :title="t('standalone.threat_shield.ip_address_found')"
+              kind="info"
+            >
+              <template #description>
+                <p>
+                  {{
+                    t('standalone.threat_shield.ip_address_found_description', {
+                      ip: ip,
+                      blocklist: result.list
+                    })
+                  }}
+                </p>
+              </template>
+            </NeInlineNotification>
+            <div class="flex items-center gap-4">
+              <NeButton
+                :disabled="unblocking"
+                :loading="unblocking"
+                kind="secondary"
+                size="lg"
+                @click="allowIp"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
+                </template>
+                {{ t('standalone.threat_shield.add_to_local_allowlist') }}
+              </NeButton>
+              <Transition name="fade">
+                <p
+                  v-if="successUnblocking"
+                  class="rounded bg-gray-100 px-2.5 py-1.5 text-sm text-gray-900"
+                >
+                  {{ t('standalone.threat_shield.added_to_local_allowlist') }}
+                </p>
+              </Transition>
+            </div>
+          </div>
           <NeEmptyState
             v-else
             :description="

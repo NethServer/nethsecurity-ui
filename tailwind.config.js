@@ -36,7 +36,8 @@ export default {
         '7xl': '3584px'
       },
       animation: {
-        'spin-fast': 'spin 0.5s linear infinite'
+        'spin-fast': 'spin 0.5s linear infinite',
+        'spin-relaxed': 'spin 1.5s linear infinite'
       }
     }
   },

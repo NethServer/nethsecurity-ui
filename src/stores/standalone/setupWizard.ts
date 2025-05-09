@@ -55,6 +55,7 @@ export const useSetupWizardStore = defineStore('setupWizard', () => {
       await ubusCall('ns.wizard', 'set', {
         complete: value
       })
+      isComplete.value = value
     } catch (err: unknown) {
       console.error(err)
       errorSetWizardConfig.value = t(getAxiosErrorMessage(err))
@@ -76,6 +77,7 @@ export const useSetupWizardStore = defineStore('setupWizard', () => {
       await ubusCall('ns.wizard', 'set', {
         password_changed: value
       })
+      isPasswordChanged.value = value
     } catch (err: unknown) {
       console.error(err)
       errorSetWizardConfig.value = t(getAxiosErrorMessage(err))

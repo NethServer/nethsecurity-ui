@@ -65,9 +65,8 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
     const themeStore = useThemeStore()
     themeStore.loadTheme()
-    await loadAppData()
     isSessionExpired.value = false
-    router.push(`${getStandaloneRoutePrefix()}/`)
+    loadAppData()
   }
 
   const logout = async () => {
@@ -140,7 +139,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
       if (!wizardStore.isComplete) {
         // show setup wizard
-        router.push(`${getStandaloneRoutePrefix()}/wizard`)
+        router.replace(`${getStandaloneRoutePrefix()}/wizard`)
         return
       }
       // wizard already completed
@@ -151,6 +150,9 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
       // load unit hostname
       loadHostname()
+
+      // go to dashboard
+      router.push(`${getStandaloneRoutePrefix()}/`)
     } catch (err) {
       console.error(err)
     }

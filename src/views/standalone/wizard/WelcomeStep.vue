@@ -61,8 +61,6 @@ async function goToNextStep() {
       break
     case 'restoreBackup':
       await wizardStore.setCompleted(true)
-      await wizardStore.getWizardConfig()
-
       router.push({
         path: `${getStandaloneRoutePrefix()}/system/backup-and-restore`,
         query: {
@@ -72,7 +70,6 @@ async function goToNextStep() {
       break
     case 'factoryReset':
       await wizardStore.setCompleted(true)
-      await wizardStore.getWizardConfig()
       router.push(`${getStandaloneRoutePrefix()}/system/factory_reset`)
       break
   }

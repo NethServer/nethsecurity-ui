@@ -22,7 +22,7 @@ import {
   faCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import { MessageBag } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
@@ -34,7 +34,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const wizardStore = useSetupWizardStore()
-const portRef = ref()
+const portRef = useTemplateRef<HTMLInputElement>('port')
 const validationErrors = ref(new MessageBag())
 const loadingSaveSsh = ref(false)
 const errorSaveSsh = ref('')
@@ -127,7 +127,7 @@ function validate() {
       <div class="space-y-8">
         <div class="max-w-sm">
           <NeTextInput
-            ref="portRef"
+            ref="port"
             v-model="wizardStore.sshPort"
             :invalid-message="validationErrors.get('port')?.[0]"
             :label="t('standalone.wizard.tcp_port')"

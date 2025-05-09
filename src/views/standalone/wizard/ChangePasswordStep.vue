@@ -149,7 +149,6 @@ async function changeRootPassword() {
 
 async function setPasswordChanged() {
   await wizardStore.setPasswordChanged(true)
-  await wizardStore.getWizardConfig()
   await uciChangesStore.getChanges()
 
   // apply uci changes

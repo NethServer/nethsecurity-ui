@@ -19,7 +19,7 @@ import {
   NeTooltip
 } from '@nethesis/vue-components'
 import type { User } from './UsersDatabaseManager.vue'
-import { faCrown } from '@fortawesome/free-solid-svg-icons'
+import { faCircleMinus, faCrown, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 
 const props = defineProps<{
@@ -45,8 +45,7 @@ function getDropdownItems(item: User) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)
@@ -56,8 +55,7 @@ function getDropdownItems(item: User) {
       ? {
           id: 'remove_admin',
           label: t('standalone.users_database.remove_admin'),
-          iconStyle: 'fas',
-          icon: 'circle-minus',
+          icon: faCircleMinus,
           action: () => {
             emit('removeAdmin', item)
           }
@@ -65,8 +63,7 @@ function getDropdownItems(item: User) {
       : {
           id: 'set_admin',
           label: t('standalone.users_database.set_admin'),
-          iconStyle: 'fas',
-          icon: 'crown',
+          icon: faCrown,
           action: () => {
             emit('setAdmin', item)
           }

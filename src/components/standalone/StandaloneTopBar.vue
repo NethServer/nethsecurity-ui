@@ -16,6 +16,7 @@ import { isEmpty, isEqual } from 'lodash-es'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { isStandaloneMode } from '@/lib/config'
 import UciChangesModal from './UciChangesModal.vue'
+import { faCircleUser, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -41,23 +42,20 @@ const accountMenuOptions = computed(() => {
     {
       id: 'account',
       label: t('common.shell.account_settings'),
-      icon: 'circle-user',
-      iconStyle: 'fas',
+      icon: faCircleUser,
       action: () => router.push('/standalone/account'),
       disabled: !isStandaloneMode()
     },
     {
       id: 'theme',
       label: t('common.shell.toggle_theme'),
-      icon: themeStore.isLight ? 'moon' : 'sun',
-      iconStyle: 'fas',
+      icon: themeStore.isLight ? faMoon : faSun,
       action: themeStore.toggleTheme
     },
     {
       id: 'logout',
       label: t('common.shell.sign_out'),
-      icon: 'right-from-bracket',
-      iconStyle: 'fas',
+      icon: faRightFromBracket,
       action: loginStore.logout,
       disabled: !isStandaloneMode()
     }

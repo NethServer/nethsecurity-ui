@@ -23,6 +23,13 @@ import type {
   RWAccount
 } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 import { ref } from 'vue'
+import {
+  faArrowsRotate,
+  faCircleArrowDown,
+  faCircleCheck,
+  faCircleXmark,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -51,8 +58,7 @@ function getDropdownItems(item: RWAccount) {
     {
       id: 'download_configuration',
       label: t('standalone.openvpn_rw.download_configuration'),
-      iconStyle: 'fas',
-      icon: 'circle-arrow-down',
+      icon: faCircleArrowDown,
       danger: false,
       action: () => {
         emit('downloadConfiguration', item)
@@ -61,8 +67,7 @@ function getDropdownItems(item: RWAccount) {
     {
       id: 'download_certificate',
       label: t('standalone.openvpn_rw.download_certificate'),
-      iconStyle: 'fas',
-      icon: 'circle-arrow-down',
+      icon: faCircleArrowDown,
       danger: false,
       action: () => {
         emit('downloadCertificate', item)
@@ -73,8 +78,7 @@ function getDropdownItems(item: RWAccount) {
           {
             id: 'download_qr_code',
             label: t('standalone.openvpn_rw.download_qr_code'),
-            iconStyle: 'fas',
-            icon: 'circle-arrow-down',
+            icon: faCircleArrowDown,
             danger: false,
             action: () => {
               emit('downloadQrCode', item)
@@ -85,8 +89,7 @@ function getDropdownItems(item: RWAccount) {
     {
       id: 'enable_disable',
       label: item.openvpn_enabled === '1' ? t('common.disable') : t('common.enable'),
-      iconStyle: 'fas',
-      icon: item.openvpn_enabled === '1' ? 'circle-xmark' : 'circle-check',
+      icon: item.openvpn_enabled === '1' ? faCircleXmark : faCircleCheck,
       action: () => {
         emit('enableDisable', item)
       }
@@ -94,8 +97,7 @@ function getDropdownItems(item: RWAccount) {
     {
       id: 'regenerate_certificate',
       label: t('standalone.openvpn_rw.regenerate_certificate'),
-      iconStyle: 'fas',
-      icon: 'arrows-rotate',
+      icon: faArrowsRotate,
       danger: false,
       action: () => {
         emit('regenerateCertificate', item)
@@ -104,8 +106,7 @@ function getDropdownItems(item: RWAccount) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)

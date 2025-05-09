@@ -26,6 +26,7 @@ import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { CanceledError } from 'axios'
 import { onUnmounted } from 'vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export type User = {
   local: boolean
@@ -191,8 +192,7 @@ onMounted(() => {
             {
               id: 'delete',
               label: t('common.delete'),
-              iconStyle: 'fas',
-              icon: 'trash',
+              icon: faTrash,
               danger: true,
               action: () => {
                 showDeleteDatabaseModal = true

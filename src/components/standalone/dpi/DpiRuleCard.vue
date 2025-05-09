@@ -11,6 +11,7 @@ import { getZoneBorderColorClasses } from '@/lib/standalone/network'
 import { computed, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { Zone } from '@/stores/standalone/firewall'
+import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
   rule: DpiRule
@@ -87,15 +88,13 @@ async function toggleRule() {
       {
         id: 'enable_disable',
         label: rule.enabled ? t('common.disable') : t('common.enable'),
-        iconStyle: 'fas',
-        icon: rule.enabled ? 'circle-xmark' : 'circle-check',
+        icon: rule.enabled ? faCircleXmark : faCircleCheck,
         action: () => toggleRule()
       },
       {
         id: 'delete',
         label: t('common.delete'),
-        icon: 'trash',
-        iconStyle: 'fas',
+        icon: faTrash,
         action: () => emit('deleteRule', rule),
         danger: true
       }

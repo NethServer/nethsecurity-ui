@@ -35,6 +35,7 @@ import {
 import { ubusCall } from '@/lib/standalone/ubus'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import NeCopyField from '../NeCopyField.vue'
+import { faCircleArrowUp, faKey } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   isShown: boolean
@@ -134,12 +135,12 @@ const presharedKeyOptions = [
   {
     id: 'generate',
     label: t('standalone.ipsec_tunnel.use_generated_key'),
-    icon: 'key'
+    icon: faKey
   },
   {
     id: 'import',
     label: t('standalone.ipsec_tunnel.use_custom_key'),
-    icon: 'circle-arrow-up'
+    icon: faCircleArrowUp
   }
 ]
 const wanOptions = ref<NeComboboxOption[]>([])

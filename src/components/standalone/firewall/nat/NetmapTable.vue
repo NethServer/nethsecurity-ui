@@ -10,6 +10,7 @@ import { NeDropdown } from '@nethesis/vue-components'
 import { computed, type PropType } from 'vue'
 import NeTable from '@/components/standalone/NeTable.vue'
 import { type NetmapRule } from '@/stores/standalone/firewall'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   rules: {
@@ -76,8 +77,7 @@ function getDropdownItems(rule: NetmapRule) {
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => emit('deleteRule', rule),
       danger: true
     }

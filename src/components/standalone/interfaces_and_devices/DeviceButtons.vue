@@ -13,6 +13,7 @@ import {
 } from '@/lib/standalone/network'
 import type { PropType } from 'vue'
 import { NeDropdown, NeButton } from '@nethesis/vue-components'
+import { faCircleMinus, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -47,8 +48,7 @@ function getConfiguredDeviceKebabMenuItems(device: DeviceOrIface) {
     {
       id: 'createAliasInterface',
       label: t('standalone.interfaces_and_devices.create_alias_interface'),
-      icon: 'copy',
-      iconStyle: 'fas',
+      icon: faCopy,
       action: () => emit('showCreateAliasInterfaceDrawer', device),
       disabled:
         !iface ||
@@ -60,8 +60,7 @@ function getConfiguredDeviceKebabMenuItems(device: DeviceOrIface) {
       label: isBridge(device)
         ? t('standalone.interfaces_and_devices.delete_interface')
         : t('standalone.interfaces_and_devices.remove_configuration'),
-      icon: 'circle-minus',
-      iconStyle: 'fas',
+      icon: faCircleMinus,
       action: () => emit('showUnconfigureDeviceModal', device),
       danger: true,
       disabled: !iface
@@ -74,8 +73,7 @@ function getUnconfiguredVlanKebabMenuItems(device: DeviceOrIface) {
     {
       id: 'deleteDevice',
       label: t('standalone.interfaces_and_devices.delete_device'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => emit('showDeleteDeviceModal', device),
       danger: true
     }
@@ -133,8 +131,7 @@ function getUnconfiguredVlanKebabMenuItems(device: DeviceOrIface) {
       {
         id: 'deleteBond',
         label: t('standalone.interfaces_and_devices.delete_bond'),
-        icon: 'trash',
-        iconStyle: 'fas',
+        icon: faTrash,
         action: () => emit('showDeleteBondModal', deviceOrIface),
         danger: true
       }

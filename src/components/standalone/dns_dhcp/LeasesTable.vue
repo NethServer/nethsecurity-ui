@@ -17,6 +17,7 @@ import {
 import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
 import { ref } from 'vue'
+import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -63,8 +64,7 @@ function getDropdownItems(item: StaticLease) {
         {
           id: 'delete',
           label: t('common.delete'),
-          iconStyle: 'fas',
-          icon: 'trash',
+          icon: faTrash,
           danger: true,
           action: () => {
             emit('lease-delete', item)
@@ -75,8 +75,7 @@ function getDropdownItems(item: StaticLease) {
         {
           id: 'create-static-lease',
           label: t('standalone.dns_dhcp.add_reservation'),
-          iconStyle: 'fas',
-          icon: 'circle-plus',
+          icon: faCirclePlus,
           action: () => {
             emit('create-static-lease-from-dynamic', item)
           }

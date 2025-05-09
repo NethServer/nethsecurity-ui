@@ -59,6 +59,7 @@ import { zonesSorting } from '@/stores/standalone/firewall'
 import DeleteBondModal from '@/components/standalone/interfaces_and_devices/DeleteBondModal.vue'
 import DeviceButtons from '@/components/standalone/interfaces_and_devices/DeviceButtons.vue'
 import type { UciNetworkConfig } from '@/composables/useUciNetworkConfig'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -369,8 +370,7 @@ function getAliasKebabMenuItems(alias: any, device: any) {
     {
       id: 'deleteAlias',
       label: t('standalone.interfaces_and_devices.delete_alias'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => showDeleteAliasModal(alias, device),
       danger: true,
       disabled: !getFirewallZone(iface, firewallConfig.value)

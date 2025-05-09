@@ -33,6 +33,7 @@ import {
   getZoneColorClasses,
   getZoneIcon
 } from '@/lib/standalone/network'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const firewallConfig = useFirewallStore()
@@ -212,14 +213,14 @@ function editZone(zone: Zone) {
                     id: 'edit',
                     label: t('common.edit'),
                     action: () => editZone(item),
-                    icon: 'pen-to-square'
+                    icon: faPenToSquare
                   },
                   {
                     id: 'delete',
                     danger: true,
                     label: t('common.delete'),
                     action: () => (zoneToDelete = item),
-                    icon: 'trash',
+                    icon: faTrash,
                     disabled: isSpecialZone(item)
                   }
                 ]"

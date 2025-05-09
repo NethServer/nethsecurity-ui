@@ -30,7 +30,8 @@ import {
   faEarthAmerica,
   faLocationDot,
   faCircleCheck,
-  faCircleXmark
+  faCircleXmark,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -344,7 +345,7 @@ function scrollToMainTable() {
                         danger: true,
                         label: t('common.delete'),
                         disabled: item.readonly,
-                        icon: 'trash',
+                        icon: faTrash,
                         action: () => {
                           deleteRouteId = item.id
                           deleteRouteName = item.ns_description || item.target

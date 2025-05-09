@@ -21,7 +21,7 @@ import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   users: ControllerAccount[]
@@ -44,8 +44,7 @@ function getDropdownItems(item: ControllerAccount) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)

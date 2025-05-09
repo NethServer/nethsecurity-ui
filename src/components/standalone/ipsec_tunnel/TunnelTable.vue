@@ -9,6 +9,7 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
+import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -53,8 +54,7 @@ function getDropdownItems(item: IpsecTunnel) {
         item.enabled === '1'
           ? t('standalone.ipsec_tunnel.disable')
           : t('standalone.ipsec_tunnel.enable'),
-      iconStyle: 'fas',
-      icon: item.enabled === '1' ? 'circle-xmark' : 'circle-check',
+      icon: item.enabled === '1' ? faCircleXmark : faCircleCheck,
       action: () => {
         emit('tunnel-toggle-enable', item)
       }
@@ -62,8 +62,7 @@ function getDropdownItems(item: IpsecTunnel) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('tunnel-delete', item)

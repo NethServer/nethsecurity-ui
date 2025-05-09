@@ -9,6 +9,12 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
+import {
+  faCircleArrowDown,
+  faCircleCheck,
+  faCircleXmark,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -90,8 +96,7 @@ function getDropdownItems(item: ServerTunnel) {
     {
       id: 'download',
       label: t('standalone.openvpn_tunnel.download'),
-      iconStyle: 'fas',
-      icon: 'circle-arrow-down',
+      icon: faCircleArrowDown,
       action: () => {
         emit('tunnel-download', item)
       }
@@ -101,8 +106,7 @@ function getDropdownItems(item: ServerTunnel) {
       label: item.enabled
         ? t('standalone.openvpn_tunnel.disable')
         : t('standalone.openvpn_tunnel.enable'),
-      iconStyle: 'fas',
-      icon: item.enabled ? 'circle-xmark' : 'circle-check',
+      icon: item.enabled ? faCircleXmark : faCircleCheck,
       action: () => {
         emit('tunnel-toggle-enable', item)
       }
@@ -110,8 +114,7 @@ function getDropdownItems(item: ServerTunnel) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('tunnel-delete', item)

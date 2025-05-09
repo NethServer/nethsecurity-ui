@@ -20,7 +20,7 @@ import {
 import { ref, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DnsBlockedDomain } from '@/stores/standalone/threatShield'
-import { faCircleInfo, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   filteredDomains: {
@@ -46,8 +46,7 @@ function getKebabMenuItems(domain: DnsBlockedDomain) {
     {
       id: 'deleteHostSet',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       danger: true,
       action: () => emit('deleteDomain', domain),
       disabled: false

@@ -15,6 +15,7 @@ import {
   getZoneIconForegroundStyle,
   getZoneIconBackgroundStyle
 } from '@/lib/standalone/network'
+import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -57,8 +58,7 @@ function getDropdownItems(item: QoSInterface) {
     {
       id: 'enable_disable',
       label: !item.disabled ? t('common.disable') : t('common.enable'),
-      iconStyle: 'fas',
-      icon: !item.disabled ? 'circle-xmark' : 'circle-check',
+      icon: !item.disabled ? faCircleXmark : faCircleCheck,
       action: () => {
         emit('enableDisable', item)
       }
@@ -66,8 +66,7 @@ function getDropdownItems(item: QoSInterface) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('delete', item)

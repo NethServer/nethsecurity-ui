@@ -18,6 +18,7 @@ import {
   NeButton
 } from '@nethesis/vue-components'
 import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
+import { faCircleCheck, faCircleXmark, faClone, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -42,8 +43,7 @@ function getDropdownItems(item: PortForward) {
       label: item.enabled
         ? t('standalone.port_forward.disable')
         : t('standalone.port_forward.enable'),
-      iconStyle: 'fas',
-      icon: item.enabled ? 'circle-xmark' : 'circle-check',
+      icon: item.enabled ? faCircleXmark : faCircleCheck,
       action: () => {
         emit('port-forward-toggle-enable', item)
       }
@@ -51,8 +51,7 @@ function getDropdownItems(item: PortForward) {
     {
       id: 'duplicate',
       label: t('standalone.port_forward.duplicate'),
-      iconStyle: 'fas',
-      icon: 'clone',
+      icon: faClone,
       action: () => {
         emit('port-forward-duplicate', item)
       }
@@ -60,8 +59,7 @@ function getDropdownItems(item: PortForward) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         emit('port-forward-delete', item)

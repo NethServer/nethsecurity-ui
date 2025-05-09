@@ -39,6 +39,7 @@ import {
   faEdit,
   faLock,
   faPlay,
+  faTrash,
   faUnlock
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
@@ -181,8 +182,7 @@ function getDropdownItems(item: Backup) {
     {
       id: 'delete',
       label: t('common.delete'),
-      iconStyle: 'fas',
-      icon: 'trash',
+      icon: faTrash,
       danger: true,
       action: () => {
         openDeleteBackup(

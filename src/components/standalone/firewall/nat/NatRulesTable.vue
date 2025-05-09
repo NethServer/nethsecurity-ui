@@ -21,6 +21,7 @@ import {
 import { ref, type PropType } from 'vue'
 import { type NatRule } from '@/stores/standalone/firewall'
 import { getZoneColorClasses } from '@/lib/standalone/network'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   rules: {
@@ -46,8 +47,7 @@ function getDropdownItems(rule: NatRule) {
     {
       id: 'delete',
       label: t('common.delete'),
-      icon: 'trash',
-      iconStyle: 'fas',
+      icon: faTrash,
       action: () => emit('deleteRule', rule),
       danger: true
     }

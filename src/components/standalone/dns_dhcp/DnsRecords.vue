@@ -53,6 +53,7 @@ async function getUciChanges() {
     :fetch-error-notification-title="t('error.cannot_retrieve_dns_records')"
     :apply-filter-to-items-function="applyFilterToDnsRecords"
     :readonly="false"
+    :sort-by-device="false"
     :no-items-found-message="t('standalone.dns_dhcp.no_dns_record_configured')"
     :no-filtered-items-found-message="t('standalone.dns_dhcp.no_dns_record_found')"
     :no-filtered-items-found-description="t('standalone.dns_dhcp.filter_change_suggestion')"

@@ -85,7 +85,7 @@ onMounted(() => {
 async function listInputRules() {
   loadingListInputRules.value = true
   errorListInputRules.value = ''
-  errorListInputRules.value = ''
+  errorListInputRulesDetails.value = ''
 
   try {
     const res = await ubusCall('ns.firewall', 'list-input-rules')

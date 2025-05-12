@@ -1620,7 +1620,7 @@
       "three_days": "3 days",
       "filter_blocklists": "Filter blocklists",
       "banned_ips": "Banned IPs",
-      "banned_ips_description": "This page displays IP addresses that have been temporarily blocked by the firewall.  These addresses have made multiple failed attempts to access the system, indicating potential brute force attacks.",
+      "banned_ips_description": "This page displays IP addresses that have been temporarily blocked by the firewall. These addresses have made multiple failed attempts to access the system, indicating potential brute force attacks.",
       "ban_start": "Ban start",
       "ban_expiration": "Ban expiration",
       "ip_address_not_found": "IP address not found",

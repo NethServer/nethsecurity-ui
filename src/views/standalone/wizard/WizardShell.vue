@@ -28,6 +28,7 @@ import Port443Step from './Port443Step.vue'
 import type { FirewallRule } from '@/stores/standalone/firewall'
 import { ubusCall } from '@/lib/standalone/ubus'
 import SummaryStep from './SummaryStep.vue'
+import wizardLoaderUrl from '@/assets/wizard-loader.svg'
 
 type Step = 'welcome' | 'password' | 'ssh' | 'port9090' | 'port443' | 'summary'
 
@@ -158,7 +159,7 @@ function goToPreviousStep() {
       <!-- loader -->
       <img
         class="mb-14 h-16 w-16 animate-spin-relaxed"
-        :src="`/wizard-loader.svg`"
+        :src="wizardLoaderUrl"
         :alt="`${getCompanyName()} logo`"
         aria-hidden="true"
       />

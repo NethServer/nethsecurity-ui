@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2025 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script setup lang="ts">
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'

@@ -20,7 +20,7 @@ export class ValidationError extends Error {
 
 export const ubusCall = async (
   path: string,
-  method: any,
+  method: string,
   payload: any = {},
   config?: AxiosRequestConfig
 ) => {
@@ -52,7 +52,7 @@ export const ubusCall = async (
 
 export const ubusCallFromController = async (
   path: string,
-  method: any,
+  method: string,
   payload: any = {},
   unitId: string,
   config?: AxiosRequestConfig

@@ -13,6 +13,7 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useTitle } from '@vueuse/core'
+import { useSetupWizardStore } from './setupWizard'
 
 export const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
@@ -25,6 +26,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
   const router = useRouter()
   const route = useRoute()
+  const wizardStore = useSetupWizardStore()
 
   const isLoggedIn = computed(() => {
     return !isEmpty(username.value)
@@ -50,7 +52,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     return jwtToken
   }
 
-  const loginSuccessful = (user: string, jwtToken: string) => {
+  const loginSuccessful = async (user: string, jwtToken: string) => {
     const loginInfo = {
       username: user,
       token: jwtToken,
@@ -63,9 +65,8 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
 
     const themeStore = useThemeStore()
     themeStore.loadTheme()
-    loadAppData()
     isSessionExpired.value = false
-    router.push(`${getStandaloneRoutePrefix()}/`)
+    loadAppData()
   }
 
   const logout = async () => {
@@ -131,13 +132,30 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   // load data after login or on page load (if already logged in)
-  const loadAppData = () => {
-    // load uci pending changes
-    const uciChangesStore = useUciPendingChangesStore()
-    uciChangesStore.getChanges()
+  const loadAppData = async () => {
+    // need to show setup wizard?
+    try {
+      await wizardStore.getWizardConfig()
 
-    // load unit hostname
-    loadHostname()
+      if (!wizardStore.isComplete) {
+        // show setup wizard
+        router.replace(`${getStandaloneRoutePrefix()}/wizard`)
+        return
+      }
+      // wizard already completed
+
+      // load uci pending changes
+      const uciChangesStore = useUciPendingChangesStore()
+      uciChangesStore.getChanges()
+
+      // load unit hostname
+      loadHostname()
+
+      // go to dashboard
+      router.push(`${getStandaloneRoutePrefix()}/`)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const loadHostname = async () => {

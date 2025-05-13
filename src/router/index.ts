@@ -2,9 +2,15 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { isStandaloneMode } from '@/lib/config'
+import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const standaloneRoutes = [
+  {
+    path: 'wizard',
+    name: 'Wizard',
+    component: () => import('../views/standalone/wizard/WizardShell.vue')
+  },
   {
     path: 'dashboard',
     name: 'Dashboard',
@@ -268,6 +274,21 @@ const router = createRouter({
       component: () => import('../views/controller/UnitTerminalView.vue')
     }
   ]
+})
+
+// redirect to wizard page if not completed
+router.beforeEach(async (to) => {
+  const setupWizardStore = useSetupWizardStore()
+
+  if (setupWizardStore.isComplete) {
+    // setup wizard already completed
+    return true
+  } else {
+    // setup wizard not completed
+    if (to.name !== 'StandaloneWizard') {
+      return { name: 'StandaloneWizard' }
+    }
+  }
 })
 
 export default router

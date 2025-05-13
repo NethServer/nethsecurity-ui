@@ -17,6 +17,8 @@ import { getPreference } from '@nethesis/vue-components'
 import { useNotificationsStore } from './stores/notifications'
 import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
 import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
+import WizardShell from './views/standalone/wizard/WizardShell.vue'
+import ToastNotificationsArea from './components/ToastNotificationsArea.vue'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
@@ -43,9 +45,11 @@ onMounted(async () => {
   configureAxios()
 
   if (loginStore.isLoggedIn) {
-    loginStore.loadAppData()
+    await loginStore.loadAppData()
+    isLoaded.value = true
+  } else {
+    isLoaded.value = true
   }
-  isLoaded.value = true
 })
 
 function configureAxios() {
@@ -169,7 +173,11 @@ function configureAxios() {
 <template>
   <template v-if="isLoaded">
     <template v-if="loginStore.isLoggedIn">
-      <StandaloneAppShell />
+      <StandaloneAppShell v-if="route.path !== '/standalone/wizard'" />
+      <template v-else>
+        <WizardShell />
+        <ToastNotificationsArea />
+      </template>
       <AskSudoPasswordModal />
     </template>
     <template v-else>

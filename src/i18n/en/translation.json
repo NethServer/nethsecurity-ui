@@ -1851,6 +1851,7 @@
       "dynamic_range_ip_start": "Dynamic range IP start",
       "dynamic_range_ip_end": "Dynamic range IP end",
       "download_all_configs": "Download all configurations",
+      "user_not_valid": "Invalid user: the user has a VPN configuration but it's not present inside the remote user database.",
       "tabs": {
         "road_warrior_server": "Road Warrior server",
         "connections_history": "Connections history"

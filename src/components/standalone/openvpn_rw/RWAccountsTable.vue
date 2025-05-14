@@ -28,6 +28,7 @@ import {
   faCircleArrowDown,
   faCircleCheck,
   faCircleXmark,
+  faCircleInfo,
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -174,6 +175,19 @@ function getCellClasses(item: RWAccount) {
                 </div>
               </template>
             </NeTooltip>
+            <NeTooltip v-if="item.valid === false">
+              <template #trigger>
+                <font-awesome-icon
+                  :icon="faCircleInfo"
+                  class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+                />
+              </template>
+              <template #content>
+                <div class="text-center">
+                  <p>{{ t('standalone.openvpn_rw.user_not_valid') }}</p>
+                </div>
+              </template>
+            </NeTooltip>
           </div>
           <!-- more info button -->
           <NeTooltip v-if="item.connected" interactive placement="bottom">
@@ -264,7 +278,10 @@ function getCellClasses(item: RWAccount) {
         </NeTableCell>
         <!-- connection -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.connection')">
-          <div :class="['flex', 'flex-row', 'items-center', getCellClasses(item)]">
+          <div v-if="item.valid === false" class="flex flex-row items-center">
+            <p>-</p>
+          </div>
+          <div v-else :class="['flex', 'flex-row', 'items-center', getCellClasses(item)]">
             <font-awesome-icon
               :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
               :class="[
@@ -287,17 +304,28 @@ function getCellClasses(item: RWAccount) {
         <!-- actions -->
         <NeTableCell :data-label="t('common.actions')">
           <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
-            <NeButton kind="tertiary" @click="emit('edit', item)">
-              <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'pen-to-square']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
-              </template>
-              {{ t('common.edit') }}
-            </NeButton>
-            <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+            <template v-if="item.valid !== false">
+              <NeButton kind="tertiary" @click="emit('edit', item)">
+                <template #prefix>
+                  <font-awesome-icon
+                    :icon="['fas', 'pen-to-square']"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </template>
+                {{ t('common.edit') }}
+              </NeButton>
+              <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+            </template>
+            <template v-else>
+              <NeButton kind="tertiary" @click="emit('delete', item)">
+                <template #prefix>
+                  <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />
+                </template>
+                {{ t('common.delete') }}
+              </NeButton>
+              <span class="w-6"></span>
+            </template>
           </div>
         </NeTableCell>
       </NeTableRow>

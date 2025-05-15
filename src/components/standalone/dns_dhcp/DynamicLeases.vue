@@ -8,7 +8,6 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import LeasesTable from './LeasesTable.vue'
 import { ref, computed, onMounted } from 'vue'
-import { type Ref } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
@@ -23,6 +22,7 @@ import {
   type FilterOption,
   NeDropdownFilter
 } from '@nethesis/vue-components'
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 const { t } = useI18n()
 const router = useRouter()
 // Define props
@@ -34,7 +34,7 @@ const showCreateStaticLeaseDrawer = ref(false)
 const uciChangesStore = useUciPendingChangesStore()
 const filter = ref('')
 const selectedInterface = ref<string[]>(['any'])
-const items = ref<DynamicLease[]>([]) as Ref<DynamicLease[]>
+const items = ref<DynamicLease[]>([])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -134,8 +134,8 @@ function clearFilters() {
         {{ t('standalone.dns_dhcp.dynamic_leases_description') }}
       </p>
     </div>
-    <div class="flex flex-row gap-x-3">
-      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+    <div class="flex items-center gap-x-3">
+      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" is-search />
       <NeDropdownFilter
         v-model="selectedInterface"
         kind="radio"
@@ -163,14 +163,14 @@ function clearFilters() {
       <NeEmptyState
         v-if="items.length == 0"
         :title="t('standalone.dns_dhcp.no_dynamic_lease_found')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         class="pb-2"
       />
       <NeEmptyState
         v-else-if="filteredItems.length == 0"
         :title="t('standalone.dns_dhcp.no_dynamic_lease_found')"
         :description="t('standalone.dns_dhcp.filter_change_suggestion')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
       />
       <LeasesTable
         v-else

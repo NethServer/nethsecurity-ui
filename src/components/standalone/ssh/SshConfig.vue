@@ -59,7 +59,7 @@ function submit() {
     submitting.value = true
     ubusCall('uci', 'set', {
       config: 'dropbear',
-      section: 'dropbear.main',
+      section: 'main',
       values: {
         Port: port.value,
         PasswordAuth: passwordAuth.value ? 'on' : 'off',

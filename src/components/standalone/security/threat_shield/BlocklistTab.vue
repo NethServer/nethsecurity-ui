@@ -22,6 +22,7 @@ import { useI18n } from 'vue-i18n'
 import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import SearchBannedIp from '@/components/standalone/security/threat_shield/SearchBannedIp.vue'
 
 export type Blocklist = {
   name: string
@@ -178,11 +179,15 @@ onMounted(() => {
         ></NeEmptyState
       >
       <template v-else>
-        <NeTextInput
-          v-model="filter"
-          class="max-w-xs sm:max-w-sm"
-          :placeholder="t('standalone.threat_shield.filter_blocklists')"
-          is-search />
+        <div class="flex flex-col flex-wrap gap-4 sm:flex-row">
+          <NeTextInput
+            v-model="filter"
+            class="mr-auto sm:max-w-sm"
+            :placeholder="t('standalone.threat_shield.filter_blocklists')"
+            is-search
+          />
+          <SearchBannedIp />
+        </div>
         <BlocklistTable
           v-if="filteredBlocklists.length > 0"
           :blocklists="filteredBlocklists"

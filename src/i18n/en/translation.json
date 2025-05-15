@@ -38,6 +38,7 @@
     "copied": "Copied!",
     "status": "Status",
     "any": "Any",
+    "interface": "Interface",
     "loading": "Loading",
     "plus_num_others": "+{num} other | +{num} others",
     "eg_value": "e.g. {value}",

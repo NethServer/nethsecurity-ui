@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.24.2](https://github.com/NethServer/nethsecurity-ui/compare/1.24.1...1.24.2) (2025-05-15)
+
+
+### Bug Fixes
+
+* improve message in axios error modal ([#545](https://github.com/NethServer/nethsecurity-ui/issues/545)) ([65c15ba](https://github.com/NethServer/nethsecurity-ui/commit/65c15bab14e4386bf9a2f69a6d9bdf527ded5b00))
+* replace string icons with IconDefinition ([#547](https://github.com/NethServer/nethsecurity-ui/issues/547)) ([9536cd7](https://github.com/NethServer/nethsecurity-ui/commit/9536cd7d18014a0d2645015efa1ba49e3af3e58f))
+* **ssh:** wrong section name ([abf9673](https://github.com/NethServer/nethsecurity-ui/commit/abf967381bedcd8e0de4961a30524957c7709abb))
+
 ## [1.24.1](https://github.com/NethServer/nethsecurity-ui/compare/1.24.0...1.24.1) (2025-05-08)
 
 

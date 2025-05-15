@@ -29,8 +29,10 @@ import {
   faCircleCheck,
   faCircleXmark,
   faCircleInfo,
-  faTrash
+  faTrash,
+  faPenToSquare
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 
@@ -177,7 +179,7 @@ function getCellClasses(item: RWAccount) {
             </NeTooltip>
             <NeTooltip v-if="item.valid === false">
               <template #trigger>
-                <font-awesome-icon
+                <FontAwesomeIcon
                   :icon="faCircleInfo"
                   class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
                 />
@@ -307,11 +309,7 @@ function getCellClasses(item: RWAccount) {
             <template v-if="item.valid !== false">
               <NeButton kind="tertiary" @click="emit('edit', item)">
                 <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
+                  <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
                 </template>
                 {{ t('common.edit') }}
               </NeButton>
@@ -320,7 +318,7 @@ function getCellClasses(item: RWAccount) {
             <template v-else>
               <NeButton kind="tertiary" @click="emit('delete', item)">
                 <template #prefix>
-                  <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4" aria-hidden="true" />
+                  <FontAwesomeIcon :icon="faTrash" class="h-4 w-4" aria-hidden="true" />
                 </template>
                 {{ t('common.delete') }}
               </NeButton>

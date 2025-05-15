@@ -181,10 +181,10 @@ onMounted(() => {
         {{ generalInvalidMessage }}
       </p>
       <NeButton
-        class="mt-4"
+        class="-ml-2.5 mt-4"
         size="md"
         :disabled="disableAddButton"
-        kind="secondary"
+        kind="tertiary"
         @click="addItem"
       >
         <template #prefix>

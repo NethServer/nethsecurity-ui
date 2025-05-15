@@ -78,6 +78,7 @@ export type RWAccount = {
   since?: number
   used: boolean
   matches: string[]
+  valid?: boolean
 }
 
 const { t } = useI18n()

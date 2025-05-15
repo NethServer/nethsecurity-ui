@@ -128,7 +128,7 @@ function updatePassword() {
       ref="newPasswordHtmlRef"
       v-model="newPassword"
       :disabled="loading"
-      :invalid-message="t(validationBag.getFirstFor('new_password'))"
+      :invalid-message="t(validationBag.getFirstI18nKeyFor('new_password'))"
       :label="t('standalone.change_password.new_password')"
       is-password
     >

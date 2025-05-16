@@ -37,7 +37,7 @@ export type StaticLease = {
 }
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
-const filter = ref('')
+const textFilter = ref('')
 const selectedInterface = ref<string[]>(['any'])
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
@@ -51,7 +51,7 @@ const error = ref({
 const loading = ref(false)
 const filteredItems = computed<StaticLease[]>(() => {
   let result =
-    filter.value === '' ? items.value : applyFilterToStaticLeases(items.value, filter.value)
+    textFilter.value === '' ? items.value : applyFilterToStaticLeases(items.value, textFilter.value)
   // Use the first selected interface, default to 'any'
   const selected = selectedInterface.value[0] ?? 'any'
   if (selected !== 'any') {
@@ -64,8 +64,8 @@ const filteredItems = computed<StaticLease[]>(() => {
   return result
 })
 
-function applyFilterToStaticLeases(staticLeases: StaticLease[], filter: string): StaticLease[] {
-  const lowerCaseFilter = filter.toLowerCase()
+function applyFilterToStaticLeases(staticLeases: StaticLease[], textFilter: string): StaticLease[] {
+  const lowerCaseFilter = textFilter.toLowerCase()
   return staticLeases.filter(
     (staticLease) =>
       staticLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
@@ -130,9 +130,9 @@ const interfaceFilterOptions = computed(() => {
 onMounted(() => {
   fetchItems()
 })
-// clear the filter
+// clear the textFilter
 function clearFilters() {
-  filter.value = ''
+  textFilter.value = ''
   selectedInterface.value = ['any']
 }
 </script>
@@ -153,7 +153,7 @@ function clearFilters() {
       </div>
     </div>
     <div class="flex items-center gap-x-3">
-      <NeTextInput v-model="filter" is-search class="max-w-xs" :placeholder="t('common.filter')" />
+      <NeTextInput v-model="textFilter" is-search class="max-w-xs" :placeholder="t('common.filter')" />
       <NeDropdownFilter
         v-model="selectedInterface"
         kind="radio"

@@ -28,7 +28,7 @@ const router = useRouter()
 const selectedLease = ref<DynamicLease>()
 const showCreateStaticLeaseDrawer = ref(false)
 const uciChangesStore = useUciPendingChangesStore()
-const filter = ref('')
+const textFilter = ref('')
 const selectedInterface = ref<string[]>(['any'])
 const items = ref<DynamicLease[]>([])
 const error = ref({
@@ -54,7 +54,9 @@ function openCreateStaticLeaseDrawer(item: DynamicLease) {
 
 const filteredItems = computed<DynamicLease[]>(() => {
   let result =
-    filter.value === '' ? items.value : applyFilterToDynamicLeases(items.value, filter.value)
+    textFilter.value === ''
+      ? items.value
+      : applyFilterToDynamicLeases(items.value, textFilter.value)
   // Use the first selected interface, default to 'any'
   const selected = selectedInterface.value[0] ?? 'any'
   if (selected !== 'any') {
@@ -67,8 +69,8 @@ const filteredItems = computed<DynamicLease[]>(() => {
   return result
 })
 
-function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], filter: string) {
-  const lowerCaseFilter = filter.toLowerCase()
+function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], textFilter: string) {
+  const lowerCaseFilter = textFilter.toLowerCase()
   return dynamicLeases.filter(
     (dynamicLease) =>
       dynamicLease.hostname.toLowerCase().includes(lowerCaseFilter) ||
@@ -118,7 +120,7 @@ onMounted(() => {
 })
 
 function clearFilters() {
-  filter.value = ''
+  textFilter.value = ''
   selectedInterface.value = ['any']
 }
 </script>
@@ -131,7 +133,12 @@ function clearFilters() {
       </p>
     </div>
     <div class="flex items-center gap-x-3">
-      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" is-search />
+      <NeTextInput
+        v-model="textFilter"
+        class="max-w-xs"
+        :placeholder="t('common.filter')"
+        is-search
+      />
       <NeDropdownFilter
         v-model="selectedInterface"
         kind="radio"

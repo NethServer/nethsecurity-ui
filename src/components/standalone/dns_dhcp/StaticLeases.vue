@@ -10,18 +10,20 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import LeasesTable from './LeasesTable.vue'
 import DeleteStaticLeaseModal from './DeleteStaticLeaseModal.vue'
 import CreateOrEditStaticLeaseDrawer from './CreateOrEditStaticLeaseDrawer.vue'
-import { ref, computed, onMounted } from 'vue'
-import { type Ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {
+  type FilterOption,
+  getAxiosErrorMessage,
   NeButton,
+  NeDropdownFilter,
   NeEmptyState,
   NeInlineNotification,
   NeSkeleton,
-  NeTextInput,
-  getAxiosErrorMessage,
-  type FilterOption,
-  NeDropdownFilter
+  NeTextInput
 } from '@nethesis/vue-components'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+
 export type StaticLease = {
   lease: string
   macaddr: string
@@ -39,8 +41,8 @@ const filter = ref('')
 const selectedInterface = ref<string[]>(['any'])
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
-const selectedItem = ref<StaticLease | undefined>(undefined)
-const items = ref<StaticLease[]>([]) as Ref<StaticLease[]>
+const selectedItem = ref<StaticLease>()
+const items = ref<StaticLease[]>([])
 const error = ref({
   notificationTitle: '',
   notificationDescription: '',
@@ -137,21 +139,21 @@ function clearFilters() {
 
 <template>
   <div class="flex flex-col gap-y-6">
-    <div class="flex flex-row items-center justify-between">
+    <div class="flex items-center justify-between">
       <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.dns_dhcp.static_leases_description') }}
       </p>
       <div class="ml-2 shrink-0">
         <NeButton v-if="items.length > 0" kind="secondary" @click="openCreateEditDrawer()">
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.dns_dhcp.add_reservation') }}
         </NeButton>
       </div>
     </div>
-    <div class="flex flex-row gap-x-3">
-      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+    <div class="flex items-center gap-x-3">
+      <NeTextInput v-model="filter" is-search class="max-w-xs" :placeholder="t('common.filter')" />
       <NeDropdownFilter
         v-model="selectedInterface"
         kind="radio"
@@ -179,22 +181,20 @@ function clearFilters() {
       <NeEmptyState
         v-if="items.length == 0"
         :title="t('standalone.dns_dhcp.no_reservation_configured')"
-        :icon="['fas', 'circle-info']"
-        ><NeButton kind="primary" @click="openCreateEditDrawer()"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.dns_dhcp.add_reservation') }}</NeButton
-        ></NeEmptyState
+        :icon="faCircleInfo"
       >
+        <NeButton kind="primary" @click="openCreateEditDrawer()">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.dns_dhcp.add_reservation') }}
+        </NeButton>
+      </NeEmptyState>
       <NeEmptyState
         v-else-if="filteredItems.length == 0"
         :title="t('standalone.dns_dhcp.no_reservation_found')"
         :description="t('standalone.dns_dhcp.filter_change_suggestion')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
       />
       <LeasesTable
         v-else

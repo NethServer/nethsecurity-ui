@@ -112,7 +112,7 @@ async function fetchItems() {
 const interfaceFilterOptions = computed(() => {
   // Collect all interface values, treating empty string as 'unknown'
   const interfaces = items.value.map((item) =>
-    item.interface && item.interface.trim() !== '' ? item.interface : 'unknown'
+    item.interface?.trim() !== '' ? item.interface : 'unknown'
   )
   // Get unique values
   const uniqueInterfaces = Array.from(new Set(interfaces))
@@ -153,7 +153,12 @@ function clearFilters() {
       </div>
     </div>
     <div class="flex items-center gap-x-3">
-      <NeTextInput v-model="textFilter" is-search class="max-w-xs" :placeholder="t('common.filter')" />
+      <NeTextInput
+        v-model="textFilter"
+        is-search
+        class="max-w-xs"
+        :placeholder="t('common.filter')"
+      />
       <NeDropdownFilter
         v-model="selectedInterface"
         kind="radio"

@@ -25,10 +25,6 @@ import {
 } from '@nethesis/vue-components'
 const { t } = useI18n()
 const router = useRouter()
-// Define props
-const props = defineProps<{
-  fetchErrorNotificationTitle?: string
-}>()
 const selectedLease = ref<DynamicLease>()
 const showCreateStaticLeaseDrawer = ref(false)
 const uciChangesStore = useUciPendingChangesStore()
@@ -112,7 +108,7 @@ async function fetchItems() {
     uciChangesStore.getChanges()
     loading.value = false
   } catch (err: any) {
-    error.value.notificationTitle = props.fetchErrorNotificationTitle ?? ''
+    error.value.notificationTitle = t('error.cannot_retrieve_dynamic_leases')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   }

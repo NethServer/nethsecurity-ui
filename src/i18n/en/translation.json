@@ -205,6 +205,7 @@
     "cannot_retrieve_popular_apps": "Cannot retrieve popular apps",
     "cannot_retrieve_devices": "Cannot retrieve devices",
     "cannot_retrieve_applications": "Cannot retrieve applications",
+    "cannot_retrieve_static_leases": "Cannot retrieve static leases",
     "zone_already_exists": "Zone already exists",
     "db_already_exists": "Database already exists",
     "user_db_not_found": "User database not found",

@@ -34,11 +34,6 @@ export type StaticLease = {
   matches: string[]
 }
 const { t } = useI18n()
-// Define props
-const props = defineProps<{
-  fetchErrorNotificationTitle?: string
-}>()
-
 const uciChangesStore = useUciPendingChangesStore()
 const filter = ref('')
 const selectedInterface = ref<string[]>(['any'])
@@ -107,7 +102,7 @@ async function fetchItems() {
     uciChangesStore.getChanges()
     loading.value = false
   } catch (err: any) {
-    error.value.notificationTitle = props.fetchErrorNotificationTitle ?? ''
+    error.value.notificationTitle = t('error.cannot_fetch_static_leases')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = err.toString()
   }

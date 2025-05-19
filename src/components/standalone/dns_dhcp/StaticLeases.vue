@@ -115,7 +115,13 @@ const interfaceFilterOptions = computed(() => {
     item.interface?.trim() !== '' ? item.interface : 'unknown'
   )
   // Get unique values
-  const uniqueInterfaces = Array.from(new Set(interfaces))
+  let uniqueInterfaces = Array.from(new Set(interfaces))
+
+  // Remove 'unknown' for sorting, then add it back after sorting if present
+  const hasUnknown = uniqueInterfaces.includes('unknown')
+  uniqueInterfaces = uniqueInterfaces.filter((i) => i !== 'unknown').sort()
+  if (hasUnknown) uniqueInterfaces.push('unknown')
+
   // Build options array
   const options: FilterOption[] = [
     { id: 'any', label: t('common.any') },

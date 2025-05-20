@@ -43,6 +43,7 @@ type GetConfigResponse = AxiosResponse<{
     password: string
     bypass: string[]
     zones: string[]
+    custom_servers: string[]
   }
 }>
 
@@ -71,6 +72,7 @@ const radioOptions: RadioSelection = [
 const username = ref('')
 const password = ref('')
 const bypassSource = ref<Array<string>>([])
+const customServers = ref<Array<string>>([])
 const availableZones = ref<NeComboboxOption[]>([])
 const zones = ref<NeComboboxOption[]>([])
 
@@ -109,6 +111,11 @@ function fetchConfig() {
       } else {
         bypassSource.value = ['']
       }
+      if (response.data.values.custom_servers.length > 0) {
+        customServers.value = response.data.values.custom_servers
+      } else {
+        customServers.value = ['']
+      }
     })
   ])
     .catch((reason: AxiosError) => (fetchError.value = reason))
@@ -130,6 +137,7 @@ const saveError = ref<Error>()
 const validationBag = ref(new MessageBag())
 
 function save() {
+  validationBag.value.clear()
   saveError.value = undefined
   saving.value = true
   ubusCall('ns.flashstart', 'set-config', {
@@ -138,7 +146,8 @@ function save() {
     username: username.value,
     password: password.value,
     zones: zones.value.map((zone: NeComboboxOption) => zone.label),
-    bypass: bypassSource.value.filter((item) => item != '')
+    bypass: bypassSource.value.filter((item) => item != ''),
+    custom_servers: customServers.value.filter((item) => item != '')
   })
     .then(() => uciChangesStore.getChanges())
     .catch((reason) => {
@@ -237,6 +246,25 @@ function save() {
               <NeTooltip>
                 <template #content>
                   {{ t('standalone.flashstart.sourcebypass_helper') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeMultiTextInput>
+          <NeMultiTextInput
+            v-model="customServers"
+            :title="t('standalone.flashstart.custom_servers')"
+            :add-item-label="t('standalone.flashstart.add_custom_servers')"
+            :general-invalid-message="t(validationBag.getFirstI18nKeyFor('custom_servers'))"
+            :disable-inputs="saving"
+            :disable-add-button="saving"
+            optional
+            :optional-label="t('common.optional')"
+            required
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.flashstart.custom_server_helper') }}
                 </template>
               </NeTooltip>
             </template>

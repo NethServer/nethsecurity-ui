@@ -168,7 +168,7 @@ function save() {
         <template v-if="status">
           <NeRadioSelection
             v-model="mode"
-            :label="t('standalone.flashstart.mode')"
+            :label="t('standalone.flashstart.service_type')"
             :options="radioOptions"
           />
           <NeTextInput

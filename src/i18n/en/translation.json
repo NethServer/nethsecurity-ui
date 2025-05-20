@@ -1509,7 +1509,7 @@
       "flashstart_disabled_threat_shield_enabled": "To enable it, you must first disable Threat shield DNS",
       "proplus": "ProPlus",
       "pro": "Pro",
-      "mode": "Mode"
+      "service_type": "Service type"
     },
     "dpi": {
       "title": "DPI filter",

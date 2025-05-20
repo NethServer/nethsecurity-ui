@@ -71,6 +71,7 @@ const radioOptions: RadioSelection = [
 const username = ref('')
 const password = ref('')
 const bypassSource = ref<Array<string>>([])
+const availableZones = ref<NeComboboxOption[]>([])
 const zones = ref<NeComboboxOption[]>([])
 
 const fetchError = ref<Error>()
@@ -81,7 +82,12 @@ function fetchConfig() {
   fetchLoading.value = true
   Promise.all([
     ubusCall('ns.flashstart', 'list-zones').then((response: ListZonesResponse) => {
-      zones.value = response.data.values
+      availableZones.value = response.data.values.map((item) => {
+        return {
+          label: item.label,
+          id: item.label
+        }
+      })
     }),
     ubusCall('ns.flashstart', 'get-config').then((response: GetConfigResponse) => {
       status.value = response.data.values.enabled
@@ -92,6 +98,12 @@ function fetchConfig() {
       }
       username.value = response.data.values.username
       password.value = response.data.values.password
+      zones.value = response.data.values.zones.map((item) => {
+        return {
+          label: item,
+          id: item
+        }
+      })
       if (response.data.values.bypass.length > 0) {
         bypassSource.value = response.data.values.bypass
       } else {
@@ -202,7 +214,7 @@ function save() {
             :placeholder="t('standalone.flashstart.zones_placeholder')"
             :invalid-message="t(validationBag.getFirstI18nKeyFor('zones'))"
             multiple
-            :options="zones"
+            :options="availableZones"
             :no-results-label="t('ne_combobox.no_results')"
             :limited-options-label="t('ne_combobox.limited_options_label')"
             :no-options-label="t('ne_combobox.no_options_label')"

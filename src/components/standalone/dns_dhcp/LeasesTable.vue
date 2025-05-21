@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { toRef } from 'vue'
 import {
   NeButton,
   NeDropdown,
@@ -26,6 +27,7 @@ const props = defineProps<{
   showDynamicLeases: boolean
 }>()
 
+const leasesRef = toRef(props, 'leases')
 const emit = defineEmits(['lease-delete', 'lease-edit', 'create-static-lease-from-dynamic'])
 
 const pageSize = ref(10)
@@ -49,7 +51,7 @@ function sortAddresses<T extends StaticLease | DynamicLease>(a: T, b: T) {
 }
 
 // Declare sortedItems before useItemPagination
-const { sortedItems } = useSort(props.leases, sortKey, sortDescending, {
+const { sortedItems } = useSort(leasesRef, sortKey, sortDescending, {
   address: sortAddresses
 })
 

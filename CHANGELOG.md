@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.25.0](https://github.com/NethServer/nethsecurity-ui/compare/1.24.2...1.25.0) (2025-05-21)
+
+
+### Features
+
+* add setup wizard ([#539](https://github.com/NethServer/nethsecurity-ui/issues/539)) ([e5f88a1](https://github.com/NethServer/nethsecurity-ui/commit/e5f88a1e8a915454425f8333bf2c772a823503ef))
+* **dhcp:** enhance filtering and sorting by device ([#549](https://github.com/NethServer/nethsecurity-ui/issues/549)) ([99dfd66](https://github.com/NethServer/nethsecurity-ui/commit/99dfd665eec59a3f35895d9f8c7f67877b954fe9))
+* **ovpnrw:** show invalid users ([#548](https://github.com/NethServer/nethsecurity-ui/issues/548)) ([b75c649](https://github.com/NethServer/nethsecurity-ui/commit/b75c649601d82b59c28f0c1db5839ca660fb4137))
+* **threatshield:** add currently banned ip list and ban search ([#538](https://github.com/NethServer/nethsecurity-ui/issues/538)) ([e641e45](https://github.com/NethServer/nethsecurity-ui/commit/e641e45864e6a7226e6444f251ec8b1f0b463d37))
+
 ## [1.24.2](https://github.com/NethServer/nethsecurity-ui/compare/1.24.1...1.24.2) (2025-05-15)
 
 

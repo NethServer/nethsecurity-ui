@@ -66,7 +66,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     const themeStore = useThemeStore()
     themeStore.loadTheme()
     isSessionExpired.value = false
-    loadAppData()
+    loadAppData(true)
   }
 
   const logout = async () => {
@@ -132,7 +132,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   // load data after login or on page load (if already logged in)
-  const loadAppData = async () => {
+  const loadAppData = async (justLoggedIn: boolean) => {
     // need to show setup wizard?
     try {
       await wizardStore.getWizardConfig()
@@ -151,8 +151,10 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       // load unit hostname
       loadHostname()
 
-      // go to dashboard
-      router.push(`${getStandaloneRoutePrefix()}/`)
+      if (justLoggedIn) {
+        // go to dashboard
+        router.push(`${getStandaloneRoutePrefix()}/`)
+      }
     } catch (err) {
       console.error(err)
     }

@@ -199,9 +199,9 @@ const onSort = (payload: any) => {
               </template></NeTooltip
             >
             <NeBadge
-              v-if="item.servers.length <= 0"
+              v-if="item.servers?.length ?? 0 <= 0"
               kind="secondary"
-              class="-mt-2"
+              class="-mt-0.5"
               :text="t('standalone.certificates.not_used')"
             />
           </div>

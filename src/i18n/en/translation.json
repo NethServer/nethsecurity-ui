@@ -613,7 +613,14 @@
       "remote_vpn_users_databases": "Remote VPN users databases",
       "unlimited_controlled_units": "Unlimited units to be managed from a registered controller",
       "threat_shield": "Advanced Threat shield blocklists",
-      "monitoring_service": "Monitoring service"
+      "monitoring_service": "Monitoring service",
+      "last_attempted_sync": "Last attempted sync: {date}",
+      "last_sync": "Last sync: {date}",
+      "sync_now": "Sync now",
+      "sync_not_attempted": "Sync not attempted",
+      "sync_not_attempted_description": "Since last boot the unit haven't attempted to sync with remote portal. You can force a sync by clicking on the button 'Sync now' below.",
+      "sync_error": "Sync error",
+      "sync_error_description": "The unit is unable to sync with remote portal. Check your internet connection and try again."
     },
     "system": {
       "title": "System"

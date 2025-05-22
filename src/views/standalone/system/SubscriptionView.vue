@@ -44,8 +44,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-6">
-    <NeHeading tag="h3" class="mb-7">{{ t('standalone.subscription.title') }}</NeHeading>
+  <div class="flex flex-col gap-y-8">
+    <NeHeading tag="h3">{{ t('standalone.subscription.title') }}</NeHeading>
     <NeInlineNotification
       v-if="pageError"
       kind="error"

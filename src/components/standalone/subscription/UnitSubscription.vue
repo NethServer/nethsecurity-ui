@@ -7,23 +7,23 @@
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import {
+  focusElement,
+  formatDateLoc,
+  getAxiosErrorMessage,
   NeBadge,
-  NeHeading,
   NeButton,
+  NeHeading,
   NeInlineNotification,
   NeSkeleton,
-  NeTextInput,
-  focusElement,
-  getAxiosErrorMessage
+  NeTextInput
 } from '@nethesis/vue-components'
 import type { SubscriptionDataType } from '@/views/standalone/system/SubscriptionView.vue'
-import type { PropType } from 'vue'
-import { ref, toRefs } from 'vue'
+import { computed, onMounted, type PropType, ref, toRefs } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { validateRequired } from '@/lib/validation'
-import { computed } from 'vue'
 import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import type { AxiosResponse } from 'axios'
 
 const { t } = useI18n()
 
@@ -101,6 +101,59 @@ async function subscribe() {
 function showCancelSubscriptionModal() {
   isShownCancelSubscriptionModal.value = true
 }
+
+type InventoryCodes = 'not attempted' | 'success' | 'error'
+
+type InventoryStatus =
+  | {
+      status: Exclude<InventoryCodes, 'success' | 'error'>
+    }
+  | {
+      status: Exclude<InventoryCodes, 'not attempted'>
+      last_attempt: string
+    }
+
+type InventoryStatusResponse = AxiosResponse<InventoryStatus>
+
+const errorLastSync = ref<Error>()
+const loadingLastSync = ref(true)
+const lastSyncStatus = ref<InventoryStatus>()
+
+function fetchLastSyncStatus() {
+  errorLastSync.value = undefined
+  ubusCall('ns.subscription', 'inventory-status')
+    .then((response: InventoryStatusResponse) => {
+      lastSyncStatus.value = response.data
+    })
+    .catch((reason) => {
+      errorLastSync.value = reason
+    })
+    .finally(() => {
+      loadingLastSync.value = false
+    })
+}
+
+onMounted(() => {
+  fetchLastSyncStatus()
+})
+
+const loadingRequestSync = ref(false)
+const errorRequestSync = ref<Error>()
+
+function requestSync() {
+  loadingRequestSync.value = true
+  errorRequestSync.value = undefined
+  ubusCall('ns.subscription', 'send-inventory')
+    .then(() => {
+      fetchLastSyncStatus()
+    })
+    .catch((reason) => {
+      errorRequestSync.value = reason
+    })
+    .finally(() => {
+      loadingRequestSync.value = false
+    })
+}
 </script>
 
 <template>
@@ -132,7 +185,7 @@ function showCancelSubscriptionModal() {
               {{ expirationDateString }}
             </p>
           </div>
-          <div class="align-center flex flex-row">
+          <div class="align-center flex">
             <NeHeading tag="h6" class="!mb-0 mr-4 inline-block">{{
               t('standalone.subscription.status')
             }}</NeHeading>
@@ -146,16 +199,66 @@ function showCancelSubscriptionModal() {
               size="sm"
             />
           </div>
+          <div class="-mt-6">
+            <NeSkeleton v-if="loadingLastSync" :lines="1" />
+            <p
+              v-else-if="lastSyncStatus?.status != 'not attempted'"
+              class="text-sm font-normal text-gray-500 dark:text-gray-400"
+            >
+              <template v-if="lastSyncStatus?.status == 'error'">
+                {{
+                  t('standalone.subscription.last_attempted_sync', {
+                    date: formatDateLoc(new Date(lastSyncStatus.last_attempt), 'PPpp')
+                  })
+                }}
+              </template>
+              <template v-else-if="lastSyncStatus?.status == 'success'">
+                {{
+                  t('standalone.subscription.last_sync', {
+                    date: formatDateLoc(new Date(lastSyncStatus.last_attempt), 'PPpp')
+                  })
+                }}
+              </template>
+            </p>
+          </div>
+          <template v-if="!loadingLastSync">
+            <NeInlineNotification
+              v-if="errorLastSync != undefined"
+              :description="t(getAxiosErrorMessage(errorLastSync))"
+              :title="t('error.sync_error')"
+              kind="error"
+            />
+            <NeInlineNotification
+              v-if="lastSyncStatus?.status == 'not attempted'"
+              :description="t('standalone.subscription.sync_not_attempted_description')"
+              :title="t('standalone.subscription.sync_not_attempted')"
+              kind="info"
+            />
+            <NeInlineNotification
+              v-if="lastSyncStatus?.status == 'error'"
+              :description="t('standalone.subscription.sync_error_description')"
+              :title="t('standalone.subscription.sync_error')"
+              kind="warning"
+            />
+          </template>
           <NeInlineNotification
             v-if="errors.request"
             kind="error"
             :title="t('error.cancel_registration_error')"
             :description="errors.request"
           />
-          <div>
-            <NeButton kind="tertiary" class="-ml-2.5" @click="showCancelSubscriptionModal">{{
-              t('standalone.subscription.cancel_registration')
-            }}</NeButton>
+          <div class="flex gap-4">
+            <NeButton
+              :disabled="loadingRequestSync"
+              :loading="loadingRequestSync"
+              kind="secondary"
+              @click="requestSync"
+            >
+              {{ t('standalone.subscription.sync_now') }}
+            </NeButton>
+            <NeButton kind="tertiary" @click="showCancelSubscriptionModal">
+              {{ t('standalone.subscription.cancel_registration') }}
+            </NeButton>
           </div>
         </div>
       </template>

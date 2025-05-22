@@ -34,7 +34,7 @@ export type Certificate = {
   expiration?: string
   requested_domains?: string[]
   pending?: boolean
-  servers: string[]
+  servers?: string[]
 }
 
 const { t } = useI18n()

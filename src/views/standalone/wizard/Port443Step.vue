@@ -109,7 +109,7 @@ async function setWebInterface() {
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-4">
     <NeHeading tag="h2">
       {{ t('standalone.wizard.web_access_443_title') }}
     </NeHeading>

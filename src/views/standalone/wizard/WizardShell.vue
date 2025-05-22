@@ -12,9 +12,7 @@ import {
   NeInlineNotification
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
-import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '@/stores/theme'
 import { getCompanyName } from '@/lib/config'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -34,7 +32,6 @@ type Step = 'welcome' | 'password' | 'ssh' | 'port9090' | 'port443' | 'summary'
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
-const router = useRouter()
 const wizardStore = useSetupWizardStore()
 const currentStep = ref<Step>('welcome')
 const steps: Step[] = ['password', 'ssh', 'port9090', 'port443', 'summary']
@@ -75,12 +72,7 @@ const wizardProgress = computed(() => {
 })
 
 onMounted(() => {
-  if (wizardStore.isComplete) {
-    // setup wizard already completed, redirect to dashboard
-    router.replace(`${getStandaloneRoutePrefix()}/dashboard`)
-  } else {
-    listInputRules()
-  }
+  listInputRules()
 })
 
 async function listInputRules() {

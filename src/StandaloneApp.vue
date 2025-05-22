@@ -45,7 +45,7 @@ onMounted(async () => {
   configureAxios()
 
   if (loginStore.isLoggedIn) {
-    await loginStore.loadAppData()
+    await loginStore.loadAppData(false)
     isLoaded.value = true
   } else {
     isLoaded.value = true

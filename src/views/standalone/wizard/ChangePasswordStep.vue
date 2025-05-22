@@ -172,7 +172,7 @@ async function setPasswordChanged() {
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-4">
     <NeHeading tag="h2">
       {{ t('standalone.wizard.change_root_password') }}
     </NeHeading>

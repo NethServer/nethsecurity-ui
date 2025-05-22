@@ -281,8 +281,10 @@ router.beforeEach(async (to) => {
   const setupWizardStore = useSetupWizardStore()
 
   if (setupWizardStore.isComplete) {
-    // setup wizard already completed
-    return true
+    if (to.name === 'StandaloneWizard') {
+      // cannot access wizard page since it's already completed
+      return { name: 'StandaloneDashboard' }
+    }
   } else {
     // setup wizard not completed
     if (to.name !== 'StandaloneWizard') {

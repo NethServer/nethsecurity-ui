@@ -5,23 +5,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import {
-  NeButton,
-  NeHeading,
-  NeInlineNotification,
-  NeRadioSelection
-} from '@nethesis/vue-components'
-import { ref } from 'vue'
-import {
-  faArrowRotateLeft,
-  faArrowsRotate,
-  faWandMagicSparkles,
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons'
+import { NeButton, NeHeading, NeInlineNotification } from '@nethesis/vue-components'
+import { faArrowRight, faGear, faRocket, faShieldHalved } from '@fortawesome/free-solid-svg-icons'
 import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { getProductName } from '@/lib/config'
 
 export type WelcomeSelection = 'newConfiguration' | 'restoreBackup' | 'factoryReset'
 
@@ -32,65 +23,57 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const router = useRouter()
 const wizardStore = useSetupWizardStore()
-const selection = ref<WelcomeSelection>('newConfiguration')
-const options = [
-  {
-    id: 'newConfiguration',
-    label: t('standalone.wizard.new_configuration'),
-    description: t('standalone.wizard.new_configuration_description'),
-    icon: faWandMagicSparkles
-  },
-  {
-    id: 'restoreBackup',
-    label: t('standalone.wizard.restore_backup'),
-    description: t('standalone.wizard.restore_backup_description'),
-    icon: faArrowsRotate
-  },
-  {
-    id: 'factoryReset',
-    label: t('standalone.wizard.factory_reset'),
-    description: t('standalone.wizard.factory_reset_description'),
-    icon: faArrowRotateLeft
-  }
-]
+const uciChangesStore = useUciPendingChangesStore()
 
-async function goToNextStep() {
-  switch (selection.value) {
-    case 'newConfiguration':
-      emit('nextStep')
-      break
-    case 'restoreBackup':
-      await wizardStore.setCompleted(true)
-      router.push({
-        path: `${getStandaloneRoutePrefix()}/system/backup-and-restore`,
-        query: {
-          tab: 'tab-restore'
-        }
-      })
-      break
-    case 'factoryReset':
-      await wizardStore.setCompleted(true)
-      router.push(`${getStandaloneRoutePrefix()}/system/factory_reset`)
-      break
-  }
+async function skipWizard() {
+  await wizardStore.setCompleted(true)
+  await uciChangesStore.getChanges()
+  await uciChangesStore.commitChanges(false)
+  router.push({
+    path: `${getStandaloneRoutePrefix()}/dashboard`
+  })
 }
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-6">
     <NeHeading tag="h2">
       {{ t('standalone.wizard.welcome_to_the_setup_wizard') }}
     </NeHeading>
-    <p>{{ t('standalone.wizard.welcome_description') }}</p>
+    <p>
+      {{ t('standalone.wizard.welcome_description', { product: getProductName() }) }}
+    </p>
+  </div>
+  <div class="space-y-8 py-10">
+    <div class="space-y-2">
+      <div class="flex items-center gap-2">
+        <FontAwesomeIcon :icon="faShieldHalved" aria-hidden="true" class="h-6 w-6" />
+        <p class="text-lg uppercase">
+          {{ t('standalone.wizard.secure_by_default') }}
+        </p>
+      </div>
+      <p>{{ t('standalone.wizard.secure_by_default_description') }}</p>
+    </div>
+    <div class="space-y-2">
+      <div class="flex items-center gap-2">
+        <FontAwesomeIcon :icon="faGear" aria-hidden="true" class="h-6 w-6" />
+        <p class="text-lg uppercase">
+          {{ t('standalone.wizard.tailored_configuration') }}
+        </p>
+      </div>
+      <p>{{ t('standalone.wizard.tailored_configuration_description') }}</p>
+    </div>
+    <div class="space-y-2">
+      <div class="flex items-center gap-2">
+        <FontAwesomeIcon :icon="faRocket" aria-hidden="true" class="h-6 w-6" />
+        <p class="text-lg uppercase">
+          {{ t('standalone.wizard.quick_setup') }}
+        </p>
+      </div>
+      <p>{{ t('standalone.wizard.quick_setup_description') }}</p>
+    </div>
   </div>
   <div class="space-y-6">
-    <NeRadioSelection
-      v-model="selection"
-      :label="t('standalone.wizard.select_option')"
-      card
-      grid-style="grid-cols-1 gap-4"
-      :options="options"
-    />
     <!-- get wizard error notification -->
     <NeInlineNotification
       v-if="wizardStore.errorGetWizardConfig"
@@ -121,15 +104,20 @@ async function goToNextStep() {
         size="lg"
         type="submit"
         :disabled="wizardStore.loadingGetWizardConfig || wizardStore.loadingSetWizardConfig"
-        :loading="wizardStore.loadingGetWizardConfig || wizardStore.loadingSetWizardConfig"
-        @click.prevent="goToNextStep"
+        @click.prevent="emit('nextStep')"
       >
         <template #suffix>
           <FontAwesomeIcon :icon="faArrowRight" aria-hidden="true" class="h-4 w-4" />
         </template>
-        {{
-          selection === 'newConfiguration' ? t('common.next') : t('standalone.wizard.skip_wizard')
-        }}
+        {{ t('standalone.wizard.start_setup') }}
+      </NeButton>
+      <NeButton
+        kind="tertiary"
+        size="lg"
+        :disabled="wizardStore.loadingGetWizardConfig || wizardStore.loadingSetWizardConfig"
+        @click.prevent="skipWizard"
+      >
+        {{ t('standalone.wizard.skip_wizard') }}
       </NeButton>
     </div>
   </div>

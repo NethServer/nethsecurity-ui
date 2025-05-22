@@ -63,7 +63,7 @@ async function finishSetup() {
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-4">
     <NeHeading tag="h2">
       {{ t('standalone.wizard.summary_title') }}
     </NeHeading>

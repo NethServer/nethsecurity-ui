@@ -94,7 +94,7 @@ function validate() {
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-4">
     <NeHeading tag="h2">
       {{ t('standalone.wizard.ssh_access') }}
     </NeHeading>
@@ -102,7 +102,7 @@ function validate() {
   </div>
   <div class="space-y-6">
     <NeCard :title="t('standalone.wizard.default_access_configuration')">
-      <div class="space-y-2">
+      <div class="space-y-6">
         <p>
           {{ t('standalone.wizard.ssh_access_from_lan') }}:
           <FontAwesomeIcon

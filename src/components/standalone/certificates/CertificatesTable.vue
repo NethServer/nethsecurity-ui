@@ -19,7 +19,8 @@ import {
   NeButton,
   NeTooltip,
   useSort,
-  NeSortDropdown
+  NeSortDropdown,
+  NeDropdownItem
 } from '@nethesis/vue-components'
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 import { ref } from 'vue'
@@ -93,10 +94,8 @@ function getCertificateType(item: Certificate) {
   }
 }
 
-function getDropdownItems(item: Certificate) {
-  return [
-    // "Set as default" option is enabled only if certificate isn't expired and, in the case of an
-    // ACME certificate, it isn't pending
+function getDropdownItems(item: Certificate): NeDropdownItem[] {
+  const items: NeDropdownItem[] = [
     {
       id: 'set_as_default',
       label: t('standalone.certificates.set_as_default'),
@@ -105,22 +104,21 @@ function getDropdownItems(item: Certificate) {
       action: () => {
         emit('setAsDefault', item)
       }
-    },
-    // The self-signed system certificate cannot be deleted, nor a certificate which is used
-    ...(item.name != '_lan' && item.servers.length <= 0
-      ? [
-          {
-            id: 'delete',
-            label: t('common.delete'),
-            icon: faTrash,
-            danger: true,
-            action: () => {
-              emit('delete', item)
-            }
-          }
-        ]
-      : [])
+    }
   ]
+  // servers is an optional property, so we need to check if it exists
+  if (item.name == '_lan' && (item.servers?.length ?? 0) <= 0) {
+    items.push({
+      id: 'delete',
+      label: t('common.delete'),
+      icon: faTrash,
+      danger: true,
+      action: () => {
+        emit('delete', item)
+      }
+    })
+  }
+  return items
 }
 
 const onSort = (payload: any) => {
@@ -201,9 +199,9 @@ const onSort = (payload: any) => {
               </template></NeTooltip
             >
             <NeBadge
-              v-if="item.servers.length <= 0"
+              v-if="item.servers?.length ?? 0 <= 0"
               kind="secondary"
-              class="-mt-2"
+              class="-mt-0.5"
               :text="t('standalone.certificates.not_used')"
             />
           </div>

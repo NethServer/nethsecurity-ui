@@ -620,7 +620,8 @@
       "sync_not_attempted": "Sync not attempted",
       "sync_not_attempted_description": "Since last boot the unit haven't attempted to sync with remote portal. You can force a sync by clicking on the button 'Sync now' below.",
       "sync_error": "Sync error",
-      "sync_error_description": "The unit is unable to sync with remote portal. Check your internet connection and try again."
+      "sync_error_description": "The unit is unable to sync with remote portal. Check your internet connection and try again.",
+      "subscription_active": "Subscription is active"
     },
     "system": {
       "title": "System"

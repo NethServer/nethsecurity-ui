@@ -1172,7 +1172,6 @@
       "title": "FlashStart DNS",
       "flashstart_disabled": "FlashStart DNS è disattivato",
       "flashstart_disabled_description": "Il filtro FlashStart è disponibile solo con un abbonamento {product}",
-      "flashstart_configuration_saved": "Configurazione FlashStart salvata",
       "flashstart_disabled_threat_shield_enabled": "Per abilitarlo, prima è necessario disabilitare Threat shield DNS"
     },
     "hotspot": {

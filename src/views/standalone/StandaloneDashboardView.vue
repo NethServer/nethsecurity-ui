@@ -17,6 +17,7 @@ import ThreatShieldIpCard from '@/components/standalone/dashboard/ThreatShieldIp
 import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
 import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingStatusCard.vue'
 import BackupStatusCard from '@/components/standalone/dashboard/BackupStatusCard.vue'
+import HaStatusCard from '@/components/standalone/dashboard/HaStatusCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -119,5 +120,6 @@ function goTo(path: string) {
       :icon="['fas', 'circle-info']"
     />
     <BackupStatusCard />
+    <HaStatusCard />
   </div>
 </template>

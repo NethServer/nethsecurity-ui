@@ -1578,7 +1578,12 @@
       "flashstart_disabled": "FlashStart DNS is disabled",
       "flashstart_disabled_description": "FlashStart filter is available only with a {product} subscription",
       "flashstart_disabled_threat_shield_enabled": "To enable it, you must first disable Threat shield DNS",
-      "flashstart_configuration_saved": "FlashStart configuration saved"
+      "proplus": "ProPlus",
+      "pro": "Pro",
+      "service_type": "Service type",
+      "custom_servers": "Custom DNS servers",
+      "add_custom_servers": "Add custom DNS server",
+      "custom_server_helper": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     },
     "dpi": {
       "title": "DPI filter",

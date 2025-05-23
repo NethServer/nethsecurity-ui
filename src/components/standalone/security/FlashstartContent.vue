@@ -4,220 +4,160 @@
 -->
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import {
+  getAxiosErrorMessage,
+  NeButton,
   NeCombobox,
   type NeComboboxOption,
-  NeLink,
   NeInlineNotification,
+  NeLink,
   NeSkeleton,
-  NeTooltip,
-  NeButton,
-  NeFormItemLabel,
   NeTextInput,
-  focusElement,
-  getAxiosErrorMessage
+  NeToggle,
+  NeTooltip,
+  NeRadioSelection
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethesis/vue-components'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  validateIp4Address,
-  validateIp4Cidr,
-  validateRequired,
-  validateRequiredOption
-} from '@/lib/validation'
-import { ubusCall } from '@/lib/standalone/ubus'
-import { AxiosError } from 'axios'
-import { useNotificationsStore } from '@/stores/notifications'
+import { MessageBag } from '@/lib/validation'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { AxiosError, type AxiosResponse } from 'axios'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges.ts'
+
+type ListZonesResponse = AxiosResponse<{
+  values: {
+    label: string
+    id: string
+  }[]
+}>
+
+type GetConfigResponse = AxiosResponse<{
+  values: {
+    enabled: boolean
+    proplus: boolean
+    username: string
+    password: string
+    bypass: string[]
+    zones: string[]
+    custom_servers: string[]
+  }
+}>
+
+type ModeTypes = 'pro' | 'proplus'
+
+type RadioSelection = Array<{
+  id: ModeTypes
+  label: string
+}>
 
 const { t } = useI18n()
-const notificationsStore = useNotificationsStore()
+const uciChangesStore = useUciPendingChangesStore()
 
-const form = ref({
-  status: false,
-  username: '',
-  password: '',
-  bypassSource: [''],
-  zones: []
-})
-
-const isError = ref(false)
-const loading = ref(false)
-const saving = ref(false)
+const status = ref(false)
+const mode = ref<ModeTypes>('pro')
+const radioOptions: RadioSelection = [
+  {
+    label: t('standalone.flashstart.pro'),
+    id: 'pro'
+  },
+  {
+    label: t('standalone.flashstart.proplus'),
+    id: 'proplus'
+  }
+]
+const username = ref('')
+const password = ref('')
+const bypassSource = ref<Array<string>>([])
+const customServers = ref<Array<string>>([])
+const availableZones = ref<NeComboboxOption[]>([])
 const zones = ref<NeComboboxOption[]>([])
-const usernameRef = ref()
-const passwordRef = ref()
-const zonesRef = ref()
-const bypassSourceRef = ref()
 
-const objError = {
-  notificationTitle: '',
-  notificationDescription: '',
-  username: '',
-  password: '',
-  zones: '',
-  bypassSource: ['']
+const fetchError = ref<Error>()
+const fetchLoading = ref(false)
+
+function fetchConfig() {
+  fetchError.value = undefined
+  fetchLoading.value = true
+  Promise.all([
+    ubusCall('ns.flashstart', 'list-zones').then((response: ListZonesResponse) => {
+      availableZones.value = response.data.values.map((item) => {
+        return {
+          label: item.label,
+          id: item.label
+        }
+      })
+    }),
+    ubusCall('ns.flashstart', 'get-config').then((response: GetConfigResponse) => {
+      status.value = response.data.values.enabled
+      if (response.data.values.proplus) {
+        mode.value = 'proplus'
+      } else {
+        mode.value = 'pro'
+      }
+      username.value = response.data.values.username
+      password.value = response.data.values.password
+      zones.value = response.data.values.zones.map((item) => {
+        return {
+          label: item,
+          id: item
+        }
+      })
+      if (response.data.values.bypass.length > 0) {
+        bypassSource.value = response.data.values.bypass
+      } else {
+        bypassSource.value = ['']
+      }
+      if (response.data.values.custom_servers.length > 0) {
+        customServers.value = response.data.values.custom_servers
+      } else {
+        customServers.value = ['']
+      }
+    })
+  ])
+    .catch((reason: AxiosError) => (fetchError.value = reason))
+    .finally(() => (fetchLoading.value = false))
 }
-const error = ref({ ...objError })
-const errorLoadingZones = ref({ ...objError })
-const errorLoadingConfiguration = ref({ ...objError })
-const errorSaving = ref({ ...objError })
 
-onMounted(() => {
-  getConfiguration()
+const statusLabel = computed(() => {
+  if (status.value) {
+    return t('standalone.flashstart.status_enabled')
+  } else {
+    return t('standalone.flashstart.status_disabled')
+  }
 })
 
-async function getZones() {
-  errorLoadingZones.value = { ...objError }
+onMounted(() => fetchConfig())
 
-  // Retrieve firewall zones
-  try {
-    const getZones = await ubusCall('ns.flashstart', 'list-zones', {})
-    if (getZones?.data?.values?.length) {
-      zones.value = getZones.data.values.map((item: any) => ({
-        id: item.label,
-        label: item.label
-      }))
-    }
-  } catch (exception: any) {
-    isError.value = true
-    errorLoadingZones.value.notificationTitle = t('error.cannot_retrieve_zones')
-    errorLoadingZones.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  } finally {
-    loading.value = false
-  }
-}
-
-async function getConfiguration() {
-  loading.value = true
-
-  try {
-    const getDataConfiguration = await ubusCall('ns.flashstart', 'get-config', {})
-    if (getDataConfiguration && getDataConfiguration.data && getDataConfiguration.data.values) {
-      const configuration = getDataConfiguration.data.values
-      form.value.status = configuration.enabled
-      form.value.username = configuration.username
-      form.value.password = configuration.password
-      form.value.bypassSource = configuration.bypass
-      form.value.zones = configuration.zones.map((item: any) => ({
-        id: item,
-        label: item
-      }))
-
-      if (!form.value.bypassSource.length) {
-        form.value.bypassSource = ['']
-      }
-    }
-  } catch (exception: any) {
-    isError.value = true
-    errorLoadingConfiguration.value.notificationTitle = t(
-      'error.cannot_retrieve_flashstart_configuration'
-    )
-    errorLoadingConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
-  } finally {
-    await getZones()
-  }
-}
-
-function clearErrors() {
-  error.value = {
-    notificationTitle: '',
-    notificationDescription: '',
-    username: '',
-    password: '',
-    zones: '',
-    bypassSource: ['']
-  }
-}
-
-function validate() {
-  let isValidationOk = true
-  let isFocusInput = false
-
-  if (!form.value.username) {
-    const { valid, errMessage } = validateRequired(form.value.username)
-    if (!valid) {
-      error.value.username = t(errMessage as string)
-      isValidationOk = false
-    }
-  }
-
-  if (!isValidationOk) {
-    focusElement(usernameRef)
-    isFocusInput = true
-  }
-
-  if (!form.value.password) {
-    const { valid, errMessage } = validateRequired(form.value.password)
-    if (!valid) {
-      error.value.password = t(errMessage as string)
-      isValidationOk = false
-    }
-  }
-
-  if (!isValidationOk && !isFocusInput) {
-    focusElement(passwordRef)
-    isFocusInput = true
-  }
-
-  if (!form.value.zones.length) {
-    const { valid, errMessage } = validateRequiredOption(form.value.zones)
-    if (!valid) {
-      error.value.zones = t(errMessage as string)
-      isValidationOk = false
-    }
-  }
-
-  if (!isValidationOk && !isFocusInput) {
-    focusElement(zonesRef)
-  }
-
-  for (const [index, item] of form.value.bypassSource.entries()) {
-    if (item) {
-      const validator = [validateIp4Address(item), validateIp4Cidr(item)]
-      const allInvalid = validator.every((obj) => !obj.valid)
-      if (allInvalid) {
-        error.value.bypassSource[index] = t(validator[0].errMessage as string)
-        isValidationOk = false
-      }
-    }
-  }
-
-  return isValidationOk
-}
+const saving = ref(false)
+const saveError = ref<Error>()
+const validationBag = ref(new MessageBag())
 
 function save() {
-  clearErrors()
-  if (!form.value.status || validate()) {
-    saving.value = true
-
-    // create payload
-    const payload = {
-      enabled: form.value.status,
-      username: form.value.username,
-      password: form.value.password,
-      zones: form.value.zones
-        .filter((zone: NeComboboxOption) => zone.label)
-        .map((zone: NeComboboxOption) => zone.label),
-      bypass: form.value.bypassSource.filter((item) => item)
-    }
-
-    ubusCall('ns.flashstart', 'set-config', payload)
-      .then(() => {
-        notificationsStore.createNotification({
-          kind: 'success',
-          title: t('standalone.flashstart.flashstart_configuration_saved')
-        })
-      })
-      .catch((exception: AxiosError) => {
-        errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
-        errorSaving.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      })
-      .finally(() => (saving.value = false))
-  }
+  validationBag.value.clear()
+  saveError.value = undefined
+  saving.value = true
+  ubusCall('ns.flashstart', 'set-config', {
+    enabled: status.value,
+    proplus: mode.value == 'proplus',
+    username: username.value,
+    password: password.value,
+    zones: zones.value.map((zone: NeComboboxOption) => zone.label),
+    bypass: bypassSource.value.filter((item) => item != ''),
+    custom_servers: customServers.value.filter((item) => item != '')
+  })
+    .then(() => uciChangesStore.getChanges())
+    .catch((reason) => {
+      if (reason instanceof ValidationError) {
+        validationBag.value = reason.errorBag
+      } else {
+        saveError.value = reason
+      }
+    })
+    .finally(() => (saving.value = false))
 }
 </script>
 
@@ -233,38 +173,28 @@ function save() {
           </template>
         </i18n-t>
       </template>
-      <NeSkeleton v-if="loading" :lines="5" />
+      <NeSkeleton v-if="fetchLoading" :lines="5" />
       <NeInlineNotification
-        v-if="errorLoadingZones.notificationTitle"
-        class="my-4"
+        v-else-if="fetchError"
         kind="error"
-        :title="errorLoadingZones.notificationTitle"
-        :description="errorLoadingZones.notificationDescription"
+        :description="t(getAxiosErrorMessage(fetchError))"
+        :title="t('error.cannot_retrieve_flashstart_configuration')"
       />
-      <NeInlineNotification
-        v-if="errorLoadingConfiguration.notificationTitle"
-        class="my-4"
-        kind="error"
-        :title="errorLoadingConfiguration.notificationTitle"
-        :description="errorLoadingConfiguration.notificationDescription"
-      />
-      <div v-if="!isError && !loading" class="mb-8 flex flex-col gap-y-6">
-        <div>
-          <NeFormItemLabel>{{ t('standalone.flashstart.status') }}</NeFormItemLabel>
-          <NeToggle
-            v-model="form.status"
-            :label="
-              form.status
-                ? t('standalone.flashstart.status_enabled')
-                : t('standalone.flashstart.status_disabled')
-            "
+      <form v-else class="space-y-6">
+        <NeToggle
+          v-model="status"
+          :label="statusLabel"
+          :top-label="t('standalone.flashstart.status')"
+        />
+        <template v-if="status">
+          <NeRadioSelection
+            v-model="mode"
+            :label="t('standalone.flashstart.service_type')"
+            :options="radioOptions"
           />
-        </div>
-        <template v-if="form.status">
           <NeTextInput
-            ref="usernameRef"
-            v-model="form.username"
-            :invalid-message="error.username"
+            v-model="username"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('username'))"
             :label="t('standalone.flashstart.username')"
           >
             <template #tooltip>
@@ -282,20 +212,18 @@ function save() {
             </template>
           </NeTextInput>
           <NeTextInput
-            ref="passwordRef"
-            v-model="form.password"
+            v-model="password"
             is-password
-            :invalid-message="error.password"
             :label="t('standalone.flashstart.password')"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('password'))"
           />
           <NeCombobox
-            ref="zonesRef"
-            v-model="form.zones"
+            v-model="zones"
             :label="t('standalone.flashstart.zones')"
             :placeholder="t('standalone.flashstart.zones_placeholder')"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('zones'))"
             multiple
-            :options="zones"
-            :invalid-message="error.zones"
+            :options="availableZones"
             :no-results-label="t('ne_combobox.no_results')"
             :limited-options-label="t('ne_combobox.limited_options_label')"
             :no-options-label="t('ne_combobox.no_options_label')"
@@ -304,15 +232,15 @@ function save() {
             :optional-label="t('common.optional')"
           />
           <NeMultiTextInput
-            ref="bypassSourceRef"
-            v-model="form.bypassSource"
+            v-model="bypassSource"
             :title="t('standalone.flashstart.sourcebypass')"
             :add-item-label="t('standalone.flashstart.add_sourcebypass')"
-            :invalid-messages="error.bypassSource"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('bypass'))"
             :disable-inputs="saving"
             :disable-add-button="saving"
             optional
             :optional-label="t('common.optional')"
+            required
           >
             <template #tooltip>
               <NeTooltip>
@@ -322,23 +250,42 @@ function save() {
               </NeTooltip>
             </template>
           </NeMultiTextInput>
+          <NeMultiTextInput
+            v-model="customServers"
+            :title="t('standalone.flashstart.custom_servers')"
+            :add-item-label="t('standalone.flashstart.add_custom_servers')"
+            :general-invalid-message="t(validationBag.getFirstI18nKeyFor('custom_servers'))"
+            :disable-inputs="saving"
+            :disable-add-button="saving"
+            optional
+            :optional-label="t('common.optional')"
+            required
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.flashstart.custom_server_helper') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeMultiTextInput>
           <NeInlineNotification
-            v-if="errorSaving.notificationTitle"
+            v-if="saveError"
             class="my-4"
             kind="error"
-            :title="errorSaving.notificationTitle"
-            :description="errorSaving.notificationDescription"
+            :description="t(getAxiosErrorMessage(saveError))"
+            :title="t('error.cannot_save_configuration')"
           />
         </template>
         <div class="mt-6">
-          <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
+          <NeButton :disabled="saving" :loading="saving" kind="primary" @click="save()">
             <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faFloppyDisk" aria-hidden="true" class="h-4 w-4" />
             </template>
             {{ t('common.save') }}
           </NeButton>
         </div>
-      </div>
+      </form>
     </FormLayout>
   </div>
 </template>

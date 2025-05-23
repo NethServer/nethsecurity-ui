@@ -10,6 +10,8 @@ import { NeCombobox, type NeComboboxOption, NeButton, NeTextInput } from '@nethe
 import { watch } from 'vue'
 import { zip } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export type KeyValueItem = {
   key: string
@@ -173,8 +175,13 @@ onMounted(() => {
           :placeholder="placeholder"
           @input="updateModelValue(i, $event.target.value)"
         />
-        <NeButton kind="tertiary" size="md" :disabled="i === 0 && required" @click="deleteItem(i)">
-          <font-awesome-icon :icon="['fas', 'trash']" class="h-4 w-4 py-1" aria-hidden="true" />
+        <NeButton
+          kind="tertiary"
+          size="md"
+          :disabled="items.length <= 1 && required"
+          @click="deleteItem(i)"
+        >
+          <FontAwesomeIcon :icon="faTrash" class="h-4 w-4 py-1" aria-hidden="true" />
         </NeButton>
       </div>
       <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
@@ -188,7 +195,7 @@ onMounted(() => {
         @click="addItem"
       >
         <template #prefix>
-          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
         </template>
         {{ addItemLabel }}
       </NeButton>

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.26.0](https://github.com/NethServer/nethsecurity-ui/compare/1.25.0...1.26.0) (2025-05-23)
+
+
+### Features
+
+* added subscription icon on top ([#557](https://github.com/NethServer/nethsecurity-ui/issues/557)) ([8d5621d](https://github.com/NethServer/nethsecurity-ui/commit/8d5621dbc11b44e695eaa1cf3d110e5efe9f613b))
+* **flashstart:** proplus UI ([#550](https://github.com/NethServer/nethsecurity-ui/issues/550)) ([af65ac6](https://github.com/NethServer/nethsecurity-ui/commit/af65ac68b5e8e27b4ee88097d5c5ce83e2042394))
+* **subscription:** added sync status ([#555](https://github.com/NethServer/nethsecurity-ui/issues/555)) ([61ba3e7](https://github.com/NethServer/nethsecurity-ui/commit/61ba3e74ebccfcabec7ceefad3d00437188777a7))
+
+
+### Bug Fixes
+
+* **certificates:** enable deletion of pending certificates ([#552](https://github.com/NethServer/nethsecurity-ui/issues/552)) ([f540393](https://github.com/NethServer/nethsecurity-ui/commit/f540393e7c686718b59f3d845823a7d3c3c07f06))
+* **flashstart:** removed lorem ipsum text ([8b646fd](https://github.com/NethServer/nethsecurity-ui/commit/8b646fd7f91aa8c4da7c04b61e31cd8d91e3ccd0))
+
 ## [1.25.0](https://github.com/NethServer/nethsecurity-ui/compare/1.24.2...1.25.0) (2025-05-21)
 
 

@@ -175,11 +175,18 @@ function openNotificationsDrawer() {
         </NeTooltip>
         <!-- unit name -->
         <div aria-hidden="true" class="hidden items-center gap-2 text-sm lg:flex lg:h-6">
-          <FontAwesomeIcon
+          <NeTooltip
             v-if="!subscriptionStore.loading && subscriptionStore.isActive"
-            :icon="faAward"
-            class="h-4 w-4"
-          />
+            trigger-event="mouseenter focus"
+            placement="bottom"
+          >
+            <template #trigger>
+              <FontAwesomeIcon :icon="faAward" class="mt-1.5 h-4 w-4" />
+            </template>
+            <template #content>
+              {{ t('standalone.subscription.subscription_active') }}
+            </template>
+          </NeTooltip>
           <NeSkeleton v-if="loading.systemBoard" class="w-28" />
           <span v-else>{{ unitName }}</span>
         </div>

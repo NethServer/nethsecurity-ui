@@ -7,7 +7,7 @@
 import router from '@/router'
 import { useNotificationsStore } from '@/stores/notifications'
 import { NeBadge, NeButton, NeDropdown, NeSkeleton, NeTooltip } from '@nethesis/vue-components'
-import { ref, watch, computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
@@ -16,7 +16,15 @@ import { isEmpty, isEqual } from 'lodash-es'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { isStandaloneMode } from '@/lib/config'
 import UciChangesModal from './UciChangesModal.vue'
-import { faCircleUser, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
+import {
+  faAward,
+  faCircleUser,
+  faMoon,
+  faRightFromBracket,
+  faSun
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -25,6 +33,7 @@ const loginStore = useLoginStore()
 const themeStore = useThemeStore()
 const uciChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
+const subscriptionStore = useSubscriptionStore()
 
 const showUciChangesModal = ref(false)
 const isChangesButtonFlashing = ref(false)
@@ -165,7 +174,12 @@ function openNotificationsDrawer() {
           </template>
         </NeTooltip>
         <!-- unit name -->
-        <div class="hidden text-sm lg:block lg:h-6" aria-hidden="true">
+        <div aria-hidden="true" class="hidden items-center gap-2 text-sm lg:flex lg:h-6">
+          <FontAwesomeIcon
+            v-if="!subscriptionStore.loading && subscriptionStore.isActive"
+            :icon="faAward"
+            class="h-4 w-4"
+          />
           <NeSkeleton v-if="loading.systemBoard" class="w-28" />
           <span v-else>{{ unitName }}</span>
         </div>

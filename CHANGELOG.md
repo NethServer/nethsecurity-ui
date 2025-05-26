@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.1](https://github.com/NethServer/nethsecurity-ui/compare/1.26.0...1.26.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* **banip:** added tooltip into search ([#558](https://github.com/NethServer/nethsecurity-ui/issues/558)) ([66c63b0](https://github.com/NethServer/nethsecurity-ui/commit/66c63b070607a8bdb599418c9af062e8d8bd98c6))
+
 ## [1.26.0](https://github.com/NethServer/nethsecurity-ui/compare/1.25.0...1.26.0) (2025-05-23)
 
 

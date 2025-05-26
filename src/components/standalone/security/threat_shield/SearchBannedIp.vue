@@ -11,7 +11,8 @@ import {
   NeInlineNotification,
   NeSideDrawer,
   NeSkeleton,
-  NeTextInput
+  NeTextInput,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -114,7 +115,14 @@ function allowIp() {
     <div class="space-y-6">
       <div class="space-y-4">
         <div class="space-y-2">
-          <NeFormItemLabel>{{ t('common.ip_address') }}</NeFormItemLabel>
+          <NeFormItemLabel class="flex gap-2">
+            <p>{{ t('common.ip_address') }}</p>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.threat_shield.search_ip_tooltip') }}
+              </template>
+            </NeTooltip>
+          </NeFormItemLabel>
           <form class="flex flex-col gap-2 sm:flex-row sm:items-start" @submit.prevent="search">
             <div class="flex-auto">
               <NeTextInput
@@ -122,7 +130,7 @@ function allowIp() {
                 :helper-text="t('standalone.threat_shield.ipv4_or_ipv6_address')"
                 :invalid-message="t(validationBag.getFirstI18nKeyFor('ip'))"
                 is-search
-                rqeuired
+                required
               />
             </div>
             <NeButton

@@ -1719,7 +1719,7 @@
       "the_ip_is_not_in_any_blocklist": "The IP {ip} is not listed in any active blocklist",
       "add_to_local_allowlist": "Add to local allowlist",
       "added_to_local_allowlist": "Added to Local allowlist",
-      "search_ip_tooltip": "Search will be performed only in active blocklists."
+      "search_ip_tooltip": "Search will be performed only on active blocklists."
     },
     "threat_shield_dns": {
       "title": "Threat shield DNS",

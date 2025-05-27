@@ -14,7 +14,9 @@ import {
   NeRadioSelection,
   focusElement,
   NeTextInput,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  NeExpandable,
+  NeSkeleton
 } from '@nethesis/vue-components'
 import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -34,6 +36,7 @@ import {
   type validationOutput
 } from '@/lib/validation'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import type { AxiosResponse } from 'axios'
 
 const props = defineProps({
   currentRule: {
@@ -59,6 +62,11 @@ const rewriteIpAddress = ref('')
 const rewriteIpAddressRef = ref()
 const sourceAddressOptions = ref<NeComboboxOption[]>([])
 const destinationAddressOptions = ref<NeComboboxOption[]>([])
+const advancedSettingsExpanded = ref(false)
+const device = ref('')
+const availableDevices = ref<NeComboboxOption[]>([])
+const loadingAvailableDevices = ref(false)
+const errorAvailableDevices = ref<Error>()
 const errorBag = ref(new MessageBag())
 // contains the first invalid field ref
 const firstErrorRef = ref()
@@ -118,6 +126,16 @@ const zoneOptions = computed(() => {
   return [anyAddress, ...zones]
 })
 
+const deviceOptions = computed<NeComboboxOption[]>(() => {
+  return [
+    {
+      id: '',
+      label: t('common.any')
+    },
+    ...availableDevices.value
+  ]
+})
+
 watch(
   () => props.isShown,
   () => {
@@ -130,8 +148,10 @@ watch(
       })
       firewallConfig.fetch()
       listHostSuggestions()
+      listAvailableDevices()
       sourceAddress.value = ''
       destinationAddress.value = ''
+      advancedSettingsExpanded.value = false
 
       if (isCreatingRule.value) {
         // creating rule, reset form to defaults
@@ -139,6 +159,7 @@ watch(
         outboundZone.value = '*'
         action.value = 'SNAT'
         rewriteIpAddress.value = ''
+        device.value = ''
       } else if (props.currentRule) {
         // editing rule
         ruleName.value = props.currentRule.name || ''
@@ -146,6 +167,7 @@ watch(
         outboundZone.value = props.currentRule.src || '*'
         action.value = props.currentRule.target || 'SNAT'
         rewriteIpAddress.value = props.currentRule.snat_ip || ''
+        device.value = props.currentRule.device || ''
       }
     }
   }
@@ -160,6 +182,23 @@ function clearErrors() {
   error.value.listHostSuggestionsDetails = ''
   error.value.saveRule = ''
   error.value.saveRuleDetails = ''
+  errorAvailableDevices.value = undefined
+}
+
+type ListDevicesResponse = AxiosResponse<{
+  devices: {
+    id: string
+    label: string
+  }[]
+}>
+
+function listAvailableDevices() {
+  loadingAvailableDevices.value = true
+  errorAvailableDevices.value = undefined
+  ubusCall('ns.nat', 'list-interfaces')
+    .then((response: ListDevicesResponse) => (availableDevices.value = response.data.devices))
+    .catch((reason) => (errorAvailableDevices.value = reason))
+    .finally(() => (loadingAvailableDevices.value = false))
 }
 
 async function listHostSuggestions() {
@@ -318,7 +357,8 @@ async function saveRule() {
     src_ip: sourceAddress.value,
     dest_ip: destinationAddress.value,
     target: action.value,
-    snat_ip: action.value === 'SNAT' ? rewriteIpAddress.value : ''
+    snat_ip: action.value === 'SNAT' ? rewriteIpAddress.value : '',
+    device: device.value
   }
 
   if (isEditingRule.value) {
@@ -456,6 +496,33 @@ async function saveRule() {
           :invalid-message="t(errorBag.getFirstI18nKeyFor('snat_ip'))"
           :disabled="loading.saveRule"
         />
+        <NeExpandable
+          :label="t('common.advanced_settings')"
+          :is-expanded="advancedSettingsExpanded"
+          @set-expanded="(ev: boolean) => (advancedSettingsExpanded = ev)"
+        >
+          <NeSkeleton v-if="loadingAvailableDevices" :lines="2" />
+          <NeInlineNotification
+            v-else-if="errorAvailableDevices"
+            kind="error"
+            :title="t(getAxiosErrorMessage(errorAvailableDevices))"
+            :description="errorAvailableDevices.message"
+          />
+          <NeCombobox
+            v-else
+            v-model="device"
+            :disabled="loading.saveRule"
+            :label="t('standalone.nat.device')"
+            :options="deviceOptions"
+            :invalid-message="t(errorBag.getFirstI18nKeyFor('device'))"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+            :optional-label="t('common.optional')"
+          />
+        </NeExpandable>
         <!-- saveRule error notification -->
         <NeInlineNotification
           v-if="error.saveRule"

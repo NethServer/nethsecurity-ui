@@ -5,20 +5,20 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeButton } from '@nethesis/vue-components'
 import {
   NeBadge,
+  NeButton,
   NeDropdown,
+  NePaginator,
   NeTable,
+  NeTableBody,
+  NeTableCell,
   NeTableHead,
   NeTableHeadCell,
-  NeTableBody,
   NeTableRow,
-  NeTableCell,
-  NePaginator,
   useItemPagination
 } from '@nethesis/vue-components'
-import { ref, type PropType } from 'vue'
+import { type PropType, ref } from 'vue'
 import { type NatRule } from '@/stores/standalone/firewall'
 import { getZoneColorClasses } from '@/lib/standalone/network'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -71,6 +71,7 @@ function getDropdownItems(rule: NatRule) {
         <NeTableHeadCell>{{ t('standalone.nat.destination_address') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.nat.action') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.nat.rewrite_ip') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.nat.device') }}</NeTableHeadCell>
         <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
@@ -101,6 +102,10 @@ function getDropdownItems(rule: NatRule) {
           <NeTableCell :data-label="t('standalone.nat.rewrite_ip')">
             <span v-if="item.snat_ip">{{ item.snat_ip }}</span>
             <span v-else> - </span>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.nat.device')">
+            <span v-if="item.device">{{ item.device }}</span>
+            <span v-else>{{ t('common.any') }}</span>
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="align-center -ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">

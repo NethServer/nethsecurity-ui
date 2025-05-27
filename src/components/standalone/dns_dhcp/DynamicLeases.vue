@@ -69,6 +69,13 @@ const filteredItems = computed<DynamicLease[]>(() => {
   return result
 })
 
+function formatTimestamp(ts: string): string {
+  const num = Number(ts)
+  if (!num) return ''
+  const date = new Date(num * 1000)
+  return date.toLocaleString()
+}
+
 function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], textFilter: string) {
   const lowerCaseFilter = textFilter.toLowerCase()
   return dynamicLeases.filter(
@@ -77,7 +84,8 @@ function applyFilterToDynamicLeases(dynamicLeases: DynamicLease[], textFilter: s
       dynamicLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
       dynamicLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
       dynamicLease.interface.toLowerCase().includes(lowerCaseFilter) ||
-      dynamicLease.device.toLowerCase().includes(lowerCaseFilter)
+      dynamicLease.device.toLowerCase().includes(lowerCaseFilter) ||
+      formatTimestamp(dynamicLease.timestamp).toLowerCase().includes(lowerCaseFilter)
   )
 }
 

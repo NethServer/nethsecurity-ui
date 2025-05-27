@@ -101,7 +101,7 @@ const onSort = (payload: any) => {
       { id: 'hostname', label: t('standalone.dns_dhcp.hostname') },
       { id: 'description', label: t('standalone.dns_dhcp.reservation_name') },
       { id: 'interface', label: t('standalone.dns_dhcp.interface') },
-      { id: 'expiration', label: t('standalone.dns_dhcp.lease_expiration') },
+      { id: 'timestamp', label: t('standalone.dns_dhcp.lease_expiration') },
       { id: 'address', label: t('standalone.dns_dhcp.ip_address') }
     ]"
     :open-menu-aria-label="t('ne_dropdown.open_menu')"
@@ -128,7 +128,7 @@ const onSort = (payload: any) => {
         {{ t('standalone.dns_dhcp.ip_address') }}
       </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.dns_dhcp.mac_address') }}</NeTableHeadCell>
-      <NeTableHeadCell v-if="showDynamicLeases" column-key="expiration" sortable @sort="onSort">
+      <NeTableHeadCell v-if="showDynamicLeases" column-key="timestamp" sortable @sort="onSort">
         {{ t('standalone.dns_dhcp.lease_expiration') }}
       </NeTableHeadCell>
       <NeTableHeadCell v-if="!showDynamicLeases" column-key="description" sortable @sort="onSort">

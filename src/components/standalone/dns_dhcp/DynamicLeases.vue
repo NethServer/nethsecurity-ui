@@ -71,7 +71,9 @@ const filteredItems = computed<DynamicLease[]>(() => {
 
 function formatTimestamp(ts: string): string {
   const num = Number(ts)
-  if (!num) return ''
+  if (!num) {
+    return ''
+  }
   const date = new Date(num * 1000)
   return date.toLocaleString()
 }

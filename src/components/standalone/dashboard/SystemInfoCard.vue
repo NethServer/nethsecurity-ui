@@ -279,7 +279,7 @@ async function getUpdatesStatus() {
             class="my-1"
           />
         </div>
-        <div v-if="dataStorageUsagePerc">
+        <div v-if="freeDataStorage != 0 || totalDataStorage != 0">
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.storage_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {

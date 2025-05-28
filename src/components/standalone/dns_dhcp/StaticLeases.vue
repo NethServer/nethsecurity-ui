@@ -72,7 +72,8 @@ function applyFilterToStaticLeases(staticLeases: StaticLease[], textFilter: stri
       staticLease.ipaddr.toLowerCase().includes(lowerCaseFilter) ||
       staticLease.macaddr.toLowerCase().includes(lowerCaseFilter) ||
       staticLease.interface.toLowerCase().includes(lowerCaseFilter) ||
-      staticLease.device.toLowerCase().includes(lowerCaseFilter)
+      staticLease.device.toLowerCase().includes(lowerCaseFilter) ||
+      staticLease.description.toLowerCase().includes(lowerCaseFilter)
   )
 }
 

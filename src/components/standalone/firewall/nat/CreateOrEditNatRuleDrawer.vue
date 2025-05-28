@@ -5,26 +5,26 @@
 
 <script setup lang="ts">
 import {
+  focusElement,
+  getAxiosErrorMessage,
+  NeButton,
   NeCombobox,
   type NeComboboxOption,
-  NeTooltip,
-  NeInlineNotification,
-  NeSideDrawer,
-  NeButton,
-  NeRadioSelection,
-  focusElement,
-  NeTextInput,
-  getAxiosErrorMessage,
   NeExpandable,
-  NeSkeleton
+  NeInlineNotification,
+  NeRadioSelection,
+  NeSideDrawer,
+  NeSkeleton,
+  NeTextInput,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { ref, computed, type PropType, type Ref, watch, nextTick } from 'vue'
+import { computed, nextTick, type PropType, type Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
-  useFirewallStore,
   type NatRule,
   type NatRuleAction,
-  type RuleHost
+  type RuleHost,
+  useFirewallStore
 } from '@/stores/standalone/firewall'
 import {
   MessageBag,
@@ -35,7 +35,7 @@ import {
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
-import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 
 const props = defineProps({
@@ -168,6 +168,7 @@ watch(
         action.value = props.currentRule.target || 'SNAT'
         rewriteIpAddress.value = props.currentRule.snat_ip || ''
         device.value = props.currentRule.device || ''
+        advancedSettingsExpanded.value = props.currentRule.device != ''
       }
     }
   }
@@ -496,20 +497,20 @@ async function saveRule() {
           :invalid-message="t(errorBag.getFirstI18nKeyFor('snat_ip'))"
           :disabled="loading.saveRule"
         />
+        <NeInlineNotification
+          v-if="errorAvailableDevices"
+          :description="errorAvailableDevices.message"
+          :title="t(getAxiosErrorMessage(errorAvailableDevices))"
+          kind="error"
+        />
         <NeExpandable
           :label="t('common.advanced_settings')"
           :is-expanded="advancedSettingsExpanded"
           @set-expanded="(ev: boolean) => (advancedSettingsExpanded = ev)"
         >
           <NeSkeleton v-if="loadingAvailableDevices" :lines="2" />
-          <NeInlineNotification
-            v-else-if="errorAvailableDevices"
-            kind="error"
-            :title="t(getAxiosErrorMessage(errorAvailableDevices))"
-            :description="errorAvailableDevices.message"
-          />
           <NeCombobox
-            v-else
+            v-else-if="errorAvailableDevices == undefined"
             v-model="device"
             :disabled="loading.saveRule"
             :label="t('standalone.nat.device')"

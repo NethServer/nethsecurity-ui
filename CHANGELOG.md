@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.27.0](https://github.com/NethServer/nethsecurity-ui/compare/1.26.1...1.27.0) (2025-05-28)
+
+
+### Features
+
+* **nat:** added device specification for NATs ([#563](https://github.com/NethServer/nethsecurity-ui/issues/563)) ([70289c0](https://github.com/NethServer/nethsecurity-ui/commit/70289c0d99a26536eaa85ee7cb19906fe3a906e3))
+
+
+### Bug Fixes
+
+* **dhcp:** enhance lease filtering and sorting functionality ([#562](https://github.com/NethServer/nethsecurity-ui/issues/562)) ([b3e38f6](https://github.com/NethServer/nethsecurity-ui/commit/b3e38f63f04e8201b7324d48932c38ec75950dd9))
+* parameter of go_to_page i18n string ([#560](https://github.com/NethServer/nethsecurity-ui/issues/560)) ([b1583d4](https://github.com/NethServer/nethsecurity-ui/commit/b1583d45ab8ddd70214de587817374a9d7145702))
+
 ## [1.26.1](https://github.com/NethServer/nethsecurity-ui/compare/1.26.0...1.26.1) (2025-05-26)
 
 

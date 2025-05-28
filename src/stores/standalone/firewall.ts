@@ -81,6 +81,7 @@ export interface NatRule {
   dest_ip: string
   target: NatRuleAction
   snat_ip?: string
+  device: string
 }
 
 export interface NetmapRule {

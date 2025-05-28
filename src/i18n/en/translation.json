@@ -2292,7 +2292,8 @@
       "delete_nat_rule": "Delete NAT rule",
       "confirm_delete_rule": "You are about to delete NAT rule '{name}'",
       "any_address": "Any address",
-      "rules_and_netmap": "Rules and NETMAP"
+      "rules_and_netmap": "Rules and NETMAP",
+      "device": "Device"
     },
     "netmap": {
       "title": "NETMAP",

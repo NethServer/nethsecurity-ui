@@ -9,8 +9,6 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import LeasesTable from './LeasesTable.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { getStandaloneRoutePrefix } from '@/lib/router'
-import { useRouter } from 'vue-router'
 import CreateOrEditStaticLeaseDrawer from './CreateOrEditStaticLeaseDrawer.vue'
 import {
   NeButton,
@@ -24,7 +22,6 @@ import {
 } from '@nethesis/vue-components'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 const { t } = useI18n()
-const router = useRouter()
 const selectedLease = ref<DynamicLease>()
 const showCreateStaticLeaseDrawer = ref(false)
 const uciChangesStore = useUciPendingChangesStore()
@@ -201,7 +198,7 @@ function clearFilters() {
       () => {
         showCreateStaticLeaseDrawer = false
         uciChangesStore.getChanges()
-        router.push(`${getStandaloneRoutePrefix()}/network/dns-dhcp?tab=static-leases`)
+        fetchItems()
       }
     "
   />

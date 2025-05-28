@@ -141,7 +141,7 @@ const onSort = (payload: any) => {
     <NeTableBody>
       <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
         <NeTableCell :data-label="t('standalone.dns_dhcp.hostname')">
-          {{ item.hostname ? item.hostname : '-' }}
+          {{ item.hostname || '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.dns_dhcp.interface')">
           <p v-if="!item.interface && !item.device">-</p>

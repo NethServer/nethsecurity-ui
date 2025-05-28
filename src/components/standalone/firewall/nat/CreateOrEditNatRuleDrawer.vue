@@ -195,7 +195,7 @@ type ListDevicesResponse = AxiosResponse<{
 function listAvailableDevices() {
   loadingAvailableDevices.value = true
   errorAvailableDevices.value = undefined
-  ubusCall('ns.nat', 'list-interfaces')
+  ubusCall('ns.nat', 'list-devices')
     .then((response: ListDevicesResponse) => (availableDevices.value = response.data.devices))
     .catch((reason) => (errorAvailableDevices.value = reason))
     .finally(() => (loadingAvailableDevices.value = false))

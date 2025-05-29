@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.1](https://github.com/NethServer/nethsecurity-ui/compare/1.27.0...1.27.1) (2025-05-29)
+
+
+### Bug Fixes
+
+* **certificates:** inverted delete modal check ([d454054](https://github.com/NethServer/nethsecurity-ui/commit/d45405417c2dcc90da278946e2f7b29c9e315226))
+
 ## [1.27.0](https://github.com/NethServer/nethsecurity-ui/compare/1.26.1...1.27.0) (2025-05-28)
 
 

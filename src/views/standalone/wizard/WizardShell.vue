@@ -7,7 +7,7 @@
 import {
   getAxiosErrorMessage,
   NeHeading,
-  NeLink,
+  NeButton,
   NeProgressBar,
   NeInlineNotification
 } from '@nethesis/vue-components'
@@ -166,88 +166,104 @@ function goToPreviousStep() {
     </div>
   </div>
   <!-- wizard -->
-  <div v-else class="flex min-h-full w-full">
-    <!-- side bar -->
+  <div v-else class="flex h-full w-full items-center justify-center bg-gray-200 dark:bg-gray-700">
     <div
-      class="hidden min-h-full w-96 shrink-0 flex-col space-y-6 border-r border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-950 lg:flex"
+      class="flex h-full max-w-7xl grow shadow-xl lg:h-[90%] lg:w-[90%] lg:grow-0 lg:rounded-3xl"
     >
-      <!-- spacer -->
-      <div class="h-[28vh]"></div>
-      <!-- logo -->
-      <img
-        class="h-10"
-        :src="`/${logoFilename}`"
-        :alt="`${getCompanyName()} logo`"
-        aria-hidden="true"
-      />
-      <NeHeading tag="h4">
-        {{ t('standalone.wizard.setup_wizard') }}
-      </NeHeading>
-      <p>
-        {{ t('standalone.wizard.setup_wizard_description') }}
-      </p>
-      <NeLink
-        href="https://docs.nethsecurity.org/en/latest/setup_wizard.html"
-        target="_blank"
-        class="inline-block"
+      <!-- side panel -->
+      <div
+        class="hidden h-full w-96 shrink-0 flex-col justify-center border-r border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-950 lg:flex lg:rounded-l-3xl"
       >
-        <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
-        {{ t('standalone.wizard.need_help') }}
-      </NeLink>
-    </div>
-    <!-- main content -->
-    <div class="w-full max-w-4xl space-y-6 bg-gray-50 p-12 dark:bg-gray-900">
-      <!-- steps progress -->
-      <div v-if="currentStep !== 'welcome'" class="mb-6">
-        <NeProgressBar
-          class="mb-2 w-full"
-          :progress="wizardProgress"
-          color="custom"
-          custom-color-classes="bg-gradient-to-r from-cyan-500 to-indigo-500"
-        />
-        <p class="text-center text-xs text-gray-700 dark:text-gray-200">
-          {{
-            t('standalone.wizard.step_num_of_total', { num: currentStepNum, total: steps.length })
-          }}
-        </p>
+        <div class="space-y-6">
+          <!-- logo -->
+          <img
+            class="h-10"
+            :src="`/${logoFilename}`"
+            :alt="`${getCompanyName()} logo`"
+            aria-hidden="true"
+          />
+          <NeHeading tag="h4">
+            {{ t('standalone.wizard.setup_wizard') }}
+          </NeHeading>
+          <p>
+            {{ t('standalone.wizard.setup_wizard_description') }}
+          </p>
+          <a
+            href="https://docs.nethsecurity.org/en/latest/setup_wizard.html"
+            target="_blank"
+            class="inline-block"
+          >
+            <NeButton kind="tertiary" size="lg">
+              <template #prefix>
+                <FontAwesomeIcon
+                  :icon="faArrowUpRightFromSquare"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('standalone.wizard.need_help') }}
+            </NeButton>
+          </a>
+        </div>
       </div>
-      <!-- list-input-rules error notification -->
-      <NeInlineNotification
-        v-if="errorListInputRules"
-        kind="error"
-        :title="t('error.cannot_retrieve_firewall_rules')"
-        :description="errorListInputRules"
+      <!-- main content -->
+      <div
+        class="flex w-full flex-col space-y-6 bg-gray-50 p-12 pr-8 dark:bg-gray-900 lg:rounded-r-3xl"
       >
-        <template v-if="errorListInputRulesDetails" #details>
-          {{ errorListInputRulesDetails }}
-        </template>
-      </NeInlineNotification>
-      <template v-if="currentStep === 'welcome'">
-        <WelcomeStep @next-step="goToNextStep" />
-      </template>
-      <template v-else-if="currentStep === 'password'">
-        <ChangePasswordStep @next-step="goToNextStep" @previous-step="goToPreviousStep" />
-      </template>
-      <template v-else-if="currentStep === 'ssh'">
-        <SshStep @next-step="goToNextStep" @previous-step="goToPreviousStep" />
-      </template>
-      <template v-else-if="currentStep === 'port9090'">
-        <Port9090Step
-          :input-rules="inputRules"
-          @next-step="goToNextStep"
-          @previous-step="goToPreviousStep"
-        />
-      </template>
-      <template v-else-if="currentStep === 'port443'">
-        <Port443Step
-          :input-rules="inputRules"
-          @next-step="goToNextStep"
-          @previous-step="goToPreviousStep"
-        />
-      </template>
-      <template v-else-if="currentStep === 'summary'">
-        <SummaryStep @previous-step="goToPreviousStep" />
-      </template>
+        <!-- steps progress -->
+        <div v-if="currentStep !== 'welcome'" class="mb-4 w-full pr-4">
+          <NeProgressBar
+            class="mb-2"
+            :progress="wizardProgress"
+            color="custom"
+            custom-color-classes="bg-gradient-to-r from-cyan-500 to-indigo-500"
+          />
+          <p class="text-center text-xs text-gray-700 dark:text-gray-200">
+            {{
+              t('standalone.wizard.step_num_of_total', { num: currentStepNum, total: steps.length })
+            }}
+          </p>
+        </div>
+        <div class="h-full flex-1 space-y-6 overflow-y-auto pr-4">
+          <!-- list-input-rules error notification -->
+          <NeInlineNotification
+            v-if="errorListInputRules"
+            kind="error"
+            :title="t('error.cannot_retrieve_firewall_rules')"
+            :description="errorListInputRules"
+          >
+            <template v-if="errorListInputRulesDetails" #details>
+              {{ errorListInputRulesDetails }}
+            </template>
+          </NeInlineNotification>
+          <template v-if="currentStep === 'welcome'">
+            <WelcomeStep @next-step="goToNextStep" />
+          </template>
+          <template v-else-if="currentStep === 'password'">
+            <ChangePasswordStep @next-step="goToNextStep" @previous-step="goToPreviousStep" />
+          </template>
+          <template v-else-if="currentStep === 'ssh'">
+            <SshStep @next-step="goToNextStep" @previous-step="goToPreviousStep" />
+          </template>
+          <template v-else-if="currentStep === 'port9090'">
+            <Port9090Step
+              :input-rules="inputRules"
+              @next-step="goToNextStep"
+              @previous-step="goToPreviousStep"
+            />
+          </template>
+          <template v-else-if="currentStep === 'port443'">
+            <Port443Step
+              :input-rules="inputRules"
+              @next-step="goToNextStep"
+              @previous-step="goToPreviousStep"
+            />
+          </template>
+          <template v-else-if="currentStep === 'summary'">
+            <SummaryStep @previous-step="goToPreviousStep" />
+          </template>
+        </div>
+      </div>
     </div>
   </div>
 </template>

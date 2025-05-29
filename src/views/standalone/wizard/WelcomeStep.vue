@@ -45,7 +45,7 @@ async function skipWizard() {
       {{ t('standalone.wizard.welcome_description', { product: getProductName() }) }}
     </p>
   </div>
-  <div class="space-y-8 py-10">
+  <div class="space-y-8 py-8">
     <div class="space-y-2">
       <div class="flex items-center gap-2">
         <FontAwesomeIcon :icon="faShieldHalved" aria-hidden="true" class="h-6 w-6" />

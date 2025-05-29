@@ -529,8 +529,8 @@
       "web_access_form_wan_limited_description": "Access to the web interface from the WAN could be limited depending on your current configuration. If you are connected via port 443 or 9090, you might lose access after applying the changes. Make sure your settings align with your access requirements.",
       "finish_setup": "Finish setup",
       "finish_message": "Adjusting unit settings, almost there...",
-      "wan_access_port_443_warning_title": "WAN access on TCP port 443 is disabled",
-      "wan_access_port_443_warning_description": "As a result, reverse proxies will not function, and remote access to the firewall unit may be lost."
+      "wan_access_port_443_warning_title": "WAN access on TCP port 443 disabled",
+      "wan_access_port_443_warning_description": "As a result, reverse proxies will not function."
     },
     "netify_informatics": {
       "title": "Netify Informatics",

@@ -235,12 +235,11 @@ function save() {
             v-model="bypassSource"
             :title="t('standalone.flashstart.sourcebypass')"
             :add-item-label="t('standalone.flashstart.add_sourcebypass')"
-            :invalid-message="t(validationBag.getFirstI18nKeyFor('bypass'))"
+            :general-invalid-message="t(validationBag.getFirstI18nKeyFor('bypass'))"
             :disable-inputs="saving"
             :disable-add-button="saving"
             optional
             :optional-label="t('common.optional')"
-            required
           >
             <template #tooltip>
               <NeTooltip>
@@ -259,7 +258,6 @@ function save() {
             :disable-add-button="saving"
             optional
             :optional-label="t('common.optional')"
-            required
           >
             <template #tooltip>
               <NeTooltip>

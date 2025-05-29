@@ -107,7 +107,7 @@ function getDropdownItems(item: Certificate): NeDropdownItem[] {
     }
   ]
   // servers is an optional property, so we need to check if it exists
-  if (item.name == '_lan' && (item.servers?.length ?? 0) <= 0) {
+  if (item.name != '_lan' && (item.servers?.length ?? 0) <= 0) {
     items.push({
       id: 'delete',
       label: t('common.delete'),

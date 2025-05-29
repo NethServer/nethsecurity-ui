@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.27.2](https://github.com/NethServer/nethsecurity-ui/compare/1.27.1...1.27.2) (2025-05-29)
+
+
+### Bug Fixes
+
+* **dashboard:** fixed storage usage bar if is zero ([#564](https://github.com/NethServer/nethsecurity-ui/issues/564)) ([31fd04e](https://github.com/NethServer/nethsecurity-ui/commit/31fd04ea0e899ca60e80fbd7924d4abd31af9721))
+* **flashstart:** showing validation ([#568](https://github.com/NethServer/nethsecurity-ui/issues/568)) ([e6f85fc](https://github.com/NethServer/nethsecurity-ui/commit/e6f85fcc0a8cfee7ac79175157e0396cbb3432d1))
+* improve first configuration wizard ([#567](https://github.com/NethServer/nethsecurity-ui/issues/567)) ([b937230](https://github.com/NethServer/nethsecurity-ui/commit/b9372303ea63b0e835ae3a4184a4df4b8cadf7bc))
+
 ## [1.27.1](https://github.com/NethServer/nethsecurity-ui/compare/1.27.0...1.27.1) (2025-05-29)
 
 

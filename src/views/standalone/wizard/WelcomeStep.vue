@@ -29,6 +29,7 @@ async function skipWizard() {
   await wizardStore.setCompleted(true)
   await uciChangesStore.getChanges()
   await uciChangesStore.commitChanges(false)
+  await uciChangesStore.getChanges()
   router.push({
     path: `${getStandaloneRoutePrefix()}/dashboard`
   })

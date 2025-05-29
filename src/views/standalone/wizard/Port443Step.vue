@@ -132,6 +132,12 @@ async function setWebInterface() {
           :label="wizardStore.port443WanAccessEnabled ? t('common.enabled') : t('common.disabled')"
           :disabled="loadingSetWebInterface || loadingSaveRule"
         />
+        <NeInlineNotification
+          v-if="!wizardStore.port443WanAccessEnabled"
+          kind="warning"
+          :title="t('standalone.wizard.wan_access_port_443_warning_title')"
+          :description="t('standalone.wizard.wan_access_port_443_warning_description')"
+        />
       </div>
     </NeCard>
     <!-- set web interface error notification -->

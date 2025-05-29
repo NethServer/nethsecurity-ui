@@ -73,8 +73,13 @@ async function finishSetup() {
     <!-- change root password -->
     <div class="space-y-1">
       <NeHeading tag="h6"> 1. {{ t('standalone.wizard.change_root_password') }} </NeHeading>
-      <p>
+      <p class="flex items-center gap-2">
         {{ t('standalone.wizard.root_password_saved_successfully') }}
+        <FontAwesomeIcon
+          :icon="faCircleCheck"
+          class="h-4 w-4 text-green-700 dark:text-green-500"
+          aria-hidden="true"
+        />
       </p>
     </div>
     <!-- ssh access -->
@@ -181,6 +186,17 @@ async function finishSetup() {
       </div>
     </div>
     <NeInlineNotification
+      v-if="!wizardStore.port443WanAccessEnabled"
+      kind="warning"
+      :title="t('standalone.wizard.wan_access_port_443_warning_title')"
+      :description="t('standalone.wizard.wan_access_port_443_warning_description')"
+    />
+    <NeInlineNotification
+      v-if="
+        wizardStore.port9090WanAccess !== 'enabled' ||
+        !wizardStore.port443WebInterfaceEnabled ||
+        !wizardStore.port443WanAccessEnabled
+      "
       kind="warning"
       :title="t('standalone.wizard.web_access_form_wan_limited')"
       :description="t('standalone.wizard.web_access_form_wan_limited_description')"

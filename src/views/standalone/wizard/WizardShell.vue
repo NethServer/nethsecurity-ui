@@ -7,7 +7,7 @@
 import {
   getAxiosErrorMessage,
   NeHeading,
-  NeButton,
+  NeLink,
   NeProgressBar,
   NeInlineNotification
 } from '@nethesis/vue-components'
@@ -188,22 +188,14 @@ function goToPreviousStep() {
           <p>
             {{ t('standalone.wizard.setup_wizard_description') }}
           </p>
-          <a
+          <NeLink
             href="https://docs.nethsecurity.org/en/latest/setup_wizard.html"
             target="_blank"
-            class="inline-block"
+            class="inline-block text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-400"
           >
-            <NeButton kind="tertiary" size="lg">
-              <template #prefix>
-                <FontAwesomeIcon
-                  :icon="faArrowUpRightFromSquare"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
-              </template>
-              {{ t('standalone.wizard.need_help') }}
-            </NeButton>
-          </a>
+            <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
+            {{ t('standalone.wizard.need_help') }}
+          </NeLink>
         </div>
       </div>
       <!-- main content -->

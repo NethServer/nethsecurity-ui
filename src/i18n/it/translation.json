@@ -466,9 +466,11 @@
       "summary_description": "Rivedi il riepilogo della configurazione prima di applicare le modifiche. Se devi apportare cambiamenti, fai clic su 'Precedente' per tornare ai passaggi precedenti.",
       "root_password_saved_successfully": "La password di root è stata salvata con successo",
       "web_access_form_wan_limited": "L'accesso web dalla WAN potrebbe essere limitato",
-      "web_access_form_wan_limited_description": "L'accesso all'interfaccia web dalla WAN potrebbe essere limitato in base alla configurazione attuale. Se sei connesso tramite la porta 443, potresti perdere l'accesso dopo l'applicazione delle modifiche. Assicurati che le impostazioni siano coerenti con le tue esigenze di accesso, specialmente se utilizzi reverse proxy.",
+      "web_access_form_wan_limited_description": "L'accesso all'interfaccia web dalla WAN potrebbe essere limitato in base alla configurazione attuale. Se sei connesso tramite la porta 443, potresti perdere l'accesso dopo l'applicazione delle modifiche. Assicurati che le impostazioni siano coerenti con le tue esigenze di accesso.",
       "finish_setup": "Completa configurazione",
-      "finish_message": "Configurazione unità in corso, ci siamo quasi..."
+      "finish_message": "Configurazione unità in corso, ci siamo quasi...",
+      "wan_access_port_443_warning_title": "Accesso WAN sulla porta TCP 443 disabilitato",
+      "wan_access_port_443_warning_description": "Di conseguenza, eventuali reverse proxy non funzioneranno."
     },
     "ssh": {
       "title": "SSH",

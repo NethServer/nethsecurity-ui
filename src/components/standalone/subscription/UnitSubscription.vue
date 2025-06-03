@@ -186,7 +186,7 @@ function requestSync() {
             </p>
           </div>
           <div class="align-center flex">
-            <NeHeading tag="h6" class="!mb-0 mr-4 inline-block">{{
+            <NeHeading tag="h6" class="mr-4 mb-0! inline-block">{{
               t('standalone.subscription.status')
             }}</NeHeading>
             <NeBadge

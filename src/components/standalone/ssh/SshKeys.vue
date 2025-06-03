@@ -168,9 +168,7 @@ function handleCloseDeleteModal() {
     <div class="space-y-4">
       <ul class="space-y-2">
         <li v-for="key in sshKeys" :key="key.key" class="flex items-center gap-2">
-          <div
-            class="min-w-0 flex-grow rounded border border-gray-200 p-3 text-xs dark:border-gray-700"
-          >
+          <div class="min-w-0 grow rounded border border-gray-200 p-3 text-xs dark:border-gray-700">
             <p class="mb-1 font-bold">
               <template v-if="key.comment != ''">
                 {{ key.comment }}

@@ -25,7 +25,7 @@ const notificationsToShow = computed(() => {
     <Teleport to="body">
       <div
         aria-live="assertive"
-        class="pointer-events-none fixed inset-0 z-[120] flex items-start px-8 pb-6 pt-24 text-sm"
+        class="pointer-events-none fixed inset-0 z-120 flex items-start px-8 pt-24 pb-6 text-sm"
       >
         <div class="flex w-full flex-col items-end space-y-4">
           <TransitionGroup name="fade">

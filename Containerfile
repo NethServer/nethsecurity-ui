@@ -14,8 +14,6 @@ COPY .env.production .
 COPY .gitignore .
 COPY env.d.ts .
 COPY index.html .
-COPY postcss.config.js .
-COPY tailwind.config.js .
 COPY tsconfig.app.json .
 COPY tsconfig.json .
 COPY tsconfig.node.json .

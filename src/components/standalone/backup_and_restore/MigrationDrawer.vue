@@ -299,13 +299,13 @@ watch(
           </div>
           <div v-for="(deviceMigration, index) in listDevicesMigration" :key="index">
             <div class="flex items-center">
-              <div class="flex-grow">
+              <div class="grow">
                 <NeTextInput v-model="deviceMigration.label" disabled />
               </div>
               <div class="px-3 text-center text-sm">
                 {{ t('standalone.backup_and_restore.migration.to') }}
               </div>
-              <div class="flex-grow">
+              <div class="grow">
                 <NeCombobox
                   :ref="'deviceMigration' + index"
                   v-model="deviceMigration.selected"

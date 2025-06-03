@@ -2,7 +2,6 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import './assets/main.css'
-import 'tippy.js/dist/tippy.css'
 
 import itTranslation from './i18n/it/translation.json'
 import enTranslation from './i18n/en/translation.json'

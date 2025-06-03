@@ -174,7 +174,6 @@ function clearFilters() {
         v-if="items.length == 0"
         :title="t('standalone.dns_dhcp.no_dynamic_lease_found')"
         :icon="faCircleInfo"
-        class="pb-2"
       />
       <NeEmptyState
         v-else-if="filteredItems.length == 0"

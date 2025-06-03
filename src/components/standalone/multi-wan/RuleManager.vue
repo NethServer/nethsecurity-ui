@@ -127,7 +127,7 @@ function saveState(): void {
     :headers="headers"
     :loading="loading"
     :style="'card'"
-    class="!border-spacing-y-1"
+    class="border-spacing-y-1!"
   >
     <template #tbody>
       <tbody>
@@ -159,7 +159,7 @@ function saveState(): void {
               @dragend="ruleDragged = undefined"
               @dragstart="ruleDragged = index"
             >
-              <td class="cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70">
+              <td class="cursor-move text-center hover:bg-gray-100 hover:dark:bg-gray-700">
                 <FontAwesomeIcon :icon="faGripVertical" />
               </td>
               <td>
@@ -231,6 +231,8 @@ function saveState(): void {
 </template>
 
 <style scoped>
+@reference "../../../assets/main.css";
+
 tr.drop-target > td {
   @apply bg-transparent py-1;
 }

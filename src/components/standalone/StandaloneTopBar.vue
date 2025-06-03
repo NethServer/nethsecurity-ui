@@ -124,11 +124,11 @@ function openNotificationsDrawer() {
 
 <template>
   <div
-    class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm dark:border-gray-700 dark:bg-gray-950 sm:gap-x-6 sm:px-6 lg:px-8"
+    class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 dark:border-gray-700 dark:bg-gray-950"
   >
     <button
       type="button"
-      class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50 lg:hidden"
+      class="-m-2.5 p-2.5 text-gray-600 hover:text-gray-900 lg:hidden dark:text-gray-300 dark:hover:text-gray-50"
       @click="emit('openSidebar')"
     >
       <span class="sr-only">{{ t('common.shell.open_sidebar') }}</span>
@@ -136,7 +136,7 @@ function openNotificationsDrawer() {
     </button>
 
     <!-- Separator -->
-    <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 lg:hidden" aria-hidden="true" />
+    <div class="h-6 w-px bg-gray-200 lg:hidden dark:bg-gray-700" aria-hidden="true" />
 
     <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
       <div class="relative flex flex-1">
@@ -158,7 +158,7 @@ function openNotificationsDrawer() {
             </span>
             <span
               v-if="isChangesButtonFlashing"
-              class="absolute inline-flex h-full w-3/4 animate-ping rounded-md bg-primary-500 opacity-75 dark:bg-primary-300 dark:opacity-75"
+              class="bg-primary-500 dark:bg-primary-300 absolute inline-flex h-full w-3/4 animate-ping rounded-md opacity-75 dark:opacity-75"
             ></span>
           </NeButton>
           <UciChangesModal :visible="showUciChangesModal" @close="showUciChangesModal = false" />
@@ -247,7 +247,7 @@ function openNotificationsDrawer() {
               :items="accountMenuOptions"
               :align-to-right="true"
               :open-menu-aria-label="t('common.shell.open_user_menu')"
-              menu-classes="!z-[150]"
+              menu-classes="z-150!"
             >
               <template #button>
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">

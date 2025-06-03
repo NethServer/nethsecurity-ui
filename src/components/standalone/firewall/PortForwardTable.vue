@@ -85,7 +85,7 @@ function getCellClasses(item: PortForward) {
 <template>
   <div>
     <p
-      class="z-0 -my-1 table max-w-md rounded-se-md rounded-ss-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
+      class="z-0 -my-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
     >
       {{ t('standalone.port_forward.destination') }}: <strong>{{ header }}</strong>
     </p>

@@ -131,7 +131,7 @@ const zone = computed(() => {
             <!-- show +n others -->
             <NeTooltip>
               <template #trigger>
-                <span class="ml-2 text-primary-700 dark:text-primary-500">
+                <span class="text-primary-700 dark:text-primary-500 ml-2">
                   {{
                     t(
                       'common.plus_num_others',

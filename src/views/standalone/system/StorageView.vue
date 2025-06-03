@@ -122,7 +122,7 @@ onMounted(() => {
           t('standalone.storage.storage_configuration')
         }}</NeHeading>
         <div
-          class="flex max-w-3xl flex-row items-center rounded-md bg-white p-6 transition-colors duration-200 dark:bg-gray-800 sm:shadow"
+          class="flex max-w-3xl flex-row items-center rounded-md bg-white p-6 transition-colors duration-200 sm:shadow dark:bg-gray-800"
         >
           <!-- Card icon + device name and path -->
           <div
@@ -135,7 +135,7 @@ onMounted(() => {
                   : ['fas', 'hard-drive']
               "
               aria-hidden="true"
-              :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 dark:bg-gray-500 dark:text-gray-50 md:mb-0 md:mr-5`"
+              :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 md:mr-5 md:mb-0 dark:bg-gray-500 dark:text-gray-50`"
             />
             <div class="text-center text-sm md:text-start">
               <p class="font-semibold">

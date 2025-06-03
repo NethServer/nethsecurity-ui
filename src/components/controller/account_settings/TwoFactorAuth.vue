@@ -208,7 +208,7 @@ function hideStoreRecoveryCodesReminder() {
                 class="mt-2"
               />
               <!-- copy all codes -->
-              <NeButton kind="tertiary" size="lg" class="-ml-2.5 mt-2" @click="copyRecoveryCodes">
+              <NeButton kind="tertiary" size="lg" class="mt-2 -ml-2.5" @click="copyRecoveryCodes">
                 <template #prefix>
                   <font-awesome-icon
                     :icon="['fas', recoveryCodesJustCopied ? 'check' : 'copy']"

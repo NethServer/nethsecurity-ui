@@ -363,7 +363,7 @@ onMounted(() => {
             !scheduleDate
           "
           kind="primary"
-          class="mb-2 mr-4"
+          class="mr-4 mb-2"
           :disabled="disableRemoteUpdates"
           @click="showEditScheduleDrawer"
           ><template #prefix>

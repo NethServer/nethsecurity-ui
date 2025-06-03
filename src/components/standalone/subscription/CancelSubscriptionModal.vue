@@ -93,7 +93,7 @@ async function cancelSubscription() {
         kind="error"
         :title="t('error.cancel_registration_error')"
         :description="error.unregister"
-        class="!my-4"
+        class="my-4!"
       >
         <template v-if="error.unregisterDetails" #details>
           {{ error.unregisterDetails }}

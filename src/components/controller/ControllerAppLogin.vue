@@ -138,7 +138,7 @@ function isFormInvalid() {
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <div class="mx-auto w-full max-w-md">
-        <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
+        <div class="bg-gray-50 px-6 py-12 shadow sm:rounded-lg sm:px-12 dark:bg-gray-900">
           <NeHeading tag="h4" class="mb-4">
             {{ t('login.welcome_title_controller', { product: getProductName() }) }}
           </NeHeading>
@@ -220,7 +220,7 @@ function isFormInvalid() {
                   v-model="rememberMe"
                   name="remember-me"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
+                  class="text-primary-600 focus:ring-primary-600 dark:text-primary-600 dark:focus:ring-primary-400 h-4 w-4 rounded border-gray-300 dark:border-gray-700"
                 />
                 <label
                   for="remember-me"
@@ -253,9 +253,9 @@ function isFormInvalid() {
       </div>
     </div>
     <div
-      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-800 lg:flex"
+      class="to-primary-800 relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 lg:flex"
     >
-      <div class="flex w-2/3 flex-col items-center xl:w-2/5 3xl:w-1/3 5xl:w-1/4">
+      <div class="3xl:w-1/3 5xl:w-1/4 flex w-2/3 flex-col items-center xl:w-2/5">
         <img src="/login_logo.svg" :alt="`${getCompanyName()} logo`" class="" />
         <span class="text-xl text-white">Controller</span>
       </div>

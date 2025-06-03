@@ -128,7 +128,7 @@ function getBadgeIcon() {
       t('controller.unit_terminal.name_unit_terminal', { name: unitName })
     }}</NeHeading>
     <!-- 50 rem is an appropriate width for the default number or colums of xterm.js terminal -->
-    <div class="flex max-w-[50rem] flex-col gap-6">
+    <div class="flex max-w-200 flex-col gap-6">
       <div class="flex items-center gap-4">
         <span>{{ t('controller.unit_terminal.connection') }}</span>
         <NeBadge
@@ -155,7 +155,7 @@ function getBadgeIcon() {
         :title="t('controller.unit_terminal.connection_closed')"
         :description="t('controller.unit_terminal.connection_closed_description')"
       />
-      <div id="terminal-container" class="min-h-[14rem] rounded-md bg-black p-4"></div>
+      <div id="terminal-container" class="min-h-56 rounded-md bg-black p-4"></div>
     </div>
   </div>
 </template>

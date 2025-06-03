@@ -89,7 +89,7 @@ function getZoneForInterface(item: QoSInterface) {
     <template #interface="{ item }: { item: QoSInterface }">
       <div class="flex flex-row items-center gap-x-4">
         <div
-          :class="`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${getZoneIconBackgroundStyle(
+          :class="`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${getZoneIconBackgroundStyle(
             getZoneForInterface(item)
           )}`"
         >

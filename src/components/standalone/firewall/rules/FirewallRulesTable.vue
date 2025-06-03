@@ -91,7 +91,7 @@ const headers = [
 
 const ruleDragged = ref<number>()
 const indexOver = ref<number>()
-const disabledRuleClasses = '!bg-[#fcfdfd] dark:!bg-[#18212f]'
+const disabledRuleClasses = 'bg-[#fcfdfd]! dark:bg-[#18212f]!'
 
 const filteredRules = computed(() => {
   if (!props.textFilter) {
@@ -287,7 +287,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       :data="filteredRules"
       :headers="headers"
       :style="'card'"
-      class="!border-spacing-y-1"
+      class="border-spacing-y-1!"
     >
       <template #tbody>
         <tbody>
@@ -330,7 +330,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 <td
                   v-if="!textFilter"
                   :class="[
-                    'cursor-move text-center hover:bg-opacity-50 hover:dark:bg-opacity-70',
+                    'cursor-move text-center hover:bg-gray-100 hover:dark:bg-gray-700',
                     !isEnabled(rule) ? disabledRuleClasses : ''
                   ]"
                 >
@@ -491,6 +491,8 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
 </template>
 
 <style scoped>
+@reference "../../../../assets/main.css";
+
 tr.drop-target > td {
   @apply bg-transparent py-1;
 }

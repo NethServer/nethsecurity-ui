@@ -85,7 +85,7 @@ function goToUpdates() {
   >
     <div class="space-y-5">
       <div>
-        <NeFormItemLabel class="!mb-1">
+        <NeFormItemLabel class="mb-1!">
           {{ t('error_modal.request_failed') }}
         </NeFormItemLabel>
         <div class="font-mono">

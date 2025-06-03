@@ -1129,7 +1129,7 @@ async function listZonesForDeviceConfig() {
             v-model="dhcpCustomHostname"
             :placeholder="t('standalone.interfaces_and_devices.custom_hostname')"
             :invalid-message="t(error.dhcpCustomHostname)"
-            class="!mt-4 ml-6"
+            class="mt-4! ml-6"
           />
         </div>
         <!-- advanced settings (don't show for pppoe and bond) -->

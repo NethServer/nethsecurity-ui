@@ -140,7 +140,7 @@ onMounted(() => {
 
     <!-- Database Card -->
     <div
-      class="flex max-w-2xl flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 p-5 text-gray-700 dark:border-indigo-500 dark:bg-gray-800 dark:text-gray-200 sm:rounded-lg sm:shadow"
+      class="flex max-w-2xl flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 p-5 text-gray-700 sm:rounded-lg sm:shadow dark:border-indigo-500 dark:bg-gray-800 dark:text-gray-200"
     >
       <div class="flex flex-row items-center">
         <font-awesome-icon
@@ -165,7 +165,7 @@ onMounted(() => {
         </div>
         <p
           v-if="database.type === 'ldap'"
-          class="ml-4 border-l border-gray-800 py-3 pl-4 dark:border-gray-600 md:ml-8 md:pl-8"
+          class="ml-4 border-l border-gray-800 py-3 pl-4 md:ml-8 md:pl-8 dark:border-gray-600"
         >
           <strong class="text-sm">URI:</strong><span class="ml-2 text-sm">{{ database.uri }}</span>
         </p>

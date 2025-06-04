@@ -427,12 +427,16 @@ function validate(): boolean {
     ]
   ]
 
+  const destinationIpRequired = sourcePort.value == '' || destinationPort.value == ''
+
   const validators: [validationOutput[], string, Ref][] = [
     [[validateRequired(name.value)], 'name', nameRef],
     ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
     destinationAddressType.value === 'address'
       ? [
-          [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
+          destinationIpRequired
+            ? [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)]
+            : [{ valid: true }],
           'destinationIP',
           destinationIpRef
         ]
@@ -652,7 +656,9 @@ async function createOrEditPortForward() {
         v-model="destinationIP"
         :label="t('standalone.port_forward.destination_address')"
         :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
+        :helper-text="t('standalone.port_forward.leave_blank_for_firewall')"
         :disabled="isSubmittingRequest"
+        optional
       />
       <!-- destination object -->
       <NeCombobox

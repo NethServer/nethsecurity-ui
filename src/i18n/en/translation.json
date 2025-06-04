@@ -1461,6 +1461,7 @@
       "choose_protocol": "Choose protocol",
       "protocol_helper": "Leave unselected for any source protocol",
       "source_destination_port_helper": "Leave blank for any port",
+      "leave_blank_for_firewall": "Leave blank for firewall",
       "any_protocol": "Any protocol",
       "any_protocol_message": "You selected 'any' protocol, this means that ALL traffic will be forwarded. Make sure you know what you are doing",
       "automatic": "Automatic",

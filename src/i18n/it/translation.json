@@ -391,7 +391,8 @@
     "cannot_save_blocked_domain": "Impossibile salvare il dominio bloccato",
     "invalid_domain_name": "Nome dominio non valido",
     "cannot_delete_bypass": "Impossibile eliminare il bypass",
-    "cannot_create_bypass": "Impossibile creare il bypass"
+    "cannot_create_bypass": "Impossibile creare il bypass",
+    "invalid_credentials": "Credenziali non valide"
   },
   "login": {
     "sign_in": "Accedi",

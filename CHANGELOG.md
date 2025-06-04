@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.27.3](https://github.com/NethServer/nethsecurity-ui/compare/1.27.2...1.27.3) (2025-06-04)
+
+
+### Bug Fixes
+
+* **port forward:** enabled possibility to set rules for firewall ([#571](https://github.com/NethServer/nethsecurity-ui/issues/571)) ([451fa89](https://github.com/NethServer/nethsecurity-ui/commit/451fa893e9d4d21c297bb34d39bcd78ed85d93bd))
+* skip wizard check while on controller ([#573](https://github.com/NethServer/nethsecurity-ui/issues/573)) ([a22a8c9](https://github.com/NethServer/nethsecurity-ui/commit/a22a8c9edc50435930fd42d57686e978901a232a))
+* ssh keys list while opening unit ssh terminal ([#572](https://github.com/NethServer/nethsecurity-ui/issues/572)) ([e9b727e](https://github.com/NethServer/nethsecurity-ui/commit/e9b727eff32539ce687868a4fc23140b82d44d28))
+
 ## [1.27.2](https://github.com/NethServer/nethsecurity-ui/compare/1.27.1...1.27.2) (2025-05-29)
 
 

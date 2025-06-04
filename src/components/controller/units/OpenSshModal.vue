@@ -122,11 +122,16 @@ async function loadAccountAndUnitSshKeys() {
     try {
       const res = await ubusCallFromController('ns.ssh', 'list-keys', {}, props.unit.id)
       const keys: SshKey[] = res.data.keys
+      const [pubKeyType, pubKeyKey, pubKeyComment] = pubKey.split(' ')
 
-      // split on newline, trim whitespaces and remove empty lines
-      const unitSshKeys = keys.map((key) => key.key.trim())
+      const pubKeyFound = keys.find(
+        (key) =>
+          key.key.trim() === pubKeyKey.trim() &&
+          key.type === pubKeyType &&
+          key.comment === pubKeyComment
+      )
 
-      if (unitSshKeys.includes(pubKey.trim())) {
+      if (pubKeyFound) {
         usePassphrase.value = true
       } else {
         usePassphrase.value = false

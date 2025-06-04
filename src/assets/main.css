@@ -4,7 +4,7 @@
  */
 @layer vendor, theme, base, components, utilities;
 
-@import '@xterm/xterm/css/xterm.css' layer(base); /* //// test */
+@import '@xterm/xterm/css/xterm.css' layer(components);
 
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
@@ -14,8 +14,9 @@
 @import '../../node_modules/@nethesis/vue-components/dist/main.css' layer(components);
 
 /* detect tailwind classes used in @nethesis/vue-components */
-@source "../../node_modules/@nethesis/vue-components/dist/**/*.js";
+@source '../../node_modules/@nethesis/vue-components/dist/**/*.js';
 
+/* load tailwind forms plugin, needed for some components */
 @plugin '@tailwindcss/forms';
 
 @custom-variant dark (&:where(.dark, .dark *));

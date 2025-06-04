@@ -23,6 +23,7 @@ import router from '@/router'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ubusCallFromController } from '@/lib/standalone/ubus'
 import { useAccountsStore } from '@/stores/controller/accounts'
+import type { SshKey } from '@/lib/standalone/sshKey'
 
 const props = defineProps({
   visible: {
@@ -120,13 +121,10 @@ async function loadAccountAndUnitSshKeys() {
 
     try {
       const res = await ubusCallFromController('ns.ssh', 'list-keys', {}, props.unit.id)
-      const keysString: string = res.data.keys
+      const keys: SshKey[] = res.data.keys
 
       // split on newline, trim whitespaces and remove empty lines
-      const unitSshKeys = keysString
-        .split('\n')
-        .map((key) => key.trim())
-        .filter((key) => key)
+      const unitSshKeys = keys.map((key) => key.key.trim())
 
       if (unitSshKeys.includes(pubKey.trim())) {
         usePassphrase.value = true

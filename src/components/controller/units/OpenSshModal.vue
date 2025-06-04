@@ -122,7 +122,10 @@ async function loadAccountAndUnitSshKeys() {
     try {
       const res = await ubusCallFromController('ns.ssh', 'list-keys', {}, props.unit.id)
       const keys: SshKey[] = res.data.keys
-      const [pubKeyType, pubKeyKey, pubKeyComment] = pubKey.split(' ')
+      const tokens = pubKey.split(' ')
+      const pubKeyType = tokens[0]
+      const pubKeyKey = tokens[1]
+      const pubKeyComment = tokens.slice(2).join(' ')
 
       const pubKeyFound = keys.find(
         (key) =>

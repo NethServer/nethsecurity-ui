@@ -278,6 +278,10 @@ const router = createRouter({
 
 // redirect to wizard page if not completed
 router.beforeEach(async (to) => {
+  if (!isStandaloneMode()) {
+    // do not check wizard in controller mode
+    return true
+  }
   const setupWizardStore = useSetupWizardStore()
 
   if (setupWizardStore.isComplete) {

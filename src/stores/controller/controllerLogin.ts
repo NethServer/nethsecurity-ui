@@ -62,7 +62,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
 
     // set or remove username to/from local storage
     if (rememberMe) {
-      saveToStorage('controllerUsername', username.value)
+      saveToStorage('controllerUsername', user)
     } else {
       deleteFromStorage('controllerUsername')
     }

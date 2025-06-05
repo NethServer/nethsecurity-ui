@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.27.4](https://github.com/NethServer/nethsecurity-ui/compare/1.27.3...1.27.4) (2025-06-05)
+
+
+### Bug Fixes
+
+* **controller:** remember me checkbox on login ([#577](https://github.com/NethServer/nethsecurity-ui/issues/577)) ([97f9ab0](https://github.com/NethServer/nethsecurity-ui/commit/97f9ab0c16174743e0c2d79a0ddb3a7b25d20b15))
+* passphrase (public key) access to unit ssh ([#575](https://github.com/NethServer/nethsecurity-ui/issues/575)) ([e954e12](https://github.com/NethServer/nethsecurity-ui/commit/e954e12045f48748e277fb63c500c715d4eb7a69))
+
 ## [1.27.3](https://github.com/NethServer/nethsecurity-ui/compare/1.27.2...1.27.3) (2025-06-04)
 
 

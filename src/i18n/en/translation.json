@@ -2515,6 +2515,24 @@
       "max_detect_info": "Policy 'max-detect' is enabled.",
       "max_detect_description": "Please refer to the manual for more information.",
       "events_today": "event today | events today"
+    },
+    "ha": {
+      "sidebar_title": "High Availability",
+      "state": "State",
+      "role": "Role",
+      "primary": "Primary",
+      "backup": "Backup",
+      "last_sync_status": "Last sync status",
+      "last_sync_time": "Last sync time",
+      "ssh_connection_failed": "SSH connection failed",
+      "rsync_detection_failed": "Rsync detection failed",
+      "rsync_transfer_failed": "Rsync transfer failed",
+      "successful": "Successful",
+      "up_to_date": "Up to date",
+      "master": "Active",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "backup_warning": "Read-only node"
     }
   },
   "controller": {

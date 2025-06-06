@@ -231,7 +231,7 @@ function saveState(): void {
 </template>
 
 <style scoped>
-@reference "../../../assets/main.css";
+@reference "@/assets/main.css";
 
 tr.drop-target > td {
   @apply bg-transparent py-1;

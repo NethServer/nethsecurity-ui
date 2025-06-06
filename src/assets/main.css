@@ -2,22 +2,23 @@
   Copyright (C) 2024 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
  */
-@layer vendor, theme, base, components, utilities;
 
-@import '@xterm/xterm/css/xterm.css' layer(components);
+/* fontawesome styles */
+@import '@fortawesome/fontawesome-svg-core/styles.css' layer(fontawesome);
 
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/preflight.css' layer(base);
-@import 'tailwindcss/utilities.css';
+@import 'tailwindcss';
 
-/* import styles from @nethesis/vue-components */
-@import '../../node_modules/@nethesis/vue-components/dist/main.css' layer(components);
+/* vue-datepicker styles */
+@import '@vuepic/vue-datepicker/dist/main.css' layer(vendor);
 
-/* detect tailwind classes used in @nethesis/vue-components */
-@source '../../node_modules/@nethesis/vue-components/dist/**/*.js';
+/* xterm styles */
+@import '@xterm/xterm/css/xterm.css' layer(vendor);
 
-/* load tailwind forms plugin, needed for some components */
-@plugin '@tailwindcss/forms';
+@import "@fontsource/poppins";
+
+/* import theme from @nethesis/vue-components */
+@import '@nethesis/vue-components/theme.css';
+@source '../../node_modules/@nethesis/vue-components';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -44,7 +45,6 @@
   --breakpoint-7xl: 3584px;
 
   /* animations */
-  --animate-spin-fast: spin 0.5s linear infinite;
   --animate-spin-relaxed: spin 1.5s linear infinite;
 }
 
@@ -73,6 +73,68 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
+
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
+  }
+
+  #app {
+    @apply h-full;
+  }
+
+  /* fade transition */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  /* slide-down transition */
+  .slide-down-enter-active,
+  .slide-down-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  .slide-down-enter-from,
+  .slide-down-leave-to {
+    transform: translateY(-15px);
+    opacity: 0;
+  }
+
+  code {
+    @apply block rounded-sm bg-gray-500/20 px-1 font-mono dark:bg-gray-500/40;
+  }
+
+  hr {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+}
+
+@layer vendor {
+  .dp__theme_dark {
+    --dp-background-color: var(--color-gray-950);
+    --dp-primary-color: var(--color-primary-500);
+    --dp-primary-text-color: var(--color-gray-950);
+    --dp-border-color-hover: var(--color-primary-500);
+  }
+
+  .dp__theme_light {
+    --dp-primary-color: var(--color-primary-700);
+    --dp-border-color-hover: var(--dp-primary-color);
+  }
+
+  /* compatibility with how we used icons since now */
+  .svg-inline--fa {
+    @apply inline-block
+  }
 }
 
 @utility text-offline {
@@ -97,72 +159,4 @@
 
 @utility text-tertiary-neutral {
   @apply text-gray-600 dark:text-gray-300;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url(/Poppins-Regular.ttf) format('truetype');
-}
-
-html {
-  font-family: Poppins, system-ui, sans-serif;
-  @apply h-full;
-}
-
-body {
-  @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
-}
-
-#app {
-  @apply h-full;
-}
-
-/* fade transition */
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-/* slide-down transition */
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-down-enter-from,
-.slide-down-leave-to {
-  transform: translateY(-15px);
-  opacity: 0;
-}
-
-code {
-  @apply block rounded-sm bg-gray-500/20 px-1 font-mono dark:bg-gray-500/40;
-}
-
-hr {
-  @apply border-gray-200 dark:border-gray-700;
-}
-
-/* vue-datepicker styles */
-
-@import '../../node_modules/@vuepic/vue-datepicker/dist/main.css' layer(components);
-
-@layer components {
-  .dp__theme_dark {
-    --dp-background-color: var(--color-gray-950);
-    --dp-primary-color: var(--color-primary-500);
-    --dp-primary-text-color: var(--color-gray-950);
-    --dp-border-color-hover: var(--color-primary-500);
-  }
-
-  .dp__theme_light {
-    --dp-primary-color: var(--color-primary-700);
-    --dp-border-color-hover: var(--dp-primary-color);
-  }
 }

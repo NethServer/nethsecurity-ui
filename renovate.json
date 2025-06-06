@@ -1,6 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>NethServer/.github:renovate-config"
+    "config:reccomended",
+    ":disableDependencyDashboard",
+    ":maintainLockFilesMonthly",
+    ":automergeMinor"
   ]
 }

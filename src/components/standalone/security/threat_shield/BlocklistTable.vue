@@ -105,7 +105,7 @@ function getBlocklistName(blocklist: Blocklist) {
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">
           <p v-if="item.confidence === -1">{{ t('standalone.threat_shield.unknown') }}</p>
-          <div v-else class="max-w-[10rem]">
+          <div v-else class="max-w-40">
             <div class="mb-2 flex flex-row">
               <div v-for="i in range(0, 10)" :key="i" class="flex grow basis-0 justify-center">
                 <p v-if="i + 1 == item.confidence" class="text-xs font-semibold">
@@ -115,7 +115,7 @@ function getBlocklistName(blocklist: Blocklist) {
             </div>
             <NeProgressBar
               color="custom"
-              custom-color-classes="bg-gradient-to-r from-cyan-500 to-indigo-500"
+              custom-color-classes="bg-linear-to-r from-cyan-500 to-indigo-500"
               :progress="(item.confidence / 10) * 100"
               size="sm"
             />

@@ -23,7 +23,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
 <template>
   <div class="flex w-full flex-col gap-6 2xl:flex-row">
     <div
-      class="flex grow flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 bg-gray-100 p-2 dark:border-indigo-500 dark:bg-gray-800 sm:rounded-lg sm:shadow"
+      class="flex grow flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 bg-gray-100 p-2 sm:rounded-lg sm:shadow dark:border-indigo-500 dark:bg-gray-800"
     >
       <div class="ml-4 flex flex-row items-center">
         <font-awesome-icon
@@ -34,7 +34,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
         <p>{{ server.ns_description }}</p>
       </div>
       <div
-        class="ml-4 mr-10 grow border-l border-gray-800 py-3 pl-4 text-sm dark:border-gray-600 md:ml-8 md:pl-8"
+        class="mr-10 ml-4 grow border-l border-gray-800 py-3 pl-4 text-sm md:ml-8 md:pl-8 dark:border-gray-600"
       >
         <div class="flex max-w-xl flex-col justify-between gap-y-4 sm:flex-row sm:gap-x-4">
           <div>
@@ -100,7 +100,7 @@ const emit = defineEmits(['delete-server', 'edit-server'])
     </div>
 
     <div
-      class="flex flex-row items-center justify-between rounded-md bg-gray-100 p-5 dark:bg-gray-800 sm:rounded-lg sm:shadow"
+      class="flex flex-row items-center justify-between rounded-md bg-gray-100 p-5 sm:rounded-lg sm:shadow dark:bg-gray-800"
     >
       <div class="flex flex-row items-center">
         <font-awesome-icon

@@ -9,7 +9,7 @@
   "packageRules": [
     {
       "matchManagers": [
-        "js"
+        "npm"
       ],
       "rangeStrategy": "replace"
     }

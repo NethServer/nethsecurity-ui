@@ -14,7 +14,7 @@
 /* xterm styles */
 @import '@xterm/xterm/css/xterm.css' layer(vendor);
 
-@import "@fontsource/poppins";
+@import '@fontsource/poppins';
 
 /* import theme from @nethesis/vue-components */
 @import '@nethesis/vue-components/theme.css';
@@ -133,7 +133,7 @@
 
   /* compatibility with how we used icons since now */
   .svg-inline--fa {
-    @apply inline-block
+    @apply inline-block;
   }
 }
 

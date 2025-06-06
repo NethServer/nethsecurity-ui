@@ -134,7 +134,7 @@ defineProps({
 </template>
 
 <style>
-@reference "../../assets/main.css";
+@reference "@/assets/main.css";
 
 table {
   @apply w-full;

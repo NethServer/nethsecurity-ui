@@ -1,7 +1,7 @@
 //  Copyright (C) 2024 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { config, library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faArrowCircleDown,
@@ -125,6 +125,7 @@ import { faBell as farBell } from '@fortawesome/free-regular-svg-icons'
 
 export async function loadFontAwesome(app: any) {
   app.component('FontAwesomeIcon', FontAwesomeIcon)
+  config.autoAddCss = false
   library.add(fasHouse)
   library.add(falHouse)
   library.add(fasServer)

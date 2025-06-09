@@ -20,7 +20,12 @@ import { NeToggle } from '@nethesis/vue-components'
 import { computed, onMounted, ref, type PropType, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'
-import { MessageBag, validateRequired, validateUciName } from '@/lib/validation'
+import {
+  MessageBag,
+  validateAlphanumeric,
+  validateRequired,
+  validateUciName
+} from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
@@ -244,7 +249,11 @@ function save() {
 
 function validate(): boolean {
   errorBag.value.clear()
-  const validateName = [validateRequired(name.value), validateUciName(name.value.toLowerCase())]
+  const validateName = [
+    validateRequired(name.value),
+    validateUciName(name.value.toLowerCase()),
+    validateAlphanumeric(name.value, true)
+  ]
   validateName.forEach((output) => {
     if (!output.valid) {
       errorBag.value.set('name', [String(output.errMessage)])

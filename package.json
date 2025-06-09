@@ -29,7 +29,7 @@
     "@nethesis/nethesis-brands-svg-icons": "github:nethesis/Font-Awesome#ns-brands",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#ns-light",
     "@nethesis/nethesis-solid-svg-icons": "github:nethesis/Font-Awesome#ns-solid",
-    "@nethesis/vue-components": "^2.0.0",
+    "@nethesis/vue-components": "^3.0.0",
     "@tailwindcss/vite": "^4.1.8",
     "@types/lodash-es": "^4.17.12",
     "@types/semver": "^7.5.8",

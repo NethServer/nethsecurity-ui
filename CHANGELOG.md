@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.28.0](https://github.com/NethServer/nethsecurity-ui/compare/1.27.3...1.28.0) (2025-06-10)
+
+
+### Features
+
+* **ha:** show card on dashboard ([#533](https://github.com/NethServer/nethsecurity-ui/issues/533)) ([8f9064f](https://github.com/NethServer/nethsecurity-ui/commit/8f9064fbb3e7663b63a3540b3f47ed37c546f711))
+
+
+### Bug Fixes
+
+* **controller:** remember me checkbox on login ([#577](https://github.com/NethServer/nethsecurity-ui/issues/577)) ([97f9ab0](https://github.com/NethServer/nethsecurity-ui/commit/97f9ab0c16174743e0c2d79a0ddb3a7b25d20b15))
+* **lang:** add error for duplicate IP reservation ([#580](https://github.com/NethServer/nethsecurity-ui/issues/580)) ([d670cef](https://github.com/NethServer/nethsecurity-ui/commit/d670cefc1f26f10acd002186db35d7772d0ca2b7))
+* passphrase (public key) access to unit ssh ([#575](https://github.com/NethServer/nethsecurity-ui/issues/575)) ([e954e12](https://github.com/NethServer/nethsecurity-ui/commit/e954e12045f48748e277fb63c500c715d4eb7a69))
+* **zones:** allow names not starting with number ([#579](https://github.com/NethServer/nethsecurity-ui/issues/579)) ([dfc7686](https://github.com/NethServer/nethsecurity-ui/commit/dfc7686aaee55b86a8df74c2ab223616ec18fac6))
+
 ## [1.27.3](https://github.com/NethServer/nethsecurity-ui/compare/1.27.2...1.27.3) (2025-06-04)
 
 

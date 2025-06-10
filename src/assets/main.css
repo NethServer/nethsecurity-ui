@@ -38,11 +38,11 @@
   --color-primary-950: var(--color-cyan-950);
 
   /* breakpoints */
-  --breakpoint-3xl: 1792px;
-  --breakpoint-4xl: 2048px;
-  --breakpoint-5xl: 2560px;
-  --breakpoint-6xl: 3072px;
-  --breakpoint-7xl: 3584px;
+  --breakpoint-3xl: 112rem;
+  --breakpoint-4xl: 128rem;
+  --breakpoint-5xl: 160rem;
+  --breakpoint-6xl: 192rem;
+  --breakpoint-7xl: 224rem;
 
   /* animations */
   --animate-spin-relaxed: spin 1.5s linear infinite;

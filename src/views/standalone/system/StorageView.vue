@@ -128,15 +128,19 @@ onMounted(() => {
           <div
             class="flex flex-col items-center justify-center self-stretch border-r pr-6 md:flex-row"
           >
-            <font-awesome-icon
-              :icon="
-                currentStorageConfiguration.type == 'disk'
-                  ? ['fas', 'database']
-                  : ['fas', 'hard-drive']
-              "
-              aria-hidden="true"
-              :class="`mb-2 h-5 w-5 rounded-full bg-gray-100 p-4 text-gray-500 md:mr-5 md:mb-0 dark:bg-gray-500 dark:text-gray-50`"
-            />
+            <div
+              class="mb-2 flex h-13 w-13 items-center justify-center rounded-full bg-gray-100 md:mr-5 md:mb-0 dark:bg-gray-500"
+            >
+              <font-awesome-icon
+                :icon="
+                  currentStorageConfiguration.type == 'disk'
+                    ? ['fas', 'database']
+                    : ['fas', 'hard-drive']
+                "
+                aria-hidden="true"
+                class="h-5 w-5 text-gray-500 dark:text-gray-50"
+              />
+            </div>
             <div class="text-center text-sm md:text-start">
               <p class="font-semibold">
                 {{ t('standalone.storage.' + currentStorageConfiguration.type) }}

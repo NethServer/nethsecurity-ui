@@ -99,7 +99,7 @@ async function updateUnit() {
     await unitsStore.getUnitInfo(_unit.value!.id)
     await unitsStore.getUnits()
 
-    const notification: NeNotification = {
+    const notification: Partial<NeNotification> = {
       kind: 'success'
     }
     if (updateMode.value == 'now') {

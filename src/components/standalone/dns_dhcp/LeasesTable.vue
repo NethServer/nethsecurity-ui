@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { toRef } from 'vue'
 import {
   NeButton,
   NeDropdown,
@@ -19,19 +18,21 @@ import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
 import { ref } from 'vue'
 import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
 
 const { t } = useI18n()
 
+type Lease = StaticLease | DynamicLease
+
 const props = defineProps<{
-  leases: StaticLease[] | DynamicLease[]
+  leases: Lease[]
   showDynamicLeases: boolean
 }>()
 
-const leasesRef = toRef(props, 'leases')
 const emit = defineEmits(['lease-delete', 'lease-edit', 'create-static-lease-from-dynamic'])
 
 const pageSize = ref(10)
-const sortKey = ref<keyof StaticLease | keyof DynamicLease>('hostname')
+const sortKey = ref<keyof Lease>('hostname')
 const sortDescending = ref(false)
 
 function compareIpAddresses(ip1: string, ip2: string): number {
@@ -51,8 +52,8 @@ function sortAddresses<T extends StaticLease | DynamicLease>(a: T, b: T) {
 }
 
 // Declare sortedItems before useItemPagination
-const { sortedItems } = useSort(leasesRef, sortKey, sortDescending, {
-  address: sortAddresses
+const { sortedItems } = useSort(props.leases, sortKey, sortDescending, {
+  ipaddr: sortAddresses
 })
 
 // Now use sortedItems in useItemPagination
@@ -60,7 +61,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.valu
   itemsPerPage: pageSize
 })
 
-function getDropdownItems(item: StaticLease) {
+function getDropdownItems(item: Lease) {
   return !props.showDynamicLeases
     ? [
         {
@@ -85,9 +86,8 @@ function getDropdownItems(item: StaticLease) {
       ]
 }
 
-// FIXME: return typed event from NeTableHeadCell
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof Lease
   sortDescending.value = payload.descending
 }
 </script>
@@ -157,14 +157,18 @@ const onSort = (payload: any) => {
           v-if="showDynamicLeases"
           :data-label="t('standalone.dns_dhcp.lease_expiration')"
         >
-          {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleDateString() }}
-          {{ new Date(Number.parseInt(item.timestamp) * 1000).toLocaleTimeString() }}
+          {{
+            new Date(Number.parseInt((item as DynamicLease).timestamp) * 1000).toLocaleDateString()
+          }}
+          {{
+            new Date(Number.parseInt((item as DynamicLease).timestamp) * 1000).toLocaleTimeString()
+          }}
         </NeTableCell>
         <NeTableCell
           v-if="!showDynamicLeases"
           :data-label="t('standalone.dns_dhcp.reservation_name')"
         >
-          {{ item.description ? item.description : '-' }}
+          {{ (item as StaticLease).description ? (item as StaticLease).description : '-' }}
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
           <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">

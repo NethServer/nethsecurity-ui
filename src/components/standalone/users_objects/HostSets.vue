@@ -217,6 +217,8 @@ function clearFilters() {
           :options="objectTypeFilterOptions"
           :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
           :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options_label')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
         />
         <NeDropdownFilter
           v-model="ipVersionFilter"
@@ -225,6 +227,8 @@ function clearFilters() {
           :options="ipVersionFilterOptions"
           :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
           :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options_label')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
         />
         <NeButton kind="tertiary" :disabled="loadingListHostSets" @click="clearFilters">
           {{ t('common.clear_filters') }}

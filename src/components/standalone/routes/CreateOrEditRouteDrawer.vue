@@ -91,8 +91,8 @@ const originalForm = {
 
 const form = ref<Form>({ ...originalForm })
 
-const routeInterfaces = ref<Array<RouteInterface>>()
-const routeTypes = ref<Array<RouteType>>()
+const routeInterfaces = ref<Array<RouteInterface>>([])
+const routeTypes = ref<Array<RouteType>>([])
 const loading = ref(false)
 const saving = ref(false)
 const isExpandedAdvancedSettings = ref(false)

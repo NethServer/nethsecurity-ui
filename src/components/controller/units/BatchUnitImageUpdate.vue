@@ -4,7 +4,6 @@ import {
   NeButton,
   NeCombobox,
   type NeComboboxOption,
-  type NeDropdownItem,
   NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
@@ -58,7 +57,12 @@ function updateUnits() {
   loading.value = true
   someUnitsFailed.value = false
   Promise.allSettled(
-    selectedUnits.value.map((unit: NeComboboxOption) => {
+    selectedUnits.value.map((unitOption: NeComboboxOption) => {
+      const unit = unitsStore.units.find((u) => u.id === unitOption.id)
+      if (!unit) {
+        return Promise.reject(new Error(`Unit with id ${unitOption.id} not found`))
+      }
+
       if (updateMode.value === 'now') {
         return upgradeUnitImage(unit).then(() => {
           unitsStore.addUnitUpgradingImage(unit.id)
@@ -99,7 +103,7 @@ function updateUnits() {
     })
 }
 
-const unitsAvailableForUpdate = computed((): NeDropdownItem[] => {
+const unitsAvailableForUpdate = computed((): NeComboboxOption[] => {
   return unitsStore.units
     .filter(
       // if a unit is connected, and does not have a scheduled update and have a new image available

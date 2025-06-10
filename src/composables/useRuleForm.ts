@@ -71,8 +71,8 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
         destinationAddress.value = rule.value.destination_address ?? ''
         destinationPort.value = rule.value.destination_port ?? ''
         sticky.value = rule.value.sticky
-        srcObject.value = rule.value.ns_src
-        dstObject.value = rule.value.ns_dst
+        srcObject.value = rule.value.ns_src ?? ''
+        dstObject.value = rule.value.ns_dst ?? ''
         if (srcObject.value != undefined) {
           srcType.value = 'object'
         } else if (sourceAddress.value != '') {
@@ -124,8 +124,8 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
     }
   }
 
-  const srcObject = ref<string>()
-  const dstObject = ref<string>()
+  const srcObject = ref<string>('')
+  const dstObject = ref<string>('')
   const objectsError = ref<Error>()
   const objectsLoading = ref(true)
   const srcObjectOptions = ref<NeComboboxOption[]>([])

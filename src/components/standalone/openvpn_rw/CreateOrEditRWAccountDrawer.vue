@@ -232,6 +232,9 @@ watch(
         :optional-label="t('common.optional')"
         :placeholder="t('standalone.openvpn_rw.choose_user_from_database')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
+        :selected-label="t('ne_combobox.selected')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeInlineNotification
         v-if="itemToEdit?.expired"

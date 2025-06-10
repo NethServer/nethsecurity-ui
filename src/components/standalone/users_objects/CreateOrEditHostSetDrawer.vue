@@ -34,14 +34,16 @@ import type { HostSet } from '@/composables/useHostSets'
 const props = defineProps({
   isShown: { type: Boolean, default: false },
   currentHostSet: {
-    type: Object as PropType<HostSet>
+    type: Object as PropType<HostSet>,
+    default: null
   },
   allObjects: {
     type: Array as PropType<HostSet[]>,
     required: true
   },
   recordOptions: {
-    type: Array as PropType<NeComboboxOption[]>
+    type: Array as PropType<NeComboboxOption[]>,
+    default: () => []
   }
 })
 
@@ -64,7 +66,7 @@ const { t } = useI18n()
 const name = ref('')
 const nameRef = ref()
 const ipVersion = ref<IpVersion>('ipv4')
-const records = ref<NeComboboxOption[]>([''])
+const records = ref<string[]>([''])
 const recordRef = ref()
 const errorBag = ref(new MessageBag())
 // contains the first invalid field ref

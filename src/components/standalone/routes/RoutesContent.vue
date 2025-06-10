@@ -38,9 +38,6 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import CreateOrEditRouteDrawer from '@/components/standalone/routes/CreateOrEditRouteDrawer.vue'
 import { AxiosError } from 'axios'
 
-/**
- * Props parent component
- */
 const props = defineProps({
   protocol: {
     type: String,
@@ -48,18 +45,38 @@ const props = defineProps({
   }
 })
 
+type Route = {
+  id: string
+  ns_description?: string
+  target: string
+  gateway?: string
+  metric: string
+  interface?: string
+  disabled?: string
+  readonly?: boolean
+}
+
+type ActiveRoute = {
+  id: string
+  interface: string
+  network: string
+  gateway?: string
+  metric?: string
+  protocol?: string
+}
+
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 
 const createEditRoute = ref(false)
-const routes: any = ref([])
-const table: any = ref([])
+const routes = ref<Route[]>([])
+const table = ref<ActiveRoute[]>([])
 const loading = ref(true)
 const selectedRoute = ref({})
 const deleting = ref(false)
 const deleteError = ref<Error>()
-const deleteRouteId = ref(undefined)
-const deleteRouteName = ref(undefined)
+const deleteRouteId = ref<string | undefined>(undefined)
+const deleteRouteName = ref<string | undefined>(undefined)
 const error = ref({
   notificationTitle: '',
   notificationDescription: ''
@@ -409,7 +426,7 @@ function scrollToMainTable() {
                   />
                 </NeTableCell>
               </NeTableRow>
-              <NeTableRow v-for="item in paginatedItemsTable" v-else :key="item.id">
+              <NeTableRow v-for="(item, index) in paginatedItemsTable" v-else :key="index">
                 <NeTableCell :data-label="t('standalone.routes.route_interface')">
                   <div>
                     {{ item.interface }}

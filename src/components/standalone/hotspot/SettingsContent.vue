@@ -13,7 +13,8 @@ import {
   NeTooltip,
   NeTextInput,
   focusElement,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  type NeComboboxOption
 } from '@nethesis/vue-components'
 import { type NeNotification, NeModal } from '@nethesis/vue-components'
 import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
@@ -99,8 +100,8 @@ const unitDescriptionRef = ref()
 const networkDeviceRef = ref()
 const networkAddressRef = ref()
 const dhcpLimitRef = ref()
-const parentHotspotList = ref<Array<ParentHotspot>>()
-const networkDeviceList = ref<Array<NetworkDevice>>()
+const parentHotspotList = ref<Array<NeComboboxOption>>([])
+const networkDeviceList = ref<Array<NeComboboxOption>>([])
 
 const objError = {
   notificationTitle: '',

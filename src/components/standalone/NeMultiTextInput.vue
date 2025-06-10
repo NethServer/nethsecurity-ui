@@ -39,7 +39,7 @@ const props = withDefaults(
     keyInputPlaceholder?: string
     placeholder?: string
   }>(),
-  { useKeyInput: false, required: false }
+  { useKeyInput: false, required: false, keyOptions: () => [] }
 )
 
 defineExpose({

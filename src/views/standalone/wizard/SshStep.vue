@@ -50,10 +50,10 @@ function saveSshConfig() {
   loadingSaveSsh.value = true
   ubusCall('uci', 'set', {
     config: 'dropbear',
-    section: '@dropbear[0]',
+    section: 'main',
     values: {
       Port: wizardStore.sshPort,
-      PasswordAuth: 'on',
+      PasswordAuth: wizardStore.sshRootLoginWithPassword,
       RootPasswordAuth: wizardStore.sshRootLoginWithPassword,
       GatewayPorts: 'off'
     }

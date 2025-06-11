@@ -19,6 +19,10 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import ProxyTable from '@/components/standalone/reverse_proxy/ProxyTable.vue'
 import DeleteProxyModal from '@/components/standalone/reverse_proxy/DeleteProxyModal.vue'
 import CreateOrEditProxyDrawer from '@/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCirclePlus, faServer } from '@fortawesome/free-solid-svg-icons'
+import { getStandaloneRoutePrefix } from '@/lib/router.ts'
+import { useRouter } from 'vue-router'
 
 export type ReverseProxy = {
   id: string
@@ -33,6 +37,7 @@ export type ReverseProxy = {
 }
 
 const { t } = useI18n()
+const router = useRouter()
 
 const uciChangesStore = useUciPendingChangesStore()
 
@@ -41,6 +46,7 @@ const proxies = ref<ReverseProxy[]>([])
 const selectedProxy = ref<ReverseProxy | null>(null)
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
+const portOpen = ref(false)
 
 const error = ref({
   notificationTitle: '',
@@ -51,7 +57,9 @@ const error = ref({
 async function fetchProxies() {
   try {
     loading.value = true
-    proxies.value = (await ubusCall('ns.reverseproxy', 'list-proxies')).data.data
+    const data = await ubusCall('ns.reverseproxy', 'list-proxies')
+    proxies.value = data.data.data
+    portOpen.value = data.data.port_open
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_proxies')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -107,11 +115,7 @@ onMounted(() => {
         <div class="ml-2 flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
           <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
             <template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'circle-plus']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+              <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.reverse_proxy.add_reverse_proxy') }}
           </NeButton>
@@ -123,26 +127,33 @@ onMounted(() => {
       kind="error"
       :title="error.notificationTitle"
       :description="error.notificationDescription"
-      ><template v-if="error.notificationDetails" #details>
-        {{ error.notificationDetails }}
-      </template></NeInlineNotification
     >
+      <template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="10" />
     <template v-else-if="!error.notificationTitle">
+      <NeInlineNotification
+        v-if="!portOpen"
+        kind="warning"
+        :title="t('standalone.reverse_proxy.port_not_open')"
+        :description="t('standalone.reverse_proxy.port_not_open_description')"
+        :primary-button-label="t('standalone.reverse_proxy.open_firewall_settings')"
+        @click="router.push(`${getStandaloneRoutePrefix()}/firewall/rules?tab=inputRules`)"
+      />
       <NeEmptyState
         v-if="proxies.length == 0"
         :title="t('standalone.reverse_proxy.no_reverse_proxy_found')"
-        :icon="['fas', 'server']"
-        ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.reverse_proxy.add_reverse_proxy') }}</NeButton
-        ></NeEmptyState
+        :icon="faServer"
       >
+        <NeButton kind="primary" @click="openCreateEditDrawer(null)">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.reverse_proxy.add_reverse_proxy') }}
+        </NeButton>
+      </NeEmptyState>
       <ProxyTable
         v-else
         :proxies="proxies"

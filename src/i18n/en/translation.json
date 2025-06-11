@@ -1382,7 +1382,10 @@
       "path_tooltip": "Type resource path beginning with a '/' to create a “resource path” matching rule",
       "domain_tooltip": "Type website fully qualified domain name to create a “web site name” matching rule",
       "destination_url_tooltip": "This path specifies the location to which incoming requests will be forwarded. Example: 'http://destination-server:port/path'",
-      "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks"
+      "allowed_networks_tooltip": "Access permitted only from the following IPv4/IPV6 networks",
+      "port_not_open": "The reverse proxy requires TCP port 443 to be open and reachable on the WAN (external) interface.",
+      "port_not_open_description": "Ensure that firewall rules permit inbound traffic on this port.",
+      "open_firewall_settings": "Open firewall settings"
     },
     "qos": {
       "title_short": "QoS",

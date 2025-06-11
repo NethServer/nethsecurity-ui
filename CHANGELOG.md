@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.28.1](https://github.com/NethServer/nethsecurity-ui/compare/1.28.0...1.28.1) (2025-06-11)
+
+
+### Bug Fixes
+
+* **i18n:** mwan, improve translation ([#581](https://github.com/NethServer/nethsecurity-ui/issues/581)) ([16ade4e](https://github.com/NethServer/nethsecurity-ui/commit/16ade4e59babbf774e4e0318110959606dacbbc9))
+* **wizard:** few improvements to UX ([#583](https://github.com/NethServer/nethsecurity-ui/issues/583)) ([04bf45c](https://github.com/NethServer/nethsecurity-ui/commit/04bf45c6d173f03756a5fa2539383dd123484ba7))
+
 ## [1.28.0](https://github.com/NethServer/nethsecurity-ui/compare/1.27.3...1.28.0) (2025-06-10)
 
 

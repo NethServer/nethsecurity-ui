@@ -49,9 +49,12 @@ async function finishSetup() {
 
     wizardStore.showFinishAnimation = true
     setTimeout(() => {
-      // reload the page
-      location.reload()
-    }, 2500)
+      if (!wizardStore.port443WebInterfaceEnabled && location.port != '9090') {
+        location.port = '9090'
+      } else {
+        location.reload()
+      }
+    }, 5000)
   } catch (err: unknown) {
     console.error(err)
     errorFinishSetup.value = t(getAxiosErrorMessage(err))

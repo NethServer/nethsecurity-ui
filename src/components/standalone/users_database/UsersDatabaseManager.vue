@@ -26,7 +26,8 @@ import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { CanceledError } from 'axios'
 import { onUnmounted } from 'vue'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faDatabase, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export type User = {
   local: boolean
@@ -140,14 +141,16 @@ onMounted(() => {
 
     <!-- Database Card -->
     <div
-      class="flex max-w-2xl flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 p-5 text-gray-700 dark:border-indigo-500 dark:bg-gray-800 dark:text-gray-200 sm:rounded-lg sm:shadow"
+      class="flex max-w-2xl flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 p-5 text-gray-700 sm:rounded-lg sm:shadow dark:border-indigo-500 dark:bg-gray-800 dark:text-gray-200"
     >
       <div class="flex flex-row items-center">
-        <font-awesome-icon
-          :icon="['fas', 'database']"
-          aria-hidden="true"
-          :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
-        />
+        <div class="mr-5 rounded-full bg-gray-900 p-2 dark:bg-gray-50">
+          <FontAwesomeIcon
+            :icon="faDatabase"
+            aria-hidden="true"
+            class="h-4 w-5 text-gray-300 dark:text-gray-600"
+          />
+        </div>
         <div>
           <p>
             {{
@@ -165,7 +168,7 @@ onMounted(() => {
         </div>
         <p
           v-if="database.type === 'ldap'"
-          class="ml-4 border-l border-gray-800 py-3 pl-4 dark:border-gray-600 md:ml-8 md:pl-8"
+          class="ml-4 border-l border-gray-800 py-3 pl-4 md:ml-8 md:pl-8 dark:border-gray-600"
         >
           <strong class="text-sm">URI:</strong><span class="ml-2 text-sm">{{ database.uri }}</span>
         </p>

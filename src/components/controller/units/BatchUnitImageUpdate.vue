@@ -4,7 +4,6 @@ import {
   NeButton,
   NeCombobox,
   type NeComboboxOption,
-  type NeDropdownItem,
   NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
@@ -58,7 +57,12 @@ function updateUnits() {
   loading.value = true
   someUnitsFailed.value = false
   Promise.allSettled(
-    selectedUnits.value.map((unit: NeComboboxOption) => {
+    selectedUnits.value.map((unitOption: NeComboboxOption) => {
+      const unit = unitsStore.units.find((u) => u.id === unitOption.id)
+      if (!unit) {
+        return Promise.reject(new Error(`Unit with id ${unitOption.id} not found`))
+      }
+
       if (updateMode.value === 'now') {
         return upgradeUnitImage(unit).then(() => {
           unitsStore.addUnitUpgradingImage(unit.id)
@@ -99,7 +103,7 @@ function updateUnits() {
     })
 }
 
-const unitsAvailableForUpdate = computed((): NeDropdownItem[] => {
+const unitsAvailableForUpdate = computed((): NeComboboxOption[] => {
   return unitsStore.units
     .filter(
       // if a unit is connected, and does not have a scheduled update and have a new image available
@@ -240,19 +244,3 @@ const someUnitsFailed = ref(false)
     </div>
   </NeSideDrawer>
 </template>
-
-<style>
-@import '@vuepic/vue-datepicker/dist/main.css';
-
-.dp__theme_dark {
-  --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
-  --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));
-  --dp-primary-text-color: rgb(3 7 18 / var(--tw-text-opacity));
-  --dp-border-color-hover: var(--dp-primary-color);
-}
-
-.dp__theme_light {
-  --dp-primary-color: rgb(14 116 144 / var(--tw-bg-opacity));
-  --dp-border-color-hover: var(--dp-primary-color);
-}
-</style>

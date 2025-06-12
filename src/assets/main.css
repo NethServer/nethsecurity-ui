@@ -3,102 +3,160 @@
   SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-@import '@xterm/xterm/css/xterm.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* fontawesome styles */
+@import '@fortawesome/fontawesome-svg-core/styles.css' layer(fontawesome);
 
-@font-face {
-  font-family: 'Poppins';
-  src: url(/Poppins-Regular.ttf) format('truetype');
+@import 'tailwindcss';
+
+/* vue-datepicker styles */
+@import '@vuepic/vue-datepicker/dist/main.css' layer(vendor);
+
+/* xterm styles */
+@import '@xterm/xterm/css/xterm.css' layer(vendor);
+
+@import '@fontsource/poppins';
+
+/* import theme from @nethesis/vue-components */
+@import '@nethesis/vue-components/theme.css';
+@source '../../node_modules/@nethesis/vue-components';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* primary palette */
+  --color-transparent: transparent;
+  --color-primary-50: var(--color-cyan-50);
+  --color-primary-100: var(--color-cyan-100);
+  --color-primary-200: var(--color-cyan-200);
+  --color-primary-300: var(--color-cyan-300);
+  --color-primary-400: var(--color-cyan-400);
+  --color-primary-500: var(--color-cyan-500);
+  --color-primary-600: var(--color-cyan-600);
+  --color-primary-700: var(--color-cyan-700);
+  --color-primary-800: var(--color-cyan-800);
+  --color-primary-900: var(--color-cyan-900);
+  --color-primary-950: var(--color-cyan-950);
+
+  /* breakpoints */
+  --breakpoint-3xl: 112rem;
+  --breakpoint-4xl: 128rem;
+  --breakpoint-5xl: 160rem;
+  --breakpoint-6xl: 192rem;
+  --breakpoint-7xl: 224rem;
+
+  /* animations */
+  --animate-spin-relaxed: spin 1.5s linear infinite;
 }
 
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
 @layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  /*
+    Use cursor-pointer for buttons (behavior changed from Tailwind CSS v3)
+    See: https://tailwindcss.com/docs/upgrade-guide#buttons-use-the-default-cursor
+  */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
   html {
-    font-family: Poppins, system-ui, sans-serif;
     @apply h-full;
   }
-}
 
-@layer utilities {
-  .text-offline {
-    @apply text-gray-700 dark:text-gray-400;
+  body {
+    @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
   }
 
-  .text-online {
-    @apply text-green-700 dark:text-green-500;
+  #app {
+    @apply h-full;
   }
 
-  .text-primary-neutral {
-    @apply text-gray-600 dark:text-gray-50;
+  /* fade transition */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all 0.3s ease;
   }
 
-  .text-secondary {
-    @apply text-indigo-700 dark:text-indigo-500;
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
   }
 
-  .text-secondary-neutral {
-    @apply dark:text-gray-200;
+  /* slide-down transition */
+  .slide-down-enter-active,
+  .slide-down-leave-active {
+    transition: all 0.3s ease;
   }
 
-  .text-tertiary-neutral {
-    @apply text-gray-600 dark:text-gray-300;
+  .slide-down-enter-from,
+  .slide-down-leave-to {
+    transform: translateY(-15px);
+    opacity: 0;
+  }
+
+  code {
+    @apply block rounded-sm bg-gray-500/20 px-1 font-mono dark:bg-gray-500/40;
+  }
+
+  hr {
+    @apply border-gray-200 dark:border-gray-700;
   }
 }
 
-body {
-  @apply h-full bg-gray-50 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-100;
+@layer vendor {
+  .dp__theme_dark {
+    --dp-background-color: var(--color-gray-950);
+    --dp-primary-color: var(--color-primary-500);
+    --dp-primary-text-color: var(--color-gray-950);
+    --dp-border-color-hover: var(--color-primary-500);
+  }
+
+  .dp__theme_light {
+    --dp-primary-color: var(--color-primary-700);
+    --dp-border-color-hover: var(--dp-primary-color);
+  }
+
+  /* compatibility with how we used icons since now */
+  .svg-inline--fa {
+    @apply inline-block;
+  }
 }
 
-#app {
-  @apply h-full;
+@utility text-offline {
+  @apply text-gray-700 dark:text-gray-400;
 }
 
-/* fade transition */
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
+@utility text-online {
+  @apply text-green-700 dark:text-green-500;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+@utility text-primary-neutral {
+  @apply text-gray-600 dark:text-gray-50;
 }
 
-/* slide-down transition */
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s ease;
+@utility text-secondary {
+  @apply text-indigo-700 dark:text-indigo-500;
 }
 
-.slide-down-enter-from,
-.slide-down-leave-to {
-  transform: translateY(-15px);
-  opacity: 0;
+@utility text-secondary-neutral {
+  @apply dark:text-gray-200;
 }
 
-code {
-  @apply block rounded bg-gray-500 bg-opacity-20 px-1 font-mono dark:bg-opacity-40;
-}
-
-hr {
-  @apply border-gray-200 dark:border-gray-700;
-}
-
-/* tailwind theme for tooltip library */
-.tippy-box[data-theme~='tailwind'] {
-  @apply border border-gray-700 bg-gray-700 text-gray-50 shadow-2xl dark:border-gray-200 dark:bg-gray-200 dark:text-gray-700;
-}
-.tippy-box[data-theme~='tailwind'][data-placement^='top'] > .tippy-arrow::before {
-  @apply border-t-gray-700 dark:border-t-gray-200;
-}
-.tippy-box[data-theme~='tailwind'][data-placement^='bottom'] > .tippy-arrow::before {
-  @apply border-b-gray-700 dark:border-b-gray-200;
-}
-.tippy-box[data-theme~='tailwind'][data-placement^='left'] > .tippy-arrow::before {
-  @apply border-l-gray-700 dark:border-l-gray-200;
-}
-.tippy-box[data-theme~='tailwind'][data-placement^='right'] > .tippy-arrow::before {
-  @apply border-r-gray-700 dark:border-r-gray-200;
+@utility text-tertiary-neutral {
+  @apply text-gray-600 dark:text-gray-300;
 }

@@ -35,7 +35,7 @@ function goTo(path: string) {
     </div>
   </div>
 
-  <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6">
+  <div class="3xl:grid-cols-6 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4">
     <!-- system -->
     <SystemInfoCard class="sm:col-span-2 xl:row-span-3" />
     <!-- internet connection -->

@@ -200,7 +200,7 @@ function getBulkActionsKebabMenuItems() {
           </template>
           <NeProgressBar
             color="custom"
-            custom-color-classes="bg-gradient-to-r from-indigo-400 to-indigo-700"
+            custom-color-classes="bg-linear-to-r from-indigo-400 to-indigo-700"
             :progress="(unitsStore.units.length / MAX_NO_SUBSCRIPTION_UNITS) * 100"
             size="sm"
           />

@@ -152,16 +152,22 @@ async function listDevices() {
     if (props.currentRule) {
       // editing rule
       if (props.currentRule.device_in?.length) {
-        inboundDevices.value = props.currentRule.device_in.map((deviceId) => {
-          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
-        })
+        inboundDevices.value = props.currentRule.device_in
+          .map((deviceId) => {
+            return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
+          })
+          // ensure we filter out undefined devices
+          .filter((device): device is NeComboboxOption => device !== undefined)
         isExpandedAdvancedSettings.value = true
       }
 
       if (props.currentRule.device_out) {
-        outboundDevices.value = props.currentRule.device_out.map((deviceId) => {
-          return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
-        })
+        outboundDevices.value = props.currentRule.device_out
+          .map((deviceId) => {
+            return devicesOptions.value.find((dev: NeComboboxOption) => dev.id === deviceId)
+          })
+          // ensure we filter out undefined devices
+          .filter((device): device is NeComboboxOption => device !== undefined)
         isExpandedAdvancedSettings.value = true
       }
     }

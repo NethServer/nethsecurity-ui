@@ -53,7 +53,10 @@
     "no_data_available": "Nessun dato disponibile",
     "upload": "Upload",
     "confirm": "Conferma",
-    "ip_address": "Indirizzo IP"
+    "ip_address": "Indirizzo IP",
+    "interface": "Interfaccia",
+    "password_confirmation_required": "Conferma della password richiesta",
+    "password_confirmation_required_description": "Si prega di confermare la password per procedere"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -392,7 +395,20 @@
     "invalid_domain_name": "Nome dominio non valido",
     "cannot_delete_bypass": "Impossibile eliminare il bypass",
     "cannot_create_bypass": "Impossibile creare il bypass",
-    "invalid_credentials": "Credenziali non valide"
+    "invalid_credentials": "Credenziali non valide",
+    "ip_already_reserved": "L'indirizzo IP ha già una reservation",
+    "dhcp_range_cannot_contain_interface": "L'indirizzo IP del firewall deve essere al di fuori dell'intervallo DHCP.",
+    "duplicate_suppression": "Esista già una regola che silenzia questo allarme",
+    "duplicate_rule": "La regola esiste già",
+    "cannot_retrieve_backup_info": "Non è possibile recuperare le informazioni di backup",
+    "invalid_old_password": "La vecchia password è errata",
+    "key_already_exists": "La chiave esiste già",
+    "key_invalid_format": "Formato chiave non valido",
+    "cannot_reuse_old_password": "La nuova password deve essere diversa da quella vecchia",
+    "invalid_password": "Autenticazione fallita",
+    "cannot_retrieve_static_leases": "Impossibile recuperare i lease statici",
+    "cannot_set_uci_configuration": "Impossibile salvare la configurazione UCI",
+    "unauthorized_action": "Azione non autorizzata"
   },
   "login": {
     "sign_in": "Accedi",
@@ -484,7 +500,8 @@
         "allow_remote_host_connection": "Consenti agli host remoti di connettersi alle porte SSH locali inoltrate",
         "tcp_port_too_low": "La porta TCP deve essere maggiore di 1",
         "tcp_port_too_high": "La porta TCP deve essere inferiore a 65535",
-        "tcp_port_invalid": "La porta TCP non è valida"
+        "tcp_port_invalid": "La porta TCP non è valida",
+        "ssh_access.main_config_not_found": "Configurazione SSH predefinita non trovata"
       },
       "ssh_keys": {
         "description": "Le chiavi pubbliche consentono di effettuare accessi SSH senza password con una maggiore sicurezza rispetto all'uso di password",
@@ -505,7 +522,9 @@
           "required": "Richiesto",
           "invalid": "Chiave non valida",
           "duplicate": "La chiave esiste già"
-        }
+        },
+        "key_deleted_notification": "Chiave SSH eliminata con successo",
+        "key_added_notification": "Chiave SSH aggiunta con successo"
       }
     },
     "backup_and_restore": {
@@ -537,7 +556,7 @@
         "migrate": "Migra"
       },
       "backup": {
-        "run_backup_description": "Sei sicuro di voler avviare il backup '{name}'?",
+        "run_backup_description": "Verrà creato un backup chiamato '{name}'.",
         "success_download": "Backup scaricato con successo",
         "no_backups_found": "Nessun backup trovato",
         "passphrase_helper": "Digitare una passphrase se si desidera crittografare il backup con GPG; se la passphrase è vuota, il backup verrà salvato senza cifratura. Attenzione: se si perde la passphrase, non potrai utilizzare il backup crittografato.",
@@ -562,8 +581,21 @@
         "pgp-encrypted": "Criptato",
         "size": "Dimensione",
         "mimetype": "Tipo",
-        "passphrase_is_set": "Passphrase configurata: crittografia abilitata",
-        "description_subscription": "Eseguire un backup per scaricare le impostazioni e i dati correnti dell'unità. Il sistema funziona autonomamente e mantiene fino a 10 backup. Configurare una passphrase per aumentare la sicurezza dei dati."
+        "passphrase_is_set": "Passphrase configurata",
+        "description_subscription": "Configurare un passphrase per abilitare i backup crittografati. Il sistema gestisce automaticamente fino a 10 backup crittografati.",
+        "no_backups": "Nessun backup",
+        "passphrase_update_applies_to_new_backups": "La passphrase aggiornata sarà applicata ai nuovi backup",
+        "remote_backup": "Backup remoto",
+        "last_backup": "Ultimo backup",
+        "passphrase_not_configured": "Passphrase non configurata",
+        "passphrase_required_for_restore": "Passphrase richiesta per il ripristino",
+        "edit_passphrase": "Modifica passphrase",
+        "backups_require_a_passphrase": "I backup richiedono un passphrase da configurare.",
+        "new_passphrase": "Nuova passphrase",
+        "passphrase_required_for_restore_description": "La passphrase impostata sarà necessario per decifrare i backup durante il processo di ripristino. Assicurarsi di memorizzarla in modo sicuro, in quanto non può essere recuperata.",
+        "changing_your_passphrase_applies_to_new_backups_description": "Cambiare la tua passphrase influenzerà solo i backup futuri. Per ripristinare i backup più vecchi, è necessario utilizzare il passphrase che è stata impostata al momento della loro creazione.",
+        "configure_passphrase_to_run": "Configurare la passphrase per eseguire backup crittografati",
+        "the_system_will_automatically_create_backups": "Il sistema creerà automaticamente i backup, oppure si può avviare manualmente facendo clic su \"Esegui backup\"."
       },
       "tabs": {
         "migration": "Migrazione",
@@ -675,7 +707,15 @@
       "remote_backup": "Backup remoto",
       "monitoring_service": "Servizio di monitoraggio",
       "unlimited_controlled_units": "Numero illimitato di unità gestibili da un controller registrato",
-      "threat_shield": "Blocklist avanzate per Threat shield"
+      "threat_shield": "Blocklist avanzate per Threat shield",
+      "subscription_active": "La subscription è attiva",
+      "sync_error_description": "L'unità non è in grado di sincronizzarsi con il portale remoto. Controllare la connessione internet e riprovare.",
+      "sync_error": "Errore di sincronizzazione",
+      "last_sync": "Ultima sincronizzazione: {date}",
+      "sync_now": "Sincronizza ora",
+      "sync_not_attempted": "Sincronizzazione non eseguita",
+      "last_attempted_sync": "Ultima tentativo di sincronizzazione: {date}",
+      "sync_not_attempted_description": "Dall'ultimo avvio l'unità non ha tentato di sincronizzarsi con il portale remoto. È possibile forzare una sincronizzazione cliccando sul pulsante 'Sincronizza ora' più sotto."
     },
     "system_settings": {
       "title": "Impostazioni di sistema",
@@ -994,7 +1034,8 @@
       "port_forwards_for_destination_name": "Port forward per la destinazione '{name}'",
       "save_port_forward": "Salva port forward",
       "destination_object": "Oggetto di destinazione",
-      "restricted_object_tooltip": "Tutti gli oggetti sono supportati, tranne gli host set che contengono intervalli di IP"
+      "restricted_object_tooltip": "Tutti gli oggetti supportati, tranne gli host set contenenti intervalli IP o oggetti nidificati",
+      "leave_blank_for_firewall": "Lascia vuoto per firewall"
     },
     "routes": {
       "route_type": "Tipo di rotta",
@@ -1044,7 +1085,7 @@
       "options": "Opzioni",
       "name": "Nome",
       "tabs": {
-        "dhcp": "DHCP",
+        "dhcp": "DHCP e MAC binding",
         "static_leases": "Lease statici",
         "dns_records": "Record DNS",
         "dynamic_leases": "Lease dinamici",
@@ -1119,7 +1160,19 @@
       "scan_not_requested_empty_state": "Fare clic su 'Scansiona rete' su un'interfaccia per individuarne i dispositivi",
       "scan_no_results_empty_state": "Nessun dispositivo trovato sull'interfaccia '{iface}'",
       "reservation_location_info_description": "Questa reservation apparirà in:",
-      "dns_record_location_info_description": "Questo record DNS verrà visualizzato in:"
+      "dns_record_location_info_description": "Questo record DNS verrà visualizzato in:",
+      "mac_binding_tooltip": "Filtra il traffico in base ai binding IP-MAC definiti nella configurazione dei lease statici.",
+      "mac_binding": "MAC Binding",
+      "plus_n_others": "+{n} altro | +{n} altri",
+      "strict_binding_description": "Solo gli host con una reservation sono permessi, gli altri sono bloccati",
+      "dhcp": "DHCP",
+      "strict": "Strict",
+      "ip_range": "Intervallo IP",
+      "soft": "Soft",
+      "soft_binding_description": "Consente host senza reservation, blocca gli IP/MAC non corrispondenti",
+      "custom": "Personallizzato",
+      "strict_binding": "Strict binding",
+      "soft_binding": "Soft binding"
     },
     "storage": {
       "vendor": "Produttore",
@@ -1148,7 +1201,8 @@
       "new_password": "Nuova password",
       "success_message": "La password è stata cambiata con successo",
       "confirm_password": "Conferma password",
-      "password_rules": "Deve essere almeno 8 caratteri, contenere almeno una lettera minuscola, una lettera maiuscola, un numero e un simbolo"
+      "password_rules": "Deve essere almeno 8 caratteri, contenere almeno una lettera minuscola, una lettera maiuscola, un numero e un simbolo",
+      "old_password": "Vecchia password"
     },
     "account_management": {
       "change_password": "Modifica password",
@@ -1175,7 +1229,13 @@
       "title": "FlashStart DNS",
       "flashstart_disabled": "FlashStart DNS è disattivato",
       "flashstart_disabled_description": "Il filtro FlashStart è disponibile solo con un abbonamento {product}",
-      "flashstart_disabled_threat_shield_enabled": "Per abilitarlo, prima è necessario disabilitare Threat shield DNS"
+      "flashstart_disabled_threat_shield_enabled": "Per abilitarlo, prima è necessario disabilitare Threat shield DNS",
+      "custom_servers": "Server DNS personalizzati",
+      "add_custom_servers": "Aggiungi server DNS personalizzato",
+      "pro": "Pro",
+      "proplus": "ProPlus",
+      "service_type": "Tipo di servizio",
+      "custom_server_helper": "Utilizzare la sintassi '/ <domain>/ <server>' per indirizzare solo le richieste di un dominio specifico al server inserito. Utilizzare la sintassi '/ <server># <port> ` se il server upstream non ascolta su una porta standard."
     },
     "hotspot": {
       "settings": {
@@ -1499,7 +1559,10 @@
       "domain_path": "Dominio/Percorso",
       "add_cidr_network": "Aggiungi rete CIDR",
       "default_certificate": "Certificato predefinito",
-      "and_n_others": "+ {n} altri"
+      "and_n_others": "+ {n} altri",
+      "port_not_open": "Il reverse proxy richiede che la porta TCP 443 sia aperta e raggiungibile dall'interfaccia WAN (esterno).",
+      "port_not_open_description": "Assicurarsi che le regole firewall consentano il traffico in entrata su questa porta.",
+      "open_firewall_settings": "Vai alle regole del firewall"
     },
     "users_database": {
       "set": "Impostata",
@@ -1709,7 +1772,8 @@
       "tabs": {
         "road_warrior_server": "Server Road Warrior",
         "connections_history": "Cronologia delle connessioni"
-      }
+      },
+      "user_not_valid": "Utente non valido: l'utente ha una configurazione VPN ma non è presente all'interno del database utenti remoto."
     },
     "qos": {
       "interface": "Interfaccia",
@@ -1848,7 +1912,8 @@
       "default_certificate_tooltip": "Questo certificato è servito quando si accede alla unità usando il suo FQDN",
       "certificate_deleted": "Certificato eliminato",
       "dns_api": "API DNS",
-      "validation_method_tooltip": "In modalità Standalone, il server sarà temporaneamente accessibile sulla porta 80 durante la generazione del certificato. I domini per i quali richiedi i certificati devono essere nomi di dominio pubblici collegati all'indirizzo IP pubblico del firewall stesso. La modalità DNS abilita l'utilizzo delle API del tuo provider DNS per emettere certificati. A differenza della modalità standalone, il nome di dominio in modalità DNS non deve necessariamente essere risolvibile dall'IP del router. È l'unica modalità che supporta certificati wildcard"
+      "validation_method_tooltip": "In modalità Standalone, il server sarà temporaneamente accessibile sulla porta 80 durante la generazione del certificato. I domini per i quali richiedi i certificati devono essere nomi di dominio pubblici collegati all'indirizzo IP pubblico del firewall stesso. La modalità DNS abilita l'utilizzo delle API del tuo provider DNS per emettere certificati. A differenza della modalità standalone, il nome di dominio in modalità DNS non deve necessariamente essere risolvibile dall'IP del router. È l'unica modalità che supporta certificati wildcard",
+      "not_used": "Non utilizzato"
     },
     "threat_shield": {
       "status": "Stato",
@@ -1941,7 +2006,8 @@
       "ip_address_found_description": "L'IP {ip} è elencato nella seguente blocklist: {blocklist}",
       "the_ip_is_not_in_any_blocklist": "L'IP {ip} non è elencato in alcuna blocklist attiva",
       "add_to_local_allowlist": "Aggiungi alla allowlist locale",
-      "added_to_local_allowlist": "Aggiunto alla allowlist locale"
+      "added_to_local_allowlist": "Aggiunto alla allowlist locale",
+      "search_ip_tooltip": "La ricerca verrà eseguita solo sulle blocklist attive."
     },
     "two_fa": {
       "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
@@ -1997,7 +2063,8 @@
       "rewrite_ip": "Riscrivi IP",
       "delete_nat_rule": "Elimina regola NAT",
       "any_address": "Qualsiasi indirizzo",
-      "rules_and_netmap": "Regole e NETMAP"
+      "rules_and_netmap": "Regole e NETMAP",
+      "device": "Device"
     },
     "netmap": {
       "destination_network": "Rete destinazione",
@@ -2129,7 +2196,9 @@
       "type_firewall_rule": "Regole del firewall",
       "type_mwan3_rule": "Regole MultiWAN",
       "type_firewall_redirect": "Port forward",
-      "database_mwan3": "MultiWAN"
+      "database_mwan3": "MultiWAN",
+      "range_not_compatible_with_port_forward": "L'intervallo IP non è compatibile con i port forward. Questo host set è attualmente utilizzato da: {name}",
+      "objects_are_not_compatible_with_port_forward": "Gli oggetti non sono compatibili con i port forward. Questo host set è attualmente utilizzato da: {name}"
     },
     "user_objects": {
       "title": "Utenti e oggetti"
@@ -2314,6 +2383,116 @@
       "redirected_ports_tooltip": "Inserisci uno o più porte da reindirizzare a Threat Shield DNS.",
       "zones_tooltip": "Il traffico su queste zone verrà reindirizzato a Threat Shield DNS.",
       "page_description": " Threat Shield DNS è un servizio che blocca l'accesso a siti web maligni o indesiderati impedendo la risoluzione DNS per domini specifici, bloccando così l'accesso degli utenti a siti dannosi."
+    },
+    "ips": {
+      "destination_bypass": "Bypass destinazione",
+      "suppressed_alerts_description": "Una regola di silenziamento dice all'IPS di ignorare una regola specifica per un indirizzo IP particolare o CIDR, pur valutandola per tutti gli altri indirizzi IP. Questo è utile quando una regola è generalmente efficace, ma genera falsi avvisi positivi per host specifici.",
+      "security_description": "Massimizza la protezione con un alto numero di regole",
+      "delete_bypass_modal_wo_description": "Eliminare il bypass con l'indirizzo IP '{ip}' e direzione '{direction}?",
+      "delete_bypass_modal_title": "Elimina bypass",
+      "no_rules_found": "Nessuna regola trovata",
+      "enable_rule_error": "Impossibile abilitare la regola",
+      "delete_suppressed_alert_description": "Eliminare la regola di silenziamento dell'allarme per ID '{id}' con '{ip}' e direzione '{direction}'?",
+      "delete_suppressed_alert_error": "Impossibile eliminare la regola di silenziamento",
+      "filter_events": "Filtra eventi",
+      "bypass_address": "Indirizzo IP",
+      "error_loading_events": "Impossibile caricare gli eventi",
+      "ips_is_disabled_description": "Attivarlo nella pagina Impostazioni per avviare il monitoraggio di rete",
+      "add_bypass": "Aggiungi bypass",
+      "filter_bypass_description": "Tutto il traffico che passa attraverso il firewall è ispezionato dall'IPS. Creare un bypass per escludere dall'IP indirizzi IP specifici per sorgente o destinazione.",
+      "delete_bypass_modal_w_description": "Eliminare bypass '{description}'?",
+      "delete_suppressed_alert_modal_title": "Elimina la regola di silenziamento",
+      "sid_label": "Rule Signature ID (SID)",
+      "address_helper": "Indirizzo IPv4 o CIDR",
+      "max_detect_info": "La policy \"max-detect\" è abilitata.",
+      "event_list_tab": "Lista eventi di oggi",
+      "filter_bypass_tab": "Bypass filtro",
+      "ips_status": "Stato IPS",
+      "no_filter_bypass": "Nessun bypass filtro",
+      "ips_enabled": "IPS abilitato",
+      "ips_disabled": "IPS disabilitato",
+      "create_bypass": "Crea bypass",
+      "ip_address": "Indirizzo IP",
+      "rule_sid": "SID",
+      "enable_rule_modal_title": "Abilita regola",
+      "add_suppressed_alert": "Silenzia allarme",
+      "sidebar_title": "IPS",
+      "failed_to_fetch_info": "Impossibile recuperare la configurazione IPS",
+      "ips_settings_description": "L'IPS Snort analizza tutto il traffico che attraversa il firewall. Il traffico individuato dalle regole sarà bloccato. Le regole vengono aggiornate automaticamente una volta al giorno durante la notte.",
+      "disabled_rules_description": "In alcuni scenari, le regole possono essere troppo severe o causare troppi falsi positivi. Per evitare questo, è possibile disabilitare regole specifiche. Le regole disabilitate non sono incluse nel set di regole di Snort.",
+      "event_list_description": "L'IPS analizza il traffico di rete e lo controlla in base and un set di regole impostate. Il traffico individuato può essere bloccato o generare un allarme. Questa pagina visualizza tutti gli eventi relativi al traffico bloccato e avvisi.",
+      "title": "Intrusion Prevention System",
+      "balanced": "Bilanciato",
+      "balanced_description": "Equilibrio fra sicurezza e prestazioni per uso generale",
+      "security": "Sicurezza",
+      "oinkcode_invalid": "Oinkcode non valido",
+      "description": "Descrizione",
+      "direction_tooltip": "TBA",
+      "address_type": "Tipo di indirizzo",
+      "source_bypass": "Bypass sorgente",
+      "delete_bypass_error": "Impossibile eliminare il bypass",
+      "table_id_description": "Regola GID:SID",
+      "address": "Indirizzo",
+      "no_suppressed_alerts_found": "Nessun allarme silenziato trovato",
+      "no_suppressed_alerts": "Nessun allarme silenziato",
+      "event_list_date": "Data",
+      "gid_label": "Rule Generator ID (GID)",
+      "max_detect_description": "Si prega di fare riferimento al manuale per ulteriori informazioni.",
+      "error_suppressing_alert": "Impossibile silenziare l'allarme",
+      "suppressed_alerts_tab": "Allarmi silenziati",
+      "ips_is_disabled": "IPS è disattivato",
+      "go_to_settings": "Vai a Impostazioni",
+      "connectivity": "Connettività",
+      "oinkcode_verified": "Verificato",
+      "bypass_direction": "Direzione",
+      "source": "Sorgente",
+      "destination": "Destinazione",
+      "error_loading_bypasses": "Impossibile caricare i bypass",
+      "rules_table": "Tabella regole",
+      "disable_rule": "Disabilita regola",
+      "error_loading_disabled_rules": "Impossibile caricare le regole disabilitate",
+      "no_disabled_rules": "Nessuna regola disabilitata",
+      "no_bypasses_found": "Nessun bypass trovato",
+      "type": "Tipo",
+      "connectivity_description": "Da priorità alle prestazioni con un numero minimo di regole",
+      "rule_gid": "GID",
+      "destination_suppress_alert": "Silenzia allarme per destinazione",
+      "source_suppress_alert": "Silenzia allarme per sorgente",
+      "date": "Data",
+      "protocol": "Protocollo",
+      "events_today": "evento oggi | eventi oggi",
+      "oinkcode": "Oinkcode",
+      "disabled_rules_tab": "Regole disabilitate",
+      "settings_tab": "Impostazioni",
+      "policy": "Policy regole",
+      "oinkcode_tooltip": "L'Oinkcode è un identificatore univoco utilizzato per scaricare le ultime regole Snort. Registrarsi per un account su {0} e ottenere l'Oinkcode.",
+      "verify_oinkcode": "Verifica codice",
+      "direction": "Direzione",
+      "error_loading_suppressed_alerts": "Impossibile caricare gli allarmi silenziati",
+      "alert": "Allarme",
+      "drop": "Blocca",
+      "allow": "Consenti",
+      "event_list_no_events": "Nessun evento oggi, tutto bene",
+      "no_events_found": "Nessun evento trovato",
+      "enable_rule_modal_description": "Abilitare la regola '{description}'' identificata da '{id}'?"
+    },
+    "ha": {
+      "disabled": "Disabilitato",
+      "up_to_date": "Aggiornato",
+      "sidebar_title": "High Availability",
+      "ssh_connection_failed": "Collegamento SSH fallito",
+      "master": "Attivo",
+      "role": "Ruolo",
+      "primary": "Primary",
+      "state": "Stato",
+      "backup_warning": "Nodo read-only",
+      "backup": "Backup",
+      "last_sync_status": "Stato ultima sincronizzazione",
+      "last_sync_time": "Ultima sincronizzazione",
+      "rsync_detection_failed": "Impossibile stabilire lo stato di rsync",
+      "successful": "Successo",
+      "rsync_transfer_failed": "Trasferimento rsync fallito",
+      "enabled": "Abilitato"
     }
   },
   "controller": {

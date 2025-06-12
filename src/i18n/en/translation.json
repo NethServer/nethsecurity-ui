@@ -1842,7 +1842,7 @@
       "username_password": "Username and password",
       "certificate": "Certificate",
       "username_password_certificate": "Username, password and certificate",
-      "username_otp_certificate": "Username and OTP certificate",
+      "username_otp_certificate": "Username, certificate and OTP",
       "local_database": "Local database",
       "custom_option_combobox_placeholder": "Search key",
       "strong": "Strong",

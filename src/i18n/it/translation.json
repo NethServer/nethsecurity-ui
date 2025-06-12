@@ -1718,7 +1718,7 @@
       "username_password_certificate": "Utente, password e certificato",
       "certificate_expired_message": "Questo account ha un certificato scaduto",
       "delete_account_message": "Eliminare l'account {name}? Se presente, anche il certificato associato verrà eliminato.",
-      "username_otp_certificate": "Utente e certificato OTP",
+      "username_otp_certificate": "Utente, certificato e OTP",
       "download_configuration": "Scarica configurazione",
       "password_not_configured": "Password non configurata",
       "reserved_ip": "IP riservato",

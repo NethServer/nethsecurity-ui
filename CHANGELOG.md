@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.2](https://github.com/NethServer/nethsecurity-ui/compare/1.28.1...1.28.2) (2025-06-12)
+
+
+### Bug Fixes
+
+* **i18n:** improve OVPN OTP label ([#585](https://github.com/NethServer/nethsecurity-ui/issues/585)) ([7f24315](https://github.com/NethServer/nethsecurity-ui/commit/7f24315161fcc13ea6834e3b65908b2c5afdbff1))
+
 ## [1.28.1](https://github.com/NethServer/nethsecurity-ui/compare/1.28.0...1.28.1) (2025-06-11)
 
 

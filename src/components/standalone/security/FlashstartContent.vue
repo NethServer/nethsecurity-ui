@@ -65,7 +65,7 @@ const radioOptions: RadioSelection = [
     id: 'pro'
   },
   {
-    label: t('standalone.flashstart.proplus'),
+    label: t('standalone.flashstart.proplus') + ' (BETA)',
     id: 'proplus'
   }
 ]

@@ -125,7 +125,7 @@ function setResetTimer() {
           <div class="flex">
             <FontAwesomeIcon
               :icon="['fa', 'circle-info']"
-              class="mr-2 mt-1 text-indigo-700 dark:text-indigo-300"
+              class="mt-1 mr-2 text-indigo-700 dark:text-indigo-300"
             />
             <p class="mb-8">
               {{ t('standalone.factory_reset.description_helper') }}

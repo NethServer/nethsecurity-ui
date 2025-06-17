@@ -535,6 +535,9 @@ watch(
         :no-results-label="t('ne_combobox.no_results')"
         :optional-label="t('common.optional')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_user_db'))"
+        :selected-label="t('ne_combobox.selected')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <div v-if="!itemToEdit?.ns_description">
         <NeFormItemLabel
@@ -557,6 +560,9 @@ watch(
         :no-options-label="t('ne_combobox.no_options_label')"
         :no-results-label="t('ne_combobox.no_results')"
         :optional-label="t('common.optional')"
+        :selected-label="t('ne_combobox.selected')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeRadioSelection
         v-model="mode"
@@ -573,6 +579,9 @@ watch(
           :no-results-label="t('ne_combobox.no_results')"
           :optional-label="t('common.optional')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_bridge'))"
+          :selected-label="t('ne_combobox.selected')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeTextInput
           ref="rangeIpStartRef"
@@ -685,6 +694,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :optional-label="t('common.optional')"
+          :selected-label="t('ne_combobox.selected')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="digest"
@@ -693,6 +705,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :optional-label="t('common.optional')"
+          :selected-label="t('ne_combobox.selected')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="cipher"
@@ -701,6 +716,9 @@ watch(
           :no-options-label="t('ne_combobox.no_options_label')"
           :no-results-label="t('ne_combobox.no_results')"
           :optional-label="t('common.optional')"
+          :selected-label="t('ne_combobox.selected')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeCombobox
           v-model="minimumTLSVersion"
@@ -709,6 +727,9 @@ watch(
           :no-results-label="t('ne_combobox.no_results')"
           :options="tlsOptions"
           :optional-label="t('common.optional')"
+          :selected-label="t('ne_combobox.selected')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :user-input-label="t('ne_combobox.user_input_label')"
         />
         <NeMultiTextInput
           v-model="customOptions"

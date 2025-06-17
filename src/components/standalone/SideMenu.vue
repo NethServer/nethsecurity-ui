@@ -261,9 +261,9 @@ function loadMenuItemsExpanded() {
         :to="`${getStandaloneRoutePrefix()}/${item.to}`"
         :class="[
           isCurrentRoute(item.to)
-            ? 'border-l-4 border-primary-700 bg-gray-100 text-gray-900 dark:border-primary-500 dark:bg-gray-800 dark:text-gray-50'
+            ? 'border-primary-700 dark:border-primary-500 border-l-4 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-2 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
+          'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
       >
         <font-awesome-icon
@@ -281,7 +281,7 @@ function loadMenuItemsExpanded() {
           isCurrentRoute(item.to)
             ? 'text-gray-900 dark:text-gray-50'
             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-          'group flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
+          'group flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
         ]"
         @click="toggleExpand(item)"
       >
@@ -309,9 +309,9 @@ function loadMenuItemsExpanded() {
                 :to="`${getStandaloneRoutePrefix()}/${child.to}`"
                 :class="[
                   isCurrentRoute(child.to)
-                    ? 'border-l-4 border-primary-700 bg-gray-100 text-gray-900 dark:border-primary-500 dark:bg-gray-800 dark:text-gray-50'
+                    ? 'border-primary-700 dark:border-primary-500 border-l-4 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50'
                     : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50',
-                  'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-1 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  'group flex cursor-pointer items-center gap-x-3 rounded-md px-3 py-1 text-sm leading-6 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800'
                 ]"
               >
                 {{ t(child.name) }}

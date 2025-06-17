@@ -99,7 +99,7 @@ async function updateUnit() {
     await unitsStore.getUnitInfo(_unit.value!.id)
     await unitsStore.getUnits()
 
-    const notification: NeNotification = {
+    const notification: Partial<NeNotification> = {
       kind: 'success'
     }
     if (updateMode.value == 'now') {
@@ -223,19 +223,3 @@ function close() {
     </div>
   </NeSideDrawer>
 </template>
-
-<style>
-@import '@vuepic/vue-datepicker/dist/main.css';
-
-.dp__theme_dark {
-  --dp-background-color: rgb(3 7 18 / var(--tw-bg-opacity));
-  --dp-primary-color: rgb(6 182 212 / var(--tw-bg-opacity));
-  --dp-primary-text-color: rgb(3 7 18 / var(--tw-text-opacity));
-  --dp-border-color-hover: var(--dp-primary-color);
-}
-
-.dp__theme_light {
-  --dp-primary-color: rgb(14 116 144 / var(--tw-bg-opacity));
-  --dp-border-color-hover: var(--dp-primary-color);
-}
-</style>

@@ -25,7 +25,8 @@ import type { DomainSet } from '@/composables/useDomainSets'
 
 const props = defineProps({
   filteredDomainSets: {
-    type: Array as PropType<DomainSet[]>
+    type: Array as PropType<DomainSet[]>,
+    default: () => []
   },
   loading: {
     type: Boolean,

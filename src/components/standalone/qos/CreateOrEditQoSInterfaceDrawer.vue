@@ -210,6 +210,9 @@ watch(
         :optional-label="t('common.optional')"
         :placeholder="t('standalone.qos.choose_interface')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
+        :selected-label="t('ne_combobox.selected')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :user-input-label="t('ne_combobox.user_input_label')"
       />
       <NeTextInput
         v-model="downloadSpeed"

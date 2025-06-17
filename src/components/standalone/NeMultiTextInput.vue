@@ -39,7 +39,7 @@ const props = withDefaults(
     keyInputPlaceholder?: string
     placeholder?: string
   }>(),
-  { useKeyInput: false, required: false }
+  { useKeyInput: false, required: false, keyOptions: () => [] }
 )
 
 defineExpose({
@@ -129,7 +129,7 @@ onMounted(() => {
       } flex items-center justify-between`"
     >
       <div>
-        <span class="mr-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
+        <span class="mr-2 text-sm leading-6 font-medium text-gray-700 dark:text-gray-200">
           {{ title }}
         </span>
         <slot name="tooltip"></slot>
@@ -188,7 +188,7 @@ onMounted(() => {
         {{ generalInvalidMessage }}
       </p>
       <NeButton
-        class="-ml-2.5 mt-4"
+        class="mt-4 -ml-2.5"
         size="md"
         :disabled="disableAddButton"
         kind="tertiary"

@@ -9,7 +9,7 @@ import type { DpiException } from './DpiExceptions.vue'
 import { ref } from 'vue'
 import {
   MessageBag,
-  validateIpAddress,
+  validateIp4OrCidr,
   validateRequired,
   type validationOutput
 } from '@/lib/validation'
@@ -70,7 +70,7 @@ function validate() {
 
   const validators: [validationOutput[], string][] = [
     [[validateRequired(exceptionName.value)], 'description'],
-    [[validateRequired(ipAddress.value), validateIpAddress(ipAddress.value)], 'criteria']
+    [[validateRequired(ipAddress.value), validateIp4OrCidr(ipAddress.value)], 'criteria']
   ]
 
   return validators

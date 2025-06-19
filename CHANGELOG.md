@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.28.2](https://github.com/NethServer/nethsecurity-ui/compare/1.28.1...1.28.2) (2025-06-19)
+
+
+### Bug Fixes
+
+* **dpi:** allowed insertion of CIDRs in exceptions ([#587](https://github.com/NethServer/nethsecurity-ui/issues/587)) ([292294a](https://github.com/NethServer/nethsecurity-ui/commit/292294aaa3a3c7f0ddccd1c0e771875373df61e8))
+* **flashstart:** add BETA label ([9f4146b](https://github.com/NethServer/nethsecurity-ui/commit/9f4146b1f072d1c5d49852a42426fc0a93e5ab7c))
+* **i18n:** improve OVPN OTP label ([#585](https://github.com/NethServer/nethsecurity-ui/issues/585)) ([7f24315](https://github.com/NethServer/nethsecurity-ui/commit/7f24315161fcc13ea6834e3b65908b2c5afdbff1))
+
 ## [1.28.1](https://github.com/NethServer/nethsecurity-ui/compare/1.28.0...1.28.1) (2025-06-11)
 
 

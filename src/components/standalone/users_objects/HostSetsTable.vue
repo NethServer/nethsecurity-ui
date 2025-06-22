@@ -36,10 +36,12 @@ import { useObjects } from '@/composables/useObjects'
 
 const props = defineProps({
   filteredHostSets: {
-    type: Array as PropType<HostSet[]>
+    type: Array as PropType<HostSet[]>,
+    default: () => []
   },
   allHostSets: {
-    type: Array as PropType<HostSet[]>
+    type: Array as PropType<HostSet[]>,
+    default: () => []
   },
   loading: {
     type: Boolean,
@@ -227,7 +229,7 @@ function getManagementPageLabel(subtype: string) {
     <template #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="props.filteredHostSets?.length"
+        :total-rows="props.filteredHostSets?.length || 0"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"

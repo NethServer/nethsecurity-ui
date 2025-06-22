@@ -155,7 +155,7 @@ function goToManagementPage(subtype: string) {
             {{ getManagementPageLabel(kindName) }}
           </NeButton>
         </div>
-        <hr class="mb-2 mt-1" />
+        <hr class="mt-1 mb-2" />
         <ul>
           <li
             v-for="objectInfo in usages[kindName]"

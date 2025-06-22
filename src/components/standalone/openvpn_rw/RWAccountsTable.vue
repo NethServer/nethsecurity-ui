@@ -143,7 +143,7 @@ function getCellClasses(item: RWAccount) {
       </NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
-      <NeTableRow v-for="item in paginatedItems" :key="item.username">
+      <NeTableRow v-for="item in paginatedItems" :key="item.id">
         <!-- username -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.username')">
           <div class="flex flex-row gap-x-3">
@@ -262,7 +262,7 @@ function getCellClasses(item: RWAccount) {
                 <div class="text-center">
                   <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
                   <p
-                    class="cursor-pointer text-primary-500 dark:text-primary-800"
+                    class="text-primary-500 dark:text-primary-800 cursor-pointer"
                     @click="emit('regenerateCertificate', item)"
                   >
                     {{ t('standalone.openvpn_rw.renew_certificate') }}

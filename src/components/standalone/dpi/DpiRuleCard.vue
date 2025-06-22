@@ -154,7 +154,7 @@ async function toggleRule() {
           v-if="rule.criteria.length > appsToDisplay.length"
           kind="tertiary"
           size="sm"
-          class="-ml-2 mt-3"
+          class="mt-3 -ml-2"
           @click="emit('editRule', rule)"
         >
           {{

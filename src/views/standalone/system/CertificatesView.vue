@@ -217,7 +217,7 @@ onMounted(() => {
   >
     <p class="mb-2 font-semibold">{{ t('standalone.certificates.certificate') }}</p>
     <p
-      class="h-80 w-full min-w-0 resize-y overflow-auto whitespace-pre rounded-md border border-gray-700 p-3 font-mono"
+      class="h-80 w-full min-w-0 resize-y overflow-auto rounded-md border border-gray-700 p-3 font-mono whitespace-pre"
     >
       {{ selectedCertificate?.details }}
     </p>

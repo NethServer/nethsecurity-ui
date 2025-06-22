@@ -121,7 +121,7 @@ async function getClientTraffic() {
       :selected-label="t('ne_combobox.selected')"
       :user-input-label="t('ne_combobox.user_input_label')"
       :optional-label="t('common.optional')"
-      class="mb-4 mt-2"
+      class="mt-2 mb-4"
     />
     <NeSkeleton v-if="loading.getClientTraffic" :lines="7"></NeSkeleton>
     <TrafficByHourChart v-else :labels="chartLabels" :datasets="chartDatasets" height="25vh" />

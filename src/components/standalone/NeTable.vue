@@ -134,13 +134,15 @@ defineProps({
 </template>
 
 <style>
+@reference "@/assets/main.css";
+
 table {
   @apply w-full;
 }
 
 /* Base style CSS. */
 .table-basic {
-  @apply -mx-4 overflow-x-auto border-y border-gray-300 dark:border-gray-600 sm:mx-0 sm:rounded-lg sm:border-x;
+  @apply -mx-4 overflow-x-auto border-y border-gray-300 sm:mx-0 sm:rounded-lg sm:border-x dark:border-gray-600;
 }
 
 .table-basic.ghost {
@@ -152,7 +154,7 @@ table {
 }
 
 .table-basic thead {
-  @apply hidden bg-gray-100 dark:bg-gray-800 md:table-header-group;
+  @apply hidden bg-gray-100 md:table-header-group dark:bg-gray-800;
 }
 
 .table-basic.ghost thead {
@@ -172,11 +174,11 @@ table {
 }
 
 .table-basic th {
-  @apply whitespace-nowrap px-6 pb-3 pt-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-50;
+  @apply px-6 pt-4 pb-3 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-gray-50;
 }
 
 .table-basic.condensed th {
-  @apply px-4 pb-2 pt-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50;
+  @apply px-4 pt-3 pb-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-50;
 }
 
 .table-basic.ghost th {
@@ -184,7 +186,7 @@ table {
 }
 
 .table-basic td {
-  @apply whitespace-nowrap px-6 py-4 text-sm text-gray-700 dark:text-gray-200;
+  @apply px-6 py-4 text-sm whitespace-nowrap text-gray-700 dark:text-gray-200;
 }
 
 .table-basic.condensed td {

@@ -53,7 +53,7 @@ interface Backup {
   id: string
   name: string
   created: BigInteger
-  size: BigInteger
+  size: number
   mimetype: string
 }
 

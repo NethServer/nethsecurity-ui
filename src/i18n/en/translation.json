@@ -1591,7 +1591,9 @@
       "service_type": "Service type",
       "custom_servers": "Custom DNS servers",
       "add_custom_servers": "Add custom DNS server",
-      "custom_server_helper": "Use '/<domain>/<server>' syntax to route only requests for a specific domain to the given server. Use the '/<server>#<port>` syntax if the upstream server does not listen on a standard port."
+      "custom_server_helper": "Use '/{'<'}domain{'>'}/{'<'}server{'>'}' syntax to route only requests for a specific domain to the given server. Use the '/{'<'}server{'>'}#{'<'}port{'>'}` syntax if the upstream server does not listen on a standard port.",
+      "remember_dns_dhcp": "FlashStart service requires explicitly specifying the DNS server via DHCP options.",
+      "remember_dns_dhcp_description": "Go to the DHCP section, under Advanced Settings, and add the following option: 6:dns-server,{'<'}YOUR-USUAL-DNS-SERVER{'>'}. This ensures that clients receive the correct DNS server via DHCP."
     },
     "dpi": {
       "title": "DPI filter",

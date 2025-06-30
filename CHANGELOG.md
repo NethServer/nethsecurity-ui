@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.3](https://github.com/NethServer/nethsecurity-ui/compare/1.28.2...1.28.3) (2025-06-30)
+
+
+### Bug Fixes
+
+* added info message for DNS setting ([#589](https://github.com/NethServer/nethsecurity-ui/issues/589)) ([7bfc4f3](https://github.com/NethServer/nethsecurity-ui/commit/7bfc4f3fc43abea19abfa667f9a8966eb91c52ff))
+
 ## [1.28.2](https://github.com/NethServer/nethsecurity-ui/compare/1.28.1...1.28.2) (2025-06-19)
 
 

@@ -47,6 +47,8 @@ const username = ref('')
 const displayName = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const isAdmin = ref(true) // Default to true, can be changed later if needed
+const unitGroups = ref<string[]>([])
 
 // input refs
 const usernameRef = ref()
@@ -157,14 +159,22 @@ async function createOrEditUser() {
 
     if (validate()) {
       if (!id.value) {
-        await accountsStore.addAccount(username.value, password.value, displayName.value)
+        await accountsStore.addAccount(
+          username.value,
+          password.value,
+          displayName.value,
+          isAdmin.value,
+          unitGroups.value
+        )
         emit('add-user')
       } else {
         await accountsStore.updateAccount(
           id.value,
           username.value,
           password.value,
-          displayName.value
+          displayName.value,
+          isAdmin.value,
+          unitGroups.value
         )
         emit('edit-user')
       }

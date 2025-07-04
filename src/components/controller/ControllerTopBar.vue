@@ -12,7 +12,7 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { faCircleUser, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -29,7 +29,7 @@ const accountMenuOptions = computed(() => {
     {
       id: 'account',
       label: t('common.shell.account_settings'),
-      icon: faCircleUser,
+      icon: faGear,
       action: () => router.push(`${getControllerRoutePrefix()}/account`)
     },
     {

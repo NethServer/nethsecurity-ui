@@ -12,7 +12,16 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { faGear, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
+import {
+  faGear,
+  faMoon,
+  faRightFromBracket,
+  faSun,
+  faInfoCircle
+} from '@fortawesome/free-solid-svg-icons'
+import PlatformInfoModal from './PlatformInfoModal.vue'
+import { getControllerApiEndpoint } from '@/lib/config'
+import axios from 'axios'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -23,6 +32,10 @@ const loginStore = useLoginStore()
 const shakeNotificationsIcon = ref(false)
 const topBarButtonsColorClasses =
   'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
+
+const platformInfo = ref<Record<string, any> | null>(null)
+const showPlatformInfoModal = ref(false)
+const platformInfoError = ref<string | null>(null)
 
 const accountMenuOptions = computed(() => {
   return [
@@ -37,6 +50,12 @@ const accountMenuOptions = computed(() => {
       label: t('common.shell.toggle_theme'),
       icon: themeStore.isLight ? faMoon : faSun,
       action: themeStore.toggleTheme
+    },
+    {
+      id: 'about',
+      label: t('common.shell.about'),
+      icon: faInfoCircle,
+      action: openPlatformInfoModal
     },
     {
       id: 'logout',
@@ -62,6 +81,21 @@ watch(
     }
   }
 )
+
+async function openPlatformInfoModal() {
+  try {
+    const { data } = await axios.get(`${getControllerApiEndpoint()}/platform`, {
+      headers: {
+        Authorization: `Bearer ${loginStore.token}`
+      }
+    })
+    platformInfo.value = data.data
+  } catch (err: any) {
+    platformInfoError.value = err?.message || t('error.generic')
+  } finally {
+    showPlatformInfoModal.value = true
+  }
+}
 
 function openNotificationsDrawer() {
   notificationsStore.setNotificationDrawerOpen(true)
@@ -175,6 +209,15 @@ function openNotificationsDrawer() {
             {{ t('common.shell.account') }}
           </template>
         </NeTooltip>
+
+        <!-- PlatformInfoModal -->
+        <PlatformInfoModal
+          :visible="showPlatformInfoModal"
+          :platform-info="platformInfo"
+          :error="platformInfoError"
+          @close="showPlatformInfoModal = false"
+          v-if="showPlatformInfoModal"
+        />
       </div>
     </div>
   </div>

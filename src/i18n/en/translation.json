@@ -14,7 +14,16 @@
       "open_user_menu": "Open user menu",
       "close_side_drawer": "Close side drawer",
       "account": "Account",
-      "controlled_unit_tooltip": "This unit has been opened by a Controller"
+      "controlled_unit_tooltip": "This unit has been opened by a Controller",
+      "about": "About",
+      "platform_info": "Controller information"
+    },
+    "platform": {
+      "controller_version": "Controller version",
+      "logs_retention_days": "Log retention days",
+      "metrics_retention_days": "Metrics retention",
+      "vpn_network": "VPN network",
+      "vpn_port": "VPN port"
     },
     "save": "Save",
     "cancel": "Cancel",

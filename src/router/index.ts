@@ -272,6 +272,11 @@ const router = createRouter({
       path: '/controller/unit-terminal',
       name: 'ControllerUnitTerminal',
       component: () => import('../views/controller/UnitTerminalView.vue')
+    },
+    {
+      path: '/controller/unit-groups',
+      name: 'ControllerUnitGroups',
+      component: () => import('../views/controller/UnitGroupsView.vue')
     }
   ]
 })

@@ -1,0 +1,122 @@
+import { getControllerApiEndpoint } from '@/lib/config'
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getAxiosErrorMessage } from '@nethesis/vue-components'
+
+export type UnitGroup = {
+  id: number
+  name: string
+  description: string
+  units: string[]
+  created: string
+  updated: string
+  used_by: string[]
+}
+
+export const useUnitGroupsStore = defineStore('unit_groups', () => {
+  const { t } = useI18n()
+  const unitGroups = ref<UnitGroup[]>([])
+  const unitGroupsLoading = ref(false)
+  const unitGroupsError = ref({
+    notificationDescription: '',
+    notificationDetails: ''
+  })
+
+  const controllerLoginStore = useControllerLoginStore()
+
+  const loadUnitGroups = async () => {
+    unitGroupsError.value.notificationDescription = ''
+    unitGroupsError.value.notificationDetails = ''
+    try {
+      unitGroupsLoading.value = true
+      const res = await axios.get(`${getControllerApiEndpoint()}/unit_groups`, {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      })
+      unitGroups.value = res.data.data as UnitGroup[]
+    } catch (err: any) {
+      unitGroupsError.value.notificationDescription = t(getAxiosErrorMessage(err))
+      unitGroupsError.value.notificationDetails = err.toString()
+    } finally {
+      unitGroupsLoading.value = false
+    }
+  }
+
+  const getUnitGroup = async (groupId: number) => {
+    try {
+      const res = await axios.get(`${getControllerApiEndpoint()}/unit_groups/${groupId}`, {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      })
+      return res.data.unit_group as UnitGroup
+    } catch (err: any) {
+      throw err
+    }
+  }
+
+  const addUnitGroup = async (name: string, description: string, units: string[]) => {
+    try {
+      const res = await axios.post(
+        `${getControllerApiEndpoint()}/unit_groups`,
+        { name, description, units },
+        {
+          headers: {
+            Authorization: `Bearer ${controllerLoginStore.token}`
+          }
+        }
+      )
+      return res.data.id as number
+    } catch (err: any) {
+      throw err
+    }
+  }
+
+  const updateUnitGroup = async (
+    groupId: number,
+    name: string,
+    description: string,
+    units: string[]
+  ) => {
+    try {
+      await axios.put(
+        `${getControllerApiEndpoint()}/unit_groups/${groupId}`,
+        { name, description, units },
+        {
+          headers: {
+            Authorization: `Bearer ${controllerLoginStore.token}`
+          }
+        }
+      )
+    } catch (err: any) {
+      throw err
+    }
+  }
+
+  const deleteUnitGroup = async (groupId: number) => {
+    try {
+      await axios.delete(`${getControllerApiEndpoint()}/unit_groups/${groupId}`, {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
+        }
+      })
+    } catch (err: any) {
+      throw err
+    }
+  }
+
+  return {
+    unitGroups,
+    unitGroupsLoading,
+    unitGroupsError,
+    loadUnitGroups,
+    getUnitGroup,
+    addUnitGroup,
+    updateUnitGroup,
+    deleteUnitGroup
+  }
+})

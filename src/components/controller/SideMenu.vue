@@ -27,6 +27,15 @@ const navigation: Ref<MenuItem[]> = ref([
     to: 'units',
     icon: 'server'
   },
+  ...(controllerLogin.isAdmin
+    ? [
+        {
+          name: 'controller.unit_groups.title',
+          to: 'unit-groups',
+          icon: 'network-wired'
+        }
+      ]
+    : []),
   {
     name: 'controller.account_settings.title',
     to: 'account',

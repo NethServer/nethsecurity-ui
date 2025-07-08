@@ -2651,7 +2651,28 @@
       "error_batch_updating_systems": "Some systems failed to update.",
       "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again.",
       "updating_image": "Update in progress",
-      "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed."
+      "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed.",
+      "groups": "Groups"
+    },
+    "unit_groups": {
+      "title": "Unit groups",
+      "page_description": "Unit groups allow you to group units together for easier management. You can create a unit group and add one or more units to it. Once a unit is added to a group, you can perform actions on the entire group instead of individual units. If a unit group is assigned to a user account, the user will be able to manage only the units in that group.",
+      "add_group": "Add unit group",
+      "edit_group": "Edit unit group",
+      "no_groups_configured": "No unit groups configured",
+      "filter_groups": "Filter groups",
+      "name": "Name",
+      "description": "Description",
+      "units": "Units",
+      "add_unit": "Add unit",
+      "remove": "Remove",
+      "used_by": "Used by",
+      "delete": "Delete unit group",
+      "delete_confirm": "You are about to delete the unit group '{name}'. This action cannot be undone.",
+      "no_groups_found": "No unit groups found",
+      "group_edited": "Unit group updated",
+      "group_added": "Unit group added",
+      "group_deleted": "Unit group deleted"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

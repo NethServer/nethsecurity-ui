@@ -22,6 +22,7 @@ export interface Unit {
   vpn: UnitVpnData
   info: UnitInfo
   join_code?: string
+  groups?: string[]
 }
 
 interface UnitInfo {

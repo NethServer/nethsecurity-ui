@@ -14,7 +14,7 @@ export type ControllerAccount = {
   created: string
   two_fa: boolean
   admin: boolean
-  unitGroups: string[]
+  unit_groups: string[]
 }
 
 /*

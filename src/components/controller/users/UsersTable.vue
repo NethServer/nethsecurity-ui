@@ -14,6 +14,7 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
+  NeTooltip,
   useItemPagination
 } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
@@ -21,11 +22,12 @@ import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faTrash, faCrown } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   users: ControllerAccount[]
-}>()
+  unitGroupsNameMap?: Record<string, string>
+}>();
 
 const emit = defineEmits<{
   delete: [item: ControllerAccount]
@@ -65,6 +67,9 @@ function getDropdownItems(item: ControllerAccount) {
         {{ t('controller.users.display_name') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
+        {{ t('controller.users.unit_groups') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>
         {{ t('controller.users.two_fa_status') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
@@ -74,10 +79,33 @@ function getDropdownItems(item: ControllerAccount) {
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.username">
         <NeTableCell :data-label="t('controller.users.username')">
-          {{ item.username }}
+          <div :class="['flex', 'flex-row', 'items-center']">
+            {{ item.username }}s
+            <NeTooltip v-if="item.admin" interactive>
+              <template #trigger>
+                <FontAwesomeIcon v-if="item.admin" :icon="faCrown" class="ml-2 text-indigo-700 dark:text-indigo-500"
+                  aria-hidden="true" />
+              </template>
+              <template #content>
+                <p class="text-center">
+                  {{ t('standalone.users_database.administrator_table_tooltip') }}
+                </p>
+              </template>
+            </NeTooltip>
+          </div>
         </NeTableCell>
         <NeTableCell :data-label="t('controller.users.display_name')">
           {{ item.display_name }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('controller.users.unit_groups')">
+          <span class="truncate">
+            <template v-if="item.unit_groups && item.unit_groups.length">
+              {{item.unit_groups.map((group: string) => props.unitGroupsNameMap?.[group] || group).join(', ')}}
+            </template>
+            <template v-else>
+              -
+            </template>
+          </span>
         </NeTableCell>
         <NeTableCell :data-label="t('controller.users.two_fa_status')">
           <span class="flex items-center gap-2">
@@ -95,11 +123,7 @@ function getDropdownItems(item: ControllerAccount) {
           <div class="align-center -ml-2.5 flex gap-2 md:ml-0 md:justify-end">
             <NeButton kind="tertiary" @click="emit('edit', item)">
               <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'pen-to-square']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
+                <font-awesome-icon :icon="['fas', 'pen-to-square']" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('common.edit') }}
             </NeButton>
@@ -109,26 +133,18 @@ function getDropdownItems(item: ControllerAccount) {
       </NeTableRow>
     </NeTableBody>
     <template #paginator>
-      <NePaginator
-        :current-page="currentPage"
-        :total-rows="props.users.length"
-        :page-size="pageSize"
-        :nav-pagination-label="t('ne_table.pagination')"
-        :next-label="t('ne_table.go_to_next_page')"
-        :previous-label="t('ne_table.go_to_previous_page')"
-        :range-of-total-label="t('ne_table.of')"
-        :page-size-label="t('ne_table.show')"
-        @select-page="
+      <NePaginator :current-page="currentPage" :total-rows="props.users.length" :page-size="pageSize"
+        :nav-pagination-label="t('ne_table.pagination')" :next-label="t('ne_table.go_to_next_page')"
+        :previous-label="t('ne_table.go_to_previous_page')" :range-of-total-label="t('ne_table.of')"
+        :page-size-label="t('ne_table.show')" @select-page="
           (page: number) => {
             currentPage = page
           }
-        "
-        @select-page-size="
+        " @select-page-size="
           (size: number) => {
             pageSize = size
           }
-        "
-      />
+        " />
     </template>
   </NeTable>
 </template>

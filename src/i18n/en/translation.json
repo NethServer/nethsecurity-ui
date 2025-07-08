@@ -2722,7 +2722,7 @@
     },
     "users": {
       "title": "Users",
-      "description": "The users listed on this page are granted full control over all firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator.",
+      "description": "The users listed on this page are granted control over firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator users. Users associated with a unit group can only manage the units within that group. Administrator users have unrestricted access to all units and users.",
       "no_users_found": "No users found",
       "add_user": "Add user",
       "username": "Username",
@@ -2743,7 +2743,11 @@
       "edit_user": "Edit user",
       "two_fa_status": "2FA status",
       "two_fa_enabled": "Enabled",
-      "two_fa_disabled": "Disabled"
+      "two_fa_disabled": "Disabled",
+      "admin": "Administrator user",
+      "admin_tooltip": "This user has administrator privileges and can manage all units and users.",
+      "unit_groups": "Unit groups",
+      "unit_groups_tooltip": "Select the unit groups this user can manage. If no groups are selected, the user will not be able access any unit."
     }
   },
   "notifications": {

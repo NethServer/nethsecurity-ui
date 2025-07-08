@@ -11,7 +11,8 @@ import {
   NeHeading,
   NeInlineNotification,
   NeSkeleton,
-  NeTextInput
+  NeTextInput,
+  type NeComboboxOption
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -19,9 +20,11 @@ import UsersTable from '@/components/controller/users/UsersTable.vue'
 import CreateOrEditUserDrawer from '@/components/controller/users/CreateOrEditUserDrawer.vue'
 import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
+import { useUnitGroupsStore } from '@/stores/controller/unit_groups'
 
 const accountsStore = useAccountsStore()
 const notificationsStore = useNotificationsStore()
+const unitGroupsStore = useUnitGroupsStore()
 
 const { t } = useI18n()
 
@@ -37,6 +40,27 @@ const filteredAccounts = computed(() =>
   )
 )
 
+const unitGroupsOptions = computed(() =>
+  Array.isArray(unitGroupsStore.unitGroups) && unitGroupsStore.unitGroups.length > 0
+    ? unitGroupsStore.unitGroups.map((group) => ({
+        id: group.id,
+        label: group.name,
+        description: group.description || ''
+      })) as Array<NeComboboxOption>
+    : []
+)
+
+const unitGroupNameMap = computed(() => {
+  const map: Record<string, string> = {}
+  if (!Array.isArray(unitGroupsStore.unitGroups)) {
+    return map
+  }
+  unitGroupsStore.unitGroups.forEach((group) => {
+    map[group.id] = group.name
+  })
+  return map 
+})
+
 function openCreateEditDrawer(itemToEdit?: ControllerAccount) {
   selectedItem.value = itemToEdit
   showCreateEditDrawer.value = true
@@ -49,6 +73,7 @@ function openDeleteModal(itemToEdit?: ControllerAccount) {
 
 onMounted(() => {
   accountsStore.loadAccounts()
+  unitGroupsStore.loadUnitGroups()
 })
 </script>
 
@@ -107,6 +132,7 @@ onMounted(() => {
       <UsersTable
         v-else
         :users="filteredAccounts"
+        :unit-groups-name-map="unitGroupNameMap"
         @edit="openCreateEditDrawer"
         @delete="openDeleteModal"
       />
@@ -115,6 +141,7 @@ onMounted(() => {
   <CreateOrEditUserDrawer
     :is-shown="showCreateEditDrawer"
     :item-to-edit="selectedItem"
+    :unit-groups-options="unitGroupsOptions"
     @add-user="
       () => {
         accountsStore.loadAccounts()

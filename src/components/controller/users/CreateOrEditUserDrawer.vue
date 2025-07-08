@@ -17,8 +17,12 @@ import {
   NeButton,
   NeSideDrawer,
   NeTextInput,
+  NeToggle,
+  NeTooltip,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  NeCombobox,
+  type NeComboboxOption
 } from '@nethesis/vue-components'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
@@ -26,6 +30,7 @@ import { useAccountsStore, type ControllerAccount } from '@/stores/controller/ac
 const props = defineProps<{
   isShown: boolean
   itemToEdit?: ControllerAccount
+  unitGroupsOptions?: Array<NeComboboxOption>
 }>()
 
 const { t } = useI18n()
@@ -47,8 +52,8 @@ const username = ref('')
 const displayName = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const isAdmin = ref(true) // Default to true, can be changed later if needed
-const unitGroups = ref<string[]>([])
+const isAdmin = ref(false)
+const unitGroups = ref<NeComboboxOption[]>([])
 
 // input refs
 const usernameRef = ref()
@@ -61,10 +66,22 @@ async function resetForm() {
     id.value = props.itemToEdit.id
     username.value = props.itemToEdit.username
     displayName.value = props.itemToEdit.display_name
+    isAdmin.value = props.itemToEdit.admin
+    if (Array.isArray(props.itemToEdit.unit_groups) && props.itemToEdit.unit_groups.length > 0) {
+      unitGroups.value = props.itemToEdit.unit_groups.map((group: string) => ({
+        id: group,
+        label: group,
+        description: ''
+      })) as NeComboboxOption[]
+    } else {
+      unitGroups.value = []
+    }
   } else {
     id.value = undefined
     username.value = ''
     displayName.value = ''
+    isAdmin.value = false
+    unitGroups.value = []
   }
 
   password.value = ''
@@ -164,7 +181,7 @@ async function createOrEditUser() {
           password.value,
           displayName.value,
           isAdmin.value,
-          unitGroups.value
+          unitGroups.value.map((group: NeComboboxOption) => group.id)
         )
         emit('add-user')
       } else {
@@ -174,7 +191,7 @@ async function createOrEditUser() {
           password.value,
           displayName.value,
           isAdmin.value,
-          unitGroups.value
+          unitGroups.value.map((group: NeComboboxOption) => group.id)
         )
         emit('edit-user')
       }
@@ -206,45 +223,22 @@ watch(
 </script>
 
 <template>
-  <NeSideDrawer
-    :is-shown="isShown"
-    :close-aria-label="t('common.shell.close_side_drawer')"
-    :title="id ? t('controller.users.edit_user') : t('controller.users.add_user')"
-    @close="close()"
-  >
-    <NeInlineNotification
-      v-if="error.notificationTitle"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
-      class="mb-6"
-      kind="error"
-    >
+  <NeSideDrawer :is-shown="isShown" :close-aria-label="t('common.shell.close_side_drawer')"
+    :title="id ? t('controller.users.edit_user') : t('controller.users.add_user')" @close="close()">
+    <NeInlineNotification v-if="error.notificationTitle" :title="error.notificationTitle"
+      :description="error.notificationDescription" class="mb-6" kind="error">
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
+      </template>
+    </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
-      <NeTextInput
-        ref="usernameRef"
-        v-model="username"
-        :disabled="Boolean(id)"
-        :label="t('controller.users.username')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))"
-      />
-      <NeTextInput
-        ref="displayNameRef"
-        v-model="displayName"
-        :label="t('controller.users.display_name')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('display_name'))"
-      />
-      <NeTextInput
-        ref="passwordRef"
-        v-model="password"
-        :label="t('controller.users.user_password')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('password'))"
-        :is-password="true"
-        :placeholder="id ? t('controller.users.unchanged') : ''"
-      />
+      <NeTextInput ref="usernameRef" v-model="username" :disabled="Boolean(id)" :label="t('controller.users.username')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('username'))" />
+      <NeTextInput ref="displayNameRef" v-model="displayName" :label="t('controller.users.display_name')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('display_name'))" />
+      <NeTextInput ref="passwordRef" v-model="password" :label="t('controller.users.user_password')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('password'))" :is-password="true"
+        :placeholder="id ? t('controller.users.unchanged') : ''" />
       <ul class="list-inside list-disc text-sm font-normal text-gray-500 dark:text-gray-400">
         <li>{{ t('controller.users.password_suggestion_1') }}</li>
         <li>{{ t('controller.users.password_suggestion_2') }}</li>
@@ -252,25 +246,43 @@ watch(
         <li>{{ t('controller.users.password_suggestion_4') }}</li>
         <li>{{ t('controller.users.password_suggestion_5') }}</li>
       </ul>
-      <NeTextInput
-        ref="confirmPasswordRef"
-        v-model="confirmPassword"
+      <NeTextInput ref="confirmPasswordRef" v-model="confirmPassword"
         :label="t('controller.users.confirm_user_password')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirmPassword'))"
-        :is-password="true"
-        :placeholder="id ? t('controller.users.unchanged') : ''"
-      />
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('confirmPassword'))" :is-password="true"
+        :placeholder="id ? t('controller.users.unchanged') : ''" />
+      <NeToggle v-model="isAdmin" :top-label="t('controller.users.admin')"
+        :label="isAdmin ? t('common.enabled') : t('common.disabled')">
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
+            <template #content>
+              {{ t('controller.users.admin_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
+      <NeCombobox v-if="!isAdmin" :label="t('controller.users.unit_groups')" v-model="unitGroups"
+        :options="unitGroupsOptions" :placeholder="t('ne_combobox.choose_or_enter')"
+        :no-results-label="t('ne_combobox.no_results')" :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')" :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')" :multiple="true"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('groups'))"
+        :tooltip="t('controller.users.unit_groups_tooltip')">
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              <i18n-t keypath="controller.users.unit_groups_tooltip" tag="span" scope="global">
+              </i18n-t>
+            </template>
+          </NeTooltip>
+        </template>
+      </NeCombobox>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-        <NeButton
-          kind="primary"
-          :disabled="isSavingChanges"
-          :loading="isSavingChanges"
-          @click="createOrEditUser()"
-          >{{ id ? t('common.save') : t('controller.users.add_user') }}</NeButton
-        >
+        <NeButton kind="primary" :disabled="isSavingChanges" :loading="isSavingChanges" @click="createOrEditUser()">{{
+          id ?
+            t('common.save') : t('controller.users.add_user') }}</NeButton>
       </div>
-    </div></NeSideDrawer
-  >
+    </div>
+  </NeSideDrawer>
 </template>

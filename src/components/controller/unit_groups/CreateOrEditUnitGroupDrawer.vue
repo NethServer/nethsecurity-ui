@@ -94,7 +94,7 @@ function validate() {
   }
 
   if (units.value.length === 0) {
-    validationErrorBag.value.set('units', [t('error.required')])
+    validationErrorBag.value.set('units', ['error.required'])
     if (valid) {
       valid = false
     }

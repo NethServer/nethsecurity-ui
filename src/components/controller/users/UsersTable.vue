@@ -80,7 +80,7 @@ function getDropdownItems(item: ControllerAccount) {
       <NeTableRow v-for="item in paginatedItems" :key="item.username">
         <NeTableCell :data-label="t('controller.users.username')">
           <div :class="['flex', 'flex-row', 'items-center']">
-            {{ item.username }}s
+            {{ item.username }}
             <NeTooltip v-if="item.admin" interactive>
               <template #trigger>
                 <FontAwesomeIcon
@@ -106,9 +106,13 @@ function getDropdownItems(item: ControllerAccount) {
             <template v-if="item.unit_groups && item.unit_groups.length">
               {{
                 item.unit_groups
+                  .slice(0, 3)
                   .map((group: string) => props.unitGroupsNameMap?.[group] || group)
                   .join(', ')
               }}
+              <template v-if="item.unit_groups.length > 3">
+                {{ t('common.plus_num_others', { num: item.unit_groups.length - 3 }) }}
+              </template>
             </template>
             <template v-else> - </template>
           </span>

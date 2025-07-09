@@ -98,8 +98,14 @@ function closeDeleteModal() {
           <NeTableCell :data-label="t('controller.unit_groups.units')">
             <span v-if="item.units && item.units.length" class="truncate">
               {{
-                item.units.map((unitId: string) => props.unitNameMap?.[unitId] || unitId).join(', ')
+                item.units
+                  .slice(0, 2)
+                  .map((unitId: string) => props.unitNameMap?.[unitId] || unitId)
+                  .join(', ')
               }}
+              <template v-if="item.units.length > 2">
+                {{ t('common.plus_num_others', { num: item.units.length - 2 }) }}
+              </template>
             </span>
             <span v-else>-</span>
           </NeTableCell>

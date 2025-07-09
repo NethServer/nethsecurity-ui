@@ -14,9 +14,11 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
-  useItemPagination
+  useItemPagination,
+  NeButton,
+  formatDateLoc,
+  NeTooltip
 } from '@nethesis/vue-components'
-import { NeButton } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -90,7 +92,48 @@ function closeDeleteModal() {
       <NeTableBody>
         <NeTableRow v-for="item in paginatedItems" :key="item.id">
           <NeTableCell :data-label="t('controller.unit_groups.name')">
-            {{ item.name }}
+            <div>{{ item.name }}</div>
+            <!-- more info button -->
+            <div>
+              <NeTooltip interactive :max-width="450">
+                <template #trigger>
+                  <NeButton size="sm" kind="tertiary" class="-mx-2">
+                    {{ t('common.more_info') }}
+                  </NeButton>
+                </template>
+                <template #content>
+                  <div class="space-y-1 px-2 py-1">
+                    <!-- number of units -->
+                    <div>
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('controller.unit_groups.units_number') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-600">
+                        {{ item.units.length || '-' }}
+                      </span>
+                    </div>
+                    <!-- created -->
+                    <div v-if="item.created_at">
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('controller.unit_groups.created') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-600">
+                        {{ formatDateLoc(new Date(item.created_at), 'PPpp') || '-' }}
+                      </span>
+                    </div>
+                    <!-- updated -->
+                    <div v-if="item.updated_at">
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('controller.unit_groups.updated') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-600">
+                        {{ formatDateLoc(new Date(item.updated_at), 'PPpp') || '-' }}
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </NeTooltip>
+            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('controller.unit_groups.description')">
             {{ item.description }}

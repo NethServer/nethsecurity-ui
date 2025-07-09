@@ -2672,7 +2672,10 @@
       "no_groups_found": "No unit groups found",
       "group_edited": "Unit group updated",
       "group_added": "Unit group added",
-      "group_deleted": "Unit group deleted"
+      "group_deleted": "Unit group deleted",
+      "units_number": "Number of units",
+      "created": "Created",
+      "updated": "Last modified"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",

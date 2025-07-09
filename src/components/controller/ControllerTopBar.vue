@@ -15,7 +15,7 @@ import { useLoginStore } from '@/stores/controller/controllerLogin'
 import {
   faGear,
   faMoon,
-  faRightFromBracket,
+  faArrowRightFromBracket,
   faSun,
   faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
@@ -60,7 +60,7 @@ const accountMenuOptions = computed(() => {
     {
       id: 'logout',
       label: t('common.shell.sign_out'),
-      icon: faRightFromBracket,
+      icon: faArrowRightFromBracket,
       action: loginStore.logout
     }
   ]
@@ -190,7 +190,7 @@ function openNotificationsDrawer() {
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
                   <div class="flex items-center gap-2">
                     <font-awesome-icon
-                      :icon="['fas', 'circle-user']"
+                      :icon="loginStore.isAdmin ? ['fas', 'crown'] : ['fas', 'circle-user']"
                       class="h-6 w-6 shrink-0"
                       aria-hidden="true"
                     />

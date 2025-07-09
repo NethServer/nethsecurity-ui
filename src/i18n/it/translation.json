@@ -2572,7 +2572,7 @@
       "cannot_open_unit": "Impossibile aprire l'unità",
       "warning_open_unit_description": "Potrebbe essere necessario accedere direttamente all'unità per utilizzare le funzionalità più recenti. Questo è dovuto a un temporaneo disallineamento di versione che verrà risolto con il prossimo aggiornamento.",
       "scheduled_image_update": "Aggiornamento immagine programmato",
-      "scheduled_image_update_tooltip": "L'unità è stata programmata per installare la versione \"{version}\" in data {data}.",
+      "scheduled_image_update_tooltip": "L'unità è stata programmata per installare la versione \"{version}\" in data {date}.",
       "image_update_available": "Aggiornamento immagine disponibile",
       "image_update_available_tooltip": "La versione '{version}' è disponibile per il download.",
       "edit_scheduled_image_update": "Modificare la programmazione dell'aggiornamento dell'immagine",

@@ -138,7 +138,7 @@ function openNotificationsDrawer() {
         <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <a
-              href="https://docs.nethsecurity.org/"
+              href="https://docs.nethsecurity.org/en/latest/controller.html"
               target="_blank"
               rel="noreferrer"
               :class="['-m-2.5 flex items-center gap-3 p-2.5', topBarButtonsColorClasses]"

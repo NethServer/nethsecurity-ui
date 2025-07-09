@@ -422,9 +422,9 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
           <NeTableCell>
             <span class="truncate">
-            {{ item.groups.length > 0
-              ? item.groups.map((group: string) => group).join(', ')
-              : "-" }}
+              {{
+                item.groups.length > 0 ? item.groups.map((group: string) => group).join(', ') : '-'
+              }}
             </span>
           </NeTableCell>
           <!-- status -->

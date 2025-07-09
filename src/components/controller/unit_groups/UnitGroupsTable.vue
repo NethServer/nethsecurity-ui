@@ -23,15 +23,14 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import type { UnitGroup } from '@/stores/controller/unit_groups'
 import DeleteUnitGroupModal from './DeleteUnitGroupModal.vue'
 
-
 const props = defineProps<{
   unitGroups: UnitGroup[]
   unitNameMap?: Record<string, string>
 }>()
 
 const emit = defineEmits<{
-  (e: 'edit-group', selectedGroup: UnitGroup): void,
-  (e: 'group-deleted'): void,
+  (e: 'edit-group', selectedGroup: UnitGroup): void
+  (e: 'group-deleted'): void
 }>()
 
 const { t } = useI18n()
@@ -98,7 +97,9 @@ function closeDeleteModal() {
           </NeTableCell>
           <NeTableCell :data-label="t('controller.unit_groups.units')">
             <span v-if="item.units && item.units.length" class="truncate">
-              {{item.units.map((unitId: string) => props.unitNameMap?.[unitId] || unitId).join(', ')}}
+              {{
+                item.units.map((unitId: string) => props.unitNameMap?.[unitId] || unitId).join(', ')
+              }}
             </span>
             <span v-else>-</span>
           </NeTableCell>
@@ -122,22 +123,33 @@ function closeDeleteModal() {
         </NeTableRow>
       </NeTableBody>
       <template #paginator>
-        <NePaginator :current-page="currentPage" :total-rows="props.unitGroups.length" :page-size="pageSize"
-          :nav-pagination-label="t('ne_table.pagination')" :next-label="t('ne_table.go_to_next_page')"
-          :previous-label="t('ne_table.go_to_previous_page')" :range-of-total-label="t('ne_table.of')"
-          :page-size-label="t('ne_table.show')" @select-page="
+        <NePaginator
+          :current-page="currentPage"
+          :total-rows="props.unitGroups.length"
+          :page-size="pageSize"
+          :nav-pagination-label="t('ne_table.pagination')"
+          :next-label="t('ne_table.go_to_next_page')"
+          :previous-label="t('ne_table.go_to_previous_page')"
+          :range-of-total-label="t('ne_table.of')"
+          :page-size-label="t('ne_table.show')"
+          @select-page="
             (page: number) => {
               currentPage = page
             }
-          " @select-page-size="
+          "
+          @select-page-size="
             (size: number) => {
               pageSize = size
             }
-          " />
+          "
+        />
       </template>
     </NeTable>
 
-    <DeleteUnitGroupModal :visible="showDeleteModal" :item-to-delete="selectedGroup"
-      @group-deleted="closeDeleteModal()" />
+    <DeleteUnitGroupModal
+      :visible="showDeleteModal"
+      :item-to-delete="selectedGroup"
+      @group-deleted="closeDeleteModal()"
+    />
   </div>
 </template>

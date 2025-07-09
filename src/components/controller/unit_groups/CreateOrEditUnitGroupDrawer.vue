@@ -4,10 +4,7 @@
 -->
 
 <script setup lang="ts">
-import {
-  MessageBag,
-  validateRequired
-} from '@/lib/validation'
+import { MessageBag, validateRequired } from '@/lib/validation'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
@@ -25,8 +22,8 @@ import { useUnitGroupsStore } from '@/stores/controller/unit_groups'
 import type { UnitGroup } from '@/stores/controller/unit_groups'
 
 const props = defineProps<{
-  isShown: boolean,
-  allUnits: Array<NeComboboxOption>,
+  isShown: boolean
+  allUnits: Array<NeComboboxOption>
   itemToEdit?: UnitGroup
 }>()
 
@@ -60,12 +57,12 @@ async function resetForm() {
     description.value = props.itemToEdit.description
     // Remap itemToEdit.units to NeComboboxOption[]
     units.value = props.itemToEdit.units
-      ? props.itemToEdit.units.map((unit: any) => ({
-        id: unit,
-        // Find the label from allUnits by matching id
-        label: props.allUnits.find(opt => opt.id === unit)?.label || unit,
-        description: props.allUnits.find(opt => opt.id === unit)?.description || '',
-      })) as Array<NeComboboxOption>
+      ? (props.itemToEdit.units.map((unit: any) => ({
+          id: unit,
+          // Find the label from allUnits by matching id
+          label: props.allUnits.find((opt) => opt.id === unit)?.label || unit,
+          description: props.allUnits.find((opt) => opt.id === unit)?.description || ''
+        })) as Array<NeComboboxOption>)
       : []
   } else {
     id.value = undefined
@@ -157,37 +154,64 @@ watch(
     }
   }
 )
-
 </script>
 
 <template>
-  <NeSideDrawer :is-shown="isShown" :close-aria-label="t('common.shell.close_side_drawer')"
-    :title="id ? t('controller.unit_groups.edit_group') : t('controller.unit_groups.add_group')" @close="close()">
-    <NeInlineNotification v-if="error.notificationTitle" :title="error.notificationTitle"
-      :description="error.notificationDescription" class="mb-6" kind="error">
+  <NeSideDrawer
+    :is-shown="isShown"
+    :close-aria-label="t('common.shell.close_side_drawer')"
+    :title="id ? t('controller.unit_groups.edit_group') : t('controller.unit_groups.add_group')"
+    @close="close()"
+  >
+    <NeInlineNotification
+      v-if="error.notificationTitle"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      class="mb-6"
+      kind="error"
+    >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
-      <NeTextInput ref="nameRef" v-model="name" :label="t('controller.unit_groups.name')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))" />
-      <NeTextInput ref="descriptionRef" v-model="description" :label="t('controller.unit_groups.description')"
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))" :optional="true" />
+      <NeTextInput
+        ref="nameRef"
+        v-model="name"
+        :label="t('controller.unit_groups.name')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
+      />
+      <NeTextInput
+        ref="descriptionRef"
+        v-model="description"
+        :label="t('controller.unit_groups.description')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))"
+        :optional="true"
+      />
       <div>
-        <label class="block mb-2 font-medium">{{ t('controller.unit_groups.units') }}</label>
-        <NeCombobox v-model="units" :options="allUnits" :placeholder="t('ne_combobox.choose_or_enter')"
+        <label class="mb-2 block font-medium">{{ t('controller.unit_groups.units') }}</label>
+        <NeCombobox
+          v-model="units"
+          :options="allUnits"
+          :placeholder="t('ne_combobox.choose_or_enter')"
           :no-results-label="t('ne_combobox.no_results')"
           :limited-options-label="t('ne_combobox.limited_options_label')"
-          :no-options-label="t('ne_combobox.no_options_label')" :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')" :multiple="true"
-          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('units'))" />
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :multiple="true"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('units'))"
+        />
       </div>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
-        <NeButton kind="primary" :disabled="isSavingChanges" :loading="isSavingChanges"
-          @click="createOrEditUnitGroup()">
+        <NeButton
+          kind="primary"
+          :disabled="isSavingChanges"
+          :loading="isSavingChanges"
+          @click="createOrEditUnitGroup()"
+        >
           {{ id ? t('common.save') : t('controller.unit_groups.add_group') }}
         </NeButton>
       </div>

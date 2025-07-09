@@ -24,12 +24,24 @@ function close() {
 </script>
 
 <template>
-  <NeModal :visible="props.visible" kind="info" :title="t('common.shell.platform_info')"
-    :primary-label="t('common.close')" :primary-action="close" :close-aria-label="t('common.close')"
-    @primary-click="close()" @close="close()">
+  <NeModal
+    :visible="props.visible"
+    kind="info"
+    :title="t('common.shell.platform_info')"
+    :primary-label="t('common.close')"
+    :primary-action="close"
+    :close-aria-label="t('common.close')"
+    @primary-click="close()"
+    @close="close()"
+  >
     <div class="d-flex flex-column align-items-center my-3">
-      <NeInlineNotification v-if="props.error" kind="error" :title="t('error.generic')" :description="props.error"
-        class="my-2" />
+      <NeInlineNotification
+        v-if="props.error"
+        kind="error"
+        :title="t('error.generic')"
+        :description="props.error"
+        class="my-2"
+      />
       <div v-if="props.platformInfo && !props.error" class="w-100">
         <table class="table-sm table">
           <tbody>

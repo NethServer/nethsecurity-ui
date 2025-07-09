@@ -11,7 +11,7 @@ import {
   NeSkeleton,
   NeTextInput,
   type NeComboboxOption,
-  NeEmptyState,
+  NeEmptyState
 } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
 import { useUnitGroupsStore } from '@/stores/controller/unit_groups'
@@ -39,7 +39,7 @@ const allUnits = computed(
     unitsStore.units.map((unit: any) => ({
       id: unit.id,
       label: unit.info?.unit_name || unit.id,
-      description: unit.info?.unit_name ? unit.id : '',
+      description: unit.info?.unit_name ? unit.id : ''
     })) as Array<NeComboboxOption>
 )
 const unitNameMap = computed(() => {
@@ -144,8 +144,12 @@ function closeDrawer() {
     <div class="mb-6 flex flex-col-reverse items-start justify-between gap-6 xl:flex-row">
       <!-- text filter -->
       <div class="flex items-center gap-4">
-        <NeTextInput v-model.trim="textFilter" :placeholder="t('controller.unit_groups.filter_groups')"
-          :disabled="loading" class="max-w-xs" />
+        <NeTextInput
+          v-model.trim="textFilter"
+          :placeholder="t('controller.unit_groups.filter_groups')"
+          :disabled="loading"
+          class="max-w-xs"
+        />
         <NeButton kind="tertiary" :disabled="loading || !textFilter" @click="textFilter = ''">
           {{ t('common.clear_filter') }}
         </NeButton>
@@ -154,7 +158,13 @@ function closeDrawer() {
         <!-- buttons -->
         <div v-if="!loading" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
           <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
-          <NeButton kind="tertiary" size="lg" :disabled="showDrawer" class="shrink-0" @click="openAddDrawer()">
+          <NeButton
+            kind="tertiary"
+            size="lg"
+            :disabled="showDrawer"
+            class="shrink-0"
+            @click="openAddDrawer()"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
             </template>
@@ -171,8 +181,11 @@ function closeDrawer() {
       <template v-else>
         <!-- empty state -->
         <template v-if="isEmpty(unitGroupsStore.unitGroups)">
-          <NeEmptyState :title="t('controller.unit_groups.no_groups_configured')" :icon="['fas', 'server']"
-            class="mt-4">
+          <NeEmptyState
+            :title="t('controller.unit_groups.no_groups_configured')"
+            :icon="['fas', 'server']"
+            class="mt-4"
+          >
             <NeButton kind="primary" size="lg" @click="openAddDrawer()">
               <template #prefix>
                 <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -183,29 +196,45 @@ function closeDrawer() {
         </template>
         <!-- no rule matching filter -->
         <template v-else-if="isEmpty(filteredGroups)">
-          <NeEmptyState :title="t('controller.unit_groups.no_groups_found')"
-            :description="t('common.try_changing_search_filter')" :icon="['fas', 'circle-info']" class="mt-4">
+          <NeEmptyState
+            :title="t('controller.unit_groups.no_groups_found')"
+            :description="t('common.try_changing_search_filter')"
+            :icon="['fas', 'circle-info']"
+            class="mt-4"
+          >
             <NeButton kind="tertiary" @click="textFilter = ''">
-              {{ t('common.clear_filter') }}</NeButton>
+              {{ t('common.clear_filter') }}</NeButton
+            >
           </NeEmptyState>
         </template>
         <!-- units groups table -->
         <template v-else>
-          <UnitGroupsTable :unit-groups="filteredGroups" :unit-name-map="unitNameMap" @edit-group="openEditDrawer"
-            @delete-group="openDeleteModal" @group-deleted="() => {
-              loadData()
-              notificationsStore.addNotification({
-                kind: 'success',
-                id: 'delete-unit-group',
-                title: t('controller.unit_groups.group_deleted')
-              })
-            }" />
+          <UnitGroupsTable
+            :unit-groups="filteredGroups"
+            :unit-name-map="unitNameMap"
+            @edit-group="openEditDrawer"
+            @delete-group="openDeleteModal"
+            @group-deleted="
+              () => {
+                loadData()
+                notificationsStore.addNotification({
+                  kind: 'success',
+                  id: 'delete-unit-group',
+                  title: t('controller.unit_groups.group_deleted')
+                })
+              }
+            "
+          />
         </template>
       </template>
     </div>
   </div>
-  <CreateOrEditUnitGroupDrawer v-model:show="showDrawer" :item-to-edit="selectedGroup" :is-shown="showDrawer"
-    :all-units="allUnits" @edit-group="
+  <CreateOrEditUnitGroupDrawer
+    v-model:show="showDrawer"
+    :item-to-edit="selectedGroup"
+    :is-shown="showDrawer"
+    :all-units="allUnits"
+    @edit-group="
       () => {
         loadData()
         notificationsStore.addNotification({
@@ -214,7 +243,8 @@ function closeDrawer() {
           title: t('controller.unit_groups.group_edited')
         })
       }
-    " @add-group="
+    "
+    @add-group="
       () => {
         loadData()
         notificationsStore.addNotification({
@@ -223,5 +253,7 @@ function closeDrawer() {
           title: t('controller.unit_groups.group_added')
         })
       }
-    " @close-drawer=" closeDrawer()" />
+    "
+    @close-drawer="closeDrawer()"
+  />
 </template>

@@ -55,14 +55,12 @@ async function resetForm() {
     name.value = props.itemToEdit.name
     description.value = props.itemToEdit.description
     // Remap itemToEdit.units to NeComboboxOption[]
-    units.value = props.itemToEdit.units
-      ? (props.itemToEdit.units.map((unit: any) => ({
-          id: unit,
-          // Find the label from allUnits by matching id
-          label: props.allUnits.find((opt) => opt.id === unit)?.label || unit,
-          description: props.allUnits.find((opt) => opt.id === unit)?.description || ''
-        })) as Array<NeComboboxOption>)
-      : []
+    units.value = props.itemToEdit.units.map((unit: string) => ({
+      id: unit,
+      // Find the label from allUnits by matching id
+      label: props.allUnits.find((opt) => opt.id === unit)?.label || unit,
+      description: props.allUnits.find((opt) => opt.id === unit)?.description || ''
+    }))
   } else {
     id.value = undefined
     name.value = ''

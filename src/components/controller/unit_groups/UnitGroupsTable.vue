@@ -71,7 +71,7 @@ function closeDeleteModal() {
 
 <template>
   <div>
-    <NeTable :aria-label="t('controller.unit_groups.title')" card-breakpoint="md">
+    <NeTable :aria-label="t('controller.unit_groups.title')" card-breakpoint="xl">
       <NeTableHead>
         <NeTableHeadCell>
           {{ t('controller.unit_groups.name') }}

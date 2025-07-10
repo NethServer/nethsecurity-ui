@@ -16,7 +16,7 @@ export type UnitGroup = {
   used_by: string[]
 }
 
-export const useUnitGroupsStore = defineStore('unit_groups', () => {
+export const useUnitGroupsStore = defineStore('unitGroups', () => {
   const { t } = useI18n()
   const unitGroups = ref<UnitGroup[]>([])
   const unitGroupsLoading = ref(false)

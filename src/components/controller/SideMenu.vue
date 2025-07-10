@@ -32,7 +32,7 @@ const navigation: Ref<MenuItem[]> = ref([
         {
           name: 'controller.unit_groups.title',
           to: 'unit-groups',
-          icon: 'network-wired'
+          icon: 'unit-groups'
         }
       ]
     : []),

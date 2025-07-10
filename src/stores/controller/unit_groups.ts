@@ -20,16 +20,10 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
   const { t } = useI18n()
   const unitGroups = ref<UnitGroup[]>([])
   const unitGroupsLoading = ref(false)
-  const unitGroupsError = ref({
-    notificationDescription: '',
-    notificationDetails: ''
-  })
 
   const controllerLoginStore = useControllerLoginStore()
 
   const loadUnitGroups = async () => {
-    unitGroupsError.value.notificationDescription = ''
-    unitGroupsError.value.notificationDetails = ''
     try {
       unitGroupsLoading.value = true
       const res = await axios.get(`${getControllerApiEndpoint()}/unit_groups`, {
@@ -39,8 +33,6 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
       })
       unitGroups.value = res.data.data as UnitGroup[]
     } catch (err: any) {
-      unitGroupsError.value.notificationDescription = t(getAxiosErrorMessage(err))
-      unitGroupsError.value.notificationDetails = err.toString()
     } finally {
       unitGroupsLoading.value = false
     }
@@ -99,7 +91,6 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
   return {
     unitGroups,
     unitGroupsLoading,
-    unitGroupsError,
     loadUnitGroups,
     getUnitGroup,
     addUnitGroup,

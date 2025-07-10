@@ -47,7 +47,7 @@ const description = ref('')
 const units = ref<NeComboboxOption[]>([])
 
 // input refs
-const nameRef = useTemplateRef('name')
+const nameRef = useTemplateRef('name-input')
 
 async function resetForm() {
   if (props.itemToEdit != undefined) {
@@ -167,7 +167,7 @@ watch(
     </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
-        ref="name"
+        ref="name-input"
         v-model="name"
         :label="t('controller.unit_groups.name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"

@@ -20,23 +20,22 @@ const unitGroupsStore = useUnitGroupsStore()
 
 const { t } = useI18n()
 
-const error = ref({
-  notificationDescription: '',
-  notificationDetails: ''
-})
+const error = ref<Error>()
 const isDeleting = ref(false)
 
 async function deleteUnitGroup() {
   if (props.itemToDelete) {
-    error.value.notificationDescription = ''
-    error.value.notificationDetails = ''
+    error.value = undefined
     isDeleting.value = true
     try {
       await unitGroupsStore.deleteUnitGroup(props.itemToDelete.id)
       emit('group-deleted')
-    } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err
+      } else {
+        throw err
+      }
     } finally {
       isDeleting.value = false
     }
@@ -44,8 +43,7 @@ async function deleteUnitGroup() {
 }
 
 function close() {
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
+  error.value = undefined
 }
 </script>
 
@@ -68,14 +66,14 @@ function close() {
       })
     }}
     <NeInlineNotification
-      v-if="error.notificationDescription"
+      v-if="error"
       kind="error"
       :title="t('error.cannot_delete_unit_group')"
-      :description="error.notificationDescription"
+      :description="t(getAxiosErrorMessage(error))"
       class="my-2"
     >
-      <template v-if="error.notificationDetails" #details>
-        {{ error.notificationDetails }}
+      <template #details>
+        {{ error.toString() }}
       </template>
     </NeInlineNotification>
   </NeModal>

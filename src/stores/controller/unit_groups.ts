@@ -47,33 +47,28 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
   }
 
   const getUnitGroup = async (groupId: number) => {
-    try {
-      const res = await axios.get(`${getControllerApiEndpoint()}/unit_groups/${groupId}`, {
+    const res = await axios.get<{ unit_group: UnitGroup }>(
+      `${getControllerApiEndpoint()}/unit_groups/${groupId}`,
+      {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`
         }
-      })
-      return res.data.unit_group as UnitGroup
-    } catch (err: any) {
-      throw err
-    }
+      }
+    )
+    return res.data.unit_group
   }
 
   const addUnitGroup = async (name: string, description: string, units: string[]) => {
-    try {
-      const res = await axios.post(
-        `${getControllerApiEndpoint()}/unit_groups`,
-        { name, description, units },
-        {
-          headers: {
-            Authorization: `Bearer ${controllerLoginStore.token}`
-          }
+    const res = await axios.post<{ id: number }>(
+      `${getControllerApiEndpoint()}/unit_groups`,
+      { name, description, units },
+      {
+        headers: {
+          Authorization: `Bearer ${controllerLoginStore.token}`
         }
-      )
-      return res.data.id as number
-    } catch (err: any) {
-      throw err
-    }
+      }
+    )
+    return res.data.id
   }
 
   const updateUnitGroup = async (
@@ -82,31 +77,23 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
     description: string,
     units: string[]
   ) => {
-    try {
-      await axios.put(
-        `${getControllerApiEndpoint()}/unit_groups/${groupId}`,
-        { name, description, units },
-        {
-          headers: {
-            Authorization: `Bearer ${controllerLoginStore.token}`
-          }
-        }
-      )
-    } catch (err: any) {
-      throw err
-    }
-  }
-
-  const deleteUnitGroup = async (groupId: number) => {
-    try {
-      await axios.delete(`${getControllerApiEndpoint()}/unit_groups/${groupId}`, {
+    await axios.put(
+      `${getControllerApiEndpoint()}/unit_groups/${groupId}`,
+      { name, description, units },
+      {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`
         }
-      })
-    } catch (err: any) {
-      throw err
-    }
+      }
+    )
+  }
+
+  const deleteUnitGroup = async (groupId: number) => {
+    await axios.delete(`${getControllerApiEndpoint()}/unit_groups/${groupId}`, {
+      headers: {
+        Authorization: `Bearer ${controllerLoginStore.token}`
+      }
+    })
   }
 
   return {

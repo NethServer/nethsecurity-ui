@@ -22,7 +22,9 @@ import { useNotificationsStore } from '@/stores/notifications'
 
 // Import or define the UnitGroup type
 import type { UnitGroup } from '@/stores/controller/unit_groups'
-import { useUnitsStore } from '@/stores/controller/units'
+import { type Unit, useUnitsStore } from '@/stores/controller/units'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleInfo, faCirclePlus, faServer } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const unitGroupsStore = useUnitGroupsStore()
@@ -32,27 +34,22 @@ const notificationsStore = useNotificationsStore()
 const textFilter = ref('')
 const showDeleteModal = ref(false)
 const showDrawer = ref(false)
-const selectedGroup = ref<any>(null)
+const selectedGroup = ref<UnitGroup>()
 
-const allUnits = computed(
-  () =>
-    unitsStore.units.map((unit: any) => ({
-      id: unit.id,
-      label: unit.info?.unit_name || unit.id,
-      description: unit.info?.unit_name ? unit.id : ''
-    })) as Array<NeComboboxOption>
+const allUnits = computed<NeComboboxOption[]>(() =>
+  unitsStore.units.map((unit: Unit) => ({
+    id: unit.id,
+    label: unit.info?.unit_name || unit.id,
+    description: unit.info?.unit_name ? unit.id : ''
+  }))
 )
 const unitNameMap = computed(() => {
   const map: Record<string, string> = {}
-  if (!Array.isArray(unitsStore.units)) {
-    return map
-  }
   unitsStore.units.forEach((unit) => {
     map[unit.id] = unit.info?.unit_name || unit.id
   })
   return map
 })
-const loading = computed(() => unitGroupsStore.unitGroupsLoading)
 
 async function loadData() {
   await unitGroupsStore.loadUnitGroups()
@@ -68,7 +65,7 @@ onMounted(() => {
 function searchStringInGroup(group: UnitGroup, queryText: string) {
   const regex = /[^a-zA-Z0-9-]/g
   queryText = queryText.replace(regex, '')
-  let found = false
+  let found: boolean
 
   // search in group name
   found = new RegExp(queryText, 'i').test(group.name?.replace(regex, ''))
@@ -84,12 +81,10 @@ function searchStringInGroup(group: UnitGroup, queryText: string) {
   }
 
   // search in each unit's name or id
-  if (Array.isArray(group.units)) {
-    for (const unit of group.units) {
-      // Try to match by unit id
-      if (unit && new RegExp(queryText, 'i').test(unit.replace(regex, ''))) {
-        return true
-      }
+  for (const unit of group.units) {
+    // Try to match by unit id
+    if (unit && new RegExp(queryText, 'i').test(unit.replace(regex, ''))) {
+      return true
     }
   }
   return false
@@ -107,7 +102,7 @@ const filteredGroups = computed(() => {
   }
 })
 
-function openDeleteModal(group: any) {
+function openDeleteModal(group: UnitGroup) {
   selectedGroup.value = group
   showDeleteModal.value = true
 }
@@ -119,12 +114,12 @@ function openEditDrawer(group: UnitGroup) {
 
 function openAddDrawer() {
   showDrawer.value = true
-  selectedGroup.value = null
+  selectedGroup.value = undefined
 }
 
 function closeDrawer() {
   showDrawer.value = false
-  selectedGroup.value = null
+  selectedGroup.value = undefined
 }
 </script>
 
@@ -147,16 +142,23 @@ function closeDrawer() {
         <NeTextInput
           v-model.trim="textFilter"
           :placeholder="t('controller.unit_groups.filter_groups')"
-          :disabled="loading"
+          :disabled="unitGroupsStore.unitGroupsLoading"
           class="max-w-xs"
         />
-        <NeButton kind="tertiary" :disabled="loading || !textFilter" @click="textFilter = ''">
+        <NeButton
+          kind="tertiary"
+          :disabled="unitGroupsStore.unitGroupsLoading || !textFilter"
+          @click="textFilter = ''"
+        >
           {{ t('common.clear_filter') }}
         </NeButton>
       </div>
       <div>
         <!-- buttons -->
-        <div v-if="!loading" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
+        <div
+          v-if="!unitGroupsStore.unitGroupsLoading"
+          class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row"
+        >
           <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
           <NeButton
             kind="tertiary"
@@ -166,7 +168,7 @@ function closeDrawer() {
             @click="openAddDrawer()"
           >
             <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
             </template>
             {{ t('controller.unit_groups.add_group') }}
           </NeButton>
@@ -175,7 +177,7 @@ function closeDrawer() {
     </div>
     <div>
       <!-- skeleton -->
-      <template v-if="loading">
+      <template v-if="unitGroupsStore.unitGroupsLoading">
         <NeSkeleton :lines="7" size="lg" />
       </template>
       <template v-else>
@@ -183,12 +185,12 @@ function closeDrawer() {
         <template v-if="isEmpty(unitGroupsStore.unitGroups)">
           <NeEmptyState
             :title="t('controller.unit_groups.no_groups_configured')"
-            :icon="['fas', 'server']"
+            :icon="faServer"
             class="mt-4"
           >
             <NeButton kind="primary" size="lg" @click="openAddDrawer()">
               <template #prefix>
-                <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
               </template>
               {{ t('controller.unit_groups.add_group') }}
             </NeButton>
@@ -199,7 +201,7 @@ function closeDrawer() {
           <NeEmptyState
             :title="t('controller.unit_groups.no_groups_found')"
             :description="t('common.try_changing_search_filter')"
-            :icon="['fas', 'circle-info']"
+            :icon="faCircleInfo"
             class="mt-4"
           >
             <NeButton kind="tertiary" @click="textFilter = ''">

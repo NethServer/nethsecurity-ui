@@ -67,15 +67,11 @@ async function resetForm() {
     username.value = props.itemToEdit.username
     displayName.value = props.itemToEdit.display_name
     isAdmin.value = props.itemToEdit.admin
-    if (Array.isArray(props.itemToEdit.unit_groups) && props.itemToEdit.unit_groups.length > 0) {
-      unitGroups.value = props.itemToEdit.unit_groups.map((group: string) => ({
-        id: group,
-        label: group,
-        description: ''
-      })) as NeComboboxOption[]
-    } else {
-      unitGroups.value = []
-    }
+    unitGroups.value = props.itemToEdit.unit_groups.map<NeComboboxOption>((group: string) => ({
+      id: group,
+      label: group,
+      description: ''
+    }))
   } else {
     id.value = undefined
     username.value = ''
@@ -292,8 +288,8 @@ watch(
       </NeToggle>
       <NeCombobox
         v-if="!isAdmin"
-        :label="t('controller.users.unit_groups')"
         v-model="unitGroups"
+        :label="t('controller.users.unit_groups')"
         :options="unitGroupsOptions"
         :placeholder="t('ne_combobox.choose_or_enter')"
         :no-results-label="t('ne_combobox.no_results')"
@@ -308,8 +304,7 @@ watch(
         <template #tooltip>
           <NeTooltip>
             <template #content>
-              <i18n-t keypath="controller.users.unit_groups_tooltip" tag="span" scope="global">
-              </i18n-t>
+              <span>{{ t('controller.users.unit_groups_tooltip') }}</span>
             </template>
           </NeTooltip>
         </template>

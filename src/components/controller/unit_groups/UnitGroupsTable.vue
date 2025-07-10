@@ -31,8 +31,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'edit-group', selectedGroup: UnitGroup): void
-  (e: 'group-deleted'): void
+  'edit-group': [selectedGroup: UnitGroup]
+  'group-deleted': []
 }>()
 
 const { t } = useI18n()

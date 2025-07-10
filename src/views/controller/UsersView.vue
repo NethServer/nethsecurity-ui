@@ -7,12 +7,12 @@
 import { type ControllerAccount, useAccountsStore } from '@/stores/controller/accounts'
 import {
   NeButton,
+  type NeComboboxOption,
   NeEmptyState,
   NeHeading,
   NeInlineNotification,
   NeSkeleton,
-  NeTextInput,
-  type NeComboboxOption
+  NeTextInput
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -40,14 +40,14 @@ const filteredAccounts = computed(() =>
   )
 )
 
-const unitGroupsOptions = computed(() =>
-  Array.isArray(unitGroupsStore.unitGroups) && unitGroupsStore.unitGroups.length > 0
-    ? (unitGroupsStore.unitGroups.map((group) => ({
-        id: group.id,
-        label: group.name,
-        description: group.description || ''
-      })) as Array<NeComboboxOption>)
-    : []
+const unitGroupsOptions = computed<NeComboboxOption[]>(() =>
+  unitGroupsStore.unitGroups.map((group) => {
+    return {
+      id: group.id,
+      label: group.name,
+      description: group.description || ''
+    }
+  })
 )
 
 const unitGroupNameMap = computed(() => {

@@ -79,7 +79,7 @@ function getDropdownItems(item: ControllerAccount) {
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.username">
         <NeTableCell :data-label="t('controller.users.username')">
-          <div :class="['flex', 'flex-row', 'items-center']">
+          <div class="flex flex-row items-center">
             {{ item.username }}
             <NeTooltip v-if="item.admin" interactive>
               <template #trigger>

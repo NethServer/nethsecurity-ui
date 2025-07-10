@@ -5,12 +5,11 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
+import { NeInlineNotification, NeModal } from '@nethesis/vue-components'
 
-const props = defineProps<{
+defineProps<{
   visible: boolean
-  platformInfo: Record<string, any> | null
+  platformInfo: Record<string, string | number>
   error?: string | null
 }>()
 
@@ -25,27 +24,27 @@ function close() {
 
 <template>
   <NeModal
-    :visible="props.visible"
+    :visible="visible"
     kind="info"
     :title="t('common.shell.platform_info')"
     :primary-label="t('common.close')"
     :primary-action="close"
     :close-aria-label="t('common.close')"
-    @primary-click="close()"
-    @close="close()"
+    @close="close"
+    @primary-click="close"
   >
     <div class="d-flex flex-column align-items-center my-3">
       <NeInlineNotification
-        v-if="props.error"
+        v-if="error"
         kind="error"
         :title="t('error.generic_error')"
-        :description="props.error"
+        :description="error"
         class="my-2"
       />
-      <div v-if="props.platformInfo && !props.error" class="w-100">
+      <div v-else class="w-100">
         <table class="table-sm table">
           <tbody>
-            <tr v-for="(value, key) in props.platformInfo" :key="key">
+            <tr v-for="(value, key) in platformInfo" :key="key">
               <th class="pe-3">{{ t(`common.platform.${key}`, key) }}</th>
               <td>{{ value }}</td>
             </tr>

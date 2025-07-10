@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { MessageBag, validateRequired } from '@/lib/validation'
-import { ref, watch } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   NeInlineNotification,
@@ -47,11 +47,10 @@ const description = ref('')
 const units = ref<NeComboboxOption[]>([])
 
 // input refs
-const nameRef = ref()
-const descriptionRef = ref()
+const nameRef = useTemplateRef('name')
 
 async function resetForm() {
-  if (props.itemToEdit) {
+  if (props.itemToEdit != undefined) {
     id.value = props.itemToEdit.id
     name.value = props.itemToEdit.name
     description.value = props.itemToEdit.description
@@ -82,25 +81,18 @@ function close() {
 
 function validate() {
   validationErrorBag.value.clear()
-  let valid = true
 
   const nameValidator = validateRequired(name.value)
   if (!nameValidator.valid) {
     validationErrorBag.value.set('name', [nameValidator.errMessage as string])
-    if (valid) {
-      focusElement(nameRef)
-      valid = false
-    }
+    focusElement(nameRef)
   }
 
   if (units.value.length === 0) {
     validationErrorBag.value.set('units', ['error.required'])
-    if (valid) {
-      valid = false
-    }
   }
 
-  return valid
+  return validationErrorBag.value.size < 1
 }
 
 async function createOrEditUnitGroup() {
@@ -113,7 +105,7 @@ async function createOrEditUnitGroup() {
     isSavingChanges.value = true
 
     if (validate()) {
-      if (!id.value) {
+      if (id.value == undefined) {
         await unitGroupsStore.addUnitGroup(
           name.value,
           description.value,
@@ -135,9 +127,10 @@ async function createOrEditUnitGroup() {
     if (err instanceof ValidationError) {
       validationErrorBag.value = err.errorBag
     } else {
-      error.value.notificationTitle = id.value
-        ? t('error.cannot_edit_unit_group')
-        : t('error.cannot_create_unit_group')
+      error.value.notificationTitle =
+        id.value != undefined
+          ? t('error.cannot_edit_unit_group')
+          : t('error.cannot_create_unit_group')
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()
     }
@@ -176,13 +169,12 @@ watch(
     </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
-        ref="nameRef"
+        ref="name"
         v-model="name"
         :label="t('controller.unit_groups.name')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
       />
       <NeTextInput
-        ref="descriptionRef"
         v-model="description"
         :label="t('controller.unit_groups.description')"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('description'))"
@@ -190,8 +182,8 @@ watch(
       />
       <div>
         <NeCombobox
-          :label="t('controller.unit_groups.units')"
           v-model="units"
+          :label="t('controller.unit_groups.units')"
           :options="allUnits"
           :placeholder="t('ne_combobox.choose_or_enter')"
           :no-results-label="t('ne_combobox.no_results')"

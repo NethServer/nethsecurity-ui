@@ -422,9 +422,10 @@ function showRemoveUnitModal(unit: Unit) {
           </NeTableCell>
           <NeTableCell>
             <span class="truncate">
-              {{
-                item.groups.length > 0 ? item.groups.map((group: string) => group).join(', ') : '-'
-              }}
+              <template v-if="item.groups == undefined || item.groups.length < 1"> - </template>
+              <template v-else>
+                {{ item.groups.map((group: string) => group).join(', ') }}
+              </template>
             </span>
           </NeTableCell>
           <!-- status -->

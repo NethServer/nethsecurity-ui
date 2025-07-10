@@ -189,8 +189,8 @@ watch(
         :optional="true"
       />
       <div>
-        <label class="mb-2 block font-medium">{{ t('controller.unit_groups.units') }}</label>
         <NeCombobox
+          :label="t('controller.unit_groups.units')"
           v-model="units"
           :options="allUnits"
           :placeholder="t('ne_combobox.choose_or_enter')"

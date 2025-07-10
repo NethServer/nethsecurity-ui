@@ -159,7 +159,6 @@ function closeDrawer() {
           v-if="!unitGroupsStore.unitGroupsLoading"
           class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row"
         >
-          <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
           <NeButton
             kind="secondary"
             size="lg"

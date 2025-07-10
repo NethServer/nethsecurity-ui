@@ -161,7 +161,7 @@ function closeDrawer() {
         >
           <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
           <NeButton
-            kind="tertiary"
+            kind="secondary"
             size="lg"
             :disabled="showDrawer"
             class="shrink-0"

@@ -91,7 +91,7 @@ async function openPlatformInfoModal() {
     })
     platformInfo.value = data.data
   } catch (err: any) {
-    platformInfoError.value = err?.message || t('error.generic')
+    platformInfoError.value = err?.message || t('error.generic_error')
   } finally {
     showPlatformInfoModal.value = true
   }
@@ -216,7 +216,6 @@ function openNotificationsDrawer() {
           :platform-info="platformInfo"
           :error="platformInfoError"
           @close="showPlatformInfoModal = false"
-          v-if="showPlatformInfoModal"
         />
       </div>
     </div>

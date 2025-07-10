@@ -38,7 +38,7 @@ function close() {
       <NeInlineNotification
         v-if="props.error"
         kind="error"
-        :title="t('error.generic')"
+        :title="t('error.generic_error')"
         :description="props.error"
         class="my-2"
       />

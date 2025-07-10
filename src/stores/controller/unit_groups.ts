@@ -3,8 +3,6 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { getAxiosErrorMessage } from '@nethesis/vue-components'
 
 export type UnitGroup = {
   id: number
@@ -17,7 +15,6 @@ export type UnitGroup = {
 }
 
 export const useUnitGroupsStore = defineStore('unitGroups', () => {
-  const { t } = useI18n()
   const unitGroups = ref<UnitGroup[]>([])
   const unitGroupsLoading = ref(false)
 
@@ -32,7 +29,6 @@ export const useUnitGroupsStore = defineStore('unitGroups', () => {
         }
       })
       unitGroups.value = res.data.data as UnitGroup[]
-    } catch (err: any) {
     } finally {
       unitGroupsLoading.value = false
     }

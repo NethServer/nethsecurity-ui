@@ -4,22 +4,64 @@
 -->
 
 <script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeInlineNotification, NeModal } from '@nethesis/vue-components'
+import { NeInlineNotification, NeModal, NeSkeleton } from '@nethesis/vue-components'
+import { getControllerApiEndpoint } from '@/lib/config'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
+import axios from 'axios'
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
-  platformInfo: Record<string, string | number>
-  error?: string | null
 }>()
 
 const emit = defineEmits(['close'])
+const platformInfo = ref<Record<string, string | number>>({})
+const platformInfoError = ref<string | null>(null)
+const isLoading = ref(false)
+const loginStore = useLoginStore()
 
 const { t } = useI18n()
 
 function close() {
   emit('close')
 }
+
+async function loadPlatformInfo() {
+  try {
+    isLoading.value = true
+    platformInfoError.value = null
+
+    const { data } = await axios.get(`${getControllerApiEndpoint()}/platform`, {
+      headers: {
+        Authorization: `Bearer ${loginStore.token}`
+      }
+    })
+    platformInfo.value = data.data
+  } catch (err: any) {
+    platformInfoError.value = err?.message || t('error.generic_error')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Watch the visible prop and load platform info when it becomes true
+watch(
+  () => props.visible,
+  (isVisible) => {
+    if (isVisible) {
+      loadPlatformInfo()
+    }
+  },
+  { immediate: true }
+)
+
+// Also load on component mount as a fallback
+onMounted(() => {
+  if (props.visible) {
+    loadPlatformInfo()
+  }
+})
 </script>
 
 <template>
@@ -34,11 +76,14 @@ function close() {
     @primary-click="close"
   >
     <div class="d-flex flex-column align-items-center my-3">
+      <div v-if="isLoading" class="w-100">
+        <NeSkeleton v-if="isLoading" :lines="4" />
+      </div>
       <NeInlineNotification
-        v-if="error"
+        v-else-if="platformInfoError"
         kind="error"
         :title="t('error.generic_error')"
-        :description="error"
+        :description="platformInfoError"
         class="my-2"
       />
       <div v-else class="w-100">

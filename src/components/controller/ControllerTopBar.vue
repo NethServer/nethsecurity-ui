@@ -20,8 +20,6 @@ import {
   faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
 import PlatformInfoModal from './PlatformInfoModal.vue'
-import { getControllerApiEndpoint } from '@/lib/config'
-import axios from 'axios'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -33,9 +31,7 @@ const shakeNotificationsIcon = ref(false)
 const topBarButtonsColorClasses =
   'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
 
-const platformInfo = ref<Record<string, string | number>>({})
 const showPlatformInfoModal = ref(false)
-const platformInfoError = ref<string | null>(null)
 
 const accountMenuOptions = computed(() => {
   return [
@@ -83,18 +79,7 @@ watch(
 )
 
 async function openPlatformInfoModal() {
-  try {
-    const { data } = await axios.get(`${getControllerApiEndpoint()}/platform`, {
-      headers: {
-        Authorization: `Bearer ${loginStore.token}`
-      }
-    })
-    platformInfo.value = data.data
-  } catch (err: any) {
-    platformInfoError.value = err?.message || t('error.generic_error')
-  } finally {
-    showPlatformInfoModal.value = true
-  }
+  showPlatformInfoModal.value = true
 }
 
 function openNotificationsDrawer() {
@@ -213,8 +198,6 @@ function openNotificationsDrawer() {
         <!-- PlatformInfoModal -->
         <PlatformInfoModal
           :visible="showPlatformInfoModal"
-          :platform-info="platformInfo"
-          :error="platformInfoError"
           @close="showPlatformInfoModal = false"
         />
       </div>

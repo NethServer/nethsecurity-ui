@@ -2652,7 +2652,8 @@
       "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again.",
       "updating_image": "Update in progress",
       "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed.",
-      "groups": "Groups"
+      "groups": "Groups",
+      "description": "Description"
     },
     "unit_groups": {
       "title": "Unit groups",

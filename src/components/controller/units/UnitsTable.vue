@@ -295,6 +295,9 @@ function showRemoveUnitModal(unit: Unit) {
           {{ t('controller.units.unit_name') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
+          {{ t('controller.units.description') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
           {{ t('controller.units.groups') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
@@ -419,6 +422,9 @@ function showRemoveUnitModal(unit: Unit) {
                 </NeTooltip>
               </div>
             </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('controller.units.description')">
+            <span class="truncate">{{ item.info.description || '-' }}</span>
           </NeTableCell>
           <NeTableCell>
             <span class="truncate">

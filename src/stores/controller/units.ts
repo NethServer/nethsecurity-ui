@@ -36,6 +36,7 @@ interface UnitInfo {
   api_version: string
   version_update: string
   scheduled_update: number
+  description?: string
 }
 
 interface UnitVpnData {

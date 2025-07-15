@@ -41,6 +41,7 @@ type ControllerRegistrationStatus = {
   tls_verify: boolean
   push_status: 'enabled' | 'disabled'
   push_last_sent: number
+  description?: string
 }
 
 const { t } = useI18n()
@@ -68,6 +69,7 @@ const showConnectUnitModal = ref(false)
 // form fields
 const unitId = ref('')
 const unitName = ref('')
+const unitDescription = ref('')
 const controllerUrl = ref('')
 const controllerJoinCode = ref('')
 const verifyTlsCertificate = ref(false)
@@ -105,6 +107,7 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
     vpnIpAddress.value = registrationStatus.address ?? ''
     push_status.value = registrationStatus.push_status ?? 'disabled'
     push_last_sent.value = registrationStatus.push_last_sent ?? -1
+    unitDescription.value = registrationStatus.description ?? ''
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_fetch_controller_registration_status')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -187,7 +190,8 @@ async function connectUnit() {
     await ubusCall('ns.plug', 'register', {
       join_code: controllerJoinCode.value,
       tls_verify: verifyTlsCertificate.value,
-      unit_name: unitName.value
+      unit_name: unitName.value,
+      description: unitDescription.value
     })
     restartRegistrationStatusFetchInterval()
   } catch (err: any) {
@@ -284,13 +288,29 @@ function promptConnectUnit() {
           :invalid-message="t(errorBag.getFirstI18nKeyFor('unit_name'))"
         >
           <template #tooltip>
-            <NeTooltip v-if="status === 'unregistered'">
+            <NeTooltip>
               <template #content>
                 {{ t('standalone.controller.unit_name_tooltip') }}
               </template>
             </NeTooltip>
           </template>
         </NeTextInput>
+        <NeTextArea
+          ref="unitDescriptionRef"
+          :rows="2"
+          :optional="true"
+          v-model="unitDescription"
+          :disabled="status !== 'unregistered'"
+          :label="t('standalone.controller.unit_description')"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.controller.unit_description_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextArea>
         <NeTextArea
           v-if="status === 'unregistered'"
           ref="controllerJoinCodeRef"

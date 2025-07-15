@@ -960,7 +960,9 @@
       "sending_data_to_controller_tooltip": "Complete monitoring available on Grafana with NethSecurity {subscription_link}",
       "sending_data_to_controller_tooltip_link": "subscription",
       "last_sent": "Last sent: {date}",
-      "no_last_sent": "Data is being prepared for transmission"
+      "no_last_sent": "Data is being prepared for transmission",
+      "unit_description": "Description",
+      "unit_description_tooltip": "Insert a descriptive text to easily find the unit within the controller. To change it: disconnect the unit, edit the description and then reconnect the unit. It requires controller version 2.0.0 or later."
     },
     "network": {
       "title": "Network"

@@ -60,7 +60,9 @@
     "confirm": "Confirm",
     "ip_address": "IP address",
     "password_confirmation_required": "Password confirmation required",
-    "password_confirmation_required_description": "Please confirm your password to proceed"
+    "password_confirmation_required_description": "Please confirm your password to proceed",
+    "automated": "Automated",
+    "automated_tooltip": "This entry is managed by the system and cannot be modified."
   },
   "error": {
     "generic_error": "Something went wrong",

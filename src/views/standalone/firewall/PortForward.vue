@@ -42,6 +42,7 @@ export type PortForward = {
   reflection: boolean
   reflection_zone: string[]
   dest: string
+  ns_tag: string[]
 }
 
 export type CreateEditPortForwardPayload = {

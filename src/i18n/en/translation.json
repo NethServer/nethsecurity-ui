@@ -2659,7 +2659,7 @@
     },
     "unit_groups": {
       "title": "Unit groups",
-      "page_description": "Unit groups allow you to group units together for easier management. You can create a unit group and add one or more units to it. Once a unit is added to a group, you can perform actions on the entire group instead of individual units. If a unit group is assigned to a user account, the user will be able to manage only the units in that group.",
+      "page_description": "Unit groups allow you to group units together for easier management. You can create a unit group and add one or more units to it. Once a group is assigned to a user account, the user will be able to manage only the units in that group.",
       "add_group": "Add unit group",
       "edit_group": "Edit unit group",
       "no_groups_configured": "No unit groups configured",

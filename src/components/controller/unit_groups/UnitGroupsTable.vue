@@ -113,21 +113,21 @@ function closeDeleteModal() {
                       </span>
                     </div>
                     <!-- created -->
-                    <div v-if="item.created">
+                    <div v-if="item.created_at">
                       <span class="mr-2 inline-block font-semibold">
                         {{ t('controller.unit_groups.created') }}:
                       </span>
                       <span class="text-gray-300 dark:text-gray-600">
-                        {{ formatDateLoc(new Date(item.created), 'PPpp') || '-' }}
+                        {{ formatDateLoc(new Date(item.created_at), 'PPpp') || '-' }}
                       </span>
                     </div>
                     <!-- updated -->
-                    <div v-if="item.updated">
+                    <div v-if="item.updated_at">
                       <span class="mr-2 inline-block font-semibold">
                         {{ t('controller.unit_groups.updated') }}:
                       </span>
                       <span class="text-gray-300 dark:text-gray-600">
-                        {{ formatDateLoc(new Date(item.updated), 'PPpp') || '-' }}
+                        {{ formatDateLoc(new Date(item.updated_at), 'PPpp') || '-' }}
                       </span>
                     </div>
                   </div>

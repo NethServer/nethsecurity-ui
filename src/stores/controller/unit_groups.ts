@@ -9,8 +9,8 @@ export type UnitGroup = {
   name: string
   description: string
   units: string[]
-  created: string
-  updated: string
+  created_at: string
+  updated_at: string
   used_by: string[]
 }
 

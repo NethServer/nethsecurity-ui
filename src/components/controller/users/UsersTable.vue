@@ -14,6 +14,7 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
+  NeTooltip,
   useItemPagination
 } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
@@ -21,10 +22,11 @@ import { type ControllerAccount } from '@/stores/controller/accounts'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faTrash, faCrown } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   users: ControllerAccount[]
+  unitGroupsNameMap?: Record<string, string>
 }>()
 
 const emit = defineEmits<{
@@ -65,6 +67,9 @@ function getDropdownItems(item: ControllerAccount) {
         {{ t('controller.users.display_name') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
+        {{ t('controller.users.unit_groups') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>
         {{ t('controller.users.two_fa_status') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
@@ -74,10 +79,43 @@ function getDropdownItems(item: ControllerAccount) {
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.username">
         <NeTableCell :data-label="t('controller.users.username')">
-          {{ item.username }}
+          <div class="flex flex-row items-center">
+            {{ item.username }}
+            <NeTooltip v-if="item.admin" interactive>
+              <template #trigger>
+                <FontAwesomeIcon
+                  v-if="item.admin"
+                  :icon="faCrown"
+                  class="ml-2 text-indigo-700 dark:text-indigo-500"
+                  aria-hidden="true"
+                />
+              </template>
+              <template #content>
+                <p class="text-center">
+                  {{ t('standalone.users_database.administrator_table_tooltip') }}
+                </p>
+              </template>
+            </NeTooltip>
+          </div>
         </NeTableCell>
         <NeTableCell :data-label="t('controller.users.display_name')">
           {{ item.display_name }}
+        </NeTableCell>
+        <NeTableCell :data-label="t('controller.users.unit_groups')">
+          <span class="truncate">
+            <template v-if="item.unit_groups && item.unit_groups.length">
+              {{
+                item.unit_groups
+                  .slice(0, 3)
+                  .map((group: string) => props.unitGroupsNameMap?.[group] || group)
+                  .join(', ')
+              }}
+              <template v-if="item.unit_groups.length > 3">
+                {{ t('common.plus_num_others', { num: item.unit_groups.length - 3 }) }}
+              </template>
+            </template>
+            <template v-else> - </template>
+          </span>
         </NeTableCell>
         <NeTableCell :data-label="t('controller.users.two_fa_status')">
           <span class="flex items-center gap-2">

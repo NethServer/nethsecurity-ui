@@ -13,6 +13,8 @@ export type ControllerAccount = {
   display_name: string
   created: string
   two_fa: boolean
+  admin: boolean
+  unit_groups: string[]
 }
 
 /*
@@ -80,10 +82,16 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
 
-  const addAccount = async (username: string, password: string, displayName: string) => {
+  const addAccount = async (
+    username: string,
+    password: string,
+    displayName: string,
+    admin: boolean,
+    unitGroups: string[]
+  ) => {
     await axios.post(
       `${getControllerApiEndpoint()}/accounts`,
-      { username, password, display_name: displayName },
+      { username, password, display_name: displayName, admin, unit_groups: unitGroups },
       {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`
@@ -96,11 +104,13 @@ export const useAccountsStore = defineStore('accounts', () => {
     accountId: number,
     username: string,
     password: string,
-    displayName: string
+    displayName: string,
+    admin: boolean,
+    unitGroups: string[]
   ) => {
     await axios.put(
       `${getControllerApiEndpoint()}/accounts/${accountId}`,
-      { username, password, display_name: displayName },
+      { username, password, display_name: displayName, admin, unit_groups: unitGroups },
       {
         headers: {
           Authorization: `Bearer ${controllerLoginStore.token}`

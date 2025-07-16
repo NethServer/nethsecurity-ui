@@ -100,11 +100,13 @@ import {
   faServer as falServer,
   faShieldHalved as falShieldHalved,
   faUserGroup as falUserGroup,
-  faGear as falGear
+  faGear as falGear,
+  faUnitGroups as falUnitGroups
 } from '@nethesis/nethesis-light-svg-icons'
 import {
   faBlockBrickFire as fasBlockBrickFire,
-  faTrafficCone as fasTrafficCone
+  faTrafficCone as fasTrafficCone,
+  faUnitGroups as fasUnitGroups
 } from '@nethesis/nethesis-solid-svg-icons'
 import {
   faAmazon,
@@ -240,4 +242,6 @@ export async function loadFontAwesome(app: any) {
   library.add(fasTerminal)
   library.add(faTable)
   library.add(fasCrown)
+  library.add(fasUnitGroups)
+  library.add(falUnitGroups)
 }

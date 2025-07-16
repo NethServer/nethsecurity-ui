@@ -7,6 +7,7 @@
 import { type ControllerAccount, useAccountsStore } from '@/stores/controller/accounts'
 import {
   NeButton,
+  type NeComboboxOption,
   NeEmptyState,
   NeHeading,
   NeInlineNotification,
@@ -19,9 +20,11 @@ import UsersTable from '@/components/controller/users/UsersTable.vue'
 import CreateOrEditUserDrawer from '@/components/controller/users/CreateOrEditUserDrawer.vue'
 import DeleteUserModal from '@/components/controller/users/DeleteUserModal.vue'
 import { useNotificationsStore } from '@/stores/notifications'
+import { useUnitGroupsStore } from '@/stores/controller/unit_groups'
 
 const accountsStore = useAccountsStore()
 const notificationsStore = useNotificationsStore()
+const unitGroupsStore = useUnitGroupsStore()
 
 const { t } = useI18n()
 
@@ -37,6 +40,27 @@ const filteredAccounts = computed(() =>
   )
 )
 
+const unitGroupsOptions = computed<NeComboboxOption[]>(() =>
+  unitGroupsStore.unitGroups.map((group): NeComboboxOption => {
+    return {
+      id: String(group.id),
+      label: group.name,
+      description: group.description || ''
+    }
+  })
+)
+
+const unitGroupNameMap = computed(() => {
+  const map: Record<string, string> = {}
+  if (!Array.isArray(unitGroupsStore.unitGroups)) {
+    return map
+  }
+  unitGroupsStore.unitGroups.forEach((group) => {
+    map[group.id] = group.name
+  })
+  return map
+})
+
 function openCreateEditDrawer(itemToEdit?: ControllerAccount) {
   selectedItem.value = itemToEdit
   showCreateEditDrawer.value = true
@@ -49,6 +73,7 @@ function openDeleteModal(itemToEdit?: ControllerAccount) {
 
 onMounted(() => {
   accountsStore.loadAccounts()
+  unitGroupsStore.loadUnitGroups()
 })
 </script>
 
@@ -72,7 +97,17 @@ onMounted(() => {
         </NeButton>
       </div>
     </div>
-    <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+    <!-- text filter -->
+    <div class="flex items-center gap-4">
+      <NeTextInput v-model="filter" class="max-w-xs" :placeholder="t('common.filter')" />
+      <NeButton
+        kind="tertiary"
+        :disabled="accountsStore.listAccountsLoading || !filter"
+        @click="filter = ''"
+      >
+        {{ t('common.clear_filter') }}
+      </NeButton>
+    </div>
     <NeInlineNotification
       v-if="accountsStore.listAccountsError.notificationDescription"
       kind="error"
@@ -89,7 +124,8 @@ onMounted(() => {
         v-if="accountsStore.accounts.length == 0"
         :title="t('controller.users.no_users_found')"
         :icon="['fas', 'user-group']"
-        ><NeButton kind="primary" @click="openCreateEditDrawer()"
+      >
+        <NeButton kind="primary" @click="openCreateEditDrawer()"
           ><template #prefix>
             <font-awesome-icon
               :icon="['fas', 'circle-plus']"
@@ -97,8 +133,8 @@ onMounted(() => {
               aria-hidden="true"
             /> </template
           >{{ t('controller.users.add_user') }}</NeButton
-        ></NeEmptyState
-      >
+        >
+      </NeEmptyState>
       <NeEmptyState
         v-else-if="filteredAccounts.length == 0"
         :title="t('controller.users.no_users_found')"
@@ -107,6 +143,7 @@ onMounted(() => {
       <UsersTable
         v-else
         :users="filteredAccounts"
+        :unit-groups-name-map="unitGroupNameMap"
         @edit="openCreateEditDrawer"
         @delete="openDeleteModal"
       />
@@ -115,6 +152,7 @@ onMounted(() => {
   <CreateOrEditUserDrawer
     :is-shown="showCreateEditDrawer"
     :item-to-edit="selectedItem"
+    :unit-groups-options="unitGroupsOptions"
     @add-user="
       () => {
         accountsStore.loadAccounts()

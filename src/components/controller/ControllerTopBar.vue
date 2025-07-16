@@ -12,7 +12,14 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
-import { faCircleUser, faMoon, faRightFromBracket, faSun } from '@fortawesome/free-solid-svg-icons'
+import {
+  faGear,
+  faMoon,
+  faArrowRightFromBracket,
+  faSun,
+  faInfoCircle
+} from '@fortawesome/free-solid-svg-icons'
+import PlatformInfoModal from './PlatformInfoModal.vue'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -24,12 +31,14 @@ const shakeNotificationsIcon = ref(false)
 const topBarButtonsColorClasses =
   'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
 
+const showPlatformInfoModal = ref(false)
+
 const accountMenuOptions = computed(() => {
   return [
     {
       id: 'account',
       label: t('common.shell.account_settings'),
-      icon: faCircleUser,
+      icon: faGear,
       action: () => router.push(`${getControllerRoutePrefix()}/account`)
     },
     {
@@ -39,9 +48,15 @@ const accountMenuOptions = computed(() => {
       action: themeStore.toggleTheme
     },
     {
+      id: 'about',
+      label: t('common.shell.about'),
+      icon: faInfoCircle,
+      action: openPlatformInfoModal
+    },
+    {
       id: 'logout',
       label: t('common.shell.sign_out'),
-      icon: faRightFromBracket,
+      icon: faArrowRightFromBracket,
       action: loginStore.logout
     }
   ]
@@ -62,6 +77,10 @@ watch(
     }
   }
 )
+
+async function openPlatformInfoModal() {
+  showPlatformInfoModal.value = true
+}
 
 function openNotificationsDrawer() {
   notificationsStore.setNotificationDrawerOpen(true)
@@ -104,7 +123,7 @@ function openNotificationsDrawer() {
         <NeTooltip trigger-event="mouseenter focus" placement="bottom">
           <template #trigger>
             <a
-              href="https://docs.nethsecurity.org/"
+              href="https://docs.nethsecurity.org/en/latest/controller.html"
               target="_blank"
               rel="noreferrer"
               :class="['-m-2.5 flex items-center gap-3 p-2.5', topBarButtonsColorClasses]"
@@ -156,7 +175,7 @@ function openNotificationsDrawer() {
                 <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
                   <div class="flex items-center gap-2">
                     <font-awesome-icon
-                      :icon="['fas', 'circle-user']"
+                      :icon="loginStore.isAdmin ? ['fas', 'crown'] : ['fas', 'circle-user']"
                       class="h-6 w-6 shrink-0"
                       aria-hidden="true"
                     />
@@ -175,6 +194,12 @@ function openNotificationsDrawer() {
             {{ t('common.shell.account') }}
           </template>
         </NeTooltip>
+
+        <!-- PlatformInfoModal -->
+        <PlatformInfoModal
+          :visible="showPlatformInfoModal"
+          @close="showPlatformInfoModal = false"
+        />
       </div>
     </div>
   </div>

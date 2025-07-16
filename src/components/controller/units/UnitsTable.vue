@@ -295,6 +295,12 @@ function showRemoveUnitModal(unit: Unit) {
           {{ t('controller.units.unit_name') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
+          {{ t('controller.units.description') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
+          {{ t('controller.units.groups') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
           {{ t('controller.units.status') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
@@ -416,6 +422,17 @@ function showRemoveUnitModal(unit: Unit) {
                 </NeTooltip>
               </div>
             </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('controller.units.description')">
+            <span class="truncate">{{ item.info.description || '-' }}</span>
+          </NeTableCell>
+          <NeTableCell>
+            <span class="truncate">
+              <template v-if="item.groups == undefined || item.groups.length < 1"> - </template>
+              <template v-else>
+                {{ item.groups.map((group: string) => group).join(', ') }}
+              </template>
+            </span>
           </NeTableCell>
           <!-- status -->
           <NeTableCell :data-label="t('controller.units.status')">

@@ -27,11 +27,15 @@ const navigation: Ref<MenuItem[]> = ref([
     to: 'units',
     icon: 'server'
   },
-  {
-    name: 'controller.account_settings.title',
-    to: 'account',
-    icon: 'gear'
-  },
+  ...(controllerLogin.isAdmin
+    ? [
+        {
+          name: 'controller.unit_groups.title',
+          to: 'unit-groups',
+          icon: 'unit-groups'
+        }
+      ]
+    : []),
   ...(controllerLogin.isAdmin
     ? [
         {
@@ -40,7 +44,12 @@ const navigation: Ref<MenuItem[]> = ref([
           icon: 'user-group'
         }
       ]
-    : [])
+    : []),
+  {
+    name: 'controller.account_settings.title',
+    to: 'account',
+    icon: 'gear'
+  }
 ])
 
 function isCurrentRoute(itemPath: string) {

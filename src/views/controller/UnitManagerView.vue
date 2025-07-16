@@ -94,6 +94,12 @@ function searchStringInUnit(unit: Unit, queryText: string) {
   if (found) {
     return true
   }
+
+  // search in unit description
+  found = new RegExp(queryText, 'i').test((unit.info?.description || '').replace(regex, ''))
+  if (found) {
+    return true
+  }
   return false
 }
 

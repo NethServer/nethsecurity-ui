@@ -14,7 +14,16 @@
       "open_user_menu": "Open user menu",
       "close_side_drawer": "Close side drawer",
       "account": "Account",
-      "controlled_unit_tooltip": "This unit has been opened by a Controller"
+      "controlled_unit_tooltip": "This unit has been opened by a Controller",
+      "about": "About",
+      "platform_info": "Controller information"
+    },
+    "platform": {
+      "controller_version": "Controller version",
+      "logs_retention_days": "Log retention days",
+      "metrics_retention_days": "Metrics retention",
+      "vpn_network": "VPN network",
+      "vpn_port": "VPN port"
     },
     "save": "Save",
     "cancel": "Cancel",
@@ -2642,7 +2651,32 @@
       "error_batch_updating_systems": "Some systems failed to update.",
       "error_batch_updating_systems_description": "Some units failed to get the update from the controller. Please check below the ones that failed and try again.",
       "updating_image": "Update in progress",
-      "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed."
+      "updating_image_description": "The unit is updating the image. The unit may be not available for a few minutes while the update is being installed.",
+      "groups": "Groups",
+      "description": "Description"
+    },
+    "unit_groups": {
+      "title": "Unit groups",
+      "page_description": "Unit groups allow you to group units together for easier management. You can create a unit group and add one or more units to it. Once a unit is added to a group, you can perform actions on the entire group instead of individual units. If a unit group is assigned to a user account, the user will be able to manage only the units in that group.",
+      "add_group": "Add unit group",
+      "edit_group": "Edit unit group",
+      "no_groups_configured": "No unit groups configured",
+      "filter_groups": "Filter groups",
+      "name": "Name",
+      "description": "Description",
+      "units": "Units",
+      "add_unit": "Add unit",
+      "remove": "Remove",
+      "used_by": "Used by",
+      "delete": "Delete unit group",
+      "delete_confirm": "You are about to delete the unit group '{name}'. This action cannot be undone.",
+      "no_groups_found": "No unit groups found",
+      "group_edited": "Unit group updated",
+      "group_added": "Unit group added",
+      "group_deleted": "Unit group deleted",
+      "units_number": "Number of units",
+      "created": "Created",
+      "updated": "Last modified"
     },
     "unit_terminal": {
       "name_unit_terminal": "{name} unit terminal",
@@ -2692,7 +2726,7 @@
     },
     "users": {
       "title": "Users",
-      "description": "The users listed on this page are granted full control over all firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator.",
+      "description": "The users listed on this page are granted control over firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator users. Users associated with a unit group can only manage the units within that group. Administrator users have unrestricted access to all units and users.",
       "no_users_found": "No users found",
       "add_user": "Add user",
       "username": "Username",
@@ -2713,7 +2747,11 @@
       "edit_user": "Edit user",
       "two_fa_status": "2FA status",
       "two_fa_enabled": "Enabled",
-      "two_fa_disabled": "Disabled"
+      "two_fa_disabled": "Disabled",
+      "admin": "Administrator user",
+      "admin_tooltip": "This user has administrator privileges and can manage all units and users.",
+      "unit_groups": "Unit groups",
+      "unit_groups_tooltip": "Select the unit groups this user can manage. If no groups are selected, the user will not be able access any unit."
     }
   },
   "notifications": {

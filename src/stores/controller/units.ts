@@ -22,6 +22,7 @@ export interface Unit {
   vpn: UnitVpnData
   info: UnitInfo
   join_code?: string
+  groups?: string[]
 }
 
 interface UnitInfo {
@@ -35,6 +36,7 @@ interface UnitInfo {
   api_version: string
   version_update: string
   scheduled_update: number
+  description?: string
 }
 
 interface UnitVpnData {

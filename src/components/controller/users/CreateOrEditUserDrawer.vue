@@ -17,14 +17,19 @@ import {
   NeButton,
   NeSideDrawer,
   NeTextInput,
+  NeToggle,
+  NeTooltip,
   getAxiosErrorMessage,
-  focusElement
+  focusElement,
+  NeCombobox,
+  type NeComboboxOption
 } from '@nethesis/vue-components'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useAccountsStore, type ControllerAccount } from '@/stores/controller/accounts'
 
 const props = defineProps<{
   isShown: boolean
+  unitGroupsOptions: Array<NeComboboxOption>
   itemToEdit?: ControllerAccount
 }>()
 
@@ -47,6 +52,8 @@ const username = ref('')
 const displayName = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const isAdmin = ref(false)
+const unitGroups = ref<NeComboboxOption[]>([])
 
 // input refs
 const usernameRef = ref()
@@ -59,10 +66,18 @@ async function resetForm() {
     id.value = props.itemToEdit.id
     username.value = props.itemToEdit.username
     displayName.value = props.itemToEdit.display_name
+    isAdmin.value = props.itemToEdit.admin
+    unitGroups.value = props.itemToEdit.unit_groups.map<NeComboboxOption>((group: string) => ({
+      id: group,
+      label: group,
+      description: ''
+    }))
   } else {
     id.value = undefined
     username.value = ''
     displayName.value = ''
+    isAdmin.value = false
+    unitGroups.value = []
   }
 
   password.value = ''
@@ -157,14 +172,22 @@ async function createOrEditUser() {
 
     if (validate()) {
       if (!id.value) {
-        await accountsStore.addAccount(username.value, password.value, displayName.value)
+        await accountsStore.addAccount(
+          username.value,
+          password.value,
+          displayName.value,
+          isAdmin.value,
+          unitGroups.value.map((group: NeComboboxOption) => group.id)
+        )
         emit('add-user')
       } else {
         await accountsStore.updateAccount(
           id.value,
           username.value,
           password.value,
-          displayName.value
+          displayName.value,
+          isAdmin.value,
+          unitGroups.value.map((group: NeComboboxOption) => group.id)
         )
         emit('edit-user')
       }
@@ -211,8 +234,8 @@ watch(
     >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
+      </template>
+    </NeInlineNotification>
     <div class="flex flex-col gap-y-6">
       <NeTextInput
         ref="usernameRef"
@@ -250,6 +273,43 @@ watch(
         :is-password="true"
         :placeholder="id ? t('controller.users.unchanged') : ''"
       />
+      <NeToggle
+        v-model="isAdmin"
+        :top-label="t('controller.users.admin')"
+        :label="isAdmin ? t('common.enabled') : t('common.disabled')"
+      >
+        <template #topTooltip>
+          <NeTooltip placement="top-start">
+            <template #content>
+              {{ t('controller.users.admin_tooltip') }}
+            </template>
+          </NeTooltip>
+        </template>
+      </NeToggle>
+      <NeCombobox
+        v-if="!isAdmin"
+        v-model="unitGroups"
+        :label="t('controller.users.unit_groups')"
+        :options="unitGroupsOptions"
+        :placeholder="t('ne_combobox.choose_or_enter')"
+        :no-results-label="t('ne_combobox.no_results')"
+        :limited-options-label="t('ne_combobox.limited_options_label')"
+        :no-options-label="t('ne_combobox.no_options_label')"
+        :selected-label="t('ne_combobox.selected')"
+        :user-input-label="t('ne_combobox.user_input_label')"
+        :multiple="true"
+        :optional-label="t('common.optional')"
+        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('groups'))"
+        :tooltip="t('controller.users.unit_groups_tooltip')"
+      >
+        <template #tooltip>
+          <NeTooltip>
+            <template #content>
+              <span>{{ t('controller.users.unit_groups_tooltip') }}</span>
+            </template>
+          </NeTooltip>
+        </template>
+      </NeCombobox>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>
@@ -261,6 +321,6 @@ watch(
           >{{ id ? t('common.save') : t('controller.users.add_user') }}</NeButton
         >
       </div>
-    </div></NeSideDrawer
-  >
+    </div>
+  </NeSideDrawer>
 </template>

@@ -39,7 +39,8 @@
       "open_sidebar": "Apri sidebar",
       "open_user_menu": "Apri il menu utente",
       "close_side_drawer": "Chiudi il drawer laterale",
-      "about": "Informazioni"
+      "about": "Informazioni",
+      "platform_info": "Informazioni controller"
     },
     "platform": {
       "controller_version": "Versione controller",
@@ -1245,7 +1246,9 @@
       "pro": "Pro",
       "proplus": "ProPlus",
       "service_type": "Tipo di servizio",
-      "custom_server_helper": "Utilizzare la sintassi '/ <domain>/ <server>' per indirizzare solo le richieste di un dominio specifico al server inserito. Utilizzare la sintassi '/ <server># <port> ` se il server upstream non ascolta su una porta standard."
+      "custom_server_helper": "Utilizzare la sintassi '/{'<'}domain{'>'}/{'<'}server{'>'}' per indirizzare solo le richieste di un dominio specifico al server inserito. Utilizzare la sintassi '/{'<'}server{'>'}#{'<'}port{'>'}` se il server upstream non ascolta su una porta standard.",
+      "remember_dns_dhcp": "Il servizio FlashStart richiede esplicitamente di specificare il server DNS tramite le opzioni DHCP.",
+      "remember_dns_dhcp_description": "Accedere alla sezione DHCP, in Impostazioni avanzate e aggiungere la seguente option: 6:dns-server, <'}YOUR-USUAL-DNS-SERVER{'>'}. Questo assicura che i client ricevano il server DNS corretto tramite DHCP."
     },
     "hotspot": {
       "settings": {
@@ -2125,7 +2128,9 @@
       "last_sent": "Ultimo invio: {date}",
       "sending_data_to_controller_tooltip": "Monitoraggio completo disponibile su Grafana con NethSecurity {subscription_link}",
       "no_last_sent": "Dai in preparazione per la trasmissione",
-      "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unità al Controller."
+      "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unità al Controller.",
+      "unit_description": "Descrizione",
+      "unit_description_tooltip": "Inserire un testo descrittivo per trovare facilmente l'unità all'interno del controller. Per cambiarlo: scollegare l'unità, modificare la descrizione e quindi riconnettere l'unità. Richiede versione controller 2.0.0 o successiva."
     },
     "conntrack": {
       "delete_all": "Elimina tutte le connessioni",
@@ -2604,7 +2609,9 @@
       "error_batch_updating_systems": "Alcuni sistemi hanno fallito l'aggiornamento.",
       "error_batch_updating_systems_description": "Alcune unità non hanno ricevuto la richiesta di aggiornamento dal controller. Si prega di controllare sotto quelli che hanno fallito e riprovare.",
       "updating_image_description": "L'unità sta aggiornando l'immagine. L'unità potrebbe non essere disponibile per alcuni minuti mentre l'aggiornamento è in fase di installazione.",
-      "updating_image": "Aggiornamento in corso"
+      "updating_image": "Aggiornamento in corso",
+      "groups": "Gruppi",
+      "description": "Descrizione"
     },
     "unit_terminal": {
       "connection_status_active": "Attiva",
@@ -2653,7 +2660,7 @@
       "show_connected_units": "Mostra unità collegate"
     },
     "users": {
-      "description": "Gli utenti elencati in questa pagina hanno il pieno controllo su tutte le unità firewall. Le autorizzazioni per creare, modificare o eliminare account utente sono riservate esclusivamente all'amministratore.",
+      "description": "Gli utenti elencati in questa pagina hanno controllo sulle unità firewall. Le autorizzazioni esclusive per creare, modificare o eliminare account utente sono riservate solo agli utenti amministratori. Gli utenti standard associati a un gruppo di unità possono gestire solo le unità all'interno del gruppo. Gli utenti amministratori hanno accesso illimitato a tutte le unità e gli utenti.",
       "title": "Utenti",
       "no_users_found": "Nessun utente trovato",
       "user_password": "Password utente",
@@ -2675,7 +2682,34 @@
       "user_edited": "Utente modificato",
       "two_fa_status": "Stato 2FA",
       "two_fa_enabled": "Abilitato",
-      "two_fa_disabled": "Disabilitato"
+      "two_fa_disabled": "Disabilitato",
+      "admin": "Utente amministratore",
+      "admin_tooltip": "Questo utente ha privilegi di amministratore e può gestire tutte le unità e gli utenti.",
+      "unit_groups": "Gruppi di unità",
+      "unit_groups_tooltip": "Selezionare i gruppi di unità che l'utente può gestire. Se non vengono selezionati gruppi, l'utente non potrà accedere a nessuna unità."
+    },
+    "unit_groups": {
+      "add_group": "Aggiungere gruppo di unità",
+      "edit_group": "Modifica gruppo di unità",
+      "no_groups_configured": "Nessun gruppo di unità configurato",
+      "filter_groups": "Filtra gruppi",
+      "name": "Nome",
+      "description": "Descrizione",
+      "units": "Unità",
+      "add_unit": "Aggiungi unità",
+      "remove": "Elimina",
+      "used_by": "Usato da",
+      "delete": "Elimina gruppo di unità",
+      "delete_confirm": "Stai per eliminare il gruppo di unità '{name}'. Questa azione non può essere annullata.",
+      "no_groups_found": "Nessun gruppo di unità trovato",
+      "title": "Gruppi di unità",
+      "group_edited": "Gruppo di unità aggiornato",
+      "group_added": "Gruppo di unità aggiunto",
+      "group_deleted": "Gruppo di unità eliminato",
+      "units_number": "Numero di unità",
+      "created": "Creato",
+      "updated": "Ultima modifica",
+      "page_description": "I gruppi di unità consentono di raggruppare le unità per una gestione più semplice. È possibile creare un gruppo di unità e aggiungere una o più unità ad esso. Una volta assegnato un gruppo a un account utente, l'utente sarà in grado di gestire solo le unità in quel gruppo."
     }
   },
   "ne_text_input": {

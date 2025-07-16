@@ -20,6 +20,7 @@ import type {
   SuppressedAlert
 } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import type { RadioOption } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 
@@ -29,12 +30,6 @@ const { visible, alert } = defineProps<{
 }>()
 
 const emit = defineEmits(['close', 'suppress'])
-
-// FIXME: export the type from the library
-type RadioOption = {
-  label: string
-  id: Direction
-}
 
 const directionOptions: RadioOption[] = [
   { label: t('standalone.ips.source'), id: 'by_src' },

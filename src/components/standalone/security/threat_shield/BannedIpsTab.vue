@@ -98,7 +98,7 @@ function handleIpDeleted() {
 
 <template>
   <div class="space-y-8">
-    <p class="text-tertiary-neutral max-w-2xl text-sm font-normal">
+    <p class="max-w-2xl text-sm font-normal text-tertiary-neutral">
       {{ t('standalone.threat_shield.banned_ips_description') }}
     </p>
     <NeTextInput

@@ -73,13 +73,13 @@ flag: `--no-verify`
 The project uses [prettier](https://prettier.io) to enforce code style in tandem with [eslint](https://eslint.org). To format all files automatically, you can run:
 
 ```bash
-./dev.sh npm run format
+./dev.sh npm run format-fix
 ```
 
 while to check for linting errors (and automatically fix them if possible) you can run:
 
 ```bash
-./dev.sh npm run lint
+./dev.sh npm run lint-fix
 ```
 
 this will prevent issues when proposing a PR.

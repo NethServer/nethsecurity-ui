@@ -47,7 +47,7 @@ watch(
     // set selected zones if dns zones have been loaded
     if (tsStore.dnsZones.length) {
       selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
-        return zonesOptions.value.find((z) => z.id === zone)
+        return zonesOptions.value.find((z) => z.id === zone) as NeComboboxOption
       })
     }
   },
@@ -60,7 +60,7 @@ watch(
   () => {
     if (tsStore.dnsSettings) {
       selectedZones.value = tsStore.dnsSettings.zones.map((zone) => {
-        return zonesOptions.value.find((z) => z.id === zone)
+        return zonesOptions.value.find((z) => z.id === zone) as NeComboboxOption
       })
     }
   },

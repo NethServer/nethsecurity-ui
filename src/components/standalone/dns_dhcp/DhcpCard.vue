@@ -60,7 +60,7 @@ const visibleOptions = computed(() => {
 <template>
   <div
     :class="borderColor"
-    class="space-y-4 border-l-4 bg-white px-4 py-5 text-sm text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:px-6 sm:shadow"
+    class="space-y-4 border-l-4 bg-white px-4 py-5 text-sm text-gray-700 sm:rounded-lg sm:px-6 sm:shadow dark:bg-gray-950 dark:text-gray-200"
   >
     <div class="flex justify-between">
       <div class="flex items-center gap-2">
@@ -75,7 +75,7 @@ const visibleOptions = computed(() => {
             class="h-4 w-4"
           />
         </div>
-        <span class="text-base font-medium leading-6">
+        <span class="text-base leading-6 font-medium">
           {{ interfaceName }}<br />{{ dhcpInterface.device }}
         </span>
       </div>
@@ -88,7 +88,7 @@ const visibleOptions = computed(() => {
         </NeButton>
       </div>
     </div>
-    <div class="text-tertiary-neutral space-y-2">
+    <div class="space-y-2 text-tertiary-neutral">
       <p class="flex items-center gap-3">
         <span>{{ t('standalone.dns_dhcp.mac_binding') }}:</span>
         <span class="space-x-1">

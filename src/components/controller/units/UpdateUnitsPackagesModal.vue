@@ -10,6 +10,7 @@ import {
   NeModal,
   NeSkeleton
 } from '@nethesis/vue-components'
+import type { ModalKind } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 const { upgradePackages, updatePackageIndex } = useUpdates()
@@ -59,7 +60,7 @@ const primaryButtonLabel = computed((): string => {
   }
 })
 
-const modalKind = computed((): string => {
+const modalKind = computed((): ModalKind => {
   if (fetchingData.value) {
     return 'neutral'
   } else if (availableUpdates.value.length > 0) {

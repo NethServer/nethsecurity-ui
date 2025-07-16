@@ -13,6 +13,7 @@ import type {
   AddressType,
   Direction
 } from '@/components/standalone/security/ips/IpsFilterBypass.vue'
+import type { RadioOption } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 
@@ -24,12 +25,6 @@ const emit = defineEmits<{
   close: [void]
   save: [void]
 }>()
-
-// FIXME: export the type from the library
-type RadioOption = {
-  label: string
-  id: string
-}
 
 watch(
   () => visible,

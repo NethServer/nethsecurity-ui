@@ -300,7 +300,7 @@ watch(
     <div v-else class="space-y-8">
       <div class="space-y-6">
         <div class="space-y-4">
-          <h5 class="text-secondary text-lg font-medium">
+          <h5 class="text-lg font-medium text-secondary">
             {{ t('standalone.dns_dhcp.mac_binding') }}
           </h5>
           <NeToggle
@@ -326,7 +326,7 @@ watch(
       </div>
       <div class="space-y-6">
         <div class="space-y-4">
-          <h5 class="text-secondary text-lg font-medium">
+          <h5 class="text-lg font-medium text-secondary">
             {{ t('standalone.dns_dhcp.dhcp') }}
           </h5>
           <NeToggle

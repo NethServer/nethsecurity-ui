@@ -110,7 +110,7 @@ function hideEditNatHelperDrawer() {
           v-model.trim="textFilter"
           :placeholder="t('standalone.nat_helpers.filter_nat_helpers')"
           :disabled="loading.listNatHelpers"
-          class="max-w-[12rem] sm:max-w-sm"
+          class="max-w-48 sm:max-w-sm"
         />
         <!-- clear filters -->
         <NeButton kind="tertiary" :disabled="loading.listNatHelpers" @click="clearFilters">

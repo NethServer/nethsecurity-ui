@@ -513,7 +513,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
               class="w-96"
             />
           </div>
-          <div class="mb-2 mt-4">
+          <div class="mt-4 mb-2">
             {{
               t('standalone.dpi.num_apps_and_protocols_selected', {
                 num: numAppsSelected,
@@ -552,7 +552,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
               <div
                 v-for="i in APP_SEARCH_SKELETON_CARDS"
                 :key="i"
-                class="overflow-hidden bg-gray-100 py-2 pl-4 pr-1 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-200 sm:rounded-lg sm:shadow"
+                class="overflow-hidden bg-gray-100 py-2 pr-1 pl-4 text-sm text-gray-700 sm:rounded-lg sm:shadow dark:bg-gray-900 dark:text-gray-200"
               >
                 <NeSkeleton :lines="2" />
               </div>
@@ -591,7 +591,7 @@ function onChange(ev: any, app: DpiAppOrProtocol) {
                       <!-- unavailable app / category -->
                       <div
                         v-if="app.missing || app.category?.name"
-                        class="text-xs uppercase text-gray-500 dark:text-gray-400"
+                        class="text-xs text-gray-500 uppercase dark:text-gray-400"
                       >
                         <template v-if="app.missing">
                           {{ t('standalone.dpi.available_with_subscription') }}

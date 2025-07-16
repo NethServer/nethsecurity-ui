@@ -34,6 +34,7 @@ import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisabl
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsEnableRuleModal from '@/components/standalone/security/ips/IpsEnableRuleModal.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Rule = {
   description: string
@@ -82,16 +83,15 @@ const filteredRules = computed((): Rule[] => {
 
 const sortKey = ref<keyof Rule>('sid')
 const sortDescending = ref(false)
-const { sortedItems } = useSort(filteredRules, sortKey, sortDescending, {})
+const { sortedItems } = useSort(filteredRules, sortKey, sortDescending)
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(sortedItems, {
   itemsPerPage: pageSize
 })
 
-// FIXME: when types from library are fixed, use proper type
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof Rule
   sortDescending.value = payload.descending
 }
 
@@ -183,7 +183,7 @@ function handleEnabled() {
               </NeEmptyState>
             </NeTableCell>
           </NeTableRow>
-          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}`">
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.gid}-${item.sid}`">
             <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}
             </NeTableCell>

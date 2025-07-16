@@ -145,7 +145,7 @@ function goToPreviousStep() {
   <!-- finish animation -->
   <div
     v-if="wizardStore.showFinishAnimation"
-    class="fixed left-0 top-0 z-[9999] h-[100vh] w-[100vw] bg-white dark:bg-gray-950"
+    class="fixed top-0 left-0 z-9999 h-screen w-screen bg-white dark:bg-gray-950"
   >
     <div class="flex h-full flex-col items-center justify-center">
       <!-- loader -->
@@ -172,7 +172,7 @@ function goToPreviousStep() {
     >
       <!-- side panel -->
       <div
-        class="hidden h-full w-96 shrink-0 flex-col justify-center border-r border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-950 lg:flex lg:rounded-l-3xl"
+        class="hidden h-full w-96 shrink-0 flex-col justify-center border-r border-gray-200 bg-white p-12 text-center lg:flex lg:rounded-l-3xl dark:border-gray-700 dark:bg-gray-950"
       >
         <div class="space-y-6">
           <!-- logo -->
@@ -200,7 +200,7 @@ function goToPreviousStep() {
       </div>
       <!-- main content -->
       <div
-        class="flex w-full flex-col space-y-6 bg-gray-50 p-12 pr-8 dark:bg-gray-900 lg:rounded-r-3xl"
+        class="flex w-full flex-col space-y-6 bg-gray-50 p-12 pr-8 lg:rounded-r-3xl dark:bg-gray-900"
       >
         <!-- steps progress -->
         <div v-if="currentStep !== 'welcome'" class="mb-4 w-full pr-4">
@@ -208,7 +208,7 @@ function goToPreviousStep() {
             class="mb-2"
             :progress="wizardProgress"
             color="custom"
-            custom-color-classes="bg-gradient-to-r from-cyan-500 to-indigo-500"
+            custom-color-classes="bg-linear-to-r from-cyan-500 to-indigo-500"
           />
           <p class="text-center text-xs text-gray-700 dark:text-gray-200">
             {{

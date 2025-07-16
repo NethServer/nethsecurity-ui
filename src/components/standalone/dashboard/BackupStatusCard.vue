@@ -89,10 +89,10 @@ const error = computed((): string | undefined => {
       </NeLink>
     </template>
     <div class="space-y-4">
-      <p class="text-primary-neutral font-medium">
+      <p class="font-medium text-primary-neutral">
         {{ t('standalone.backup_and_restore.backup.last_backup') }}
       </p>
-      <p class="text-tertiary-neutral flex items-center gap-2">
+      <p class="flex items-center gap-2 text-tertiary-neutral">
         <template v-if="lastBackup != undefined">
           <FontAwesomeIcon :icon="faClock" />
           {{ lastBackup }}

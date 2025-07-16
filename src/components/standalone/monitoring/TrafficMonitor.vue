@@ -142,7 +142,7 @@ const hoursDatasets = computed(() => {
               <p v-if="resolvedHostname != get('client')" class="text-lg">
                 {{ resolvedHostname }}
               </p>
-              <p class="text-lg [&:nth-child(2)]:text-base">{{ get('client') }}</p>
+              <p class="text-lg nth-2:text-base">{{ get('client') }}</p>
             </SimpleStat>
           </NeCard>
           <NeCard v-if="applicationName" :title="t('standalone.real_time_monitor.application')">

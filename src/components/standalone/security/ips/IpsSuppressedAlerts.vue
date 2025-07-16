@@ -34,6 +34,7 @@ import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSupp
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsRestoreSuppressedAlertModal from '@/components/standalone/security/ips/IpsRestoreSuppressedAlertModal.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Direction = 'by_src' | 'by_dst'
 
@@ -85,15 +86,15 @@ const filteredAlerts = computed((): SuppressedAlert[] => {
 
 const sortKey = ref<keyof SuppressedAlert>('sid')
 const sortDescending = ref(false)
-const { sortedItems } = useSort(filteredAlerts, sortKey, sortDescending, {})
+const { sortedItems } = useSort(filteredAlerts, sortKey, sortDescending)
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(sortedItems, {
   itemsPerPage: pageSize
 })
 
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof SuppressedAlert
   sortDescending.value = payload.descending
 }
 

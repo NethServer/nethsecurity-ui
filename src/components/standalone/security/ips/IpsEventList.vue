@@ -18,7 +18,7 @@ import {
   NeButton,
   NeDropdown,
   NeDropdownFilter,
-  NeDropdownItem,
+  type NeDropdownItem,
   NeEmptyState,
   NeInlineNotification,
   NePaginator,
@@ -49,6 +49,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import type { SuppressedAlert } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
+import type { SortEvent } from '@nethesis/vue-components'
 
 type EventType = 'drop' | 'alert' | 'allow'
 
@@ -139,13 +140,13 @@ const filteredEvents = computed((): Event[] => {
 
 const sortKey = ref<keyof Event>('timestamp')
 const sortDescending = ref(true)
-const { sortedItems } = useSort(filteredEvents, sortKey, sortDescending, {})
+const { sortedItems } = useSort(filteredEvents, sortKey, sortDescending)
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(sortedItems, {
   itemsPerPage: pageSize
 })
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof Event
   sortDescending.value = payload.descending
 }
 function dropDownActions(item: Event): NeDropdownItem[] {
@@ -236,6 +237,8 @@ function suppressedAlertHandler() {
             :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
             :options="typeFilterOptions"
             kind="radio"
+            :no-options-label="t('ne_dropdown_filter.no_options')"
+            :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
           />
           <NeButton kind="tertiary" @click="clearFilters">
             {{ t('common.clear_filters') }}
@@ -286,7 +289,11 @@ function suppressedAlertHandler() {
                 </NeEmptyState>
               </NeTableCell>
             </NeTableRow>
-            <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.id}-${item.timestamp}`">
+            <NeTableRow
+              v-for="item in paginatedItems"
+              v-else
+              :key="`${item.gid}-${item.sid}-${item.timestamp}`"
+            >
               <NeTableCell :data-label="t('standalone.ips.date')" class="text-nowrap">
                 <span :title="item.timestamp">
                   {{ formatDateLoc(new Date(item.timestamp), 'PPpp') }}

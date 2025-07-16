@@ -22,6 +22,7 @@ import {
 import type { ConnectionsRecord } from './ConnectionsHistory.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ref, computed } from 'vue'
+import type { SortEvent } from '@nethesis/vue-components'
 const { t } = useI18n()
 
 const props = defineProps<{
@@ -30,7 +31,7 @@ const props = defineProps<{
 
 const pageSize = ref(10)
 
-const sortKey = ref('startTime')
+const sortKey = ref<keyof ConnectionsRecord>('startTime')
 const sortDescending = ref(true)
 
 function compareIpAddresses(ip1: string, ip2: string): number {
@@ -68,8 +69,8 @@ const { sortedItems } = useSort(
   sortFunctions
 )
 
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof ConnectionsRecord
   sortDescending.value = payload.descending
 }
 

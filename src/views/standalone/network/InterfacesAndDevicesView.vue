@@ -623,7 +623,7 @@ function formatPackets(packets: number) {
                     <!-- edit button and overflow menu for smaller screens -->
                     <div
                       v-if="isDeviceConfigurable(device)"
-                      class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden"
+                      class="absolute top-4 right-4 flex items-center gap-2 3xl:hidden"
                     >
                       <DeviceButtons
                         :device-or-iface="device"
@@ -642,11 +642,11 @@ function formatPackets(packets: number) {
                     >
                       <!-- first column -->
                       <div
-                        class="flex flex-wrap items-start gap-x-1 gap-y-6 border-gray-200 pr-6 dark:border-gray-600 md:justify-between md:border-r"
+                        class="flex flex-wrap items-start gap-x-1 gap-y-6 border-gray-200 pr-6 md:justify-between md:border-r dark:border-gray-600"
                       >
                         <div class="flex items-center">
                           <div
-                            :class="`mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${getIconBackgroundStyle(
+                            :class="`mr-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${getIconBackgroundStyle(
                               device
                             )}`"
                           >
@@ -686,7 +686,7 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              class="-mr-2 -mt-2"
+                              class="-mt-2 -mr-2"
                               @click="toggleExpandAlias(device)"
                             >
                               <template #suffix>
@@ -713,7 +713,7 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              class="-mr-2 -mt-2"
+                              class="-mt-2 -mr-2"
                               @click="toggleExpandBridge(device)"
                             >
                               <template #suffix>
@@ -736,7 +736,7 @@ function formatPackets(packets: number) {
                             <NeButton
                               kind="tertiary"
                               size="sm"
-                              class="-mr-2 -mt-2"
+                              class="-mt-2 -mr-2"
                               @click="toggleExpandBond(device)"
                             >
                               <template #suffix>
@@ -826,7 +826,7 @@ function formatPackets(packets: number) {
                           </div>
                         </div>
                         <!-- vpn networks -->
-                        <div v-if="isVpn(device)" class="!-mt-2">
+                        <div v-if="isVpn(device)" class="-mt-2!">
                           <template v-if="isOpenVpnRw(device)">
                             <!-- openvpn rw -->
                             <div class="font-medium">
@@ -925,7 +925,7 @@ function formatPackets(packets: number) {
                       <!-- fifth column -->
                       <div
                         v-if="isDeviceConfigurable(device)"
-                        class="hidden items-start justify-end gap-2 border-l border-gray-200 dark:border-gray-600 3xl:flex"
+                        class="hidden items-start justify-end gap-2 border-l border-gray-200 3xl:flex dark:border-gray-600"
                       >
                         <DeviceButtons
                           :device-or-iface="device"
@@ -966,7 +966,7 @@ function formatPackets(packets: number) {
                           )}`"
                         >
                           <!-- edit button and overflow menu for smaller screens -->
-                          <div class="absolute right-4 top-4 flex items-center gap-2 3xl:hidden">
+                          <div class="absolute top-4 right-4 flex items-center gap-2 3xl:hidden">
                             <NeButton
                               kind="tertiary"
                               size="lg"
@@ -990,7 +990,7 @@ function formatPackets(packets: number) {
                           <div class="flex flex-wrap justify-between gap-8">
                             <!-- alias name -->
                             <div
-                              class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
+                              class="w-full border-gray-200 pr-8 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5 dark:border-gray-600"
                             >
                               <div class="font-semibold">
                                 {{ t('standalone.interfaces_and_devices.alias') }}:
@@ -1013,7 +1013,7 @@ function formatPackets(packets: number) {
                             </div>
                             <!-- edit alias and overflow menu -->
                             <div
-                              class="hidden w-1/5 items-start justify-end gap-2 border-l border-gray-200 pl-8 dark:border-gray-600 3xl:flex"
+                              class="hidden w-1/5 items-start justify-end gap-2 border-l border-gray-200 pl-8 3xl:flex dark:border-gray-600"
                             >
                               <NeButton
                                 kind="tertiary"
@@ -1060,7 +1060,7 @@ function formatPackets(packets: number) {
                         <div class="flex flex-wrap justify-between gap-8">
                           <!-- bridge name -->
                           <div
-                            class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
+                            class="w-full border-gray-200 pr-8 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5 dark:border-gray-600"
                           >
                             <div class="font-semibold">
                               {{ t('standalone.interfaces_and_devices.bridge') }}:
@@ -1107,7 +1107,7 @@ function formatPackets(packets: number) {
                         <div class="flex flex-wrap justify-between gap-8">
                           <!-- bond name -->
                           <div
-                            class="w-full border-gray-200 pr-8 dark:border-gray-600 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5"
+                            class="w-full border-gray-200 pr-8 md:w-1/2 md:border-r xl:w-1/4 3xl:w-1/5 dark:border-gray-600"
                           >
                             <div class="font-semibold">
                               {{ t('standalone.interfaces_and_devices.bond') }}

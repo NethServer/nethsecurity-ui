@@ -157,7 +157,7 @@ async function getUpdatesStatus() {
     :error-title="error.title"
     :error-description="error.description"
   >
-    <div class="mb-2 mt-3 flex items-center">
+    <div class="mt-3 mb-2 flex items-center">
       <div
         class="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary-400 dark:bg-primary-700"
       >

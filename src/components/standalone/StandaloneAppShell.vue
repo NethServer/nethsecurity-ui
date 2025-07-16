@@ -66,7 +66,7 @@ const logoFilename = computed(() => {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
               >
-                <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                <div class="absolute top-0 left-full flex w-16 justify-center pt-5">
                   <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
                     <span class="sr-only">{{ t('common.shell.close_sidebar') }}</span>
                     <font-awesome-icon

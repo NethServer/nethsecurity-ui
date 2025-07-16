@@ -127,7 +127,7 @@ function getQosRule(item: Wan) {
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.public_ip_address')">
-            <span v-if="item.ipAddresses.length">
+            <span v-if="item.ipAddresses?.length">
               {{ item.ipAddresses.join(', ') }}
             </span>
             <span v-else>-</span>

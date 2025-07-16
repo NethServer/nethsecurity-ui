@@ -1073,7 +1073,7 @@
       "create_route_ipv6": "Aggiungi rotta IPv6",
       "route_network_address": "Indirizzo di rete",
       "delete_route_ipv4": "Elimina rotta IPv4",
-      "network_address_ip4_tooltip": "Inserisci l'indirizzo di rete nella notazione CIDR o \"0.0.0./0\" per instradare tutto il traffico",
+      "network_address_ip4_tooltip": "Inserisci l'indirizzo di rete nella notazione CIDR o \"0.0.0.0/0\" per instradare tutto il traffico",
       "network_address_ip6_tooltip": "Inserisci l'indirizzo di rete nella notazione CIDR o \"::/0\" per instradare tutto il traffico",
       "route_network_address_cidr": "Indirizzo di rete (notazione CIDR)",
       "delete_route": "Elimina rotta"

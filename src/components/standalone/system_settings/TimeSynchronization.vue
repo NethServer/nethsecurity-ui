@@ -260,7 +260,7 @@ function resetNtpServerErrors() {
 </script>
 
 <template>
-  <div class="max-w-screen-md">
+  <div class="max-w-(--breakpoint-md)">
     <NeInlineNotification
       v-if="error.notificationTitle"
       kind="error"

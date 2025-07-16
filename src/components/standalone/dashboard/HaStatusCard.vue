@@ -129,7 +129,7 @@ function getBadgeIcon(status: string) {
           >
         </li>
 
-        <li class="pt-3" v-if="ha.role === 'backup'">
+        <li v-if="ha.role === 'backup'" class="pt-3">
           <NeBadge
             :kind="'warning'"
             :icon="['fas', 'triangle-exclamation']"

@@ -39,7 +39,7 @@ function getBorderColorForInterface(iface: string) {
 
 <template>
   <div
-    :class="`overflow-hidden rounded-md border-l-4 bg-white text-sm text-gray-700 dark:bg-gray-950 dark:text-gray-200 sm:rounded-lg sm:shadow ${getBorderColorForInterface(
+    :class="`overflow-hidden rounded-md border-l-4 bg-white text-sm text-gray-700 sm:rounded-lg sm:shadow dark:bg-gray-950 dark:text-gray-200 ${getBorderColorForInterface(
       iface.name
     )}`"
   >

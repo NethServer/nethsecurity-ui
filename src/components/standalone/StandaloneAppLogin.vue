@@ -198,7 +198,7 @@ async function verifyOtp() {
       class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
     >
       <div class="mx-auto w-full max-w-md">
-        <div class="bg-gray-50 px-6 py-12 shadow dark:bg-gray-900 sm:rounded-lg sm:px-12">
+        <div class="bg-gray-50 px-6 py-12 shadow sm:rounded-lg sm:px-12 dark:bg-gray-900">
           <NeHeading tag="h4" class="mb-4">
             <template v-if="step === 'login'">
               {{ t('login.welcome_title_standalone', { product: getProductName() }) }}
@@ -332,7 +332,7 @@ async function verifyOtp() {
       </div>
     </div>
     <div
-      class="relative hidden w-0 flex-1 items-center justify-center bg-gradient-to-t from-gray-950 to-primary-800 lg:flex"
+      class="relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 to-primary-800 lg:flex"
     >
       <img
         src="/login_logo.svg"

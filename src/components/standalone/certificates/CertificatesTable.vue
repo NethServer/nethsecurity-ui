@@ -20,11 +20,12 @@ import {
   NeTooltip,
   useSort,
   NeSortDropdown,
-  NeDropdownItem
+  type NeDropdownItem
 } from '@nethesis/vue-components'
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 import { ref } from 'vue'
 import { faCircleCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
+import type { SortEvent } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 
@@ -32,12 +33,12 @@ const props = defineProps<{
   certificates: Certificate[]
 }>()
 
-const sortKey = ref('name')
+const sortKey = ref<keyof Certificate>('name')
 const sortDescending = ref(false)
 
 const sortFunctions = {
   // custom sorting function for domains attribute
-  domains: (a: Certificate, b: Certificate) => {
+  domain: (a: Certificate, b: Certificate) => {
     if (a.type === 'acme' && b.type === 'acme') {
       if (a.requested_domains?.length && b.requested_domains?.length) {
         return a.requested_domains[0].localeCompare(b.requested_domains[0])
@@ -121,8 +122,8 @@ function getDropdownItems(item: Certificate): NeDropdownItem[] {
   return items
 }
 
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof Certificate
   sortDescending.value = payload.descending
 }
 </script>
@@ -156,7 +157,7 @@ const onSort = (payload: any) => {
       <NeTableHeadCell sortable column-key="name" @sort="onSort">{{
         t('standalone.certificates.name')
       }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="domains" @sort="onSort">{{
+      <NeTableHeadCell sortable column-key="domain" @sort="onSort">{{
         t('standalone.certificates.domains')
       }}</NeTableHeadCell>
       <NeTableHeadCell sortable column-key="type" @sort="onSort">{{

@@ -163,7 +163,7 @@ function addDnsRecord(scanResult: ScanResult) {
           <!-- interface cards skeleton -->
           <template v-if="isLoadingData">
             <div v-for="index in 8" :key="index" class="flex animate-pulse">
-              <div class="h-24 w-full bg-gray-300 dark:bg-gray-700 sm:rounded-lg"></div>
+              <div class="h-24 w-full bg-gray-300 sm:rounded-lg dark:bg-gray-700"></div>
             </div>
           </template>
           <!-- interface cards -->
@@ -201,7 +201,7 @@ function addDnsRecord(scanResult: ScanResult) {
         </template>
         <template v-else>
           <p
-            class="z-0 -mb-1 table max-w-md rounded-se-md rounded-ss-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
+            class="z-0 -mb-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
           >
             {{ t('standalone.dns_dhcp.interface_name', { name: scanningInterface }) }}
           </p>

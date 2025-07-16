@@ -33,6 +33,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
 import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Direction = 'src' | 'dst'
 export type AddressType = 'ipv4' | 'ipv6'
@@ -84,16 +85,15 @@ const filteredByPasses = computed((): Bypass[] => {
 
 const sortKey = ref<keyof Bypass>('ip')
 const sortDescending = ref(false)
-const { sortedItems } = useSort(filteredByPasses, sortKey, sortDescending, {})
+const { sortedItems } = useSort(filteredByPasses, sortKey, sortDescending)
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(sortedItems, {
   itemsPerPage: pageSize
 })
 
-// FIXME: when types from library are fixed, use proper type
-const onSort = (payload: any) => {
-  sortKey.value = payload.key
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof Bypass
   sortDescending.value = payload.descending
 }
 

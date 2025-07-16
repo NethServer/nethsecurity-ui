@@ -17,13 +17,13 @@ function copyValue() {
 
 <template>
   <div>
-    <p v-if="label" class="mb-2 text-sm font-medium leading-6 text-gray-700 dark:text-gray-200">
+    <p v-if="label" class="mb-2 text-sm leading-6 font-medium text-gray-700 dark:text-gray-200">
       {{ label }}
     </p>
     <div
-      class="text-md flex flex-row rounded-md border border-gray-300 bg-white text-gray-700 transition-colors duration-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-200 sm:text-sm sm:leading-6"
+      class="text-md flex flex-row rounded-md border border-gray-300 bg-white text-gray-700 transition-colors duration-200 sm:text-sm sm:leading-6 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-200"
     >
-      <div class="no-scrollbar mt-0 max-w-full flex-grow overflow-x-scroll px-3 py-1.5">
+      <div class="no-scrollbar mt-0 max-w-full grow overflow-x-scroll px-3 py-1.5">
         {{ value }}
       </div>
       <button

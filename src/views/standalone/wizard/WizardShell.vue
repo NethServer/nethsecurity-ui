@@ -150,7 +150,7 @@ function goToPreviousStep() {
     <div class="flex h-full flex-col items-center justify-center">
       <!-- loader -->
       <img
-        class="animate-spin-relaxed mb-14 h-16 w-16"
+        class="mb-14 h-16 w-16 animate-spin-relaxed"
         :src="wizardLoaderUrl"
         :alt="`${getCompanyName()} logo`"
         aria-hidden="true"
@@ -191,7 +191,7 @@ function goToPreviousStep() {
           <NeLink
             href="https://docs.nethsecurity.org/en/latest/setup_wizard.html"
             target="_blank"
-            class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-400 inline-block"
+            class="inline-block text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-400"
           >
             <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
             {{ t('standalone.wizard.need_help') }}

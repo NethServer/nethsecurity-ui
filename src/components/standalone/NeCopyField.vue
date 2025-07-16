@@ -27,7 +27,7 @@ function copyValue() {
         {{ value }}
       </div>
       <button
-        class="focus:ring-primary-500 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950 rounded-r-md bg-gray-50 px-3 py-1.5 duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:duration-0 dark:bg-gray-950 dark:hover:bg-gray-800"
+        class="rounded-r-md bg-gray-50 px-3 py-1.5 duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white focus:duration-0 dark:bg-gray-950 dark:hover:bg-gray-800 dark:focus:ring-primary-300 dark:focus:ring-offset-primary-950"
         @click="copyValue()"
       >
         <font-awesome-icon

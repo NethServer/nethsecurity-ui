@@ -18,7 +18,7 @@ import type { StaticLease } from './StaticLeases.vue'
 import type { DynamicLease } from './DynamicLeases.vue'
 import { ref } from 'vue'
 import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 

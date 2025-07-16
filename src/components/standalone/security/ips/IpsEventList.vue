@@ -49,7 +49,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSuppressAlertDrawer.vue'
 import type { SuppressedAlert } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 type EventType = 'drop' | 'alert' | 'allow'
 

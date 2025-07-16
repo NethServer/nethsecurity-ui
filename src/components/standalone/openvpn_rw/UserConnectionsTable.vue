@@ -22,7 +22,7 @@ import {
 import type { ConnectionsRecord } from './ConnectionsHistory.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ref, computed } from 'vue'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 const { t } = useI18n()
 
 const props = defineProps<{

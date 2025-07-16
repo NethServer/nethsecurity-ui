@@ -262,7 +262,7 @@ function getCellClasses(item: RWAccount) {
                 <div class="text-center">
                   <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
                   <p
-                    class="text-primary-500 dark:text-primary-800 cursor-pointer"
+                    class="cursor-pointer text-primary-500 dark:text-primary-800"
                     @click="emit('regenerateCertificate', item)"
                   >
                     {{ t('standalone.openvpn_rw.renew_certificate') }}

@@ -239,7 +239,7 @@ function successDeleteBackup() {
     <template v-else>
       <div v-if="subscription.isActive" class="flex flex-col flex-wrap gap-4 xl:flex-row">
         <div class="mr-auto max-w-2xl space-y-4">
-          <p class="text-secondary-neutral text-sm font-normal">
+          <p class="text-sm font-normal text-secondary-neutral">
             {{ t('standalone.backup_and_restore.backup.description_subscription') }}
           </p>
           <template v-if="!backups.isPassPhraseSet">

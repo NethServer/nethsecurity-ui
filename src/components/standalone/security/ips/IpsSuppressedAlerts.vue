@@ -34,7 +34,7 @@ import IpsSuppressAlertDrawer from '@/components/standalone/security/ips/IpsSupp
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsRestoreSuppressedAlertModal from '@/components/standalone/security/ips/IpsRestoreSuppressedAlertModal.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Direction = 'by_src' | 'by_dst'
 

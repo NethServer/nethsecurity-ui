@@ -296,14 +296,14 @@ async function getMwanPolicies() {
         <NeCard
           loading
           :skeleton-lines="7"
-          class="3xl:col-span-8 6xl:col-span-4 7xl:col-span-3 sm:col-span-12"
+          class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
         ></NeCard>
         <NeCard
           v-for="index in 4"
           :key="index"
           loading
           :skeleton-lines="7"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         ></NeCard>
       </template>
       <template v-else>
@@ -311,13 +311,13 @@ async function getMwanPolicies() {
         <WanConnectionsCard
           v-if="wanConnections.length"
           :wan-connections="wanConnections"
-          class="3xl:col-span-8 6xl:col-span-4 7xl:col-span-3 sm:col-span-12"
+          class="sm:col-span-12 3xl:col-span-8 6xl:col-span-4 7xl:col-span-3"
         />
         <!-- wan events -->
         <NeCard
           v-if="isEmpty(mwanEvents)"
           :title="t('standalone.real_time_monitor.wan_events')"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         >
           <NeEmptyState
             :title="t('standalone.real_time_monitor.no_events_message')"
@@ -331,7 +331,7 @@ async function getMwanPolicies() {
           :key="wanName"
           :wan="wanName"
           :wan-events="events"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
         <!-- wans traffic -->
         <InterfaceTrafficCard
@@ -339,19 +339,19 @@ async function getMwanPolicies() {
           :key="wan.device"
           :iface="wan.iface"
           :device="wan.device"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         />
         <!-- latency and quality -->
         <NeCard
           v-if="loadingLatencyAndQualityReport"
           loading
           :skeleton-lines="7"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         ></NeCard>
         <NeCard
           v-else-if="latencyAndQualityCharts.length == 0"
           :title="t('standalone.real_time_monitor.latency_and_packet_delivery_rate')"
-          class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
         >
           <NeEmptyState
             :title="t('standalone.real_time_monitor.no_hosts_configured_for_monitoring')"
@@ -386,7 +386,7 @@ async function getMwanPolicies() {
                     pingHost: chart.pingHost
                   })
             "
-            class="3xl:col-span-4 7xl:col-span-3 sm:col-span-12 xl:col-span-6"
+            class="sm:col-span-12 xl:col-span-6 3xl:col-span-4 7xl:col-span-3"
           >
             <TimeLineChart
               v-if="chart.type === 'latency'"

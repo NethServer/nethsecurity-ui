@@ -10,7 +10,7 @@ import {
   NeModal,
   NeSkeleton
 } from '@nethesis/vue-components'
-import type { ModalKind } from '@nethesis/vue-components/components/NeModal.vue.js'
+import type { ModalKind } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 const { upgradePackages, updatePackageIndex } = useUpdates()

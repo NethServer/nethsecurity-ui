@@ -25,7 +25,7 @@ import {
 import type { Certificate } from '@/views/standalone/system/CertificatesView.vue'
 import { ref } from 'vue'
 import { faCircleCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 

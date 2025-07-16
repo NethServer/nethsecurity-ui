@@ -158,7 +158,7 @@ function openNotificationsDrawer() {
             </span>
             <span
               v-if="isChangesButtonFlashing"
-              class="bg-primary-500 dark:bg-primary-300 absolute inline-flex h-full w-3/4 animate-ping rounded-md opacity-75 dark:opacity-75"
+              class="absolute inline-flex h-full w-3/4 animate-ping rounded-md bg-primary-500 opacity-75 dark:bg-primary-300 dark:opacity-75"
             ></span>
           </NeButton>
           <UciChangesModal :visible="showUciChangesModal" @close="showUciChangesModal = false" />

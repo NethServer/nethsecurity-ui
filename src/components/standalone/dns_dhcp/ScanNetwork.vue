@@ -159,7 +159,7 @@ function addDnsRecord(scanResult: ScanResult) {
           :title="t('standalone.dns_dhcp.no_interface_configured')"
           :icon="['fas', 'circle-info']"
         />
-        <div v-else class="3xl:grid-cols-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
           <!-- interface cards skeleton -->
           <template v-if="isLoadingData">
             <div v-for="index in 8" :key="index" class="flex animate-pulse">

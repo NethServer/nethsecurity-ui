@@ -20,7 +20,7 @@ import type {
   SuppressedAlert
 } from '@/components/standalone/security/ips/IpsSuppressedAlerts.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import type { RadioOption } from '@nethesis/vue-components/components/NeRadioSelection.vue.js'
+import type { RadioOption } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 

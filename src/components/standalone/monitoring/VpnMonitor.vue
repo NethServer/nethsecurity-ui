@@ -358,7 +358,7 @@ function getTunnelName(tunnelId: string) {
           v-for="index in 6"
           :key="index"
           loading
-          class="3xl:col-span-4 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></NeCard>
       </template>
       <template
@@ -397,13 +397,13 @@ function getTunnelName(tunnelId: string) {
         <ClientSessionsCard
           :ovpn-instance="ovpnInstance"
           :day="today"
-          class="3xl:col-span-4 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></ClientSessionsCard>
         <!-- connected clients by hour -->
         <ConnectedClientsByHourCard
           :ovpn-instance="ovpnInstance"
           :day="today"
-          class="3xl:col-span-4 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></ConnectedClientsByHourCard>
         <!-- client traffic by hour -->
         <TrafficByClientByHourCard
@@ -411,7 +411,7 @@ function getTunnelName(tunnelId: string) {
           :ovpn-users="ovpnUsers[ovpnInstance] || []"
           :day="today"
           :loading-users="loading.listUsers"
-          class="3xl:col-span-4 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         ></TrafficByClientByHourCard>
       </template>
       <template v-if="enabledTunnels.length">
@@ -422,7 +422,7 @@ function getTunnelName(tunnelId: string) {
         <!-- connected tunnels -->
         <NeCard
           :title="t('standalone.real_time_monitor.connected_tunnels')"
-          class="3xl:col-span-3 sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3"
+          class="sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3 3xl:col-span-3"
         >
           <SimpleStat class="mt-1">
             <span>{{ connectedTunnels.length }}/{{ enabledTunnels.length }}</span>
@@ -432,7 +432,7 @@ function getTunnelName(tunnelId: string) {
         <ConfiguredTunnelsCard
           :tunnels="enabledTunnels"
           :tunnel-devices="tunnelDevices"
-          class="3xl:col-span-5 row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9"
+          class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 3xl:col-span-5"
         ></ConfiguredTunnelsCard>
         <!-- tunnels traffic -->
         <InterfaceTrafficCard
@@ -440,7 +440,7 @@ function getTunnelName(tunnelId: string) {
           :key="tunnelDevice"
           :iface="getTunnelName(tunnelId)"
           :device="tunnelDevice"
-          class="3xl:col-span-4 row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6"
+          class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 3xl:col-span-4"
         />
       </template>
     </div>

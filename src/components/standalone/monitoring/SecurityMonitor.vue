@@ -401,7 +401,7 @@ async function getAttackReport() {
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
           :error-title="error.getMalwareReport"
           :error-description="error.getMalwareReportDetails"
-          class="5xl:col-span-3 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->
           <NeEmptyState
@@ -424,7 +424,7 @@ async function getAttackReport() {
           :loading="loading.getMalwareReport || loading.getThreatShieldSettings"
           :error-title="error.getMalwareReport"
           :error-description="error.getMalwareReportDetails"
-          class="5xl:col-span-3 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->
           <NeEmptyState
@@ -466,7 +466,7 @@ async function getAttackReport() {
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
           :error-title="error.getAttackReport"
           :error-description="error.getAttackReportDetails"
-          class="5xl:col-span-3 row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 2xl:col-span-9"
+          class="row-span-2 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-9 2xl:col-span-9 5xl:col-span-3"
         >
           <BlockedIpsByHourChart
             :labels="blockedIpsByHourChartLabels"
@@ -481,7 +481,7 @@ async function getAttackReport() {
           :loading="loading.getAttackReport || loading.getThreatShieldSettings"
           :error-title="error.getAttackReport"
           :error-description="error.getAttackReportDetails"
-          class="5xl:col-span-3 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6"
+          class="sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-6 2xl:col-span-6 5xl:col-span-3"
         >
           <!-- empty state -->
           <NeEmptyState

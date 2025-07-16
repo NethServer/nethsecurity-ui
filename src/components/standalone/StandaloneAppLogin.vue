@@ -266,7 +266,7 @@ async function verifyOtp() {
                     v-model="rememberMe"
                     name="remember-me"
                     type="checkbox"
-                    class="text-primary-600 focus:ring-primary-600 dark:text-primary-600 dark:focus:ring-primary-400 h-4 w-4 rounded border-gray-300 dark:border-gray-700"
+                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
                   />
                   <label
                     for="remember-me"
@@ -332,12 +332,12 @@ async function verifyOtp() {
       </div>
     </div>
     <div
-      class="to-primary-800 relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 lg:flex"
+      class="relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 to-primary-800 lg:flex"
     >
       <img
         src="/login_logo.svg"
         :alt="`${getCompanyName()} logo`"
-        class="3xl:w-1/3 5xl:w-1/4 w-2/3 xl:w-2/5"
+        class="w-2/3 xl:w-2/5 3xl:w-1/3 5xl:w-1/4"
       />
     </div>
   </div>

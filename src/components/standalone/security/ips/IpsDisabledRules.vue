@@ -34,7 +34,7 @@ import IpsDisableRuleDrawer from '@/components/standalone/security/ips/IpsDisabl
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import IpsEnableRuleModal from '@/components/standalone/security/ips/IpsEnableRuleModal.vue'
 import IpsSnortDocLink from '@/components/standalone/security/ips/IpsSnortDocLink.vue'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Rule = {
   description: string

@@ -33,7 +33,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
 import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
-import type { SortEvent } from '@nethesis/vue-components/components/NeTableHeadCell.vue.js'
+import type { SortEvent } from '@nethesis/vue-components'
 
 export type Direction = 'src' | 'dst'
 export type AddressType = 'ipv4' | 'ipv6'

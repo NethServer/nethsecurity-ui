@@ -145,7 +145,7 @@ function clearFilter() {
           <!-- bypasses card grid -->
           <div
             v-if="tsStore.dnsBypasses.length || tsStore.loadingListDnsBypass"
-            class="4xl:grid-cols-5 6xl:grid-cols-6 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 4xl:grid-cols-5 6xl:grid-cols-6"
           >
             <!-- skeleton -->
             <template v-if="tsStore.loadingListDnsBypass">

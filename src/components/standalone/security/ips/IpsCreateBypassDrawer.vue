@@ -13,7 +13,7 @@ import type {
   AddressType,
   Direction
 } from '@/components/standalone/security/ips/IpsFilterBypass.vue'
-import type { RadioOption } from '@nethesis/vue-components/components/NeRadioSelection.vue.js'
+import type { RadioOption } from '@nethesis/vue-components'
 
 const { t } = useI18n()
 

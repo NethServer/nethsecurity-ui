@@ -23,7 +23,7 @@ const {
     :title="errorTopTalkers"
     kind="error"
   />
-  <div v-else class="4xl:grid-cols-3 grid grid-cols-1 gap-6 xl:grid-cols-2">
+  <div v-else class="grid grid-cols-1 gap-6 xl:grid-cols-2 4xl:grid-cols-3">
     <InstantHostTrafficCard :top-hosts="topHosts" />
     <!-- instant apps traffic -->
     <InstantAppTrafficCard :top-apps="topApps" />

@@ -25,7 +25,7 @@ const orderedItems = computed<T[]>(() => [...items].sort((a, b) => a.order - b.o
         <li class="space-x-1">
           <template v-if="index < orderedItems.length - 1">
             <a
-              class="text-primary-700 hover:text-primary-800 dark:text-primary-500 dark:hover:text-primary-400 hover:underline"
+              class="text-primary-700 hover:text-primary-800 hover:underline dark:text-primary-500 dark:hover:text-primary-400"
               href="#"
               @click.prevent="$emit('click', item)"
             >

@@ -88,7 +88,7 @@ const visibleOptions = computed(() => {
         </NeButton>
       </div>
     </div>
-    <div class="text-tertiary-neutral space-y-2">
+    <div class="space-y-2 text-tertiary-neutral">
       <p class="flex items-center gap-3">
         <span>{{ t('standalone.dns_dhcp.mac_binding') }}:</span>
         <span class="space-x-1">

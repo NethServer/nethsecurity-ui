@@ -190,6 +190,7 @@ watch(
           :selected-label="t('ne_combobox.selected')"
           :user-input-label="t('ne_combobox.user_input_label')"
           :multiple="true"
+          :optional-label="t('common.optional')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('units'))"
         />
       </div>

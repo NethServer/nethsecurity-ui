@@ -41,9 +41,9 @@ const filteredAccounts = computed(() =>
 )
 
 const unitGroupsOptions = computed<NeComboboxOption[]>(() =>
-  unitGroupsStore.unitGroups.map((group) => {
+  unitGroupsStore.unitGroups.map((group): NeComboboxOption => {
     return {
-      id: group.id,
+      id: String(group.id),
       label: group.name,
       description: group.description || ''
     }

@@ -2728,7 +2728,7 @@
     },
     "users": {
       "title": "Users",
-      "description": "The users listed on this page are granted control over firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator users. Users associated with a unit group can only manage the units within that group. Administrator users have unrestricted access to all units and users.",
+      "description": "The users listed on this page are granted control over firewall units. Exclusive permissions to create, modify, or delete user accounts are reserved solely for the administrator users. Standard users associated with a unit group can only manage the units within that group. Administrator users have unrestricted access to all units and users.",
       "no_users_found": "No users found",
       "add_user": "Add user",
       "username": "Username",

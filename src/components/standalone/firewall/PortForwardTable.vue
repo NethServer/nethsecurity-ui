@@ -15,10 +15,19 @@ import {
   NeTableBody,
   NeTableRow,
   NeTableCell,
-  NeButton
+  NeButton,
+  NeBadge,
+  NeTooltip
 } from '@nethesis/vue-components'
 import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
-import { faCircleCheck, faCircleXmark, faClone, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faClone,
+  faPenToSquare,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 
@@ -146,16 +155,28 @@ function getCellClasses(item: PortForward) {
             </template>
             <template v-else-if="item.restrict.length > 0">
               <p :class="[...getCellClasses(item)]">
-                {{ item.restrict.slice(0, 2).join(', ')
-                }}<span v-if="item.restrict.length > 2">...</span>
+                {{ item.restrict.slice(0, 2).join(', ') }}
+                <span v-if="item.restrict.length > 2">...</span>
               </p>
             </template>
             <p v-else :class="[...getCellClasses(item)]">-</p>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.status')">
-            <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
-              <font-awesome-icon
-                :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
+            <NeTooltip
+              v-if="item.ns_tag.includes('automated')"
+              trigger-event="mouseenter focus"
+              placement="top-start"
+            >
+              <template #trigger>
+                <NeBadge :text="t('common.automated')" />
+              </template>
+              <template #content>
+                {{ t('common.automated_tooltip') }}
+              </template>
+            </NeTooltip>
+            <div v-else :class="getCellClasses(item)" class="flex flex-row items-center">
+              <FontAwesomeIcon
+                :icon="item.enabled ? faCircleCheck : faCircleXmark"
                 class="mr-2 h-5 w-5"
                 aria-hidden="true"
               />
@@ -170,17 +191,21 @@ function getCellClasses(item: PortForward) {
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
-              <NeButton kind="tertiary" @click="emit('port-forward-edit', item)">
+              <NeButton
+                kind="tertiary"
+                :disabled="item.ns_tag.includes('automated')"
+                @click="emit('port-forward-edit', item)"
+              >
                 <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
+                  <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
                 </template>
                 {{ t('common.edit') }}
               </NeButton>
-              <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+              <NeDropdown
+                v-if="!item.ns_tag.includes('automated')"
+                :items="getDropdownItems(item)"
+                :align-to-right="true"
+              />
             </div>
           </NeTableCell>
         </NeTableRow>

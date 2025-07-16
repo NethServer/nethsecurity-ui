@@ -56,7 +56,9 @@
     "ip_address": "Indirizzo IP",
     "interface": "Interfaccia",
     "password_confirmation_required": "Conferma della password richiesta",
-    "password_confirmation_required_description": "Si prega di confermare la password per procedere"
+    "password_confirmation_required_description": "Si prega di confermare la password per procedere",
+    "automated": "Sistema",
+    "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica."
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",

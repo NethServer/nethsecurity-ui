@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/NethServer/nethsecurity-ui/compare/1.28.3...2.0.0) (2025-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **controller:** added user permissions and unit groups #591
+
+### Features
+
+* **controller:** added user permissions and unit groups [#591](https://github.com/NethServer/nethsecurity-ui/issues/591) ([79b889b](https://github.com/NethServer/nethsecurity-ui/commit/79b889b7d46ede32a40f36fe0946af3837f9211e))
+* **standalone:** controller, add unit description ([#595](https://github.com/NethServer/nethsecurity-ui/issues/595)) ([a49db17](https://github.com/NethServer/nethsecurity-ui/commit/a49db17898290cc72b05db32e3440d8ea11b3c51))
+
+
+### Bug Fixes
+
+* **controller:** correct Italian translation ([5a901ad](https://github.com/NethServer/nethsecurity-ui/commit/5a901ad387d1f5b6fd3a0181a121b7e4b4eab95b))
+* **controller:** improve unit description label ([6f29a55](https://github.com/NethServer/nethsecurity-ui/commit/6f29a55bf794d30388b873340f4cf2327bdf6c02))
+* **controller:** improve unit page description ([9a22f46](https://github.com/NethServer/nethsecurity-ui/commit/9a22f469dedfbe8b7ff54e0552cdbd585cfbb13a))
+* **port forward:** added automated tag if entry is managed by system ([#594](https://github.com/NethServer/nethsecurity-ui/issues/594)) ([46f6d9c](https://github.com/NethServer/nethsecurity-ui/commit/46f6d9cd76c82548a70e94c9b22d2a9ab041dd1f))
+
 ## [1.28.3](https://github.com/NethServer/nethsecurity-ui/compare/1.28.2...1.28.3) (2025-06-30)
 
 

@@ -138,7 +138,7 @@ onMounted(() => {
     </div>
 
     <div class="space-y-4">
-      <div v-for="(item, i) in items" :key="i" class="flex items-start gap-2">
+      <div v-for="(item, i) in items" :key="i" class="flex items-stretch gap-2">
         <NeCombobox
           v-if="useKeyInput && keyInputType === 'combobox'"
           :options="keyOptions"
@@ -181,7 +181,7 @@ onMounted(() => {
           :disabled="items.length <= 1 && required"
           @click="deleteItem(i)"
         >
-          <FontAwesomeIcon :icon="faTrash" class="h-4 w-4 py-1" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faTrash" class="h-4 w-4" aria-hidden="true" />
         </NeButton>
       </div>
       <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">

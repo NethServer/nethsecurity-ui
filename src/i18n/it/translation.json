@@ -1983,7 +1983,7 @@
       "log_forward_chain": "Log dei pacchetti bloccati nella chain di forward",
       "log_forward_lan_chain": "Log dei pacchetti bloccati inoltrati dalla LAN",
       "ban_after_n_attempts_tooltip": "Il numero di volte che un IP deve apparire nel log prima di essere contrassegnato come sospetto e bloccato.",
-      "block_dos_description": "Monitora il traffico in ingresso dalle interfacce WAN per identificare e bloccare attacchi DoS (Denial of Service). Limita il traffico eccessivo relativo a protocolli specifici, bloccandolo fino a quando la situazione non torna alla normalità. ",
+      "block_dos_description": "Limita il traffico eccessivo relativo a protocolli specifici, bloccandolo fino a quando la situazione non torna alla normalità. Agisce su tutto il traffico in ingresso dalle interfacce WAN.",
       "threats_monitoring_disabled": "Monitoraggio delle minacce disabilitato",
       "threats_monitoring_disabled_message": "Il monitoraggio delle minacce mostra solo minacce registrate nel log. Attivare il log su almeno una chain per consentire il monitoraggio delle minacce.",
       "ban_time_tooltip": "Dopo il periodo di timeout, l'IP bloccato verrà sbloccato automaticamente, ripristinando l'accesso al sistema.",

@@ -19,12 +19,13 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import NeMultiTextInput from '../../NeMultiTextInput.vue'
 import { MessageBag } from '@/lib/validation'
+import type { AxiosResponse } from 'axios'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -39,8 +40,11 @@ const banTime = ref('')
 const maxFailedAccesses = ref('')
 const attackPatterns = ref([''])
 const isBlockIcmpDosEnabled = ref(false)
+const blockIcmpDosLimit = ref('')
 const isBlockSynDosEnabled = ref(false)
+const blockSynDosLimit = ref('')
 const isBlockUdpDosEnabled = ref(false)
+const blockUdpDosLimit = ref('')
 const errorBag = ref(new MessageBag())
 
 const loading = ref({
@@ -65,10 +69,29 @@ const banTimeOptions = ref<NeComboboxOption[]>([
   { id: '3d', label: t('standalone.threat_shield.three_days') }
 ])
 
+type ListSettingsResponse = {
+  data: {
+    data: {
+      ban_icmplimit: number
+      ban_logcount: string
+      ban_logforwardlan: boolean
+      ban_logforwardwan: boolean
+      ban_loginput: boolean
+      ban_loglimit: boolean
+      ban_logprerouting: boolean
+      ban_logterm: string[]
+      ban_nftexpiry: string
+      ban_synlimit: number
+      ban_udplimit: number
+      enabled: boolean
+    }
+  }
+}
+
 async function fetchSettings() {
   try {
     loading.value.listSettings = true
-    const res = await ubusCall('ns.threatshield', 'list-settings')
+    const res = await ubusCall<ListSettingsResponse>('ns.threatshield', 'list-settings')
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
     isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
@@ -79,9 +102,12 @@ async function fetchSettings() {
     banTime.value = threatShieldConfig.ban_nftexpiry
     maxFailedAccesses.value = threatShieldConfig.ban_logcount.toString()
     attackPatterns.value = threatShieldConfig.ban_logterm
-    isBlockIcmpDosEnabled.value = threatShieldConfig.ban_icmplimit
-    isBlockSynDosEnabled.value = threatShieldConfig.ban_synlimit
-    isBlockUdpDosEnabled.value = threatShieldConfig.ban_udplimit
+    blockIcmpDosLimit.value = String(threatShieldConfig.ban_icmplimit)
+    isBlockIcmpDosEnabled.value = threatShieldConfig.ban_icmplimit > 0
+    blockSynDosLimit.value = String(threatShieldConfig.ban_synlimit)
+    isBlockSynDosEnabled.value = threatShieldConfig.ban_synlimit > 0
+    blockUdpDosLimit.value = String(threatShieldConfig.ban_udplimit)
+    isBlockUdpDosEnabled.value = threatShieldConfig.ban_udplimit > 0
   } catch (err: any) {
     error.value.listSettings = t(getAxiosErrorMessage(err))
     error.value.listSettingsDetails = err.toString()
@@ -154,9 +180,9 @@ async function saveSettings() {
       ban_nftexpiry: banTime.value,
       ban_logcount: Number(maxFailedAccesses.value),
       ban_logterm: patterns,
-      ban_icmplimit: isBlockIcmpDosEnabled.value,
-      ban_synlimit: isBlockSynDosEnabled.value,
-      ban_udplimit: isBlockUdpDosEnabled.value
+      ban_icmplimit: isBlockIcmpDosEnabled.value ? Number(blockIcmpDosLimit.value) : 0,
+      ban_synlimit: isBlockSynDosEnabled.value ? Number(blockSynDosLimit.value) : 0,
+      ban_udplimit: isBlockUdpDosEnabled.value ? Number(blockUdpDosLimit.value) : 0
     })
     reloadSettings()
   } catch (err: any) {
@@ -351,6 +377,15 @@ onMounted(() => {
                   :label="isBlockIcmpDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
+                <NeTextInput
+                  v-if="isBlockIcmpDosEnabled"
+                  v-model.number="blockIcmpDosLimit"
+                  :label="t('standalone.threat_shield.block_icmp_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="!isBlockIcmpDosEnabled || loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('isBlockIcmpDosEnabled')"
+                />
                 <!-- block syn dos -->
                 <NeToggle
                   v-model="isBlockSynDosEnabled"
@@ -358,12 +393,30 @@ onMounted(() => {
                   :label="isBlockSynDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
+                <NeTextInput
+                  v-if="isBlockSynDosEnabled"
+                  v-model.number="blockSynDosLimit"
+                  :label="t('standalone.threat_shield.block_syn_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="!isBlockSynDosEnabled || loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('isBlockSynDosEnabled')"
+                />
                 <!-- block udp dos -->
                 <NeToggle
                   v-model="isBlockUdpDosEnabled"
                   :top-label="t('standalone.threat_shield.block_udp_dos')"
                   :label="isBlockUdpDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
+                />
+                <NeTextInput
+                  v-if="isBlockUdpDosEnabled"
+                  v-model.number="blockUdpDosLimit"
+                  :label="t('standalone.threat_shield.block_udp_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="!isBlockUdpDosEnabled || loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('isBlockUdpDosEnabled')"
                 />
               </div>
             </FormLayout>

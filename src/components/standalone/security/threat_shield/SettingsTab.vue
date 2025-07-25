@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'

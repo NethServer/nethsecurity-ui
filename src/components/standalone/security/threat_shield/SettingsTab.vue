@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -40,10 +40,13 @@ const maxFailedAccesses = ref('')
 const attackPatterns = ref([''])
 const isBlockIcmpDosEnabled = ref(false)
 const blockIcmpDosLimit = ref('')
+const blockIcmpDosDefault = ref(0)
 const isBlockSynDosEnabled = ref(false)
 const blockSynDosLimit = ref('')
+const blockSynDosDefault = ref(0)
 const isBlockUdpDosEnabled = ref(false)
 const blockUdpDosLimit = ref('')
+const blockUdpDosDefault = ref(0)
 const errorBag = ref(new MessageBag())
 
 const loading = ref({
@@ -83,6 +86,9 @@ type ListSettingsResponse = {
       ban_synlimit: number
       ban_udplimit: number
       enabled: boolean
+      ban_icmplimit_default: number
+      ban_synlimit_default: number
+      ban_udplimit_default: number
     }
   }
 }
@@ -107,6 +113,9 @@ async function fetchSettings() {
     isBlockSynDosEnabled.value = threatShieldConfig.ban_synlimit > 0
     blockUdpDosLimit.value = String(threatShieldConfig.ban_udplimit)
     isBlockUdpDosEnabled.value = threatShieldConfig.ban_udplimit > 0
+    blockIcmpDosDefault.value = threatShieldConfig.ban_icmplimit_default
+    blockSynDosDefault.value = threatShieldConfig.ban_synlimit_default
+    blockUdpDosDefault.value = threatShieldConfig.ban_udplimit_default
   } catch (err: any) {
     error.value.listSettings = t(getAxiosErrorMessage(err))
     error.value.listSettingsDetails = err.toString()
@@ -114,6 +123,24 @@ async function fetchSettings() {
     loading.value.listSettings = false
   }
 }
+
+watchEffect(() => {
+  if (isBlockIcmpDosEnabled.value && blockIcmpDosLimit.value == '0') {
+    blockIcmpDosLimit.value = String(blockIcmpDosDefault.value)
+  }
+})
+
+watchEffect(() => {
+  if (isBlockSynDosEnabled.value && blockSynDosLimit.value == '0') {
+    blockSynDosLimit.value = String(blockSynDosDefault.value)
+  }
+})
+
+watchEffect(() => {
+  if (isBlockUdpDosEnabled.value && blockUdpDosLimit.value == '0') {
+    blockUdpDosLimit.value = String(blockUdpDosDefault.value)
+  }
+})
 
 async function reloadSettings() {
   await uciChangesStore.getChanges()
@@ -378,7 +405,7 @@ onMounted(() => {
                 />
                 <NeTextInput
                   v-if="isBlockIcmpDosEnabled"
-                  v-model.number="blockIcmpDosLimit"
+                  v-model="blockIcmpDosLimit"
                   :label="t('standalone.threat_shield.block_icmp_dos_limit')"
                   type="number"
                   min="0"
@@ -394,7 +421,7 @@ onMounted(() => {
                 />
                 <NeTextInput
                   v-if="isBlockSynDosEnabled"
-                  v-model.number="blockSynDosLimit"
+                  v-model="blockSynDosLimit"
                   :label="t('standalone.threat_shield.block_syn_dos_limit')"
                   type="number"
                   min="0"
@@ -410,7 +437,7 @@ onMounted(() => {
                 />
                 <NeTextInput
                   v-if="isBlockUdpDosEnabled"
-                  v-model.number="blockUdpDosLimit"
+                  v-model="blockUdpDosLimit"
                   :label="t('standalone.threat_shield.block_udp_dos_limit')"
                   type="number"
                   min="0"

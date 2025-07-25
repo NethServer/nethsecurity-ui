@@ -19,7 +19,7 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -39,8 +39,14 @@ const banTime = ref('')
 const maxFailedAccesses = ref('')
 const attackPatterns = ref([''])
 const isBlockIcmpDosEnabled = ref(false)
+const blockIcmpDosLimit = ref('')
+const blockIcmpDosDefault = ref(0)
 const isBlockSynDosEnabled = ref(false)
+const blockSynDosLimit = ref('')
+const blockSynDosDefault = ref(0)
 const isBlockUdpDosEnabled = ref(false)
+const blockUdpDosLimit = ref('')
+const blockUdpDosDefault = ref(0)
 const errorBag = ref(new MessageBag())
 
 const loading = ref({
@@ -65,10 +71,32 @@ const banTimeOptions = ref<NeComboboxOption[]>([
   { id: '3d', label: t('standalone.threat_shield.three_days') }
 ])
 
+type ListSettingsResponse = {
+  data: {
+    data: {
+      ban_icmplimit: number
+      ban_logcount: string
+      ban_logforwardlan: boolean
+      ban_logforwardwan: boolean
+      ban_loginput: boolean
+      ban_loglimit: boolean
+      ban_logprerouting: boolean
+      ban_logterm: string[]
+      ban_nftexpiry: string
+      ban_synlimit: number
+      ban_udplimit: number
+      enabled: boolean
+      ban_icmplimit_default: number
+      ban_synlimit_default: number
+      ban_udplimit_default: number
+    }
+  }
+}
+
 async function fetchSettings() {
   try {
     loading.value.listSettings = true
-    const res = await ubusCall('ns.threatshield', 'list-settings')
+    const res = await ubusCall<ListSettingsResponse>('ns.threatshield', 'list-settings')
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
     isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
@@ -79,9 +107,15 @@ async function fetchSettings() {
     banTime.value = threatShieldConfig.ban_nftexpiry
     maxFailedAccesses.value = threatShieldConfig.ban_logcount.toString()
     attackPatterns.value = threatShieldConfig.ban_logterm
-    isBlockIcmpDosEnabled.value = threatShieldConfig.ban_icmplimit
-    isBlockSynDosEnabled.value = threatShieldConfig.ban_synlimit
-    isBlockUdpDosEnabled.value = threatShieldConfig.ban_udplimit
+    blockIcmpDosLimit.value = String(threatShieldConfig.ban_icmplimit)
+    isBlockIcmpDosEnabled.value = threatShieldConfig.ban_icmplimit > 0
+    blockSynDosLimit.value = String(threatShieldConfig.ban_synlimit)
+    isBlockSynDosEnabled.value = threatShieldConfig.ban_synlimit > 0
+    blockUdpDosLimit.value = String(threatShieldConfig.ban_udplimit)
+    isBlockUdpDosEnabled.value = threatShieldConfig.ban_udplimit > 0
+    blockIcmpDosDefault.value = threatShieldConfig.ban_icmplimit_default
+    blockSynDosDefault.value = threatShieldConfig.ban_synlimit_default
+    blockUdpDosDefault.value = threatShieldConfig.ban_udplimit_default
   } catch (err: any) {
     error.value.listSettings = t(getAxiosErrorMessage(err))
     error.value.listSettingsDetails = err.toString()
@@ -89,6 +123,24 @@ async function fetchSettings() {
     loading.value.listSettings = false
   }
 }
+
+watch(isBlockIcmpDosEnabled, (value) => {
+  if (value && blockIcmpDosLimit.value == '0') {
+    blockIcmpDosLimit.value = String(blockIcmpDosDefault.value)
+  }
+})
+
+watch(isBlockSynDosEnabled, (value) => {
+  if (value && blockSynDosLimit.value == '0') {
+    blockSynDosLimit.value = String(blockSynDosDefault.value)
+  }
+})
+
+watch(isBlockUdpDosEnabled, (value) => {
+  if (value && blockUdpDosLimit.value == '0') {
+    blockUdpDosLimit.value = String(blockUdpDosDefault.value)
+  }
+})
 
 async function reloadSettings() {
   await uciChangesStore.getChanges()
@@ -102,39 +154,57 @@ function clearErrors() {
   error.value.editSettingsDetails = ''
 }
 
-function validate() {
+function isFormInvalid(): boolean {
   clearErrors()
   errorBag.value.clear()
-  let isValidationOk = true
 
   if (isBlockBruteForceEnabled.value) {
     // max failed accesses
-
     if (isNaN(Number(maxFailedAccesses.value)) || Number(maxFailedAccesses.value) < 1) {
       errorBag.value.set('maxFailedAccess', [
         t('standalone.threat_shield.enter_a_number_greater_than_0')
       ])
-      if (isValidationOk) {
-        isValidationOk = false
-      }
     }
 
     // attack patterns
 
     if (attackPatterns.value.length === 0 || !attackPatterns.value[0]) {
       errorBag.value.set('attackPatterns', [t('error.required')])
-      if (isValidationOk) {
-        isValidationOk = false
-      }
     }
   }
 
-  return isValidationOk
+  if (isBlockIcmpDosEnabled.value) {
+    // block icmp dos limit
+    if (isNaN(Number(blockIcmpDosLimit.value)) || Number(blockIcmpDosLimit.value) < 1) {
+      errorBag.value.set('blockIcmpDosLimit', [
+        t('standalone.threat_shield.enter_a_number_greater_than_0')
+      ])
+    }
+  }
+
+  if (isBlockSynDosEnabled.value) {
+    // block syn dos limit
+    if (isNaN(Number(blockSynDosLimit.value)) || Number(blockSynDosLimit.value) < 1) {
+      errorBag.value.set('blockSynDosLimit', [
+        t('standalone.threat_shield.enter_a_number_greater_than_0')
+      ])
+    }
+  }
+
+  if (isBlockUdpDosEnabled.value) {
+    // block udp dos limit
+    if (isNaN(Number(blockUdpDosLimit.value)) || Number(blockUdpDosLimit.value) < 1) {
+      errorBag.value.set('blockUdpDosLimit', [
+        t('standalone.threat_shield.enter_a_number_greater_than_0')
+      ])
+    }
+  }
+
+  return errorBag.value.size > 0
 }
 
 async function saveSettings() {
-  const isValidationOk = validate()
-  if (!isValidationOk) {
+  if (isFormInvalid()) {
     return
   }
 
@@ -154,9 +224,9 @@ async function saveSettings() {
       ban_nftexpiry: banTime.value,
       ban_logcount: Number(maxFailedAccesses.value),
       ban_logterm: patterns,
-      ban_icmplimit: isBlockIcmpDosEnabled.value,
-      ban_synlimit: isBlockSynDosEnabled.value,
-      ban_udplimit: isBlockUdpDosEnabled.value
+      ban_icmplimit: isBlockIcmpDosEnabled.value ? Number(blockIcmpDosLimit.value) : 0,
+      ban_synlimit: isBlockSynDosEnabled.value ? Number(blockSynDosLimit.value) : 0,
+      ban_udplimit: isBlockUdpDosEnabled.value ? Number(blockUdpDosLimit.value) : 0
     })
     reloadSettings()
   } catch (err: any) {
@@ -277,7 +347,7 @@ onMounted(() => {
                 <template v-if="isBlockBruteForceEnabled">
                   <!-- ban after N failed accesses -->
                   <NeTextInput
-                    v-model.number="maxFailedAccesses"
+                    v-model="maxFailedAccesses"
                     :label="t('standalone.threat_shield.ban_after_n_attempts')"
                     type="number"
                     min="1"
@@ -309,9 +379,9 @@ onMounted(() => {
                   >
                     <template #tooltip>
                       <NeTooltip>
-                        <template #content>{{
-                          t('standalone.threat_shield.ban_time_tooltip')
-                        }}</template>
+                        <template #content>
+                          {{ t('standalone.threat_shield.ban_time_tooltip') }}
+                        </template>
                       </NeTooltip>
                     </template>
                   </NeCombobox>
@@ -326,9 +396,9 @@ onMounted(() => {
                   >
                     <template #tooltip>
                       <NeTooltip>
-                        <template #content>{{
-                          t('standalone.threat_shield.attack_patterns_tooltip')
-                        }}</template>
+                        <template #content>
+                          {{ t('standalone.threat_shield.attack_patterns_tooltip') }}
+                        </template>
                       </NeTooltip>
                     </template>
                   </NeMultiTextInput>
@@ -351,6 +421,16 @@ onMounted(() => {
                   :label="isBlockIcmpDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
+                <NeTextInput
+                  v-if="isBlockIcmpDosEnabled"
+                  v-model="blockIcmpDosLimit"
+                  :label="t('standalone.threat_shield.block_icmp_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('blockIcmpDosLimit')"
+                  :helper-text="t('standalone.threat_shield.packets_per_second')"
+                />
                 <!-- block syn dos -->
                 <NeToggle
                   v-model="isBlockSynDosEnabled"
@@ -358,12 +438,32 @@ onMounted(() => {
                   :label="isBlockSynDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
+                <NeTextInput
+                  v-if="isBlockSynDosEnabled"
+                  v-model="blockSynDosLimit"
+                  :label="t('standalone.threat_shield.block_syn_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('blockSynDosLimit')"
+                  :helper-text="t('standalone.threat_shield.packets_per_second')"
+                />
                 <!-- block udp dos -->
                 <NeToggle
                   v-model="isBlockUdpDosEnabled"
                   :top-label="t('standalone.threat_shield.block_udp_dos')"
                   :label="isBlockUdpDosEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
+                />
+                <NeTextInput
+                  v-if="isBlockUdpDosEnabled"
+                  v-model="blockUdpDosLimit"
+                  :label="t('standalone.threat_shield.block_udp_dos_limit')"
+                  type="number"
+                  min="0"
+                  :disabled="loading.editSettings"
+                  :invalid-message="errorBag.getFirstFor('blockUdpDosLimit')"
+                  :helper-text="t('standalone.threat_shield.packets_per_second')"
                 />
               </div>
             </FormLayout>

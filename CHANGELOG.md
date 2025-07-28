@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/NethServer/nethsecurity-ui/compare/2.1.0...2.1.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* **standalone:** restore, sort backup list ([#600](https://github.com/NethServer/nethsecurity-ui/issues/600)) ([acbb136](https://github.com/NethServer/nethsecurity-ui/commit/acbb136a3b845271f381c73a7d12bf711ee20b9a))
+
 ## [2.1.0](https://github.com/NethServer/nethsecurity-ui/compare/2.0.0...2.1.0) (2025-07-28)
 
 

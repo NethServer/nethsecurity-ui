@@ -180,14 +180,6 @@ const zoneComboboxOptions = computed((): NeComboboxOption[] => {
   )
 })
 
-const forwardPlaceholder = computed((): string => {
-  return zoneComboboxOptions.value
-    .slice(0, 2)
-    .map((zone: NeComboboxOption) => zone.label.toUpperCase())
-    .join(', ')
-    .concat('...')
-})
-
 function editZone() {
   ubusCall('ns.firewall', 'edit_zone', {
     name: name.value.toLowerCase(),
@@ -459,7 +451,7 @@ watch(preset, (newPreset) => {
         :disabled="saving"
         :label="t('standalone.zones_and_policies.allow_forwards_to')"
         :options="zoneComboboxOptions"
-        :placeholder="forwardPlaceholder"
+        :placeholder="t('standalone.zones_and_policies.choose_one_or_more_zones')"
         multiple
         :no-results-label="t('ne_combobox.no_results')"
         :limited-options-label="t('ne_combobox.limited_options_label')"
@@ -467,13 +459,14 @@ watch(preset, (newPreset) => {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optional-label="t('common.optional')"
+        optional
       />
       <NeCombobox
         v-model="forwardsFrom"
         :disabled="saving"
         :label="t('standalone.zones_and_policies.allow_forwards_from')"
         :options="zoneComboboxOptions"
-        :placeholder="forwardPlaceholder"
+        :placeholder="t('standalone.zones_and_policies.choose_one_or_more_zones')"
         multiple
         :no-results-label="t('ne_combobox.no_results')"
         :limited-options-label="t('ne_combobox.limited_options_label')"
@@ -481,6 +474,7 @@ watch(preset, (newPreset) => {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optional-label="t('common.optional')"
+        optional
       />
       <NeToggle
         v-if="zoneToEdit?.name !== SpecialZones.WAN"

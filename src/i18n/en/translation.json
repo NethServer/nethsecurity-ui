@@ -1449,7 +1449,8 @@
       "zone_dmz_label": "DMZ",
       "zone_dmz_color": "Orange",
       "preset_active_title": "Preset selected",
-      "preset_active_description": "When you create this zone, the system will automatically add firewall rules to allow access to essential services. You can view or modify them anytime under Firewall → Rules → Input Rules."
+      "preset_active_description": "When you create this zone, the system will automatically add firewall rules to allow access to essential services. You can view or modify them anytime under Firewall → Rules → Input Rules.",
+      "choose_one_or_more_zones": "Choose one or more zones"
     },
     "port_forward": {
       "title": "Port forward",

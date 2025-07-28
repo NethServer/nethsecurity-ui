@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.0](https://github.com/NethServer/nethsecurity-ui/compare/2.0.0...2.1.0) (2025-07-28)
+
+
+### Features
+
+* **threat shield ip:** added management of DoS limits ([#599](https://github.com/NethServer/nethsecurity-ui/issues/599)) ([8a1e765](https://github.com/NethServer/nethsecurity-ui/commit/8a1e7658729f1bfc19c7e08827890d59222d05da))
+
+
+### Bug Fixes
+
+* **deps:** update dependency axios to v1.11.0 [security] ([c87d622](https://github.com/NethServer/nethsecurity-ui/commit/c87d62219d1910422dee9f6bce06818e03fba0b0))
+* **threat shield ip:** updated labels ([#598](https://github.com/NethServer/nethsecurity-ui/issues/598)) ([3b7b51f](https://github.com/NethServer/nethsecurity-ui/commit/3b7b51fc0050efcc0ba03cba9c2d819234a5cb38))
+* wrong styling for icon in NeMultiTextInput ([#596](https://github.com/NethServer/nethsecurity-ui/issues/596)) ([288a9cc](https://github.com/NethServer/nethsecurity-ui/commit/288a9cc13e90ec725b42bc3e5bf2e3a0c111c42e))
+
 ## [2.0.0](https://github.com/NethServer/nethsecurity-ui/compare/1.28.3...2.0.0) (2025-07-16)
 
 

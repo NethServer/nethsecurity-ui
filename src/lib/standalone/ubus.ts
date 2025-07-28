@@ -18,7 +18,10 @@ export class ValidationError extends Error {
   }
 }
 
-export const ubusCall = async (
+// for compatibility with all the previous code, we use a generic type T.
+// any is required, otherwise we break all the type checking for all the previous code
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const ubusCall = async <T = any>(
   path: string,
   method: string,
   payload: any = {},
@@ -27,7 +30,7 @@ export const ubusCall = async (
   const loginStore = useLoginStore()
 
   try {
-    const res = await axios.post(
+    const res = await axios.post<T>(
       `${getStandaloneApiEndpoint()}/ubus/call`,
       { path, method, payload },
       {

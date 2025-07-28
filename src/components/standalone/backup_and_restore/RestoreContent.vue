@@ -109,14 +109,16 @@ async function getBackups() {
     try {
       const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
-        listBackups.value = res.data.values.backups?.map((item: any) => ({
-          id: item.id,
-          label:
-            formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
-            ' (' +
-            byteFormat1024(item.size) +
-            ')'
-        }))
+        listBackups.value = res.data.values.backups
+          .sort((a: any, b: any) => Number(b.created) - Number(a.created))
+          .map((item: any) => ({
+            id: item.id,
+            label:
+              formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+              ' (' +
+              byteFormat1024(item.size) +
+              ')'
+          }))
       }
     } catch (exception: any) {
       errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')

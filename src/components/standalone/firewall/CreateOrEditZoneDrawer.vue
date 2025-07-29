@@ -258,8 +258,7 @@ function addZone() {
             system_rule: false
           })
         )
-      }
-      if (preset.value == SpecialZones.DMZ) {
+      } else if (preset.value == SpecialZones.DMZ) {
         apiCalls.push(
           ubusCall('ns.firewall', 'add-rule', {
             name: 'Allow DNS from DMZ Zone',

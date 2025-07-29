@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/NethServer/nethsecurity-ui/compare/2.1.1...2.2.0) (2025-07-29)
+
+
+### Features
+
+* **zones:** added guest and dmz automations when creating a zone ([#602](https://github.com/NethServer/nethsecurity-ui/issues/602)) ([6e1f67d](https://github.com/NethServer/nethsecurity-ui/commit/6e1f67db93ba8186c23b002da5d0605ffa4fb5b8))
+
 ## [2.1.1](https://github.com/NethServer/nethsecurity-ui/compare/2.1.0...2.1.1) (2025-07-28)
 
 

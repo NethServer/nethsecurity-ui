@@ -14,10 +14,11 @@ import {
   NeTextInput,
   getAxiosErrorMessage,
   focusElement,
-  NeTooltip
+  NeTooltip,
+  NeToggle,
+  type RadioOption
 } from '@nethesis/vue-components'
-import { NeToggle } from '@nethesis/vue-components'
-import { computed, onMounted, ref, type PropType, watch, nextTick } from 'vue'
+import { computed, onMounted, ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SpecialZones, TrafficPolicy, useFirewallStore, Zone } from '@/stores/standalone/firewall'
 import {
@@ -34,14 +35,12 @@ import {
   forwardingsToByZone,
   getTrafficToWan
 } from '@/lib/standalone/network'
+import { faShield, faStar, faUsers } from '@fortawesome/free-solid-svg-icons'
 
-const props = defineProps({
-  isShown: { type: Boolean, default: false },
-  zoneToEdit: {
-    type: Object as PropType<Zone>,
-    default: undefined
-  }
-})
+const { isShown = false, zoneToEdit } = defineProps<{
+  isShown?: boolean
+  zoneToEdit?: Zone
+}>()
 
 const emit = defineEmits(['close', 'success'])
 
@@ -65,7 +64,7 @@ const saveError = ref<Error>()
 const errorBag = ref(new MessageBag())
 
 const isCreating = computed(() => {
-  return !props.zoneToEdit
+  return !zoneToEdit
 })
 
 const inputTrafficOptions = [
@@ -99,14 +98,15 @@ const forwardTrafficOptions = [
 ]
 
 watch(
-  () => props.isShown,
+  () => isShown,
   () => {
-    if (props.isShown) {
+    if (isShown) {
       // clear errors
       saveError.value = undefined
       errorBag.value.clear()
+      preset.value = 'custom'
 
-      if (!props.zoneToEdit) {
+      if (!zoneToEdit) {
         // creating zone, reset fields to default
         name.value = ''
         forwardsTo.value = []
@@ -121,8 +121,8 @@ watch(
         })
       } else {
         // editing zone
-        name.value = props.zoneToEdit.name
-        forwardsTo.value = forwardingsToByZone(props.zoneToEdit, firewallConfig.forwardings).map(
+        name.value = zoneToEdit.name
+        forwardsTo.value = forwardingsToByZone(zoneToEdit, firewallConfig.forwardings).map(
           (forwarding) => {
             return {
               id: forwarding.destination,
@@ -130,20 +130,19 @@ watch(
             }
           }
         )
-        forwardsFrom.value = forwardingsFromByZone(
-          props.zoneToEdit,
-          firewallConfig.forwardings
-        ).map((forwarding) => {
-          return {
-            id: forwarding.source,
-            label: forwarding.source.toUpperCase()
+        forwardsFrom.value = forwardingsFromByZone(zoneToEdit, firewallConfig.forwardings).map(
+          (forwarding) => {
+            return {
+              id: forwarding.source,
+              label: forwarding.source.toUpperCase()
+            }
           }
-        })
+        )
 
-        trafficInput.value = mapTrafficPolicyToRadioId(props.zoneToEdit.input, 'input')
-        trafficForward.value = mapTrafficPolicyToRadioId(props.zoneToEdit.forward, 'forward')
-        trafficToWan.value = !!getTrafficToWan(props.zoneToEdit, firewallConfig.forwardings)
-        enableLogging.value = props.zoneToEdit.logging
+        trafficInput.value = mapTrafficPolicyToRadioId(zoneToEdit.input, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(zoneToEdit.forward, 'forward')
+        trafficToWan.value = !!getTrafficToWan(zoneToEdit, firewallConfig.forwardings)
+        enableLogging.value = zoneToEdit.logging
       }
     }
   }
@@ -170,9 +169,7 @@ const zoneComboboxOptions = computed((): NeComboboxOption[] => {
     firewallConfig.zones
       // exclude WAN and current zone (if editing)
       .filter(
-        (zone) =>
-          zone.name != SpecialZones.WAN &&
-          (!props.zoneToEdit || props.zoneToEdit.name !== zone.name)
+        (zone) => zone.name != SpecialZones.WAN && (!zoneToEdit || zoneToEdit.name !== zone.name)
       )
       .map((zone) => {
         return {
@@ -181,14 +178,6 @@ const zoneComboboxOptions = computed((): NeComboboxOption[] => {
         }
       })
   )
-})
-
-const forwardPlaceholder = computed((): string => {
-  return zoneComboboxOptions.value
-    .slice(0, 2)
-    .map((zone: NeComboboxOption) => zone.label.toUpperCase())
-    .join(', ')
-    .concat('...')
 })
 
 function editZone() {
@@ -214,15 +203,86 @@ function addZone() {
   if (!validate()) {
     saving.value = true
 
-    ubusCall('ns.firewall', 'create_zone', {
-      name: name.value.toLowerCase(),
-      input: mapRadioIdToTrafficPolicy(trafficInput.value),
-      forward: mapRadioIdToTrafficPolicy(trafficForward.value),
-      traffic_to_wan: trafficToWan.value,
-      forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
-      forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
-      log: enableLogging.value
-    })
+    const apiCalls: Promise<unknown>[] = [
+      ubusCall('ns.firewall', 'create_zone', {
+        name: name.value.toLowerCase(),
+        input: mapRadioIdToTrafficPolicy(trafficInput.value),
+        forward: mapRadioIdToTrafficPolicy(trafficForward.value),
+        traffic_to_wan: trafficToWan.value,
+        forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
+        forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
+        log: enableLogging.value
+      })
+    ]
+
+    if (isPresetActive.value) {
+      // if preset is active, we need to call additional APIs to configure the firewall rules
+      if (preset.value == SpecialZones.GUEST) {
+        apiCalls.push(
+          ubusCall('ns.firewall', 'add-rule', {
+            name: 'Allow DNS from Guest Zone',
+            enabled: true,
+            src_ip: [],
+            ns_src: '',
+            src: 'guest',
+            dest_ip: [],
+            ns_dst: '',
+            dest: '',
+            ns_service: 'domain',
+            proto: [],
+            dest_port: [],
+            target: 'ACCEPT',
+            add_to_top: false,
+            ns_tag: [],
+            log: false,
+            system_rule: false
+          })
+        )
+        apiCalls.push(
+          ubusCall('ns.firewall', 'add-rule', {
+            name: 'Allow DHCP from Guest Zone',
+            enabled: true,
+            src_ip: [],
+            ns_src: '',
+            src: 'guest',
+            dest_ip: [],
+            ns_dst: '',
+            dest: '',
+            ns_service: 'bootps',
+            proto: [],
+            dest_port: [],
+            target: 'ACCEPT',
+            add_to_top: false,
+            ns_tag: [],
+            log: false,
+            system_rule: false
+          })
+        )
+      } else if (preset.value == SpecialZones.DMZ) {
+        apiCalls.push(
+          ubusCall('ns.firewall', 'add-rule', {
+            name: 'Allow DNS from DMZ Zone',
+            enabled: true,
+            src_ip: [],
+            ns_src: '',
+            src: 'dmz',
+            dest_ip: [],
+            ns_dst: '',
+            dest: '',
+            ns_service: 'domain',
+            proto: [],
+            dest_port: [],
+            target: 'ACCEPT',
+            add_to_top: false,
+            ns_tag: [],
+            log: false,
+            system_rule: false
+          })
+        )
+      }
+    }
+
+    Promise.all(apiCalls)
       .then(() => {
         uciPendingChangesStore.getChanges()
         firewallConfig.fetch()
@@ -270,6 +330,77 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
   const [, trafficPolicy] = radioId.split('-')
   return trafficPolicy.toUpperCase()
 }
+
+type AvailablePresets = SpecialZones.GUEST | SpecialZones.DMZ | 'custom'
+const getPresets = computed<RadioOption[]>(() => {
+  return [
+    {
+      id: 'custom',
+      label: t('standalone.interfaces_and_devices.custom_zone'),
+      icon: faStar
+    },
+    {
+      id: SpecialZones.GUEST,
+      label: t('standalone.zones_and_policies.zone_guest_label'),
+      description: t('standalone.zones_and_policies.zone_guest_color'),
+      icon: faUsers,
+      disabled: firewallConfig.zones.some((zone) => zone.name == SpecialZones.GUEST)
+    },
+    {
+      id: SpecialZones.DMZ,
+      label: t('standalone.zones_and_policies.zone_dmz_label'),
+      description: t('standalone.zones_and_policies.zone_dmz_color'),
+      icon: faShield,
+      disabled: firewallConfig.zones.some((zone) => zone.name == SpecialZones.DMZ)
+    }
+  ]
+})
+
+const preset = ref<AvailablePresets>('custom')
+const isPresetActive = computed<boolean>(() => {
+  return preset.value != 'custom'
+})
+
+watch(preset, (newPreset) => {
+  if (isCreating.value) {
+    switch (newPreset) {
+      case SpecialZones.GUEST:
+        name.value = SpecialZones.GUEST
+        forwardsTo.value = []
+        forwardsFrom.value = [
+          {
+            id: SpecialZones.LAN,
+            label: SpecialZones.LAN.toUpperCase()
+          }
+        ]
+        trafficToWan.value = true
+        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
+        break
+      case SpecialZones.DMZ:
+        name.value = SpecialZones.DMZ
+        forwardsTo.value = []
+        forwardsFrom.value = [
+          {
+            id: SpecialZones.LAN,
+            label: SpecialZones.LAN.toUpperCase()
+          }
+        ]
+        trafficToWan.value = true
+
+        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
+        break
+      default:
+        name.value = ''
+        forwardsTo.value = []
+        forwardsFrom.value = []
+        trafficInput.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'input')
+        trafficForward.value = mapTrafficPolicyToRadioId(TrafficPolicy.DROP, 'forward')
+        trafficToWan.value = false
+    }
+  }
+})
 </script>
 <template>
   <NeSideDrawer
@@ -293,10 +424,23 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :title="t(getAxiosErrorMessage(saveError.message))"
         kind="error"
       />
+      <NeRadioSelection
+        v-if="isCreating"
+        v-model="preset"
+        :options="getPresets"
+        :label="t('standalone.zones_and_policies.type')"
+        card
+      />
+      <NeInlineNotification
+        v-if="isPresetActive"
+        kind="info"
+        :title="t('standalone.zones_and_policies.preset_active_title')"
+        :description="t('standalone.zones_and_policies.preset_active_description')"
+      />
       <NeTextInput
         ref="nameRef"
         v-model="name"
-        :disabled="saving || !isCreating"
+        :disabled="saving || !isCreating || isPresetActive"
         :invalid-message="t(errorBag.getFirstI18nKeyFor('name'))"
         :label="t('standalone.zones_and_policies.name')"
         :placeholder="t('standalone.zones_and_policies.name')"
@@ -306,7 +450,7 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :disabled="saving"
         :label="t('standalone.zones_and_policies.allow_forwards_to')"
         :options="zoneComboboxOptions"
-        :placeholder="forwardPlaceholder"
+        :placeholder="t('standalone.zones_and_policies.choose_one_or_more_zones')"
         multiple
         :no-results-label="t('ne_combobox.no_results')"
         :limited-options-label="t('ne_combobox.limited_options_label')"
@@ -314,13 +458,14 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optional-label="t('common.optional')"
+        optional
       />
       <NeCombobox
         v-model="forwardsFrom"
         :disabled="saving"
         :label="t('standalone.zones_and_policies.allow_forwards_from')"
         :options="zoneComboboxOptions"
-        :placeholder="forwardPlaceholder"
+        :placeholder="t('standalone.zones_and_policies.choose_one_or_more_zones')"
         multiple
         :no-results-label="t('ne_combobox.no_results')"
         :limited-options-label="t('ne_combobox.limited_options_label')"
@@ -328,6 +473,7 @@ function mapRadioIdToTrafficPolicy(radioId: string): string {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optional-label="t('common.optional')"
+        optional
       />
       <NeToggle
         v-if="zoneToEdit?.name !== SpecialZones.WAN"

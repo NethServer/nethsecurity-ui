@@ -87,7 +87,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     password: string,
     displayName: string,
     admin: boolean,
-    unitGroups: string[]
+    unitGroups: number[]
   ) => {
     await axios.post(
       `${getControllerApiEndpoint()}/accounts`,
@@ -106,7 +106,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     password: string,
     displayName: string,
     admin: boolean,
-    unitGroups: string[]
+    unitGroups: number[]
   ) => {
     await axios.put(
       `${getControllerApiEndpoint()}/accounts/${accountId}`,

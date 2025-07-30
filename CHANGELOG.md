@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/NethServer/nethsecurity-ui/compare/2.2.0...2.2.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* **controller:** fix edit user unit group type ([c7698e6](https://github.com/NethServer/nethsecurity-ui/commit/c7698e6073daa91d861a607e48192374b00e9a9d))
+
 ## [2.2.0](https://github.com/NethServer/nethsecurity-ui/compare/2.1.1...2.2.0) (2025-07-29)
 
 

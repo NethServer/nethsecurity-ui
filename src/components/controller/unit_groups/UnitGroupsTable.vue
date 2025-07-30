@@ -49,6 +49,7 @@ function getDropdownItems(item: UnitGroup) {
       id: 'delete',
       label: t('common.delete'),
       icon: faTrash,
+      disabled: item.used_by && item.used_by.length > 0,
       danger: true,
       action: () => {
         openDeleteModal(item)

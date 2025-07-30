@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/NethServer/nethsecurity-ui/compare/2.2.1...2.2.2) (2025-07-30)
+
+
+### Bug Fixes
+
+* **controller:** prevent deletion of used groups ([17c5df6](https://github.com/NethServer/nethsecurity-ui/commit/17c5df61e3f2be4102d1c8ad5ebd0ff54b19bc3a))
+
 ## [2.2.1](https://github.com/NethServer/nethsecurity-ui/compare/2.2.0...2.2.1) (2025-07-30)
 
 

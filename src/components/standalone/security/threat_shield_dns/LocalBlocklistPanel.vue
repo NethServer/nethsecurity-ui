@@ -158,7 +158,7 @@ function clearFilter() {
     <DeleteModal
       :visible="isShownDeleteDomainModal"
       :title="t('standalone.threat_shield_dns.delete_domain')"
-      :delete-button-label="t('standalone.threat_shield_dns.delete_domain')"
+      :delete-button-label="t('common.delete')"
       :error-notification-title="t('error.cannot_delete_blocked_domain')"
       :delete-function="() => tsStore.deleteDnsBlockedDomain(currentDomain?.address || '')"
       @close="isShownDeleteDomainModal = false"

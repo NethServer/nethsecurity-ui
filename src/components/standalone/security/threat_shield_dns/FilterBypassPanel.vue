@@ -172,7 +172,7 @@ function clearFilter() {
     <DeleteModal
       :visible="isShownDeleteBypassModal"
       :title="t('standalone.threat_shield_dns.delete_bypass')"
-      :delete-button-label="t('standalone.threat_shield_dns.delete_bypass')"
+      :delete-button-label="t('common.delete')"
       :error-notification-title="t('error.cannot_delete_bypass')"
       :delete-function="() => tsStore.deleteDnsBypass(currentBypass)"
       @close="isShownDeleteBypassModal = false"

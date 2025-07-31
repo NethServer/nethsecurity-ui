@@ -184,11 +184,7 @@ async function saveBlockedDomain() {
           :loading="tsStore.loadingSaveDnsBlockedDomain"
           @click.prevent="saveBlockedDomain"
         >
-          {{
-            currentDomain
-              ? t('standalone.threat_shield_dns.save_domain')
-              : t('standalone.threat_shield_dns.add_domain')
-          }}
+          {{ currentDomain ? t('common.save') : t('standalone.threat_shield_dns.add_domain') }}
         </NeButton>
       </div>
     </form>

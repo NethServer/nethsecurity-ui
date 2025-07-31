@@ -29,7 +29,7 @@ import {
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { AxiosError } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
 import {
   forwardingsFromByZone,
   forwardingsToByZone,
@@ -199,90 +199,100 @@ function editZone() {
     .then(() => (saving.value = false))
 }
 
+type CreatedZoneResponse = {
+  data: {
+    created_zone: string
+  }
+}
+
 function addZone() {
   if (!validate()) {
     saving.value = true
+    saveError.value = undefined
 
-    const apiCalls: Promise<unknown>[] = [
-      ubusCall('ns.firewall', 'create_zone', {
-        name: name.value.toLowerCase(),
-        input: mapRadioIdToTrafficPolicy(trafficInput.value),
-        forward: mapRadioIdToTrafficPolicy(trafficForward.value),
-        traffic_to_wan: trafficToWan.value,
-        forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
-        forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
-        log: enableLogging.value
+    ubusCall('ns.firewall', 'create_zone', {
+      name: name.value.toLowerCase(),
+      input: mapRadioIdToTrafficPolicy(trafficInput.value),
+      forward: mapRadioIdToTrafficPolicy(trafficForward.value),
+      traffic_to_wan: trafficToWan.value,
+      forwards_to: forwardsTo.value.map((item: NeComboboxOption) => item.id),
+      forwards_from: forwardsFrom.value.map((item: NeComboboxOption) => item.id),
+      log: enableLogging.value
+    })
+      .then(async (response: CreatedZoneResponse) => {
+        if (isPresetActive.value) {
+          const promises: Promise<unknown>[] = []
+          // if preset is active, we need to call additional APIs to configure the firewall rules
+          if (preset.value == SpecialZones.GUEST) {
+            promises.push(
+              ubusCall('ns.firewall', 'add-rule', {
+                name: 'Allow-DNS-from-Guest-Zone',
+                enabled: true,
+                src_ip: [],
+                ns_src: '',
+                src: 'guest',
+                dest_ip: [],
+                ns_dst: '',
+                dest: '',
+                ns_service: 'domain',
+                proto: [],
+                dest_port: [],
+                target: 'ACCEPT',
+                add_to_top: false,
+                ns_tag: [],
+                log: false,
+                system_rule: false,
+                ns_link: `firewall/${response.data.created_zone}`
+              })
+            )
+            promises.push(
+              ubusCall('ns.firewall', 'add-rule', {
+                name: 'Allow-DHCP-from-Guest-Zone',
+                enabled: true,
+                src_ip: [],
+                ns_src: '',
+                src: 'guest',
+                dest_ip: [],
+                ns_dst: '',
+                dest: '',
+                ns_service: 'bootps',
+                proto: [],
+                dest_port: [],
+                target: 'ACCEPT',
+                add_to_top: false,
+                ns_tag: [],
+                log: false,
+                system_rule: false,
+                ns_link: `firewall/${response.data.created_zone}`
+              })
+            )
+          }
+          if (preset.value == SpecialZones.DMZ) {
+            promises.push(
+              ubusCall('ns.firewall', 'add-rule', {
+                name: 'Allow-DNS-from-DMZ-Zone',
+                enabled: true,
+                src_ip: [],
+                ns_src: '',
+                src: 'dmz',
+                dest_ip: [],
+                ns_dst: '',
+                dest: '',
+                ns_service: 'domain',
+                proto: [],
+                dest_port: [],
+                target: 'ACCEPT',
+                add_to_top: false,
+                ns_tag: [],
+                log: false,
+                system_rule: false,
+                ns_link: `firewall/${response.data.created_zone}`
+              })
+            )
+          }
+          await Promise.all(promises)
+        }
       })
-    ]
-
-    if (isPresetActive.value) {
-      // if preset is active, we need to call additional APIs to configure the firewall rules
-      if (preset.value == SpecialZones.GUEST) {
-        apiCalls.push(
-          ubusCall('ns.firewall', 'add-rule', {
-            name: 'Allow DNS from Guest Zone',
-            enabled: true,
-            src_ip: [],
-            ns_src: '',
-            src: 'guest',
-            dest_ip: [],
-            ns_dst: '',
-            dest: '',
-            ns_service: 'domain',
-            proto: [],
-            dest_port: [],
-            target: 'ACCEPT',
-            add_to_top: false,
-            ns_tag: [],
-            log: false,
-            system_rule: false
-          })
-        )
-        apiCalls.push(
-          ubusCall('ns.firewall', 'add-rule', {
-            name: 'Allow DHCP from Guest Zone',
-            enabled: true,
-            src_ip: [],
-            ns_src: '',
-            src: 'guest',
-            dest_ip: [],
-            ns_dst: '',
-            dest: '',
-            ns_service: 'bootps',
-            proto: [],
-            dest_port: [],
-            target: 'ACCEPT',
-            add_to_top: false,
-            ns_tag: [],
-            log: false,
-            system_rule: false
-          })
-        )
-      } else if (preset.value == SpecialZones.DMZ) {
-        apiCalls.push(
-          ubusCall('ns.firewall', 'add-rule', {
-            name: 'Allow DNS from DMZ Zone',
-            enabled: true,
-            src_ip: [],
-            ns_src: '',
-            src: 'dmz',
-            dest_ip: [],
-            ns_dst: '',
-            dest: '',
-            ns_service: 'domain',
-            proto: [],
-            dest_port: [],
-            target: 'ACCEPT',
-            add_to_top: false,
-            ns_tag: [],
-            log: false,
-            system_rule: false
-          })
-        )
-      }
-    }
-
-    Promise.all(apiCalls)
       .then(() => {
         uciPendingChangesStore.getChanges()
         firewallConfig.fetch()
@@ -295,7 +305,7 @@ function addZone() {
           saveError.value = error
         }
       })
-      .then(() => (saving.value = false))
+      .finally(() => (saving.value = false))
   }
 }
 

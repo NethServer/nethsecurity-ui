@@ -1813,7 +1813,15 @@
       "blocked_domain_added_title": "Blocked domain added",
       "blocked_domain_added_description": "'{domain}' has been added to local DNS blocklist",
       "blocked_domain_deleted_title": "Blocked domain deleted",
-      "blocked_domain_deleted_description": "'{domain}' has been deleted from local DNS blocklist"
+      "blocked_domain_deleted_description": "'{domain}' has been deleted from local DNS blocklist",
+      "allowlist": "Local allowlist",
+      "confirm_delete_allowed_domain": "Removing '{name}' may cause it to be blocked if it matches an active blocklist. Are you sure you want to delete it?",
+      "local_allowlist_description": "Always allow content from specific domains. The local allowlist has priority over the local blocklist, meaning that if a domain is present in both lists, it will be allowed.",
+      "allowed_domain_added_title": "Allowed domain added",
+      "allowed_domain_added_description": "'{domain}' has been added to local DNS allowlist",
+      "allowed_domain_deleted_title": "Allowed domain deleted",
+      "allowed_domain_deleted_description": "'{domain}' has been deleted from local DNS allowlist",
+      "local_allowlist_is_empty": "Local allowlist is empty"
     },
     "vpn": {
       "title": "VPN"

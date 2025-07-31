@@ -29,7 +29,7 @@ import {
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
-import { AxiosError, type AxiosResponse } from 'axios'
+import { AxiosError } from 'axios'
 import {
   forwardingsFromByZone,
   forwardingsToByZone,

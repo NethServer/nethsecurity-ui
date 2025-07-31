@@ -18,6 +18,7 @@ import BlocklistSourcesPanel from '@/components/standalone/security/threat_shiel
 import FilterBypassPanel from '@/components/standalone/security/threat_shield_dns/FilterBypassPanel.vue'
 import LocalBlocklistPanel from '@/components/standalone/security/threat_shield_dns/LocalBlocklistPanel.vue'
 import SettingsPanel from '@/components/standalone/security/threat_shield_dns/SettingsPanel.vue'
+import LocalAllowListPanel from '@/components/standalone/security/threat_shield_dns/LocalAllowlistPanel.vue'
 import { onMounted, ref } from 'vue'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -39,6 +40,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'filterBypass',
     label: t('standalone.threat_shield_dns.filter_bypass')
+  },
+  {
+    name: 'allowlist',
+    label: t('standalone.threat_shield_dns.allowlist')
   },
   {
     name: 'localBlocklist',
@@ -131,6 +136,7 @@ async function getFlashstartConfig() {
         @select-tab="selectedTab = $event"
       />
       <BlocklistSourcesPanel v-if="selectedTab === 'blocklistSources'" />
+      <LocalAllowListPanel v-if="selectedTab === 'allowlist'" />
       <FilterBypassPanel v-if="selectedTab === 'filterBypass'" />
       <LocalBlocklistPanel v-if="selectedTab === 'localBlocklist'" />
       <SettingsPanel v-if="selectedTab === 'settings'" />

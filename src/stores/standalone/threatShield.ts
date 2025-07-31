@@ -28,6 +28,11 @@ export type DnsBlockedDomain = {
   description?: string
 }
 
+export type DnsAllowedDomain = {
+  address: string
+  description: string
+}
+
 export const useThreatShieldStore = defineStore('threatShield', () => {
   const { t, te } = useI18n()
   const uciChangesStore = useUciPendingChangesStore()
@@ -37,6 +42,8 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   const dnsZones = ref<string[]>([])
   const dnsBypasses = ref<string[]>([])
   const dnsBlockedDomains = ref<DnsBlockedDomain[]>([])
+  const dnsAllowedDomains = ref<DnsAllowedDomain[]>([])
+  const loadingSaveDnsAllowedDomain = ref(false)
   const loadingListDnsBlocklists = ref(false)
   const loadingListDnsBlockedDomains = ref(false)
   const loadingListDnsSettings = ref(false)
@@ -70,6 +77,11 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
   const errorSaveDnsBlockedDomainDetails = ref('')
   const errorDeleteDnsBlockedDomain = ref('')
   const errorDeleteDnsBlockedDomainDetails = ref('')
+  const errorListDnsAllowedDomains = ref('')
+  const errorListDnsAllowedDomainsDetails = ref('')
+  const loadingListDnsAllowedDomains = ref(false)
+  const errorSaveDnsAllowedDomain = ref('')
+  const errorSaveDnsAllowedDomainDetails = ref('')
 
   const isEnterprise = computed(() => {
     return dnsBlocklists.value.some((x) => x.type === 'enterprise')
@@ -154,6 +166,22 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     }
   }
 
+  async function listDnsAllowedDomains() {
+    loadingListDnsAllowedDomains.value = true
+    errorListDnsAllowedDomains.value = ''
+    errorListDnsAllowedDomainsDetails.value = ''
+    try {
+      const res = await ubusCall('ns.threatshield', 'dns-list-allowed')
+      dnsAllowedDomains.value = res.data.data as DnsAllowedDomain[]
+    } catch (err: any) {
+      console.error(err)
+      errorListDnsAllowedDomains.value = t(getAxiosErrorMessage(err))
+      errorListDnsAllowedDomainsDetails.value = err.toString()
+    } finally {
+      loadingListDnsAllowedDomains.value = false
+    }
+  }
+
   async function saveDnsBlockedDomain(domain: DnsBlockedDomain, isEditing = false) {
     loadingSaveDnsBlockedDomain.value = true
     errorSaveDnsBlockedDomain.value = ''
@@ -184,6 +212,39 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
       throw err
     } finally {
       loadingSaveDnsBlockedDomain.value = false
+    }
+  }
+
+  async function saveDnsAllowedDomain(domain: DnsAllowedDomain, isEditing = false) {
+    loadingSaveDnsAllowedDomain.value = true
+    errorSaveDnsAllowedDomain.value = ''
+    errorSaveDnsAllowedDomainDetails.value = ''
+    const method = isEditing ? 'dns-edit-allowed' : 'dns-add-allowed'
+
+    try {
+      await ubusCall('ns.threatshield', method, domain)
+
+      if (!isEditing) {
+        // applied instantly, show notification (only if creating)
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.threat_shield_dns.allowed_domain_added_title'),
+          description: t('standalone.threat_shield_dns.allowed_domain_added_description', {
+            domain: domain.address
+          })
+        })
+      }
+    } catch (err: any) {
+      console.error(err)
+
+      if (!(err instanceof ValidationError)) {
+        errorSaveDnsAllowedDomain.value = t(getAxiosErrorMessage(err))
+        errorSaveDnsAllowedDomainDetails.value = err.toString()
+      }
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingSaveDnsAllowedDomain.value = false
     }
   }
 
@@ -233,6 +294,38 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
       throw err
     } finally {
       loadingDeleteDnsBlockedDomain.value = false
+    }
+  }
+
+  async function deleteDnsAllowedDomain(domain: string) {
+    const loadingDeleteDnsAllowedDomain = ref(false)
+    const errorDeleteDnsAllowedDomain = ref('')
+    const errorDeleteDnsAllowedDomainDetails = ref('')
+
+    loadingDeleteDnsAllowedDomain.value = true
+    errorDeleteDnsAllowedDomain.value = ''
+    errorDeleteDnsAllowedDomainDetails.value = ''
+
+    try {
+      await ubusCall('ns.threatshield', 'dns-delete-allowed', {
+        address: domain
+      })
+      // applied instantly, show notification
+      notificationsStore.createNotification({
+        kind: 'success',
+        title: t('standalone.threat_shield_dns.allowed_domain_deleted_title'),
+        description: t('standalone.threat_shield_dns.allowed_domain_deleted_description', {
+          domain
+        })
+      })
+    } catch (err: any) {
+      console.error(err)
+      errorDeleteDnsAllowedDomain.value = t(getAxiosErrorMessage(err))
+      errorDeleteDnsAllowedDomainDetails.value = err.toString()
+      // rethrow error so it can be caught by the caller
+      throw err
+    } finally {
+      loadingDeleteDnsAllowedDomain.value = false
     }
   }
 
@@ -357,6 +450,18 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     })
   }
 
+  function searchStringInDnsAllowedDomain(domain: DnsAllowedDomain, queryText: string) {
+    const regex = /[^a-zA-Z0-9-_\\.]/g
+    queryText = queryText.replace(regex, '')
+
+    // search in domain name and description
+
+    return ['address', 'description'].some((attrName) => {
+      const attrValue = domain[attrName as keyof DnsAllowedDomain] as string
+      return new RegExp(queryText, 'i').test(attrValue?.replace(regex, ''))
+    })
+  }
+
   return {
     dnsBlocklists,
     dnsSettings,
@@ -408,6 +513,17 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
     searchStringInDnsBlocklist,
     searchStringInDnsBlockedDomain,
     errorDeleteDnsBlockedDomain,
-    errorDeleteDnsBlockedDomainDetails
+    errorDeleteDnsBlockedDomainDetails,
+    errorListDnsAllowedDomains,
+    errorListDnsAllowedDomainsDetails,
+    dnsAllowedDomains,
+    loadingListDnsAllowedDomains,
+    saveDnsAllowedDomain,
+    loadingSaveDnsAllowedDomain,
+    listDnsAllowedDomains,
+    errorSaveDnsAllowedDomain,
+    errorSaveDnsAllowedDomainDetails,
+    searchStringInDnsAllowedDomain,
+    deleteDnsAllowedDomain
   }
 })

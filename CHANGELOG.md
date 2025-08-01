@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/NethServer/nethsecurity-ui/compare/2.3.0...2.3.1) (2025-08-01)
+
+
+### Bug Fixes
+
+* **firewall:** generating `ns_link` accordingly to response ([#608](https://github.com/NethServer/nethsecurity-ui/issues/608)) ([fdc128b](https://github.com/NethServer/nethsecurity-ui/commit/fdc128b876a6c91731fd601f4fc37297f76717e0))
+
 ## [2.3.0](https://github.com/NethServer/nethsecurity-ui/compare/2.2.2...2.3.0) (2025-08-01)
 
 

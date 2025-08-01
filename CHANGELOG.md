@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/NethServer/nethsecurity-ui/compare/2.2.2...2.3.0) (2025-08-01)
+
+
+### Features
+
+* **ts_dns:** add local allowlist ([cf6560d](https://github.com/NethServer/nethsecurity-ui/commit/cf6560d2d19ab44ac54454fba8982ec76e75ad5f))
+
+
+### Bug Fixes
+
+* **ts_dns:** change button labels ([7496767](https://github.com/NethServer/nethsecurity-ui/commit/7496767f50aeeacd02caf2c67cde5751c0a56290))
+
 ## [2.2.2](https://github.com/NethServer/nethsecurity-ui/compare/2.2.1...2.2.2) (2025-07-30)
 
 

@@ -71,7 +71,8 @@
     "password_confirmation_required": "Password confirmation required",
     "password_confirmation_required_description": "Please confirm your password to proceed",
     "automated": "Automated",
-    "automated_tooltip": "This item is managed by the system and cannot be modified."
+    "automated_tooltip": "This item is managed by the system and cannot be modified.",
+    "remove": "Remove"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -719,7 +720,8 @@
         "migration": "Migration"
       },
       "backup": {
-        "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures. Configure a passphrase to increase the security of your data.",
+        "title": "Backup",
+        "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures.",
         "description_subscription": "Configure a passphrase to enable encrypted backups. The system automatically manages up to 10 encrypted backups.",
         "download": "Download",
         "download_backup": "Download backup",
@@ -758,7 +760,18 @@
         "passphrase_required_for_restore_description": "The passphrase you set will be required to decrypt your backups during the restore process. Make sure to store it securely, as it cannot be recovered.",
         "passphrase_update_applies_to_new_backups": "Passphrase update applies to new backups",
         "changing_your_passphrase_applies_to_new_backups_description": "Changing your passphrase will only affect future backups. To restore older backups, you must use the passphrase that was set at the time of their creation.",
-        "new_passphrase": "New passphrase"
+        "new_passphrase": "New passphrase",
+        "confirm_passphrase": "Confirm passphrase",
+        "remove_passphrase": "Remove passphrase",
+        "remove_passphrase_title": "Remove backup passphrase",
+        "remove_passphrase_description": "Are you sure you want to remove the backup passphrase? This will disable encryption for future backups.",
+        "passphrase_configured": "Passphrase configured successfully",
+        "passphrase_configured_description": "The passphrase has been configured successfully. It will be used to encrypt future backups.",
+        "passphrase_removed": "Passphrase removed successfully",
+        "passphrase_removed_description": "The passphrase has been removed successfully. Future backups will not be encrypted.",
+        "passphrase_edited": "Passphrase edited successfully",
+        "passphrase_edited_description": "The passphrase has been edited successfully. Next backups will be encrypted with the new passphrase.",
+        "manage_passphrase": "Manage passphrase"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",
@@ -785,6 +798,10 @@
         "migration_in_progress": "Migrating, please wait... At the end, the machine will be reachable from the following IPs:",
         "success_migration": "Migration performed successfully",
         "to": "to"
+      },
+      "passphrase": {
+        "title": "Passphrase",
+        "description": "Configure a passphrase to increase the security of your data. The passphrase will be required to restore the backups."
       }
     },
     "reboot_and_shutdown": {

@@ -18,10 +18,13 @@ import {
 } from '@nethesis/vue-components'
 import { isAxiosError } from 'axios'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
-import { MessageBag, validateRequired } from '@/lib/validation.ts'
+import { MessageBag } from '@/lib/validation.ts'
+import * as v from 'valibot'
+import { useNotificationsStore } from '@/stores/notifications.ts'
 
 const { t } = useI18n()
 const backup = useBackupsStore()
+const notifications = useNotificationsStore()
 
 const props = defineProps({
   showPassphraseDrawer: {
@@ -36,7 +39,9 @@ watch(
   () => props.showPassphraseDrawer,
   () => {
     error.value = undefined
+    validation.value.clear()
     passphrase.value = ''
+    confirmPassphrase.value = ''
   }
 )
 
@@ -57,16 +62,42 @@ const label = computed((): string => {
 })
 
 const passphrase = ref('')
+const confirmPassphrase = ref('')
 const error = ref<Error>()
 const loading = ref(false)
 const validation = ref(new MessageBag())
 
 function validate(): boolean {
   validation.value.clear()
-  const { valid, errMessage } = validateRequired(passphrase.value)
-  if (!valid) {
-    validation.value.set('passphrase', errMessage as string)
+
+  const validator = v.pipe(
+    v.object({
+      passphrase: v.pipe(v.string(), v.nonEmpty('error.required')),
+      confirmPassphrase: v.pipe(v.string(), v.nonEmpty('error.required'))
+    }),
+    v.forward(
+      v.check(
+        ({ passphrase, confirmPassphrase }) => passphrase == confirmPassphrase,
+        'error.invalid_equal'
+      ),
+      ['confirmPassphrase']
+    )
+  )
+
+  type validatorSchema = typeof validator
+
+  const check = v.safeParse(validator, {
+    passphrase: passphrase.value,
+    confirmPassphrase: confirmPassphrase.value
+  })
+
+  if (!check.success) {
+    const flatted = v.flatten<validatorSchema>(check.issues).nested
+    for (const key in flatted) {
+      validation.value.set(key, flatted[key as v.IssueDotPath<validatorSchema>]![0])
+    }
   }
+
   return validation.value.size == 0
 }
 
@@ -78,6 +109,21 @@ async function setPassphrase() {
       passphrase: passphrase.value
     })
       .then(() => {
+        if (backup.isPassPhraseSet) {
+          notifications.addNotification({
+            id: 'passphrase-edited',
+            kind: 'success',
+            title: t('standalone.backup_and_restore.backup.passphrase_edited'),
+            description: t('standalone.backup_and_restore.backup.passphrase_edited_description')
+          })
+        } else {
+          notifications.addNotification({
+            id: 'passphrase-set',
+            kind: 'success',
+            title: t('standalone.backup_and_restore.backup.passphrase_configured'),
+            description: t('standalone.backup_and_restore.backup.passphrase_configured_description')
+          })
+        }
         backup.isPassPhraseSet = true
         emit('success')
       })
@@ -113,7 +159,6 @@ async function setPassphrase() {
         is-password
         :label="label"
         autocomplete="new-password"
-        required
       >
         <template #tooltip>
           <NeTooltip>
@@ -123,6 +168,13 @@ async function setPassphrase() {
           </NeTooltip>
         </template>
       </NeTextInput>
+      <NeTextInput
+        v-model="confirmPassphrase"
+        :invalid-message="t(validation.getFirstI18nKeyFor('confirmPassphrase'))"
+        is-password
+        :label="t('standalone.backup_and_restore.backup.confirm_passphrase')"
+        autocomplete="new-password"
+      />
       <NeInlineNotification
         v-if="backup.isPassPhraseSet"
         :description="

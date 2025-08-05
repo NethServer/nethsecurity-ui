@@ -34,6 +34,8 @@ import {
   faArrowCircleDown,
   faBoxArchive,
   faCheck,
+  faChevronDown,
+  faCircleMinus,
   faClock,
   faCog,
   faEdit,
@@ -44,6 +46,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import DeletePassphraseModal from '@/components/standalone/backup_and_restore/DeletePassphraseModal.vue'
 
 const { t } = useI18n()
 const backups = useBackupsStore()
@@ -89,6 +92,7 @@ const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
+const showPassphraseModal = ref(false)
 
 onMounted(() => {
   getHostname()
@@ -258,35 +262,60 @@ function successDeleteBackup() {
               kind="warning"
             />
           </template>
-        </div>
-        <div class="flex flex-col items-start gap-4 xl:items-end">
           <NeBadge
             v-if="backups.isPassPhraseSet"
             :icon="faCheck"
             :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
             kind="success"
           />
-          <div v-if="listBackups.length > 0 || backups.isPassPhraseSet" class="flex gap-4">
-            <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
+        </div>
+        <div class="flex flex-col items-start gap-4 xl:items-end">
+          <div
+            v-if="listBackups.length > 0 || backups.isPassPhraseSet"
+            class="flex flex-wrap gap-4"
+          >
+            <NeButton
+              v-if="!backups.isPassPhraseSet"
+              kind="tertiary"
+              size="lg"
+              @click="showPassphraseDrawer = true"
+            >
               <template #prefix>
-                <template v-if="backups.isPassPhraseSet">
-                  <FontAwesomeIcon :icon="faEdit" aria-hidden="true" />
-                </template>
-                <template v-else>
-                  <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
-                </template>
+                <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
               </template>
-              <template v-if="backups.isPassPhraseSet">
-                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
-              </template>
-              <template v-else>
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </template>
+              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
             </NeButton>
+            <NeDropdown
+              v-if="backups.isPassPhraseSet"
+              :items="[
+                {
+                  id: 'edit',
+                  label: t('standalone.backup_and_restore.backup.edit_passphrase'),
+                  icon: faEdit,
+                  action: () => (showPassphraseDrawer = true)
+                },
+                {
+                  id: 'delete',
+                  label: t('standalone.backup_and_restore.backup.remove_passphrase'),
+                  icon: faCircleMinus,
+                  action: () => (showPassphraseModal = true)
+                }
+              ]"
+              align-to-right
+            >
+              <template #button>
+                <NeButton>
+                  <template #suffix>
+                    <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
+                  </template>
+                  {{ t('standalone.backup_and_restore.backup.manage_passphrase') }}
+                </NeButton>
+              </template>
+            </NeDropdown>
             <NeButton
               v-if="listBackups.length > 0"
               :disabled="!backups.isPassPhraseSet"
-              kind="secondary"
+              kind="primary"
               @click="showRunBackupModal = true"
             >
               <template #prefix>
@@ -297,23 +326,49 @@ function successDeleteBackup() {
           </div>
         </div>
       </div>
-      <FormLayout
-        v-else
-        :description="t('standalone.backup_and_restore.backup.description')"
-        class="max-w-12xl mt-4"
-      >
-        <div class="flex gap-4">
-          <NeButton kind="secondary" size="lg" type="submit" @click="showDownloadModal = true">
-            <template #prefix>
-              <FontAwesomeIcon :icon="faArrowCircleDown" />
-            </template>
-            {{ t('standalone.backup_and_restore.backup.download_backup') }}
-          </NeButton>
-          <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-          </NeButton>
-        </div>
-      </FormLayout>
+      <div v-else class="max-w-3xl space-y-6">
+        <FormLayout
+          :title="t('standalone.backup_and_restore.backup.title')"
+          :description="t('standalone.backup_and_restore.backup.description')"
+        >
+          <div class="flex flex-wrap gap-4">
+            <NeButton kind="primary" size="lg" @click="showDownloadModal = true">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faArrowCircleDown" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_backup') }}
+            </NeButton>
+          </div>
+        </FormLayout>
+        <hr />
+        <FormLayout
+          :title="t('standalone.backup_and_restore.passphrase.title')"
+          :description="t('standalone.backup_and_restore.passphrase.description')"
+        >
+          <div class="flex flex-wrap gap-4">
+            <NeButton kind="secondary" size="lg" @click="showPassphraseDrawer = true">
+              <template #prefix>
+                <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
+                <FontAwesomeIcon v-else :icon="faCog" />
+              </template>
+              <template v-if="backups.isPassPhraseSet">
+                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
+              </template>
+              <template v-else>
+                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+              </template>
+            </NeButton>
+            <NeButton
+              v-if="backups.isPassPhraseSet"
+              kind="tertiary"
+              size="lg"
+              @click="showPassphraseModal = true"
+            >
+              {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
+            </NeButton>
+          </div>
+        </FormLayout>
+      </div>
     </template>
     <!-- No clue why this double check, however table formats bad if merged with the above template -->
     <div v-if="!loading && subscription.isActive" class="mt-4">
@@ -428,5 +483,16 @@ function successDeleteBackup() {
     :selected-backup-id="selectedBackupId"
     :selected-backup-label="selectedBackupLabel"
     @close="successDeleteBackup()"
+  />
+  <DeletePassphraseModal
+    v-if="backups.isPassPhraseSet"
+    :visible="showPassphraseModal"
+    @success="
+      () => {
+        backups.loadData()
+        showPassphraseModal = false
+      }
+    "
+    @close="showPassphraseModal = false"
   />
 </template>

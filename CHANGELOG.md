@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/NethServer/nethsecurity-ui/compare/2.3.1...2.3.2) (2025-08-05)
+
+
+### Bug Fixes
+
+* **controller:** show selected unit groups ([#613](https://github.com/NethServer/nethsecurity-ui/issues/613)) ([a260496](https://github.com/NethServer/nethsecurity-ui/commit/a260496a34740a0018df6b13380d354d78e3e3ab))
+
 ## [2.3.1](https://github.com/NethServer/nethsecurity-ui/compare/2.3.0...2.3.1) (2025-08-01)
 
 

@@ -92,7 +92,7 @@ const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
-const showDisableEncryptionModal = ref(false)
+const showPassphraseModal = ref(false)
 
 onMounted(() => {
   getHostname()
@@ -298,7 +298,7 @@ function successDeleteBackup() {
                   id: 'delete',
                   label: t('standalone.backup_and_restore.backup.remove_passphrase'),
                   icon: faCircleMinus,
-                  action: () => (showDisableEncryptionModal = true)
+                  action: () => (showPassphraseModal = true)
                 }
               ]"
               align-to-right
@@ -362,7 +362,7 @@ function successDeleteBackup() {
               v-if="backups.isPassPhraseSet"
               kind="tertiary"
               size="lg"
-              @click="showDisableEncryptionModal = true"
+              @click="showPassphraseModal = true"
             >
               {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
             </NeButton>
@@ -486,13 +486,13 @@ function successDeleteBackup() {
   />
   <DeletePassphraseModal
     v-if="backups.isPassPhraseSet"
-    :visible="showDisableEncryptionModal"
+    :visible="showPassphraseModal"
     @success="
       () => {
         backups.loadData()
-        showDisableEncryptionModal = false
+        showPassphraseModal = false
       }
     "
-    @close="showDisableEncryptionModal = false"
+    @close="showPassphraseModal = false"
   />
 </template>

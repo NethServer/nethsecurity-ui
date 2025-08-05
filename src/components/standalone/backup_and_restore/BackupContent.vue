@@ -40,10 +40,12 @@ import {
   faLock,
   faPlay,
   faTrash,
-  faUnlock
+  faUnlock,
+  faUnlockKeyhole
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import DeletePassphraseModal from '@/components/standalone/backup_and_restore/DeletePassphraseModal.vue'
 
 const { t } = useI18n()
 const backups = useBackupsStore()
@@ -89,6 +91,7 @@ const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
 const listBackups = ref<Backup[]>([])
+const showDisableEncryptionModal = ref(false)
 
 onMounted(() => {
   getHostname()
@@ -267,21 +270,16 @@ function successDeleteBackup() {
             kind="success"
           />
           <div v-if="listBackups.length > 0 || backups.isPassPhraseSet" class="flex gap-4">
-            <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
+            <NeButton
+              v-if="!backups.isPassPhraseSet"
+              kind="tertiary"
+              size="lg"
+              @click="showPassphraseDrawer = true"
+            >
               <template #prefix>
-                <template v-if="backups.isPassPhraseSet">
-                  <FontAwesomeIcon :icon="faEdit" aria-hidden="true" />
-                </template>
-                <template v-else>
-                  <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
-                </template>
+                <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
               </template>
-              <template v-if="backups.isPassPhraseSet">
-                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
-              </template>
-              <template v-else>
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </template>
+              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
             </NeButton>
             <NeButton
               v-if="listBackups.length > 0"
@@ -294,26 +292,70 @@ function successDeleteBackup() {
               </template>
               {{ t('standalone.backup_and_restore.backup.run_backup') }}
             </NeButton>
+            <NeDropdown
+              v-if="backups.isPassPhraseSet"
+              :items="[
+                {
+                  id: 'edit',
+                  label: t('standalone.backup_and_restore.backup.edit_passphrase'),
+                  icon: faEdit,
+                  action: () => (showPassphraseDrawer = true)
+                },
+                {
+                  id: 'delete',
+                  label: t('standalone.backup_and_restore.backup.disable_encryption'),
+                  icon: faUnlockKeyhole,
+                  action: () => (showDisableEncryptionModal = true)
+                }
+              ]"
+              align-to-right
+            />
           </div>
         </div>
       </div>
-      <FormLayout
-        v-else
-        :description="t('standalone.backup_and_restore.backup.description')"
-        class="max-w-12xl mt-4"
-      >
-        <div class="flex gap-4">
-          <NeButton kind="secondary" size="lg" type="submit" @click="showDownloadModal = true">
-            <template #prefix>
-              <FontAwesomeIcon :icon="faArrowCircleDown" />
-            </template>
-            {{ t('standalone.backup_and_restore.backup.download_backup') }}
-          </NeButton>
-          <NeButton kind="tertiary" size="lg" @click="showPassphraseDrawer = true">
-            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-          </NeButton>
-        </div>
-      </FormLayout>
+      <div v-else class="max-w-3xl space-y-6">
+        <FormLayout
+          :title="t('standalone.backup_and_restore.backup.title')"
+          :description="t('standalone.backup_and_restore.backup.description')"
+        >
+          <div class="flex flex-wrap gap-4">
+            <NeButton kind="primary" size="lg" @click="showDownloadModal = true">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faArrowCircleDown" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_backup') }}
+            </NeButton>
+          </div>
+        </FormLayout>
+        <hr />
+        <FormLayout
+          :title="t('standalone.backup_and_restore.passphrase.title')"
+          :description="t('standalone.backup_and_restore.passphrase.description')"
+        >
+          <div class="flex flex-wrap gap-4">
+            <NeButton kind="secondary" size="lg" @click="showPassphraseDrawer = true">
+              <template #prefix>
+                <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
+                <FontAwesomeIcon v-else :icon="faCog" />
+              </template>
+              <template v-if="backups.isPassPhraseSet">
+                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
+              </template>
+              <template v-else>
+                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+              </template>
+            </NeButton>
+            <NeButton
+              v-if="backups.isPassPhraseSet"
+              kind="tertiary"
+              size="lg"
+              @click="showDisableEncryptionModal = true"
+            >
+              {{ t('standalone.backup_and_restore.backup.disable_encryption') }}
+            </NeButton>
+          </div>
+        </FormLayout>
+      </div>
     </template>
     <!-- No clue why this double check, however table formats bad if merged with the above template -->
     <div v-if="!loading && subscription.isActive" class="mt-4">
@@ -428,5 +470,16 @@ function successDeleteBackup() {
     :selected-backup-id="selectedBackupId"
     :selected-backup-label="selectedBackupLabel"
     @close="successDeleteBackup()"
+  />
+  <DeletePassphraseModal
+    v-if="backups.isPassPhraseSet"
+    :visible="showDisableEncryptionModal"
+    @success="
+      () => {
+        backups.loadData()
+        showDisableEncryptionModal = false
+      }
+    "
+    @close="showDisableEncryptionModal = false"
   />
 </template>

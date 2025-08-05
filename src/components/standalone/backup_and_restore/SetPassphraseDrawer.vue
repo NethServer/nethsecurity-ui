@@ -155,17 +155,9 @@ async function setPassphrase() {
         v-model="confirmPassphrase"
         :invalid-message="t(validation.getFirstI18nKeyFor('confirmPassphrase'))"
         is-password
-        :label="label"
+        :label="t('standalone.backup_and_restore.backup.confirm_passphrase')"
         autocomplete="new-password"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.backup_and_restore.backup.passphrase_helper') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
+      />
       <NeInlineNotification
         v-if="backup.isPassPhraseSet"
         :description="

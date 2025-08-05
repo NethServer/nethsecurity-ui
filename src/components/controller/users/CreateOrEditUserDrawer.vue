@@ -68,7 +68,7 @@ async function resetForm() {
     displayName.value = props.itemToEdit.display_name
     isAdmin.value = props.itemToEdit.admin
     unitGroups.value = props.itemToEdit.unit_groups.map<NeComboboxOption>((group: string) => ({
-      id: group,
+      id: String(group),
       label: group,
       description: ''
     }))

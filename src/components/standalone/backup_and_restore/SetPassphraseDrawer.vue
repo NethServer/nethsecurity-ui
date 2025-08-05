@@ -20,9 +20,11 @@ import { isAxiosError } from 'axios'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { MessageBag } from '@/lib/validation.ts'
 import * as v from 'valibot'
+import { useNotificationsStore } from '@/stores/notifications.ts'
 
 const { t } = useI18n()
 const backup = useBackupsStore()
+const notifications = useNotificationsStore()
 
 const props = defineProps({
   showPassphraseDrawer: {
@@ -107,6 +109,21 @@ async function setPassphrase() {
       passphrase: passphrase.value
     })
       .then(() => {
+        if (backup.isPassPhraseSet) {
+          notifications.addNotification({
+            id: 'passphrase-edited',
+            kind: 'success',
+            title: t('standalone.backup_and_restore.backup.passphrase_edited'),
+            description: t('standalone.backup_and_restore.backup.passphrase_edited_description')
+          })
+        } else {
+          notifications.addNotification({
+            id: 'passphrase-set',
+            kind: 'success',
+            title: t('standalone.backup_and_restore.backup.passphrase_configured'),
+            description: t('standalone.backup_and_restore.backup.passphrase_configured_description')
+          })
+        }
         backup.isPassPhraseSet = true
         emit('success')
       })

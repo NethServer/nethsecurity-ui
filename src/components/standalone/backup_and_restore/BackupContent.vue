@@ -34,14 +34,15 @@ import {
   faArrowCircleDown,
   faBoxArchive,
   faCheck,
+  faChevronDown,
+  faCircleMinus,
   faClock,
   faCog,
   faEdit,
   faLock,
   faPlay,
   faTrash,
-  faUnlock,
-  faUnlockKeyhole
+  faUnlock
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
@@ -261,15 +262,18 @@ function successDeleteBackup() {
               kind="warning"
             />
           </template>
-        </div>
-        <div class="flex flex-col items-start gap-4 xl:items-end">
           <NeBadge
             v-if="backups.isPassPhraseSet"
             :icon="faCheck"
             :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
             kind="success"
           />
-          <div v-if="listBackups.length > 0 || backups.isPassPhraseSet" class="flex gap-4">
+        </div>
+        <div class="flex flex-col items-start gap-4 xl:items-end">
+          <div
+            v-if="listBackups.length > 0 || backups.isPassPhraseSet"
+            class="flex flex-wrap gap-4"
+          >
             <NeButton
               v-if="!backups.isPassPhraseSet"
               kind="tertiary"
@@ -280,17 +284,6 @@ function successDeleteBackup() {
                 <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
               </template>
               {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-            </NeButton>
-            <NeButton
-              v-if="listBackups.length > 0"
-              :disabled="!backups.isPassPhraseSet"
-              kind="secondary"
-              @click="showRunBackupModal = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.run_backup') }}
             </NeButton>
             <NeDropdown
               v-if="backups.isPassPhraseSet"
@@ -303,13 +296,33 @@ function successDeleteBackup() {
                 },
                 {
                   id: 'delete',
-                  label: t('standalone.backup_and_restore.backup.disable_encryption'),
-                  icon: faUnlockKeyhole,
+                  label: t('standalone.backup_and_restore.backup.remove_passphrase'),
+                  icon: faCircleMinus,
                   action: () => (showDisableEncryptionModal = true)
                 }
               ]"
               align-to-right
-            />
+            >
+              <template #button>
+                <NeButton>
+                  <template #suffix>
+                    <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
+                  </template>
+                  {{ t('standalone.backup_and_restore.backup.manage_passphrase') }}
+                </NeButton>
+              </template>
+            </NeDropdown>
+            <NeButton
+              v-if="listBackups.length > 0"
+              :disabled="!backups.isPassPhraseSet"
+              kind="primary"
+              @click="showRunBackupModal = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.run_backup') }}
+            </NeButton>
           </div>
         </div>
       </div>
@@ -351,7 +364,7 @@ function successDeleteBackup() {
               size="lg"
               @click="showDisableEncryptionModal = true"
             >
-              {{ t('standalone.backup_and_restore.backup.disable_encryption') }}
+              {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
             </NeButton>
           </div>
         </FormLayout>

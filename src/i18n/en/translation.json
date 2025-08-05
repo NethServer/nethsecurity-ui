@@ -71,7 +71,8 @@
     "password_confirmation_required": "Password confirmation required",
     "password_confirmation_required_description": "Please confirm your password to proceed",
     "automated": "Automated",
-    "automated_tooltip": "This item is managed by the system and cannot be modified."
+    "automated_tooltip": "This item is managed by the system and cannot be modified.",
+    "remove": "Remove"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -761,9 +762,16 @@
         "changing_your_passphrase_applies_to_new_backups_description": "Changing your passphrase will only affect future backups. To restore older backups, you must use the passphrase that was set at the time of their creation.",
         "new_passphrase": "New passphrase",
         "confirm_passphrase": "Confirm passphrase",
-        "disable_encryption": "Disable backup encryption",
+        "remove_passphrase": "Remove passphrase",
         "remove_passphrase_title": "Remove backup passphrase",
-        "remove_passphrase_description": "Are you sure you want to remove the backup passphrase? This will disable encryption for future backups."
+        "remove_passphrase_description": "Are you sure you want to remove the backup passphrase? This will disable encryption for future backups.",
+        "passphrase_configured": "Passphrase configured successfully",
+        "passphrase_configured_description": "The passphrase has been configured successfully. It will be used to encrypt future backups.",
+        "passphrase_removed": "Passphrase removed successfully",
+        "passphrase_removed_description": "The passphrase has been removed successfully. Future backups will not be encrypted.",
+        "passphrase_edited": "Passphrase edited successfully",
+        "passphrase_edited_description": "The passphrase has been edited successfully. Next backups will be encrypted with the new passphrase.",
+        "manage_passphrase": "Manage passphrase"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

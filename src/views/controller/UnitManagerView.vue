@@ -30,6 +30,7 @@ import AbortUpdateModal from '@/components/controller/units/CancelUpdateModal.vu
 import UpdateUnitsPackagesModal from '@/components/controller/units/UpdateUnitsPackagesModal.vue'
 import BatchUnitImageUpdate from '@/components/controller/units/BatchUnitImageUpdate.vue'
 import { faArrowsRotate, faCircleMinus, faKey } from '@fortawesome/free-solid-svg-icons'
+import { useLoginStore } from '@/stores/controller/controllerLogin'
 
 export type SendOrRevokeAction = 'send' | 'revoke'
 
@@ -37,6 +38,7 @@ const GET_UNITS_REFRESH_INTERVAL = 10000
 const { t } = useI18n()
 const unitsStore = useUnitsStore()
 const defaultsStore = useDefaultsStore()
+const loginStore = useLoginStore()
 
 const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
@@ -240,6 +242,7 @@ function getBulkActionsKebabMenuItems() {
             :disabled="isAddUnitDisabled"
             class="shrink-0"
             @click="isShownAddUnitModal = true"
+            v-if="loginStore.isAdmin"
           >
             <template #prefix>
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -281,7 +284,12 @@ function getBulkActionsKebabMenuItems() {
             :icon="['fas', 'server']"
             class="mt-4"
           >
-            <NeButton kind="primary" size="lg" @click="isShownAddUnitModal = true">
+            <NeButton
+              kind="primary"
+              size="lg"
+              @click="isShownAddUnitModal = true"
+              v-if="loginStore.isAdmin"
+            >
               <template #prefix>
                 <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
               </template>

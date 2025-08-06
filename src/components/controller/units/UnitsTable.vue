@@ -201,19 +201,24 @@ function getKebabMenuItems(unit: Unit) {
       icon: faCloudArrowUp,
       action: () => refreshUnitInfo(unit),
       disabled: !unit.connected
-    },
-    {
-      id: 'divider1'
-    },
-    {
-      id: 'removeUnit',
-      label: t('controller.units.remove_unit'),
-      icon: faTrash,
-      action: () => maybeShowRemoveUnitModal(unit),
-      danger: true,
-      disabled: (unit.groups?.length ?? 0) > 0
     }
   )
+  // add admin menu items
+  if (loginStore.isAdmin) {
+    menuItems.push(
+      {
+        id: 'divider1'
+      },
+      {
+        id: 'removeUnit',
+        label: t('controller.units.remove_unit'),
+        icon: faTrash,
+        action: () => maybeShowRemoveUnitModal(unit),
+        danger: true,
+        disabled: (unit.groups?.length ?? 0) > 0
+      }
+    )
+  }
   return menuItems
 }
 

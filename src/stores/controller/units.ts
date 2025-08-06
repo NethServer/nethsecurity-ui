@@ -77,7 +77,7 @@ export const useUnitsStore = defineStore('units', () => {
 
       // set connected attribute
       for (const unit of unitsList) {
-        unit.registered = !isEmpty(unit.info)
+        unit.registered = !isEmpty(unit.info) && unit.info.unit_name !== ''
         unit.connected = !isEmpty(unit.vpn)
       }
 

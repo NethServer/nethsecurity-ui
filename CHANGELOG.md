@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.4.1](https://github.com/NethServer/nethsecurity-ui/compare/2.4.0...2.4.1) (2025-08-06)
+
+
+### Bug Fixes
+
+* **controller:** hide unit button for non-admins ([2f9da2b](https://github.com/NethServer/nethsecurity-ui/commit/2f9da2b3b26415890f1260ad2487a6e1df843ca2))
+* **controller:** hide unit counter for non-admins ([91e44e5](https://github.com/NethServer/nethsecurity-ui/commit/91e44e5bfed0cb4d30f42b9ea24f45b7ac92d642))
+* **controller:** prevent unit deletion if in use ([adcfebc](https://github.com/NethServer/nethsecurity-ui/commit/adcfebc1a5564047222169ab5b1163aa46fe0d81))
+* **controller:** remove add unit for non-admins ([87bafc8](https://github.com/NethServer/nethsecurity-ui/commit/87bafc8dd2bf06829381594143a515d24926eaaf))
+* **controller:** show join code for new units ([a86a323](https://github.com/NethServer/nethsecurity-ui/commit/a86a323a2afdcefd55685de19b65c7ac8e969fa2))
+
 ## [2.4.0](https://github.com/NethServer/nethsecurity-ui/compare/2.3.2...2.4.0) (2025-08-05)
 
 

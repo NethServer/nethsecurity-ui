@@ -210,7 +210,8 @@ function getKebabMenuItems(unit: Unit) {
       label: t('controller.units.remove_unit'),
       icon: faTrash,
       action: () => maybeShowRemoveUnitModal(unit),
-      danger: true
+      danger: true,
+      disabled: (unit.groups?.length ?? 0) > 0
     }
   )
   return menuItems

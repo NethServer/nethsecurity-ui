@@ -180,7 +180,9 @@ function getBulkActionsKebabMenuItems() {
         </div>
         <!-- units left -->
         <NeCard
-          v-if="defaultsStore.defaultsLoaded && !defaultsStore.validSubscription"
+          v-if="
+            defaultsStore.defaultsLoaded && !defaultsStore.validSubscription && loginStore.isAdmin
+          "
           :title="
             t(
               'controller.units.num_units_left',

@@ -214,8 +214,7 @@ function getKebabMenuItems(unit: Unit) {
         label: t('controller.units.remove_unit'),
         icon: faTrash,
         action: () => maybeShowRemoveUnitModal(unit),
-        danger: true,
-        disabled: (unit.groups?.length ?? 0) > 0
+        danger: true
       }
     )
   }
@@ -266,7 +265,7 @@ function getSubscriptionLabel(subscriptionType: string) {
 }
 
 async function maybeShowRemoveUnitModal(unit: Unit) {
-  if (unit.registered) {
+  if (unit.registered || (unit.groups && unit.groups.length > 0)) {
     showRemoveUnitModal(unit)
   } else {
     await unitsStore.removeUnit(unit.id)

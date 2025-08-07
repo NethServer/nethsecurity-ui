@@ -108,6 +108,9 @@ async function removeUnit() {
     @primary-click="removeUnit"
   >
     {{ t('controller.units.confirm_remove_unit', { name: unitName }) }}
+    <div v-if="props.unit?.groups && props.unit.groups.length > 0" class="mt-4">
+      {{ t('controller.units.unit_in_group', { groups: props.unit.groups.join(', ') }) }}
+    </div>
     <NeInlineNotification
       v-if="error.notificationTitle"
       kind="error"

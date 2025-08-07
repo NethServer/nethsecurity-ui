@@ -91,6 +91,7 @@ const selectedBackupType = ref('')
 const selectedBackupId = ref('')
 const selectedBackupLabel = ref('')
 const selectedBackupTime = ref('')
+const selectedBackupUnencrypted = ref(false)
 const listBackups = ref<Backup[]>([])
 const showPassphraseModal = ref(false)
 
@@ -147,6 +148,15 @@ function openDownloadEnterprise(file: string, type: string, time: string) {
   selectedBackup.value = file
   selectedBackupType.value = type
   selectedBackupTime.value = time
+  selectedBackupUnencrypted.value = false
+}
+
+function openDownloadUnencrypted(file: string, type: string, time: string) {
+  showDownloadModal.value = true
+  selectedBackup.value = file
+  selectedBackupType.value = type
+  selectedBackupTime.value = time
+  selectedBackupUnencrypted.value = true
 }
 
 function openDeleteBackup(id: string, label: string) {
@@ -182,23 +192,39 @@ function getMimetypeIcon(mimetype: string) {
 }
 
 function getDropdownItems(item: Backup) {
-  return [
-    {
-      id: 'delete',
-      label: t('common.delete'),
-      icon: faTrash,
-      danger: true,
+  const items = []
+
+  if (
+    item.mimetype === 'application/pgp-encrypted' ||
+    item.mimetype === 'application/octet-stream'
+  ) {
+    items.push({
+      id: 'download-unencrypted',
+      label: t('standalone.backup_and_restore.backup.download_unencrypted'),
+      icon: faUnlock,
       action: () => {
-        openDeleteBackup(
-          item.id,
-          formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
-            ' (' +
-            byteFormat1024(item.size) +
-            ')'
-        )
+        openDownloadUnencrypted(item.id, item.mimetype, item.created.toString())
       }
+    })
+  }
+
+  items.push({
+    id: 'delete',
+    label: t('common.delete'),
+    icon: faTrash,
+    danger: true,
+    action: () => {
+      openDeleteBackup(
+        item.id,
+        formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+          ' (' +
+          byteFormat1024(item.size) +
+          ')'
+      )
     }
-  ]
+  })
+
+  return items
 }
 
 function successDeleteBackup() {
@@ -465,6 +491,7 @@ function successDeleteBackup() {
     :selected-backup="selectedBackup"
     :selected-backup-time="selectedBackupTime"
     :unit-name="unitName"
+    :unencrypted="selectedBackupUnencrypted"
     @close="showDownloadModal = false"
   />
   <RunBackupModal

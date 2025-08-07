@@ -724,6 +724,7 @@
         "description": "Download current settings and data of your unit. This will be a safeguard against potential data loss or system failures.",
         "description_subscription": "Configure a passphrase to enable encrypted backups. The system automatically manages up to 10 encrypted backups.",
         "download": "Download",
+        "download_unencrypted": "Download unencrypted",
         "download_backup": "Download backup",
         "modal_download_description": "Download backup '{name}'?",
         "passphrase_drawer_title": "Configure passphrase",

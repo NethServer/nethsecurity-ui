@@ -86,10 +86,6 @@ function validate() {
     focusElement(nameRef)
   }
 
-  if (units.value.length === 0) {
-    validationErrorBag.value.set('units', ['error.required'])
-  }
-
   return validationErrorBag.value.size < 1
 }
 
@@ -192,6 +188,7 @@ watch(
           :multiple="true"
           :optional-label="t('common.optional')"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('units'))"
+          :optional="true"
         />
       </div>
       <hr />

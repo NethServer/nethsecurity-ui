@@ -299,6 +299,7 @@ watch(
         :user-input-label="t('ne_combobox.user_input_label')"
         :multiple="true"
         :optional-label="t('common.optional')"
+        :optional="true"
         :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('groups'))"
         :tooltip="t('controller.users.unit_groups_tooltip')"
       >

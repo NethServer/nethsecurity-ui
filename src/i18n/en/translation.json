@@ -2706,7 +2706,7 @@
       "units": "Units",
       "add_unit": "Add unit",
       "remove": "Remove",
-      "used_by": "Used by",
+      "used_by": "Managed by",
       "delete": "Delete unit group",
       "delete_confirm": "You are about to delete the unit group '{name}'. This action cannot be undone.",
       "no_groups_found": "No unit groups found",
@@ -2791,7 +2791,7 @@
       "admin": "Administrator user",
       "admin_tooltip": "This user has administrator privileges and can manage all units and users.",
       "unit_groups": "Unit groups",
-      "unit_groups_tooltip": "Select the unit groups this user can manage. If no groups are selected, the user will not be able access any unit."
+      "unit_groups_tooltip": "Select the unit groups this user can manage. If no groups are selected, the user will not be able to access any unit."
     }
   },
   "notifications": {

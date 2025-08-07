@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.4.2](https://github.com/NethServer/nethsecurity-ui/compare/2.4.1...2.4.2) (2025-08-07)
+
+
+### Bug Fixes
+
+* **controller:** add optional label to drawer ([f0a2928](https://github.com/NethServer/nethsecurity-ui/commit/f0a29287624dc09573017495a5c8162dd06319c3))
+* **controller:** allow empty unit groups ([80f0038](https://github.com/NethServer/nethsecurity-ui/commit/80f0038c2a0d77046f36ed7bd26c93d2e9a575f3))
+* **controller:** always allow unit deletion ([6456e94](https://github.com/NethServer/nethsecurity-ui/commit/6456e940d323506df52a10eae28409415a66a052))
+* **controller:** improve labels for unit groups ([84af76a](https://github.com/NethServer/nethsecurity-ui/commit/84af76a43717cd48dd92dbf3f74dcbf90da67f26))
+
 ## [2.4.1](https://github.com/NethServer/nethsecurity-ui/compare/2.4.0...2.4.1) (2025-08-06)
 
 

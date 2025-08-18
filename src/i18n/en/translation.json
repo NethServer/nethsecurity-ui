@@ -725,6 +725,7 @@
         "description_subscription": "Configure a passphrase to enable encrypted backups. The system automatically manages up to 10 encrypted backups.",
         "download": "Download",
         "download_backup": "Download backup",
+        "download_unencrypted_backup": "Download unencrypted",
         "modal_download_description": "Download backup '{name}'?",
         "passphrase_drawer_title": "Configure passphrase",
         "passphrase": "Passphrase",

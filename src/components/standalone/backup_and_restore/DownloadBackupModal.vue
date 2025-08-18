@@ -18,6 +18,10 @@ const props = defineProps({
     type: Boolean,
     required: true
   },
+  unencrypted: {
+    type: Boolean,
+    default: false
+  },
   isSetPassphrase: {
     type: Boolean,
     required: true
@@ -66,7 +70,9 @@ async function downloadBackup() {
 
     let payload = {}
     let methodCall = 'backup'
-    if (props.selectedBackup) {
+    if (props.unencrypted) {
+      payload = { encrypted: false }
+    } else if (props.selectedBackup) {
       methodCall = 'registered-download-backup'
       payload = {
         file: props.selectedBackup
@@ -79,7 +85,9 @@ async function downloadBackup() {
       const fileURL = URL.createObjectURL(file)
 
       let extension = '.tar.gz'
-      if (props.isValidSubscription) {
+      if (props.unencrypted) {
+        // unencrypted is always .tar.gz
+      } else if (props.isValidSubscription) {
         // valid subscription, use the type to set the extension
         if (
           props.selectedBackupType == 'application/pgp-encrypted' ||
@@ -95,7 +103,7 @@ async function downloadBackup() {
       }
       const link = document.createElement('a')
       link.href = fileURL
-      if (props.selectedBackupTime) {
+      if (props.selectedBackupTime && !props.unencrypted) {
         link.download = 'backup-' + props.unitName + '-' + props.selectedBackupTime + extension
       } else {
         link.download = 'backup-' + props.unitName + '-' + Date.now().toString() + extension

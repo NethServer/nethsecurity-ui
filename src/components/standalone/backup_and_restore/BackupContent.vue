@@ -82,6 +82,7 @@ const loadingHostname = ref(false)
 const errorFetchHostname = ref<Error>()
 
 const showDownloadModal = ref(false)
+const downloadUnencrypted = ref(false)
 const showDeleteModal = ref(false)
 const showPassphraseDrawer = ref(false)
 const showRunBackupModal = ref(false)
@@ -148,6 +149,11 @@ function openDownloadEnterprise(file: string, type: string, time: string) {
   selectedBackup.value = file
   selectedBackupType.value = type
   selectedBackupTime.value = time
+}
+
+function openDownloadUnencryptedModal() {
+  downloadUnencrypted.value = true
+  showDownloadModal.value = true
 }
 
 function openDeleteBackup(id: string, label: string) {
@@ -324,6 +330,12 @@ function successDeleteBackup() {
               </template>
               {{ t('standalone.backup_and_restore.backup.run_backup') }}
             </NeButton>
+            <NeButton kind="tertiary" @click="openDownloadUnencryptedModal()">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faUnlock" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_unencrypted_backup') }}
+            </NeButton>
           </div>
         </div>
       </div>
@@ -338,6 +350,12 @@ function successDeleteBackup() {
                 <FontAwesomeIcon :icon="faArrowCircleDown" />
               </template>
               {{ t('standalone.backup_and_restore.backup.download_backup') }}
+            </NeButton>
+            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal()">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faUnlock" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_unencrypted_backup') }}
             </NeButton>
           </div>
         </FormLayout>
@@ -482,7 +500,11 @@ function successDeleteBackup() {
     :selected-backup="selectedBackup"
     :selected-backup-time="selectedBackupTime"
     :unit-name="unitName"
-    @close="showDownloadModal = false"
+    :unencrypted="downloadUnencrypted"
+    @close="
+      showDownloadModal = false
+      downloadUnencrypted = false
+    "
   />
   <RunBackupModal
     :show-run-backup-modal="showRunBackupModal"

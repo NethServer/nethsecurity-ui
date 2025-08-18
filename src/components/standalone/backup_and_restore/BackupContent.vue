@@ -42,7 +42,8 @@ import {
   faLock,
   faPlay,
   faTrash,
-  faUnlock
+  faUnlock,
+  faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
@@ -345,27 +346,43 @@ function successDeleteBackup() {
           :title="t('standalone.backup_and_restore.passphrase.title')"
           :description="t('standalone.backup_and_restore.passphrase.description')"
         >
-          <div class="flex flex-wrap gap-4">
-            <NeButton kind="secondary" size="lg" @click="showPassphraseDrawer = true">
-              <template #prefix>
-                <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
-                <FontAwesomeIcon v-else :icon="faCog" />
-              </template>
-              <template v-if="backups.isPassPhraseSet">
-                {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
-              </template>
-              <template v-else>
-                {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-              </template>
-            </NeButton>
-            <NeButton
+          <div class="space-y-4">
+            <NeBadge
               v-if="backups.isPassPhraseSet"
-              kind="tertiary"
-              size="lg"
-              @click="showPassphraseModal = true"
-            >
-              {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
-            </NeButton>
+              :icon="faCheck"
+              :text="t('standalone.backup_and_restore.backup.passphrase_is_set')"
+              kind="success"
+              size="xs"
+            />
+            <NeBadge
+              v-else
+              :icon="faXmark"
+              :text="t('standalone.backup_and_restore.backup.passphrase_not_configured')"
+              kind="secondary"
+              size="xs"
+            />
+            <div class="flex flex-wrap gap-4">
+              <NeButton kind="secondary" size="lg" @click="showPassphraseDrawer = true">
+                <template #prefix>
+                  <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
+                  <FontAwesomeIcon v-else :icon="faCog" />
+                </template>
+                <template v-if="backups.isPassPhraseSet">
+                  {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
+                </template>
+                <template v-else>
+                  {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+                </template>
+              </NeButton>
+              <NeButton
+                v-if="backups.isPassPhraseSet"
+                kind="tertiary"
+                size="lg"
+                @click="showPassphraseModal = true"
+              >
+                {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
+              </NeButton>
+            </div>
           </div>
         </FormLayout>
       </div>

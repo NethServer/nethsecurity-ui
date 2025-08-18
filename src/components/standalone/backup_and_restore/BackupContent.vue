@@ -143,6 +143,11 @@ async function getBackups() {
   }
 }
 
+function closeDownloadModal() {
+  showDownloadModal.value = false
+  downloadUnencrypted.value = false
+}
+
 function openDownloadEnterprise(file: string, type: string, time: string) {
   showDownloadModal.value = true
   selectedBackup.value = file
@@ -492,7 +497,8 @@ function successDeleteBackup() {
     :selected-backup-time="selectedBackupTime"
     :unit-name="unitName"
     :unencrypted="selectedBackupUnencrypted"
-    @close="showDownloadModal = false"
+    :unencrypted="downloadUnencrypted"
+    @close="closeDownloadModal()"
   />
   <RunBackupModal
     :show-run-backup-modal="showRunBackupModal"

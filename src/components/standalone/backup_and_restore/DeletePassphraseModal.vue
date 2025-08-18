@@ -47,6 +47,7 @@ function deletePassphrase() {
     :primary-label="t('common.remove')"
     :title="t('standalone.backup_and_restore.backup.remove_passphrase_title')"
     :visible="visible"
+    :cancel-label="t('common.cancel')"
     primary-button-kind="danger"
     kind="warning"
     @primary-click="deletePassphrase"

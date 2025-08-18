@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.4](https://github.com/NethServer/nethsecurity-ui/compare/2.4.3...2.4.4) (2025-08-18)
+
+
+### Miscellaneous Chores
+
+* translations update from Hosted Weblate ([#623](https://github.com/NethServer/nethsecurity-ui/issues/623)) ([a39dfb9](https://github.com/NethServer/nethsecurity-ui/commit/a39dfb9de863be8f06bc427f12402e3b6aa16bdc))
+
 ## [2.4.3](https://github.com/NethServer/nethsecurity-ui/compare/2.4.2...2.4.3) (2025-08-18)
 
 

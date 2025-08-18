@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.3](https://github.com/NethServer/nethsecurity-ui/compare/2.4.2...2.4.3) (2025-08-18)
+
+
+### Bug Fixes
+
+* **backup:** updated backup page, adding clarity ([#621](https://github.com/NethServer/nethsecurity-ui/issues/621)) ([af4457a](https://github.com/NethServer/nethsecurity-ui/commit/af4457a6d0b2f63054a69d353cd820d977dec1b1))
+
 ## [2.4.2](https://github.com/NethServer/nethsecurity-ui/compare/2.4.1...2.4.2) (2025-08-07)
 
 

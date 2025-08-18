@@ -67,7 +67,8 @@
     "password_confirmation_required": "Conferma della password richiesta",
     "password_confirmation_required_description": "Si prega di confermare la password per procedere",
     "automated": "Sistema",
-    "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica."
+    "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica.",
+    "remove": "Eliminare"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -606,12 +607,28 @@
         "passphrase_required_for_restore_description": "La passphrase impostata sarà necessario per decifrare i backup durante il processo di ripristino. Assicurarsi di memorizzarla in modo sicuro, in quanto non può essere recuperata.",
         "changing_your_passphrase_applies_to_new_backups_description": "Cambiare la tua passphrase influenzerà solo i backup futuri. Per ripristinare i backup più vecchi, è necessario utilizzare il passphrase che è stata impostata al momento della loro creazione.",
         "configure_passphrase_to_run": "Configurare la passphrase per eseguire backup crittografati",
-        "the_system_will_automatically_create_backups": "Il sistema creerà automaticamente i backup, oppure si può avviare manualmente facendo clic su \"Esegui backup\"."
+        "the_system_will_automatically_create_backups": "Il sistema creerà automaticamente i backup, oppure si può avviare manualmente facendo clic su \"Esegui backup\".",
+        "title": "Backup",
+        "confirm_passphrase": "Conferma la passphrase",
+        "remove_passphrase": "Rimuovi passphrase",
+        "remove_passphrase_title": "Rimuovi passphrase",
+        "remove_passphrase_description": "La rimozione della passphrase disattiva la crittografia per i backup futuri.",
+        "passphrase_configured": "Passphrase configurata con successo",
+        "passphrase_configured_description": "La passphrase è stata configurata con successo. Sarà utilizzata per crittografare i backup futuri.",
+        "passphrase_removed": "Passphrase rimossa con successo",
+        "passphrase_removed_description": "La passphrase è stata rimosso con successo. I backup futuri non saranno crittografati.",
+        "passphrase_edited": "Passphrase modificata con successo",
+        "passphrase_edited_description": "La passphrase è stata modificata con successo. I backup futuri saranno crittografati con la nuova passphrase.",
+        "manage_passphrase": "Gestione passphrase"
       },
       "tabs": {
         "migration": "Migrazione",
         "backup": "Backup",
         "restore": "Ripristino"
+      },
+      "passphrase": {
+        "title": "Passphrase",
+        "description": "Configurare un passphrase per aumentare la sicurezza dei dati. La passphrase sarà richiesta per ripristinare i backup."
       }
     },
     "reboot_and_shutdown": {
@@ -992,7 +1009,15 @@
       "limit_log_messages": "Limita i messaggi di log",
       "edit_zone_name": "Modifica zona {name}",
       "firewall_zones": "Zone firewall",
-      "enable_logging_tooltip": "Attiva o disabilita il log dei pacchetti bloccati su questa zona"
+      "enable_logging_tooltip": "Attiva o disabilita il log dei pacchetti bloccati su questa zona",
+      "type": "Tipologia",
+      "zone_guest_label": "Guest",
+      "zone_guest_color": "Blue",
+      "zone_dmz_label": "DMZ",
+      "zone_dmz_color": "Orange",
+      "preset_active_title": "Preset selezionato",
+      "preset_active_description": "Quando si crea questa zona, il sistema aggiungerà automaticamente le regole firewall per consentire l'accesso ai servizi essenziali. È possibile visualizzarli o modificarli in qualsiasi momento sotto Firewall > Regole > Regole di input.",
+      "choose_one_or_more_zones": "Scegliere una o più zone"
     },
     "port_forward": {
       "disable": "Disabilita",
@@ -2020,7 +2045,11 @@
       "the_ip_is_not_in_any_blocklist": "L'IP {ip} non è elencato in alcuna blocklist attiva",
       "add_to_local_allowlist": "Aggiungi alla allowlist locale",
       "added_to_local_allowlist": "Aggiunto alla allowlist locale",
-      "search_ip_tooltip": "La ricerca verrà eseguita solo sulle blocklist attive."
+      "search_ip_tooltip": "La ricerca verrà eseguita solo sulle blocklist attive.",
+      "block_icmp_dos_limit": "Limite DoS ICMP",
+      "block_syn_dos_limit": "Limite DoS TCP SYN",
+      "block_udp_dos_limit": "Limite DoS UDP",
+      "packets_per_second": "Pacchetti al secondo"
     },
     "two_fa": {
       "configure_two_fa_step_2": "Scansiona il QR code con la tua app di autenticazione",
@@ -2397,7 +2426,15 @@
       "threat_shield_settings_description": "Abilita o disabilita Threat Shield DNS e configura le sue impostazioni.",
       "redirected_ports_tooltip": "Inserisci uno o più porte da reindirizzare a Threat Shield DNS.",
       "zones_tooltip": "Il traffico su queste zone verrà reindirizzato a Threat Shield DNS.",
-      "page_description": " Threat Shield DNS è un servizio che blocca l'accesso a siti web maligni o indesiderati impedendo la risoluzione DNS per domini specifici, bloccando così l'accesso degli utenti a siti dannosi."
+      "page_description": " Threat Shield DNS è un servizio che blocca l'accesso a siti web maligni o indesiderati impedendo la risoluzione DNS per domini specifici, bloccando così l'accesso degli utenti a siti dannosi.",
+      "allowlist": "Allowlist locale",
+      "confirm_delete_allowed_domain": "Rimuovendo '{name}' può causarne il blocco se corrisponde a un blocklist attivo. Sei sicuro di volerlo eliminare?",
+      "local_allowlist_description": "Consentire sempre domini specifici. La allowlist locale locale ha la priorità sulla blocklist locale, se un dominio è presente in entrambe le liste, sarà consentito.",
+      "allowed_domain_added_title": "Dominio consentito aggiunto",
+      "allowed_domain_added_description": "'{domain}' è stato aggiunto alla allowlist DNS locale",
+      "allowed_domain_deleted_title": "Dominio consentito eliminato",
+      "allowed_domain_deleted_description": "'{domain}' è stato cancellato dalla allowlist DNS locale",
+      "local_allowlist_is_empty": "La allowlist locale è vuota"
     },
     "ips": {
       "destination_bypass": "Bypass destinazione",
@@ -2611,7 +2648,8 @@
       "updating_image_description": "L'unità sta aggiornando l'immagine. L'unità potrebbe non essere disponibile per alcuni minuti mentre l'aggiornamento è in fase di installazione.",
       "updating_image": "Aggiornamento in corso",
       "groups": "Gruppi",
-      "description": "Descrizione"
+      "description": "Descrizione",
+      "unit_in_group": "Inoltre, sarà rimosso dai seguenti gruppi: {groups}"
     },
     "unit_terminal": {
       "connection_status_active": "Attiva",
@@ -2709,7 +2747,8 @@
       "units_number": "Numero di unità",
       "created": "Creato",
       "updated": "Ultima modifica",
-      "page_description": "I gruppi di unità consentono di raggruppare le unità per una gestione più semplice. È possibile creare un gruppo di unità e aggiungere una o più unità ad esso. Una volta assegnato un gruppo a un account utente, l'utente sarà in grado di gestire solo le unità in quel gruppo."
+      "page_description": "I gruppi di unità consentono di raggruppare le unità per una gestione più semplice. È possibile creare un gruppo di unità e aggiungere una o più unità ad esso. Una volta assegnato un gruppo a un account utente, l'utente sarà in grado di gestire solo le unità in quel gruppo.",
+      "cannot_delete_unit_group": "Non è possibile eliminare il gruppo di unità"
     }
   },
   "ne_text_input": {

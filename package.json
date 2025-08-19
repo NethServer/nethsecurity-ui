@@ -73,7 +73,7 @@
     "tailwindcss": "^4.1.8",
     "typescript": "~5.7.3",
     "vite": "^6.1.1",
-    "vite-plugin-vue-devtools": "^7.7.2",
+    "vite-plugin-vue-devtools": "^8.0.0",
     "vue-tsc": "^2.2.2"
   }
 }

@@ -7,20 +7,20 @@ on:
 jobs:
   eslint:
     name: Eslint
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
       - run: npm ci
       - run: npm run lint
   prettier:
     name: Prettier
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
       - run: npm ci
@@ -41,9 +41,9 @@ jobs:
           echo "$TITLE" | npx commitlint
   build:
     name: Build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: ./build.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v4

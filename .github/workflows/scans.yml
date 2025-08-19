@@ -11,11 +11,11 @@ on:
 jobs:
   sbom:
     name: SBOM
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Update Dependency Graph
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           scan-ref: .
@@ -23,7 +23,7 @@ jobs:
           output: sbom.spdx.json
           github-pat: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate Sarif Report
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           scan-ref: .
@@ -36,12 +36,12 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: github.event_name == 'release'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Generate CycloneDX SBOM
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           scan-ref: .

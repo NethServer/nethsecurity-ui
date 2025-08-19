@@ -42,7 +42,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",
-    "pinia": "^2.0.36",
+    "pinia": "^3.0.3",
     "qrcode-vue3": "^1.7.1",
     "semver": "^7.7.1",
     "uid": "^2.0.2",

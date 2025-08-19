@@ -25,6 +25,20 @@ jobs:
           node-version-file: '.nvmrc'
       - run: npm ci
       - run: npm run format
+  conventional_commits:
+    name: Conventional Commits
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Run conventional commits
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          npm install
+          echo "$TITLE" | npx commitlint
   build:
     name: Build
     runs-on: ubuntu-22.04

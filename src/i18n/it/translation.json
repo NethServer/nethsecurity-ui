@@ -1273,7 +1273,7 @@
       "service_type": "Tipo di servizio",
       "custom_server_helper": "Utilizzare la sintassi '/{'<'}domain{'>'}/{'<'}server{'>'}' per indirizzare solo le richieste di un dominio specifico al server inserito. Utilizzare la sintassi '/{'<'}server{'>'}#{'<'}port{'>'}` se il server upstream non ascolta su una porta standard.",
       "remember_dns_dhcp": "Il servizio FlashStart richiede esplicitamente di specificare il server DNS tramite le opzioni DHCP.",
-      "remember_dns_dhcp_description": "Accedere alla sezione DHCP, in Impostazioni avanzate e aggiungere la seguente option: 6:dns-server, <'}YOUR-USUAL-DNS-SERVER{'>'}. Questo assicura che i client ricevano il server DNS corretto tramite DHCP."
+      "remember_dns_dhcp_description": "Accedere alla sezione DHCP, in Impostazioni avanzate e aggiungere la seguente option: 6:dns-server, {'<'}YOUR-USUAL-DNS-SERVER{'>'}. Questo assicura che i client ricevano il server DNS corretto tramite DHCP."
     },
     "hotspot": {
       "settings": {

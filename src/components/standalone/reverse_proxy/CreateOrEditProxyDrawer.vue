@@ -30,6 +30,7 @@ import {
 } from '@nethesis/vue-components'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { useRouter } from 'vue-router'
 
 type CreateOrEditProxyPayload = {
   path?: string
@@ -47,6 +48,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const router = useRouter()
 
 const emit = defineEmits(['close', 'add-edit-proxy'])
 
@@ -326,16 +328,12 @@ watch(
           :optional-label="t('common.optional')"
         />
         <NeInlineNotification
-          v-if="certificateOptions.length == 1 && certificateOptions[0].id == '_lan'"
+          v-if="certificateOptions.length == 1 && certificateOptions[0]!.id == '_lan'"
           :title="t('standalone.reverse_proxy.no_certificate_configured_title')"
           :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
           kind="warning"
           :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
-          @primary-click="
-            () => {
-              $router.push('/standalone/system/certificates')
-            }
-          "
+          @primary-click="() => router.push('/standalone/system/certificates')"
         />
       </template>
       <NeTextInput

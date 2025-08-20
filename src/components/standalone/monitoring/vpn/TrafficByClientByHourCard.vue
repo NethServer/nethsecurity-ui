@@ -57,7 +57,7 @@ watch(
   () => props.ovpnUsers,
   () => {
     if (props.ovpnUsers?.length) {
-      selectedClient.value = clientOptions.value[0].id
+      selectedClient.value = clientOptions.value[0]!.id
     }
   },
   { immediate: true }

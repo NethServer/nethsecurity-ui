@@ -241,7 +241,7 @@ function validate() {
       [
         validateNoObjectsWithPortForward(records.value),
         validateNoIpRangeWithPortForward(records.value),
-        validateRequired(records.value[0])
+        validateRequired(records.value[0] ?? '')
       ],
       'ipaddr',
       recordRef
@@ -357,7 +357,7 @@ function deleteRecord(index: number) {
             <div v-for="(record, i) in records" :key="record + i" class="flex items-start gap-2">
               <NeCombobox
                 :key="record + i"
-                v-model="records[i]"
+                v-model="records[i]!"
                 :disabled="loading.saveHostSet"
                 :options="recordOptionsButCurrent"
                 :placeholder="t('ne_combobox.choose_or_enter')"

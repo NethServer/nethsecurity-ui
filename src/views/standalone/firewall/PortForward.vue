@@ -104,7 +104,7 @@ const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
                   el.restrict.filter((rs) => rs.includes(filter.value)).length > 0)
             )
           ])
-          .filter(([, v]) => v.length > 0)
+          .filter(([, v]) => (v?.length ?? 0) > 0)
       )
 })
 
@@ -222,7 +222,7 @@ function closeDeleteModal() {
 function getPortForwardHeader(portForwards: PortForward[], key: string) {
   const firstPortForward = portForwards[0]
 
-  if (!firstPortForward.ns_dst) {
+  if (firstPortForward == undefined || !firstPortForward.ns_dst) {
     return key
   } else {
     const objectFound = destinationObjectSuggestions.value.find(

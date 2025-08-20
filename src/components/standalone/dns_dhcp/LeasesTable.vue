@@ -41,7 +41,7 @@ function compareIpAddresses(ip1: string, ip2: string): number {
 
   for (let i = 0; i < 4; i++) {
     if (octets1[i] !== octets2[i]) {
-      return octets1[i] - octets2[i]
+      return octets1[i]! - octets2[i]!
     }
   }
   return 0

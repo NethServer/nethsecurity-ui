@@ -28,7 +28,7 @@ export function useTabs(tabsList: Tab[], initialTabName?: string) {
         selectedTab.value =
           (route.query.tab as string) ??
           initialTabName ??
-          (tabs.value.length > 0 ? tabs.value[0].name : '')
+          (tabs.value.length > 0 ? (tabs.value[0]?.name ?? '') : '')
       }
     },
     { immediate: true }

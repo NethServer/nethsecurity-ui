@@ -200,7 +200,7 @@ function validate() {
   // these validators aren't applied
   if (!ipv6Enabled.value || ipv4AddressesNotEmpty.value || !ipv6AddressesNotEmpty.value) {
     for (let index = 0; index < ipv4Addresses.value.length; index++) {
-      const ipv4Address = ipv4Addresses.value[index]
+      const ipv4Address = ipv4Addresses.value[index]!
 
       {
         // check required
@@ -228,7 +228,7 @@ function validate() {
   // if ipv6 fields are empty whereas the ipv4 ones are filled, these validators aren't applied
   if (ipv6Enabled.value && (ipv6AddressesNotEmpty.value || !ipv4AddressesNotEmpty.value)) {
     for (let index = 0; index < ipv6Addresses.value.length; index++) {
-      const ipv6Address = ipv6Addresses.value[index]
+      const ipv6Address = ipv6Addresses.value[index]!
 
       {
         // check required

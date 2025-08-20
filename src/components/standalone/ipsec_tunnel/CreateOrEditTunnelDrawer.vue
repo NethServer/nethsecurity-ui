@@ -117,7 +117,7 @@ const espDiffieHellmanGroup = ref('modp2048')
 const espKeyLifetime = ref('3600')
 
 // Form options
-const ikeVersionOptions: NeComboboxOption[] = [
+const ikeVersionOptions: [NeComboboxOption, ...NeComboboxOption[]] = [
   {
     id: 'ike',
     label: 'IKEv1 & IKEv2'

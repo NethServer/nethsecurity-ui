@@ -95,8 +95,8 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
     } else if (value == PolicyOptions.BALANCE) {
       // flatten all priorities in a single gateway per priority
       priorities.value = [priorities.value.flat(1)]
-      for (let i = priorities.value[0].length; i < 2; i++) {
-        priorities.value[0].push(new Gateway())
+      for (let i = priorities.value[0]?.length ?? 0; i < 2; i++) {
+        priorities.value[0]?.push(new Gateway())
       }
     } else {
       // filter out empty gateways
@@ -119,7 +119,7 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
    */
   const isTrashButtonDisabled = computed<boolean>(() => {
     if (selection.value == 'balance') {
-      return priorities.value[0].length < 3
+      return (priorities.value[0]?.length ?? 0) < 3
     } else if (selection.value == 'backup') {
       return priorities.value.length < 3
     }
@@ -135,7 +135,7 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
   })
 
   function removePriority(prioritiesIndex: number, priority: number) {
-    priorities.value[prioritiesIndex].splice(priority, 1)
+    priorities.value[prioritiesIndex]?.splice(priority, 1)
     priorities.value = priorities.value.filter((priority) => priority.length > 0)
   }
 
@@ -144,7 +144,7 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
   }
 
   function addGateway(priorityIndex: number) {
-    priorities.value[priorityIndex].push(new Gateway())
+    priorities.value[priorityIndex]?.push(new Gateway())
   }
 
   function cleanForm() {

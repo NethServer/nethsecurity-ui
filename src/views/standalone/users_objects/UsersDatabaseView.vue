@@ -59,7 +59,7 @@ async function fetchDatabases(resetSelectedTab: boolean = false) {
       label: db.type === 'local' ? t('standalone.users_database.local_database') : db.name
     }))
     if (!selectedTab.value) {
-      selectedTab.value = tabs.value[0].name
+      selectedTab.value = tabs.value[0]?.name ?? ''
     }
   } catch (err: any) {
     error.value.listDatabases = t(getAxiosErrorMessage(err))

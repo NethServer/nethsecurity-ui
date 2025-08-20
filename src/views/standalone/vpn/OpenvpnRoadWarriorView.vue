@@ -142,7 +142,7 @@ async function fetchServer(setLoading: boolean = true) {
     }
     const instances: string[] = (await ubusCall('ns.ovpnrw', 'list-instances')).data.instances
     if (instances.length > 0) {
-      instanceName.value = instances[0]
+      instanceName.value = instances[0]!
       instanceData.value = (
         await ubusCall('ns.ovpnrw', 'get-configuration', { instance: instanceName.value })
       ).data

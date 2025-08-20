@@ -142,7 +142,7 @@ onMounted(() => {
         <NeCombobox
           v-if="useKeyInput && keyInputType === 'combobox'"
           :options="keyOptions"
-          :model-value="keys[i]"
+          :model-value="keys[i]!"
           :invalid-message="invalidKeyMessages ? invalidKeyMessages[i] : ''"
           :placeholder="keyInputPlaceholder"
           :no-results-label="t('ne_combobox.no_results')"

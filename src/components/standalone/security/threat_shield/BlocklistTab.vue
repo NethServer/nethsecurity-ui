@@ -108,7 +108,7 @@ async function toggleBlocklistEnable(blocklist: Blocklist) {
     error.value.notificationDetails = err.toString()
 
     const blocklistToRevert =
-      blocklists.value[blocklists.value.findIndex((x) => x.name === blocklist.name)]
+      blocklists.value[blocklists.value.findIndex((x) => x.name === blocklist.name)]!
     blocklistToRevert.enabled = !blocklistToRevert.enabled
   } finally {
     isTogglingBlocklistEnabled.value = false

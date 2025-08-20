@@ -338,7 +338,7 @@ function mapTrafficPolicyToRadioId(trafficPolicy: TrafficPolicy, prefix: string)
 
 function mapRadioIdToTrafficPolicy(radioId: string): string {
   const [, trafficPolicy] = radioId.split('-')
-  return trafficPolicy.toUpperCase()
+  return trafficPolicy!.toUpperCase()
 }
 
 type AvailablePresets = SpecialZones.GUEST | SpecialZones.DMZ | 'custom'

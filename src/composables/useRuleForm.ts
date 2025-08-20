@@ -20,7 +20,7 @@ import type { AxiosResponse } from 'axios'
 export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined>) {
   const { t } = useI18n()
 
-  const protocolOptions: NeComboboxOption[] = [
+  const protocolOptions: [NeComboboxOption, ...NeComboboxOption[]] = [
     {
       id: 'all',
       label: t('standalone.multi_wan.all_protocols')

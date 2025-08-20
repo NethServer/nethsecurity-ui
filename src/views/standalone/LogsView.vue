@@ -19,7 +19,7 @@ interface LogResponse {
   values: string[]
 }
 
-const logLimitComboboxOption: NeComboboxOption[] = [
+const logLimitComboboxOption: [NeComboboxOption, ...NeComboboxOption[]] = [
   {
     id: '100',
     label: '100'

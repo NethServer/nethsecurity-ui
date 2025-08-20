@@ -60,7 +60,7 @@ export function useLatencyAndQualityReport() {
 
   function buildQualityChart(latencyAndQualityData: LatencyAndQualityData, pingHost: string) {
     // convert timestamp to milliseconds
-    const chartLabels = latencyAndQualityData.quality.data.map((d: number[]) => d[0] * 1000)
+    const chartLabels = latencyAndQualityData.quality.data.map((d: number[]) => (d[0] ?? 0) * 1000)
     const qualityData = latencyAndQualityData.quality.data.map((d: number[]) => d[1])
 
     const chartDatasets = [
@@ -85,7 +85,7 @@ export function useLatencyAndQualityReport() {
 
   function buildLatencyChart(latencyAndQualityData: LatencyAndQualityData, pingHost: string) {
     // convert timestamp to milliseconds
-    const chartLabels = latencyAndQualityData.latency.data.map((d: number[]) => d[0] * 1000)
+    const chartLabels = latencyAndQualityData.latency.data.map((d: number[]) => (d[0] ?? 0) * 1000)
     // show latency in milliseconds with one decimal
     const minLatencyData = latencyAndQualityData.latency.data.map((d: number[]) =>
       d[1] ? parseFloat(d[1].toFixed(1)) : null

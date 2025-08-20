@@ -163,7 +163,7 @@ function getCellClasses(item: PortForward) {
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.status')">
             <NeTooltip
-              v-if="item.ns_tag.includes('automated')"
+              v-if="item.ns_tag?.includes('automated')"
               trigger-event="mouseenter focus"
               placement="top-start"
             >
@@ -193,7 +193,7 @@ function getCellClasses(item: PortForward) {
             <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
               <NeButton
                 kind="tertiary"
-                :disabled="item.ns_tag.includes('automated')"
+                :disabled="item.ns_tag?.includes('automated')"
                 @click="emit('port-forward-edit', item)"
               >
                 <template #prefix>
@@ -202,7 +202,7 @@ function getCellClasses(item: PortForward) {
                 {{ t('common.edit') }}
               </NeButton>
               <NeDropdown
-                v-if="!item.ns_tag.includes('automated')"
+                v-if="!item.ns_tag?.includes('automated')"
                 :items="getDropdownItems(item)"
                 :align-to-right="true"
               />

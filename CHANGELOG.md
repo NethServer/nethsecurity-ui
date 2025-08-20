@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.4.5](https://github.com/NethServer/nethsecurity-ui/compare/2.4.4...2.4.5) (2025-08-19)
+
+
+### Bug Fixes
+
+* **standalone:** port forward, fix ns_tag field ([d271bcb](https://github.com/NethServer/nethsecurity-ui/commit/d271bcba8bf13464157d36cbd092a290a3731dbf))
+* **controller:** automatically empty group list ([e474b5a](https://github.com/NethServer/nethsecurity-ui/commit/e474b5a8d42f2e63a3d17d3f973dc8095f22eebd))
+* **deps:** updated pinia to v3 ([9d7e660](https://github.com/NethServer/nethsecurity-ui/commit/9d7e66053988948dce5f93b6e41c0fa3d6a431eb))
+* **deps:** updated vueuse to v13 ([f414d29](https://github.com/NethServer/nethsecurity-ui/commit/f414d2990be2721c49668e8d6896b4e54ae972c8))
+
 ## [2.4.4](https://github.com/NethServer/nethsecurity-ui/compare/2.4.3...2.4.4) (2025-08-18)
 
 

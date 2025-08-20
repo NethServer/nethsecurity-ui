@@ -17,12 +17,12 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
 import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/twoFa'
-import QRCodeVue3 from 'qrcode-vue3'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useNotificationsStore } from '@/stores/notifications'
 import { isStandaloneMode } from '@/lib/config'
+import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const props = defineProps({
   isShown: { type: Boolean, default: false }
@@ -36,6 +36,10 @@ const otp = ref('')
 const otpRef = ref()
 const qrCodeUrl = ref('')
 const errorBag = ref(new MessageBag())
+
+const qrcode = useQRCode(qrCodeUrl, {
+  scale: 6
+})
 
 const loading = ref({
   getTwoFaQrCode: false,
@@ -181,7 +185,7 @@ async function verifyOtp() {
           <div class="h-72 w-72 bg-gray-300 dark:bg-gray-700"></div>
         </div>
         <!-- qr code -->
-        <QRCodeVue3 v-else :value="qrCodeUrl" :dots-options="{ type: 'dots', color: '#000' }" />
+        <img :src="qrcode" alt="QR Code" />
         <!-- otp -->
         <NeTextInput
           ref="otpRef"

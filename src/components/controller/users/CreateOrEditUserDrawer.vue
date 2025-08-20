@@ -187,7 +187,7 @@ async function createOrEditUser() {
           password.value,
           displayName.value,
           isAdmin.value,
-          unitGroups.value.map((group: NeComboboxOption) => Number(group.id))
+          isAdmin.value ? [] : unitGroups.value.map((group: NeComboboxOption) => Number(group.id))
         )
         emit('edit-user')
       }

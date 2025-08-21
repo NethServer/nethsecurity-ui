@@ -297,9 +297,9 @@ function promptConnectUnit() {
         </NeTextInput>
         <NeTextArea
           ref="unitDescriptionRef"
+          v-model="unitDescription"
           :rows="2"
           :optional="true"
-          v-model="unitDescription"
           :disabled="status !== 'unregistered'"
           :label="t('standalone.controller.unit_description')"
         >

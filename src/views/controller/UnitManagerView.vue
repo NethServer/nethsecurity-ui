@@ -239,12 +239,12 @@ function getBulkActionsKebabMenuItems() {
         <div v-if="!isShownUnitsSkeleton" class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
           <!-- allow adding a new unit if the controller has a valid subscription, or the number of units is lower than MAX_NO_SUBSCRIPTION_UNITS -->
           <NeButton
+            v-if="loginStore.isAdmin"
             kind="tertiary"
             size="lg"
             :disabled="isAddUnitDisabled"
             class="shrink-0"
             @click="isShownAddUnitModal = true"
-            v-if="loginStore.isAdmin"
           >
             <template #prefix>
               <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
@@ -287,10 +287,10 @@ function getBulkActionsKebabMenuItems() {
             class="mt-4"
           >
             <NeButton
+              v-if="loginStore.isAdmin"
               kind="primary"
               size="lg"
               @click="isShownAddUnitModal = true"
-              v-if="loginStore.isAdmin"
             >
               <template #prefix>
                 <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />

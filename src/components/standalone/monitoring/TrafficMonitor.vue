@@ -72,7 +72,7 @@ const filtersToBreadcrumb = computed<FilterableBreadcrumbItem[]>(() => {
           label = filter.value.toUpperCase()
           break
         default:
-          label = t(`standalone.real_time_monitor.${filter.key}`)
+          label = t(`standalone.real_time_monitor.${String(filter.key)}`)
       }
       return {
         key: filter.key as string,

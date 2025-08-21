@@ -1670,7 +1670,7 @@
       "add_remote_database_tooltip": "I database degli utenti remoti sono disponibili solo con subscription",
       "administrator_tooltip": "Un utente promosso ad amministratore può accedere all'interfaccia web di amministrazione e configurare questa unità.",
       "user_bind_dn": "User bind DN personalizzato",
-      "user_bind_dn_tooltip": "Distinguished Name (DN) utilizzato per collegarsi al server LDAP. Questo campo sovrascrive il bind DN calcolato. Utilizzare quando ci si autenticata ad un server Active Directory. Può contenere una variabile '%u' che verrà espansa con il nome dell'utente. Esempio: '%u@secrexample.com', 'SECRETEXAMPLE\\%u'",
+      "user_bind_dn_tooltip": "Distinguished Name (DN) utilizzato per collegarsi al server LDAP. Questo campo sovrascrive il bind DN calcolato. Utilizzare quando ci si autenticata ad un server Active Directory. Può contenere una variabile '%u' che verrà espansa con il nome dell'utente. Esempio: '%u{'@'}secretexample.com', 'SECRETEXAMPLE\\%u'",
       "add_remote_database": "Aggiungi database remoto",
       "edit_remote_database": "Modifica database remoto",
       "user_display_attribute": "Nome utente",
@@ -2822,6 +2822,8 @@
   },
   "languages": {
     "en": "Inglese",
-    "it": "Italiano"
+    "it": "Italiano",
+    "fr": "Francese",
+    "nl": "Olandese"
   }
 }

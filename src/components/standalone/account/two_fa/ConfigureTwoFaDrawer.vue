@@ -22,7 +22,7 @@ import {
   MessageBag,
   validateSixDigitCode
 } from '@/lib/validation.ts'
-import QRCodeVue3 from 'qrcode-vue3'
+import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 type QrCodeResponse = {
   data: {
@@ -46,6 +46,11 @@ const otpRef = useTemplateRef<HTMLInputElement>('otp-ref')
 const validationBag = ref(new MessageBag())
 const verifyingOtp = ref(false)
 const verifyingOtpError = ref<Error>()
+
+const qrUrl = computed(() => data.value?.data.url ?? '')
+const qrcode = useQRCode(qrUrl, {
+  scale: 6
+})
 
 function convertErrorToMessage(error?: Error): string {
   if (error instanceof UnauthorizedAction) {
@@ -167,7 +172,7 @@ function closeDrawer() {
             {{ t('standalone.two_fa.configure_two_fa_step_3') }}
           </li>
         </ul>
-        <QRCodeVue3 :dots-options="{ type: 'dots', color: '#000' }" :value="data!.data.url" />
+        <img :src="qrcode" alt="QR Code" />
         <form class="space-y-6" @submit.prevent="verifyOtp">
           <NeInlineNotification
             v-if="verifyingOtpError"

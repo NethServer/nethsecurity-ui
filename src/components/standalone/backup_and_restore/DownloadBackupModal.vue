@@ -137,7 +137,14 @@ async function downloadBackup() {
     @close="$emit('close')"
     @primary-click="downloadBackup()"
   >
-    <div>
+    <div v-if="unencrypted">
+      {{
+        t('standalone.backup_and_restore.backup.modal_download_unencrypted_description', {
+          name: getBackupName()
+        })
+      }}
+    </div>
+    <div v-else>
       {{
         t('standalone.backup_and_restore.backup.modal_download_description', {
           name: getBackupName()

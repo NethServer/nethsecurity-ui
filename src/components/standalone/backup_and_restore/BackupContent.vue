@@ -159,6 +159,9 @@ function openDownloadEnterprise(file: string, type: string, time: string) {
 function openDownloadUnencryptedModal() {
   downloadUnencrypted.value = true
   showDownloadModal.value = true
+  selectedBackup.value = ''
+  selectedBackupType.value = ''
+  selectedBackupTime.value = ''
 }
 
 function openDeleteBackup(id: string, label: string) {
@@ -316,7 +319,7 @@ function successDeleteBackup() {
               align-to-right
             >
               <template #button>
-                <NeButton>
+                <NeButton size="lg">
                   <template #suffix>
                     <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
                   </template>
@@ -324,22 +327,23 @@ function successDeleteBackup() {
                 </NeButton>
               </template>
             </NeDropdown>
+            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faArrowCircleDown" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
+            </NeButton>
             <NeButton
               v-if="listBackups.length > 0"
               :disabled="!backups.isPassPhraseSet"
               kind="primary"
+              size="lg"
               @click="showRunBackupModal = true"
             >
               <template #prefix>
                 <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
               </template>
-              {{ t('standalone.backup_and_restore.backup.run_backup') }}
-            </NeButton>
-            <NeButton kind="tertiary" @click="openDownloadUnencryptedModal()">
-              <template #prefix>
-                <FontAwesomeIcon :icon="faUnlock" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_unencrypted_backup') }}
+              {{ t('standalone.backup_and_restore.backup.run_cloud_backup') }}
             </NeButton>
           </div>
         </div>
@@ -350,17 +354,22 @@ function successDeleteBackup() {
           :description="t('standalone.backup_and_restore.backup.description')"
         >
           <div class="flex flex-wrap gap-4">
-            <NeButton kind="primary" size="lg" @click="showDownloadModal = true">
-              <template #prefix>
-                <FontAwesomeIcon :icon="faArrowCircleDown" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_backup') }}
-            </NeButton>
-            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal()">
+            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal">
               <template #prefix>
                 <FontAwesomeIcon :icon="faUnlock" />
               </template>
-              {{ t('standalone.backup_and_restore.backup.download_unencrypted_backup') }}
+              {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
+            </NeButton>
+            <NeButton
+              kind="primary"
+              size="lg"
+              :disabled="!backups.isPassPhraseSet"
+              @click="showDownloadModal = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faLock" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.download_encrypted') }}
             </NeButton>
           </div>
         </FormLayout>

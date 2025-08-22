@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/NethServer/nethsecurity-ui/compare/2.4.5...2.5.0) (2025-08-22)
+
+
+### Features
+
+* **backup:** allow download of unencrypted backup ([#625](https://github.com/NethServer/nethsecurity-ui/issues/625)) ([3bb4a24](https://github.com/NethServer/nethsecurity-ui/commit/3bb4a24b99e4ca45050c87814f7fd446d9e85e51))
+
+
+### Bug Fixes
+
+* **lang:** missing starting brace of escaped character ([f4e1502](https://github.com/NethServer/nethsecurity-ui/commit/f4e150243d7d9df5ba51939f7f07b2e6749a9658))
+
 ## [2.4.5](https://github.com/NethServer/nethsecurity-ui/compare/2.4.4...2.4.5) (2025-08-19)
 
 

@@ -725,7 +725,9 @@
         "description_subscription": "Configure a passphrase to enable encrypted backups. The system automatically manages up to 10 encrypted backups.",
         "download": "Download",
         "download_backup": "Download backup",
+        "download_unencrypted_backup": "Download unencrypted",
         "modal_download_description": "Download backup '{name}'?",
+        "modal_download_unencrypted_description": "Download unencrypted backup '{name}'?",
         "passphrase_drawer_title": "Configure passphrase",
         "passphrase": "Passphrase",
         "passphrase_helper": "Enter a passphrase if you want to encrypt the backup with GPG; if the passphrase is empty, the backup will be saved in plain text. Warning: if you lose the passphrase, you won't be able to use the encrypted backup.",
@@ -733,6 +735,7 @@
         "configure_passphrase": "Configure passphrase",
         "no_backups_found": "No backups found",
         "run_backup": "Run backup",
+        "run_cloud_backup": "Run cloud backup",
         "run_backup_description": "A backup of '{name}' will be created.",
         "success_run_backup": "Backup performed successfully",
         "success_download": "Backup downloaded successfully",
@@ -771,7 +774,9 @@
         "passphrase_removed_description": "The passphrase has been removed successfully. Future backups will not be encrypted.",
         "passphrase_edited": "Passphrase edited successfully",
         "passphrase_edited_description": "The passphrase has been edited successfully. Next backups will be encrypted with the new passphrase.",
-        "manage_passphrase": "Manage passphrase"
+        "manage_passphrase": "Manage passphrase",
+        "download_unencrypted": "Download unencrypted",
+        "download_encrypted": "Download encrypted"
       },
       "restore": {
         "description": "Restore a previous configuration of the unit, ensuring it works with its original rules and parameters.",

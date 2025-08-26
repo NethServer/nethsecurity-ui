@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/NethServer/nethsecurity-ui/compare/2.5.1...2.5.2) (2025-08-26)
+
+
+### Bug Fixes
+
+* **certificates:** correctly show not used badge ([5b71659](https://github.com/NethServer/nethsecurity-ui/commit/5b7165985c7a053d53b7e82ddf1b1eaef0eb0fe0))
+
 ## [2.5.1](https://github.com/NethServer/nethsecurity-ui/compare/2.5.0...2.5.1) (2025-08-26)
 
 

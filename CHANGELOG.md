@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.1](https://github.com/NethServer/nethsecurity-ui/compare/2.5.0...2.5.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* **backup:** always show download button ([5b65496](https://github.com/NethServer/nethsecurity-ui/commit/5b65496eb18965fe5757d3acd5076b9e0f9d0ea5))
+* **ovpn tunnel:** change compression alg id ([7ac85de](https://github.com/NethServer/nethsecurity-ui/commit/7ac85dea44723ae9d4fc1be185266cf122d9f6e4))
+
 ## [2.5.0](https://github.com/NethServer/nethsecurity-ui/compare/2.4.5...2.5.0) (2025-08-22)
 
 

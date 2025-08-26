@@ -286,17 +286,6 @@ function successDeleteBackup() {
         </div>
         <div class="flex flex-col items-start gap-4 xl:items-end">
           <div class="flex flex-wrap gap-4">
-            <NeButton
-              v-if="!backups.isPassPhraseSet"
-              kind="primary"
-              size="lg"
-              @click="showPassphraseDrawer = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-            </NeButton>
             <NeDropdown
               v-if="backups.isPassPhraseSet"
               :items="[

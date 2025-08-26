@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.3](https://github.com/NethServer/nethsecurity-ui/compare/2.5.2...2.5.3) (2025-08-26)
+
+
+### Bug Fixes
+
+* **backup:** remove primary configure passphrase button ([df3b84e](https://github.com/NethServer/nethsecurity-ui/commit/df3b84e4b816f544f743f4cbe88283376909bb24))
+* replaced qrcode library ([a2ce50b](https://github.com/NethServer/nethsecurity-ui/commit/a2ce50b0d56e1967000fc839acdbca9bb6573cd2))
+
 ## [2.5.2](https://github.com/NethServer/nethsecurity-ui/compare/2.5.1...2.5.2) (2025-08-26)
 
 

@@ -285,13 +285,10 @@ function successDeleteBackup() {
           />
         </div>
         <div class="flex flex-col items-start gap-4 xl:items-end">
-          <div
-            v-if="listBackups.length > 0 || backups.isPassPhraseSet"
-            class="flex flex-wrap gap-4"
-          >
+          <div class="flex flex-wrap gap-4">
             <NeButton
               v-if="!backups.isPassPhraseSet"
-              kind="tertiary"
+              kind="primary"
               size="lg"
               @click="showPassphraseDrawer = true"
             >
@@ -348,7 +345,7 @@ function successDeleteBackup() {
           </div>
         </div>
       </div>
-      <div v-else class="max-w-3xl space-y-6">
+      <div v-if="!subscription.isActive" class="max-w-3xl space-y-6">
         <FormLayout
           :title="t('standalone.backup_and_restore.backup.title')"
           :description="t('standalone.backup_and_restore.backup.description')"
@@ -394,7 +391,11 @@ function successDeleteBackup() {
               size="xs"
             />
             <div class="flex flex-wrap gap-4">
-              <NeButton kind="secondary" size="lg" @click="showPassphraseDrawer = true">
+              <NeButton
+                :kind="backups.isPassPhraseSet ? 'secondary' : 'primary'"
+                size="lg"
+                @click="showPassphraseDrawer = true"
+              >
                 <template #prefix>
                   <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
                   <FontAwesomeIcon v-else :icon="faCog" />
@@ -443,7 +444,7 @@ function successDeleteBackup() {
             </template>
             {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
           </NeButton>
-          <NeButton v-else kind="secondary" size="lg" @click="showRunBackupModal = true">
+          <NeButton v-else kind="primary" size="lg" @click="showRunBackupModal = true">
             <template #prefix>
               <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
             </template>

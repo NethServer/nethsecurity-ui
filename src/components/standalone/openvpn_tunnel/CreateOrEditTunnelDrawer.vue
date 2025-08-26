@@ -143,7 +143,7 @@ const compressionOptions = [
     label: t('standalone.openvpn_tunnel.disabled')
   },
   {
-    id: 'lz0',
+    id: 'lzo',
     label: 'LZO'
   },
   {

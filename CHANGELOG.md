@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.4](https://github.com/NethServer/nethsecurity-ui/compare/2.5.3...2.5.4) (2025-08-28)
+
+
+### Bug Fixes
+
+* **redirects:** better destination IP validation [#639](https://github.com/NethServer/nethsecurity-ui/issues/639) ([22828ed](https://github.com/NethServer/nethsecurity-ui/commit/22828ed54e6c0c1d85ff7513b5fe94b3cc1b3936))
+
 ## [2.5.3](https://github.com/NethServer/nethsecurity-ui/compare/2.5.2...2.5.3) (2025-08-26)
 
 

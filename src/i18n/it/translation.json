@@ -575,7 +575,7 @@
         "configure_passphrase": "Configura passphrase",
         "modal_download_description": "Scaricare il backup '{name}'?",
         "success_run_backup": "Backup eseguito con successo",
-        "run_backup": "Esegui backup",
+        "run_backup": "Esegui cloud backup",
         "description": "Scarica le impostazioni e i dati correnti dell'unità. Questo proteggerà contro potenziali perdite di dati o guasti di sistema. Configura una passphrase per aumentare la sicurezza dei tuoi dati.",
         "download_backup": "Scarica backup",
         "passphrase_drawer_title": "Configura passphrase",
@@ -607,7 +607,7 @@
         "passphrase_required_for_restore_description": "La passphrase impostata sarà necessario per decifrare i backup durante il processo di ripristino. Assicurarsi di memorizzarla in modo sicuro, in quanto non può essere recuperata.",
         "changing_your_passphrase_applies_to_new_backups_description": "Cambiare la tua passphrase influenzerà solo i backup futuri. Per ripristinare i backup più vecchi, è necessario utilizzare il passphrase che è stata impostata al momento della loro creazione.",
         "configure_passphrase_to_run": "Configurare la passphrase per eseguire backup crittografati",
-        "the_system_will_automatically_create_backups": "Il sistema creerà automaticamente i backup, oppure si può avviare manualmente facendo clic su \"Esegui backup\".",
+        "the_system_will_automatically_create_backups": "Il sistema creerà automaticamente i backup, oppure si può avviare manualmente facendo clic su \"Esegui cloud backup\".",
         "title": "Backup",
         "confirm_passphrase": "Conferma la passphrase",
         "remove_passphrase": "Rimuovi passphrase",
@@ -619,7 +619,12 @@
         "passphrase_removed_description": "La passphrase è stata rimosso con successo. I backup futuri non saranno crittografati.",
         "passphrase_edited": "Passphrase modificata con successo",
         "passphrase_edited_description": "La passphrase è stata modificata con successo. I backup futuri saranno crittografati con la nuova passphrase.",
-        "manage_passphrase": "Gestione passphrase"
+        "manage_passphrase": "Gestione passphrase",
+        "download_unencrypted_backup": "Scarica non cifrato",
+        "modal_download_unencrypted_description": "Scaricare il backup non cifrato '{name}'?",
+        "run_cloud_backup": "Esegui cloud backup",
+        "download_unencrypted": "Scarica non cifrato",
+        "download_encrypted": "Scarica cifrato"
       },
       "tabs": {
         "migration": "Migrazione",

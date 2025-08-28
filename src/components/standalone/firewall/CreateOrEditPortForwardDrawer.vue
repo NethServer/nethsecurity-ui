@@ -436,7 +436,9 @@ function validate(): boolean {
       ? [
           destinationIpRequired
             ? [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)]
-            : [{ valid: true }],
+            : destinationIP.value
+              ? [validateIpAddress(destinationIP.value)]
+              : [{ valid: true }],
           'destinationIP',
           destinationIpRef
         ]

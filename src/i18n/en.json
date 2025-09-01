@@ -1,10 +1,4 @@
 {
-  "languages": {
-    "it": "Italiano",
-    "en": "English",
-    "fr": "Français",
-    "nl": "Nederlands"
-  },
   "common": {
     "shell": {
       "account_settings": "Account settings",

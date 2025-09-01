@@ -1,9 +1,9 @@
 {
   "languages": {
-    "it": "Italian",
+    "it": "Italiano",
     "en": "English",
-    "fr": "French",
-    "nl": "Dutch"
+    "fr": "Français",
+    "nl": "Nederlands"
   },
   "common": {
     "shell": {

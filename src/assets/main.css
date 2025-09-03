@@ -160,3 +160,11 @@
 @utility text-tertiary-neutral {
   @apply text-gray-600 dark:text-gray-300;
 }
+
+@utility text-enabled {
+  @apply text-green-700 dark:text-green-500;
+}
+
+@utility text-disabled {
+  @apply text-gray-400 dark:text-gray-600;
+}

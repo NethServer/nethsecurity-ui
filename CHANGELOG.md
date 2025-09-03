@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.5](https://github.com/NethServer/nethsecurity-ui/compare/2.5.4...2.5.5) (2025-09-03)
+
+
+### Bug Fixes
+
+* **deps:** updated vuei18n ([#629](https://github.com/NethServer/nethsecurity-ui/issues/629)) ([b2fdd13](https://github.com/NethServer/nethsecurity-ui/commit/b2fdd138d843fee8792f6b94b38723566c7d953e))
+
 ## [2.5.4](https://github.com/NethServer/nethsecurity-ui/compare/2.5.3...2.5.4) (2025-08-28)
 
 

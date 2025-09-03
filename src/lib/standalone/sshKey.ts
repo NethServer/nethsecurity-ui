@@ -25,7 +25,7 @@ export class SshKey {
       default:
         throw new Error('Invalid SSH key type.')
     }
-    this.key = splitKey[1]
+    this.key = splitKey[1]!
     // if there's a comment, we join the rest of the array
     if (splitKey.length > 2) {
       this.comment = splitKey

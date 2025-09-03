@@ -447,8 +447,8 @@ export function validatePortRange(value: string, minPort = 1, maxPort = 65535): 
   if (range.length != 2) {
     return { valid: false, errMessage: 'error.invalid_port_range' }
   }
-  const start = Number.parseInt(range[0])
-  const end = Number.parseInt(range[1])
+  const start = Number.parseInt(range[0]!)
+  const end = Number.parseInt(range[1]!)
   if (start > end) {
     return { valid: false, errMessage: 'error.invalid_port_range' }
   }
@@ -678,7 +678,7 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
         continue
       }
 
-      const res = validateHostname(names[i])
+      const res = validateHostname(names[i]!)
 
       if (!res.valid) {
         return invalidResult
@@ -691,7 +691,7 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
   }
 
   // ipaddr%scopeid#srvport@source@interface#srcport
-  const ipAddrMatch = match[2].match(
+  const ipAddrMatch = match[2]!.match(
     /^([0-9a-f:.]+)(?:%[^#@]+)?(?:#(\d+))?(?:@([0-9a-f:.]+)(?:@[^#]+)?(?:#(\d+))?)?$/
   )
 
@@ -700,11 +700,11 @@ export const validateDNSForwardingServer = (value: string): validationOutput => 
   }
 
   // validate ip addresses and port formats
-  if (validateIp4Address(ipAddrMatch[1]).valid) {
+  if (validateIp4Address(ipAddrMatch[1]!).valid) {
     if (ipAddrMatch[3] && !validateIp4Address(ipAddrMatch[3]).valid) {
       return invalidResult
     }
-  } else if (validateIp6Address(ipAddrMatch[1]).valid) {
+  } else if (validateIp6Address(ipAddrMatch[1]!).valid) {
     if (ipAddrMatch[3] && !validateIp6Address(ipAddrMatch[3]).valid) {
       return invalidResult
     }

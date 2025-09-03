@@ -41,7 +41,7 @@ const sortFunctions = {
   domain: (a: Certificate, b: Certificate) => {
     if (a.type === 'acme' && b.type === 'acme') {
       if (a.requested_domains?.length && b.requested_domains?.length) {
-        return a.requested_domains[0].localeCompare(b.requested_domains[0])
+        return a.requested_domains[0]!.localeCompare(b.requested_domains[0]!)
       } else {
         return 0
       }

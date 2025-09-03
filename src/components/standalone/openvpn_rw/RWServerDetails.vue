@@ -8,7 +8,8 @@ import { useI18n } from 'vue-i18n'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faServer, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 
@@ -26,11 +27,9 @@ const emit = defineEmits(['delete-server', 'edit-server'])
       class="flex grow flex-row items-center justify-between rounded-md border-l-4 border-indigo-400 bg-gray-100 p-2 sm:rounded-lg sm:shadow dark:border-indigo-500 dark:bg-gray-800"
     >
       <div class="ml-4 flex flex-row items-center">
-        <font-awesome-icon
-          :icon="['fas', 'server']"
-          aria-hidden="true"
-          :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
-        />
+        <div class="mr-5 rounded-full bg-gray-900 text-gray-300 dark:bg-gray-50 dark:text-gray-600">
+          <FontAwesomeIcon :icon="faServer" aria-hidden="true" class="m-2 h-4 w-4" />
+        </div>
         <p>{{ server.ns_description }}</p>
       </div>
       <div
@@ -103,11 +102,9 @@ const emit = defineEmits(['delete-server', 'edit-server'])
       class="flex flex-row items-center justify-between rounded-md bg-gray-100 p-5 sm:rounded-lg sm:shadow dark:bg-gray-800"
     >
       <div class="flex flex-row items-center">
-        <font-awesome-icon
-          :icon="['fas', 'user-group']"
-          aria-hidden="true"
-          :class="`mr-5 h-4 w-4 rounded-full bg-gray-900 p-2 text-gray-300 dark:bg-gray-50 dark:text-gray-600`"
-        />
+        <div class="mr-5 rounded-full bg-gray-900 text-gray-300 dark:bg-gray-50 dark:text-gray-600">
+          <FontAwesomeIcon :icon="faUserGroup" aria-hidden="true" class="m-2 h-4 w-4" />
+        </div>
         <p class="mx-2">{{ t('standalone.openvpn_rw.connected_clients') }}</p>
       </div>
       <p class="ml-4 text-3xl">{{ connectedClients }}</p>

@@ -207,7 +207,7 @@ function validate() {
   // ntp server candidates
 
   for (let index = 0; index < ntpServerCandidates.value.length; index++) {
-    const ntpServer = ntpServerCandidates.value[index]
+    const ntpServer = ntpServerCandidates.value[index]!
 
     {
       // check required

@@ -98,7 +98,7 @@ async function resetForm() {
       leaseTime.value = interfaceResponse.leasetime
       enableDhcp.value = interfaceResponse.active
       dhcpOptions.value = interfaceResponse.options.map((optionObj: { [key: string]: string }) => {
-        const key = Object.keys(optionObj)[0]
+        const key: keyof typeof optionObj = Object.keys(optionObj)[0]!
         return { key, value: optionObj[key] }
       })
       force.value = interfaceResponse.force

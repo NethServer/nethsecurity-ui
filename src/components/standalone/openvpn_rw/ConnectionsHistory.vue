@@ -47,10 +47,10 @@ const props = defineProps<{
   instance: string
 }>()
 
+type RangeFilterOptions = 'all' | 'last_3_months' | 'last_month' | 'last_week' | 'today'
+
 // filter time range to populate NeDropdownFilter timeRangeFilter options
-const timeRangeFilter = ref<('all' | 'last_3_months' | 'last_month' | 'last_week' | 'today')[]>([
-  'today'
-])
+const timeRangeFilter = ref<[RangeFilterOptions, ...RangeFilterOptions[]]>(['today'])
 const timeRangeFilterOptions = ref<FilterOption[]>([
   {
     id: 'today',

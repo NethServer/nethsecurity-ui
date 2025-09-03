@@ -27,7 +27,7 @@ const { tabs, selectedTab } = useTabs([
 ])
 
 onMounted(() => {
-  selectedTab.value = (route.query.tab as string) ?? tabs.value[0].name
+  selectedTab.value = (route.query.tab as string) ?? tabs.value[0]!.name
 })
 
 watch(selectedTab, () => {

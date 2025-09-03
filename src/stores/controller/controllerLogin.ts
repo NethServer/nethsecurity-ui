@@ -71,7 +71,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
     tokenRefreshedTime.value = new Date().getTime()
     if (!twoFaActive.value) {
       username.value = user
-      role.value = JSON.parse(atob(token.value.split('.')[1])).role
+      role.value = JSON.parse(atob(token.value.split('.')[1]!)).role
       saveToStorage('controllerLoginInfo', {
         username: username.value,
         token: token.value,
@@ -83,7 +83,7 @@ export const useLoginStore = defineStore('controllerLogin', () => {
   async function verifyTwoFaToken(user: string, otp: string) {
     await verifyTwoFaOtp(user, token.value, otp)
     username.value = user
-    role.value = JSON.parse(atob(token.value.split('.')[1])).role
+    role.value = JSON.parse(atob(token.value.split('.')[1]!)).role
     saveToStorage('controllerLoginInfo', {
       username: username.value,
       token: token.value,

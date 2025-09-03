@@ -124,7 +124,7 @@ async function loadAccountAndUnitSshKeys() {
       const keys: SshKey[] = res.data.keys
       const tokens = pubKey.split(' ')
       const pubKeyType = tokens[0]
-      const pubKeyKey = tokens[1]
+      const pubKeyKey = tokens[1]!
       const pubKeyComment = tokens.slice(2).join(' ')
 
       const pubKeyFound = keys.find(

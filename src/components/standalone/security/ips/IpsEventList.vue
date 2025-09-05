@@ -240,6 +240,7 @@ function suppressedAlertHandler() {
             kind="radio"
             :no-options-label="t('ne_dropdown_filter.no_options')"
             :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+            :clear-search-label="t('ne_dropdown_filter.clear_search')"
           />
           <NeButton kind="tertiary" @click="clearFilters">
             {{ t('common.clear_filters') }}

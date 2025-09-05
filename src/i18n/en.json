@@ -461,7 +461,8 @@
     "no_options": "No options",
     "more_options_hidden": "Continue typing to show more options",
     "clear_selection": "Clear selection",
-    "clear_search": "Clear search"
+    "clear_search": "Clear search",
+    "clear_search_label": "Clear"
   },
   "login": {
     "welcome_title_standalone": "Welcome",

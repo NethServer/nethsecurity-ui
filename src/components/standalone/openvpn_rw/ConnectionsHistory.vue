@@ -276,6 +276,7 @@ watch(timeRangeFilter, () => {
         :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         :no-options-label="t('ne_dropdown_filter.no_options')"
         :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        :clear-search-label="t('ne_dropdown_filter.clear_search')"
       />
       <NeDropdownFilter
         v-model="accountsFilter"
@@ -289,6 +290,7 @@ watch(timeRangeFilter, () => {
         :no-options-label="t('ne_dropdown_filter.no_options')"
         :options-filter-placeholder="t('standalone.openvpn_rw.history.filter_accounts')"
         :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        :clear-search-label="t('ne_dropdown_filter.clear_search')"
       />
       <NeButton kind="tertiary" :disabled="isLoading" @click="clearFilters">
         {{ t('standalone.openvpn_rw.history.reset_filters') }}

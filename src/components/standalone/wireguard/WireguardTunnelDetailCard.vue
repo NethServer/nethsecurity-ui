@@ -43,7 +43,8 @@ type Peer = {
   reserved_ip: string
 }
 
-type Tunnel = {
+export type Tunnel = {
+  id: string
   address: string
   client_to_client: boolean
   enabled: boolean
@@ -55,7 +56,7 @@ type Tunnel = {
   route_all_traffic: boolean
   routes: string[]
   mtu: number
-  dns: string[]
+  dns: string
 }
 
 const loading = ref(true)
@@ -73,13 +74,17 @@ function loadData() {
     .finally(() => (loading.value = false))
 }
 
-const tunnelActions: NeDropdownItem[] = [
+const emit = defineEmits<{
+  edit: [item: Tunnel]
+}>()
+
+const tunnelActions = (tunnel: Tunnel): NeDropdownItem[] => [
   {
     id: 'edit',
     label: t('standalone.wireguard_tunnel.edit_tunnel'),
     icon: faPenToSquare,
     action: () => {
-      /* FIXME */
+      emit('edit', tunnel)
     }
   },
   {
@@ -154,7 +159,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
             </span>
             <span v-if="data.dns.length > 0">
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.dns') }}: </span>
-              {{ data.dns.join(', ') }}
+              {{ data.dns }}
             </span>
           </div>
         </div>
@@ -173,7 +178,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
             </template>
             {{ t('standalone.wireguard_tunnel.add_peer') }}
           </NeButton>
-          <NeDropdown :items="tunnelActions" :align-to-right="true" />
+          <NeDropdown :items="tunnelActions(data)" :align-to-right="true" />
         </div>
       </div>
       <NeTable

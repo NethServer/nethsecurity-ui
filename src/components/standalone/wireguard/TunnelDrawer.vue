@@ -15,11 +15,13 @@ import type { AxiosResponse } from 'axios'
 import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
 import * as v from 'valibot'
 import { MessageBag } from '@/lib/validation.ts'
+import type { Tunnel } from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
 
 const { t } = useI18n()
 
-const { isShown } = defineProps<{
+const { isShown, tunnel = undefined } = defineProps<{
   isShown: boolean
+  tunnel?: Tunnel
 }>()
 
 const enabled = ref(true)
@@ -58,12 +60,34 @@ function loadSuggestions() {
 
 const validation = ref(new MessageBag())
 
+const editing = ref(false)
+
 watch(
   () => isShown,
   (newVal) => {
     if (newVal) {
+      editing.value = false
+      tunnelName.value = ''
+      enabled.value = true
+      network.value = ''
+      udpPort.value = ''
+      publicIp.value = ''
+      mtu.value = ''
+      dnsServers.value = ''
       validation.value.clear()
-      loadSuggestions()
+      if (tunnel != undefined) {
+        tunnelName.value = tunnel.name
+        enabled.value = tunnel.enabled
+        network.value = tunnel.network
+        udpPort.value = tunnel.listen_port.toString()
+        publicIp.value = tunnel.public_endpoint
+        mtu.value = tunnel.mtu.toString()
+        dnsServers.value = tunnel.dns
+        editing.value = true
+        disableForm.value = false
+      } else {
+        loadSuggestions()
+      }
     }
   },
   { immediate: true }
@@ -104,22 +128,37 @@ function validate() {
 
 const loading = ref(false)
 const error = ref<Error>()
-function addTunnel() {
+function submitForm() {
   if (!validate()) {
     return
   }
   error.value = undefined
   disableForm.value = true
   loading.value = true
-  ubusCall('ns.wireguard', 'add-server', {
-    enabled: enabled.value,
-    name: tunnelName.value,
-    public_endpoint: publicIp.value,
-    listen_port: Number(udpPort.value),
-    network: network.value,
-    mtu: mtu.value,
-    dns: dnsServers.value
-  })
+  let method: Promise<unknown>
+  if (editing.value) {
+    method = ubusCall('ns.wireguard', 'edit-server', {
+      instance: tunnel!.id,
+      enabled: enabled.value,
+      name: tunnelName.value,
+      public_endpoint: publicIp.value,
+      listen_port: Number(udpPort.value),
+      network: network.value,
+      mtu: mtu.value,
+      dns: dnsServers.value
+    })
+  } else {
+    method = ubusCall('ns.wireguard', 'add-server', {
+      enabled: enabled.value,
+      name: tunnelName.value,
+      public_endpoint: publicIp.value,
+      listen_port: Number(udpPort.value),
+      network: network.value,
+      mtu: mtu.value,
+      dns: dnsServers.value
+    })
+  }
+  method
     .then(() => emit('success'))
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -131,15 +170,27 @@ function addTunnel() {
       disableForm.value = false
     })
 }
+
+const drawerTitle = computed(() => {
+  if (editing.value) {
+    return t('standalone.wireguard_tunnel.edit_server')
+  } else {
+    return t('standalone.wireguard_tunnel.add_server')
+  }
+})
+
+const saveButtonLabel = computed(() => {
+  if (editing.value) {
+    return t('common.save')
+  } else {
+    return t('common.add')
+  }
+})
 </script>
 
 <template>
-  <NeSideDrawer
-    :is-shown="isShown"
-    :title="t('standalone.wireguard_tunnel.add_server')"
-    @close="$emit('close')"
-  >
-    <form class="space-y-8" @submit="addTunnel">
+  <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="$emit('close')">
+    <form class="space-y-8" @submit="submitForm">
       <NeInlineNotification
         v-if="errorFetchingServerSetup"
         :description="t('standalone.wireguard_tunnel.error_fetching_server_setup_description')"
@@ -210,7 +261,7 @@ function addTunnel() {
           kind="primary"
           type="submit"
         >
-          {{ t('standalone.wireguard_tunnel.add_server') }}
+          {{ saveButtonLabel }}
         </NeButton>
       </div>
     </form>

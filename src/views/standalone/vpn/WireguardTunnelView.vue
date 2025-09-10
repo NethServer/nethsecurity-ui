@@ -12,7 +12,9 @@ import { useTabs } from '@/composables/useTabs.ts'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import { onMounted, ref } from 'vue'
 import type { AxiosResponse } from 'axios'
-import WireguardTunnelDetailCard from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
+import WireguardTunnelDetailCard, {
+  type Tunnel
+} from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
 import { faCirclePlus, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TunnelDrawer from '@/components/standalone/wireguard/TunnelDrawer.vue'
@@ -57,6 +59,17 @@ const showTunnelDrawer = ref(false)
 function createdTunnel() {
   Promise.all([changes.getChanges(), fetchData()]).finally(() => (showTunnelDrawer.value = false))
 }
+
+const editingTunnel = ref<Tunnel>()
+function editTunnel(instance: Tunnel) {
+  editingTunnel.value = instance
+  showTunnelDrawer.value = true
+}
+
+function closeTunnelDrawer() {
+  showTunnelDrawer.value = false
+  editingTunnel.value = undefined
+}
 </script>
 
 <template>
@@ -87,6 +100,7 @@ function createdTunnel() {
             v-for="instance in instances"
             :key="instance"
             :instance="instance"
+            @edit="editTunnel"
           />
         </template>
         <NeEmptyState
@@ -107,7 +121,8 @@ function createdTunnel() {
   </div>
   <TunnelDrawer
     :is-shown="showTunnelDrawer"
+    :tunnel="editingTunnel"
     @success="createdTunnel"
-    @close="showTunnelDrawer = false"
+    @close="closeTunnelDrawer"
   />
 </template>

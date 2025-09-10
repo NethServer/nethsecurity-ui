@@ -2620,7 +2620,8 @@
       "public_ip": "Public IP",
       "dns_servers": "DNS servers",
       "error_fetching_server_setup": "Error fetching server setup",
-      "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later"
+      "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later",
+      "edit_server": "Edit server"
     }
   },
   "controller": {

@@ -158,7 +158,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
             </span>
           </div>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-start gap-2">
           <NeButton
             v-if="data.peers.length > 0"
             kind="secondary"

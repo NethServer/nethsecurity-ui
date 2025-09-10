@@ -5,13 +5,16 @@ import {
   NeFormItemLabel,
   NeTextInput,
   NeTooltip,
-  NeButton
+  NeButton,
+  NeInlineNotification
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
 import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
+import * as v from 'valibot'
+import { MessageBag } from '@/lib/validation.ts'
 
 const { t } = useI18n()
 
@@ -24,38 +27,42 @@ const statusLabel = computed<string>(() => {
   return enabled.value ? t('common.enabled') : t('common.disabled')
 })
 const tunnelName = ref('')
-const vpnNetwork = ref('')
+const network = ref('')
 const udpPort = ref('')
 const publicIp = ref('')
 const mtu = ref('')
 const dnsServers = ref('')
 
-type SuggestionResponse = AxiosResponse<{
-  instance: string
+type ServerSetup = AxiosResponse<{
   listen_port: number
   network: string
   public_endpoint: string
-  routes: string[]
 }>
 
 const disableForm = ref(false)
+const errorFetchingServerSetup = ref(false)
+const tunnelInstance = ref('')
 function loadSuggestions() {
+  tunnelInstance.value = ''
   disableForm.value = true
-  // If there is an error, free the form anyway
-  ubusCall<SuggestionResponse>('ns.wireguard', 'get-instance-defaults')
+  errorFetchingServerSetup.value = false
+  ubusCall<ServerSetup>('ns.wireguard', 'get-instance-defaults')
     .then((result) => {
-      tunnelName.value = result.data.instance
-      vpnNetwork.value = result.data.network
+      network.value = result.data.network
       udpPort.value = result.data.listen_port.toString()
       publicIp.value = result.data.public_endpoint
     })
+    .catch(() => (errorFetchingServerSetup.value = true))
     .finally(() => (disableForm.value = false))
 }
+
+const validation = ref(new MessageBag())
 
 watch(
   () => isShown,
   (newVal) => {
     if (newVal) {
+      validation.value.clear()
       loadSuggestions()
     }
   },
@@ -64,26 +71,62 @@ watch(
 
 const emit = defineEmits(['close', 'success'])
 
+function validate() {
+  validation.value.clear()
+
+  const RequiredString = v.pipe(v.string(), v.nonEmpty('error.required'))
+
+  const validator = v.object({
+    name: RequiredString,
+    network: RequiredString,
+    udpPort: v.number('error.invalid'),
+    publicIp: RequiredString
+  })
+
+  type validatorSchema = typeof validator
+
+  const check = v.safeParse(validator, {
+    name: tunnelName.value,
+    network: network.value,
+    udpPort: Number(udpPort.value),
+    publicIp: publicIp.value
+  })
+
+  if (!check.success) {
+    const flatted = v.flatten<validatorSchema>(check.issues).nested
+    for (const key in flatted) {
+      validation.value.set(key, flatted[key as v.IssueDotPath<validatorSchema>]![0])
+    }
+  }
+
+  return validation.value.size == 0
+}
+
 const loading = ref(false)
 const error = ref<Error>()
 function addTunnel() {
+  if (!validate()) {
+    return
+  }
   error.value = undefined
   disableForm.value = true
   loading.value = true
-  ubusCall('ns.wireguard', 'set-instance', {
-    instance: 'wg1',
+  ubusCall('ns.wireguard', 'add-server', {
     enabled: enabled.value,
     name: tunnelName.value,
     public_endpoint: publicIp.value,
-    listen_port: udpPort.value,
-    network: vpnNetwork.value,
+    listen_port: Number(udpPort.value),
+    network: network.value,
     mtu: mtu.value,
-    dns: dnsServers.value,
-    routes: ['0.0.0.0/0']
+    dns: dnsServers.value
   })
     .then(() => emit('success'))
     .catch((err) => {
-      error.value = err
+      if (err instanceof ValidationError) {
+        validation.value = err.errorBag
+      } else {
+        error.value = err
+      }
       loading.value = false
       disableForm.value = false
     })
@@ -97,62 +140,76 @@ function addTunnel() {
     @close="$emit('close')"
   >
     <form class="space-y-8" @submit="addTunnel">
-      <div>
-        <NeFormItemLabel>{{ t('standalone.wireguard_tunnel.status') }}</NeFormItemLabel>
-        <NeToggle v-model="enabled" :label="statusLabel" />
-      </div>
-      <NeTextInput
-        v-model="tunnelName"
-        :label="t('standalone.wireguard_tunnel.name')"
-        :disabled="disableForm"
-        required
+      <NeInlineNotification
+        v-if="errorFetchingServerSetup"
+        :description="t('standalone.wireguard_tunnel.error_fetching_server_setup_description')"
+        :title="t('standalone.wireguard_tunnel.error_fetching_server_setup')"
+        kind="error"
       />
-      <NeTextInput
-        v-model="vpnNetwork"
-        :label="t('standalone.wireguard_tunnel.vpn_network')"
-        :disabled="disableForm"
-        required
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.wireguard_tunnel.vpn_network_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
-      <NeTextInput
-        v-model="udpPort"
-        :label="t('standalone.wireguard_tunnel.udp_port')"
-        :disabled="disableForm"
-        required
-      />
-      <NeTextInput
-        v-model="publicIp"
-        :label="t('standalone.wireguard_tunnel.public_ip')"
-        :disabled="disableForm"
-        required
-      />
-      <AdvancedSettingsDropdown>
+      <template v-else>
+        <div>
+          <NeFormItemLabel>{{ t('standalone.wireguard_tunnel.status') }}</NeFormItemLabel>
+          <NeToggle v-model="enabled" :label="statusLabel" />
+        </div>
         <NeTextInput
-          v-model="mtu"
-          :label="t('standalone.wireguard_tunnel.mtu')"
+          v-model="tunnelName"
           :disabled="disableForm"
-          optional
+          :invalid-message="t(validation.getFirstI18nKeyFor('name'))"
+          :label="t('standalone.wireguard_tunnel.name')"
         />
         <NeTextInput
-          v-model="dnsServers"
-          :label="t('standalone.wireguard_tunnel.dns_servers')"
+          v-model="network"
           :disabled="disableForm"
-          optional
+          :invalid-message="t(validation.getFirstI18nKeyFor('network'))"
+          :label="t('standalone.wireguard_tunnel.vpn_network')"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.wireguard_tunnel.vpn_network_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
+        <NeTextInput
+          v-model="udpPort"
+          :disabled="disableForm"
+          :label="t('standalone.wireguard_tunnel.udp_port')"
+          :invalid-message="t(validation.getFirstI18nKeyFor('udpPort'))"
         />
-      </AdvancedSettingsDropdown>
+        <NeTextInput
+          v-model="publicIp"
+          :disabled="disableForm"
+          :label="t('standalone.wireguard_tunnel.public_ip')"
+          :invalid-message="t(validation.getFirstI18nKeyFor('publicIp'))"
+        />
+        <AdvancedSettingsDropdown>
+          <NeTextInput
+            v-model="mtu"
+            :disabled="disableForm"
+            :label="t('standalone.wireguard_tunnel.mtu')"
+            optional
+          />
+          <NeTextInput
+            v-model="dnsServers"
+            :disabled="disableForm"
+            :label="t('standalone.wireguard_tunnel.dns_servers')"
+            optional
+          />
+        </AdvancedSettingsDropdown>
+      </template>
       <hr />
       <div class="flex justify-end gap-6">
         <NeButton kind="tertiary" :disabled="disableForm" @click="$emit('close')">
           {{ t('common.cancel') }}
         </NeButton>
-        <NeButton kind="primary" type="submit" :disabled="disableForm" :loading="loading">
+        <NeButton
+          v-if="!errorFetchingServerSetup"
+          :disabled="disableForm"
+          :loading="loading"
+          kind="primary"
+          type="submit"
+        >
           {{ t('standalone.wireguard_tunnel.add_server') }}
         </NeButton>
       </div>

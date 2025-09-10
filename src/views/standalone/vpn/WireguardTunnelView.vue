@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { NeHeading, NeCard, NeTabs, NeEmptyState, NeButton } from '@nethesis/vue-components'
+import {
+  NeHeading,
+  NeCard,
+  NeTabs,
+  NeEmptyState,
+  NeButton,
+  NeTextInput
+} from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs.ts'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
@@ -65,7 +72,17 @@ function createdTunnel() {
     <div v-if="selectedTab == 'server'">
       <NeCard v-if="loading" loading />
       <div v-else class="space-y-6">
+        <p>{{ t('standalone.wireguard_tunnel.description') }}</p>
         <template v-if="instances.length > 0">
+          <div class="flex flex-wrap gap-4">
+            <NeTextInput is-search :placeholder="t('common.filter')" class="mr-auto" />
+            <NeButton kind="secondary" @click="showTunnelDrawer = true">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+              </template>
+              {{ t('standalone.wireguard_tunnel.add_server') }}
+            </NeButton>
+          </div>
           <WireguardTunnelDetailCard
             v-for="instance in instances"
             :key="instance"

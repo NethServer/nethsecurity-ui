@@ -2618,7 +2618,9 @@
       "add_server": "Add server",
       "udp_port": "UDP port",
       "public_ip": "Public IP",
-      "dns_servers": "DNS servers"
+      "dns_servers": "DNS servers",
+      "error_fetching_server_setup": "Error fetching server setup",
+      "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later"
     }
   },
   "controller": {

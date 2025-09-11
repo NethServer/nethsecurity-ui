@@ -29,72 +29,32 @@ import {
   faTrash,
   faUserGroup
 } from '@fortawesome/free-solid-svg-icons'
+import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 
 const { t } = useI18n()
 
 const { instance } = defineProps<{
-  instance: string
+  instance: Tunnel
 }>()
-
-type Peer = {
-  allowed_ips: string[]
-  enabled: boolean
-  name: string
-  reserved_ip: string
-}
-
-export type Tunnel = {
-  id: string
-  address: string
-  client_to_client: boolean
-  enabled: boolean
-  listen_port: number
-  name: string
-  network: string
-  peers: Peer[]
-  public_endpoint: string
-  route_all_traffic: boolean
-  routes: string[]
-  mtu: number
-  dns: string
-}
-
-const loading = ref(true)
-// FIXME
-// const error = ref<Error>()
-const data = ref<Tunnel>()
-
-onMounted(() => loadData())
-
-function loadData() {
-  ubusCall<AxiosResponse<Tunnel>>('ns.wireguard', 'get-configuration', {
-    instance: instance
-  })
-    .then((response) => (data.value = response.data))
-    .finally(() => (loading.value = false))
-}
 
 const emit = defineEmits<{
   edit: [item: Tunnel]
+  delete: [item: Tunnel]
 }>()
 
-const tunnelActions = (tunnel: Tunnel): NeDropdownItem[] => [
+const tunnelActions: NeDropdownItem[] = [
   {
     id: 'edit',
     label: t('standalone.wireguard_tunnel.edit_tunnel'),
     icon: faPenToSquare,
-    action: () => {
-      emit('edit', tunnel)
-    }
+    action: () => emit('edit', instance)
   },
   {
     id: 'delete',
     label: t('standalone.wireguard_tunnel.delete_tunnel'),
     icon: faTrash,
     danger: true,
-    action: () => {
-      /* FIXME */
-    }
+    action: () => emit('delete', instance)
   }
 ]
 
@@ -119,19 +79,19 @@ const peerActions: NeDropdownItem[] = [
 ]
 
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peers ?? [], {
+const { currentPage, paginatedItems } = useItemPagination(() => instance.peers ?? [], {
   itemsPerPage: pageSize
 })
 </script>
 
 <template>
-  <NeCard :loading="loading">
-    <div v-if="data != undefined" class="space-y-6">
+  <NeCard>
+    <div class="space-y-6">
       <div class="flex flex-wrap gap-8">
         <div class="mr-auto space-y-2">
           <div class="flex items-center gap-8">
-            <NeHeading tag="h4">{{ data.name }}</NeHeading>
-            <NeBadgeV2 v-if="data.enabled" kind="green" size="xs">
+            <NeHeading tag="h4">{{ instance.name }}</NeHeading>
+            <NeBadgeV2 v-if="instance.enabled" kind="green" size="xs">
               <FontAwesomeIcon :icon="faCircleCheck" class="size-4" />
               {{ t('common.enabled') }}
             </NeBadgeV2>
@@ -143,29 +103,29 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
           <div class="flex flex-wrap gap-x-8 gap-y-2">
             <span>
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.vpn_network') }}: </span>
-              {{ data.network }}
+              {{ instance.network }}
             </span>
             <span>
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.port') }}: </span>
-              {{ data.listen_port }}
+              {{ instance.listen_port }}
             </span>
             <span>
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.endpoint') }}: </span>
-              {{ data.public_endpoint }}
+              {{ instance.public_endpoint }}
             </span>
             <span>
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.mtu') }}: </span>
-              {{ data.mtu }}
+              {{ instance.mtu }}
             </span>
-            <span v-if="data.dns.length > 0">
+            <span v-if="instance.dns">
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.dns') }}: </span>
-              {{ data.dns }}
+              {{ instance.dns }}
             </span>
           </div>
         </div>
         <div class="flex items-start gap-2">
           <NeButton
-            v-if="data.peers.length > 0"
+            v-if="instance.peers.length > 0"
             kind="secondary"
             @click="
               () => {
@@ -178,11 +138,11 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
             </template>
             {{ t('standalone.wireguard_tunnel.add_peer') }}
           </NeButton>
-          <NeDropdown :items="tunnelActions(data)" :align-to-right="true" />
+          <NeDropdown :items="tunnelActions" :align-to-right="true" />
         </div>
       </div>
       <NeTable
-        v-if="data.peers.length > 0"
+        v-if="instance.peers.length > 0"
         :aria-label="t('standalone.wireguard_tunnel.peers')"
         card-breakpoint="lg"
       >
@@ -236,7 +196,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => data.value?.peer
         <template #paginator>
           <NePaginator
             :current-page="currentPage"
-            :total-rows="data.peers.length"
+            :total-rows="instance.peers.length"
             :page-size="pageSize"
             :nav-pagination-label="t('ne_table.pagination')"
             :next-label="t('ne_table.go_to_next_page')"

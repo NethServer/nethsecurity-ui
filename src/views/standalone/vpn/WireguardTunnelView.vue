@@ -5,20 +5,20 @@ import {
   NeTabs,
   NeEmptyState,
   NeButton,
-  NeTextInput
+  NeTextInput,
+  NeInlineNotification
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs.ts'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import { onMounted, ref } from 'vue'
 import type { AxiosResponse } from 'axios'
-import WireguardTunnelDetailCard, {
-  type Tunnel
-} from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
+import WireguardTunnelDetailCard from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
 import { faCirclePlus, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TunnelDrawer from '@/components/standalone/wireguard/TunnelDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import DeleteTunnelModal from '@/components/standalone/wireguard/DeleteTunnelModal.vue'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -34,17 +34,39 @@ const { tabs, selectedTab } = useTabs([
   }
 ])
 
-type Instances = string[]
+type Peer = {
+  allowed_ips: string[]
+  enabled: boolean
+  name: string
+  reserved_ip: string
+}
+
+export type Tunnel = {
+  id: string
+  address: string
+  client_to_client: boolean
+  enabled: boolean
+  listen_port: number
+  name: string
+  network: string
+  peers: Peer[]
+  public_endpoint: string
+  route_all_traffic: boolean
+  routes: string[]
+  mtu: number
+  dns: string
+}
 
 type ListInstancesResponse = {
-  instances: Instances
+  instances: Tunnel[]
 }
 
 const loading = ref(true)
 const error = ref<Error>()
-const instances = ref<Instances>([])
+const instances = ref<Tunnel[]>([])
 
 async function fetchData(): Promise<AxiosResponse<ListInstancesResponse>> {
+  error.value = undefined
   return ubusCall<AxiosResponse<ListInstancesResponse>>('ns.wireguard', 'list-instances')
     .then((response) => {
       instances.value = response.data.instances
@@ -55,9 +77,13 @@ async function fetchData(): Promise<AxiosResponse<ListInstancesResponse>> {
 
 onMounted(() => fetchData())
 
+function refreshData(): Promise<unknown> {
+  return Promise.all([changes.getChanges(), fetchData()])
+}
+
 const showTunnelDrawer = ref(false)
 function createdTunnel() {
-  Promise.all([changes.getChanges(), fetchData()]).finally(() => (showTunnelDrawer.value = false))
+  refreshData().finally(() => closeTunnelDrawer())
 }
 
 const editingTunnel = ref<Tunnel>()
@@ -69,6 +95,17 @@ function editTunnel(instance: Tunnel) {
 function closeTunnelDrawer() {
   showTunnelDrawer.value = false
   editingTunnel.value = undefined
+}
+
+const deletingTunnel = ref<Tunnel>()
+function deleteTunnel(instance: Tunnel) {
+  deletingTunnel.value = instance
+}
+function closeDeleteModal() {
+  deletingTunnel.value = undefined
+}
+function tunnelDeleted() {
+  refreshData().then(closeDeleteModal)
 }
 </script>
 
@@ -86,7 +123,8 @@ function closeTunnelDrawer() {
       <NeCard v-if="loading" loading />
       <div v-else class="space-y-6">
         <p>{{ t('standalone.wireguard_tunnel.description') }}</p>
-        <template v-if="instances.length > 0">
+        <NeInlineNotification v-if="error != undefined" kind="error" :title="t('common.error')" />
+        <template v-else-if="instances.length > 0">
           <div class="flex flex-wrap gap-4">
             <NeTextInput is-search :placeholder="t('common.filter')" class="mr-auto" />
             <NeButton kind="secondary" @click="showTunnelDrawer = true">
@@ -98,9 +136,10 @@ function closeTunnelDrawer() {
           </div>
           <WireguardTunnelDetailCard
             v-for="instance in instances"
-            :key="instance"
+            :key="instance.id"
             :instance="instance"
             @edit="editTunnel"
+            @delete="deleteTunnel"
           />
         </template>
         <NeEmptyState
@@ -124,5 +163,10 @@ function closeTunnelDrawer() {
     :tunnel="editingTunnel"
     @success="createdTunnel"
     @close="closeTunnelDrawer"
+  />
+  <DeleteTunnelModal
+    :instance="deletingTunnel"
+    @success="tunnelDeleted"
+    @close="closeDeleteModal"
   />
 </template>

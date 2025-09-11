@@ -15,7 +15,7 @@ import type { AxiosResponse } from 'axios'
 import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
 import * as v from 'valibot'
 import { MessageBag } from '@/lib/validation.ts'
-import type { Tunnel } from '@/components/standalone/wireguard/WireguardTunnelDetailCard.vue'
+import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 
 const { t } = useI18n()
 

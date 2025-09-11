@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TunnelDrawer from '@/components/standalone/wireguard/TunnelDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DeleteTunnelModal from '@/components/standalone/wireguard/DeleteTunnelModal.vue'
+import PeerDrawer from '@/components/standalone/wireguard/PeerDrawer.vue'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -38,6 +39,7 @@ type Peer = {
   allowed_ips: string[]
   enabled: boolean
   name: string
+  id: string
   reserved_ip: string
 }
 
@@ -107,6 +109,20 @@ function closeDeleteModal() {
 function tunnelDeleted() {
   refreshData().then(closeDeleteModal)
 }
+
+const showPeerDrawer = ref(false)
+const creatingPeerFor = ref<Tunnel>()
+function closePeerDrawer() {
+  showPeerDrawer.value = false
+  creatingPeerFor.value = undefined
+}
+function addPeerHandler(instance: Tunnel) {
+  showPeerDrawer.value = true
+  creatingPeerFor.value = instance
+}
+function addedPeerHandler() {
+  refreshData().then(closePeerDrawer)
+}
 </script>
 
 <template>
@@ -140,6 +156,7 @@ function tunnelDeleted() {
             :instance="instance"
             @edit="editTunnel"
             @delete="deleteTunnel"
+            @add-peer="addPeerHandler"
           />
         </template>
         <NeEmptyState
@@ -168,5 +185,11 @@ function tunnelDeleted() {
     :instance="deletingTunnel"
     @success="tunnelDeleted"
     @close="closeDeleteModal"
+  />
+  <PeerDrawer
+    :is-shown="showPeerDrawer"
+    :instance="creatingPeerFor"
+    @close="closePeerDrawer"
+    @success="addedPeerHandler"
   />
 </template>

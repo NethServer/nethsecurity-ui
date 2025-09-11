@@ -16,9 +16,7 @@ import {
   useItemPagination,
   NePaginator
 } from '@nethesis/vue-components'
-import { onMounted, ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus.ts'
-import type { AxiosResponse } from 'axios'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -40,6 +38,7 @@ const { instance } = defineProps<{
 const emit = defineEmits<{
   edit: [item: Tunnel]
   delete: [item: Tunnel]
+  'add-peer': [item: Tunnel]
 }>()
 
 const tunnelActions: NeDropdownItem[] = [
@@ -82,6 +81,10 @@ const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => instance.peers ?? [], {
   itemsPerPage: pageSize
 })
+
+function openPeerDrawer() {
+  emit('add-peer', instance)
+}
 </script>
 
 <template>
@@ -124,15 +127,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instance.peers ?
           </div>
         </div>
         <div class="flex items-start gap-2">
-          <NeButton
-            v-if="instance.peers.length > 0"
-            kind="secondary"
-            @click="
-              () => {
-                /* FIXME */
-              }
-            "
-          >
+          <NeButton v-if="instance.peers.length > 0" kind="secondary" @click="openPeerDrawer">
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
             </template>
@@ -221,14 +216,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instance.peers ?
         :title="t('standalone.wireguard_tunnel.no_peer_configured')"
         :icon="faUserGroup"
       >
-        <NeButton
-          kind="primary"
-          @click="
-            () => {
-              /* FIXME */
-            }
-          "
-        >
+        <NeButton kind="primary" @click="openPeerDrawer">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
           </template>

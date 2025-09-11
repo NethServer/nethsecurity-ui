@@ -420,7 +420,8 @@
     "unauthorized_action": "Unauthorized action",
     "invalid_credentials": "Invalid credentials",
     "cannot_set_uci_configuration": "Cannot set UCI configuration",
-    "cannot_reuse_old_password": "New password must be different from the old one"
+    "cannot_reuse_old_password": "New password must be different from the old one",
+    "duplicate_ip": "IP has already been used"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2623,7 +2624,12 @@
       "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later",
       "edit_server": "Edit server",
       "delete_tunnel_title": "Delete tunnel",
-      "delete_tunnel_confirm": "Deleting the server tunnel '{name}' will remove all associated peers and disconnect them from the VPN."
+      "delete_tunnel_confirm": "Deleting the server tunnel '{name}' will remove all associated peers and disconnect them from the VPN.",
+      "route_all_traffic": "Route all traffic",
+      "pre_shared_key": "Pre-Shared key",
+      "local_networks": "Local networks",
+      "remote_networks": "Remote networks",
+      "add_network": "Add network"
     }
   },
   "controller": {

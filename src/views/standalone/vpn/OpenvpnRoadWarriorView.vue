@@ -192,11 +192,20 @@ async function initAndConfigureServer() {
   showCreateOrEditServerModal.value = true
 }
 
+/**
+ * When the ui pools the server loading, sometimes the load time is pretty big. The following
+ * variable is only used in the interval pool below, so that the issue is mitigated.
+ */
+const loadingServer = ref(false)
 onMounted(() => {
-  fetchServer()
-
-  // periodically reload data
-  fetchServerIntervalId.value = setInterval(() => fetchServer(false), RELOAD_INTERVAL)
+  fetchServer().then(() => {
+    fetchServerIntervalId.value = setInterval(() => {
+      if (!loadingServer.value) {
+        loadingServer.value = true
+        fetchServer(false).finally(() => (loadingServer.value = false))
+      }
+    }, RELOAD_INTERVAL)
+  })
 })
 
 onUnmounted(() => {

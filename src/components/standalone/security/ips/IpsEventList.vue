@@ -233,6 +233,7 @@ function suppressedAlertHandler() {
           <NeDropdownFilter
             v-model="typeFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+            :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.ips.type')"
             :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
             :options="typeFilterOptions"

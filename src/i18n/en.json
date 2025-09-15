@@ -460,7 +460,8 @@
     "open_filter": "Open filter",
     "no_options": "No options",
     "more_options_hidden": "Continue typing to show more options",
-    "clear_selection": "Clear selection"
+    "clear_selection": "Clear selection",
+    "clear_search": "Clear search"
   },
   "login": {
     "welcome_title_standalone": "Welcome",

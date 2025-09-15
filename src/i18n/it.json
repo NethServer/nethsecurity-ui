@@ -2811,7 +2811,8 @@
     "open_filter": "Apri filtro",
     "clear_selection": "Cancella selezione",
     "more_options_hidden": "Continua a digitare per visualizzare altre opzioni",
-    "no_options": "Nessuna opzione"
+    "no_options": "Nessuna opzione",
+    "clear_search": "Azzera ricerca"
   },
   "sort": {
     "sort_by": "Ordina per",

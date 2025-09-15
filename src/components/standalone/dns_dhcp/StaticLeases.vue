@@ -171,6 +171,7 @@ function clearFilters() {
         kind="radio"
         :label="t('common.interface')"
         :options="interfaceFilterOptions"
+        :clear-search-label="t('ne_dropdown_filter.clear_search')"
         :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
         :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
         :no-options-label="t('ne_dropdown_filter.no_options')"

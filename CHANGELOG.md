@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.5.6](https://github.com/NethServer/nethsecurity-ui/compare/2.5.5...2.5.6) (2025-09-15)
+
+
+### Bug Fixes
+
+* **deps:** lockfile maintainance ([6e03b04](https://github.com/NethServer/nethsecurity-ui/commit/6e03b048e2d1f84cd33a457a125d51e71f43a63f))
+* missing clear search label ([6e87002](https://github.com/NethServer/nethsecurity-ui/commit/6e8700244a38d64482dd428fe1e6b76ccc464413))
+* **ovpnrw:** defer loading of server in case API takes long to respond ([c9fbdb4](https://github.com/NethServer/nethsecurity-ui/commit/c9fbdb45fb062ed8c36cd205348abae9a6afee81))
+
 ## [2.5.5](https://github.com/NethServer/nethsecurity-ui/compare/2.5.4...2.5.5) (2025-09-03)
 
 

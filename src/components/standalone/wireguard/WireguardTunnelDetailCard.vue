@@ -10,8 +10,6 @@ import {
   NeTable,
   NeTableHeadCell,
   NeTableHead,
-  NeTableRow,
-  NeTableCell,
   NeTableBody,
   useItemPagination,
   NePaginator
@@ -27,7 +25,8 @@ import {
   faTrash,
   faUserGroup
 } from '@fortawesome/free-solid-svg-icons'
-import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
+import type { Peer, Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
+import PeerTableRow from '@/components/standalone/wireguard/PeerTableRow.vue'
 
 const { t } = useI18n()
 
@@ -39,6 +38,8 @@ const emit = defineEmits<{
   edit: [item: Tunnel]
   delete: [item: Tunnel]
   'add-peer': [item: Tunnel]
+  'edit-peer': [instance: Tunnel, peer: Peer]
+  'delete-peer': [peer: Peer]
 }>()
 
 const tunnelActions: NeDropdownItem[] = [
@@ -49,31 +50,14 @@ const tunnelActions: NeDropdownItem[] = [
     action: () => emit('edit', instance)
   },
   {
+    id: 'divider1'
+  },
+  {
     id: 'delete',
     label: t('standalone.wireguard_tunnel.delete_tunnel'),
     icon: faTrash,
     danger: true,
     action: () => emit('delete', instance)
-  }
-]
-
-const peerActions: NeDropdownItem[] = [
-  {
-    id: 'edit',
-    label: t('standalone.wireguard_tunnel.edit_peer'),
-    icon: faPenToSquare,
-    action: () => {
-      /* FIXME */
-    }
-  },
-  {
-    id: 'delete',
-    label: t('standalone.wireguard_tunnel.delete_peer'),
-    icon: faTrash,
-    danger: true,
-    action: () => {
-      /* FIXME */
-    }
   }
 ]
 
@@ -156,37 +140,13 @@ function openPeerDrawer() {
           </NeTableHeadCell>
         </NeTableHead>
         <NeTableBody>
-          <NeTableRow v-for="peer in paginatedItems" :key="peer.name">
-            <NeTableCell :data-label="t('standalone.wireguard_tunnel.name')">
-              <div>{{ peer.name }}</div>
-            </NeTableCell>
-            <NeTableCell :data-label="t('standalone.wireguard_tunnel.reserved_ip')">
-              {{ peer.reserved_ip }}
-            </NeTableCell>
-            <NeTableCell :data-label="t('standalone.wireguard_tunnel.status')">
-              <div class="flex items-center gap-1">
-                <template v-if="peer.enabled">
-                  <FontAwesomeIcon :icon="faCircleCheck" class="size-4 text-enabled" />
-                  {{ t('common.enabled') }}
-                </template>
-                <template v-else>
-                  <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
-                  {{ t('common.disabled') }}
-                </template>
-              </div>
-            </NeTableCell>
-            <NeTableCell :data-label="t('common.actions')">
-              <div class="flex justify-end gap-2">
-                <NeButton kind="tertiary">
-                  <template #prefix>
-                    <FontAwesomeIcon :icon="faPenToSquare" aria-hidden="true" class="size-4" />
-                  </template>
-                  {{ t('common.edit') }}
-                </NeButton>
-                <NeDropdown :items="peerActions" :align-to-right="true" />
-              </div>
-            </NeTableCell>
-          </NeTableRow>
+          <PeerTableRow
+            v-for="peer in paginatedItems"
+            :key="peer.name"
+            :peer="peer"
+            @edit="(item) => emit('edit-peer', instance, item)"
+            @delete="(item) => emit('delete-peer', item)"
+          />
         </NeTableBody>
         <template #paginator>
           <NePaginator

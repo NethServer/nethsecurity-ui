@@ -20,6 +20,7 @@ import TunnelDrawer from '@/components/standalone/wireguard/TunnelDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DeleteTunnelModal from '@/components/standalone/wireguard/DeleteTunnelModal.vue'
 import PeerDrawer from '@/components/standalone/wireguard/PeerDrawer.vue'
+import DeletePeerModal from '@/components/standalone/wireguard/DeletePeerModal.vue'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -35,11 +36,14 @@ const { tabs, selectedTab } = useTabs([
   }
 ])
 
-type Peer = {
-  allowed_ips: string[]
+export type Peer = {
+  id: string
   enabled: boolean
   name: string
-  id: string
+  pre_shared_key: boolean
+  route_all_traffic: boolean
+  remote_networks: string[]
+  local_networks: string[]
   reserved_ip: string
 }
 
@@ -112,9 +116,11 @@ function tunnelDeleted() {
 
 const showPeerDrawer = ref(false)
 const creatingPeerFor = ref<Tunnel>()
+const editPeer = ref<Peer>()
 function closePeerDrawer() {
   showPeerDrawer.value = false
   creatingPeerFor.value = undefined
+  editPeer.value = undefined
 }
 function addPeerHandler(instance: Tunnel) {
   showPeerDrawer.value = true
@@ -122,6 +128,21 @@ function addPeerHandler(instance: Tunnel) {
 }
 function addedPeerHandler() {
   refreshData().then(closePeerDrawer)
+}
+function editPeerHandler(instance: Tunnel, peer: Peer) {
+  showPeerDrawer.value = true
+  creatingPeerFor.value = instance
+  editPeer.value = peer
+}
+const peerToDelete = ref<Peer>()
+function deletePeerHandler(peer: Peer) {
+  peerToDelete.value = peer
+}
+function closeDeletePeerModal() {
+  peerToDelete.value = undefined
+}
+function peerDeleted() {
+  refreshData().then(closeDeletePeerModal)
 }
 </script>
 
@@ -157,6 +178,8 @@ function addedPeerHandler() {
             @edit="editTunnel"
             @delete="deleteTunnel"
             @add-peer="addPeerHandler"
+            @edit-peer="editPeerHandler"
+            @delete-peer="deletePeerHandler"
           />
         </template>
         <NeEmptyState
@@ -189,7 +212,9 @@ function addedPeerHandler() {
   <PeerDrawer
     :is-shown="showPeerDrawer"
     :instance="creatingPeerFor"
+    :peer="editPeer"
     @close="closePeerDrawer"
     @success="addedPeerHandler"
   />
+  <DeletePeerModal :peer="peerToDelete" @success="peerDeleted" @close="closeDeletePeerModal" />
 </template>

@@ -190,7 +190,7 @@ const saveButtonLabel = computed(() => {
 
 <template>
   <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="$emit('close')">
-    <form class="space-y-8" @submit="submitForm">
+    <form class="space-y-8" @submit.prevent="submitForm">
       <NeInlineNotification
         v-if="errorFetchingServerSetup"
         :description="t('standalone.wireguard_tunnel.error_fetching_server_setup_description')"

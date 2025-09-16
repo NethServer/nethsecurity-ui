@@ -12,13 +12,18 @@ import { computed, ref, watch } from 'vue'
 import { MessageBag } from '@/lib/validation.ts'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
-import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
+import type { Tunnel, Peer } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 import type { AxiosResponse } from 'axios'
 import * as v from 'valibot'
 
-const { isShown, instance = undefined } = defineProps<{
+const {
+  isShown,
+  instance = undefined,
+  peer = undefined
+} = defineProps<{
   isShown: boolean
   instance?: Tunnel
+  peer?: Peer
 }>()
 
 const { t } = useI18n()
@@ -37,27 +42,51 @@ const preSharedKey = ref(false)
 const preSharedKeyLabel = computed<string>(() => toggleState(preSharedKey.value))
 const routeAllTraffic = ref(false)
 const routeAllTrafficLabel = computed<string>(() => toggleState(routeAllTraffic.value))
-const remoteNetworks = ref<string[]>([])
-const localNetworks = ref<string[]>([])
+const remoteNetworks = ref<string[]>([''])
+const localNetworks = ref<string[]>([''])
 
 const disableForm = ref(true)
 const loading = ref(false)
 const error = ref<Error>()
 const validation = ref(new MessageBag())
 
+const editing = ref(false)
+
 watch(
   () => isShown,
   (newVal) => {
     if (newVal) {
+      editing.value = false
+      validation.value.clear()
+      error.value = undefined
       disableForm.value = false
       loading.value = false
       enabled.value = true
       peerName.value = ''
       preSharedKey.value = false
       routeAllTraffic.value = false
-      remoteNetworks.value = []
-      localNetworks.value = []
-      fetchPeerConfig()
+      remoteNetworks.value = ['']
+      localNetworks.value = ['']
+      if (peer != undefined) {
+        enabled.value = peer.enabled
+        peerName.value = peer.name
+        reservedIp.value = peer.reserved_ip
+        preSharedKey.value = peer.pre_shared_key
+        routeAllTraffic.value = peer.route_all_traffic
+        if (peer.remote_networks.length > 0) {
+          remoteNetworks.value = peer.remote_networks
+        } else {
+          remoteNetworks.value = ['']
+        }
+        if (peer.local_networks.length > 0) {
+          localNetworks.value = peer.local_networks
+        } else {
+          localNetworks.value = ['']
+        }
+        editing.value = true
+      } else {
+        fetchPeerConfig()
+      }
     }
   },
   { immediate: true }
@@ -115,18 +144,35 @@ function submitForm() {
   if (!validate()) {
     return
   }
+  error.value = undefined
   disableForm.value = true
   loading.value = true
-  ubusCall('ns.wireguard', 'add-peer', {
-    instance: instance!.id,
-    enabled: enabled.value,
-    name: peerName.value,
-    reserved_ip: reservedIp.value,
-    pre_shared_key: preSharedKey.value,
-    route_all_traffic: routeAllTraffic.value,
-    local_networks: localNetworks.value,
-    remote_networks: remoteNetworks.value
-  })
+  let method: Promise<unknown>
+  if (peer == undefined) {
+    method = ubusCall('ns.wireguard', 'add-peer', {
+      instance: instance!.id,
+      enabled: enabled.value,
+      name: peerName.value,
+      reserved_ip: reservedIp.value,
+      pre_shared_key: preSharedKey.value,
+      route_all_traffic: routeAllTraffic.value,
+      local_networks: localNetworks.value,
+      remote_networks: remoteNetworks.value
+    })
+  } else {
+    method = ubusCall('ns.wireguard', 'edit-peer', {
+      instance: instance!.id,
+      id: peer.id,
+      enabled: enabled.value,
+      name: peerName.value,
+      reserved_ip: reservedIp.value,
+      pre_shared_key: preSharedKey.value,
+      route_all_traffic: routeAllTraffic.value,
+      local_networks: localNetworks.value,
+      remote_networks: remoteNetworks.value
+    })
+  }
+  method
     .then(() => emits('success'))
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -139,14 +185,26 @@ function submitForm() {
       disableForm.value = false
     })
 }
+
+const drawerTitle = computed(() => {
+  if (editing.value) {
+    return t('standalone.wireguard_tunnel.edit_peer')
+  } else {
+    return t('standalone.wireguard_tunnel.add_peer')
+  }
+})
+
+const saveButtonLabel = computed(() => {
+  if (editing.value) {
+    return t('common.save')
+  } else {
+    return t('common.add')
+  }
+})
 </script>
 
 <template>
-  <NeSideDrawer
-    :is-shown="isShown"
-    :title="t('standalone.wireguard_tunnel.add_peer')"
-    @close="emits('close')"
-  >
+  <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="emits('close')">
     <form class="space-y-8" @submit.prevent="submitForm">
       <NeInlineNotification v-if="error != undefined" kind="error" title="testing" />
       <div>
@@ -175,6 +233,7 @@ function submitForm() {
       </div>
       <NeMultiTextInput
         v-model="localNetworks"
+        required
         :disable-inputs="routeAllTraffic || disableForm"
         :disable-add-button="routeAllTraffic || disableForm"
         :title="t('standalone.wireguard_tunnel.local_networks')"
@@ -183,6 +242,7 @@ function submitForm() {
       />
       <NeMultiTextInput
         v-model="remoteNetworks"
+        required
         :disable-inputs="disableForm"
         :disable-add-button="disableForm"
         :title="t('standalone.wireguard_tunnel.remote_networks')"
@@ -195,7 +255,7 @@ function submitForm() {
           {{ t('common.cancel') }}
         </NeButton>
         <NeButton :disabled="disableForm" :loading="loading" kind="primary" type="submit">
-          {{ t('common.save') }}
+          {{ saveButtonLabel }}
         </NeButton>
       </div>
     </form>

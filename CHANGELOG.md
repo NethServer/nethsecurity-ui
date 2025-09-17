@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.7](https://github.com/NethServer/nethsecurity-ui/compare/2.5.6...2.5.7) (2025-09-17)
+
+
+### Bug Fixes
+
+* bumped min api version ([9a0da5c](https://github.com/NethServer/nethsecurity-ui/commit/9a0da5c20fede8353d53ec65c2732b9b3e276936))
+* **ns-plug:** allow edit of description for controller ([#646](https://github.com/NethServer/nethsecurity-ui/issues/646)) ([e9a8b21](https://github.com/NethServer/nethsecurity-ui/commit/e9a8b21828b96844c61c6a0a4c61fb38b0e8f196))
+
 ## [2.5.6](https://github.com/NethServer/nethsecurity-ui/compare/2.5.5...2.5.6) (2025-09-15)
 
 

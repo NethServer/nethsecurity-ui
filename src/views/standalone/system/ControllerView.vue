@@ -31,9 +31,8 @@ import {
 } from '@/lib/validation'
 import { useRoute } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges.ts'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowCircleUp, faCheck, faMinus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArrowCircleUp, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useNotificationsStore } from '@/stores/notifications.ts'
 
 type ControllerRegistrationStatus = {

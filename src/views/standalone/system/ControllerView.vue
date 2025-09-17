@@ -31,6 +31,9 @@ import {
 } from '@/lib/validation'
 import { useRoute } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faArrowCircleUp, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useNotificationsStore } from '@/stores/notifications.ts'
 
 type ControllerRegistrationStatus = {
   status: 'connected' | 'unregistered' | 'pending'
@@ -92,6 +95,8 @@ function clearError() {
   error.value.notificationDetails = ''
 }
 
+const firstUpdate = ref(true)
+
 async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) {
   if (showLoadingSkeleton) {
     loading.value = true
@@ -107,7 +112,9 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
     vpnIpAddress.value = registrationStatus.address ?? ''
     push_status.value = registrationStatus.push_status ?? 'disabled'
     push_last_sent.value = registrationStatus.push_last_sent ?? -1
-    unitDescription.value = registrationStatus.description ?? ''
+    if (firstUpdate.value) {
+      unitDescription.value = registrationStatus.description ?? ''
+    }
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_fetch_controller_registration_status')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -122,6 +129,7 @@ async function fetchControllerRegistrationStatus(showLoadingSkeleton?: boolean) 
 async function startRegistrationStatusFetchInterval() {
   await fetchControllerRegistrationStatus(true)
   if (status.value !== 'unregistered') {
+    firstUpdate.value = false
     statusFetchIntervalId.value = setInterval(() => {
       fetchControllerRegistrationStatus()
     }, 10000)
@@ -253,6 +261,24 @@ function promptConnectUnit() {
   }
   showConnectUnitModal.value = true
 }
+
+const updatingFields = ref(false)
+const notifications = useNotificationsStore()
+
+function updateFields() {
+  updatingFields.value = true
+  ubusCall('ns.plug', 'update', {
+    description: unitDescription.value
+  }).then(() => {
+    updatingFields.value = false
+    notifications.addNotification({
+      id: 'controller-settings-updated',
+      kind: 'success',
+      title: t('standalone.controller.settings_updated'),
+      description: t('standalone.controller.settings_updated_description')
+    })
+  })
+}
 </script>
 
 <template>
@@ -300,7 +326,7 @@ function promptConnectUnit() {
           v-model="unitDescription"
           :rows="2"
           :optional="true"
-          :disabled="status !== 'unregistered'"
+          :disabled="updatingFields"
           :label="t('standalone.controller.unit_description')"
         >
           <template #tooltip>
@@ -361,7 +387,13 @@ function promptConnectUnit() {
               kind="warning"
               size="sm"
             />
-            <NeBadge v-else :text="t('standalone.controller.connected')" kind="success" size="sm" />
+            <NeBadge
+              v-else
+              :icon="faCheck"
+              :text="t('standalone.controller.connected')"
+              kind="success"
+              size="sm"
+            />
           </div>
           <div class="flex flex-col gap-2">
             <div class="flex gap-2">
@@ -383,7 +415,7 @@ function promptConnectUnit() {
               </NeTooltip>
             </div>
             <template v-if="push_status == 'enabled'">
-              <NeBadge :text="t('common.enabled')" kind="success" size="sm" />
+              <NeBadge :text="t('common.enabled')" kind="success" :icon="faCheck" size="sm" />
               <p class="text-sm text-gray-400 dark:text-gray-500">
                 <template v-if="push_last_sent > -1">
                   {{
@@ -397,38 +429,61 @@ function promptConnectUnit() {
                 </template>
               </p>
             </template>
-            <NeBadge v-else :text="t('common.disabled')" kind="warning" size="sm" />
+            <NeBadge
+              v-else
+              :text="t('common.disabled')"
+              kind="secondary"
+              :icon="faXmark"
+              size="sm"
+            />
           </div>
         </template>
         <div v-if="status === 'unregistered'">
           <NeButton kind="primary" :disabled="isPerformingAction" @click="promptConnectUnit">
             <template #prefix>
               <font-awesome-icon :icon="['fas', 'link']" class="h-4 w-4" aria-hidden="true" />
-              {{ t('standalone.controller.connect_unit') }}
             </template>
+            {{ t('standalone.controller.connect_unit') }}
           </NeButton>
         </div>
-        <div v-else class="-mx-2 flex flex-row gap-x-4">
-          <NeButton
-            kind="tertiary"
-            :disabled="isPerformingAction"
-            @click="showDisconnectUnitModal = true"
-          >
-            <template #prefix>
-              <font-awesome-icon :icon="['fas', 'link-slash']" class="h-4 w-4" aria-hidden="true" />
-              {{ t('standalone.controller.disconnect_unit') }}
-            </template>
-          </NeButton>
-          <NeButton kind="secondary" :disabled="isPerformingAction" @click="restartConnection">
-            <template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'arrows-rotate']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+        <div v-else class="space-y-4">
+          <div class="mt-2 flex flex-wrap gap-4">
+            <NeButton
+              :disabled="isPerformingAction || updatingFields"
+              :loading="updatingFields"
+              kind="primary"
+              @click="updateFields"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faArrowCircleUp" aria-hidden="true" class="h-4 w-4" />
+              </template>
+              {{ t('common.save') }}
+            </NeButton>
+            <NeButton kind="secondary" :disabled="isPerformingAction" @click="restartConnection">
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'arrows-rotate']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
               {{ t('standalone.controller.restart_connection') }}
-            </template>
-          </NeButton>
+            </NeButton>
+            <NeButton
+              kind="tertiary"
+              :disabled="isPerformingAction"
+              @click="showDisconnectUnitModal = true"
+            >
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'link-slash']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('standalone.controller.disconnect_unit') }}
+            </NeButton>
+          </div>
         </div>
       </div>
     </FormLayout>

@@ -2164,7 +2164,9 @@
       "no_last_sent": "Dai in preparazione per la trasmissione",
       "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unità al Controller.",
       "unit_description": "Descrizione",
-      "unit_description_tooltip": "Inserire un testo descrittivo per trovare facilmente l'unità all'interno del controller. Per cambiarlo: scollegare l'unità, modificare la descrizione e quindi riconnettere l'unità. Richiede versione controller 2.0.0 o successiva."
+      "unit_description_tooltip": "Inserire un testo descrittivo per trovare facilmente l'unità all'interno del controller. Una sincronizzazione manuale tramite 'Sincronizza info unità' potrebbe essere necessaria per visualizzare le modifiche. Richiede versione controller 2.0.0 o successiva.",
+      "settings_updated": "Impostazioni controller aggiornate",
+      "settings_updated_description": "La connessione al controller verrà riavviata."
     },
     "conntrack": {
       "delete_all": "Elimina tutte le connessioni",

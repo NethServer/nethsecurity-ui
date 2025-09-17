@@ -142,7 +142,7 @@ function openPeerDrawer() {
         <NeTableBody>
           <PeerTableRow
             v-for="peer in paginatedItems"
-            :key="peer.name"
+            :key="peer.id"
             :peer="peer"
             @edit="(item) => emit('edit-peer', instance, item)"
             @delete="(item) => emit('delete-peer', item)"

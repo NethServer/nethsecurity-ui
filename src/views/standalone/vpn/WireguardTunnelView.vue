@@ -45,6 +45,7 @@ export type Peer = {
   remote_networks: string[]
   local_networks: string[]
   reserved_ip: string
+  config: string
 }
 
 export type Tunnel = {

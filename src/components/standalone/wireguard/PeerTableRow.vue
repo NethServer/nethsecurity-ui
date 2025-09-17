@@ -8,13 +8,16 @@ import {
   NeTableRow
 } from '@nethesis/vue-components'
 import {
+  faCircleArrowDown,
   faCircleCheck,
   faCircleXmark,
   faPenToSquare,
+  faQrcode,
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useI18n } from 'vue-i18n'
+import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const { t } = useI18n()
 
@@ -27,7 +30,39 @@ const emit = defineEmits<{
   delete: [item: Peer]
 }>()
 
+const qrCode = useQRCode(peer.config)
+
+function downloadConfig() {
+  const blob = new Blob([peer.config], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${peer.name}.conf`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+function downloadQrCode() {
+  const link = document.createElement('a')
+  link.href = qrCode.value
+  link.download = `${peer.name}.png`
+  link.click()
+  URL.revokeObjectURL(qrCode.value)
+}
+
 const peerActions: NeDropdownItem[] = [
+  {
+    id: 'download-config',
+    label: t('standalone.wireguard_tunnel.download_configuration'),
+    icon: faCircleArrowDown,
+    action: () => downloadConfig()
+  },
+  {
+    id: 'download-qr',
+    label: t('standalone.wireguard_tunnel.download_qr_code'),
+    icon: faQrcode,
+    action: () => downloadQrCode()
+  },
   {
     id: 'divider1'
   },

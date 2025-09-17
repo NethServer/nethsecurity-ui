@@ -2633,7 +2633,9 @@
       "pre_shared_key": "Pre-Shared key",
       "local_networks": "Local networks",
       "remote_networks": "Remote networks",
-      "add_network": "Add network"
+      "add_network": "Add network",
+      "download_qr_code": "Download QR code",
+      "download_configuration": "Download configuration"
     }
   },
   "controller": {

@@ -1,6 +1,6 @@
 {
   "name": "nethsecurity-ui",
-  "version": "2.5.6",
+  "version": "2.5.7",
   "config": {
     "requiredApiVersion": "~3.3.0"
   },

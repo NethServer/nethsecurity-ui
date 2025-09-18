@@ -216,6 +216,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: 'standalone.ipsec_tunnel.title',
         to: 'vpn/ipsec-tunnel'
+      },
+      {
+        name: 'standalone.wireguard_tunnel.title',
+        to: 'vpn/wireguard-tunnel'
       }
     ]
   },

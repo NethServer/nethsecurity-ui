@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.8](https://github.com/NethServer/nethsecurity-ui/compare/2.5.7...2.5.8) (2025-09-18)
+
+
+### Bug Fixes
+
+* **ns-plug:** changing labeling for description save field ([8605668](https://github.com/NethServer/nethsecurity-ui/commit/860566861e737f068bb42a33c0e2d716a50d2250))
+
 ## [2.5.7](https://github.com/NethServer/nethsecurity-ui/compare/2.5.6...2.5.7) (2025-09-17)
 
 

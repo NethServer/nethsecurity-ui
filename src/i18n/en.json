@@ -981,9 +981,9 @@
       "last_sent": "Last sent: {date}",
       "no_last_sent": "Data is being prepared for transmission",
       "unit_description": "Description",
-      "unit_description_tooltip": "Insert a descriptive text to easily find the unit within the controller. A manual 'Sync unit info' might be required to show the changes. It requires controller version 2.0.0 or later.",
+      "unit_description_tooltip": "Insert a descriptive text to easily find the unit within the controller. It requires controller version 2.0.0 or later.",
       "settings_updated": "Controller settings updated",
-      "settings_updated_description": "Connection to the controller will be restarted."
+      "settings_updated_description": "Description may take up to 15 minutes to change in the Controller. Connection to the Controller will be restarted."
     },
     "network": {
       "title": "Network"

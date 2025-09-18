@@ -33,7 +33,7 @@ const instances = ref<Tunnel[]>([])
 
 async function fetchData(): Promise<AxiosResponse<ListInstancesResponse>> {
   error.value = undefined
-  return ubusCall<AxiosResponse<ListInstancesResponse>>('ns.wireguard', 'list-instances')
+  return ubusCall<AxiosResponse<ListInstancesResponse>>('ns.wireguard', 'list-servers')
     .then((response) => {
       instances.value = response.data.instances
     })

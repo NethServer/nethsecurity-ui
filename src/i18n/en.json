@@ -2598,6 +2598,7 @@
     },
     "wireguard_tunnel": {
       "title": "WireGuard tunnel",
+      "description": "FIXME",
       "tabs": {
         "server": "Server tunnel",
         "tunnel": "Peer tunnel"
@@ -2636,6 +2637,15 @@
       "add_network": "Add network",
       "download_qr_code": "Download QR code",
       "download_configuration": "Download configuration"
+    },
+    "wireguard_peers": {
+      "description": "FIXME",
+      "no_peer_configured": "No peer configured",
+      "no_peer_configured_description": "FIXME",
+      "import_peer_tunnel": "Import peer tunnel",
+      "add_peer_tunnel": "Add peer tunnel",
+      "wireguard_config_file": "Wireguard configuration file",
+      "error_importing_peer_tunnel_description": "Couldn't import tunnel configuration."
     }
   },
   "controller": {

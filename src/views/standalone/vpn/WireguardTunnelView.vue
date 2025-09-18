@@ -3,6 +3,7 @@ import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useTabs } from '@/composables/useTabs.ts'
 import WireguardServerTunnelList from '@/components/standalone/wireguard/WireguardServerTunnelList.vue'
+import WireguardPeerTunnelList from '@/components/standalone/wireguard/WireguardPeerTunnelList.vue'
 
 const { t } = useI18n()
 
@@ -57,5 +58,6 @@ export type Tunnel = {
       @select-tab="selectedTab = $event"
     />
     <WireguardServerTunnelList v-if="selectedTab == 'server'" />
+    <WireguardPeerTunnelList v-if="selectedTab == 'tunnel'" />
   </div>
 </template>

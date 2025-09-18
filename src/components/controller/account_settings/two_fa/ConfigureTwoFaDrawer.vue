@@ -16,7 +16,7 @@ import {
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag, validateSixDigitCode } from '@/lib/validation'
-import { getTwoFaQrCode, verifyTwoFaOtp } from '@/lib/twoFa'
+import { getTwoFaQrCode, enableTwoFaOtpController, cancelTwoFaSetupController } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
@@ -70,6 +70,11 @@ function closeDrawer() {
   emit('close')
 }
 
+async function cancelTwoFaSetup() {
+  await cancelTwoFaSetupController()
+  closeDrawer()
+}
+
 function clearErrors() {
   error.value.getTwoFaQrCode = ''
   error.value.getTwoFaQrCodeDetails = ''
@@ -120,7 +125,7 @@ async function verifyOtp() {
   const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 
   try {
-    await verifyTwoFaOtp(loginStore.username, loginStore.token, otp.value)
+    await enableTwoFaOtpController(loginStore.username, loginStore.token, otp.value)
 
     // show reminder to store recovery codes
     savePreference('twoFaRecoveryCodesStored', false, loginStore.username)
@@ -215,7 +220,7 @@ async function verifyOtp() {
           size="lg"
           :disabled="loading.verifyOtp"
           class="mr-3"
-          @click.prevent="closeDrawer"
+          @click.prevent="cancelTwoFaSetup"
         >
           {{ t('common.cancel') }}
         </NeButton>

@@ -6,28 +6,25 @@ import {
   NeTextInput,
   NeToggle
 } from '@nethesis/vue-components'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessageBag } from '@/lib/validation.ts'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
 import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
+import type { ClientTunnel } from '@/components/standalone/wireguard/WireguardPeerTunnelList.vue'
 
 const { t } = useI18n()
 
-const { isShown } = defineProps<{
+const { isShown, peer = undefined } = defineProps<{
   isShown: boolean
+  peer?: ClientTunnel
 }>()
 
 const emit = defineEmits(['close', 'success'])
 
-const drawerTitle = computed<string>(() => {
-  return t('standalone.wireguard_peers.add_peer_tunnel')
-})
-
-const editing = ref(false)
-const saveButtonLabel = computed<string>(() => (editing.value ? t('common.save') : t('common.add')))
-
+const id = ref<string>()
+const peerId = ref<string>()
 const enabled = ref(true)
 const name = ref('')
 const reservedIp = ref('')
@@ -40,29 +37,103 @@ const endpoint = ref('')
 const udpPort = ref('')
 const dnsServers = ref('')
 
+const editing = computed<boolean>(() => id.value != undefined)
+const saveButtonLabel = computed<string>(() =>
+  editing.value ? t('common.save') : t('standalone.wireguard_peers.add_tunnel')
+)
+const drawerTitle = computed<string>(() => {
+  if (editing.value) {
+    return t('standalone.wireguard_peers.edit_peer_tunnel')
+  } else {
+    return t('standalone.wireguard_peers.add_peer_tunnel')
+  }
+})
+
+watch(
+  () => isShown,
+  (value) => {
+    if (value) {
+      error.value = undefined
+      validation.value.clear()
+      disableForm.value = false
+      loading.value = false
+      id.value = undefined
+      peerId.value = undefined
+      enabled.value = true
+      name.value = ''
+      reservedIp.value = ''
+      serverPublicKey.value = ''
+      peerPrivateKey.value = ''
+      preSharedKey.value = ''
+      routeAllTraffic.value = false
+      networkRoutes.value = ['']
+      endpoint.value = ''
+      udpPort.value = ''
+      dnsServers.value = ''
+      if (peer != undefined) {
+        id.value = peer.id
+        peerId.value = peer.peer_id
+        enabled.value = peer.enabled
+        name.value = peer.name
+        reservedIp.value = peer.address
+        serverPublicKey.value = peer.server_public_key
+        peerPrivateKey.value = peer.peer_private_key
+        preSharedKey.value = peer.pre_shared_key
+        routeAllTraffic.value = peer.route_all_traffic
+        if (peer.network_routes.length > 0) {
+          networkRoutes.value = peer.network_routes
+        }
+        endpoint.value = peer.endpoint
+        udpPort.value = String(peer.udp_port)
+        dnsServers.value = peer.dns.join(',')
+      }
+    }
+  }
+)
+
 const disableForm = ref(false)
 const loading = ref(false)
 const error = ref<Error>()
 const validation = ref(new MessageBag())
 
-function addClientTunnel() {
+function submit() {
   disableForm.value = true
   loading.value = true
   error.value = undefined
   validation.value.clear()
-  ubusCall('ns.wireguard', 'add-tunnel', {
-    enabled: enabled.value,
-    name: name.value,
-    reserved_ip: reservedIp.value,
-    server_public_key: serverPublicKey.value,
-    peer_private_key: peerPrivateKey.value,
-    pre_shared_key: preSharedKey.value,
-    route_all_traffic: routeAllTraffic.value,
-    network_routes: networkRoutes.value,
-    endpoint: endpoint.value,
-    udp_port: Number(udpPort.value),
-    dns: dnsServers.value
-  })
+  let method: Promise<unknown>
+  if (editing.value) {
+    method = ubusCall('ns.wireguard', 'edit-tunnel', {
+      id: id.value,
+      peer_id: peerId.value,
+      enabled: enabled.value,
+      name: name.value,
+      reserved_ip: reservedIp.value,
+      server_public_key: serverPublicKey.value,
+      peer_private_key: peerPrivateKey.value,
+      pre_shared_key: preSharedKey.value,
+      route_all_traffic: routeAllTraffic.value,
+      network_routes: networkRoutes.value,
+      endpoint: endpoint.value,
+      udp_port: Number(udpPort.value),
+      dns: dnsServers.value
+    })
+  } else {
+    method = ubusCall('ns.wireguard', 'add-tunnel', {
+      enabled: enabled.value,
+      name: name.value,
+      reserved_ip: reservedIp.value,
+      server_public_key: serverPublicKey.value,
+      peer_private_key: peerPrivateKey.value,
+      pre_shared_key: preSharedKey.value,
+      route_all_traffic: routeAllTraffic.value,
+      network_routes: networkRoutes.value,
+      endpoint: endpoint.value,
+      udp_port: Number(udpPort.value),
+      dns: dnsServers.value
+    })
+  }
+  method
     .then(() => emit('success'))
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -78,7 +149,7 @@ function addClientTunnel() {
 
 <template>
   <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="$emit('close')">
-    <form class="space-y-8" @submit.prevent="addClientTunnel">
+    <form class="space-y-8" @submit.prevent="submit">
       <div>
         <NeFormItemLabel>{{ t('standalone.wireguard_peers.status') }}</NeFormItemLabel>
         <NeToggle

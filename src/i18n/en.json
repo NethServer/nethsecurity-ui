@@ -2645,6 +2645,7 @@
       "no_peer_configured_description": "FIXME",
       "import_peer_tunnel": "Import peer tunnel",
       "add_peer_tunnel": "Add peer tunnel",
+      "edit_peer_tunnel": "Edit peer tunnel",
       "wireguard_config_file": "Wireguard configuration file",
       "error_importing_peer_tunnel_description": "Couldn't import tunnel configuration.",
       "name": "Name",
@@ -2660,7 +2661,8 @@
       "add_route": "Add route",
       "endpoint": "Endpoint",
       "udp_port": "@:standalone.wireguard_tunnel.udp_port",
-      "dns_servers": "@:standalone.wireguard_tunnel.dns_servers"
+      "dns_servers": "@:standalone.wireguard_tunnel.dns_servers",
+      "add_tunnel": "Add tunnel"
     }
   },
   "controller": {

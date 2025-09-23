@@ -35,8 +35,9 @@ import type { AxiosResponse } from 'axios'
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
 
-type ClientTunnels = {
+export type ClientTunnel = {
   id: string
+  peer_id: string
   name: string
   enabled: boolean
   address: string
@@ -46,17 +47,17 @@ type ClientTunnels = {
   pre_shared_key: string
   endpoint: string
   udp_port: number
-  remote_routes: string[]
+  network_routes: string[]
   route_all_traffic: boolean
 }
 
 type ListTunnelsResponse = AxiosResponse<{
-  tunnels: ClientTunnels[]
+  tunnels: ClientTunnel[]
 }>
 
 const loading = ref(true)
 const error = ref<Error>()
-const instances = ref<ClientTunnels[]>([])
+const instances = ref<ClientTunnel[]>([])
 
 async function fetchInstances() {
   loading.value = true
@@ -73,12 +74,21 @@ onMounted(() => fetchInstances())
 
 const showImportTunnelDrawer = ref(false)
 const showTunnelDrawer = ref(false)
+const peerToEdit = ref<ClientTunnel>()
+
+function editPeer(item: ClientTunnel) {
+  peerToEdit.value = item
+  showTunnelDrawer.value = true
+}
 
 function addedTunnelHandler() {
-  Promise.all([changes.getChanges(), fetchInstances()]).then(() => {
-    showImportTunnelDrawer.value = false
-    showTunnelDrawer.value = false
-  })
+  Promise.all([changes.getChanges(), fetchInstances()]).then(() => closeTunnelDrawer())
+}
+
+function closeTunnelDrawer() {
+  showImportTunnelDrawer.value = false
+  showTunnelDrawer.value = false
+  peerToEdit.value = undefined
 }
 
 const pageSize = ref(10)
@@ -145,7 +155,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
               {{ t('standalone.wireguard_peers.all_traffic') }}
             </template>
             <template v-else>
-              {{ instance.remote_routes.join(', ') }}
+              {{ instance.network_routes.join(', ') }}
             </template>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.wireguard_peers.status')">
@@ -165,14 +175,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="flex justify-end gap-2">
-              <NeButton
-                kind="tertiary"
-                @click="
-                  () => {
-                    // FIXME
-                  }
-                "
-              >
+              <NeButton kind="tertiary" @click="editPeer(instance)">
                 <template #prefix>
                   <FontAwesomeIcon :icon="faPenToSquare" aria-hidden="true" class="size-4" />
                 </template>
@@ -243,7 +246,8 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
   />
   <ClientTunnelDrawer
     :is-shown="showTunnelDrawer"
-    @close="showTunnelDrawer = false"
+    :peer="peerToEdit"
+    @close="closeTunnelDrawer"
     @success="addedTunnelHandler"
   />
 </template>

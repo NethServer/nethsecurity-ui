@@ -2639,13 +2639,28 @@
       "download_configuration": "Download configuration"
     },
     "wireguard_peers": {
+      "title": "Tunnel peers",
       "description": "FIXME",
       "no_peer_configured": "No peer configured",
       "no_peer_configured_description": "FIXME",
       "import_peer_tunnel": "Import peer tunnel",
       "add_peer_tunnel": "Add peer tunnel",
       "wireguard_config_file": "Wireguard configuration file",
-      "error_importing_peer_tunnel_description": "Couldn't import tunnel configuration."
+      "error_importing_peer_tunnel_description": "Couldn't import tunnel configuration.",
+      "name": "Name",
+      "reserved_ip": "Reserved IP",
+      "network_routes": "Network routes",
+      "status": "Status",
+      "connection": "Connection",
+      "all_traffic": "All traffic",
+      "server_public_key": "Server public key",
+      "peer_private_key": "Peer private key",
+      "pre_shared_key": "Pre-shared key",
+      "route_all_traffic": "Route all traffic",
+      "add_route": "Add route",
+      "endpoint": "Endpoint",
+      "udp_port": "@:standalone.wireguard_tunnel.udp_port",
+      "dns_servers": "@:standalone.wireguard_tunnel.dns_servers"
     }
   },
   "controller": {

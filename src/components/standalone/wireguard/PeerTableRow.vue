@@ -79,7 +79,7 @@ const peerActions: NeDropdownItem[] = [
 <template>
   <NeTableRow>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.name')">
-      <div>{{ peer.name }}</div>
+      {{ peer.name }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.reserved_ip')">
       {{ peer.reserved_ip }}

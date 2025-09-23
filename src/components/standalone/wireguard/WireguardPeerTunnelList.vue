@@ -23,7 +23,8 @@ import {
   faCirclePlus,
   faCircleXmark,
   faGlobe,
-  faPenToSquare
+  faPenToSquare,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ClientTunnelDrawer from '@/components/standalone/wireguard/ClientTunnelDrawer.vue'
@@ -31,6 +32,7 @@ import ImportTunnelDrawer from '@/components/standalone/wireguard/ImportTunnelDr
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges.ts'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
+import DeleteClientModal from '@/components/standalone/wireguard/DeleteClientModal.vue'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -75,13 +77,14 @@ onMounted(() => fetchInstances())
 const showImportTunnelDrawer = ref(false)
 const showTunnelDrawer = ref(false)
 const peerToEdit = ref<ClientTunnel>()
+const peerToDelete = ref<ClientTunnel>()
 
 function editPeer(item: ClientTunnel) {
   peerToEdit.value = item
   showTunnelDrawer.value = true
 }
 
-function addedTunnelHandler() {
+function updatedData() {
   Promise.all([changes.getChanges(), fetchInstances()]).then(() => closeTunnelDrawer())
 }
 
@@ -89,6 +92,7 @@ function closeTunnelDrawer() {
   showImportTunnelDrawer.value = false
   showTunnelDrawer.value = false
   peerToEdit.value = undefined
+  peerToDelete.value = undefined
 }
 
 const pageSize = ref(10)
@@ -166,7 +170,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
               </template>
               <template v-else>
                 <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
-                {{ t('common.disabled') }}>
+                {{ t('common.disabled') }}
               </template>
             </div>
           </NeTableCell>
@@ -182,12 +186,15 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
                 {{ t('common.edit') }}
               </NeButton>
               <NeDropdown
-                :items="
-                  () => {
-                    // FIXME
-                    return []
+                :items="[
+                  {
+                    id: 'delete-tunnel',
+                    label: t('standalone.wireguard_peers.delete_tunnel'),
+                    icon: faTrash,
+                    danger: true,
+                    action: () => (peerToDelete = instance)
                   }
-                "
+                ]"
                 :align-to-right="true"
               />
             </div>
@@ -242,12 +249,13 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
   <ImportTunnelDrawer
     :is-shown="showImportTunnelDrawer"
     @close="showImportTunnelDrawer = false"
-    @success="addedTunnelHandler"
+    @success="updatedData"
   />
   <ClientTunnelDrawer
     :is-shown="showTunnelDrawer"
     :peer="peerToEdit"
     @close="closeTunnelDrawer"
-    @success="addedTunnelHandler"
+    @success="updatedData"
   />
+  <DeleteClientModal :tunnel="peerToDelete" @close="closeTunnelDrawer" @success="updatedData" />
 </template>

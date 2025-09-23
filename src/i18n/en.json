@@ -2662,7 +2662,10 @@
       "endpoint": "Endpoint",
       "udp_port": "@:standalone.wireguard_tunnel.udp_port",
       "dns_servers": "@:standalone.wireguard_tunnel.dns_servers",
-      "add_tunnel": "Add tunnel"
+      "add_tunnel": "Add tunnel",
+      "delete_tunnel": "Delete tunnel",
+      "delete_peer_title": "Delete peer tunnel",
+      "delete_peer_confirm": "Deleting the peer '{name}' will remove its VPN configuration and disconnect it from the tunnel."
     }
   },
   "controller": {

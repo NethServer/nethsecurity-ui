@@ -37,6 +37,7 @@ interface ZoneResponse {
   extra_src?: string
   extra_dest?: string
   custom_chains?: boolean
+  ns_tag: Array<string>
   // helper
 }
 
@@ -155,6 +156,7 @@ export enum ZoneType {
   OPENVPN,
   RWOPENVPN,
   IPSEC,
+  WIREGUARD,
   CUSTOM
 }
 
@@ -175,6 +177,7 @@ export class Zone {
   public readonly forward: TrafficPolicy
   public readonly interfaces: Array<string> = []
   public readonly logging: boolean = false
+  public readonly nsTags: string[] = []
 
   constructor(configName: string, zoneResponse: ZoneResponse) {
     this.configName = configName
@@ -184,6 +187,7 @@ export class Zone {
     this.forward = Zone.trafficPolicyParser(zoneResponse.forward ?? 'DROP')
     this.interfaces = zoneResponse.network ?? []
     this.logging = zoneResponse.log === '1'
+    this.nsTags = zoneResponse?.ns_tag ?? []
   }
 
   public type(): ZoneType {
@@ -204,6 +208,8 @@ export class Zone {
         return ZoneType.RWOPENVPN
       case 'IPSEC':
         return ZoneType.IPSEC
+      case 'WIREGUARD':
+        return ZoneType.WIREGUARD
       default:
         return ZoneType.CUSTOM
     }

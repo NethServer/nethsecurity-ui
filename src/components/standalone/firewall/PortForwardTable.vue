@@ -15,9 +15,7 @@ import {
   NeTableBody,
   NeTableRow,
   NeTableCell,
-  NeButton,
-  NeBadge,
-  NeTooltip
+  NeButton
 } from '@nethesis/vue-components'
 import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
 import {
@@ -28,6 +26,7 @@ import {
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import AutomatedBadge from '@/components/AutomatedBadge.vue'
 
 const { t } = useI18n()
 
@@ -162,18 +161,7 @@ function getCellClasses(item: PortForward) {
             <p v-else :class="[...getCellClasses(item)]">-</p>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.status')">
-            <NeTooltip
-              v-if="item.ns_tag?.includes('automated')"
-              trigger-event="mouseenter focus"
-              placement="top-start"
-            >
-              <template #trigger>
-                <NeBadge :text="t('common.automated')" />
-              </template>
-              <template #content>
-                {{ t('common.automated_tooltip') }}
-              </template>
-            </NeTooltip>
+            <AutomatedBadge v-if="item.ns_tag?.includes('automated')" />
             <div v-else :class="getCellClasses(item)" class="flex flex-row items-center">
               <FontAwesomeIcon
                 :icon="item.enabled ? faCircleCheck : faCircleXmark"

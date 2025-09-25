@@ -594,7 +594,8 @@
       "dns_not_configured_tooltip": "You're using one or more WANs with a static IP: make sure to configure at least one DNS forwarder. Go to {dnsLink}",
       "check_dns_configuration": "Check DNS",
       "monitoring_disabled": "Monitoring disabled",
-      "monitoring_disabled_tooltip": "Enable logging on at least one chain to enable threats monitoring. Go to {page}"
+      "monitoring_disabled_tooltip": "Enable logging on at least one chain to enable threats monitoring. Go to {page}",
+      "unavailable": "Unavailable"
     },
     "subscription": {
       "title": "Subscription",

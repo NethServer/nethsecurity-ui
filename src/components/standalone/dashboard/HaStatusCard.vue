@@ -112,7 +112,6 @@ function getBadgeIcon(status: string) {
           <span class="mr-3 font-semibold">{{ t('standalone.ha.role') }}</span
           ><span>{{ t('standalone.ha.' + ha.role) }}</span>
         </li>
-
         <li>
           <span class="mr-3 font-semibold">{{ t('standalone.ha.state') }}</span>
           <span
@@ -120,10 +119,19 @@ function getBadgeIcon(status: string) {
             <NeTooltip>
               <template #content>
                 <span class="mr-3 font-semibold">{{ t('standalone.ha.last_sync_status') }}</span
-                ><span>{{ t('standalone.ha.' + ha.lastSyncStatus) }}</span
+                ><span>{{
+                  ha.lastSyncStatus
+                    ? t('standalone.ha.' + ha.lastSyncStatus)
+                    : t('standalone.dashboard.unavailable')
+                }}</span
                 ><br />
+
                 <span class="mr-3 font-semibold">{{ t('standalone.ha.last_sync_time') }}</span>
-                <span>{{ formatDateLoc(new Date(ha.lastSyncTime * 1000), 'PPpp') }}</span>
+                <span>{{
+                  ha.lastSyncTime > 0
+                    ? formatDateLoc(new Date(ha.lastSyncTime * 1000), 'PPpp')
+                    : t('standalone.dashboard.unavailable')
+                }}</span>
               </template>
             </NeTooltip></span
           >

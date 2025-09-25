@@ -18,6 +18,8 @@ const error = ref<Error>()
 
 watchEffect(() => {
   if (tunnel != undefined) {
+    loading.value = false
+    error.value = undefined
     _internalTunnel.value = tunnel
   }
 })

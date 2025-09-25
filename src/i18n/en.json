@@ -2632,8 +2632,8 @@
       "delete_peer_confirm": "Deleting the peer '{name}' will disconnect it from the VPN.",
       "route_all_traffic": "Route all traffic",
       "pre_shared_key": "Pre-Shared key",
-      "local_networks": "Local networks",
-      "remote_networks": "Remote networks",
+      "server_networks": "Server networks",
+      "peer_networks": "Peer networks",
       "add_network": "Add network",
       "download_qr_code": "Download QR code",
       "download_configuration": "Download configuration"

@@ -183,7 +183,7 @@ const saveButtonLabel = computed(() => {
   if (editing.value) {
     return t('common.save')
   } else {
-    return t('common.add')
+    return t('standalone.wireguard_tunnel.add_server')
   }
 })
 </script>

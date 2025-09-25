@@ -198,7 +198,7 @@ const saveButtonLabel = computed(() => {
   if (editing.value) {
     return t('common.save')
   } else {
-    return t('common.add')
+    return t('standalone.wireguard_tunnel.add_peer')
   }
 })
 </script>
@@ -236,7 +236,7 @@ const saveButtonLabel = computed(() => {
         required
         :disable-inputs="routeAllTraffic || disableForm"
         :disable-add-button="routeAllTraffic || disableForm"
-        :title="t('standalone.wireguard_tunnel.local_networks')"
+        :title="t('standalone.wireguard_tunnel.server_networks')"
         :add-item-label="t('standalone.wireguard_tunnel.add_network')"
         :general-invalid-message="t(validation.getFirstI18nKeyFor('local_networks'))"
       />
@@ -245,7 +245,7 @@ const saveButtonLabel = computed(() => {
         required
         :disable-inputs="disableForm"
         :disable-add-button="disableForm"
-        :title="t('standalone.wireguard_tunnel.remote_networks')"
+        :title="t('standalone.wireguard_tunnel.peer_networks')"
         :add-item-label="t('standalone.wireguard_tunnel.add_network')"
         :general-invalid-message="t(validation.getFirstI18nKeyFor('remote_networks'))"
       />

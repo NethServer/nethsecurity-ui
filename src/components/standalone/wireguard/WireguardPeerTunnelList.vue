@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {
   NeButton,
   NeCard,
@@ -95,18 +95,33 @@ function closeTunnelDrawer() {
   peerToDelete.value = undefined
 }
 
+const filteredPeers = computed<ClientTunnel[]>(() =>
+  instances.value.filter((peer) => {
+    return peer.name.toLowerCase().includes(peerFilter.value.toLowerCase())
+  })
+)
+
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => instances.value, {
+const { currentPage, paginatedItems } = useItemPagination(() => filteredPeers.value, {
   itemsPerPage: pageSize
 })
+
+const peerFilter = ref('')
 </script>
 
 <template>
   <NeCard v-if="loading" loading />
   <div v-else class="space-y-6">
-    <p>{{ t('standalone.wireguard_peers.description') }}</p>
+    <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+      {{ t('standalone.wireguard_peers.description') }}
+    </p>
     <div v-if="instances.length > 0" class="flex flex-wrap gap-4">
-      <NeTextInput is-search :placeholder="t('common.filter')" class="mr-auto" />
+      <NeTextInput
+        v-model="peerFilter"
+        is-search
+        :placeholder="t('standalone.wireguard_tunnel.filter_peers')"
+        class="mr-auto"
+      />
       <NeButton kind="tertiary" @click="showTunnelDrawer = true">
         <template #prefix>
           <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="size-4" />
@@ -121,11 +136,37 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
       </NeButton>
     </div>
     <NeInlineNotification v-if="error != undefined" kind="error" :title="t('common.error')" />
-    <NeTable
-      v-else-if="instances.length > 0"
-      :aria-label="t('standalone.wireguard_peers.peers')"
-      card-breakpoint="lg"
+    <NeEmptyState
+      v-else-if="instances.length <= 0"
+      :title="t('standalone.wireguard_peers.no_peer_configured')"
+      :icon="faGlobe"
     >
+      <div class="flex flex-col gap-5">
+        <NeButton kind="primary" @click="showImportTunnelDrawer = true">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCircleArrowUp" aria-hidden="true" class="size-4" />
+          </template>
+          {{ t('standalone.wireguard_peers.import_peer_tunnel') }}
+        </NeButton>
+        <NeButton kind="secondary" @click="showTunnelDrawer = true">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="size-4" />
+          </template>
+          {{ t('standalone.wireguard_peers.add_peer_tunnel') }}
+        </NeButton>
+      </div>
+    </NeEmptyState>
+    <NeEmptyState
+      v-else-if="filteredPeers.length <= 0"
+      :title="t('standalone.wireguard_tunnel.no_peer_found')"
+      :description="t('standalone.wireguard_tunnel.filter_change_suggestion')"
+      :icon="faGlobe"
+    >
+      <NeButton kind="tertiary" @click="peerFilter = ''">
+        {{ t('common.clear_filter') }}
+      </NeButton>
+    </NeEmptyState>
+    <NeTable v-else :aria-label="t('standalone.wireguard_peers.peers')" card-breakpoint="lg">
       <NeTableHead>
         <NeTableHeadCell>
           {{ t('standalone.wireguard_peers.name') }}
@@ -204,7 +245,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
           :page-size-label="t('ne_table.show')"
           :previous-label="t('ne_table.go_to_previous_page')"
           :range-of-total-label="t('ne_table.of')"
-          :total-rows="instances.length"
+          :total-rows="filteredPeers.length"
           @select-page="
             (page: number) => {
               currentPage = page
@@ -218,26 +259,6 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
         />
       </template>
     </NeTable>
-    <NeEmptyState
-      v-else
-      :title="t('standalone.wireguard_peers.no_peer_configured')"
-      :icon="faGlobe"
-    >
-      <div class="flex flex-col gap-5">
-        <NeButton kind="primary" @click="showImportTunnelDrawer = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCircleArrowUp" aria-hidden="true" class="size-4" />
-          </template>
-          {{ t('standalone.wireguard_peers.import_peer_tunnel') }}
-        </NeButton>
-        <NeButton kind="secondary" @click="showTunnelDrawer = true">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="size-4" />
-          </template>
-          {{ t('standalone.wireguard_peers.add_peer_tunnel') }}
-        </NeButton>
-      </div>
-    </NeEmptyState>
   </div>
   <ImportTunnelDrawer
     :is-shown="showImportTunnelDrawer"

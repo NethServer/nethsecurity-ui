@@ -14,13 +14,14 @@ import {
   useItemPagination,
   NePaginator
 } from '@nethesis/vue-components'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCircleCheck,
   faCirclePlus,
   faCircleXmark,
+  faGlobe,
   faPenToSquare,
   faTrash,
   faUserGroup
@@ -30,8 +31,9 @@ import PeerTableRow from '@/components/standalone/wireguard/PeerTableRow.vue'
 
 const { t } = useI18n()
 
-const { instance } = defineProps<{
+const { instance, filter } = defineProps<{
   instance: Tunnel
+  filter: string
 }>()
 
 const emit = defineEmits<{
@@ -40,6 +42,7 @@ const emit = defineEmits<{
   'add-peer': [item: Tunnel]
   'edit-peer': [instance: Tunnel, peer: Peer]
   'delete-peer': [peer: Peer]
+  'clear-filter': []
 }>()
 
 const tunnelActions: NeDropdownItem[] = [
@@ -61,8 +64,18 @@ const tunnelActions: NeDropdownItem[] = [
   }
 ]
 
+const filteredPeers = computed<Peer[]>(() => {
+  if (filter.length == 0) {
+    return instance.peers
+  } else {
+    return instance.peers.filter((peer) => {
+      return peer.name.toLowerCase().includes(filter.toLowerCase())
+    })
+  }
+})
+
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => instance.peers ?? [], {
+const { currentPage, paginatedItems } = useItemPagination(() => filteredPeers.value, {
   itemsPerPage: pageSize
 })
 
@@ -122,11 +135,29 @@ function openPeerDrawer() {
           <NeDropdown :items="tunnelActions" :align-to-right="true" />
         </div>
       </div>
-      <NeTable
-        v-if="instance.peers.length > 0"
-        :aria-label="t('standalone.wireguard_tunnel.peers')"
-        card-breakpoint="lg"
+      <NeEmptyState
+        v-if="instance.peers.length <= 0"
+        :title="t('standalone.wireguard_tunnel.no_peer_configured')"
+        :icon="faUserGroup"
       >
+        <NeButton kind="primary" @click="openPeerDrawer">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+          </template>
+          {{ t('standalone.wireguard_tunnel.add_peer') }}
+        </NeButton>
+      </NeEmptyState>
+      <NeEmptyState
+        v-else-if="filteredPeers.length <= 0"
+        :title="t('standalone.wireguard_tunnel.no_peer_found')"
+        :description="t('standalone.wireguard_tunnel.filter_change_suggestion')"
+        :icon="faGlobe"
+      >
+        <NeButton kind="tertiary" @click="emit('clear-filter')">
+          {{ t('common.clear_filter') }}
+        </NeButton>
+      </NeEmptyState>
+      <NeTable v-else :aria-label="t('standalone.wireguard_tunnel.peers')" card-breakpoint="lg">
         <NeTableHead>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.name') }}
@@ -159,7 +190,7 @@ function openPeerDrawer() {
         <template #paginator>
           <NePaginator
             :current-page="currentPage"
-            :total-rows="instance.peers.length"
+            :total-rows="filteredPeers.length"
             :page-size="pageSize"
             :nav-pagination-label="t('ne_table.pagination')"
             :next-label="t('ne_table.go_to_next_page')"
@@ -179,18 +210,6 @@ function openPeerDrawer() {
           />
         </template>
       </NeTable>
-      <NeEmptyState
-        v-else
-        :title="t('standalone.wireguard_tunnel.no_peer_configured')"
-        :icon="faUserGroup"
-      >
-        <NeButton kind="primary" @click="openPeerDrawer">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
-          </template>
-          {{ t('standalone.wireguard_tunnel.add_peer') }}
-        </NeButton>
-      </NeEmptyState>
     </div>
   </NeCard>
 </template>

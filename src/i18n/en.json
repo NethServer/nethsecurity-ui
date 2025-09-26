@@ -2641,7 +2641,11 @@
       "warning_editing_server": "Warning",
       "warning_editing_server_description": "Server configuration changes require peers to download the updated configuration or adjust it manually.",
       "warning_editing_peer": "Warning",
-      "warning_editing_peer_description": "Peer changes require downloading the updated configuration or manual adjustment."
+      "warning_editing_peer_description": "Peer changes require downloading the updated configuration or manual adjustment.",
+      "filter_peers": "Filter peers",
+      "no_peer_found": "No peer found.",
+      "filter_change_suggestion": "@:standalone.conntrack.filter_change_suggestion",
+      "all_traffic": "All traffic"
     },
     "wireguard_peers": {
       "title": "Tunnel peers",

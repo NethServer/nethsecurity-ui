@@ -85,10 +85,18 @@ const peerActions: NeDropdownItem[] = [
       {{ peer.reserved_ip }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.server_networks')">
-      {{ peer.local_networks.join(', ') }}
+      <template v-if="peer.route_all_traffic">
+        {{ t('standalone.wireguard_tunnel.all_traffic') }}
+      </template>
+      <template v-else>
+        {{ peer.local_networks.join(', ') }}
+      </template>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.peer_networks')">
-      {{ peer.remote_networks.join(', ') }}
+      <template v-if="peer.remote_networks.length > 0">
+        {{ peer.remote_networks.join(', ') }}
+      </template>
+      <template v-else> - </template>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.status')">
       <div class="flex items-center gap-1">

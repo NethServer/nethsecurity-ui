@@ -104,6 +104,8 @@ function closeDeletePeerModal() {
 function peerDeleted() {
   refreshData().then(closeDeletePeerModal)
 }
+
+const peerFilter = ref('')
 </script>
 
 <template>
@@ -116,7 +118,12 @@ function peerDeleted() {
       <NeInlineNotification v-if="error != undefined" kind="error" :title="t('common.error')" />
       <template v-else-if="instances.length > 0">
         <div class="flex flex-wrap gap-4">
-          <NeTextInput is-search :placeholder="t('common.filter')" class="mr-auto" />
+          <NeTextInput
+            v-model="peerFilter"
+            is-search
+            :placeholder="t('standalone.wireguard_tunnel.filter_peers')"
+            class="mr-auto"
+          />
           <NeButton kind="secondary" @click="showTunnelDrawer = true">
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
@@ -128,6 +135,8 @@ function peerDeleted() {
           v-for="instance in instances"
           :key="instance.id"
           :instance="instance"
+          :filter="peerFilter"
+          @clear-filter="peerFilter = ''"
           @edit="editTunnel"
           @delete="deleteTunnel"
           @add-peer="addPeerHandler"

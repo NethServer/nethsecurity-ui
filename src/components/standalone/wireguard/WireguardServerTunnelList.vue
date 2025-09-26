@@ -110,7 +110,9 @@ function peerDeleted() {
   <div>
     <NeCard v-if="loading" loading />
     <div v-else class="space-y-6">
-      <p>{{ t('standalone.wireguard_tunnel.description') }}</p>
+      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.wireguard_tunnel.description') }}
+      </p>
       <NeInlineNotification v-if="error != undefined" kind="error" :title="t('common.error')" />
       <template v-else-if="instances.length > 0">
         <div class="flex flex-wrap gap-4">
@@ -136,7 +138,6 @@ function peerDeleted() {
       <NeEmptyState
         v-else
         :title="t('standalone.wireguard_tunnel.no_server_configured')"
-        :description="t('standalone.wireguard_tunnel.no_server_configured_description')"
         :icon="faGlobe"
       >
         <NeButton kind="primary" @click="showTunnelDrawer = true">

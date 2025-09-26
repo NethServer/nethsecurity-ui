@@ -97,7 +97,9 @@ function openPeerDrawer() {
               {{ instance.listen_port }}
             </span>
             <span>
-              <span class="font-bold"> {{ t('standalone.wireguard_tunnel.endpoint') }}: </span>
+              <span class="font-bold">
+                {{ t('standalone.wireguard_tunnel.public_endpoint') }}:
+              </span>
               {{ instance.public_endpoint }}
             </span>
             <span>
@@ -106,7 +108,7 @@ function openPeerDrawer() {
             </span>
             <span v-if="instance.dns">
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.dns') }}: </span>
-              {{ instance.dns }}
+              {{ instance.dns.join(', ') }}
             </span>
           </div>
         </div>
@@ -131,6 +133,12 @@ function openPeerDrawer() {
           </NeTableHeadCell>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.reserved_ip') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
+            {{ t('standalone.wireguard_tunnel.server_networks') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
+            {{ t('standalone.wireguard_tunnel.peer_networks') }}
           </NeTableHeadCell>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.status') }}

@@ -2598,7 +2598,7 @@
     },
     "wireguard_tunnel": {
       "title": "WireGuard tunnel",
-      "description": "FIXME",
+      "description": "On this page, you can create WireGuard tunnels; the WireGuard protocol is lightweight, modern, and widely supported across platforms. WireGuard tunnels can be used to securely connect remote networks with minimal overhead and strong cryptography.",
       "tabs": {
         "server": "Server tunnel",
         "tunnel": "Peer tunnel"
@@ -2618,10 +2618,9 @@
       "reserved_ip": "Reserved IP",
       "status": "Status",
       "no_server_configured": "No server configured",
-      "no_server_configured_description": "FIXME",
       "add_server": "Add server",
       "udp_port": "UDP port",
-      "public_ip": "Public IP",
+      "public_endpoint": "Public Endpoint",
       "dns_servers": "DNS servers",
       "error_fetching_server_setup": "Error fetching server setup",
       "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later",
@@ -2635,14 +2634,19 @@
       "server_networks": "Server networks",
       "peer_networks": "Peer networks",
       "add_network": "Add network",
+      "add_dns": "Add DNS",
       "download_qr_code": "Download QR code",
-      "download_configuration": "Download configuration"
+      "download_configuration": "Download configuration",
+      "vpn_network_tooltip": "The VPN network is a virtual network used by peers; please select a network not used in any other firewall configuration. The VPN network cannot be modified after the initial configuration.",
+      "warning_editing_server": "Warning",
+      "warning_editing_server_description": "Server configuration changes require peers to download the updated configuration or adjust it manually.",
+      "warning_editing_peer": "Warning",
+      "warning_editing_peer_description": "Peer changes require downloading the updated configuration or manual adjustment."
     },
     "wireguard_peers": {
       "title": "Tunnel peers",
-      "description": "FIXME",
+      "description": "On this page, you can import a configuration file generated from any WireGuard server. You can also manually configure a client to connect it to any device that supports WireGuard.",
       "no_peer_configured": "No peer configured",
-      "no_peer_configured_description": "FIXME",
       "import_peer_tunnel": "Import peer tunnel",
       "add_peer_tunnel": "Add peer tunnel",
       "edit_peer_tunnel": "Edit peer tunnel",

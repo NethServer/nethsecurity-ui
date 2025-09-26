@@ -35,7 +35,7 @@ const routeAllTraffic = ref(false)
 const networkRoutes = ref<string[]>([''])
 const endpoint = ref('')
 const udpPort = ref('')
-const dnsServers = ref('')
+const dnsServers = ref<string[]>([''])
 
 const editing = computed<boolean>(() => id.value != undefined)
 const saveButtonLabel = computed<string>(() =>
@@ -69,7 +69,7 @@ watch(
       networkRoutes.value = ['']
       endpoint.value = ''
       udpPort.value = ''
-      dnsServers.value = ''
+      dnsServers.value = ['']
       if (peer != undefined) {
         id.value = peer.id
         peerId.value = peer.peer_id
@@ -85,7 +85,11 @@ watch(
         }
         endpoint.value = peer.endpoint
         udpPort.value = String(peer.udp_port)
-        dnsServers.value = peer.dns.join(',')
+        if (peer.dns.length > 0) {
+          dnsServers.value = peer.dns
+        } else {
+          dnsServers.value = ['']
+        }
       }
     }
   }
@@ -219,11 +223,16 @@ function submit() {
         :label="t('standalone.wireguard_peers.udp_port')"
       />
       <AdvancedSettingsDropdown>
-        <NeTextInput
+        <NeMultiTextInput
           v-model="dnsServers"
-          :disabled="disableForm"
-          :label="t('standalone.wireguard_peers.dns_servers')"
+          :add-item-label="t('standalone.wireguard_tunnel.add_dns')"
           optional
+          :disable-add-button="disableForm"
+          :disable-inputs="disableForm"
+          :general-invalid-message="t(validation.getFirstI18nKeyFor('dns'))"
+          :optional-label="t('common.optional')"
+          :title="t('standalone.wireguard_tunnel.dns_servers')"
+          required
         />
       </AdvancedSettingsDropdown>
       <hr />

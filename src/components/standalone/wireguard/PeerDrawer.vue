@@ -206,7 +206,14 @@ const saveButtonLabel = computed(() => {
 <template>
   <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="emits('close')">
     <form class="space-y-8" @submit.prevent="submitForm">
+      <!-- TODO: fixme -->
       <NeInlineNotification v-if="error != undefined" kind="error" title="testing" />
+      <NeInlineNotification
+        v-if="editing"
+        kind="warning"
+        :title="t('standalone.wireguard_tunnel.warning_editing_peer')"
+        :description="t('standalone.wireguard_tunnel.warning_editing_peer_description')"
+      />
       <div>
         <NeFormItemLabel>{{ t('standalone.wireguard_tunnel.status') }}</NeFormItemLabel>
         <NeToggle v-model="enabled" :label="enabledLabel" :disabled="disableForm" />

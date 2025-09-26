@@ -140,9 +140,6 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
           {{ t('standalone.wireguard_peers.status') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
-          {{ t('standalone.wireguard_peers.connection') }}
-        </NeTableHeadCell>
-        <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
       </NeTableHead>
@@ -173,9 +170,6 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
                 {{ t('common.disabled') }}
               </template>
             </div>
-          </NeTableCell>
-          <NeTableCell :data-label="t('standalone.wireguard_peers.connection')">
-            FIXME
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="flex justify-end gap-2">
@@ -227,7 +221,6 @@ const { currentPage, paginatedItems } = useItemPagination(() => instances.value,
     <NeEmptyState
       v-else
       :title="t('standalone.wireguard_peers.no_peer_configured')"
-      :description="t('standalone.wireguard_peers.no_peer_configured_description')"
       :icon="faGlobe"
     >
       <div class="flex flex-col gap-5">

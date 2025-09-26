@@ -19,6 +19,8 @@ const error = ref<Error>()
 
 watchEffect(() => {
   if (instance != undefined) {
+    loading.value = false
+    error.value = undefined
     _internalInstance.value = instance
   }
 })

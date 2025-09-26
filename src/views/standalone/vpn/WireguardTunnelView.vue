@@ -43,7 +43,7 @@ export type Tunnel = {
   route_all_traffic: boolean
   routes: string[]
   mtu: number
-  dns: string
+  dns: string[]
 }
 </script>
 

@@ -16,6 +16,7 @@ import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
 import * as v from 'valibot'
 import { MessageBag } from '@/lib/validation.ts'
 import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
+import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 
 const { t } = useI18n()
 
@@ -33,7 +34,7 @@ const network = ref('')
 const udpPort = ref('')
 const publicIp = ref('')
 const mtu = ref('')
-const dnsServers = ref('')
+const dnsServers = ref<string[]>([''])
 
 type ServerSetup = AxiosResponse<{
   listen_port: number
@@ -66,6 +67,7 @@ watch(
   () => isShown,
   (newVal) => {
     if (newVal) {
+      loading.value = false
       editing.value = false
       tunnelName.value = ''
       enabled.value = true
@@ -73,7 +75,7 @@ watch(
       udpPort.value = ''
       publicIp.value = ''
       mtu.value = ''
-      dnsServers.value = ''
+      dnsServers.value = ['']
       validation.value.clear()
       if (tunnel != undefined) {
         tunnelName.value = tunnel.name
@@ -82,7 +84,11 @@ watch(
         udpPort.value = tunnel.listen_port.toString()
         publicIp.value = tunnel.public_endpoint
         mtu.value = tunnel.mtu.toString()
-        dnsServers.value = tunnel.dns
+        if (tunnel.dns.length > 0) {
+          dnsServers.value = tunnel.dns
+        } else {
+          dnsServers.value = ['']
+        }
         editing.value = true
         disableForm.value = false
       } else {
@@ -198,6 +204,12 @@ const saveButtonLabel = computed(() => {
         kind="error"
       />
       <template v-else>
+        <NeInlineNotification
+          v-if="editing"
+          :description="t('standalone.wireguard_tunnel.warning_editing_server_description')"
+          :title="t('standalone.wireguard_tunnel.warning_editing_server')"
+          kind="warning"
+        />
         <div>
           <NeFormItemLabel>{{ t('standalone.wireguard_tunnel.status') }}</NeFormItemLabel>
           <NeToggle v-model="enabled" :label="statusLabel" />
@@ -210,7 +222,7 @@ const saveButtonLabel = computed(() => {
         />
         <NeTextInput
           v-model="network"
-          :disabled="disableForm"
+          :disabled="disableForm || editing"
           :invalid-message="t(validation.getFirstI18nKeyFor('network'))"
           :label="t('standalone.wireguard_tunnel.vpn_network')"
         >
@@ -224,14 +236,14 @@ const saveButtonLabel = computed(() => {
         </NeTextInput>
         <NeTextInput
           v-model="udpPort"
-          :disabled="disableForm"
+          :disabled="disableForm || editing"
           :label="t('standalone.wireguard_tunnel.udp_port')"
           :invalid-message="t(validation.getFirstI18nKeyFor('udpPort'))"
         />
         <NeTextInput
           v-model="publicIp"
           :disabled="disableForm"
-          :label="t('standalone.wireguard_tunnel.public_ip')"
+          :label="t('standalone.wireguard_tunnel.public_endpoint')"
           :invalid-message="t(validation.getFirstI18nKeyFor('publicIp'))"
         />
         <AdvancedSettingsDropdown>
@@ -241,11 +253,16 @@ const saveButtonLabel = computed(() => {
             :label="t('standalone.wireguard_tunnel.mtu')"
             optional
           />
-          <NeTextInput
+          <NeMultiTextInput
             v-model="dnsServers"
-            :disabled="disableForm"
-            :label="t('standalone.wireguard_tunnel.dns_servers')"
+            :add-item-label="t('standalone.wireguard_tunnel.add_dns')"
             optional
+            :disable-add-button="disableForm"
+            :disable-inputs="disableForm"
+            :general-invalid-message="t(validation.getFirstI18nKeyFor('dns'))"
+            :optional-label="t('common.optional')"
+            :title="t('standalone.wireguard_tunnel.dns_servers')"
+            required
           />
         </AdvancedSettingsDropdown>
       </template>

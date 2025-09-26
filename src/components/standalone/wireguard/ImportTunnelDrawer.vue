@@ -7,7 +7,7 @@ import {
   NeSideDrawer
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { MessageBag } from '@/lib/validation.ts'
 import * as v from 'valibot'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
@@ -29,7 +29,7 @@ function validate(): boolean {
   validationErrors.value.clear()
 
   const validator = v.object({
-    config: v.file('error.required')
+    config: v.file('error.required_file')
   })
   type validatorSchema = typeof validator
 
@@ -46,34 +46,42 @@ function validate(): boolean {
   return validationErrors.value.size == 0
 }
 
-async function importConfiguration(): Promise<unknown> {
+async function importConfiguration() {
   if (!validate()) {
     return
   }
-  loading.value = true
-  error.value = undefined
-  const config = await configFile.value!.text()
-  return ubusCall('ns.wireguard', 'import-configuration', {
-    config: btoa(config)
-  })
-    .then(() => emit('success'))
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        validationErrors.value = err.errorBag
-      } else {
-        error.value = err
-      }
-    })
-    .finally(() => (loading.value = false))
+  try {
+    const config = await configFile.value!.text()
+    const payload = {
+      config: btoa(config)
+    }
+    loading.value = true
+    error.value = undefined
+    ubusCall('ns.wireguard', 'import-configuration', payload)
+      .then(() => emit('success'))
+      .catch((err) => {
+        if (err instanceof ValidationError) {
+          validationErrors.value = err.errorBag
+        } else {
+          error.value = err
+        }
+      })
+      .finally(() => (loading.value = false))
+  } catch {
+    validationErrors.value.set('config', 'error.invalid_file_format')
+  }
 }
 
-watchEffect(() => {
-  if (isShown) {
-    configFile.value = undefined
-    validationErrors.value.clear()
-    error.value = undefined
+watch(
+  () => isShown,
+  (state) => {
+    if (state) {
+      configFile.value = undefined
+      validationErrors.value.clear()
+      error.value = undefined
+    }
   }
-})
+)
 </script>
 
 <template>
@@ -105,7 +113,7 @@ watchEffect(() => {
           :disabled="loading"
           :loading="loading"
           kind="primary"
-          @click="importConfiguration()"
+          @click="importConfiguration"
         >
           {{ t('standalone.openvpn_tunnel.import') }}
         </NeButton>

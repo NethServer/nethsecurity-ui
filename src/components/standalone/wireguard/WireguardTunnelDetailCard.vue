@@ -175,6 +175,9 @@ function openPeerDrawer() {
             {{ t('standalone.wireguard_tunnel.status') }}
           </NeTableHeadCell>
           <NeTableHeadCell>
+            {{ t('standalone.wireguard_tunnel.connection') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
             <!-- no header for actions -->
           </NeTableHeadCell>
         </NeTableHead>

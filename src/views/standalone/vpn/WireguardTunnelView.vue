@@ -18,7 +18,7 @@ const { tabs, selectedTab } = useTabs([
   }
 ])
 
-export type Peer = {
+export type BasePeer = {
   id: string
   enabled: boolean
   name: string
@@ -28,7 +28,16 @@ export type Peer = {
   local_networks: string[]
   reserved_ip: string
   config: string
+  active: false
+  latest_handshake?: string
 }
+
+export type ActivePeer = BasePeer & {
+  active: true
+  latest_handshake: string
+}
+
+export type Peer = BasePeer | ActivePeer
 
 export type Tunnel = {
   id: string

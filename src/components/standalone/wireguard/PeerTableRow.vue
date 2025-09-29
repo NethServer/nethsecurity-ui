@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import type { Peer } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 import {
+  humanDistanceToNowLoc,
   NeButton,
   NeDropdown,
   type NeDropdownItem,
   NeTableCell,
-  NeTableRow
+  NeTableRow,
+  NeTooltip
 } from '@nethesis/vue-components'
 import {
   faCircleArrowDown,
@@ -107,6 +109,29 @@ const peerActions: NeDropdownItem[] = [
         <template v-else>
           <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
           {{ t('common.disabled') }}
+        </template>
+      </div>
+    </NeTableCell>
+    <NeTableCell :data-label="t('standalone.wireguard_tunnel.connection')">
+      <div class="flex items-center gap-2">
+        <template v-if="peer.active">
+          <FontAwesomeIcon :icon="faCircleCheck" class="size-4 text-enabled" />
+          {{ t('common.connected') }}
+        </template>
+        <template v-else>
+          <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
+          {{ t('common.not_connected') }}
+        </template>
+        <template v-if="peer.latest_handshake != undefined">
+          <NeTooltip>
+            <template #content>
+              {{
+                t('standalone.wireguard_tunnel.latest_handshake', {
+                  time: humanDistanceToNowLoc(new Date(peer.latest_handshake))
+                })
+              }}
+            </template>
+          </NeTooltip>
         </template>
       </div>
     </NeTableCell>

@@ -14,7 +14,9 @@ import {
   NeTableCell,
   useItemPagination,
   NeDropdown,
-  NeTextInput
+  NeTextInput,
+  NeTooltip,
+  humanDistanceToNowLoc
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import {
@@ -37,7 +39,7 @@ import DeleteClientModal from '@/components/standalone/wireguard/DeleteClientMod
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
 
-export type ClientTunnel = {
+type BaseClientTunnel = {
   id: string
   peer_id: string
   name: string
@@ -51,7 +53,16 @@ export type ClientTunnel = {
   udp_port: number
   network_routes: string[]
   route_all_traffic: boolean
+  active: false
+  latest_handshake?: string
 }
+
+type ActiveClientTunnel = BaseClientTunnel & {
+  active: true
+  latest_handshake: string
+}
+
+export type ClientTunnel = BaseClientTunnel | ActiveClientTunnel
 
 type ListTunnelsResponse = AxiosResponse<{
   tunnels: ClientTunnel[]
@@ -181,6 +192,9 @@ const peerFilter = ref('')
           {{ t('standalone.wireguard_peers.status') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
+          {{ t('standalone.wireguard_peers.connection') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
       </NeTableHead>
@@ -209,6 +223,29 @@ const peerFilter = ref('')
               <template v-else>
                 <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
                 {{ t('common.disabled') }}
+              </template>
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.wireguard_peers.connection')">
+            <div class="flex items-center gap-2">
+              <template v-if="instance.active">
+                <FontAwesomeIcon :icon="faCircleCheck" class="size-4 text-enabled" />
+                {{ t('common.connected') }}
+              </template>
+              <template v-else>
+                <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
+                {{ t('common.not_connected') }}
+              </template>
+              <template v-if="instance.latest_handshake != undefined">
+                <NeTooltip>
+                  <template #content>
+                    {{
+                      t('standalone.wireguard_tunnel.latest_handshake', {
+                        time: humanDistanceToNowLoc(new Date(instance.latest_handshake))
+                      })
+                    }}
+                  </template>
+                </NeTooltip>
               </template>
             </div>
           </NeTableCell>

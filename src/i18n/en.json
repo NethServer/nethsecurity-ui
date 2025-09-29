@@ -68,7 +68,9 @@
     "password_confirmation_required_description": "Please confirm your password to proceed",
     "automated": "Automated",
     "automated_tooltip": "This item is managed by the system and cannot be modified.",
-    "remove": "Remove"
+    "remove": "Remove",
+    "connected": "Connected",
+    "not_connected": "Not connected"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -2645,7 +2647,9 @@
       "filter_peers": "Filter peers",
       "no_peer_found": "No peer found.",
       "filter_change_suggestion": "@:standalone.conntrack.filter_change_suggestion",
-      "all_traffic": "All traffic"
+      "all_traffic": "All traffic",
+      "connection": "Connection",
+      "latest_handshake": "Last rekeying took place {time} ago."
     },
     "wireguard_peers": {
       "title": "Tunnel peers",

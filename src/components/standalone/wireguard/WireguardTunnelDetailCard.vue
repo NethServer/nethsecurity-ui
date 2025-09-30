@@ -115,11 +115,11 @@ function openPeerDrawer() {
               </span>
               {{ instance.public_endpoint }}
             </span>
-            <span>
+            <span v-if="instance.mtu != 0">
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.mtu') }}: </span>
               {{ instance.mtu }}
             </span>
-            <span v-if="instance.dns">
+            <span v-if="instance.dns.length > 0">
               <span class="font-bold"> {{ t('standalone.wireguard_tunnel.dns') }}: </span>
               {{ instance.dns.join(', ') }}
             </span>

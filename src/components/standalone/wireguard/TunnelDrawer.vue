@@ -83,7 +83,11 @@ watch(
         network.value = tunnel.network
         udpPort.value = tunnel.listen_port.toString()
         publicIp.value = tunnel.public_endpoint
-        mtu.value = tunnel.mtu.toString()
+        if (tunnel.mtu > 0) {
+          mtu.value = tunnel.mtu.toString()
+        } else {
+          mtu.value = ''
+        }
         if (tunnel.dns.length > 0) {
           dnsServers.value = tunnel.dns
         } else {

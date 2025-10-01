@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0](https://github.com/NethServer/nethsecurity-ui/compare/2.5.8...2.6.0) (2025-10-01)
+
+
+### Features
+
+* wireguard tunnels ([#644](https://github.com/NethServer/nethsecurity-ui/issues/644)) ([ed67430](https://github.com/NethServer/nethsecurity-ui/commit/ed674308acab9976b9e3c7868ce2d65bb5bbf0ac))
+
+
+### Bug Fixes
+
+* **standalone:** dashboard, improve HA widget ([0e46e7d](https://github.com/NethServer/nethsecurity-ui/commit/0e46e7d3386a4d70738043b1b02e7bbea1936d02))
+
 ## [2.5.8](https://github.com/NethServer/nethsecurity-ui/compare/2.5.7...2.5.8) (2025-09-18)
 
 

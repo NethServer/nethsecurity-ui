@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useHostSets } from '@/composables/useHostSets'
 import { useDomainSets } from '@/composables/useDomainSets'
+import AutomatedBadge from '@/components/AutomatedBadge.vue'
 
 const props = defineProps({
   rules: {
@@ -452,7 +453,10 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     {{ rule.target }}
                   </span>
                 </td>
-                <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
+                <td v-if="rule.ns_tag.includes('automated')">
+                  <AutomatedBadge />
+                </td>
+                <td v-else :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->
                   <div class="flex justify-end gap-2">
                     <NeButton kind="tertiary" @click="emit('editRule', rule)">

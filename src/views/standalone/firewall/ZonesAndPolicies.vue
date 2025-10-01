@@ -31,7 +31,7 @@ import {
   getTrafficToWan,
   forwardingsToByZone,
   getZoneColorClasses,
-  getZoneIcon
+  getIconFromZone
 } from '@/lib/standalone/network'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
@@ -63,7 +63,10 @@ function trafficIcon(trafficPolicy: TrafficPolicy): string {
 }
 
 function isSpecialZone(zone: Zone): boolean {
-  return Object.values(SpecialZones).includes(zone.name as unknown as SpecialZones)
+  return (
+    Object.values(SpecialZones).includes(zone.name as unknown as SpecialZones) ||
+    zone.nsTags.includes('automated')
+  )
 }
 
 function createZone() {
@@ -142,7 +145,7 @@ function editZone(zone: Zone) {
                 :class="getZoneColorClasses(item.name)"
                 class="flex h-10 w-10 items-center justify-center rounded-full"
               >
-                <FontAwesomeIcon :icon="['fas', getZoneIcon(item.name)]" class="h-5 w-5" />
+                <FontAwesomeIcon :icon="getIconFromZone(item.name)" class="h-5 w-5" />
               </div>
               <span class="uppercase">{{ item.name }}</span>
             </div>

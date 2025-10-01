@@ -2,7 +2,7 @@
   "name": "nethsecurity-ui",
   "version": "2.5.8",
   "config": {
-    "requiredApiVersion": "~3.3.0"
+    "requiredApiVersion": "~3.4.0"
   },
   "private": true,
   "type": "module",
@@ -30,7 +30,7 @@
     "@nethesis/nethesis-brands-svg-icons": "github:nethesis/Font-Awesome#ns-brands",
     "@nethesis/nethesis-light-svg-icons": "github:nethesis/Font-Awesome#ns-light",
     "@nethesis/nethesis-solid-svg-icons": "github:nethesis/Font-Awesome#ns-solid",
-    "@nethesis/vue-components": "^3.0.1",
+    "@nethesis/vue-components": "^3.2.0",
     "@tailwindcss/vite": "^4.1.8",
     "@types/lodash-es": "^4.17.12",
     "@types/semver": "^7.5.8",

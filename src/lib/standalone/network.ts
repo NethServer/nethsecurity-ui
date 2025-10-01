@@ -109,6 +109,8 @@ export function getInterface(deviceOrIface: DeviceOrIface) {
 export function getInterfaceDisplayName(deviceOrIface: DeviceOrIface) {
   if (isOpenVpnRw(deviceOrIface)) {
     return deviceOrIface.openvpn_rw.ns_description
+  } else if (isWireguard(deviceOrIface)) {
+    return deviceOrIface.iface.ns_name
   } else {
     if (getInterface(deviceOrIface)) {
       return getInterface(deviceOrIface)['.name']
@@ -159,6 +161,9 @@ export function getUiZoneName(deviceOrIface: DeviceOrIface, devicesByZone: ZoneW
 export function getZoneColor(zoneName: string) {
   const { t } = useI18n()
 
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'lan':
       return 'Green'
@@ -180,6 +185,9 @@ export function getZoneColor(zoneName: string) {
 }
 
 export function getZoneColorClasses(zoneName: string) {
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'wan':
       return 'bg-rose-100 text-rose-700 dark:bg-rose-700 dark:text-rose-50'
@@ -205,6 +213,9 @@ export function getZoneColorClasses(zoneName: string) {
 }
 
 export function getZoneBorderColorClasses(zoneName: string) {
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'lan':
       return 'border-green-700 dark:border-green-700'
@@ -232,6 +243,9 @@ export function getZoneBorderColorClasses(zoneName: string) {
  * @param zone
  */
 export function getIconFromZone(zone?: string): IconDefinition {
+  if (zone && isWireguardZone(zone)) {
+    zone = 'vpn'
+  }
   switch (zone) {
     case 'lan':
       return faLocationDot
@@ -266,6 +280,9 @@ export function getIconFromZone(zone?: string): IconDefinition {
  * @see getIconFromZone
  */
 export function getZoneIcon(zoneName: string) {
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'lan':
       return 'location-dot'
@@ -296,6 +313,9 @@ export function getZoneIconBackgroundStyle(zoneName: string | undefined) {
     return 'bg-gray-100 dark:bg-gray-500'
   }
 
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'lan':
       return 'bg-green-100 dark:bg-green-700'
@@ -322,6 +342,9 @@ export function getZoneIconForegroundStyle(zoneName: string | undefined) {
     return 'text-gray-500 dark:text-gray-50'
   }
 
+  if (isWireguardZone(zoneName)) {
+    zoneName = 'vpn'
+  }
   switch (zoneName) {
     case 'lan':
       return 'text-green-700 dark:text-green-50'
@@ -383,8 +406,12 @@ export function isOpenVpnRw(device: DeviceOrIface) {
   return device.openvpn_rw
 }
 
+export function isWireguard(device: DeviceOrIface) {
+  return device.iface?.proto == 'wireguard'
+}
+
 export function isVpn(device: DeviceOrIface) {
-  return isOpenVpnTunnel(device) || isOpenVpnRw(device) || isIpsec(device)
+  return isOpenVpnTunnel(device) || isOpenVpnRw(device) || isIpsec(device) || isWireguard(device)
 }
 
 export function isHotspot(device: DeviceOrIface) {
@@ -539,4 +566,8 @@ export function getVlanParent(bridgeDevice: DeviceOrIface, allDevices: DeviceOrI
 export function isIpv6Enabled(device: DeviceOrIface) {
   const iface = getInterface(device)
   return device.ipv6 === '1' || (iface.proto === 'pppoe' && device.ipv6 === 'auto')
+}
+
+export function isWireguardZone(name: string) {
+  return name.match(/^wg[a-zA-Z0-9]+vpn$/)
 }

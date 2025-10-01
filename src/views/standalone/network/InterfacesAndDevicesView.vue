@@ -46,7 +46,8 @@ import {
   getIpv4Addresses,
   getIpv6Addresses,
   getVlanParent,
-  isDeviceUp
+  isDeviceUp,
+  isWireguard
 } from '@/lib/standalone/network'
 import ConfigureDeviceDrawer, {
   type DeviceType
@@ -527,7 +528,8 @@ function isDeviceConfigurable(deviceOrIface: DeviceOrIface) {
     isOpenVpnTunnel(deviceOrIface) ||
     isOpenVpnRw(deviceOrIface) ||
     isIpsec(deviceOrIface) ||
-    isHotspot(deviceOrIface)
+    isHotspot(deviceOrIface) ||
+    isWireguard(deviceOrIface)
   ) {
     return false
   } else {
@@ -773,6 +775,13 @@ function formatPackets(packets: number) {
                         />
                         <!-- ipsec tunnel badge -->
                         <NeBadge v-if="isIpsec(device)" size="sm" kind="primary" text="IPSEC" />
+                        <!-- wireguard badge -->
+                        <NeBadge
+                          v-if="isWireguard(device)"
+                          size="sm"
+                          kind="primary"
+                          text="WIREGUARD"
+                        />
                       </div>
                       <!-- second column -->
                       <div class="space-y-2">

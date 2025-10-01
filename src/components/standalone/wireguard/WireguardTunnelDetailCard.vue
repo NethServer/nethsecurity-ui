@@ -150,14 +150,14 @@ function openPeerDrawer() {
       <NeEmptyState
         v-else-if="filteredPeers.length <= 0"
         :title="t('standalone.wireguard_tunnel.no_peer_found')"
-        :description="t('standalone.wireguard_tunnel.filter_change_suggestion')"
+        :description="t('common.try_changing_search_filter')"
         :icon="faGlobe"
       >
         <NeButton kind="tertiary" @click="emit('clear-filter')">
           {{ t('common.clear_filter') }}
         </NeButton>
       </NeEmptyState>
-      <NeTable v-else :aria-label="t('standalone.wireguard_tunnel.peers')" card-breakpoint="lg">
+      <NeTable v-else :aria-label="t('standalone.wireguard_tunnel.peers')" card-breakpoint="2xl">
         <NeTableHead>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.name') }}

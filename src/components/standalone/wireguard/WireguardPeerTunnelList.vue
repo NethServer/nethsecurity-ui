@@ -170,14 +170,14 @@ const peerFilter = ref('')
     <NeEmptyState
       v-else-if="filteredPeers.length <= 0"
       :title="t('standalone.wireguard_tunnel.no_peer_found')"
-      :description="t('standalone.wireguard_tunnel.filter_change_suggestion')"
+      :description="t('common.try_changing_search_filter')"
       :icon="faGlobe"
     >
       <NeButton kind="tertiary" @click="peerFilter = ''">
         {{ t('common.clear_filter') }}
       </NeButton>
     </NeEmptyState>
-    <NeTable v-else :aria-label="t('standalone.wireguard_peers.peers')" card-breakpoint="lg">
+    <NeTable v-else :aria-label="t('standalone.wireguard_peers.peers')" card-breakpoint="xl">
       <NeTableHead>
         <NeTableHeadCell>
           {{ t('standalone.wireguard_peers.name') }}

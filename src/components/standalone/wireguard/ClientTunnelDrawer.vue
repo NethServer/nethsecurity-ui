@@ -220,7 +220,7 @@ function submit() {
         v-model="udpPort"
         :disabled="disableForm"
         :invalid-message="t(validation.getFirstI18nKeyFor('udp_port'))"
-        :label="t('standalone.wireguard_peers.udp_port')"
+        :label="t('standalone.wireguard_tunnel.udp_port')"
       />
       <AdvancedSettingsDropdown>
         <NeMultiTextInput

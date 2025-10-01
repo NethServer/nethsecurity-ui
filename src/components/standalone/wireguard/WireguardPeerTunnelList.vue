@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   NeButton,
   NeCard,
@@ -35,6 +35,7 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
 import DeleteClientModal from '@/components/standalone/wireguard/DeleteClientModal.vue'
+import { useIntervalFn } from '@vueuse/core'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -73,7 +74,6 @@ const error = ref<Error>()
 const instances = ref<ClientTunnel[]>([])
 
 async function fetchInstances() {
-  loading.value = true
   error.value = undefined
   return ubusCall<ListTunnelsResponse>('ns.wireguard', 'list-tunnels')
     .then((response) => {
@@ -82,8 +82,6 @@ async function fetchInstances() {
     .catch((err) => (error.value = err))
     .finally(() => (loading.value = false))
 }
-
-onMounted(() => fetchInstances())
 
 const showImportTunnelDrawer = ref(false)
 const showTunnelDrawer = ref(false)
@@ -118,14 +116,30 @@ const { currentPage, paginatedItems } = useItemPagination(() => filteredPeers.va
 })
 
 const peerFilter = ref('')
+
+const REFRESH_SECONDS = 10
+useIntervalFn(
+  () => {
+    fetchInstances()
+  },
+  REFRESH_SECONDS * 1000,
+  {
+    immediateCallback: true
+  }
+)
 </script>
 
 <template>
   <NeCard v-if="loading" loading />
   <div v-else class="space-y-6">
-    <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-      {{ t('standalone.wireguard_peers.description') }}
-    </p>
+    <div class="flex flex-wrap gap-4">
+      <p class="mr-auto max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+        {{ t('standalone.wireguard_peers.description') }}
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        {{ t('common.data_updated_every_seconds', { seconds: REFRESH_SECONDS }) }}
+      </p>
+    </div>
     <div v-if="instances.length > 0" class="flex flex-wrap gap-4">
       <NeTextInput
         v-model="peerFilter"

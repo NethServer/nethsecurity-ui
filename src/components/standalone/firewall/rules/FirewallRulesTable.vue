@@ -454,7 +454,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                   </span>
                 </td>
                 <td v-if="rule.ns_tag.includes('automated')">
-                  <AutomatedBadge />
+                  <span class="flex justify-end">
+                    <AutomatedBadge />
+                  </span>
                 </td>
                 <td v-else :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <!-- edit and kebab menu -->

@@ -6,7 +6,7 @@ import {
   NeInlineNotification,
   NeTextInput
 } from '@nethesis/vue-components'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import type { AxiosResponse } from 'axios'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import { faCirclePlus, faGlobe } from '@fortawesome/free-solid-svg-icons'
@@ -19,6 +19,7 @@ import PeerDrawer from '@/components/standalone/wireguard/PeerDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges.ts'
 import type { Peer, Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 import { useI18n } from 'vue-i18n'
+import { useIntervalFn } from '@vueuse/core'
 
 const { t } = useI18n()
 const changes = useUciPendingChangesStore()
@@ -40,8 +41,6 @@ async function fetchData(): Promise<AxiosResponse<ListInstancesResponse>> {
     .catch((err) => (error.value = err))
     .finally(() => (loading.value = false))
 }
-
-onMounted(() => fetchData())
 
 function refreshData(): Promise<unknown> {
   return Promise.all([changes.getChanges(), fetchData()])
@@ -106,15 +105,31 @@ function peerDeleted() {
 }
 
 const peerFilter = ref('')
+
+const REFRESH_SECONDS = 10
+useIntervalFn(
+  () => {
+    fetchData()
+  },
+  REFRESH_SECONDS * 1000,
+  {
+    immediateCallback: true
+  }
+)
 </script>
 
 <template>
   <div>
     <NeCard v-if="loading" loading />
     <div v-else class="space-y-6">
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.wireguard_tunnel.description') }}
-      </p>
+      <div class="flex flex-wrap gap-4">
+        <p class="mr-auto max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.wireguard_tunnel.description') }}
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ t('common.data_updated_every_seconds', { seconds: REFRESH_SECONDS }) }}
+        </p>
+      </div>
       <NeInlineNotification v-if="error != undefined" kind="error" :title="t('common.error')" />
       <template v-else-if="instances.length > 0">
         <div class="flex flex-wrap gap-4">

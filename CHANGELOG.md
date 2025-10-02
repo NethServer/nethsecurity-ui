@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/NethServer/nethsecurity-ui/compare/2.6.0...2.7.0) (2025-10-02)
+
+
+### Features
+
+* added live update for wireguard views ([#652](https://github.com/NethServer/nethsecurity-ui/issues/652)) ([592bd46](https://github.com/NethServer/nethsecurity-ui/commit/592bd46adb4715cff6619cf64976c22f956ecf1d))
+
 ## [2.6.0](https://github.com/NethServer/nethsecurity-ui/compare/2.5.8...2.6.0) (2025-10-01)
 
 

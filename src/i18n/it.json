@@ -68,7 +68,9 @@
     "password_confirmation_required_description": "Si prega di confermare la password per procedere",
     "automated": "Sistema",
     "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica.",
-    "remove": "Eliminare"
+    "remove": "Eliminare",
+    "connected": "Connesso",
+    "not_connected": "Non connesso"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -420,7 +422,8 @@
     "invalid_password": "Autenticazione fallita",
     "cannot_retrieve_static_leases": "Impossibile recuperare i lease statici",
     "cannot_set_uci_configuration": "Impossibile salvare la configurazione UCI",
-    "unauthorized_action": "Azione non autorizzata"
+    "unauthorized_action": "Azione non autorizzata",
+    "duplicate_ip": "L'IP è già stato utilizzato"
   },
   "login": {
     "sign_in": "Accedi",
@@ -709,7 +712,8 @@
       "check_dns_configuration": "Controllare DNS",
       "tunnels_enabled": "tunnel abilitato | tunnel abilitati",
       "monitoring_disabled": "Monitoraggio disabilitato",
-      "monitoring_disabled_tooltip": "Abilitare il log almeno in una chain per abilitare il monitoraggio delle minacce. Vai alla pagina {page}"
+      "monitoring_disabled_tooltip": "Abilitare il log almeno in una chain per abilitare il monitoraggio delle minacce. Vai alla pagina {page}",
+      "unavailable": "Non disponibile"
     },
     "subscription": {
       "title": "Subscription",
@@ -2552,6 +2556,84 @@
       "successful": "Successo",
       "rsync_transfer_failed": "Trasferimento rsync fallito",
       "enabled": "Abilitato"
+    },
+    "wireguard_tunnel": {
+      "no_peer_configured": "Nessun peer configurato",
+      "add_peer": "Aggiungi peer",
+      "edit_peer": "Modifica peer",
+      "no_server_configured": "Nessun server configurato",
+      "add_server": "Aggiungi server",
+      "udp_port": "Porta UDP",
+      "error_fetching_server_setup_description": "C'è stato un errore nel recuperare i dati per aggiungere il server Wireguard, si prega di riprovare più tardi",
+      "delete_tunnel_confirm": "Cancellare il server '{name}' rimuoverà tutti i peer associati e li disconnetterà dalla VPN.",
+      "delete_peer_confirm": "Cancellare il peer '{name}' lo scollegherà dalla VPN.",
+      "add_dns": "Aggiungi DNS",
+      "vpn_network_tooltip": "La rete VPN è una rete virtuale utilizzata dai peer; selezionare una rete non utilizzata in qualsiasi altra configurazione del firewall. La rete VPN non può essere modificata dopo la configurazione iniziale.",
+      "warning_editing_server_description": "Le modifiche di configurazione del server possono richiedere il download della configurazione aggiornata sul peer o di modificarla manualmente.",
+      "warning_editing_peer_description": "Le modifiche al peer richiedono il download della configurazione aggiornata o di una modifica manuale.",
+      "no_peer_found": "Nessun peer trovato",
+      "all_traffic": "Tutto il traffico",
+      "title": "Tunnel Wireguard",
+      "description": "In questa pagina puoi creare tunnel WireGuard; il protocollo WireGuard è leggero, moderno e ampiamente supportato su diverse piattaforme. I tunnel WireGuard possono essere utilizzati per connettere in modo sicuro reti remote con un overhead minimo e una crittografia robusta.",
+      "tabs": {
+        "server": "Tunnel server",
+        "tunnel": "Tunnel peer"
+      },
+      "endpoint": "Endpoint",
+      "mtu": "MTU",
+      "dns": "DNS",
+      "delete_peer": "Elimina peer",
+      "public_endpoint": "Endpoint pubblici",
+      "error_fetching_server_setup": "Non è stato possibile prendere i parametri di setup",
+      "delete_peer_title": "Elimina peer",
+      "route_all_traffic": "Instrada tutto il traffico",
+      "pre_shared_key": "Pre-shared key",
+      "server_networks": "Reti sul server",
+      "peer_networks": "Reti sul peer",
+      "filter_peers": "Filtra peers",
+      "latest_handshake": "L'ultimo scambio di chiavi crittografiche è avvenuto {time} fa.",
+      "vpn_network": "Rete VPN",
+      "port": "Porta",
+      "edit_tunnel": "Modifica tunnel",
+      "delete_tunnel": "Elimina tunnel",
+      "name": "Nome",
+      "reserved_ip": "IP riservato",
+      "status": "Stato",
+      "dns_servers": "Server DNS",
+      "edit_server": "Modifica server",
+      "delete_tunnel_title": "Elimina tunnel",
+      "add_network": "Aggiungi rete",
+      "download_qr_code": "Scarica QR code",
+      "download_configuration": "Scarica configurazione",
+      "warning_editing_server": "Attenzione",
+      "warning_editing_peer": "Attenzione",
+      "connection": "Connessione"
+    },
+    "wireguard_peers": {
+      "description": "In questa pagina è possibile importare un file di configurazione generato da qualsiasi server WireGuard. È inoltre possibile configurare manualmente un client per collegarlo a qualsiasi dispositivo che supporta WireGuard.",
+      "no_peer_configured": "Nessun peer configurato",
+      "wireguard_config_file": "File di configurazione Wireguard",
+      "all_traffic": "Tutto il traffico",
+      "server_public_key": "Chiave pubblica del server",
+      "delete_peer_title": "Cancella tunnel peer",
+      "delete_peer_confirm": "Cancellando il peer '{name}' si rimuoverà la sua configurazione VPN e lo disconnetterà dal tunnel.",
+      "title": "Tunnel peers",
+      "import_peer_tunnel": "Importa tunnel peer",
+      "add_peer_tunnel": "Aggiungi tunnel peer",
+      "edit_peer_tunnel": "Modifica tunnel peer",
+      "error_importing_peer_tunnel_description": "Non è stato possibile importare la configurazione.",
+      "network_routes": "Rotte raggiungibili",
+      "peer_private_key": "Chiave privata del peer",
+      "pre_shared_key": "Pre-shared key",
+      "route_all_traffic": "Instrada tutto il traffico",
+      "endpoint": "Endpoint",
+      "name": "Nome",
+      "reserved_ip": "IP riservato",
+      "status": "Stato",
+      "connection": "Connessione",
+      "add_route": "Aggiungi rotta",
+      "add_tunnel": "Aggiungi tunnel",
+      "delete_tunnel": "Elimina tunnel"
     }
   },
   "controller": {
@@ -2814,7 +2896,8 @@
     "clear_selection": "Cancella selezione",
     "more_options_hidden": "Continua a digitare per visualizzare altre opzioni",
     "no_options": "Nessuna opzione",
-    "clear_search": "Azzera ricerca"
+    "clear_search": "Azzera ricerca",
+    "clear_search_label": "Pulisci"
   },
   "sort": {
     "sort_by": "Ordina per",

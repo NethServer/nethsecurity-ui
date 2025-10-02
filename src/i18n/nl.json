@@ -1,6 +1,12 @@
 {
   "common": {
     "save": "Bewaar",
-    "edit": "Wijzig"
+    "edit": "Wijzig",
+    "enabled": "Ingeschakeld",
+    "disabled": "Uitgeschakeld",
+    "loading": "Aan het laden"
+  },
+  "error": {
+    "invalid_credentials": "Ongeldige inloggegevens"
   }
 }

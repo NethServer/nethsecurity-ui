@@ -52,7 +52,7 @@ function sortAddresses<T extends StaticLease | DynamicLease>(a: T, b: T) {
 }
 
 // Declare sortedItems before useItemPagination
-const { sortedItems } = useSort(props.leases, sortKey, sortDescending, {
+const { sortedItems } = useSort(() => props.leases, sortKey, sortDescending, {
   ipaddr: sortAddresses
 })
 

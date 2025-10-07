@@ -242,7 +242,7 @@ const saveButtonLabel = computed(() => {
           v-model="udpPort"
           :disabled="disableForm || editing"
           :label="t('standalone.wireguard_tunnel.udp_port')"
-          :invalid-message="t(validation.getFirstI18nKeyFor('udpPort'))"
+          :invalid-message="t(validation.getFirstI18nKeyFor('listen_port'))"
         />
         <NeTextInput
           v-model="publicIp"

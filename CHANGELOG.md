@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.1](https://github.com/NethServer/nethsecurity-ui/compare/2.7.0...2.7.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* **dhcp:** fixed reactivity for filtering ([#655](https://github.com/NethServer/nethsecurity-ui/issues/655)) ([a70059d](https://github.com/NethServer/nethsecurity-ui/commit/a70059d80f237c4a8673cca6d78b842e83aee9b7))
+* **wireguard:** ui error fixes ([#654](https://github.com/NethServer/nethsecurity-ui/issues/654)) ([ea91bdf](https://github.com/NethServer/nethsecurity-ui/commit/ea91bdfd3e622fc8266435b22dd8a58a98eee14d))
+
 ## [2.7.0](https://github.com/NethServer/nethsecurity-ui/compare/2.6.0...2.7.0) (2025-10-02)
 
 

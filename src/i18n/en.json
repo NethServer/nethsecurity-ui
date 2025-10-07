@@ -423,7 +423,8 @@
     "invalid_credentials": "Invalid credentials",
     "cannot_set_uci_configuration": "Cannot set UCI configuration",
     "cannot_reuse_old_password": "New password must be different from the old one",
-    "duplicate_ip": "IP has already been used"
+    "duplicate_ip": "IP has already been used",
+    "duplicate_port": "Port has already been used"
   },
   "ne_text_input": {
     "show_password": "Show password",

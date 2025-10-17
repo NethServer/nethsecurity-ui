@@ -2010,7 +2010,7 @@
       "port": "Port",
       "remote_networks": "Remote networks",
       "extra_remote_networks": "Extra remote networks",
-      "remote_hosts": "Remote endpoints",
+      "remote_hosts": "Remote hosts",
       "topology": "Topology",
       "vpn_network": "VPN network",
       "status": "Status",

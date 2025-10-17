@@ -717,7 +717,7 @@ watch(
         >
         <NeMultiTextInput
           v-model="remoteNetworks"
-          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_host')"
           :title="t('standalone.openvpn_tunnel.remote_networks')"
           :invalid-messages="remoteNetworksValidationErrors"
           ><template #tooltip>
@@ -732,7 +732,7 @@ watch(
       <template v-else>
         <NeMultiTextInput
           v-model="remoteHosts"
-          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_host')"
           :title="t('standalone.openvpn_tunnel.remote_hosts')"
           :invalid-messages="remoteHostsValidationErrors"
         />
@@ -811,7 +811,7 @@ watch(
         <NeMultiTextInput
           v-if="isClientTunnel"
           v-model="remoteNetworks"
-          :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+          :add-item-label="t('standalone.openvpn_tunnel.add_remote_host')"
           :title="t('standalone.openvpn_tunnel.remote_networks')"
           :invalid-messages="remoteNetworksValidationErrors"
         />
@@ -838,7 +838,7 @@ watch(
           <NeMultiTextInput
             v-if="topology != 'p2p'"
             v-model="remoteNetworks"
-            :add-item-label="t('standalone.openvpn_tunnel.add_remote_address')"
+            :add-item-label="t('standalone.openvpn_tunnel.add_remote_host')"
             :title="t('standalone.openvpn_tunnel.extra_remote_networks')"
             optional
             :optional-label="t('common.optional')"

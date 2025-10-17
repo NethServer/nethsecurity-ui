@@ -1438,7 +1438,7 @@
       "private_key_tunnel_ca_certificates": "Chiave privata, tunnel a CA certificati",
       "status": "Stato",
       "import_configuration": "Importa configurazione",
-      "add_remote_address": "Aggiungi rete remota",
+      "add_remote_host": "Aggiungi host remoto",
       "add_server_tunnel": "Aggiungi tunnel server",
       "bridged": "Bridged",
       "disable": "Disabilita",

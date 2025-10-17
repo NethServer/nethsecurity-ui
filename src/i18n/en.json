@@ -2032,7 +2032,7 @@
       "enforce_minimum_tls_version": "Enforce a minimum TLS version",
       "choose_network": "Choose network",
       "add_endpoint": "Add endpoint",
-      "add_remote_address": "Add remote network",
+      "add_remote_host": "Add remote host",
       "subnet": "Subnet",
       "auto": "Auto",
       "server_client_negotiation": "Server/client negotiation",

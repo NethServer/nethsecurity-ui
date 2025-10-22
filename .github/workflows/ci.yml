@@ -44,6 +44,16 @@ jobs:
         run: |
           npm install
           echo "$TITLE" | npx commitlint
+  tests:
+    name: Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm ci
+      - run: npm test -- run
   build:
     name: Build
     runs-on: ubuntu-24.04

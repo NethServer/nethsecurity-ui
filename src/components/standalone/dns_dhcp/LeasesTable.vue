@@ -19,6 +19,7 @@ import type { DynamicLease } from './DynamicLeases.vue'
 import { ref } from 'vue'
 import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import type { SortEvent } from '@nethesis/vue-components'
+import { ipv4ToInt } from '@/lib/ipUtils.ts'
 
 const { t } = useI18n()
 
@@ -35,25 +36,9 @@ const pageSize = ref(10)
 const sortKey = ref<keyof Lease>('hostname')
 const sortDescending = ref(false)
 
-function compareIpAddresses(ip1: string, ip2: string): number {
-  const octets1 = ip1.split('.').map(Number)
-  const octets2 = ip2.split('.').map(Number)
-
-  for (let i = 0; i < 4; i++) {
-    if (octets1[i] !== octets2[i]) {
-      return octets1[i]! - octets2[i]!
-    }
-  }
-  return 0
-}
-
-function sortAddresses<T extends StaticLease | DynamicLease>(a: T, b: T) {
-  return compareIpAddresses(a.ipaddr, b.ipaddr)
-}
-
 // Declare sortedItems before useItemPagination
 const { sortedItems } = useSort(() => props.leases, sortKey, sortDescending, {
-  ipaddr: sortAddresses
+  ipaddr: (a, b) => ipv4ToInt(a.ipaddr) - ipv4ToInt(b.ipaddr)
 })
 
 // Now use sortedItems in useItemPagination
@@ -102,7 +87,7 @@ const onSort = (payload: SortEvent) => {
       { id: 'description', label: t('standalone.dns_dhcp.reservation_name') },
       { id: 'interface', label: t('standalone.dns_dhcp.interface') },
       { id: 'timestamp', label: t('standalone.dns_dhcp.lease_expiration') },
-      { id: 'address', label: t('standalone.dns_dhcp.ip_address') }
+      { id: 'ipaddr', label: t('standalone.dns_dhcp.ip_address') }
     ]"
     :open-menu-aria-label="t('ne_dropdown.open_menu')"
     :sort-by-label="t('sort.sort_by')"
@@ -124,7 +109,7 @@ const onSort = (payload: SortEvent) => {
       <NeTableHeadCell column-key="interface" sortable @sort="onSort">
         {{ t('standalone.dns_dhcp.interface') }}
       </NeTableHeadCell>
-      <NeTableHeadCell column-key="address" sortable @sort="onSort">
+      <NeTableHeadCell column-key="ipaddr" sortable @sort="onSort">
         {{ t('standalone.dns_dhcp.ip_address') }}
       </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.dns_dhcp.mac_address') }}</NeTableHeadCell>

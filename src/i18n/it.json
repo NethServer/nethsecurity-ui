@@ -54,7 +54,7 @@
     "data_updated_every_seconds": "Dati aggiornati ogni {seconds} secondi",
     "actions": "Azioni",
     "go_to_page": "Vai a {page}",
-    "clear_filters": "Azzera filtri",
+    "clear_filters": "Rimuovi filtri",
     "try_changing_search_filters": "Prova a cambiare i filtri di ricerca",
     "download": "Download",
     "type": "Tipo",
@@ -80,7 +80,7 @@
     "http_403": "Errore di autorizzazione",
     "http_404": "Risorsa non trovata",
     "http_500": "Errore del server",
-    "required": "Richiesto",
+    "required": "Obbligatorio",
     "invalid_hostname": "Nome host non valido",
     "hostname_is_too_long": "Il nome host ha troppi caratteri",
     "cannot_save_configuration": "Impossibile salvare la configurazione",
@@ -423,7 +423,8 @@
     "cannot_retrieve_static_leases": "Impossibile recuperare i lease statici",
     "cannot_set_uci_configuration": "Impossibile salvare la configurazione UCI",
     "unauthorized_action": "Azione non autorizzata",
-    "duplicate_ip": "L'IP è già stato utilizzato"
+    "duplicate_ip": "L'IP è già stato utilizzato",
+    "duplicate_port": "La porta è già stata utilizzata"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1898,7 +1899,7 @@
       "ports_placeholder": "E.s. 8081, 9090, 5500-5600",
       "ports_tooltip": "Inserisci una porta singola, porte multiple separate da virgole (es. '8686, 9090') e/o un range di porte (es. '5500-5600')",
       "add_to_the_bottom": "Aggiungi alla fine",
-      "clear_filter_to_sort_rules": "Pulisci filtro per ordinare le regole",
+      "clear_filter_to_sort_rules": "Rimuovi filtro per ordinare le regole",
       "forward_rules_description": "Configura le regole che definiscono come i pacchetti transitano tra le zone. La priorità è definita dall'ordine delle regole, con la prima che fa match che ha la precedenza.",
       "service_ports": "{protocols} qualunque porta | {protocols} porta {ports} | {protocols} porte {ports}",
       "source_zone": "Zona sorgente",
@@ -2891,12 +2892,12 @@
     "report_issue_step_3": "Riporta il problema, assicurati di fornire sia il comando che l'output corrispondente"
   },
   "ne_dropdown_filter": {
-    "clear_filter": "Azzera filtro",
+    "clear_filter": "Rimuovi filtro",
     "open_filter": "Apri filtro",
     "clear_selection": "Cancella selezione",
     "more_options_hidden": "Continua a digitare per visualizzare altre opzioni",
     "no_options": "Nessuna opzione",
-    "clear_search": "Azzera ricerca",
+    "clear_search": "Pulisci ricerca",
     "clear_search_label": "Pulisci"
   },
   "sort": {

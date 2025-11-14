@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.2](https://github.com/NethServer/nethsecurity-ui/compare/2.7.1...2.7.2) (2025-11-14)
+
+
+### Bug Fixes
+
+* **lang:** wrong label in openvpn tunnel client section ([#658](https://github.com/NethServer/nethsecurity-ui/issues/658)) ([9d00c69](https://github.com/NethServer/nethsecurity-ui/commit/9d00c69064369ac0b311745bd5ab73f5bf96f0a6))
+* **leases:** fixed IP sorting in leases table ([#660](https://github.com/NethServer/nethsecurity-ui/issues/660)) ([b75a18b](https://github.com/NethServer/nethsecurity-ui/commit/b75a18ba5f60038ea63603e59a1f6923552e0403))
+
 ## [2.7.1](https://github.com/NethServer/nethsecurity-ui/compare/2.7.0...2.7.1) (2025-10-07)
 
 

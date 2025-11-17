@@ -1222,7 +1222,7 @@
       "scan_network_reservation": "Reservation",
       "scan_network_reservation_ip_reserved": "IP riservato",
       "scan_network_reservation_ip_not_reserved": "IP non riservato"
-},
+    },
     "storage": {
       "vendor": "Produttore",
       "title": "Storage",

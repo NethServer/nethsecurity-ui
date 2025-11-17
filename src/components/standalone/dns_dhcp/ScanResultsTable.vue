@@ -22,11 +22,7 @@ import {
 import { ref, computed, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ScanResult } from './ScanNetwork.vue'
-import { 
-  faCirclePlus, 
-  faCircleCheck, 
-  faCircleXmark 
-} from '@fortawesome/free-solid-svg-icons'
+import { faCirclePlus, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { ipv4ToInt } from '@/lib/ipUtils.ts'
 
 const props = defineProps({
@@ -86,17 +82,17 @@ const filteredResults = computed(() => {
 
 const sortedResults = computed(() => {
   let sorted = [...filteredResults.value]
-  
+
   if (sortKey.value === 'reservation') {
     // Manual sorting for reservation field
     sorted.sort((a, b) => {
       const aReserved = hasReservation(a.ip)
       const bReserved = hasReservation(b.ip)
-      
+
       // null (error) = 0, false (not reserved) = 1, true (reserved) = 2
       const aValue = aReserved === null ? 0 : aReserved ? 2 : 1
       const bValue = bReserved === null ? 0 : bReserved ? 2 : 1
-      
+
       const comparison = aValue - bValue
       return sortDescending.value ? -comparison : comparison
     })
@@ -152,7 +148,7 @@ function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
       action: () => emit('addIpReservation', scanResult)
     })
   }
-  
+
   // Always add "Add DNS Record"
   options.push({
     id: 'addDnsRecord',
@@ -160,7 +156,7 @@ function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
     icon: faCirclePlus,
     action: () => emit('addDnsRecord', scanResult)
   })
-  
+
   return options
 }
 </script>

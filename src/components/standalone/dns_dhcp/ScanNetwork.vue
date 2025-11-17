@@ -239,7 +239,7 @@ function addDnsRecord(scanResult: ScanResult) {
             :prefix-icon="faSearch"
             :clearable="true"
             :is-search="true"
-            class="max-w-md mb-4"
+            class="mb-4 max-w-md"
           />
           <p
             class="z-0 -mb-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
@@ -264,7 +264,12 @@ function addDnsRecord(scanResult: ScanResult) {
       :is-shown="isAddReservationDrawerShown"
       :import-scan-result="currentScanResult"
       @close="isAddReservationDrawerShown = false"
-      @add-edit-lease="() => { uciChangesStore.getChanges(); loadStaticLeases(); }"
+      @add-edit-lease="
+        () => {
+          uciChangesStore.getChanges()
+          loadStaticLeases()
+        }
+      "
     />
     <!-- add dns record drawer -->
     <CreateOrEditDnsRecordDrawer

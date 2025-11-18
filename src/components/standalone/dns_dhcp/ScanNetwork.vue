@@ -136,7 +136,7 @@ function calculateReservationStatus(ip: string): boolean | null {
  * Update reservation status for existing scan results
  */
 function updateScanResultsReservations() {
-  scanResults.value = scanResults.value.map(result => ({
+  scanResults.value = scanResults.value.map((result) => ({
     ...result,
     reservation: calculateReservationStatus(result.ip)
   }))

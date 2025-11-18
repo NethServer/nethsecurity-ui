@@ -24,6 +24,7 @@ import { useI18n } from 'vue-i18n'
 import type { ScanResult } from './ScanNetwork.vue'
 import { faCirclePlus, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { ipv4ToInt } from '@/lib/ipUtils.ts'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps({
   results: {
@@ -34,14 +35,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  staticLeases: {
-    type: Array as PropType<string[]>,
-    default: () => []
-  },
-  staticLeasesError: {
-    type: Boolean,
-    default: false
-  },
   searchTerm: {
     type: String,
     default: ''
@@ -49,6 +42,10 @@ const props = defineProps({
   showPaginator: {
     type: Boolean,
     default: true
+  },
+  interfaceName: {
+    type: String,
+    default: ''
   }
 })
 
@@ -56,8 +53,7 @@ const emit = defineEmits(['addIpReservation', 'addDnsRecord'])
 
 const { t } = useI18n()
 
-type SortKey = keyof ScanResult | 'reservation'
-const sortKey = ref<SortKey>('ip')
+const sortKey = ref<keyof ScanResult>('ip')
 const sortDescending = ref(false)
 
 const filteredResults = computed(() => {
@@ -66,7 +62,7 @@ const filteredResults = computed(() => {
   if (props.searchTerm) {
     const search = props.searchTerm.toLowerCase()
     filtered = filtered.filter((item) => {
-      const reservationText = getReservationSearchText(item.ip)
+      const reservationText = getReservationSearchText(item.reservation)
       return (
         item.ip?.toLowerCase().includes(search) ||
         item.mac?.toLowerCase().includes(search) ||
@@ -80,56 +76,32 @@ const filteredResults = computed(() => {
   return filtered
 })
 
-const sortedResults = computed(() => {
-  let sorted = [...filteredResults.value]
+const { sortedItems } = useSort(() => filteredResults.value, sortKey, sortDescending, {
+  ip: (a, b) => ipv4ToInt(a.ip) - ipv4ToInt(b.ip),
+  reservation: (a, b) => {
+    // null (error) = 0, false (not reserved) = 1, true (reserved) = 2
+    const aValue = a.reservation === null ? 0 : a.reservation ? 2 : 1
+    const bValue = b.reservation === null ? 0 : b.reservation ? 2 : 1
 
-  if (sortKey.value === 'reservation') {
-    // Manual sorting for reservation field
-    sorted.sort((a, b) => {
-      const aReserved = hasReservation(a.ip)
-      const bReserved = hasReservation(b.ip)
-
-      // null (error) = 0, false (not reserved) = 1, true (reserved) = 2
-      const aValue = aReserved === null ? 0 : aReserved ? 2 : 1
-      const bValue = bReserved === null ? 0 : bReserved ? 2 : 1
-
-      const comparison = aValue - bValue
-      return sortDescending.value ? -comparison : comparison
-    })
-  } else if (sortKey.value === 'ip') {
-    sorted.sort((a, b) => {
-      const comparison = ipv4ToInt(a.ip) - ipv4ToInt(b.ip)
-      return sortDescending.value ? -comparison : comparison
-    })
-  } else {
-    const { sortedItems } = useSort(() => filteredResults.value, sortKey as any, sortDescending)
-    sorted = sortedItems.value
+    return aValue - bValue
   }
-  return sorted
 })
 
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => sortedResults.value, {
+const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
   itemsPerPage: pageSize
 })
 
 const onSort = (payload: SortEvent) => {
-  sortKey.value = payload.key as SortKey
+  sortKey.value = payload.key as keyof ScanResult
   sortDescending.value = payload.descending
 }
 
-function hasReservation(ip: string): boolean | null {
-  if (props.staticLeasesError) {
-    return null
-  }
-  return props.staticLeases.includes(ip)
-}
-
-function getReservationSearchText(ip: string): string {
-  const reserved = hasReservation(ip)
-  if (reserved === null) {
+function getReservationSearchText(reservation: boolean | null | undefined): string {
+  if (reservation === null || reservation === undefined) {
     return '-'
-  } else if (reserved) {
+  }
+  if (reservation) {
     return t('standalone.dns_dhcp.scan_network_reservation_ip_reserved').toLowerCase()
   } else {
     return t('standalone.dns_dhcp.scan_network_reservation_ip_not_reserved').toLowerCase()
@@ -139,8 +111,8 @@ function getReservationSearchText(ip: string): string {
 function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
   const options: NeDropdownItem[] = []
 
-  // Add "Add IP Reservation" only if there's no existing reservation for the specific IP (hasReservation returns false)
-  if (hasReservation(scanResult.ip) === false) {
+  // Add "Add IP Reservation" only if there's no error and no existing reservation
+  if (scanResult.reservation === false) {
     options.push({
       id: 'addIpReservation',
       label: t('standalone.dns_dhcp.add_reservation'),
@@ -177,8 +149,14 @@ function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
     :sort-direction-label="t('sort.direction')"
     :ascending-label="t('sort.ascending')"
     :descending-label="t('sort.descending')"
-    class="lg:hidden"
+    class="mb-2 xl:hidden"
   />
+  <p
+    v-if="interfaceName"
+    class="z-0 -mb-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
+  >
+    {{ t('standalone.dns_dhcp.interface_name', { name: interfaceName }) }}
+  </p>
   <NeTable
     :sort-key="sortKey"
     :sort-descending="sortDescending"
@@ -222,12 +200,12 @@ function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
         <NeTableCell :data-label="t('standalone.dns_dhcp.description')">
           {{ item.description || '-' }}
         </NeTableCell>
-        <NeTableCell :data-label="t('standalone.dns_dhcp.reservation')">
+        <NeTableCell :data-label="t('standalone.dns_dhcp.scan_network_reservation')">
           <span class="flex items-center gap-2">
-            <template v-if="hasReservation(item.ip) === null">
+            <template v-if="item.reservation === null">
               <span>-</span>
             </template>
-            <template v-else-if="hasReservation(item.ip)">
+            <template v-else-if="item.reservation === true">
               <FontAwesomeIcon :icon="faCircleCheck" class="text-green-700 dark:text-green-500" />
               <span>{{ t('standalone.dns_dhcp.scan_network_reservation_ip_reserved') }}</span>
             </template>
@@ -247,7 +225,7 @@ function getKebabMenuItems(scanResult: ScanResult): NeDropdownItem[] {
     <template v-if="showPaginator" #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="sortedResults.length"
+        :total-rows="sortedItems.length"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"

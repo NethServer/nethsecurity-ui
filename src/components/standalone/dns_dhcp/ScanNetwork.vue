@@ -24,6 +24,7 @@ import CreateOrEditStaticLeaseDrawer from './CreateOrEditStaticLeaseDrawer.vue'
 import CreateOrEditDnsRecordDrawer from './CreateOrEditDnsRecordDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import type { StaticLease } from './StaticLeases.vue'
 
 export interface ScanInterface {
   name: string
@@ -35,6 +36,7 @@ export interface ScanResult {
   mac: string
   hostname?: string
   description?: string
+  reservation?: boolean | null
 }
 
 const { t } = useI18n()
@@ -107,14 +109,37 @@ async function loadStaticLeases() {
 
   try {
     const res = await ubusCall('ns.dhcp', 'list-static-leases')
-    staticLeases.value = res.data.leases.map((lease: any) => lease.ipaddr)
-  } catch (err: any) {
+    staticLeases.value = res.data.leases.map((lease: StaticLease) => lease.ipaddr)
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
     error.value.staticLeases = t(getAxiosErrorMessage(err))
-    error.value.staticLeasesDetails = err.toString()
+    error.value.staticLeasesDetails = errorMessage
     staticLeasesLoadError.value = true
   } finally {
     loading.value.staticLeases = false
   }
+}
+
+/**
+ * Calculate the reservation status for a given IP address.
+ * @param ip ip address
+ * @return boolean | null reservation status, null if error loading static leases
+ */
+function calculateReservationStatus(ip: string): boolean | null {
+  if (staticLeasesLoadError.value) {
+    return null
+  }
+  return staticLeases.value.includes(ip)
+}
+
+/**
+ * Update reservation status for existing scan results
+ */
+function updateScanResultsReservations() {
+  scanResults.value = scanResults.value.map(result => ({
+    ...result,
+    reservation: calculateReservationStatus(result.ip)
+  }))
 }
 
 async function scanNetwork(iface: ScanInterface) {
@@ -130,7 +155,8 @@ async function scanNetwork(iface: ScanInterface) {
       ip: host.ip,
       mac: host.mac,
       hostname: host.hostname !== host.ip ? host.hostname : '',
-      description: host.description
+      description: host.description,
+      reservation: calculateReservationStatus(host.ip)
     }))
   } catch (err: any) {
     error.value.scanNetwork = t(getAxiosErrorMessage(err))
@@ -241,18 +267,12 @@ function addDnsRecord(scanResult: ScanResult) {
             :is-search="true"
             class="mb-4 max-w-md"
           />
-          <p
-            class="z-0 -mb-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
-          >
-            {{ t('standalone.dns_dhcp.interface_name', { name: scanningInterface }) }}
-          </p>
           <ScanResultsTable
             :results="scanResults"
             :loading="loading.scanNetwork"
-            :static-leases="staticLeases"
-            :static-leases-error="staticLeasesLoadError"
             :search-term="searchTerm"
             :show-paginator="shouldShowSearchAndFooter"
+            :interface-name="scanningInterface"
             @add-ip-reservation="addIpReservation"
             @add-dns-record="addDnsRecord"
           />
@@ -265,9 +285,10 @@ function addDnsRecord(scanResult: ScanResult) {
       :import-scan-result="currentScanResult"
       @close="isAddReservationDrawerShown = false"
       @add-edit-lease="
-        () => {
+        async () => {
           uciChangesStore.getChanges()
-          loadStaticLeases()
+          await loadStaticLeases()
+          updateScanResultsReservations()
         }
       "
     />

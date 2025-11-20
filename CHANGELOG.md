@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/NethServer/nethsecurity-ui/compare/2.7.2...2.8.0) (2025-11-20)
+
+
+### Features
+
+* **scan-network:** add sorting, search functionality and reservation info ([#661](https://github.com/NethServer/nethsecurity-ui/issues/661)) ([188d255](https://github.com/NethServer/nethsecurity-ui/commit/188d255612d303bfe4333e4648e3b71ebfd56bec))
+
 ## [2.7.2](https://github.com/NethServer/nethsecurity-ui/compare/2.7.1...2.7.2) (2025-11-14)
 
 

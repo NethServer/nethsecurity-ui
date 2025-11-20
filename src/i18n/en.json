@@ -1297,7 +1297,10 @@
       "soft_binding_description": "Allows hosts without a reservation, blocks mismatched IP/MAC",
       "strict_binding": "Strict binding",
       "strict_binding_description": "Only hosts with a reservation allowed, others are blocked",
-      "custom": "Custom"
+      "custom": "Custom",
+      "scan_network_reservation": "Reservation",
+      "scan_network_reservation_ip_reserved": "IP reserved",
+      "scan_network_reservation_ip_not_reserved": "IP not reserved"
     },
     "routes": {
       "title": "Routes",

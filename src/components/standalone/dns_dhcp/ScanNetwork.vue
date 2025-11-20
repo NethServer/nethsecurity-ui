@@ -8,7 +8,8 @@ import {
   NeHeading,
   NeInlineNotification,
   getAxiosErrorMessage,
-  NeEmptyState
+  NeEmptyState,
+  NeTextInput
 } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -22,6 +23,8 @@ import ScanResultsTable from './ScanResultsTable.vue'
 import CreateOrEditStaticLeaseDrawer from './CreateOrEditStaticLeaseDrawer.vue'
 import CreateOrEditDnsRecordDrawer from './CreateOrEditDnsRecordDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import type { StaticLease } from './StaticLeases.vue'
 
 export interface ScanInterface {
   name: string
@@ -33,6 +36,7 @@ export interface ScanResult {
   mac: string
   hostname?: string
   description?: string
+  reservation?: boolean | null
 }
 
 const { t } = useI18n()
@@ -46,20 +50,30 @@ const scanRequested = ref(false)
 const currentScanResult = ref<ScanResult | undefined>(undefined)
 const isAddReservationDrawerShown = ref(false)
 const isAddDnsRecordDrawerShown = ref(false)
+const staticLeases = ref<string[]>([])
+const staticLeasesLoadError = ref(false)
+const searchTerm = ref('')
 
 const loading = ref({
   listInterfaces: true,
-  scanNetwork: false
+  scanNetwork: false,
+  staticLeases: false
 })
 const error = ref({
   listInterfaces: '',
   listInterfacesDetails: '',
   scanNetwork: '',
-  scanNetworkDetails: ''
+  scanNetworkDetails: '',
+  staticLeases: '',
+  staticLeasesDetails: ''
 })
 
 const isLoadingData = computed(() => {
   return loading.value.listInterfaces || firewallConfig.loading
+})
+
+const shouldShowSearchAndFooter = computed(() => {
+  return !loading.value.scanNetwork && scanResults.value.length > 0
 })
 
 onMounted(() => {
@@ -67,6 +81,7 @@ onMounted(() => {
     firewallConfig.fetch()
   }
   listInterfaces()
+  loadStaticLeases()
 })
 
 async function listInterfaces() {
@@ -86,6 +101,47 @@ async function listInterfaces() {
   }
 }
 
+async function loadStaticLeases() {
+  loading.value.staticLeases = true
+  error.value.staticLeases = ''
+  error.value.staticLeasesDetails = ''
+  staticLeasesLoadError.value = false
+
+  try {
+    const res = await ubusCall('ns.dhcp', 'list-static-leases')
+    staticLeases.value = res.data.leases.map((lease: StaticLease) => lease.ipaddr)
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    error.value.staticLeases = t(getAxiosErrorMessage(err))
+    error.value.staticLeasesDetails = errorMessage
+    staticLeasesLoadError.value = true
+  } finally {
+    loading.value.staticLeases = false
+  }
+}
+
+/**
+ * Calculate the reservation status for a given IP address.
+ * @param ip ip address
+ * @return boolean | null reservation status, null if error loading static leases
+ */
+function calculateReservationStatus(ip: string): boolean | null {
+  if (staticLeasesLoadError.value) {
+    return null
+  }
+  return staticLeases.value.includes(ip)
+}
+
+/**
+ * Update reservation status for existing scan results
+ */
+function updateScanResultsReservations() {
+  scanResults.value = scanResults.value.map((result) => ({
+    ...result,
+    reservation: calculateReservationStatus(result.ip)
+  }))
+}
+
 async function scanNetwork(iface: ScanInterface) {
   error.value.scanNetwork = ''
   error.value.scanNetworkDetails = ''
@@ -99,7 +155,8 @@ async function scanNetwork(iface: ScanInterface) {
       ip: host.ip,
       mac: host.mac,
       hostname: host.hostname !== host.ip ? host.hostname : '',
-      description: host.description
+      description: host.description,
+      reservation: calculateReservationStatus(host.ip)
     }))
   } catch (err: any) {
     error.value.scanNetwork = t(getAxiosErrorMessage(err))
@@ -200,14 +257,22 @@ function addDnsRecord(scanResult: ScanResult) {
           />
         </template>
         <template v-else>
-          <p
-            class="z-0 -mb-1 table max-w-md rounded-ss-md rounded-se-md bg-indigo-300 p-2 text-sm dark:bg-indigo-800"
-          >
-            {{ t('standalone.dns_dhcp.interface_name', { name: scanningInterface }) }}
-          </p>
+          <!-- Search input - only shown when there are results and not loading -->
+          <NeTextInput
+            v-if="shouldShowSearchAndFooter"
+            v-model="searchTerm"
+            :placeholder="t('common.search')"
+            :prefix-icon="faSearch"
+            :clearable="true"
+            :is-search="true"
+            class="mb-4 max-w-md"
+          />
           <ScanResultsTable
             :results="scanResults"
             :loading="loading.scanNetwork"
+            :search-term="searchTerm"
+            :show-paginator="shouldShowSearchAndFooter"
+            :interface-name="scanningInterface"
             @add-ip-reservation="addIpReservation"
             @add-dns-record="addDnsRecord"
           />
@@ -219,7 +284,13 @@ function addDnsRecord(scanResult: ScanResult) {
       :is-shown="isAddReservationDrawerShown"
       :import-scan-result="currentScanResult"
       @close="isAddReservationDrawerShown = false"
-      @add-edit-lease="uciChangesStore.getChanges()"
+      @add-edit-lease="
+        async () => {
+          uciChangesStore.getChanges()
+          await loadStaticLeases()
+          updateScanResultsReservations()
+        }
+      "
     />
     <!-- add dns record drawer -->
     <CreateOrEditDnsRecordDrawer

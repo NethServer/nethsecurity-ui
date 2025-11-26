@@ -18,7 +18,7 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { validateFutureDate } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
-import VueDatePicker from '@vuepic/vue-datepicker'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
 import { useThemeStore } from '@/stores/theme'
 
 const props = defineProps<{

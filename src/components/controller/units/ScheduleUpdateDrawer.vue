@@ -15,7 +15,7 @@ import { useI18n } from 'vue-i18n'
 import { type Unit, useUnitsStore } from '@/stores/controller/units'
 import { ref, watch } from 'vue'
 import { useUpdates } from '@/composables/useUpdates'
-import VueDatePicker from '@vuepic/vue-datepicker'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
 import { useThemeStore } from '@/stores/theme'
 import { useNotificationsStore } from '@/stores/notifications'
 

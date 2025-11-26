@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.8.0](https://github.com/NethServer/nethsecurity-ui/compare/2.7.2...2.8.0) (2025-11-26)
+
+
+### Features
+
+* **interfaces:** added WAN metric ([#663](https://github.com/NethServer/nethsecurity-ui/issues/663)) ([90b729d](https://github.com/NethServer/nethsecurity-ui/commit/90b729d30fdc01422bbcf19f34007efe0e94f830))
+* **scan-network:** add sorting, search functionality and reservation info ([#661](https://github.com/NethServer/nethsecurity-ui/issues/661)) ([188d255](https://github.com/NethServer/nethsecurity-ui/commit/188d255612d303bfe4333e4648e3b71ebfd56bec))
+
+
+### Bug Fixes
+
+* **flashstart:** removed banner for DHCP option, not needed anymore ([fe67f1a](https://github.com/NethServer/nethsecurity-ui/commit/fe67f1a89cfc5bc1eeef9e34130f6f40e1bb3a1f))
+
 ## [2.7.2](https://github.com/NethServer/nethsecurity-ui/compare/2.7.1...2.7.2) (2025-11-14)
 
 

@@ -1108,7 +1108,8 @@
       "configure_bond": "Configure bond",
       "configure_bond_name": "Configure bond {name}",
       "clients_network": "Clients network",
-      "pppoe_name_too_long_need_reconfiguration": "PPPoE interface names are limited to {num} characters. You can remove the configuration from this device, then reconfigure it with a shorter interface name."
+      "pppoe_name_too_long_need_reconfiguration": "PPPoE interface names are limited to {num} characters. You can remove the configuration from this device, then reconfigure it with a shorter interface name.",
+      "metric": "Metric"
     },
     "multi_wan": {
       "title": "MultiWAN",

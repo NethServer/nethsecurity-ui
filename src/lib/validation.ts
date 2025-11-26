@@ -833,3 +833,19 @@ export class ValidationError extends Error {
     super('error.validation_failed')
   }
 }
+
+export const validateMetric = (value: string): validationOutput => {
+  const v = (value ?? '').toString().trim()
+  if (v === '') {
+    return { valid: false, errMessage: 'error.invalid_metric' }
+  }
+  if (!/^[0-9]+$/.test(v)) {
+    return { valid: false, errMessage: 'error.invalid_metric' }
+  }
+  const num = Number(v)
+  if (!Number.isInteger(num) || num < 0 || num > 65535) {
+    return { valid: false, errMessage: 'error.invalid_metric' }
+  }
+
+  return { valid: true }
+}

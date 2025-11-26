@@ -23,7 +23,8 @@ import {
   validateUciName,
   validateHexadecimalString,
   validateHostname,
-  validateIp4Cidr
+  validateIp4Cidr,
+  validateMetric
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
@@ -116,6 +117,8 @@ const bondingPolicyRef = ref<HTMLDivElement | null>()
 const bondPrimaryDevice = ref('')
 const bondPrimaryDeviceRef = ref<HTMLDivElement | null>()
 const allowedZones = ref<Array<any>>([])
+const metric = ref('')
+const metricRef = ref<HTMLDivElement | null>()
 
 const protocolBaseOptions = [
   {
@@ -212,7 +215,8 @@ const error = ref({
   pppoePassword: '',
   selectedDevicesForBridgeOrBond: '',
   bondingPolicy: '',
-  bondPrimaryDevice: ''
+  bondPrimaryDevice: '',
+  metric: ''
 })
 
 const zoneOptions = computed(() => {
@@ -374,6 +378,7 @@ watch(
         selectedDevicesForBridgeOrBond.value = []
         bondingPolicy.value = 'balance-rr'
         bondPrimaryDevice.value = ''
+        metric.value = ''
 
         if (props.deviceType === 'physical') {
           focusElement(interfaceNameRef)
@@ -416,6 +421,7 @@ watch(
         ipv6Mtu.value = props.device?.mtu6 || ''
         dhcpClientId.value = props.interfaceToEdit.clientid || ''
         dhcpVendorClass.value = props.interfaceToEdit.vendorid || ''
+        metric.value = props.interfaceToEdit.metric || ''
         pppoeUsername.value = props.interfaceToEdit.username || ''
         pppoePassword.value = props.interfaceToEdit.password || ''
 
@@ -502,6 +508,7 @@ function clearErrors() {
   error.value.selectedDevicesForBridgeOrBond = ''
   error.value.bondingPolicy = ''
   error.value.bondPrimaryDevice = ''
+  error.value.metric = ''
 }
 
 function prepareConfigureDeviceData() {
@@ -512,6 +519,10 @@ function prepareConfigureDeviceData() {
     protocol: protocol.value,
     zone: zone.value,
     ip6_enabled: isIpv6Enabled.value
+  }
+
+  if (metric.value) {
+    data.metric = metric.value
   }
 
   if (props.device.name) {
@@ -878,6 +889,18 @@ function validate() {
     }
   }
 
+  // metric validation (optional, only when present)
+  if (zone.value == 'wan' && metric.value != '') {
+    const { valid, errMessage } = validateMetric(metric.value)
+    if (!valid) {
+      error.value.metric = t(errMessage as string)
+      if (isValidationOk) {
+        isValidationOk = false
+        focusElement(metricRef)
+      }
+    }
+  }
+
   return isValidationOk
 }
 
@@ -1173,6 +1196,16 @@ async function listZonesForDeviceConfig() {
                 optional
                 :invalid-message="t(error.ipv6Mtu)"
                 :disabled="loading.configure"
+              />
+              <!-- metric -->
+              <NeTextInput
+                v-if="zone === 'wan'"
+                ref="metricRef"
+                v-model.trim="metric"
+                :disabled="loading.configure"
+                :invalid-message="t(error.metric)"
+                :label="t('standalone.interfaces_and_devices.metric')"
+                optional
               />
               <!-- dhcp client id -->
               <NeTextInput

@@ -181,12 +181,6 @@ function save() {
         :title="t('error.cannot_retrieve_flashstart_configuration')"
       />
       <form v-else class="space-y-6">
-        <NeInlineNotification
-          v-if="status"
-          kind="info"
-          :title="t('standalone.flashstart.remember_dns_dhcp')"
-          :description="t('standalone.flashstart.remember_dns_dhcp_description')"
-        />
         <NeToggle
           v-model="status"
           :label="statusLabel"

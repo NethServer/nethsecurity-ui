@@ -1,20 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    ":disableDependencyDashboard",
-    ":maintainLockFilesMonthly",
-    ":automergeMinor"
-  ],
-  "packageRules": [
-    {
-      "matchManagers": [
-        "npm"
-      ],
-      "rangeStrategy": "replace"
-    }
-  ],
-  "vulnerabilityAlerts": {
-    "enabled": true
-  }
+  "extends": ["local>NethServer/.github:vue3"]
 }

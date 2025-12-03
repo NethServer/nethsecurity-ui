@@ -174,7 +174,7 @@ const onSort = (payload: SortEvent) => {
       <NeTableRow v-for="(item, index) in paginatedItems" :key="index">
         <NeTableCell :data-label="t('standalone.certificates.name')">
           <div class="flex flex-row items-center gap-6">
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col items-start gap-1">
               <p>{{ item.name }}</p>
               <NeButton
                 :disabled="!item.details"

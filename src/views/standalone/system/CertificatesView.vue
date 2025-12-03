@@ -23,6 +23,8 @@ import { useNotificationsStore } from '@/stores/notifications'
 import { onMounted } from 'vue'
 import { map } from 'lodash-es'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleArrowUp, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 export type Certificate = {
   name: string
@@ -81,7 +83,10 @@ async function fetchCertificates() {
     ).data.values
     certificates.value = map(certificatesData, (payload: any, certificateName: string) => ({
       ...payload,
-      name: certificateName
+      name:
+        certificateName == '_lan'
+          ? t('standalone.reverse_proxy.default_certificate')
+          : certificateName
     }))
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_certificates')
@@ -128,8 +133,8 @@ onMounted(() => {
     >
       <template v-if="error.notificationDetails" #details>
         {{ error.notificationDetails }}
-      </template></NeInlineNotification
-    >
+      </template>
+    </NeInlineNotification>
     <NeSkeleton v-if="loading" size="lg" :lines="8" />
     <template v-else-if="!fetchError">
       <div class="flex flex-col items-start justify-between gap-4 xl:flex-row">
@@ -137,24 +142,18 @@ onMounted(() => {
           {{ t('standalone.certificates.description') }}
         </p>
         <div class="flex shrink-0 flex-row-reverse gap-4 xl:flex-row">
-          <NeButton kind="tertiary" @click="showImportCertificateDrawer = true"
-            ><template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'circle-arrow-up']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              /> </template
-            >{{ t('standalone.certificates.import_certificate') }}</NeButton
-          >
-          <NeButton kind="secondary" @click="showCreateCertificateDrawer = true"
-            ><template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'circle-plus']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              /> </template
-            >{{ t('standalone.certificates.add_lets_encrypt_certificate') }}</NeButton
-          >
+          <NeButton kind="tertiary" @click="showImportCertificateDrawer = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCircleArrowUp" aria-hidden="true" class="h-4 w-4" />
+            </template>
+            {{ t('standalone.certificates.import_certificate') }}
+          </NeButton>
+          <NeButton kind="secondary" @click="showCreateCertificateDrawer = true">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+            </template>
+            {{ t('standalone.certificates.add_lets_encrypt_certificate') }}
+          </NeButton>
         </div>
       </div>
       <CertificatesTable

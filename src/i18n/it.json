@@ -1607,7 +1607,7 @@
       "edit_reverse_proxy": "Modifica reverse proxy",
       "domain_path": "Dominio/Percorso",
       "add_cidr_network": "Aggiungi rete CIDR",
-      "default_certificate": "Certificato predefinito",
+      "default_certificate": "Certificato self-signed della macchina",
       "and_n_others": "+ {n} altri",
       "port_not_open": "Il reverse proxy richiede che la porta TCP 443 sia aperta e raggiungibile dall'interfaccia WAN (esterno).",
       "port_not_open_description": "Assicurarsi che le regole firewall consentano il traffico in entrata su questa porta.",

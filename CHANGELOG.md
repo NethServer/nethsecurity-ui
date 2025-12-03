@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.1](https://github.com/NethServer/nethsecurity-ui/compare/2.8.0...2.8.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* **certificates:** updated certificate label ([#665](https://github.com/NethServer/nethsecurity-ui/issues/665)) ([b6fa5b7](https://github.com/NethServer/nethsecurity-ui/commit/b6fa5b793c1bc4553a77ddd94ae80c80aa73b390))
+
 ## [2.8.0](https://github.com/NethServer/nethsecurity-ui/compare/2.7.2...2.8.0) (2025-11-26)
 
 

@@ -429,7 +429,8 @@
     "duplicate_port": "Port has already been used",
     "cannot_regenerate_cert": "Cannot regenerate certificates",
     "cannot_renew_server_cert": "Cannot renew server certificate",
-    "cannot_regenerate_all_certs": "Cannot regenerate all certificates"
+    "cannot_regenerate_all_certs": "Cannot regenerate all certificates",
+    "cannot_retrieve_flows": "Cannot retrieve flows, please try again later"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2355,7 +2356,25 @@
       "public_ip_address": "Public IP address",
       "error_fetching_data": "Error fetching data",
       "remote_hosts": "Remote hosts",
-      "no_data_available": "No data available"
+      "no_data_available": "No data available",
+      "flows": "Flows"
+    },
+    "flows": {
+      "subtitle": "View real-time network connections, each row represents an active flow with live transfer rates and total traffic.",
+      "application": "Application",
+      "protocol": "Protocol",
+      "source": "Source",
+      "destination": "Destination",
+      "origin": "Origin",
+      "duration": "Duration",
+      "download": "Download",
+      "upload": "Upload",
+      "total_download": "Tot. download",
+      "total_upload": "Tot. upload",
+      "local": "Local",
+      "remote": "Remote",
+      "last_seen_at": "Last seen at",
+      "refresh_interval": "Refresh interval: { value }"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

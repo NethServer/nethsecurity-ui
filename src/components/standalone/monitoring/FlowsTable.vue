@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, type DebuggerEvent, onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
 import { useInterval } from '@vueuse/core'
@@ -20,7 +20,11 @@ import {
   NeInlineNotification,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import FlowTableRow from '@/components/standalone/monitoring/FlowTableRow.vue'
+import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
+import { useNetifydStore } from '@/stores/standalone/netifyd.ts'
+import { useRouteQuery } from '@vueuse/router'
+
+const { data: categories } = useNetifydStore()
 
 const { t } = useI18n()
 
@@ -42,6 +46,12 @@ export type Flow = {
   digest: string
   host_server_name?: string
   dns_host_name?: string
+  risks: {
+    ndpi_risk_score: number
+    ndpi_risk_score_client: number
+    ndpi_risk_score_server: number
+    risks?: number[]
+  }
 }
 
 type FlowListResponse = AxiosResponse<{
@@ -88,15 +98,15 @@ const refreshIntervalOptions: RefreshFilterOption[] = [
     label: t('standalone.flows.refresh_interval', { value: 'off' })
   }
 ]
-const refreshIntervalSelection = ref<RefreshInterval[]>(['10s'])
+const refreshIntervalSelection = ref<RefreshInterval[]>(['30s'])
 const refreshIntervalsValue = computed<number | null>(() => {
   switch (refreshIntervalSelection.value[0]) {
     case '10s':
-      return 100
+      return 10
     case '30s':
-      return 300
+      return 30
     case '60s':
-      return 600
+      return 60
     case 'off':
     default:
       return null
@@ -105,7 +115,7 @@ const refreshIntervalsValue = computed<number | null>(() => {
 
 onMounted(() => fetchData())
 
-const { counter, pause, reset, resume } = useInterval(100, {
+const { counter, pause, reset, resume } = useInterval(1000, {
   controls: true,
   callback: async (count) => {
     if (refreshIntervalsValue.value != null && count >= refreshIntervalsValue.value) {
@@ -155,10 +165,20 @@ const applications = computed<FilterOption[]>(() => {
   data.value.forEach((flow) => {
     appSet.add(flow.detected_application_name)
   })
-  return Array.from(appSet).map((app) => ({
-    id: app,
-    label: app
-  }))
+  return Array.from(appSet).map((app) => {
+    for (const entry of categories) {
+      if (entry.tag == app) {
+        return {
+          id: app,
+          label: entry.label
+        }
+      }
+    }
+    return {
+      id: app,
+      label: app
+    }
+  })
 })
 
 const protocols = computed<FilterOption[]>(() => {
@@ -185,7 +205,7 @@ const origin: FilterOption[] = [
 
 type Filter<T> = (a: T) => boolean
 
-const filter = ref('')
+const filter = useRouteQuery('filter', '')
 const filterApplications = ref<string[]>([])
 const filterProtocols = ref<string[]>([])
 const filterSource = ref<string[]>([])
@@ -233,8 +253,8 @@ const filteredData = computed<Flow[]>(() => {
   return data.value.filter((flow) => filters.every((filter) => filter(flow)))
 })
 
-const sortKey = ref<keyof Flow | string>('download')
-const sortDescending = ref(true)
+const sortKey = useRouteQuery<keyof Flow | string>('sort', 'download')
+const sortDescending = useRouteQuery('descending', 'true', { transform: Boolean })
 const { sortedItems } = useSort(() => filteredData.value, sortKey, sortDescending, {
   duration: (a: Flow, b: Flow) => {
     return a.last_seen_at - a.first_seen_at - (b.last_seen_at - b.first_seen_at)
@@ -251,7 +271,7 @@ const { sortedItems } = useSort(() => filteredData.value, sortKey, sortDescendin
   }
 })
 
-const pageSize = ref(10)
+const pageSize = useRouteQuery<number>('page-size', 10)
 const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
   itemsPerPage: pageSize
 })
@@ -363,8 +383,8 @@ const onSort = (payload: SortEvent) => {
         <NeTableHeadCell column-key="detected_application_name" sortable @sort="onSort">
           {{ t('standalone.flows.application') }}
         </NeTableHeadCell>
-        <NeTableHeadCell column-key="detected_protocol_name" sortable @sort="onSort">
-          {{ t('standalone.flows.protocol') }}
+        <NeTableHeadCell>
+          {{ t('standalone.flows.tags') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
           {{ t('standalone.flows.source') }}
@@ -384,12 +404,7 @@ const onSort = (payload: SortEvent) => {
         <NeTableHeadCell column-key="upload" sortable @sort="onSort">
           {{ t('standalone.flows.upload') }}
         </NeTableHeadCell>
-        <NeTableHeadCell column-key="totalDownload" sortable @sort="onSort">
-          {{ t('standalone.flows.total_download') }}
-        </NeTableHeadCell>
-        <NeTableHeadCell column-key="totalUpload" sortable @sort="onSort">
-          {{ t('standalone.flows.total_upload') }}
-        </NeTableHeadCell>
+        <NeTableHeadCell />
       </NeTableHead>
       <NeTableBody>
         <FlowTableRow v-for="flow in paginatedItems" :key="flow.digest" :item="flow" />

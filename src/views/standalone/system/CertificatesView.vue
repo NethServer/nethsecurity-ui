@@ -83,10 +83,7 @@ async function fetchCertificates() {
     ).data.values
     certificates.value = map(certificatesData, (payload: any, certificateName: string) => ({
       ...payload,
-      name:
-        certificateName == '_lan'
-          ? t('standalone.reverse_proxy.default_certificate')
-          : certificateName
+      name: certificateName
     }))
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_certificates')

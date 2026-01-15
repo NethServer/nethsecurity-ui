@@ -175,7 +175,10 @@ const onSort = (payload: SortEvent) => {
         <NeTableCell :data-label="t('standalone.certificates.name')">
           <div class="flex flex-row items-center gap-6">
             <div class="flex flex-col items-start gap-1">
-              <p>{{ item.name }}</p>
+              <p v-if="item.name == '_lan'">
+                {{ t('standalone.reverse_proxy.default_certificate') }}
+              </p>
+              <p v-else>{{ item.name }}</p>
               <NeButton
                 :disabled="!item.details"
                 class="-mx-2"

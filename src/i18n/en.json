@@ -70,7 +70,8 @@
     "automated_tooltip": "This item is managed by the system and cannot be modified.",
     "remove": "Remove",
     "connected": "Connected",
-    "not_connected": "Not connected"
+    "not_connected": "Not connected",
+    "port": "Port"
   },
   "error": {
     "generic_error": "Something went wrong",
@@ -2319,9 +2320,15 @@
       "total_download": "Tot. download",
       "total_upload": "Tot. upload",
       "local": "Local",
+      "local_description": "Connection originated from Source IP address",
       "remote": "Remote",
+      "remote_description": "Connection originated from Destination IP address",
       "last_seen_at": "Last seen at",
-      "refresh_interval": "Refresh interval: { value }"
+      "refresh_interval": "Refresh interval: { value }",
+      "tags": "Tags",
+      "internal": "Internal",
+      "internal_description": "Connection is between local networks",
+      "more_info": "More info"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

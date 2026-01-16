@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.2](https://github.com/NethServer/nethsecurity-ui/compare/2.8.1...2.8.2) (2026-01-15)
+
+
+### Bug Fixes
+
+* **certificates:** fix renaming of default certificate ([fcbc1d2](https://github.com/NethServer/nethsecurity-ui/commit/fcbc1d2c18548450a3aa77daf8fa0cc70dfc99db))
+
 ## [2.8.1](https://github.com/NethServer/nethsecurity-ui/compare/2.8.0...2.8.1) (2025-12-03)
 
 

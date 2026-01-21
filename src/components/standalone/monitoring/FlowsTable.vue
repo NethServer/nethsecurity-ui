@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { computed, type DebuggerEvent, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
 import { useInterval } from '@vueuse/core'
@@ -13,7 +13,6 @@ import {
   NeDropdownFilter,
   type FilterOption,
   useItemPagination,
-  useSort,
   NePaginator,
   type SortEvent,
   NeProgressBar,
@@ -21,16 +20,26 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
-import { useNetifydStore } from '@/stores/standalone/netifyd.ts'
 import { useRouteQuery } from '@vueuse/router'
-
-const { data: categories } = useNetifydStore()
+import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
 
 const { t } = useI18n()
 
+export type FlowEvent = {
+  type: 'flow_dpi_complete' | 'flow'
+  interface: string
+  internal: boolean
+  flow: Flow
+}
+
 export type Flow = {
+  conntrack: {
+    id: string
+  }
   detected_application_name: string
   detected_protocol_name: string
+  detection_guessed?: boolean
+  detection_packets?: number
   local_ip: string
   local_port: number
   other_ip: string
@@ -40,8 +49,10 @@ export type Flow = {
   last_seen_at: number
   local_bytes: number
   local_rate: number
+  local_mac: string
   other_bytes: number
   other_rate: number
+  other_mac: string
   other_type: 'remote' | 'local'
   digest: string
   host_server_name?: string
@@ -52,13 +63,17 @@ export type Flow = {
     ndpi_risk_score_server: number
     risks?: number[]
   }
+  ssl?: {
+    client_sni?: string
+  }
+  total_bytes: number
 }
 
 type FlowListResponse = AxiosResponse<{
-  list: Flow[]
+  list: FlowEvent[]
 }>
 
-const data = ref<Flow[]>([])
+const data = ref<FlowEvent[]>([])
 const loading = ref(true)
 const error = ref<Error>()
 function fetchData() {
@@ -121,8 +136,7 @@ const { counter, pause, reset, resume } = useInterval(1000, {
     if (refreshIntervalsValue.value != null && count >= refreshIntervalsValue.value) {
       fetchData()
     }
-  },
-  immediate: true
+  }
 })
 const progressBar = computed<number>(
   () => (counter.value / (refreshIntervalsValue.value || 10)) * 100
@@ -141,7 +155,7 @@ watch(refreshIntervalsValue, (value) => {
 const sourceIps = computed<FilterOption[]>(() => {
   const ipSet = new Set<string>()
   data.value.forEach((flow) => {
-    ipSet.add(flow.local_ip)
+    ipSet.add(flow.flow.local_ip)
   })
   return Array.from(ipSet).map((ip) => ({
     id: ip,
@@ -152,7 +166,7 @@ const sourceIps = computed<FilterOption[]>(() => {
 const destinationIps = computed<FilterOption[]>(() => {
   const ipSet = new Set<string>()
   data.value.forEach((flow) => {
-    ipSet.add(flow.other_ip)
+    ipSet.add(flow.flow.other_ip)
   })
   return Array.from(ipSet).map((ip) => ({
     id: ip,
@@ -163,45 +177,43 @@ const destinationIps = computed<FilterOption[]>(() => {
 const applications = computed<FilterOption[]>(() => {
   const appSet = new Set<string>()
   data.value.forEach((flow) => {
-    appSet.add(flow.detected_application_name)
+    appSet.add(flow.flow.detected_application_name)
   })
-  return Array.from(appSet).map((app) => {
-    for (const entry of categories) {
-      if (entry.tag == app) {
-        return {
-          id: app,
-          label: entry.label
-        }
+  return Array.from(appSet)
+    .map((app) => {
+      let label = app
+      // Remove netify. prefix if present
+      if (label.startsWith('netify.')) {
+        label = label.substring(7)
       }
-    }
-    return {
-      id: app,
-      label: app
-    }
-  })
+      // Replace dashes with spaces
+      label = label.replace(/-/g, ' ')
+      // Capitalize first character of each word
+      label = label
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+
+      return {
+        id: app,
+        label: label
+      }
+    })
+    .sort((a, b) => a.label.localeCompare(b.label))
 })
 
 const protocols = computed<FilterOption[]>(() => {
   const protoSet = new Set<string>()
   data.value.forEach((flow) => {
-    protoSet.add(flow.detected_protocol_name)
+    protoSet.add(flow.flow.detected_protocol_name)
   })
-  return Array.from(protoSet).map((proto) => ({
-    id: proto,
-    label: proto
-  }))
+  return Array.from(protoSet)
+    .map((proto) => ({
+      id: proto,
+      label: proto
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 })
-
-const origin: FilterOption[] = [
-  {
-    id: 'local',
-    label: t('standalone.flows.local')
-  },
-  {
-    id: 'remote',
-    label: t('standalone.flows.remote')
-  }
-]
 
 type Filter<T> = (a: T) => boolean
 
@@ -210,10 +222,9 @@ const filterApplications = ref<string[]>([])
 const filterProtocols = ref<string[]>([])
 const filterSource = ref<string[]>([])
 const filterDestination = ref<string[]>([])
-const filterOrigin = ref<string[]>([])
-const filters: Filter<Flow>[] = [
+const filters: Filter<FlowEvent>[] = [
   (flow) => {
-    return Object.values(flow).some((value) =>
+    return Object.values(flow.flow).some((value) =>
       String(value).toLowerCase().includes(filter.value.toLowerCase())
     )
   },
@@ -221,54 +232,70 @@ const filters: Filter<Flow>[] = [
     if (!filterApplications.value.length) {
       return true
     }
-    return filterApplications.value.includes(flow.detected_application_name)
+    return filterApplications.value.includes(flow.flow.detected_application_name)
   },
   (flow) => {
     if (!filterSource.value.length) {
       return true
     }
-    return filterSource.value.includes(flow.local_ip)
+    return filterSource.value.includes(flow.flow.local_ip)
   },
   (flow) => {
     if (!filterDestination.value.length) {
       return true
     }
-    return filterDestination.value.includes(flow.other_ip)
+    return filterDestination.value.includes(flow.flow.other_ip)
   },
   (flow) => {
     if (!filterProtocols.value.length) {
       return true
     }
-    return filterProtocols.value.includes(flow.detected_protocol_name)
-  },
-  (flow) => {
-    if (!filterOrigin.value.length) {
-      return true
-    }
-    return filterOrigin.value.includes(flow.local_origin ? 'local' : 'remote')
+    return filterProtocols.value.includes(flow.flow.detected_protocol_name)
   }
 ]
 
-const filteredData = computed<Flow[]>(() => {
+const filteredData = computed<FlowEvent[]>(() => {
   return data.value.filter((flow) => filters.every((filter) => filter(flow)))
 })
 
-const sortKey = useRouteQuery<keyof Flow | string>('sort', 'download')
-const sortDescending = useRouteQuery('descending', 'true', { transform: Boolean })
-const { sortedItems } = useSort(() => filteredData.value, sortKey, sortDescending, {
-  duration: (a: Flow, b: Flow) => {
-    return a.last_seen_at - a.first_seen_at - (b.last_seen_at - b.first_seen_at)
-  },
-  download: (a: Flow, b: Flow) => {
-    const aRate = a.local_origin ? a.local_rate : a.other_rate
-    const bRate = b.local_origin ? b.local_rate : b.other_rate
-    return aRate - bRate
-  },
-  upload: (a: Flow, b: Flow) => {
-    const aRate = a.local_origin ? a.other_rate : a.local_rate
-    const bRate = b.local_origin ? b.other_rate : b.local_rate
-    return aRate - bRate
-  }
+type SortableKeys =
+  | 'detected_application_name'
+  | 'duration'
+  | 'last_seen_at'
+  | 'download'
+  | 'upload'
+const sortKey = useRouteQuery<SortableKeys>('sort', 'download')
+const sortDescending = ref(true)
+const sortedItems = computed<FlowEvent[]>(() => {
+  const items = [...filteredData.value]
+  return items.sort((a, b) => {
+    let compare = 0
+    switch (sortKey.value) {
+      case 'detected_application_name':
+        compare = a.flow.detected_application_name.localeCompare(b.flow.detected_application_name)
+        break
+      case 'duration':
+        compare =
+          a.flow.last_seen_at - a.flow.first_seen_at - (b.flow.last_seen_at - b.flow.first_seen_at)
+        break
+      case 'last_seen_at':
+        compare = a.flow.last_seen_at - b.flow.last_seen_at
+        break
+      case 'download': {
+        const aRate = a.flow.local_origin ? a.flow.local_rate : a.flow.other_rate
+        const bRate = b.flow.local_origin ? b.flow.local_rate : b.flow.other_rate
+        compare = aRate - bRate
+        break
+      }
+      case 'upload': {
+        const aRate = a.flow.local_origin ? a.flow.other_rate : a.flow.local_rate
+        const bRate = b.flow.local_origin ? b.flow.other_rate : b.flow.local_rate
+        compare = aRate - bRate
+        break
+      }
+    }
+    return sortDescending.value ? -compare : compare
+  })
 })
 
 const pageSize = useRouteQuery<number>('page-size', 10)
@@ -277,9 +304,18 @@ const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.valu
 })
 
 const onSort = (payload: SortEvent) => {
-  sortKey.value = payload.key as keyof Flow
+  sortKey.value = payload.key as SortableKeys
   sortDescending.value = payload.descending
 }
+
+const flowDetails = ref<FlowEvent>()
+watch(flowDetails, (value) => {
+  if (value != undefined) {
+    pause()
+  } else {
+    resume()
+  }
+})
 </script>
 
 <template>
@@ -343,17 +379,6 @@ const onSort = (payload: SortEvent) => {
             kind="checkbox"
             show-options-filter
           />
-          <NeDropdownFilter
-            v-model="filterOrigin"
-            :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
-            :clear-search-label="t('ne_dropdown_filter.clear_search')"
-            :label="t('standalone.flows.origin')"
-            :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
-            :no-options-label="t('ne_dropdown_filter.no_options')"
-            :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
-            :options="origin"
-            kind="checkbox"
-          />
         </div>
         <div class="space-y-2">
           <NeDropdownFilter
@@ -407,7 +432,12 @@ const onSort = (payload: SortEvent) => {
         <NeTableHeadCell />
       </NeTableHead>
       <NeTableBody>
-        <FlowTableRow v-for="flow in paginatedItems" :key="flow.digest" :item="flow" />
+        <FlowTableRow
+          v-for="flow in paginatedItems"
+          :key="flow.flow.digest"
+          :item="flow"
+          @show="flowDetails = $event"
+        />
       </NeTableBody>
       <template v-if="!loading" #paginator>
         <NePaginator
@@ -432,5 +462,6 @@ const onSort = (payload: SortEvent) => {
         />
       </template>
     </NeTable>
+    <FlowDetail :flow="flowDetails" @close="flowDetails = undefined" />
   </div>
 </template>

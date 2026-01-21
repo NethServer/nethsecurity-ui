@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { NeBadgeV2 } from '@nethesis/vue-components'
-import type { Badge } from '@/components/standalone/monitoring/FlowTableRow.vue'
+import type { Badge } from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
 
 defineProps<{
   badge: Badge

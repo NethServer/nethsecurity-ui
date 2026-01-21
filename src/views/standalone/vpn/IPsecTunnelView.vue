@@ -15,13 +15,21 @@ import TunnelTable from '@/components/standalone/ipsec_tunnel/TunnelTable.vue'
 import DeleteTunnelModal from '@/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue'
 import CreateOrEditTunnelDrawer from '@/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue'
 
+export type IpsecTunnelChild = {
+  name: string
+  installed: boolean
+}
+
 export type IpsecTunnel = {
   id: string
   name: string
   local: string[]
   remote: string[]
   enabled: '0' | '1'
-  connected: boolean
+  connected: 'yes' | 'warning' | 'no'
+  status: string
+  children: IpsecTunnelChild[]
+  raw_output: string
 }
 
 const { t } = useI18n()

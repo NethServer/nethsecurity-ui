@@ -4,14 +4,31 @@
 -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NeTable from '../NeTable.vue'
-import { NeDropdown } from '@nethesis/vue-components'
+import { NeDropdown, NeModal, NeLink } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
-import { faCircleCheck, faCircleXmark, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faTrash, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
+
+const showDetailsModal = ref(false)
+const showRawOutput = ref(false)
+const selectedTunnel = ref<IpsecTunnel | null>(null)
+
+function openDetailsModal(tunnel: IpsecTunnel) {
+  selectedTunnel.value = tunnel
+  showRawOutput.value = false
+  showDetailsModal.value = true
+}
+
+function closeDetailsModal() {
+  showDetailsModal.value = false
+  showRawOutput.value = false
+  selectedTunnel.value = null
+}
 
 defineProps<{
   tunnels: IpsecTunnel[]
@@ -47,28 +64,42 @@ const tableHeaders = [
 ]
 
 function getDropdownItems(item: IpsecTunnel) {
-  return [
-    {
-      id: 'enable_disable',
-      label:
-        item.enabled === '1'
-          ? t('standalone.ipsec_tunnel.disable')
-          : t('standalone.ipsec_tunnel.enable'),
-      icon: item.enabled === '1' ? faCircleXmark : faCircleCheck,
+  const items = []
+
+  if (item.enabled === '1') {
+    items.push({
+      id: 'details',
+      label: t('standalone.ipsec_tunnel.details'),
+      icon: faCircleInfo,
       action: () => {
-        emit('tunnel-toggle-enable', item)
+        openDetailsModal(item)
       }
-    },
-    {
-      id: 'delete',
-      label: t('common.delete'),
-      icon: faTrash,
-      danger: true,
-      action: () => {
-        emit('tunnel-delete', item)
-      }
+    })
+  }
+
+  items.push({
+    id: 'enable_disable',
+    label:
+      item.enabled === '1'
+        ? t('standalone.ipsec_tunnel.disable')
+        : t('standalone.ipsec_tunnel.enable'),
+    icon: item.enabled === '1' ? faCircleXmark : faCircleCheck,
+    action: () => {
+      emit('tunnel-toggle-enable', item)
     }
-  ]
+  })
+
+  items.push({
+    id: 'delete',
+    label: t('common.delete'),
+    icon: faTrash,
+    danger: true,
+    action: () => {
+      emit('tunnel-delete', item)
+    }
+  })
+
+  return items
 }
 
 function getCellClasses(item: IpsecTunnel) {
@@ -122,28 +153,43 @@ function getCellClasses(item: IpsecTunnel) {
       </div>
     </template>
     <template #connection="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
-        <font-awesome-icon
-          :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
-          :class="[
-            'mr-2',
-            'h-5',
-            'w-5',
-            item.enabled === '0'
-              ? 'text-gray-400 dark:text-gray-700'
-              : item.connected
-                ? 'text-green-500'
-                : 'text-rose-500'
-          ]"
-          aria-hidden="true"
-        />
-        <p>
-          {{
-            item.connected
-              ? t('standalone.ipsec_tunnel.connected')
-              : t('standalone.ipsec_tunnel.not_connected')
-          }}
-        </p>
+      <div :class="['flex', 'flex-col', ...getCellClasses(item)]">
+        <div class="flex flex-row items-center">
+          <font-awesome-icon
+            :icon="['fas',
+              item.connected === 'yes'
+                ? 'circle-check'
+                : item.connected === 'warning'
+                  ? 'triangle-exclamation'
+                  : 'circle-xmark'
+            ]"
+            :class="[
+              'mr-2',
+              'h-5',
+              'w-5',
+              item.enabled === '0'
+                ? 'text-gray-400 dark:text-gray-700'
+                : item.connected === 'yes'
+                  ? 'text-green-500'
+                  : item.connected === 'warning'
+                    ? 'text-amber-500'
+                    : 'text-rose-500'
+            ]"
+            aria-hidden="true"
+          />
+          <p>
+            {{
+              item.connected === 'yes'
+                ? t('standalone.ipsec_tunnel.connected')
+                : item.connected === 'warning'
+                  ? t('standalone.ipsec_tunnel.warning')
+                  : t('standalone.ipsec_tunnel.not_connected')
+            }}
+          </p>
+        </div>
+        <NeLink v-if="item.connected === 'warning'" class="ml-7" @click="openDetailsModal(item)">
+          {{ t('standalone.ipsec_tunnel.more_info') }}
+        </NeLink>
       </div>
     </template>
     <template #menu="{ item }: { item: IpsecTunnel }">
@@ -162,4 +208,59 @@ function getCellClasses(item: IpsecTunnel) {
       </div>
     </template>
   </NeTable>
+
+  <!-- Details Modal -->
+  <NeModal
+    :visible="showDetailsModal"
+    kind="info"
+    size="xl"
+    :title="t('standalone.ipsec_tunnel.tunnel_details')"
+    :primary-label="t('common.close')"
+    @primary-click="closeDetailsModal"
+    @close="closeDetailsModal"
+  >
+    <template v-if="selectedTunnel">
+      <p class="mb-4 font-semibold">{{ selectedTunnel.name }}</p>
+
+      <!-- Children list -->
+      <div class="mb-4">
+        <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          {{ t('standalone.ipsec_tunnel.child_tunnels') }}
+        </p>
+        <ul class="space-y-1">
+          <li
+            v-for="child in selectedTunnel.children"
+            :key="child.name"
+            class="flex items-center text-sm"
+          >
+            <font-awesome-icon
+              :icon="['fas', child.installed ? 'circle-check' : 'circle-xmark']"
+              :class="[
+                'mr-2',
+                'h-4',
+                'w-4',
+                child.installed ? 'text-green-500' : 'text-rose-500'
+              ]"
+              aria-hidden="true"
+            />
+            <span>{{ child.name }}</span>
+            <span class="ml-2 text-gray-500 dark:text-gray-400">
+              ({{ child.installed ? t('standalone.ipsec_tunnel.installed') : t('standalone.ipsec_tunnel.not_installed') }})
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Raw output toggle -->
+      <div>
+        <NeLink @click="showRawOutput = !showRawOutput">
+          {{ showRawOutput ? t('standalone.ipsec_tunnel.hide_full_status') : t('standalone.ipsec_tunnel.show_full_status') }}
+        </NeLink>
+        <pre
+          v-if="showRawOutput"
+          class="mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded bg-gray-100 p-3 text-sm dark:bg-gray-800"
+        >{{ selectedTunnel.raw_output }}</pre>
+      </div>
+    </template>
+  </NeModal>
 </template>

@@ -168,6 +168,16 @@ onUnmounted(() => {
         </p>
         <template v-if="tunnels.length > 0">
           <div class="flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
+            <NeButton kind="tertiary" @click="openRestartModal">
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'arrow-rotate-left']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('standalone.ipsec_tunnel.restart') }}
+            </NeButton>
             <NeButton kind="primary" @click="openCreateEditDrawer(null)">
               <template #prefix>
                 <font-awesome-icon
@@ -177,16 +187,6 @@ onUnmounted(() => {
                 />
               </template>
               {{ t('standalone.ipsec_tunnel.add_ipsec_tunnel') }}
-            </NeButton>
-            <NeButton kind="tertiary" @click="openRestartModal">
-              <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'arrows-rotate']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
-              </template>
-              {{ t('standalone.ipsec_tunnel.restart') }}
             </NeButton>
           </div>
         </template>
@@ -245,7 +245,7 @@ onUnmounted(() => {
     :primary-label="t('standalone.ipsec_tunnel.restart')"
     :primary-button-disabled="isRestarting"
     :primary-button-loading="isRestarting"
-    :secondary-label="t('common.cancel')"
+    :cancel-label="t('common.cancel')"
     :close-aria-label="t('common.close')"
     @close="closeModalsAndDrawers"
     @primary-click="restartTunnel"

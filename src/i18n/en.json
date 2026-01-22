@@ -2093,7 +2093,7 @@
       "more_info": "More info",
       "details": "Details",
       "tunnel_details": "Tunnel details",
-      "child_tunnels": "Child tunnels",
+      "child_tunnels": "child SA",
       "installed": "Installed",
       "not_installed": "Not installed",
       "show_full_status": "Show full status",

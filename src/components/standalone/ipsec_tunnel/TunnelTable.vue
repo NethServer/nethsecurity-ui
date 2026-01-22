@@ -97,7 +97,7 @@ function getDropdownItems(item: IpsecTunnel) {
 }
 
 function getCellClasses(item: IpsecTunnel) {
-  return item.enabled === '0' ? ['text-gray-400', 'dark:text-gray-700'] : []
+  return item.enabled === '0' ? ['text-green-700', 'dark:text-green-400'] : []
 }
 </script>
 
@@ -145,7 +145,7 @@ function getCellClasses(item: IpsecTunnel) {
       <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
         <font-awesome-icon
           :icon="['fas', item.enabled === '1' ? 'circle-check' : 'circle-xmark']"
-          class="mr-2 h-5 w-5"
+          class="mr-2 h-5 w-5 text-green-700 dark:text-green-400"
           aria-hidden="true"
         />
         <p>
@@ -176,7 +176,7 @@ function getCellClasses(item: IpsecTunnel) {
               item.enabled === '0'
                 ? 'text-gray-400 dark:text-gray-700'
                 : item.connected === 'yes'
-                  ? 'text-green-600 dark:text-green-400'
+                  ? 'text-green-700 dark:text-green-500'
                   : item.connected === 'warning'
                     ? 'text-amber-500'
                     : 'text-red-600 dark:text-red-400'
@@ -227,13 +227,12 @@ function getCellClasses(item: IpsecTunnel) {
     @close="closeDetailsModal"
   >
     <template v-if="selectedTunnel">
-      <p class="mb-4 font-semibold">{{ selectedTunnel.name }}</p>
+      <p class="mb-4">
+        {{ selectedTunnel.name }} {{ t('standalone.ipsec_tunnel.child_tunnels') }}:
+      </p>
 
       <!-- Children list -->
       <div class="mb-4">
-        <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {{ t('standalone.ipsec_tunnel.child_tunnels') }}
-        </p>
         <ul class="space-y-1">
           <li
             v-for="child in selectedTunnel.children"
@@ -247,22 +246,21 @@ function getCellClasses(item: IpsecTunnel) {
                 'h-4',
                 'w-4',
                 child.installed
-                  ? 'text-green-600 dark:text-green-400'
+                  ? 'text-green-700 dark:text-green-400'
                   : 'text-red-600 dark:text-red-400'
               ]"
               aria-hidden="true"
             />
             <span>{{ child.name }}</span>
             <span class="ml-2 text-gray-500 dark:text-gray-400">
-              ({{
+              {{
                 child.installed
                   ? t('standalone.ipsec_tunnel.installed')
                   : t('standalone.ipsec_tunnel.not_installed')
-              }})
+              }},
             </span>
             <template v-if="child.local_subnet.length || child.remote_subnet.length">
               <span class="ml-3 text-sm text-gray-500 dark:text-gray-400">
-                (
                 <template v-if="child.local_subnet.length">{{
                   child.local_subnet.join(', ')
                 }}</template>
@@ -272,7 +270,6 @@ function getCellClasses(item: IpsecTunnel) {
                 <template v-if="child.remote_subnet.length">{{
                   child.remote_subnet.join(', ')
                 }}</template>
-                )
               </span>
             </template>
           </li>

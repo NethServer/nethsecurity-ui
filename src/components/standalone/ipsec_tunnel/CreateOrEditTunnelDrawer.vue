@@ -105,7 +105,7 @@ const presharedKeyMode = ref<'generate' | 'import'>('generate')
 const presharedKey = ref('')
 const dpd = ref(false)
 const enableCompression = ref(false)
-const closeAction = ref('trap')
+const closeAction = ref('none')
 
 // Step 3 fields
 const ikeVersion = ref('')
@@ -254,7 +254,7 @@ async function resetForm() {
   remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
-  closeAction.value = tunnelData?.closeaction ?? 'trap'
+  closeAction.value = tunnelData?.closeaction ?? 'none'
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
   ikeEncryptionAlgorithm.value = tunnelData?.ike.encryption_algorithm ?? 'aes256'
   ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? 'sha256'

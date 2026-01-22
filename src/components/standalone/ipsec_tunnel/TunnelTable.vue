@@ -10,7 +10,12 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown, NeModal, NeLink } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
-import { faCircleCheck, faCircleXmark, faTrash, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faTrash,
+  faMagnifyingGlassPlus
+} from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -94,10 +99,6 @@ function getDropdownItems(item: IpsecTunnel) {
 function getCellClasses(item: IpsecTunnel) {
   return item.enabled === '0' ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
-
-
-
-
 </script>
 
 <template>
@@ -110,11 +111,7 @@ function getCellClasses(item: IpsecTunnel) {
           size="sm"
           @click="openDetailsModal(item)"
         >
-          <font-awesome-icon
-            :icon="faMagnifyingGlassPlus"
-            class="h-4 w-4"
-            aria-hidden="true"
-          />
+          <font-awesome-icon :icon="faMagnifyingGlassPlus" class="h-4 w-4" aria-hidden="true" />
         </NeButton>
         <span v-else class="w-8"></span>
         <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
@@ -164,7 +161,8 @@ function getCellClasses(item: IpsecTunnel) {
       <div :class="['flex', 'flex-col', ...getCellClasses(item)]">
         <div class="flex flex-row items-center">
           <font-awesome-icon
-            :icon="['fas',
+            :icon="[
+              'fas',
               item.connected === 'yes'
                 ? 'circle-check'
                 : item.connected === 'warning'
@@ -248,20 +246,32 @@ function getCellClasses(item: IpsecTunnel) {
                 'mr-2',
                 'h-4',
                 'w-4',
-                child.installed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                child.installed
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-red-600 dark:text-red-400'
               ]"
               aria-hidden="true"
             />
             <span>{{ child.name }}</span>
             <span class="ml-2 text-gray-500 dark:text-gray-400">
-              ({{ child.installed ? t('standalone.ipsec_tunnel.installed') : t('standalone.ipsec_tunnel.not_installed') }})
+              ({{
+                child.installed
+                  ? t('standalone.ipsec_tunnel.installed')
+                  : t('standalone.ipsec_tunnel.not_installed')
+              }})
             </span>
             <template v-if="child.local_subnet.length || child.remote_subnet.length">
               <span class="ml-3 text-sm text-gray-500 dark:text-gray-400">
                 (
-                <template v-if="child.local_subnet.length">{{ child.local_subnet.join(', ') }}</template>
-                <template v-if="child.local_subnet.length && child.remote_subnet.length"> → </template>
-                <template v-if="child.remote_subnet.length">{{ child.remote_subnet.join(', ') }}</template>
+                <template v-if="child.local_subnet.length">{{
+                  child.local_subnet.join(', ')
+                }}</template>
+                <template v-if="child.local_subnet.length && child.remote_subnet.length">
+                  →
+                </template>
+                <template v-if="child.remote_subnet.length">{{
+                  child.remote_subnet.join(', ')
+                }}</template>
                 )
               </span>
             </template>
@@ -272,12 +282,17 @@ function getCellClasses(item: IpsecTunnel) {
       <!-- Raw output toggle -->
       <div>
         <NeLink @click="showRawOutput = !showRawOutput">
-          {{ showRawOutput ? t('standalone.ipsec_tunnel.hide_full_status') : t('standalone.ipsec_tunnel.show_full_status') }}
+          {{
+            showRawOutput
+              ? t('standalone.ipsec_tunnel.hide_full_status')
+              : t('standalone.ipsec_tunnel.show_full_status')
+          }}
         </NeLink>
         <pre
           v-if="showRawOutput"
-          class="mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded bg-gray-100 p-3 text-sm dark:bg-gray-800"
-        >{{ selectedTunnel.raw_output }}</pre>
+          class="mt-2 max-h-96 overflow-auto rounded bg-gray-100 p-3 text-sm whitespace-pre-wrap dark:bg-gray-800"
+          >{{ selectedTunnel.raw_output }}</pre
+        >
       </div>
     </template>
   </NeModal>

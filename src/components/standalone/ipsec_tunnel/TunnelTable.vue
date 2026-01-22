@@ -10,7 +10,7 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown, NeModal, NeLink } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
-import { faCircleCheck, faCircleXmark, faTrash, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faTrash, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -66,17 +66,6 @@ const tableHeaders = [
 function getDropdownItems(item: IpsecTunnel) {
   const items = []
 
-  if (item.enabled === '1') {
-    items.push({
-      id: 'details',
-      label: t('standalone.ipsec_tunnel.details'),
-      icon: faCircleInfo,
-      action: () => {
-        openDetailsModal(item)
-      }
-    })
-  }
-
   items.push({
     id: 'enable_disable',
     label:
@@ -105,12 +94,31 @@ function getDropdownItems(item: IpsecTunnel) {
 function getCellClasses(item: IpsecTunnel) {
   return item.enabled === '0' ? ['text-gray-400', 'dark:text-gray-700'] : []
 }
+
+
+
+
 </script>
 
 <template>
   <NeTable :data="tunnels" :headers="tableHeaders">
     <template #name="{ item }: { item: IpsecTunnel }">
-      <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+      <div class="flex items-center gap-2">
+        <NeButton
+          v-if="item.enabled === '1'"
+          kind="tertiary"
+          size="sm"
+          @click="openDetailsModal(item)"
+        >
+          <font-awesome-icon
+            :icon="faMagnifyingGlassPlus"
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
+        </NeButton>
+        <span v-else class="w-8"></span>
+        <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+      </div>
     </template>
     <template #local_networks="{ item }: { item: IpsecTunnel }">
       <template v-if="item.local.length > 0">
@@ -170,10 +178,10 @@ function getCellClasses(item: IpsecTunnel) {
               item.enabled === '0'
                 ? 'text-gray-400 dark:text-gray-700'
                 : item.connected === 'yes'
-                  ? 'text-green-500'
+                  ? 'text-green-600 dark:text-green-400'
                   : item.connected === 'warning'
                     ? 'text-amber-500'
-                    : 'text-rose-500'
+                    : 'text-red-600 dark:text-red-400'
             ]"
             aria-hidden="true"
           />
@@ -216,6 +224,7 @@ function getCellClasses(item: IpsecTunnel) {
     size="xl"
     :title="t('standalone.ipsec_tunnel.tunnel_details')"
     :primary-label="t('common.close')"
+    :close-aria-label="t('common.close')"
     @primary-click="closeDetailsModal"
     @close="closeDetailsModal"
   >
@@ -239,7 +248,7 @@ function getCellClasses(item: IpsecTunnel) {
                 'mr-2',
                 'h-4',
                 'w-4',
-                child.installed ? 'text-green-500' : 'text-rose-500'
+                child.installed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
               ]"
               aria-hidden="true"
             />
@@ -247,6 +256,15 @@ function getCellClasses(item: IpsecTunnel) {
             <span class="ml-2 text-gray-500 dark:text-gray-400">
               ({{ child.installed ? t('standalone.ipsec_tunnel.installed') : t('standalone.ipsec_tunnel.not_installed') }})
             </span>
+            <template v-if="child.local_subnet.length || child.remote_subnet.length">
+              <span class="ml-3 text-sm text-gray-500 dark:text-gray-400">
+                (
+                <template v-if="child.local_subnet.length">{{ child.local_subnet.join(', ') }}</template>
+                <template v-if="child.local_subnet.length && child.remote_subnet.length"> → </template>
+                <template v-if="child.remote_subnet.length">{{ child.remote_subnet.join(', ') }}</template>
+                )
+              </span>
+            </template>
           </li>
         </ul>
       </div>

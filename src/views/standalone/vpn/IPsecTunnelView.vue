@@ -18,6 +18,8 @@ import CreateOrEditTunnelDrawer from '@/components/standalone/ipsec_tunnel/Creat
 export type IpsecTunnelChild = {
   name: string
   installed: boolean
+  local_subnet: string[]
+  remote_subnet: string[]
 }
 
 export type IpsecTunnel = {

@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { extractBadges, type FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vue'
+import {
+  type Badge,
+  extractBadges,
+  type FlowEvent
+} from '@/components/standalone/monitoring/FlowsTable.vue'
 import { kbpsFormat, NeButton, NeTableCell, NeTableRow, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { differenceInSeconds } from 'date-fns'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faArrowDown, faArrowUp, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons'
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import FlowBadge from '@/components/standalone/monitoring/flows/FlowBadge.vue'
 
 const { item } = defineProps<{

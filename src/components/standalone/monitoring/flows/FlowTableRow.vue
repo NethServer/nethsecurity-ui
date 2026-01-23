@@ -1,17 +1,11 @@
 <script lang="ts" setup>
-import type { FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vue'
+import { extractBadges, type FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vue'
 import { kbpsFormat, NeButton, NeTableCell, NeTableRow, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { differenceInSeconds } from 'date-fns'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  faArrowDown,
-  faArrowUp,
-  faDiagramProject,
-  faMagnifyingGlassPlus,
-  faUsers
-} from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import FlowBadge from '@/components/standalone/monitoring/flows/FlowBadge.vue'
 
@@ -48,41 +42,7 @@ const applicationName = computed<string>(() => {
     .join(' ')
 })
 
-export type Badge = {
-  text: string
-  icon: IconDefinition
-  content?: string
-  customClasses: string[]
-}
-
-const badges = computed<Badge[]>(() => {
-  const entries: Badge[] = []
-  switch (item.flow.detected_protocol_name) {
-    default:
-      entries.push({
-        text: item.flow.detected_protocol_name,
-        icon: faDiagramProject,
-        customClasses: ['bg-gray-200', 'text-gray-800', 'dark:bg-gray-600', 'dark:text-gray-100']
-      })
-  }
-  if (!item.flow.local_origin && item.flow.other_type == 'remote') {
-    entries.push({
-      text: t('standalone.flows.remote'),
-      icon: faArrowDown,
-      customClasses: ['bg-rose-100', 'text-rose-800', 'dark:bg-rose-700', 'dark:text-rose-100'],
-      content: t('standalone.flows.remote_description')
-    })
-  }
-  if (item.flow.other_type == 'local') {
-    entries.push({
-      text: t('standalone.flows.internal'),
-      icon: faUsers,
-      customClasses: ['bg-blue-100', 'text-blue-800', 'dark:bg-blue-700', 'dark:text-blue-100'],
-      content: t('standalone.flows.internal_description')
-    })
-  }
-  return entries
-})
+const badges = computed<Badge[]>(() => extractBadges(item))
 
 const sourceIp = computed<string>(() =>
   item.flow.local_origin ? item.flow.local_ip : item.flow.other_ip
@@ -92,7 +52,6 @@ const destinationIp = computed<string>(() =>
 )
 
 function formatRate(rate: number): string {
-  // Convert bytes/s to Kbps: (bytes * 8 bits/byte) / 1000
   return kbpsFormat((rate * 8) / 1000)
 }
 </script>
@@ -102,19 +61,12 @@ function formatRate(rate: number): string {
     <NeTableCell :data-label="t('standalone.flows.application')">
       {{ applicationName }}
     </NeTableCell>
+    <NeTableCell :data-label="t('standalone.flows.protocol')">
+      {{ item.flow.detected_protocol_name }}
+    </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.tags')">
       <span class="flex flex-wrap gap-2">
-        <template v-for="badge in badges" :key="badge.text">
-          <NeTooltip v-if="badge.content" trigger-event="mouseenter click">
-            <template #content>
-              {{ badge.content }}
-            </template>
-            <template #trigger>
-              <FlowBadge :badge="badge" />
-            </template>
-          </NeTooltip>
-          <FlowBadge v-else :badge="badge" />
-        </template>
+        <FlowBadge v-for="badge in badges" :key="badge.text" :badge="badge" />
       </span>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.source')">
@@ -160,9 +112,11 @@ function formatRate(rate: number): string {
       </div>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.more_info')">
-      <NeButton kind="tertiary" @click="$emit('show', item)">
-        <FontAwesomeIcon :icon="faMagnifyingGlassPlus" />
-      </NeButton>
+      <div class="flex items-start">
+        <NeButton kind="tertiary" @click="$emit('show', item)">
+          <FontAwesomeIcon :icon="faMagnifyingGlassPlus" />
+        </NeButton>
+      </div>
     </NeTableCell>
   </NeTableRow>
 </template>

@@ -1,29 +1,66 @@
-<script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
-import { computed, onMounted, ref, watch } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus.ts'
-import type { AxiosResponse } from 'axios'
-import { useInterval } from '@vueuse/core'
+<script lang="ts">
 import {
-  NeTable,
-  NeTableBody,
-  NeTableHead,
-  NeTableHeadCell,
-  NeTextInput,
-  NeDropdownFilter,
-  type FilterOption,
-  useItemPagination,
-  NePaginator,
-  type SortEvent,
-  NeProgressBar,
-  NeInlineNotification,
-  getAxiosErrorMessage
-} from '@nethesis/vue-components'
-import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
-import { useRouteQuery } from '@vueuse/router'
-import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
+  faArrowDown,
+  faClockRotateLeft,
+  faUsers,
+  faWarning
+} from '@fortawesome/free-solid-svg-icons'
+import { isHighSeverityRisk } from '@/lib/standalone/ndpiRisks.ts'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
-const { t } = useI18n()
+export type Badge = {
+  id: string
+  text: string
+  icon: IconDefinition
+  content?: string
+  customClasses: string[]
+}
+
+export function extractBadges(entry: FlowEvent): Badge[] {
+  const badges: Badge[] = []
+  if (!entry.flow.local_origin && entry.flow.other_type == 'remote') {
+    badges.push({
+      id: 'remote',
+      text: 'standalone.flows.remote',
+      icon: faArrowDown,
+      customClasses: ['bg-rose-100', 'text-rose-800', 'dark:bg-rose-700', 'dark:text-rose-100'],
+      content: 'standalone.flows.remote_description'
+    })
+  }
+  if (entry.flow.other_type == 'local') {
+    badges.push({
+      id: 'local',
+      text: 'standalone.flows.internal',
+      icon: faUsers,
+      customClasses: ['bg-blue-100', 'text-blue-800', 'dark:bg-blue-700', 'dark:text-blue-100'],
+      content: 'standalone.flows.internal_description'
+    })
+  }
+  if (entry.type == 'flow') {
+    badges.push({
+      id: 'scanning',
+      text: 'standalone.flows.scanning',
+      icon: faClockRotateLeft,
+      customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100'],
+      content: 'standalone.flows.scanning_description'
+    })
+  }
+  if (entry.flow.risks.risks?.some(isHighSeverityRisk)) {
+    badges.push({
+      id: 'risky',
+      text: 'standalone.flows.risky',
+      icon: faWarning,
+      customClasses: [
+        'bg-yellow-100',
+        'text-yellow-800',
+        'dark:bg-yellow-700',
+        'dark:text-yellow-100'
+      ],
+      content: 'standalone.flows.risky_description'
+    })
+  }
+  return badges
+}
 
 export type FlowEvent = {
   type: 'flow_dpi_complete' | 'flow'
@@ -68,6 +105,39 @@ export type Flow = {
   }
   total_bytes: number
 }
+</script>
+
+<script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+import { computed, onMounted, ref, watch } from 'vue'
+import { ubusCall } from '@/lib/standalone/ubus.ts'
+import type { AxiosResponse } from 'axios'
+import { useInterval } from '@vueuse/core'
+import {
+  NeTable,
+  NeTableBody,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTextInput,
+  NeDropdownFilter,
+  type FilterOption,
+  useItemPagination,
+  NePaginator,
+  type SortEvent,
+  NeProgressBar,
+  NeInlineNotification,
+  getAxiosErrorMessage,
+  NeEmptyState,
+  NeTableCell,
+  NeTableRow
+} from '@nethesis/vue-components'
+import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
+import { useRouteQuery } from '@vueuse/router'
+import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
+import { ipv4ToInt } from '@/lib/ipUtils.ts'
+import { faTable } from '@fortawesome/free-solid-svg-icons'
+
+const { t } = useI18n()
 
 type FlowListResponse = AxiosResponse<{
   list: FlowEvent[]
@@ -127,6 +197,11 @@ const refreshIntervalsValue = computed<number | null>(() => {
       return null
   }
 })
+watch(refreshIntervalSelection, (val) => {
+  if (!val.includes('off')) {
+    fetchData()
+  }
+})
 
 onMounted(() => fetchData())
 
@@ -150,28 +225,6 @@ watch(refreshIntervalsValue, (value) => {
     reset()
     resume()
   }
-})
-
-const sourceIps = computed<FilterOption[]>(() => {
-  const ipSet = new Set<string>()
-  data.value.forEach((flow) => {
-    ipSet.add(flow.flow.local_ip)
-  })
-  return Array.from(ipSet).map((ip) => ({
-    id: ip,
-    label: ip
-  }))
-})
-
-const destinationIps = computed<FilterOption[]>(() => {
-  const ipSet = new Set<string>()
-  data.value.forEach((flow) => {
-    ipSet.add(flow.flow.other_ip)
-  })
-  return Array.from(ipSet).map((ip) => ({
-    id: ip,
-    label: ip
-  }))
 })
 
 const applications = computed<FilterOption[]>(() => {
@@ -215,13 +268,90 @@ const protocols = computed<FilterOption[]>(() => {
     .sort((a, b) => a.label.localeCompare(b.label))
 })
 
+const badges = computed<FilterOption[]>(() => {
+  const badgeMap = new Map<string, Badge>()
+  data.value.forEach((flow) => {
+    extractBadges(flow).forEach((badge) => {
+      if (!badgeMap.has(badge.id)) {
+        badgeMap.set(badge.id, badge)
+      }
+    })
+  })
+  return Array.from(badgeMap.values())
+    .map((badge) => ({
+      id: badge.id,
+      label: t(badge.text)
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const sourceIps = computed<FilterOption[]>(() => {
+  const ipSet = new Set<string>()
+  data.value.forEach((flow) => {
+    if (flow.flow.local_origin) {
+      return ipSet.add(flow.flow.local_ip)
+    } else {
+      return ipSet.add(flow.flow.other_ip)
+    }
+  })
+  return Array.from(ipSet)
+    .map((ip) => ({
+      id: ip,
+      label: ip
+    }))
+    .sort((a, b) => ipv4ToInt(a.id) - ipv4ToInt(b.id))
+})
+
+const destinationIps = computed<FilterOption[]>(() => {
+  const ipSet = new Set<string>()
+  data.value.forEach((flow) => {
+    if (flow.flow.local_origin) {
+      return ipSet.add(flow.flow.other_ip)
+    } else {
+      return ipSet.add(flow.flow.local_ip)
+    }
+  })
+  return Array.from(ipSet)
+    .map((ip) => ({
+      id: ip,
+      label: ip
+    }))
+    .sort((a, b) => ipv4ToInt(a.id) - ipv4ToInt(b.id))
+})
+
 type Filter<T> = (a: T) => boolean
 
 const filter = useRouteQuery('filter', '')
-const filterApplications = ref<string[]>([])
-const filterProtocols = ref<string[]>([])
-const filterSource = ref<string[]>([])
-const filterDestination = ref<string[]>([])
+const filterApplications = useRouteQuery<string, string[]>('applications', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+const filterProtocols = useRouteQuery<string, string[]>('protocols', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+const filterBadges = useRouteQuery<string, string[]>('badge', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+const filterSource = useRouteQuery<string, string[]>('source', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+const filterDestination = useRouteQuery<string, string[]>('destination', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
 const filters: Filter<FlowEvent>[] = [
   (flow) => {
     return Object.values(flow.flow).some((value) =>
@@ -235,22 +365,34 @@ const filters: Filter<FlowEvent>[] = [
     return filterApplications.value.includes(flow.flow.detected_application_name)
   },
   (flow) => {
+    if (!filterProtocols.value.length) {
+      return true
+    }
+    return filterProtocols.value.includes(flow.flow.detected_protocol_name)
+  },
+  (flow) => {
+    if (!filterBadges.value.length) {
+      return true
+    }
+    return extractBadges(flow).some((items) => filterBadges.value.includes(items.id))
+  },
+  (flow) => {
     if (!filterSource.value.length) {
       return true
     }
-    return filterSource.value.includes(flow.flow.local_ip)
+    if (flow.flow.local_origin) {
+      return filterSource.value.includes(flow.flow.local_ip)
+    }
+    return filterSource.value.includes(flow.flow.other_ip)
   },
   (flow) => {
     if (!filterDestination.value.length) {
       return true
     }
-    return filterDestination.value.includes(flow.flow.other_ip)
-  },
-  (flow) => {
-    if (!filterProtocols.value.length) {
-      return true
+    if (flow.flow.local_origin) {
+      return filterDestination.value.includes(flow.flow.other_ip)
     }
-    return filterProtocols.value.includes(flow.flow.detected_protocol_name)
+    return filterDestination.value.includes(flow.flow.local_ip)
   }
 ]
 
@@ -356,6 +498,18 @@ watch(flowDetails, (value) => {
             show-options-filter
           />
           <NeDropdownFilter
+            v-model="filterBadges"
+            :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
+            :clear-search-label="t('ne_dropdown_filter.clear_search')"
+            :label="t('standalone.flows.tags')"
+            :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+            :no-options-label="t('ne_dropdown_filter.no_options')"
+            :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+            :options="badges"
+            kind="checkbox"
+            show-options-filter
+          />
+          <NeDropdownFilter
             v-model="filterSource"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
@@ -409,6 +563,9 @@ watch(flowDetails, (value) => {
           {{ t('standalone.flows.application') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
+          {{ t('standalone.flows.protocol') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
           {{ t('standalone.flows.tags') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
@@ -431,7 +588,7 @@ watch(flowDetails, (value) => {
         </NeTableHeadCell>
         <NeTableHeadCell />
       </NeTableHead>
-      <NeTableBody>
+      <NeTableBody v-if="paginatedItems.length > 0">
         <FlowTableRow
           v-for="flow in paginatedItems"
           :key="flow.flow.digest"
@@ -439,7 +596,18 @@ watch(flowDetails, (value) => {
           @show="flowDetails = $event"
         />
       </NeTableBody>
-      <template v-if="!loading" #paginator>
+      <NeTableBody v-else>
+        <NeTableRow>
+          <NeTableCell colspan="10">
+            <NeEmptyState
+              :description="t('standalone.flows.no_flows_found_description')"
+              :icon="faTable"
+              :title="t('standalone.flows.no_flows_found')"
+            />
+          </NeTableCell>
+        </NeTableRow>
+      </NeTableBody>
+      <template v-if="!loading && paginatedItems.length > 0" #paginator>
         <NePaginator
           :current-page="currentPage"
           :nav-pagination-label="t('ne_table.pagination')"

@@ -2324,6 +2324,8 @@
       "tags": "Tags",
       "internal": "Internal",
       "internal_description": "Connection is between local networks",
+      "remote": "Remote",
+      "remote_description": "Connection has been established from internet to the firewall",
       "more_info": "More info",
       "flow_details": "Flow details",
       "endpoint_information": "Endpoint information",
@@ -2349,7 +2351,14 @@
       "download_rate": "Download rate",
       "upload_bytes": "Upload bytes",
       "download_bytes": "Download bytes",
-      "total_bytes": "Total bytes"
+      "total_bytes": "Total bytes",
+      "no_flows_found": "No flows found",
+      "no_flows_found_description": "No flows found for the current filters. Try changing the search filters or wait for new connections to be established.",
+      "scanning": "Scanning",
+      "scanning_description": "The flow is currently being analyzed. Additional insights will be available once the scan completes.",
+      "risky": "Risky",
+      "risky_description": "The flow is considered risky and may contain malicious traffic.",
+      "risks_detected": "Risks detected"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

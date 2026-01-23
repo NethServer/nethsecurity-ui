@@ -159,7 +159,7 @@ function getCellClasses(item: IpsecTunnel) {
     </template>
     <template #connection="{ item }: { item: IpsecTunnel }">
       <div :class="['flex', 'flex-col', ...getCellClasses(item)]">
-        <div class="flex flex-row items-center">
+        <div class="flex items-center">
           <font-awesome-icon
             :icon="[
               'fas',
@@ -183,19 +183,21 @@ function getCellClasses(item: IpsecTunnel) {
             ]"
             aria-hidden="true"
           />
-          <p>
-            {{
-              item.connected === 'yes'
-                ? t('standalone.ipsec_tunnel.connected')
-                : item.connected === 'warning'
-                  ? t('standalone.ipsec_tunnel.warning')
-                  : t('standalone.ipsec_tunnel.not_connected')
-            }}
-          </p>
+          <div>
+            <p>
+              {{
+                item.connected === 'yes'
+                  ? t('standalone.ipsec_tunnel.connected')
+                  : item.connected === 'warning'
+                    ? t('standalone.ipsec_tunnel.warning')
+                    : t('standalone.ipsec_tunnel.not_connected')
+              }}
+            </p>
+            <NeLink v-if="item.connected === 'warning'" @click="openDetailsModal(item)">
+              {{ t('standalone.ipsec_tunnel.more_info') }}
+            </NeLink>
+          </div>
         </div>
-        <NeLink v-if="item.connected === 'warning'" class="ml-7" @click="openDetailsModal(item)">
-          {{ t('standalone.ipsec_tunnel.more_info') }}
-        </NeLink>
       </div>
     </template>
     <template #menu="{ item }: { item: IpsecTunnel }">

@@ -6,6 +6,7 @@ import {
   NeInlineNotification,
   NeSkeleton,
   NeEmptyState,
+  NeModal,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -15,13 +16,23 @@ import TunnelTable from '@/components/standalone/ipsec_tunnel/TunnelTable.vue'
 import DeleteTunnelModal from '@/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue'
 import CreateOrEditTunnelDrawer from '@/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue'
 
+export type IpsecTunnelChild = {
+  name: string
+  installed: boolean
+  local_subnet: string[]
+  remote_subnet: string[]
+}
+
 export type IpsecTunnel = {
   id: string
   name: string
   local: string[]
   remote: string[]
   enabled: '0' | '1'
-  connected: boolean
+  connected: 'yes' | 'warning' | 'no'
+  status: string
+  children: IpsecTunnelChild[]
+  raw_output: string
 }
 
 const { t } = useI18n()
@@ -33,7 +44,9 @@ const tunnels = ref([])
 const selectedTunnel = ref<IpsecTunnel | null>(null)
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
+const showRestartModal = ref(false)
 const fetchTunnelsIntervalId = ref(0)
+const isRestarting = ref(false)
 
 const error = ref({
   notificationTitle: '',
@@ -69,10 +82,15 @@ function openDeleteModal(itemToDelete: IpsecTunnel) {
   showDeleteModal.value = true
 }
 
+function openRestartModal() {
+  showRestartModal.value = true
+}
+
 function closeModalsAndDrawers() {
   selectedTunnel.value = null
   showDeleteModal.value = false
   showCreateEditDrawer.value = false
+  showRestartModal.value = false
 }
 
 function cleanError() {
@@ -105,6 +123,22 @@ async function reloadTunnels() {
   await uciChangesStore.getChanges()
 }
 
+async function restartTunnel() {
+  try {
+    cleanError()
+    isRestarting.value = true
+    await ubusCall('ns.ipsectunnel', 'restart')
+    showRestartModal.value = false
+    await reloadTunnels()
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_restart_ipsec')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    isRestarting.value = false
+  }
+}
+
 onMounted(() => {
   fetchTunnels()
 
@@ -134,7 +168,17 @@ onUnmounted(() => {
         </p>
         <template v-if="tunnels.length > 0">
           <div class="flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
-            <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+            <NeButton kind="tertiary" @click="openRestartModal">
+              <template #prefix>
+                <font-awesome-icon
+                  :icon="['fas', 'arrow-rotate-left']"
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </template>
+              {{ t('standalone.ipsec_tunnel.restart') }}
+            </NeButton>
+            <NeButton kind="primary" @click="openCreateEditDrawer(null)">
               <template #prefix>
                 <font-awesome-icon
                   :icon="['fas', 'circle-plus']"
@@ -194,4 +238,19 @@ onUnmounted(() => {
     @close="closeModalsAndDrawers"
     @add-edit-tunnel="reloadTunnels"
   />
+  <NeModal
+    :visible="showRestartModal"
+    :title="t('standalone.ipsec_tunnel.restart_confirmation_title')"
+    kind="warning"
+    :primary-label="t('standalone.ipsec_tunnel.restart')"
+    :primary-button-disabled="isRestarting"
+    :primary-button-loading="isRestarting"
+    :cancel-label="t('common.cancel')"
+    :close-aria-label="t('common.close')"
+    @close="closeModalsAndDrawers"
+    @primary-click="restartTunnel"
+    @secondary-click="closeModalsAndDrawers"
+  >
+    {{ t('standalone.ipsec_tunnel.restart_confirmation_message') }}
+  </NeModal>
 </template>

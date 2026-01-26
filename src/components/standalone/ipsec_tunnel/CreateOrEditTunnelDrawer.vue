@@ -57,6 +57,7 @@ type CreateEditIpsecTunnelPayload = {
     rekeytime: string
   }
   ipcomp: string
+  closeaction?: string
   dpdaction: 'restart' | 'none'
   remote_subnet: string[]
   local_subnet: string[]
@@ -104,6 +105,7 @@ const presharedKeyMode = ref<'generate' | 'import'>('generate')
 const presharedKey = ref('')
 const dpd = ref(false)
 const enableCompression = ref(false)
+const closeAction = ref('none')
 
 // Step 3 fields
 const ikeVersion = ref('')
@@ -144,6 +146,11 @@ const presharedKeyOptions = [
   }
 ]
 const wanOptions = ref<NeComboboxOption[]>([])
+const closeActionOptions: NeComboboxOption[] = [
+  { id: 'none', label: 'none' },
+  { id: 'trap', label: 'trap' },
+  { id: 'start', label: 'start' }
+]
 const encryptionOptions = ref<NeComboboxOption[]>([])
 const integrityOptions = ref<NeComboboxOption[]>([])
 const diffieHellmanOptions = ref<NeComboboxOption[]>([])
@@ -247,6 +254,7 @@ async function resetForm() {
   remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
   dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
+  closeAction.value = tunnelData?.closeaction ?? 'none'
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
   ikeEncryptionAlgorithm.value = tunnelData?.ike.encryption_algorithm ?? 'aes256'
   ikeIntegrityAlgorithm.value = tunnelData?.ike.hash_algorithm ?? 'sha256'
@@ -416,6 +424,7 @@ async function createOrEditTunnel() {
       rekeytime: espKeyLifetime.value
     },
     ipcomp: enableCompression.value ? 'true' : 'false',
+    closeaction: closeAction.value,
     enabled: enabled.value ? '1' : '0',
     dpdaction: dpd.value ? 'restart' : 'none',
     keyexchange: ikeVersion.value,
@@ -627,6 +636,25 @@ watch(
             "
           />
         </div>
+        <NeCombobox
+          v-model="closeAction"
+          :label="t('standalone.ipsec_tunnel.close_action')"
+          :options="closeActionOptions"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :optional-label="t('common.optional')"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.ipsec_tunnel.close_action_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeCombobox>
       </template>
       <template v-else>
         <NeHeading tag="h6" class="mb-1.5">{{

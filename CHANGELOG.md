@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.0](https://github.com/NethServer/nethsecurity-ui/compare/2.8.2...2.9.0) (2026-01-26)
+
+
+### Features
+
+* multiple IPsec improvements ([#676](https://github.com/NethServer/nethsecurity-ui/issues/676)) ([95e6d57](https://github.com/NethServer/nethsecurity-ui/commit/95e6d579ac2255c9ea5c37e6c7505d6804bf15d6))
+
 ## [2.8.2](https://github.com/NethServer/nethsecurity-ui/compare/2.8.1...2.8.2) (2026-01-15)
 
 

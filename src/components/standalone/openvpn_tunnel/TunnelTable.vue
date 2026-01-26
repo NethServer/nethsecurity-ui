@@ -3,7 +3,6 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 <script lang="ts">
-
 // certificate expiry warning threshold in days
 export const CERT_EXPIRY_WARNING_DAYS = 30
 
@@ -16,7 +15,7 @@ export interface CertificateStatusResult {
 }
 
 export function getDaysUntilExpiry(expiryTimestamp: number): number {
-  const secondsUntilExpiry = expiryTimestamp - (Date.now() / 1000)
+  const secondsUntilExpiry = expiryTimestamp - Date.now() / 1000
   return Math.floor(secondsUntilExpiry / 86400)
 }
 
@@ -26,29 +25,41 @@ export function shouldShowCertExpiryBadge(expiryTimestamp: number): boolean {
 }
 
 export function isCertificatesExpired(expiryTimestamp: number): boolean {
-  return expiryTimestamp <= (Date.now() / 1000)
+  return expiryTimestamp <= Date.now() / 1000
 }
 
-export function getCertificateStatus(expiryTimestamp: number, isClientTunnel: boolean = false, tunnelDetailModal: boolean = false): CertificateStatusResult {
+export function getCertificateStatus(
+  expiryTimestamp: number,
+  isClientTunnel: boolean = false,
+  tunnelDetailModal: boolean = false
+): CertificateStatusResult {
   if (isCertificatesExpired(expiryTimestamp)) {
     return {
       show: true,
       icon: faCircleExclamation,
       colorClass: 'text-red-700 dark:text-red-500',
-      messageKey: tunnelDetailModal 
-      ? (isClientTunnel ? 'standalone.openvpn_tunnel.client_cert_expired_complete_message' : 'standalone.openvpn_tunnel.cert_expired_complete_message')
-      : (isClientTunnel ? 'standalone.openvpn_tunnel.client_cert_expired_message' : 'standalone.openvpn_tunnel.cert_expired_message')
+      messageKey: tunnelDetailModal
+        ? isClientTunnel
+          ? 'standalone.openvpn_tunnel.client_cert_expired_complete_message'
+          : 'standalone.openvpn_tunnel.cert_expired_complete_message'
+        : isClientTunnel
+          ? 'standalone.openvpn_tunnel.client_cert_expired_message'
+          : 'standalone.openvpn_tunnel.cert_expired_message'
     }
   }
-  
+
   if (shouldShowCertExpiryBadge(expiryTimestamp)) {
     return {
       show: true,
       icon: faTriangleExclamation,
       colorClass: 'text-amber-700 dark:text-amber-500',
-      messageKey: tunnelDetailModal 
-      ? (isClientTunnel ? 'standalone.openvpn_tunnel.client_cert_expiring_complete_message' : 'standalone.openvpn_tunnel.cert_expiring_complete_message')
-      : (isClientTunnel ? 'standalone.openvpn_tunnel.client_cert_expiring_message' : 'standalone.openvpn_tunnel.cert_expiring_message'),
+      messageKey: tunnelDetailModal
+        ? isClientTunnel
+          ? 'standalone.openvpn_tunnel.client_cert_expiring_complete_message'
+          : 'standalone.openvpn_tunnel.cert_expiring_complete_message'
+        : isClientTunnel
+          ? 'standalone.openvpn_tunnel.client_cert_expiring_message'
+          : 'standalone.openvpn_tunnel.cert_expiring_message',
       messageParams: {
         days: getDaysUntilExpiry(expiryTimestamp)
       }
@@ -60,10 +71,10 @@ export function getCertificateStatus(expiryTimestamp: number, isClientTunnel: bo
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { 
-  NeDropdown, 
-  NeButton, 
-  NeTooltip, 
+import {
+  NeDropdown,
+  NeButton,
+  NeTooltip,
   NeTable,
   NeTableHead,
   NeTableHeadCell,
@@ -120,16 +131,18 @@ function getDropdownItems(item: ServerTunnel | ClientTunnel) {
         emit('tunnel-toggle-enable', item)
       }
     },
-    ...(props.isClientTunnel ? [] : [
-      {
-        id: 'regenerate_certs',
-        label: t('standalone.openvpn_tunnel.regenerate_cert'),
-        icon: faRefresh,
-        action: () => {
-          emit('tunnel-regenerate-certs', item)
-        }
-      }
-    ]),
+    ...(props.isClientTunnel
+      ? []
+      : [
+          {
+            id: 'regenerate_certs',
+            label: t('standalone.openvpn_tunnel.regenerate_cert'),
+            icon: faRefresh,
+            action: () => {
+              emit('tunnel-regenerate-certs', item)
+            }
+          }
+        ]),
     {
       id: 'delete',
       label: t('common.delete'),
@@ -153,11 +166,7 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
 </script>
 
 <template>
-  <NeTable v-if="tunnels"
-    card-breakpoint="xl"
-    :skeleton-columns="6"
-    :skeleton-rows="5"
-  >
+  <NeTable v-if="tunnels" card-breakpoint="xl" :skeleton-columns="6" :skeleton-rows="5">
     <NeTableHead>
       <NeTableHeadCell column-key="name">
         {{ t('standalone.openvpn_tunnel.name') }}
@@ -197,9 +206,10 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
             <NeButton
               size="sm"
               kind="tertiary"
-              class="w-8 h-8 p-0 shrink-0"
+              class="h-8 w-8 shrink-0 p-0"
               :disabled="!item.enabled"
-              @click="emit('tunnel-show-info', item)">
+              @click="emit('tunnel-show-info', item)"
+            >
               <FontAwesomeIcon
                 :icon="faMagnifyingGlassPlus"
                 class="h-4 w-4 shrink-0"
@@ -207,16 +217,32 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
               />
             </NeButton>
             <p :class="[...getCellClasses(item)]">{{ item.ns_name }}</p>
-            <NeTooltip v-if="item.cert_expiry_ts && getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).show" interactive>
+            <NeTooltip
+              v-if="
+                item.cert_expiry_ts &&
+                getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).show
+              "
+              interactive
+            >
               <template #trigger>
                 <FontAwesomeIcon
                   :icon="getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).icon"
-                  :class="['h-4 w-4', getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).colorClass]"
+                  :class="[
+                    'h-4 w-4',
+                    getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).colorClass
+                  ]"
                   aria-hidden="true"
                 />
               </template>
               <template #content>
-                <p class="text-center">{{ t(getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).messageKey!) }}</p>
+                <p class="text-center">
+                  {{
+                    t(
+                      getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item))
+                        .messageKey!
+                    )
+                  }}
+                </p>
               </template>
             </NeTooltip>
           </span>
@@ -224,7 +250,10 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
         <NeTableCell :data-label="t('standalone.openvpn_tunnel.port')">
           <p :class="[...getCellClasses(item)]">{{ item.port }}</p>
         </NeTableCell>
-        <NeTableCell v-if="!checkIsClientTunnel(item)" :data-label="t('standalone.openvpn_tunnel.local_networks')">
+        <NeTableCell
+          v-if="!checkIsClientTunnel(item)"
+          :data-label="t('standalone.openvpn_tunnel.local_networks')"
+        >
           <template v-if="item.local_network.length > 0">
             <p
               v-for="(local, idx) in item.local_network.slice(0, 2)"
@@ -235,7 +264,7 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
             </p>
           </template>
           <p v-else :class="[...getCellClasses(item)]">-</p>
-        </NeTableCell >
+        </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_tunnel.remote_networks')">
           <template v-if="item.remote_network.length > 0">
             <p
@@ -246,9 +275,12 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
               {{ remote }}{{ item.remote_network.length > 2 && idx == 1 ? '...' : '' }}
             </p>
           </template>
-          <p v-else :class="[...getCellClasses(item)]">-</p>          
+          <p v-else :class="[...getCellClasses(item)]">-</p>
         </NeTableCell>
-        <NeTableCell v-if="checkIsClientTunnel(item)" :data-label="t('standalone.openvpn_tunnel.remote_hosts')">
+        <NeTableCell
+          v-if="checkIsClientTunnel(item)"
+          :data-label="t('standalone.openvpn_tunnel.remote_hosts')"
+        >
           <template v-if="item.remote_host.length > 0">
             <p
               v-for="(remoteHost, idx) in item.remote_host.slice(0, 2)"
@@ -268,7 +300,10 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
             }}
           </p>
         </NeTableCell>
-        <NeTableCell v-if="!checkIsClientTunnel(item)" :data-label="t('standalone.openvpn_tunnel.vpn_network')">
+        <NeTableCell
+          v-if="!checkIsClientTunnel(item)"
+          :data-label="t('standalone.openvpn_tunnel.vpn_network')"
+        >
           <p :class="[...getCellClasses(item)]">{{ item.vpn_network }}</p>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_tunnel.status')">
@@ -279,10 +314,8 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
                 'mr-2',
                 'h-5',
                 'w-5',
-                item.enabled 
-                  ? 'text-green-700 dark:text-green-500' 
-                  : ''
-                ]"
+                item.enabled ? 'text-green-700 dark:text-green-500' : ''
+              ]"
               aria-hidden="true"
             />
             <p>
@@ -305,8 +338,8 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
                 item.connected && item.enabled
                   ? 'text-green-700 dark:text-green-500'
                   : item.enabled
-                  ? 'text-red-700 dark:text-red-500'
-                  : ''
+                    ? 'text-red-700 dark:text-red-500'
+                    : ''
               ]"
               aria-hidden="true"
             />

@@ -6,22 +6,26 @@
 import { NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
-import { watch, ref, computed } from 'vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { getCertificateStatus } from './TunnelTable.vue';
+import { watch, ref, computed } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { getCertificateStatus } from './TunnelTable.vue'
 
 const { t, locale } = useI18n()
 
-const{ itemToShow = null } = defineProps<{
+const { itemToShow = null } = defineProps<{
   itemToShow?: ServerTunnel | ClientTunnel | null
 }>()
 
-const _itemToShow = ref<ServerTunnel | ClientTunnel>();
-watch(() => itemToShow, (newVal) => {
+const _itemToShow = ref<ServerTunnel | ClientTunnel>()
+watch(
+  () => itemToShow,
+  (newVal) => {
     if (newVal !== null) {
-        _itemToShow.value = newVal;
+      _itemToShow.value = newVal
     }
-}, { immediate: true });
+  },
+  { immediate: true }
+)
 
 const emit = defineEmits(['close'])
 
@@ -31,16 +35,20 @@ function isClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientTunnel
 
 const certificateStatus = computed(() => {
   if (!_itemToShow.value?.cert_expiry_ts) return { show: false }
-  return getCertificateStatus(_itemToShow.value.cert_expiry_ts, isClientTunnel(_itemToShow.value), true)
+  return getCertificateStatus(
+    _itemToShow.value.cert_expiry_ts,
+    isClientTunnel(_itemToShow.value),
+    true
+  )
 })
 
 const fieldLabels = computed(() => {
   const isTunnelClient = _itemToShow.value ? isClientTunnel(_itemToShow.value) : false
-  
+
   return {
     bytes_received: t('standalone.openvpn_tunnel.bytes_received'),
     bytes_sent: t('standalone.openvpn_tunnel.bytes_sent'),
-    cert_expiry_ts: isTunnelClient 
+    cert_expiry_ts: isTunnelClient
       ? t('standalone.openvpn_tunnel.client_cert_expiry')
       : t('standalone.openvpn_tunnel.cert_expiry'),
     connected: t('standalone.openvpn_tunnel.connection'),
@@ -55,7 +63,7 @@ const fieldLabels = computed(() => {
     topology: t('standalone.openvpn_tunnel.topology'),
     virtual_address: t('standalone.openvpn_tunnel.virtual_address'),
     vpn_network: t('standalone.openvpn_tunnel.vpn_network'),
-    remote_host: t('standalone.openvpn_tunnel.remote_host'),
+    remote_host: t('standalone.openvpn_tunnel.remote_host')
   }
 })
 
@@ -70,7 +78,9 @@ function formatFieldValue(key: string, value: any): string {
 
   // Handle boolean-like fields
   if (key === 'connected') {
-    return value ? t('standalone.openvpn_tunnel.connected') : t('standalone.openvpn_tunnel.not_connected')
+    return value
+      ? t('standalone.openvpn_tunnel.connected')
+      : t('standalone.openvpn_tunnel.not_connected')
   }
 
   if (key === 'enabled') {
@@ -104,165 +114,165 @@ function isFieldVisible(key: string, value: any): boolean {
     @close="emit('close')"
     @primary-click="emit('close')"
   >
-    <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr]">
       <!-- ns_name -->
       <template v-if="isFieldVisible('ns_name', _itemToShow?.ns_name)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['ns_name'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('ns_name', _itemToShow?.ns_name) }}
         </p>
       </template>
 
       <!-- id -->
       <template v-if="isFieldVisible('id', _itemToShow?.id)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['id'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('id', _itemToShow?.id) }}
         </p>
       </template>
 
       <!-- port -->
       <template v-if="isFieldVisible('port', _itemToShow?.port)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['port'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('port', _itemToShow?.port) }}
         </p>
       </template>
 
       <!-- enabled -->
       <template v-if="isFieldVisible('enabled', _itemToShow?.enabled)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['enabled'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('enabled', _itemToShow?.enabled) }}
         </p>
       </template>
 
       <!-- topology -->
       <template v-if="isFieldVisible('topology', _itemToShow?.topology)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['topology'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('topology', _itemToShow?.topology) }}
         </p>
       </template>
 
       <!-- local_network -->
       <template v-if="isFieldVisible('local_network', (_itemToShow as any)?.local_network)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['local_network'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('local_network', (_itemToShow as any)?.local_network) }}
         </p>
       </template>
 
       <!-- remote_network -->
       <template v-if="isFieldVisible('remote_network', _itemToShow?.remote_network)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['remote_network'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('remote_network', _itemToShow?.remote_network) }}
         </p>
       </template>
 
       <!-- remote_host -->
       <template v-if="isFieldVisible('remote_host', (_itemToShow as any)?.remote_host)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['remote_host'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('remote_host', (_itemToShow as any)?.remote_host) }}
         </p>
       </template>
 
       <!-- vpn_network -->
       <template v-if="isFieldVisible('vpn_network', (_itemToShow as any)?.vpn_network)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['vpn_network'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('vpn_network', (_itemToShow as any)?.vpn_network) }}
         </p>
       </template>
 
       <!-- real_address -->
       <template v-if="isFieldVisible('real_address', (_itemToShow as any)?.real_address)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['real_address'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('real_address', (_itemToShow as any)?.real_address) }}
         </p>
       </template>
 
       <!-- virtual_address -->
       <template v-if="isFieldVisible('virtual_address', (_itemToShow as any)?.virtual_address)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['virtual_address'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('virtual_address', (_itemToShow as any)?.virtual_address) }}
         </p>
       </template>
 
       <!-- connected -->
       <template v-if="isFieldVisible('connected', _itemToShow?.connected)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['connected'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('connected', _itemToShow?.connected) }}
         </p>
       </template>
 
       <!-- since -->
       <template v-if="isFieldVisible('since', _itemToShow?.since)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['since'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('since', _itemToShow?.since) }}
         </p>
       </template>
 
       <!-- bytes_received -->
       <template v-if="isFieldVisible('bytes_received', _itemToShow?.bytes_received)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['bytes_received'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('bytes_received', _itemToShow?.bytes_received) }}
         </p>
       </template>
 
       <!-- bytes_sent -->
       <template v-if="isFieldVisible('bytes_sent', _itemToShow?.bytes_sent)">
-        <p class="font-semibold text-sm">
+        <p class="text-sm font-semibold">
           {{ fieldLabels['bytes_sent'] }}
         </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatFieldValue('bytes_sent', _itemToShow?.bytes_sent) }}
         </p>
       </template>
 
       <!-- cert_expiry_ts -->
       <template v-if="isFieldVisible('cert_expiry_ts', _itemToShow?.cert_expiry_ts)">
-        <p class="font-semibold text-sm">
-            {{ fieldLabels['cert_expiry_ts'] }}
-        </p>        
+        <p class="text-sm font-semibold">
+          {{ fieldLabels['cert_expiry_ts'] }}
+        </p>
         <div class="flex flex-col gap-2">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">
-              {{ formatFieldValue('cert_expiry_ts', _itemToShow?.cert_expiry_ts) }}
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ formatFieldValue('cert_expiry_ts', _itemToShow?.cert_expiry_ts) }}
           </p>
           <span v-if="certificateStatus.show" class="flex items-center gap-2">
             <FontAwesomeIcon
@@ -270,7 +280,7 @@ function isFieldVisible(key: string, value: any): boolean {
               :class="['h-4 w-4', certificateStatus.colorClass]"
               aria-hidden="true"
             />
-            <p class="text-gray-600 dark:text-gray-400 text-sm">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
               {{ t(certificateStatus.messageKey!, certificateStatus.messageParams!) }}
             </p>
           </span>
@@ -279,4 +289,3 @@ function isFieldVisible(key: string, value: any): boolean {
     </div>
   </NeModal>
 </template>
-

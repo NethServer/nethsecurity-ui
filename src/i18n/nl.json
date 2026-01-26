@@ -4,7 +4,10 @@
     "edit": "Wijzig",
     "enabled": "Ingeschakeld",
     "disabled": "Uitgeschakeld",
-    "loading": "Aan het laden"
+    "loading": "Aan het laden",
+    "any": "Elke",
+    "clear_filters": "Filters wissen",
+    "type": "Type"
   },
   "error": {
     "invalid_credentials": "Ongeldige inloggegevens"

@@ -23,7 +23,7 @@
     "status": "Stato",
     "any": "Qualsiasi",
     "loading": "Caricamento",
-    "eg_value": "ad es. {value}",
+    "eg_value": "Es. {value}",
     "name": "Nome",
     "plus_num_others": "+{num} altro | +{num} altri",
     "more_info": "Più info",
@@ -424,7 +424,8 @@
     "cannot_set_uci_configuration": "Impossibile salvare la configurazione UCI",
     "unauthorized_action": "Azione non autorizzata",
     "duplicate_ip": "L'IP è già stato utilizzato",
-    "duplicate_port": "La porta è già stata utilizzata"
+    "duplicate_port": "La porta è già stata utilizzata",
+    "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec"
   },
   "login": {
     "sign_in": "Accedi",
@@ -905,7 +906,8 @@
       "configure_bond_name": "Configura bond {name}",
       "management_ipv4_address_cidr_tooltip": "Questo indirizzo IP è solamente per uso interno e non sarà l'indirizzo principale del bond. Assicurati che non sia già in uso nella tua rete",
       "clients_network": "Rete client",
-      "pppoe_name_too_long_need_reconfiguration": "I nomi di interfaccia PPPoE sono limitati a caratteri {num}. È possibile rimuovere la configurazione da questo dispositivo, quindi riconfigurarlo con un nome di interfaccia più breve."
+      "pppoe_name_too_long_need_reconfiguration": "I nomi di interfaccia PPPoE sono limitati a caratteri {num}. È possibile rimuovere la configurazione da questo dispositivo, quindi riconfigurarlo con un nome di interfaccia più breve.",
+      "metric": "Metrica"
     },
     "multi_wan": {
       "create_rule": "Crea regola",
@@ -1478,7 +1480,7 @@
       "diffie_hellman_group": "Gruppo Diffie-Hellman",
       "delete_tunnel": "Elimina tunnel",
       "sent": "Inviato",
-      "description": "In questa pagina è possibile creare tunnel IPSec; il protocollo IPsec è supportato da molti dispositivi di rete ed è la scelta migliore per l'interoperabilità. I tunnel IPSec possono essere utilizzati per collegare in modo sicuro reti remote.",
+      "description": "In questa pagina è possibile creare tunnel IPsec; il protocollo IPsec è supportato da molti dispositivi di rete ed è la scelta migliore per l'interoperabilità. I tunnel IPsec possono essere utilizzati per collegare in modo sicuro reti remote. Dopo aver aggiunto o rimosso una rete, riavviare il servizio se i tunnel non si aggiornano automaticamente.",
       "local_networks": "Rete locale",
       "add_ipsec_tunnel": "Aggiungi tunnel IPsec",
       "local_identifier": "Identificatore locale",
@@ -1524,7 +1526,12 @@
       "remote_networks": "Reti remote",
       "ipsec_network_already_used_in_local_networks": "Rete già utilizzata nelle reti locali",
       "diffie_hellman_group_tooltip": "Selezionare un metodo di scambio chiave per abilitare Perfect Forward Secrecy (PFS)",
-      "diffie_hellman_group_pfs": "Gruppo Diffie-Hellman (PFS)"
+      "diffie_hellman_group_pfs": "Gruppo Diffie-Hellman (PFS)",
+      "close_action": "Azione di chiusura",
+      "close_action_tooltip": "Azione da eseguire dopo che un tunnel viene chiuso dal peer. \"none\" non fa alcuna azione, 'trap' tenta di riavviare un CHILD_SA fallito, 'start' cerca di ricreare immediatamente il CHILD_SA.",
+      "restart": "Riavvia",
+      "restart_confirmation_title": "Riavvia il servizio IPsec",
+      "restart_confirmation_message": "Sei sicuro di voler riavviare il servizio IPsec? L'azione riavvia tutti i tunnel. Questo è richiesto solo dopo l'aggiunta o la rimozione di reti da un tunnel."
     },
     "update": {
       "system_update_description": "Le nuove funzionalità vengono rilasciate attraverso file immagine. Se è disponibile una nuova immagine è possibile aggiornare il sistema a una nuova versione. In alternativa è possibile caricare un'immagine firmware compatibile.",
@@ -1600,7 +1607,7 @@
       "description": "Descrizione",
       "certificate": "Certificato",
       "domain_tooltip": "Inserisci un nome di dominio completo per creare una regola che fa match del nome del sito web",
-      "no_certificate_configured_description": "Puoi configurare un certificato valido nella pagina 'Certificati'.",
+      "no_certificate_configured_description": "È possibile configurare un certificato valido nella pagina \"Certificati\".",
       "go_to_certificates": "Vai ai Certificati",
       "destination_url_tooltip": "Questo percorso specifica la posizione dove le richieste che arrivano verranno ridirezionate. Esempio: 'http://destination-server:port/path'",
       "no_certificate_configured_title": "Non c'è nessun certificato valido configurato",
@@ -2594,7 +2601,7 @@
       "mtu": "MTU",
       "dns": "DNS",
       "delete_peer": "Elimina peer",
-      "public_endpoint": "Endpoint pubblici",
+      "public_endpoint": "Endpoint pubblico",
       "error_fetching_server_setup": "Non è stato possibile prendere i parametri di setup",
       "delete_peer_title": "Elimina peer",
       "route_all_traffic": "Instrada tutto il traffico",
@@ -2635,7 +2642,7 @@
       "error_importing_peer_tunnel_description": "Non è stato possibile importare la configurazione.",
       "network_routes": "Rotte raggiungibili",
       "peer_private_key": "Chiave privata del peer",
-      "pre_shared_key": "Pre-shared key",
+      "pre_shared_key": "Chiave condivisa",
       "route_all_traffic": "Instrada tutto il traffico",
       "endpoint": "Endpoint",
       "name": "Nome",

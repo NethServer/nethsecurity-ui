@@ -425,7 +425,8 @@
     "unauthorized_action": "Azione non autorizzata",
     "duplicate_ip": "L'IP è già stato utilizzato",
     "duplicate_port": "La porta è già stata utilizzata",
-    "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec"
+    "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec",
+    "cannot_regenerate_cert": "Impossibile rigenerare i certificati"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1466,7 +1467,28 @@
       "disabled": "Disabilitato",
       "weak": "Debole",
       "strong": "Forte",
-      "short_name": "OVPN TUN"
+      "short_name": "OVPN TUN",
+      "regenerate_cert": "Rigenera certificati",
+      "regenerate_cert_message": "La rigenerazione dei certificati (client e server) richiede il riavvio del tunnel OpenVPN, con la possibile interruzione del traffico VPN per un breve periodo. Il certificato client utilizzato sull'altra macchina continuerà ad essere funzionante (purchè valido e non scaduto), e sarà possibile sostituirlo con il nuovo appena generato in un secondo momento.",
+      "regenerate_cert_button": "Rigenera",
+      "tunnel_name_max_length": "Massimo 10 caratteri",
+      "bytes_received": "Bytes ricevuti",
+      "bytes_sent": "Bytes inviati",
+      "cert_expiry": "Scadenza certificati",
+      "client_cert_expiry": "Scadenza certificato client",
+      "real_address": "Indirizzo reale",
+      "since": "Inizio connessione",
+      "virtual_address": "Indirizzo virtuale",
+      "remote_host": "Host remoto",
+      "tunnel_details": "Dettagli tunnel",
+      "cert_expiring_message": "Certificati in scadenza",
+      "client_cert_expiring_message": "Certificato in scadenza",
+      "cert_expiring_complete_message": "I certificati scadranno tra {days} giorni",
+      "client_cert_expiring_complete_message": "Il certificato del client scadrà tra {days} giorni",
+      "cert_expired_message": "Certificati scaduti",
+      "client_cert_expired_message": "Certificato scaduto",
+      "cert_expired_complete_message": "I certificati sono scaduti",
+      "client_cert_expired_complete_message": "Il certificato del client è scaduto"
     },
     "ipsec_tunnel": {
       "local_identifier_tooltip": "Inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",

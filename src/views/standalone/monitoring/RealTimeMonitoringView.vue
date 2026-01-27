@@ -21,6 +21,7 @@ import { isStandaloneMode } from '@/lib/config'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import InstantTrafficMonitor from '@/components/standalone/monitoring/InstantTrafficMonitor.vue'
+import FlowsTable from '@/components/standalone/monitoring/FlowsTable.vue'
 
 const { t } = useI18n()
 
@@ -44,6 +45,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'instant-traffic',
     label: t('standalone.real_time_monitor.instant_traffic')
+  },
+  {
+    name: 'flows',
+    label: t('standalone.real_time_monitor.flows')
   }
 ])
 
@@ -167,5 +172,6 @@ function openGrafana() {
     <VpnMonitor v-else-if="selectedTab === 'vpn'" />
     <SecurityMonitor v-else-if="selectedTab === 'security'" />
     <InstantTrafficMonitor v-else-if="selectedTab == 'instant-traffic'" />
+    <FlowsTable v-else-if="selectedTab == 'flows'" />
   </div>
 </template>

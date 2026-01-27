@@ -1,6 +1,8 @@
 <script lang="ts">
 import {
   faArrowDown,
+  faArrowUp,
+  faBroadcastTower,
   faClockRotateLeft,
   faUsers,
   faWarning
@@ -27,6 +29,15 @@ export function extractBadges(entry: FlowEvent): Badge[] {
       content: 'standalone.flows.remote_description'
     })
   }
+  if (entry.flow.local_origin && entry.flow.other_type == 'remote') {
+    badges.push({
+      id: 'outgoing',
+      text: 'standalone.flows.outgoing',
+      icon: faArrowUp,
+      customClasses: ['bg-green-100', 'text-green-800', 'dark:bg-green-700', 'dark:text-green-100'],
+      content: 'standalone.flows.outgoing_description'
+    })
+  }
   if (entry.flow.other_type == 'local') {
     badges.push({
       id: 'local',
@@ -34,6 +45,20 @@ export function extractBadges(entry: FlowEvent): Badge[] {
       icon: faUsers,
       customClasses: ['bg-blue-100', 'text-blue-800', 'dark:bg-blue-700', 'dark:text-blue-100'],
       content: 'standalone.flows.internal_description'
+    })
+  }
+  if (entry.flow.other_type == 'broadcast') {
+    badges.push({
+      id: 'broadcast',
+      text: 'standalone.flows.broadcast',
+      icon: faBroadcastTower,
+      customClasses: [
+        'bg-purple-100',
+        'text-purple-800',
+        'dark:bg-purple-700',
+        'dark:text-purple-100'
+      ],
+      content: 'standalone.flows.broadcast_description'
     })
   }
   if (entry.type == 'flow') {
@@ -90,7 +115,7 @@ export type Flow = {
   other_bytes: number
   other_rate: number
   other_mac: string
-  other_type: 'remote' | 'local'
+  other_type: 'remote' | 'local' | 'broadcast'
   digest: string
   host_server_name?: string
   dns_host_name?: string
@@ -400,22 +425,19 @@ const filteredData = computed<FlowEvent[]>(() => {
   return data.value.filter((flow) => filters.every((filter) => filter(flow)))
 })
 
-type SortableKeys =
-  | 'detected_application_name'
-  | 'duration'
-  | 'last_seen_at'
-  | 'download'
-  | 'upload'
+type SortableKeys = 'duration' | 'last_seen_at' | 'download' | 'upload'
 const sortKey = useRouteQuery<SortableKeys>('sort', 'download')
-const sortDescending = ref(true)
+const sortDescending = useRouteQuery<string, boolean>('descending', 'true', {
+  transform: {
+    get: (val) => val == 'true',
+    set: (val) => val.toString()
+  }
+})
 const sortedItems = computed<FlowEvent[]>(() => {
   const items = [...filteredData.value]
   return items.sort((a, b) => {
     let compare = 0
     switch (sortKey.value) {
-      case 'detected_application_name':
-        compare = a.flow.detected_application_name.localeCompare(b.flow.detected_application_name)
-        break
       case 'duration':
         compare =
           a.flow.last_seen_at - a.flow.first_seen_at - (b.flow.last_seen_at - b.flow.first_seen_at)
@@ -423,16 +445,27 @@ const sortedItems = computed<FlowEvent[]>(() => {
       case 'last_seen_at':
         compare = a.flow.last_seen_at - b.flow.last_seen_at
         break
-      case 'download': {
-        const aRate = a.flow.local_origin ? a.flow.local_rate : a.flow.other_rate
-        const bRate = b.flow.local_origin ? b.flow.local_rate : b.flow.other_rate
-        compare = aRate - bRate
-        break
-      }
+      case 'download':
       case 'upload': {
-        const aRate = a.flow.local_origin ? a.flow.other_rate : a.flow.local_rate
-        const bRate = b.flow.local_origin ? b.flow.other_rate : b.flow.local_rate
-        compare = aRate - bRate
+        const isDownload = sortKey.value == 'download'
+        const aRate = a.flow.local_origin == isDownload ? a.flow.other_rate : a.flow.local_rate
+        const bRate = b.flow.local_origin == isDownload ? b.flow.other_rate : b.flow.local_rate
+
+        // Handle missing rates: push flows with missing rates to the bottom
+        const aHasRate = aRate !== undefined && aRate != null
+        const bHasRate = bRate !== undefined && bRate != null
+
+        if (!aHasRate && !bHasRate) {
+          compare = 0
+        } else if (!aHasRate) {
+          // a has no rate, push to bottom: positive value means a > b
+          return 1
+        } else if (!bHasRate) {
+          // b has no rate, push to bottom: negative value means a < b
+          return -1
+        } else {
+          compare = aRate - bRate
+        }
         break
       }
     }
@@ -559,7 +592,7 @@ watch(flowDetails, (value) => {
       card-breakpoint="2xl"
     >
       <NeTableHead>
-        <NeTableHeadCell column-key="detected_application_name" sortable @sort="onSort">
+        <NeTableHeadCell>
           {{ t('standalone.flows.application') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
@@ -600,6 +633,7 @@ watch(flowDetails, (value) => {
         <NeTableRow>
           <NeTableCell colspan="10">
             <NeEmptyState
+              class="bg-white dark:bg-gray-950"
               :description="t('standalone.flows.no_flows_found_description')"
               :icon="faTable"
               :title="t('standalone.flows.no_flows_found')"

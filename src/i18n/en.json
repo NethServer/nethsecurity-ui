@@ -2358,7 +2358,11 @@
       "scanning_description": "The flow is currently being analyzed. Additional insights will be available once the scan completes.",
       "risky": "Risky",
       "risky_description": "The flow is considered risky and may contain malicious traffic.",
-      "risks_detected": "Risks detected"
+      "risks_detected": "Risks detected",
+      "outgoing": "Outgoing",
+      "outgoing_description": "The connection has been initiated from local networks to the internet",
+      "broadcast": "Broadcast",
+      "broadcast_description": "The connection is a broadcast connection"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

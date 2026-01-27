@@ -159,7 +159,7 @@ import {
 import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
 import { useRouteQuery } from '@vueuse/router'
 import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
-import { ipv4ToInt } from '@/lib/ipUtils.ts'
+import { sortIps } from '@/lib/ipUtils.ts'
 import { faTable } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
@@ -320,11 +320,11 @@ const sourceIps = computed<FilterOption[]>(() => {
     }
   })
   return Array.from(ipSet)
+    .sort(sortIps)
     .map((ip) => ({
       id: ip,
       label: ip
     }))
-    .sort((a, b) => ipv4ToInt(a.id) - ipv4ToInt(b.id))
 })
 
 const destinationIps = computed<FilterOption[]>(() => {
@@ -337,11 +337,11 @@ const destinationIps = computed<FilterOption[]>(() => {
     }
   })
   return Array.from(ipSet)
+    .sort(sortIps)
     .map((ip) => ({
       id: ip,
       label: ip
     }))
-    .sort((a, b) => ipv4ToInt(a.id) - ipv4ToInt(b.id))
 })
 
 type Filter<T> = (a: T) => boolean

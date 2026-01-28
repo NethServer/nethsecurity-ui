@@ -92,7 +92,8 @@ import {
   faMagnifyingGlassPlus,
   faRefresh,
   faCircleExclamation,
-  faTriangleExclamation
+  faTriangleExclamation,
+  faPenToSquare
 } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
@@ -308,8 +309,8 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_tunnel.status')">
           <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
-            <font-awesome-icon
-              :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
+            <FontAwesomeIcon
+              :icon="item.enabled ? faCircleCheck : faCircleXmark"
               :class="[
                 'mr-2',
                 'h-5',
@@ -329,8 +330,8 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_tunnel.connection')">
           <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
-            <font-awesome-icon
-              :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
+            <FontAwesomeIcon
+              :icon="item.connected ? faCircleCheck : faCircleXmark"
               :class="[
                 'mr-2',
                 'h-5',
@@ -356,11 +357,7 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
           <div class="align-center flex justify-end">
             <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">
               <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'pen-to-square']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
+                <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('common.edit') }}
             </NeButton>

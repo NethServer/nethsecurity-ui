@@ -42,59 +42,6 @@ const certificateStatus = computed(() => {
   )
 })
 
-const fieldLabels = computed(() => {
-  const isTunnelClient = _itemToShow.value ? isClientTunnel(_itemToShow.value) : false
-
-  return {
-    bytes_received: t('standalone.openvpn_tunnel.bytes_received'),
-    bytes_sent: t('standalone.openvpn_tunnel.bytes_sent'),
-    cert_expiry_ts: isTunnelClient
-      ? t('standalone.openvpn_tunnel.client_cert_expiry')
-      : t('standalone.openvpn_tunnel.cert_expiry'),
-    connected: t('standalone.openvpn_tunnel.connection'),
-    enabled: t('standalone.openvpn_tunnel.status'),
-    id: 'Tunnel ID',
-    local_network: t('standalone.openvpn_tunnel.local_networks'),
-    ns_name: t('standalone.openvpn_tunnel.name'),
-    port: t('standalone.openvpn_tunnel.port'),
-    real_address: t('standalone.openvpn_tunnel.real_address'),
-    remote_network: t('standalone.openvpn_tunnel.remote_networks'),
-    since: t('standalone.openvpn_tunnel.since'),
-    topology: t('standalone.openvpn_tunnel.topology'),
-    virtual_address: t('standalone.openvpn_tunnel.virtual_address'),
-    vpn_network: t('standalone.openvpn_tunnel.vpn_network'),
-    remote_host: t('standalone.openvpn_tunnel.remote_host')
-  }
-})
-
-function formatFieldValue(key: string, value: any): string {
-  if (value === null || value === undefined || value === '') return ''
-
-  // Handle timestamps
-  if ((key === 'cert_expiry_ts' || key === 'since') && typeof value === 'number') {
-    const date = new Date(value * 1000)
-    return date.toLocaleString(locale.value)
-  }
-
-  // Handle boolean-like fields
-  if (key === 'connected') {
-    return value
-      ? t('standalone.openvpn_tunnel.connected')
-      : t('standalone.openvpn_tunnel.not_connected')
-  }
-
-  if (key === 'enabled') {
-    return value ? t('standalone.openvpn_tunnel.enabled') : t('standalone.openvpn_tunnel.disabled')
-  }
-
-  // Handle arrays
-  if (Array.isArray(value)) {
-    return value.join(', ')
-  }
-
-  return String(value)
-}
-
 function isFieldVisible(key: string, value: any): boolean {
   // Check if field has a meaningful value
   if (value === null || value === undefined || value === '') return false
@@ -118,161 +65,189 @@ function isFieldVisible(key: string, value: any): boolean {
       <!-- ns_name -->
       <template v-if="isFieldVisible('ns_name', _itemToShow?.ns_name)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['ns_name'] }}
+          {{ t('standalone.openvpn_tunnel.name') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('ns_name', _itemToShow?.ns_name) }}
+          {{ _itemToShow?.ns_name ? _itemToShow?.ns_name : '' }}
         </p>
       </template>
 
       <!-- id -->
       <template v-if="isFieldVisible('id', _itemToShow?.id)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['id'] }}
+          {{ t('standalone.openvpn_tunnel.tunnel_id') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('id', _itemToShow?.id) }}
+          {{ _itemToShow?.id ? _itemToShow?.id : '' }}
         </p>
       </template>
 
       <!-- port -->
       <template v-if="isFieldVisible('port', _itemToShow?.port)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['port'] }}
+          {{ t('standalone.openvpn_tunnel.port') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('port', _itemToShow?.port) }}
+          {{ _itemToShow?.port ? _itemToShow?.port : '' }}
         </p>
       </template>
 
       <!-- enabled -->
       <template v-if="isFieldVisible('enabled', _itemToShow?.enabled)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['enabled'] }}
+          {{ t('standalone.openvpn_tunnel.status') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('enabled', _itemToShow?.enabled) }}
+          {{
+            _itemToShow?.enabled
+              ? t('standalone.openvpn_tunnel.enabled')
+              : t('standalone.openvpn_tunnel.disabled')
+          }}
         </p>
       </template>
 
       <!-- topology -->
       <template v-if="isFieldVisible('topology', _itemToShow?.topology)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['topology'] }}
+          {{ t('standalone.openvpn_tunnel.topology') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('topology', _itemToShow?.topology) }}
+          {{
+            _itemToShow?.topology
+              ? _itemToShow?.topology === 'subnet'
+                ? t('standalone.openvpn_tunnel.subnet')
+                : t('standalone.openvpn_tunnel.p2p')
+              : ''
+          }}
         </p>
       </template>
 
       <!-- local_network -->
       <template v-if="isFieldVisible('local_network', (_itemToShow as any)?.local_network)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['local_network'] }}
+          {{ t('standalone.openvpn_tunnel.local_networks') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('local_network', (_itemToShow as any)?.local_network) }}
+          {{
+            (_itemToShow as any)?.local_network
+              ? (_itemToShow as any)?.local_network.join(', ')
+              : ''
+          }}
         </p>
       </template>
 
       <!-- remote_network -->
       <template v-if="isFieldVisible('remote_network', _itemToShow?.remote_network)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['remote_network'] }}
+          {{ t('standalone.openvpn_tunnel.remote_networks') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('remote_network', _itemToShow?.remote_network) }}
+          {{ _itemToShow?.remote_network ? _itemToShow?.remote_network.join(', ') : '' }}
         </p>
       </template>
 
       <!-- remote_host -->
       <template v-if="isFieldVisible('remote_host', (_itemToShow as any)?.remote_host)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['remote_host'] }}
+          {{ t('standalone.openvpn_tunnel.remote_host') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('remote_host', (_itemToShow as any)?.remote_host) }}
+          {{
+            (_itemToShow as any)?.remote_host ? (_itemToShow as any)?.remote_host.join(', ') : ''
+          }}
         </p>
       </template>
 
       <!-- vpn_network -->
       <template v-if="isFieldVisible('vpn_network', (_itemToShow as any)?.vpn_network)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['vpn_network'] }}
+          {{ t('standalone.openvpn_tunnel.vpn_network') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('vpn_network', (_itemToShow as any)?.vpn_network) }}
+          {{ (_itemToShow as any)?.vpn_network ? (_itemToShow as any)?.vpn_network : '' }}
         </p>
       </template>
 
       <!-- real_address -->
       <template v-if="isFieldVisible('real_address', (_itemToShow as any)?.real_address)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['real_address'] }}
+          {{ t('standalone.openvpn_tunnel.real_address') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('real_address', (_itemToShow as any)?.real_address) }}
+          {{ (_itemToShow as any)?.real_address ? (_itemToShow as any)?.real_address : '' }}
         </p>
       </template>
 
       <!-- virtual_address -->
       <template v-if="isFieldVisible('virtual_address', (_itemToShow as any)?.virtual_address)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['virtual_address'] }}
+          {{ t('standalone.openvpn_tunnel.virtual_address') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('virtual_address', (_itemToShow as any)?.virtual_address) }}
+          {{ (_itemToShow as any)?.virtual_address ? (_itemToShow as any)?.virtual_address : '' }}
         </p>
       </template>
 
       <!-- connected -->
       <template v-if="isFieldVisible('connected', _itemToShow?.connected)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['connected'] }}
+          {{ t('standalone.openvpn_tunnel.connection') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('connected', _itemToShow?.connected) }}
+          {{
+            _itemToShow?.connected
+              ? t('standalone.openvpn_tunnel.connected')
+              : t('standalone.openvpn_tunnel.not_connected')
+          }}
         </p>
       </template>
 
       <!-- since -->
       <template v-if="isFieldVisible('since', _itemToShow?.since)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['since'] }}
+          {{ t('standalone.openvpn_tunnel.since') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('since', _itemToShow?.since) }}
+          {{ _itemToShow?.since ? new Date(_itemToShow.since * 1000).toLocaleString(locale) : '' }}
         </p>
       </template>
 
       <!-- bytes_received -->
       <template v-if="isFieldVisible('bytes_received', _itemToShow?.bytes_received)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['bytes_received'] }}
+          {{ t('standalone.openvpn_tunnel.bytes_received') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('bytes_received', _itemToShow?.bytes_received) }}
+          {{ _itemToShow?.bytes_received ? _itemToShow.bytes_received : '' }}
         </p>
       </template>
 
       <!-- bytes_sent -->
       <template v-if="isFieldVisible('bytes_sent', _itemToShow?.bytes_sent)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['bytes_sent'] }}
+          {{ t('standalone.openvpn_tunnel.bytes_sent') }}
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ formatFieldValue('bytes_sent', _itemToShow?.bytes_sent) }}
+          {{ _itemToShow?.bytes_sent ? _itemToShow.bytes_sent : '' }}
         </p>
       </template>
 
       <!-- cert_expiry_ts -->
       <template v-if="isFieldVisible('cert_expiry_ts', _itemToShow?.cert_expiry_ts)">
         <p class="text-sm font-semibold">
-          {{ fieldLabels['cert_expiry_ts'] }}
+          {{
+            isClientTunnel(_itemToShow!)
+              ? t('standalone.openvpn_tunnel.client_cert_expiry')
+              : t('standalone.openvpn_tunnel.cert_expiry')
+          }}
         </p>
         <div class="flex flex-col gap-2">
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            {{ formatFieldValue('cert_expiry_ts', _itemToShow?.cert_expiry_ts) }}
+            {{
+              _itemToShow?.cert_expiry_ts
+                ? new Date(_itemToShow.cert_expiry_ts * 1000).toLocaleString(locale)
+                : ''
+            }}
           </p>
           <span v-if="certificateStatus.show" class="flex items-center gap-2">
             <FontAwesomeIcon

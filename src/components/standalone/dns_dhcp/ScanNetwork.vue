@@ -29,6 +29,7 @@ import type { StaticLease } from './StaticLeases.vue'
 export interface ScanInterface {
   name: string
   device: string
+  netmask: number
 }
 
 export interface ScanResult {
@@ -91,7 +92,8 @@ async function listInterfaces() {
     const res = await ubusCall('ns.scan', 'list-interfaces')
     interfaces.value = res.data.interfaces.map((iface: any) => ({
       name: iface.interface,
-      device: iface.device
+      device: iface.device,
+      netmask: iface.netmask
     }))
   } catch (err: any) {
     error.value.listInterfaces = t(getAxiosErrorMessage(err))
@@ -150,7 +152,7 @@ async function scanNetwork(iface: ScanInterface) {
   loading.value.scanNetwork = true
 
   try {
-    const res = await ubusCall('ns.scan', 'scan', { device: iface.device })
+    const res = await ubusCall('ns.scan', 'scan', { device: iface.device, interface: iface.name })
     scanResults.value = res.data.hosts.map((host: ScanResult) => ({
       ip: host.ip,
       mac: host.mac,
@@ -230,7 +232,10 @@ function addDnsRecord(scanResult: ScanResult) {
               :key="ifaceName"
               :iface="iface"
               :scan-button-loading="loading.scanNetwork && scanningInterface === iface.name"
-              :scan-button-disabled="loading.scanNetwork && scanningInterface === iface.name"
+              :scan-button-disabled="
+                (loading.scanNetwork && scanningInterface === iface.name) || iface.netmask < 20
+              "
+              :scan-button-disabled-network-too-large="iface.netmask < 20"
               @start-scan="scanNetwork"
             />
           </template>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -670,6 +670,7 @@ watch(
         v-model="name"
         :disabled="id != ''"
         :label="t('standalone.openvpn_tunnel.tunnel_name')"
+        :helper-text="t('standalone.openvpn_tunnel.tunnel_name_max_length')"
         :invalid-message="validationErrorBag.getFirstFor('ns_name')"
       />
       <template v-if="!isClientTunnel">

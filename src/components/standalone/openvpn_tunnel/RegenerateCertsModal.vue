@@ -15,31 +15,33 @@ const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
-  itemToDelete: ServerTunnel | ClientTunnel | null
+  itemToRegenerate: ServerTunnel | ClientTunnel | null
 }>()
 
-const emit = defineEmits(['close', 'tunnel-deleted'])
+const emit = defineEmits(['close', 'certs-regenerated'])
 
 const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
-const isDeleting = ref(false)
+const isRegenerating = ref(false)
 
-async function deleteTunnel() {
-  if (props.itemToDelete) {
+async function regenerateCerts() {
+  if (props.itemToRegenerate) {
     error.value.notificationDescription = ''
     error.value.notificationDetails = ''
-    isDeleting.value = true
+    isRegenerating.value = true
     try {
-      await ubusCall('ns.ovpntunnel', 'delete-tunnel', { id: props.itemToDelete.id })
-      emit('tunnel-deleted')
+      await ubusCall('ns.ovpntunnel', 'regenerate-server-certs', {
+        id: props.itemToRegenerate.id
+      })
+      emit('certs-regenerated')
       emit('close')
     } catch (err: any) {
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()
     } finally {
-      isDeleting.value = false
+      isRegenerating.value = false
     }
   }
 }
@@ -55,25 +57,20 @@ function close() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.openvpn_tunnel.delete_tunnel')"
-    :primary-label="t('common.delete')"
+    :title="t('standalone.openvpn_tunnel.regenerate_cert')"
+    :primary-label="t('standalone.openvpn_tunnel.regenerate_cert_button')"
     :cancel-label="t('common.cancel')"
-    :primary-button-disabled="isDeleting"
-    :primary-button-loading="isDeleting"
-    primary-button-kind="danger"
+    :primary-button-disabled="isRegenerating"
+    :primary-button-loading="isRegenerating"
     :close-aria-label="t('common.close')"
-    @primary-click="deleteTunnel()"
+    @primary-click="regenerateCerts()"
     @close="close()"
   >
-    {{
-      t('standalone.openvpn_tunnel.delete_tunnel_message', {
-        name: itemToDelete?.ns_name ?? ''
-      })
-    }}
+    {{ t('standalone.openvpn_tunnel.regenerate_cert_message') }}
     <NeInlineNotification
       v-if="error.notificationDescription"
       kind="error"
-      :title="t('error.cannot_delete_tunnel')"
+      :title="t('error.cannot_regenerate_cert')"
       :description="error.notificationDescription"
       class="my-2"
     >

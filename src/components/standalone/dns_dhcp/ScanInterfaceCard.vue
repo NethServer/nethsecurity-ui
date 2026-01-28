@@ -4,12 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { NeButton } from '@nethesis/vue-components'
+import { NeButton, NeTooltip } from '@nethesis/vue-components'
 import { type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useFirewallStore } from '@/stores/standalone/firewall'
 import { getZoneBorderColorClasses } from '@/lib/standalone/network'
 import type { ScanInterface } from './ScanNetwork.vue'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
 defineProps({
   iface: {
@@ -21,6 +22,10 @@ defineProps({
     default: false
   },
   scanButtonDisabled: {
+    type: Boolean,
+    default: false
+  },
+  scanButtonDisabledNetworkTooLarge: {
     type: Boolean,
     default: false
   }
@@ -51,18 +56,37 @@ function getBorderColorForInterface(iface: string) {
             <br />
             {{ iface.device }}
           </p>
+          <NeTooltip
+            v-if="scanButtonDisabledNetworkTooLarge"
+            trigger-event="mouseenter focus"
+            placement="top-start"
+          >
+            <template #trigger>
+              <NeButton
+                kind="tertiary"
+                :loading="scanButtonLoading"
+                :disabled="scanButtonDisabled"
+                @click="emit('startScan', iface)"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faMagnifyingGlass" class="h-4 w-4" aria-hidden="true" />
+                </template>
+                {{ t('standalone.dns_dhcp.scan_network') }}
+              </NeButton>
+            </template>
+            <template #content>
+              {{ t('standalone.dns_dhcp.scan_network_too_large') }}
+            </template>
+          </NeTooltip>
           <NeButton
+            v-else
             kind="tertiary"
             :loading="scanButtonLoading"
             :disabled="scanButtonDisabled"
             @click="emit('startScan', iface)"
           >
             <template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'magnifying-glass']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+              <FontAwesomeIcon :icon="faMagnifyingGlass" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.dns_dhcp.scan_network') }}
           </NeButton>

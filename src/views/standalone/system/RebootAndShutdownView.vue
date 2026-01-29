@@ -4,11 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { useTimer } from '@/composables/useTimer'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-  NeProgressBar,
   NeHeading,
   NeButton,
   NeInlineNotification,
@@ -16,13 +14,15 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 type requestType = 'poweroff' | 'reboot'
-const REBOOT_WAIT_TIME = 45000
+const POLL_INTERVAL = 3000
+const INITIAL_WAIT = 5000
+const POLL_TIMEOUT = 60000 * 3 // 3 minutes
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -36,14 +36,50 @@ const modalRequestError = ref('')
 const pageError = ref('')
 
 const isRebooting = ref(false)
+const isServerBackOnline = ref(false)
+const rebootError = ref(false)
+let pollIntervalId: ReturnType<typeof setInterval> | null = null
+let pollTimeoutId: ReturnType<typeof setTimeout> | null = null
 
-const { startTimer, currentProgress } = useTimer({
-  duration: REBOOT_WAIT_TIME,
-  progressStep: 0.5,
-  onTimerFinish: () => {
-    location.reload()
+async function checkServerAvailability() {
+  try {
+    const response = await fetch('/', { method: 'HEAD' })
+    if (response.ok) {
+      // Server is back online, wait a bit before reloading the page
+      stopPolling()
+      isServerBackOnline.value = true
+      setTimeout(() => {
+        location.reload()
+      }, 2000)
+    }
+  } catch {
+    // Server still offline, continue polling
   }
-})
+}
+
+function startPolling() {
+  // Wait a bit before starting to poll to give the server time to go down
+  setTimeout(() => {
+    pollIntervalId = setInterval(checkServerAvailability, POLL_INTERVAL)
+  }, INITIAL_WAIT)
+
+  // Set a timeout to stop polling and show error if server doesn't come back
+  pollTimeoutId = setTimeout(() => {
+    stopPolling()
+    rebootError.value = true
+  }, POLL_TIMEOUT)
+}
+
+function stopPolling() {
+  if (pollIntervalId) {
+    clearInterval(pollIntervalId)
+    pollIntervalId = null
+  }
+  if (pollTimeoutId) {
+    clearTimeout(pollTimeoutId)
+    pollTimeoutId = null
+  }
+}
 
 async function getHostname() {
   try {
@@ -62,7 +98,7 @@ async function performRequest(type: requestType) {
 
     if (type == 'reboot') {
       isRebooting.value = true
-      startTimer()
+      startPolling()
     }
   } catch (err: any) {
     modalRequestError.value = t(getAxiosErrorMessage(err))
@@ -79,6 +115,10 @@ function closeModal() {
 
 onMounted(() => {
   getHostname()
+})
+
+onUnmounted(() => {
+  stopPolling()
 })
 </script>
 
@@ -166,8 +206,20 @@ onMounted(() => {
     @primary-click="performRequest('reboot')"
   >
     <template v-if="isRebooting">
-      {{ t('standalone.reboot_and_shutdown.reboot_in_progress') }}
-      <NeProgressBar class="my-4" :progress="currentProgress" />
+      <template v-if="rebootError">
+        <NeInlineNotification
+          kind="error"
+          :title="t('standalone.reboot_and_shutdown.reboot_timeout_error')"
+        />
+      </template>
+      <div v-else class="flex items-center gap-4">
+        <template v-if="isServerBackOnline">
+          {{ t('standalone.reboot_and_shutdown.reboot_completed') }}
+        </template>
+        <template v-else>
+          {{ t('standalone.reboot_and_shutdown.reboot_in_progress') }}
+        </template>
+      </div>
     </template>
     <template v-else>
       {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}

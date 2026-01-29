@@ -827,6 +827,7 @@
       "reboot_now": "Reboot now",
       "reboot_in_progress": "The unit is rebooting, please wait...",
       "reboot_completed": "Reboot completed, reloading page...",
+      "reboot_timeout_error": "The unit is not responding. Please check the connection and try reloading the page.",
       "pending_changes_warning": "There are unsaved changes that will be lost! Do you still want to proceed?"
     },
     "update": {

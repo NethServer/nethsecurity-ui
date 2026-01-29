@@ -651,7 +651,8 @@
       "reboot_warning": "Stai per riavviare l'unità '{unit}'",
       "reboot": "Riavvio",
       "shutdown": "Spegnimento",
-      "shut_down_unit": "Spegni unità"
+      "shut_down_unit": "Spegni unità",
+      "pending_changes_warning": "Ci sono modifiche non salvate che andranno perse! Vuoi comunque procedere?"
     },
     "network": {
       "title": "Rete"

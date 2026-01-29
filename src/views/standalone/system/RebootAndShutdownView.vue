@@ -19,11 +19,13 @@ import { NeModal } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 type requestType = 'poweroff' | 'reboot'
 const REBOOT_WAIT_TIME = 45000
 
 const { t } = useI18n()
+const uciChangesStore = useUciPendingChangesStore()
 
 const hostname = ref('')
 const loading = ref(true)
@@ -131,6 +133,12 @@ onMounted(() => {
   >
     {{ t('standalone.reboot_and_shutdown.shutdown_warning', { unit: hostname }) }}
     <NeInlineNotification
+      v-if="uciChangesStore.numChanges > 0"
+      kind="warning"
+      :title="t('standalone.reboot_and_shutdown.pending_changes_warning')"
+      class="my-6"
+    />
+    <NeInlineNotification
       v-if="modalRequestError"
       :title="t('error.generic_error')"
       :description="modalRequestError"
@@ -157,6 +165,12 @@ onMounted(() => {
     </template>
     <template v-else>
       {{ t('standalone.reboot_and_shutdown.reboot_warning', { unit: hostname }) }}
+      <NeInlineNotification
+        v-if="uciChangesStore.numChanges > 0"
+        kind="warning"
+        :title="t('standalone.reboot_and_shutdown.pending_changes_warning')"
+        class="my-4"
+      />
       <NeInlineNotification
         v-if="modalRequestError"
         :title="t('error.generic_error')"

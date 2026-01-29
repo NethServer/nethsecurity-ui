@@ -41,7 +41,6 @@ const certificateStatus = computed(() => {
     true
   )
 })
-
 </script>
 
 <template>
@@ -56,9 +55,8 @@ const certificateStatus = computed(() => {
     @primary-click="emit('close')"
   >
     <div v-if="_itemToShow !== undefined" class="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr]">
-      
       <!-- fields visible both for server and client tunnels -->
-      
+
       <!-- ns_name -->
       <p class="text-sm font-semibold">
         {{ t('standalone.openvpn_tunnel.name') }}
@@ -117,9 +115,7 @@ const certificateStatus = computed(() => {
         <template v-if="_itemToShow.remote_network.length > 0">
           {{ _itemToShow.remote_network.join(', ') }}
         </template>
-        <template v-else>
-          -
-        </template>
+        <template v-else> - </template>
       </p>
 
       <!-- fields visible only for client tunnels (both connected and not) -->
@@ -133,9 +129,7 @@ const certificateStatus = computed(() => {
           <template v-if="_itemToShow.remote_host.length > 0">
             {{ _itemToShow.remote_host.join(', ') }}
           </template>
-          <template v-else>
-            -
-          </template>
+          <template v-else> - </template>
         </p>
       </template>
 
@@ -150,9 +144,7 @@ const certificateStatus = computed(() => {
           <template v-if="_itemToShow.local_network.length > 0">
             {{ _itemToShow.local_network.join(', ') }}
           </template>
-          <template v-else>
-            -
-          </template>
+          <template v-else> - </template>
         </p>
       </template>
 
@@ -167,7 +159,7 @@ const certificateStatus = computed(() => {
       </template>
 
       <!-- fields visible only for connected server tunnels -->
-      
+
       <!-- real_address -->
       <template v-if="!isClientTunnel(_itemToShow) && _itemToShow.connected">
         <p class="text-sm font-semibold">
@@ -259,7 +251,6 @@ const certificateStatus = computed(() => {
           </p>
         </span>
       </div>
-
     </div>
   </NeModal>
 </template>

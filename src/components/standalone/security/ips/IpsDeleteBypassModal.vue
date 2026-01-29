@@ -47,8 +47,7 @@ function deleteBypass() {
   loading.value = true
   ubusCall('ns.snort', 'delete-bypass', {
     protocol: _byPass.value?.protocol,
-    ip: _byPass.value?.ip,
-    direction: _byPass.value?.direction
+    ip: _byPass.value?.ip
   })
     .then(() => {
       emit('deleted')
@@ -94,11 +93,7 @@ function deleteBypass() {
         <template v-else>
           {{
             t('standalone.ips.delete_bypass_modal_wo_description', {
-              ip: _byPass?.ip,
-              direction:
-                _byPass.direction == 'src'
-                  ? t('standalone.ips.source')
-                  : t('standalone.ips.destination')
+              ip: _byPass?.ip
             })
           }}
         </template>

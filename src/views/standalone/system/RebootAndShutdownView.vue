@@ -87,6 +87,9 @@ onMounted(() => {
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.reboot_and_shutdown.title') }}</NeHeading>
     <div class="flex flex-col gap-y-4">
       <NeHeading tag="h5" class="mb-2">{{ t('standalone.reboot_and_shutdown.reboot') }}</NeHeading>
+      <p class="text-sm font-normal text-secondary-neutral">
+        {{ t('standalone.reboot_and_shutdown.reboot_description') }}
+      </p>
       <NeInlineNotification
         v-if="pageError"
         :title="t('error.generic_error')"
@@ -107,6 +110,9 @@ onMounted(() => {
         <NeHeading tag="h5" class="mb-2">{{
           t('standalone.reboot_and_shutdown.shutdown')
         }}</NeHeading>
+        <p class="text-sm font-normal text-secondary-neutral">
+          {{ t('standalone.reboot_and_shutdown.shutdown_description') }}
+        </p>
         <div>
           <NeButton kind="secondary" size="lg" @click="showShutdownModal = true">
             <template #prefix>

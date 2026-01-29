@@ -5,6 +5,7 @@
 
 <script lang="ts" setup>
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
 import {
   getAxiosErrorMessage,
@@ -23,6 +24,7 @@ import { faCheck, faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { onMounted, ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { validateRequired, validateIp4Cidr, type validationOutput } from '@/lib/validation'
 import type { AxiosResponse } from 'axios'
 import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
 
@@ -30,6 +32,7 @@ export type IpsSettings = {
   enabled: boolean
   ns_policy: Policy
   oinkcode: string
+  home_net: string[]
 }
 
 export type Policy = 'connectivity' | 'balanced' | 'security' | 'max-detect'
@@ -66,6 +69,8 @@ const error = ref<Error>()
 const enabled = ref(false)
 const policy = ref<Policy>('connectivity')
 const oinkcode = ref('')
+const homeNet = ref<string[]>([''])
+const homeNetValidationErrors = ref<string[]>([])
 
 function fetch() {
   error.value = undefined
@@ -74,6 +79,7 @@ function fetch() {
       enabled.value = response.data.enabled
       policy.value = response.data.ns_policy
       oinkcode.value = response.data.oinkcode
+      homeNet.value = response.data.home_net
     })
     .catch((reason: Error) => {
       error.value = reason
@@ -90,13 +96,54 @@ onMounted(() => {
 const saving = ref(false)
 const saveError = ref<Error>()
 
+function validateHomeNet(): boolean {
+  homeNetValidationErrors.value = []
+  let isValid = true
+
+  // Check if at least one valid entry exists
+  const nonEmptyEntries = homeNet.value.filter((entry) => entry.trim() !== '')
+  if (nonEmptyEntries.length === 0) {
+    homeNetValidationErrors.value = homeNet.value.map(() => t('error.required'))
+    return false
+  }
+
+  for (const [index, entry] of homeNet.value.entries()) {
+    const validators: validationOutput[] = []
+
+    if (entry.trim() === '') {
+      validators.push(validateRequired(entry))
+    } else {
+      validators.push(validateIp4Cidr(entry))
+    }
+
+    for (const validator of validators) {
+      if (!validator.valid) {
+        homeNetValidationErrors.value[index] = t(validator.errMessage as string)
+        isValid = false
+        break
+      }
+    }
+
+    if (homeNetValidationErrors.value[index] === undefined) {
+      homeNetValidationErrors.value[index] = ''
+    }
+  }
+
+  return isValid
+}
+
 function save() {
+  if (!validateHomeNet()) {
+    return
+  }
+
   saving.value = true
   saveError.value = undefined
   ubusCall('ns.snort', 'save-settings', {
     enabled: enabled.value,
     ns_policy: policy.value,
-    oinkcode: oinkcode.value
+    oinkcode: oinkcode.value,
+    home_net: homeNet.value.filter((entry) => entry.trim() !== '')
   })
     .then(() => {
       ips.enabled = enabled.value
@@ -181,6 +228,22 @@ function checkOinkcode() {
             :title="t('standalone.ips.max_detect_info')"
             :description="t('standalone.ips.max_detect_description')"
           />
+          <NeMultiTextInput
+            v-model="homeNet"
+            :required="true"
+            :add-item-label="t('standalone.ips.add_network')"
+            :title="t('standalone.ips.home_net')"
+            :invalid-messages="homeNetValidationErrors"
+            :disabled="saving"
+          >
+            <template #tooltip>
+              <NeTooltip>
+                <template #content>
+                  {{ t('standalone.ips.home_net_tooltip') }}
+                </template>
+              </NeTooltip>
+            </template>
+          </NeMultiTextInput>
           <div class="space-y-2">
             <NeTextInput
               v-model="oinkcode"
@@ -202,6 +265,7 @@ function checkOinkcode() {
                 </NeTooltip>
               </template>
             </NeTextInput>
+
             <div class="flex items-center gap-4">
               <NeButton
                 :disabled="checkingOinkcode"

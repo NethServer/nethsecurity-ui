@@ -181,7 +181,7 @@ onUnmounted(() => {
     <NeInlineNotification
       v-if="uciChangesStore.numChanges > 0"
       kind="warning"
-      :title="t('standalone.reboot_and_shutdown.pending_changes_warning')"
+      :title="t('standalone.reboot_and_shutdown.pending_changes_warning_shutdown')"
       class="my-6"
     />
     <NeInlineNotification
@@ -226,7 +226,7 @@ onUnmounted(() => {
       <NeInlineNotification
         v-if="uciChangesStore.numChanges > 0"
         kind="warning"
-        :title="t('standalone.reboot_and_shutdown.pending_changes_warning')"
+        :title="t('standalone.reboot_and_shutdown.pending_changes_warning_reboot')"
         class="my-4"
       />
       <NeInlineNotification

@@ -27,11 +27,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faCirclePlus,
+  faCircleInfo,
   faEarthAmerica,
   faLocationDot,
   faCircleCheck,
   faCircleXmark,
-  faTrash
+  faTrash,
+  faTable,
+  faPenToSquare
 } from '@fortawesome/free-solid-svg-icons'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -135,6 +138,7 @@ async function loadRoutes() {
  * get main table
  */
 async function loadMainTable() {
+  loading.value = true
   try {
     const res = await ubusCall('ns.routes', 'main-table', {
       protocol: props.protocol
@@ -146,6 +150,8 @@ async function loadMainTable() {
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_load_routes')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -201,23 +207,10 @@ function scrollToMainTable() {
 </script>
 
 <template>
-  <NeSkeleton v-if="loading" :lines="8" size="lg" />
-  <NeEmptyState
-    v-if="!loading && !error.notificationTitle && !routes.length"
-    :title="t('standalone.routes.no_route_found')"
-    :icon="['fas', 'circle-info']"
-  >
-    <NeButton kind="primary" size="lg" @click="openCreateRoute()">
-      <template #prefix>
-        <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
-      </template>
-      {{ t('standalone.routes.create_route') }}</NeButton
-    >
-  </NeEmptyState>
-  <div v-if="!loading && routes.length">
+  <div>
     <div class="space-y-8">
       <div class="flex">
-        <div>
+        <div class="flex items-center">
           <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
             {{ t('standalone.routes.route_description') }}
           </p>
@@ -236,6 +229,20 @@ function scrollToMainTable() {
       </div>
     </div>
   </div>
+  <NeSkeleton v-if="loading" :lines="8" size="lg" class="my-4" />
+  <NeEmptyState
+    v-if="!loading && !error.notificationTitle && !routes.length"
+    :title="t('standalone.routes.no_route_found')"
+    :icon="faCircleInfo"
+    class="my-4"
+  >
+    <NeButton kind="primary" size="lg" @click="openCreateRoute()">
+      <template #prefix>
+        <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
+      </template>
+      {{ t('standalone.routes.create_route') }}</NeButton
+    >
+  </NeEmptyState>
   <NeInlineNotification
     v-if="error.notificationTitle"
     class="my-4"
@@ -243,7 +250,7 @@ function scrollToMainTable() {
     :title="error.notificationTitle"
     :description="error.notificationDescription"
   />
-  <div v-if="!loading && routes.length">
+  <div v-if="!loading">
     <div class="my-4">
       <NeButton
         v-if="routes && routes.length && routes.length > 10"
@@ -281,7 +288,7 @@ function scrollToMainTable() {
               <NeTableCell colspan="7">
                 <NeEmptyState
                   :title="t('ne_table.no_items')"
-                  :icon="['fas', 'table']"
+                  :icon="faTable"
                   class="bg-white dark:bg-gray-950"
                 />
               </NeTableCell>
@@ -329,11 +336,14 @@ function scrollToMainTable() {
               <NeTableCell :data-label="t('standalone.routes.route_status_table')">
                 <div :class="{ 'opacity-30': item.disabled !== '0' }">
                   <span v-if="item.disabled === '0'">
-                    <FontAwesomeIcon :icon="faCircleCheck" />
+                    <FontAwesomeIcon
+                      :icon="faCircleCheck"
+                      class="text-green-700 dark:text-green-500"
+                    />
                     {{ t('standalone.routes.route_status_enabled') }}
                   </span>
                   <span v-else>
-                    <FontAwesomeIcon :icon="faCircleXmark" />
+                    <FontAwesomeIcon :icon="faCircleXmark" class="text-red-700 dark:text-red-500" />
                     {{ t('standalone.routes.route_status_disabled') }}
                   </span>
                 </div>
@@ -347,11 +357,7 @@ function scrollToMainTable() {
                     @click="openEditRoute({ item: { item: item } })"
                   >
                     <template #prefix>
-                      <font-awesome-icon
-                        :icon="['fas', 'pen-to-square']"
-                        class="h-4 w-4"
-                        aria-hidden="true"
-                      />
+                      <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
                     </template>
                     {{ t('common.edit') }}
                   </NeButton>
@@ -421,7 +427,7 @@ function scrollToMainTable() {
                 <NeTableCell colspan="5">
                   <NeEmptyState
                     :title="t('ne_table.no_items')"
-                    :icon="['fas', 'table']"
+                    :icon="faTable"
                     class="bg-white dark:bg-gray-950"
                   />
                 </NeTableCell>

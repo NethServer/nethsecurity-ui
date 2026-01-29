@@ -35,11 +35,9 @@ import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadg
 import IpsDeleteBypassModal from '@/components/standalone/security/ips/IpsDeleteBypassModal.vue'
 import type { SortEvent } from '@nethesis/vue-components'
 
-export type Direction = 'src' | 'dst'
 export type AddressType = 'ipv4' | 'ipv6'
 
 export type Bypass = {
-  direction: Direction
   protocol: AddressType
   ip: string
   description: string
@@ -170,9 +168,6 @@ function handleDeleted() {
           <NeTableHeadCell column-key="ip" sortable @sort="onSort">
             {{ t('standalone.ips.bypass_address') }}
           </NeTableHeadCell>
-          <NeTableHeadCell column-key="direction" sortable @sort="onSort">
-            {{ t('standalone.ips.bypass_direction') }}
-          </NeTableHeadCell>
           <NeTableHeadCell>{{ t('standalone.ips.description') }}</NeTableHeadCell>
           <NeTableHeadCell>
             <!-- no header for actions -->
@@ -180,7 +175,7 @@ function handleDeleted() {
         </NeTableHead>
         <NeTableBody>
           <NeTableRow v-if="filteredByPasses.length < 1">
-            <NeTableCell colspan="4">
+            <NeTableCell colspan="3">
               <NeEmptyState
                 :description="t('common.try_changing_search_filters')"
                 :icon="faCircleInfo"
@@ -193,17 +188,9 @@ function handleDeleted() {
               </NeEmptyState>
             </NeTableCell>
           </NeTableRow>
-          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.ip}-${item.direction}`">
+          <NeTableRow v-for="item in paginatedItems" v-else :key="`${item.ip}`">
             <NeTableCell :data-label="t('standalone.ips.bypass_address')">
               {{ item.ip }}
-            </NeTableCell>
-            <NeTableCell :data-label="t('standalone.ips.bypass_direction')">
-              <template v-if="item.direction == 'src'">
-                {{ t('standalone.ips.source') }}
-              </template>
-              <template v-else>
-                {{ t('standalone.ips.destination') }}
-              </template>
             </NeTableCell>
             <NeTableCell :data-label="t('standalone.ips.description')">
               {{ item.description }}

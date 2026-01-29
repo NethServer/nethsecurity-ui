@@ -2538,7 +2538,7 @@
       "destination_bypass": "இலக்கு பைபாச்",
       "delete_bypass_modal_title": "பைபாசை நீக்கு",
       "delete_bypass_modal_w_description": "'{description}' பைபாசை நீக்கவா?",
-      "delete_bypass_modal_wo_description": "ஐபி முகவரி '{ip}' மற்றும் திசை '{direction}' உடன் பைபாசை நீக்கவா?",
+      "delete_bypass_modal_wo_description": "ஐபி முகவரி '{ip}' உடன் பைபாசை நீக்கவா?",
       "delete_bypass_error": "பைபாசை நீக்க முடியாது",
       "disabled_rules_description": "சில சூழ்நிலைகளில், விதிகள் மிகவும் கண்டிப்பானதாக இருக்கலாம் அல்லது பல தவறான நேர்மறைகளை ஏற்படுத்தலாம். இதைத் தடுக்க, நீங்கள் குறிப்பிட்ட விதிகளை முடக்கலாம். முடக்கப்பட்ட விதிகள் Snort விதி தொகுப்பில் சேர்க்கப்படவில்லை.",
       "error_loading_disabled_rules": "முடக்கப்பட்ட விதிகளை ஏற்ற முடியாது",

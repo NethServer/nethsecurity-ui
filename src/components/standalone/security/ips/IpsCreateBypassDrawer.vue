@@ -9,10 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag } from '@/lib/validation'
-import type {
-  AddressType,
-  Direction
-} from '@/components/standalone/security/ips/IpsFilterBypass.vue'
+import type { AddressType } from '@/components/standalone/security/ips/IpsFilterBypass.vue'
 import type { RadioOption } from '@nethesis/vue-components'
 
 const { t } = useI18n()
@@ -31,7 +28,6 @@ watch(
   (value) => {
     if (value) {
       protocol.value = 'ipv4'
-      direction.value = 'src'
       ip.value = ''
       description.value = ''
       validationErrors.value.clear()
@@ -44,13 +40,7 @@ const protocolOptions: RadioOption[] = [
   { label: 'IPv6', id: 'ipv6' }
 ]
 
-const directionOptions: RadioOption[] = [
-  { label: t('standalone.ips.source_bypass'), id: 'src' },
-  { label: t('standalone.ips.destination_bypass'), id: 'dst' }
-]
-
 const protocol = ref<AddressType>('ipv4')
-const direction = ref<Direction>('src')
 const ip = ref('')
 const description = ref('')
 const validationErrors = ref(new MessageBag())
@@ -64,7 +54,6 @@ function save() {
   validationErrors.value.clear()
   ubusCall('ns.snort', 'create-bypass', {
     protocol: protocol.value,
-    direction: direction.value,
     ip: ip.value,
     description: description.value
   })
@@ -108,12 +97,6 @@ function closeHandler() {
         :disabled="loading"
         :invalid-message="t(validationErrors.getFirstI18nKeyFor('ip'))"
         :label="t('standalone.ips.ip_address')"
-      />
-      <NeRadioSelection
-        v-model="direction"
-        :disabled="loading"
-        :label="t('standalone.ips.direction')"
-        :options="directionOptions"
       />
       <NeTextInput
         v-model="description"

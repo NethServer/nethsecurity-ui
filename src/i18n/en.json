@@ -2627,7 +2627,10 @@
       "destination_suppress_alert": "Suppress alert for destination",
       "max_detect_info": "Policy 'max-detect' is enabled.",
       "max_detect_description": "Please refer to the manual for more information.",
-      "events_today": "event today | events today"
+      "events_today": "event today | events today",
+      "home_net": "Home networks",
+      "home_net_tooltip": "Home networks define the protected internal networks. It specifies the IP addresses or subnets Snort should consider as local networks. This helps reduce false positives by distinguishing local traffic from external threats.",
+      "add_network": "Add network (CIDR notation)"
     },
     "ha": {
       "sidebar_title": "High Availability",

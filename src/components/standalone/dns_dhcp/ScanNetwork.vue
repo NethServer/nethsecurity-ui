@@ -152,7 +152,7 @@ async function scanNetwork(iface: ScanInterface) {
   loading.value.scanNetwork = true
 
   try {
-    const res = await ubusCall('ns.scan', 'scan', { device: iface.device, interface: iface.name })
+    const res = await ubusCall('ns.scan', 'scan', { device: iface.device })
     scanResults.value = res.data.hosts.map((host: ScanResult) => ({
       ip: host.ip,
       mac: host.mac,

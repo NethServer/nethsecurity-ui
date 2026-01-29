@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall } from '@/lib/standalone/ubus'
 import {
@@ -53,6 +53,11 @@ const { t } = useI18n()
 const backups = useBackupsStore()
 const subscription = useSubscriptionStore()
 
+const MAX_RETRIES = 3
+const RETRY_DELAY_MS = 1000
+const retryCount = ref(0)
+const retryTimeout = ref<ReturnType<typeof setTimeout>>()
+
 interface Backup {
   id: string
   name: string
@@ -74,6 +79,16 @@ const error = computed((): Error | undefined => {
     errorFetchBackups.value,
     errorFetchHostname.value
   ].find((error) => error != undefined)
+})
+
+// Only show error to user after all retries have been exhausted
+const showError = computed((): boolean => {
+  return error.value != undefined && retryCount.value >= MAX_RETRIES
+})
+
+// True when we have an error but still have retries left
+const isRetrying = computed((): boolean => {
+  return error.value != undefined && retryCount.value < MAX_RETRIES
 })
 
 const loadingBackups = ref(false)
@@ -99,6 +114,43 @@ const showPassphraseModal = ref(false)
 onMounted(() => {
   getHostname()
 })
+
+onUnmounted(() => {
+  if (retryTimeout.value) {
+    clearTimeout(retryTimeout.value)
+  }
+})
+
+// Watch for errors and retry loading data after a delay (handles race conditions after reboot)
+watch(
+  error,
+  (errorValue) => {
+    if (errorValue && retryCount.value < MAX_RETRIES && !loading.value) {
+      retryTimeout.value = setTimeout(() => {
+        retryCount.value++
+        // Clear local errors before retrying
+        errorFetchBackups.value = undefined
+        errorFetchHostname.value = undefined
+        // Reload store data
+        subscription.loadData()
+        backups.loadData()
+        // Reload local data
+        getHostname()
+      }, RETRY_DELAY_MS)
+    }
+  },
+  { immediate: true }
+)
+
+// Reset retry count when loading succeeds
+watch(
+  () => !loading.value && !error.value,
+  (success) => {
+    if (success) {
+      retryCount.value = 0
+    }
+  }
+)
 
 watch(
   () => subscription.isActive,
@@ -230,9 +282,9 @@ function successDeleteBackup() {
       class="my-4"
       kind="success"
     />
-    <NeSkeleton v-if="loading" :lines="7" size="lg" />
+    <NeSkeleton v-if="loading || isRetrying" :lines="7" size="lg" />
     <NeInlineNotification
-      v-else-if="error != undefined"
+      v-else-if="showError"
       :description="t(getAxiosErrorMessage(error))"
       class="my-4"
       kind="error"

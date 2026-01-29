@@ -26,31 +26,37 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { getProductName } from '@/lib/config'
 
 export type ServerTunnel = {
+  /* always available */
+  cert_expiry_ts: number
+  connected: boolean
+  enabled: boolean
   id: string
+  local_network: string[]
   ns_name: string
   port: string
-  topology: string
-  enabled: boolean
-  local_network: string[]
   remote_network: string[]
+  topology: string
   vpn_network: string
-  connected: boolean
-  cert_expiry_ts?: number
+  /* only available on connected tunnels */
   bytes_received?: string
   bytes_sent?: string
+  real_address?: string
   since?: number
+  virtual_address?: string
 }
 
 export type ClientTunnel = {
+  /* always available */
+  cert_expiry_ts: number
+  connected: boolean
+  enabled: boolean
   id: string
   ns_name: string
-  topology: string
-  enabled: boolean
   port: string
   remote_host: string[]
   remote_network: string[]
-  connected: boolean
-  cert_expiry_ts?: number
+  topology: string
+  /* only available on connected tunnels */
   bytes_received?: string
   bytes_sent?: string
   since?: number

@@ -29,7 +29,7 @@ import type { StaticLease } from './StaticLeases.vue'
 export interface ScanInterface {
   name: string
   device: string
-  netmask: number
+  scan_enabled: boolean
 }
 
 export interface ScanResult {
@@ -93,7 +93,7 @@ async function listInterfaces() {
     interfaces.value = res.data.interfaces.map((iface: any) => ({
       name: iface.interface,
       device: iface.device,
-      netmask: iface.netmask
+      scan_enabled: iface.scan_enabled
     }))
   } catch (err: any) {
     error.value.listInterfaces = t(getAxiosErrorMessage(err))
@@ -233,9 +233,9 @@ function addDnsRecord(scanResult: ScanResult) {
               :iface="iface"
               :scan-button-loading="loading.scanNetwork && scanningInterface === iface.name"
               :scan-button-disabled="
-                (loading.scanNetwork && scanningInterface === iface.name) || iface.netmask < 20
+                (loading.scanNetwork && scanningInterface === iface.name) || !iface.scan_enabled
               "
-              :scan-button-disabled-network-too-large="iface.netmask < 20"
+              :scan-button-disabled-network-too-large="!iface.scan_enabled"
               @start-scan="scanNetwork"
             />
           </template>

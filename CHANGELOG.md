@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.10.0](https://github.com/NethServer/nethsecurity-ui/compare/2.9.0...2.10.0) (2026-02-04)
+
+
+### Features
+
+* **openvpn-tunnel:** update certs duration and add certs regeneration functionality ([#679](https://github.com/NethServer/nethsecurity-ui/issues/679)) ([c1fb8ff](https://github.com/NethServer/nethsecurity-ui/commit/c1fb8ff93a71bbb467cae7c6bd75ba579d8410b5))
+
+
+### Bug Fixes
+
+* **ipsec:** correct icon and text colors ([#687](https://github.com/NethServer/nethsecurity-ui/issues/687)) ([8ab10f3](https://github.com/NethServer/nethsecurity-ui/commit/8ab10f3e8d506f82641f3960173244ade0c79e19))
+* minor improvements in backup/restore and shutdown/reboot  ([#681](https://github.com/NethServer/nethsecurity-ui/issues/681)) ([bb886c3](https://github.com/NethServer/nethsecurity-ui/commit/bb886c37cfde8ce5c38ccc8c5d0953e0a72d91dc))
+* **routes:** show system routes table even if no custom routes are defined ([#682](https://github.com/NethServer/nethsecurity-ui/issues/682)) ([381412a](https://github.com/NethServer/nethsecurity-ui/commit/381412ac33036da01607767ea0dc10e95a2b1093))
+* **scan-network:** block network scan for large network (/19 or lower) ([#680](https://github.com/NethServer/nethsecurity-ui/issues/680)) ([38ec99d](https://github.com/NethServer/nethsecurity-ui/commit/38ec99d91aab69391bd5cafbfa5199022ad4b6a8))
+
 ## [2.9.0](https://github.com/NethServer/nethsecurity-ui/compare/2.8.2...2.9.0) (2026-01-26)
 
 

@@ -816,14 +816,20 @@
     "reboot_and_shutdown": {
       "title": "Reboot and shutdown",
       "reboot": "Reboot",
+      "reboot_description": "Restart the unit. The system will be temporarily unavailable during the reboot.",
+      "shutdown": "Shutdown",
+      "shutdown_description": "Power off the unit for maintenance, relocation, or decommissioning.",
       "reboot_unit": "Reboot unit",
       "system_reboot": "System reboot",
-      "shutdown": "Shutdown",
       "shut_down_unit": "Shut down unit",
       "shutdown_warning": "You are about to power off '{unit}' unit",
       "reboot_warning": "You are about to reboot '{unit}' unit",
       "reboot_now": "Reboot now",
-      "reboot_in_progress": "The unit is rebooting, please wait..."
+      "reboot_in_progress": "The unit is rebooting, please wait...",
+      "reboot_completed": "Reboot completed, reloading page...",
+      "reboot_timeout_error": "The unit is not responding. Please check the connection and try reloading the page.",
+      "pending_changes_warning_reboot": "There are unsaved changes. They will be lost if the system reboots.",
+      "pending_changes_warning_shutdown": "There are unsaved changes. They will be lost if the system shuts down."
     },
     "update": {
       "title": "Updates",

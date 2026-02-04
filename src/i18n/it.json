@@ -644,6 +644,7 @@
     "reboot_and_shutdown": {
       "title": "Riavvio e spegnimento",
       "reboot_now": "Riavvia ora",
+      "reboot_description": "Riavvia l'unità. Il sistema sarà temporaneamente non disponibile durante il riavvio.",
       "reboot_in_progress": "L'unità si sta riavviando, attendere...",
       "system_reboot": "Riavvio di sistema",
       "reboot_unit": "Riavvia unità",
@@ -651,7 +652,9 @@
       "reboot_warning": "Stai per riavviare l'unità '{unit}'",
       "reboot": "Riavvio",
       "shutdown": "Spegnimento",
-      "shut_down_unit": "Spegni unità"
+      "shut_down_unit": "Spegni unità",
+      "pending_changes_warning_reboot": "Ci sono modifiche non salvate. Verranno perse se il sistema si riavvia.",
+      "pending_changes_warning_shutdown": "Ci sono modifiche non salvate. Verranno perse se il sistema si spegne."
     },
     "network": {
       "title": "Rete"

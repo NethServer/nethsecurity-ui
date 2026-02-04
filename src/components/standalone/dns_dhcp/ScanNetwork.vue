@@ -29,6 +29,7 @@ import type { StaticLease } from './StaticLeases.vue'
 export interface ScanInterface {
   name: string
   device: string
+  scan_enabled: boolean
 }
 
 export interface ScanResult {
@@ -91,7 +92,8 @@ async function listInterfaces() {
     const res = await ubusCall('ns.scan', 'list-interfaces')
     interfaces.value = res.data.interfaces.map((iface: any) => ({
       name: iface.interface,
-      device: iface.device
+      device: iface.device,
+      scan_enabled: iface.scan_enabled
     }))
   } catch (err: any) {
     error.value.listInterfaces = t(getAxiosErrorMessage(err))
@@ -230,7 +232,10 @@ function addDnsRecord(scanResult: ScanResult) {
               :key="ifaceName"
               :iface="iface"
               :scan-button-loading="loading.scanNetwork && scanningInterface === iface.name"
-              :scan-button-disabled="loading.scanNetwork && scanningInterface === iface.name"
+              :scan-button-disabled="
+                (loading.scanNetwork && scanningInterface === iface.name) || !iface.scan_enabled
+              "
+              :scan-button-disabled-network-too-large="!iface.scan_enabled"
               @start-scan="scanNetwork"
             />
           </template>

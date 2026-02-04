@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.11.0](https://github.com/NethServer/nethsecurity-ui/compare/2.10.0...2.11.0) (2026-02-04)
+
+
+### Features
+
+* **ips:** unify bypass types ([ed49461](https://github.com/NethServer/nethsecurity-ui/commit/ed49461d6e2f34d155636c7b5e33b8a6f6d90b43))
+* **snort:** allow home net configuration ([89fb0d5](https://github.com/NethServer/nethsecurity-ui/commit/89fb0d50aa4c8842ff37c539ef82afdadf706588))
+
+
+### Bug Fixes
+
+* minimum version bump ([64fb88e](https://github.com/NethServer/nethsecurity-ui/commit/64fb88eeab34bbbe9d5dcdafc4c8f38c45a81de6))
+
 ## [2.10.0](https://github.com/NethServer/nethsecurity-ui/compare/2.9.0...2.10.0) (2026-02-04)
 
 

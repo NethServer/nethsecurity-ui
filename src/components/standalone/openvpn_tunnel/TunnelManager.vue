@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -18,32 +18,48 @@ import TunnelTable from './TunnelTable.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import CreateOrEditTunnelDrawer from './CreateOrEditTunnelDrawer.vue'
 import DeleteTunnelModal from './DeleteTunnelModal.vue'
+import RegenerateCertsModal from './RegenerateCertsModal.vue'
+import TunnelInfoModal from './TunnelInfoModal.vue'
 import DownloadTunnelModal from './DownloadTunnelModal.vue'
 import ImportConfigurationDrawer from './ImportConfigurationDrawer.vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { getProductName } from '@/lib/config'
 
 export type ServerTunnel = {
+  /* always available */
+  cert_expiry_ts: number
+  connected: boolean
+  enabled: boolean
   id: string
+  local_network: string[]
   ns_name: string
   port: string
-  topology: string
-  enabled: boolean
-  local_network: string[]
   remote_network: string[]
+  topology: string
   vpn_network: string
-  connected: boolean
+  /* only available on connected tunnels */
+  bytes_received?: string
+  bytes_sent?: string
+  real_address?: string
+  since?: number
+  virtual_address?: string
 }
 
 export type ClientTunnel = {
+  /* always available */
+  cert_expiry_ts: number
+  connected: boolean
+  enabled: boolean
   id: string
   ns_name: string
-  topology: string
-  enabled: boolean
   port: string
   remote_host: string[]
   remote_network: string[]
-  connected: boolean
+  topology: string
+  /* only available on connected tunnels */
+  bytes_received?: string
+  bytes_sent?: string
+  since?: number
 }
 
 type Tunnel = ServerTunnel | ClientTunnel
@@ -61,6 +77,8 @@ const tunnels = ref<ServerTunnel[] | ClientTunnel[]>([])
 const selectedTunnel = ref<Tunnel | null>(null)
 const showCreateEditDrawer = ref(false)
 const showDeleteModal = ref(false)
+const showRegenerateCertsModal = ref(false)
+const showTunnelInfoModal = ref(false)
 const showDownloadModal = ref(false)
 const showImportConfigurationDrawer = ref(false)
 const fetchTunnelsIntervalId = ref(0)
@@ -104,6 +122,16 @@ function openDeleteModal(itemToDelete: Tunnel) {
   showDeleteModal.value = true
 }
 
+function openRegenerateCertsModal(itemToRegenerate: Tunnel) {
+  selectedTunnel.value = itemToRegenerate
+  showRegenerateCertsModal.value = true
+}
+
+function openTunnelInfoModal(itemToShow: Tunnel) {
+  selectedTunnel.value = itemToShow
+  showTunnelInfoModal.value = true
+}
+
 function openDownloadModal(itemToDownload: Tunnel) {
   selectedTunnel.value = itemToDownload
   showDownloadModal.value = true
@@ -116,6 +144,8 @@ function openImportConfigurationDrawer() {
 function closeModalsAndDrawers() {
   selectedTunnel.value = null
   showDeleteModal.value = false
+  showRegenerateCertsModal.value = false
+  showTunnelInfoModal.value = false
   showDownloadModal.value = false
   showCreateEditDrawer.value = false
   showImportConfigurationDrawer.value = false
@@ -181,7 +211,7 @@ onUnmounted(() => {
       </p>
       <template v-if="tunnels.length > 0">
         <div v-if="!manageClientTunnels" class="shrink-0">
-          <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+          <NeButton kind="primary" @click="openCreateEditDrawer(null)">
             <template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-plus']"
@@ -206,7 +236,7 @@ onUnmounted(() => {
             </template>
             {{ t('standalone.openvpn_tunnel.add_client_tunnel') }}
           </NeButton>
-          <NeButton kind="secondary" @click="openImportConfigurationDrawer">
+          <NeButton kind="primary" @click="openImportConfigurationDrawer">
             <template #prefix>
               <font-awesome-icon
                 :icon="['fas', 'circle-arrow-up']"
@@ -280,6 +310,8 @@ onUnmounted(() => {
         @tunnel-download="openDownloadModal"
         @tunnel-edit="openCreateEditDrawer"
         @tunnel-toggle-enable="toggleTunnelEnable"
+        @tunnel-regenerate-certs="openRegenerateCertsModal"
+        @tunnel-show-info="openTunnelInfoModal"
       />
     </template>
   </div>
@@ -295,6 +327,17 @@ onUnmounted(() => {
     :item-to-delete="selectedTunnel"
     @close="closeModalsAndDrawers"
     @tunnel-deleted="reloadTunnels"
+  />
+  <RegenerateCertsModal
+    :visible="showRegenerateCertsModal"
+    :item-to-regenerate="selectedTunnel"
+    @close="closeModalsAndDrawers"
+    @certs-regenerated="reloadTunnels"
+  />
+  <TunnelInfoModal
+    :visible="showTunnelInfoModal"
+    :item-to-show="selectedTunnel"
+    @close="closeModalsAndDrawers"
   />
   <DownloadTunnelModal
     :visible="showDownloadModal"

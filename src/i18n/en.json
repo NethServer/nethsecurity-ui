@@ -425,7 +425,8 @@
     "cannot_set_uci_configuration": "Cannot set UCI configuration",
     "cannot_reuse_old_password": "New password must be different from the old one",
     "duplicate_ip": "IP has already been used",
-    "duplicate_port": "Port has already been used"
+    "duplicate_port": "Port has already been used",
+    "cannot_regenerate_cert": "Cannot regenerate certificates"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -2079,7 +2080,29 @@
       "topology_tooltip_subnet_description": "This method offers a straightforward configuration approach. Instead of using a point-to-point setup, utilize a subnet configuration by specifying a local IP address and subnet mask for the tun interface. In this mode, each connected client is assigned a unique IP address, and it is compatible with Windows systems as well.",
       "topology_tooltip_p2p_description": "Implement a point-to-point topology where the client's tun interface remote endpoint consistently points to the server's tun interface local endpoint. This configuration assigns a single IP address to each connected client. Utilize this mode exclusively when none of the connected clients operate on Windows systems.",
       "strong": "Strong",
-      "weak": "Weak"
+      "weak": "Weak",
+      "regenerate_cert": "Regenerate certificates",
+      "regenerate_cert_message": "Certificate regeneration (client and server) requires an OpenVPN tunnel restart, with possible VPN traffic interruption for a brief period. The client certificate used on the other machine will remain functional (provided it is valid and not expired), and can be replaced with the newly generated certificate at any time later.",
+      "regenerate_cert_button": "Regenerate",
+      "tunnel_name_max_length": "Maximum 10 characters allowed",
+      "tunnel_details": "Tunnel details",
+      "cert_expiring_message": "Certificates expiring soon",
+      "client_cert_expiring_message": "Certificate expiring soon",
+      "cert_expiring_complete_message": "The certificates will expire in {days} days",
+      "client_cert_expiring_complete_message": "The client certificate will expire in {days} days",
+      "cert_expired_message": "Certificates are expired",
+      "client_cert_expired_message": "Certificate is expired",
+      "cert_expired_complete_message": "The certificates are expired",
+      "client_cert_expired_complete_message": "The client certificate is expired",
+      "bytes_received": "Bytes received",
+      "bytes_sent": "Bytes sent",
+      "client_cert_expiry": "Client certificate expire",
+      "cert_expiry": "Certificates expire",
+      "tunnel_id": "Tunnel ID",
+      "real_address": "Real address",
+      "since": "Connection start",
+      "virtual_address": "Virtual address",
+      "remote_host": "Remote hosts"
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",

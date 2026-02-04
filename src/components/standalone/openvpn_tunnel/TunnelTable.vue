@@ -29,11 +29,19 @@ export function isCertificatesExpired(expiryTimestamp: number): boolean {
 }
 
 export function getCertificateStatus(
-  expiryTimestamp: number,
+  certificates: { [key: string]: number },
   isClientTunnel: boolean = false,
   tunnelDetailModal: boolean = false
 ): CertificateStatusResult {
-  if (isCertificatesExpired(expiryTimestamp)) {
+  // Determine which certificate to check (client for client tunnels, server for server tunnels)
+  const certToCheck = isClientTunnel ? certificates.client : certificates.server
+
+  // If the certificate is not available, return no status to show
+  if (!certToCheck) {
+    return { show: false }
+  }
+
+  if (isCertificatesExpired(certToCheck)) {
     return {
       show: true,
       icon: faCircleExclamation,
@@ -48,7 +56,7 @@ export function getCertificateStatus(
     }
   }
 
-  if (shouldShowCertExpiryBadge(expiryTimestamp)) {
+  if (shouldShowCertExpiryBadge(certToCheck)) {
     return {
       show: true,
       icon: faTriangleExclamation,
@@ -61,7 +69,7 @@ export function getCertificateStatus(
           ? 'standalone.openvpn_tunnel.client_cert_expiring_message'
           : 'standalone.openvpn_tunnel.cert_expiring_message',
       messageParams: {
-        days: getDaysUntilExpiry(expiryTimestamp)
+        days: getDaysUntilExpiry(certToCheck)
       }
     }
   }
@@ -220,17 +228,17 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
             <p :class="[...getCellClasses(item)]">{{ item.ns_name }}</p>
             <NeTooltip
               v-if="
-                item.cert_expiry_ts &&
-                getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).show
+                item.certificates &&
+                getCertificateStatus(item.certificates, checkIsClientTunnel(item)).show
               "
               interactive
             >
               <template #trigger>
                 <FontAwesomeIcon
-                  :icon="getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).icon"
+                  :icon="getCertificateStatus(item.certificates, checkIsClientTunnel(item)).icon"
                   :class="[
                     'h-4 w-4',
-                    getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).colorClass
+                    getCertificateStatus(item.certificates, checkIsClientTunnel(item)).colorClass
                   ]"
                   aria-hidden="true"
                 />
@@ -239,8 +247,7 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
                 <p class="text-center">
                   {{
                     t(
-                      getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item))
-                        .messageKey!
+                      getCertificateStatus(item.certificates, checkIsClientTunnel(item)).messageKey!
                     )
                   }}
                 </p>

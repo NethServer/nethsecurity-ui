@@ -27,7 +27,11 @@ import { getProductName } from '@/lib/config'
 
 export type ServerTunnel = {
   /* always available */
-  cert_expiry_ts: number
+  certificates: {
+    server: number
+    client: number
+    CA: number
+  }
   connected: boolean
   enabled: boolean
   id: string
@@ -47,7 +51,10 @@ export type ServerTunnel = {
 
 export type ClientTunnel = {
   /* always available */
-  cert_expiry_ts: number
+  certificates: {
+    client: number
+    CA: number
+  }
   connected: boolean
   enabled: boolean
   id: string

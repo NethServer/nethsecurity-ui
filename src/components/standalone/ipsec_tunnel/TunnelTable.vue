@@ -97,7 +97,9 @@ function getDropdownItems(item: IpsecTunnel) {
 }
 
 function getCellClasses(item: IpsecTunnel) {
-  return item.enabled === '0' ? ['text-green-700', 'dark:text-green-400'] : []
+  return item.enabled === '1'
+    ? ['text-green-700', 'dark:text-green-400']
+    : ['text-gray-700', 'dark:text-gray-400']
 }
 </script>
 
@@ -114,38 +116,30 @@ function getCellClasses(item: IpsecTunnel) {
           <font-awesome-icon :icon="faMagnifyingGlassPlus" class="h-4 w-4" aria-hidden="true" />
         </NeButton>
         <span v-else class="w-8"></span>
-        <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+        <p>{{ item.name }}</p>
       </div>
     </template>
     <template #local_networks="{ item }: { item: IpsecTunnel }">
       <template v-if="item.local.length > 0">
-        <p
-          v-for="(local, idx) in item.local.slice(0, 2)"
-          :key="local"
-          :class="[...getCellClasses(item)]"
-        >
+        <p v-for="(local, idx) in item.local.slice(0, 2)" :key="local">
           {{ local }}{{ item.local.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
-      <p v-else :class="[...getCellClasses(item)]">-</p>
+      <p v-else>-</p>
     </template>
     <template #remote_networks="{ item }: { item: IpsecTunnel }">
       <template v-if="item.remote.length > 0">
-        <p
-          v-for="(remote, idx) in item.remote.slice(0, 2)"
-          :key="remote"
-          :class="[...getCellClasses(item)]"
-        >
+        <p v-for="(remote, idx) in item.remote.slice(0, 2)" :key="remote">
           {{ remote }}{{ item.remote.length > 2 && idx == 1 ? '...' : '' }}
         </p>
       </template>
-      <p v-else :class="[...getCellClasses(item)]">-</p>
+      <p v-else>-</p>
     </template>
     <template #status="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
+      <div :class="['flex', 'flex-row', 'items-center']">
         <font-awesome-icon
           :icon="['fas', item.enabled === '1' ? 'circle-check' : 'circle-xmark']"
-          class="mr-2 h-5 w-5 text-green-700 dark:text-green-400"
+          :class="['mr-2', 'h-5', 'w-5', ...getCellClasses(item)]"
           aria-hidden="true"
         />
         <p>
@@ -158,7 +152,7 @@ function getCellClasses(item: IpsecTunnel) {
       </div>
     </template>
     <template #connection="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-col', ...getCellClasses(item)]">
+      <div :class="['flex', 'flex-col']">
         <div class="flex items-center">
           <font-awesome-icon
             :icon="[
@@ -174,7 +168,7 @@ function getCellClasses(item: IpsecTunnel) {
               'h-5',
               'w-5',
               item.enabled === '0'
-                ? 'text-gray-400 dark:text-gray-700'
+                ? 'text-gray-700 dark:text-gray-400'
                 : item.connected === 'yes'
                   ? 'text-green-700 dark:text-green-500'
                   : item.connected === 'warning'

@@ -18,6 +18,7 @@ import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue
 import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingStatusCard.vue'
 import BackupStatusCard from '@/components/standalone/dashboard/BackupStatusCard.vue'
 import HaStatusCard from '@/components/standalone/dashboard/HaStatusCard.vue'
+import WireguardCard from '@/components/standalone/dashboard/WireguardCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -87,6 +88,14 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </OpenVpnTunnelOrIpsecCard>
+    <!-- wireguard servers -->
+    <WireguardCard>
+      <template #title>
+        <NeLink @click="goTo('/vpn/wireguard-tunnel')">
+          {{ t('standalone.wireguard_tunnel.title') }}
+        </NeLink>
+      </template>
+    </WireguardCard>
     <!-- threat shield IP / banIP -->
     <ThreatShieldIpCard />
     <!-- MAC binding -->

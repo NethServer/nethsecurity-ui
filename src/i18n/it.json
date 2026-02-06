@@ -112,6 +112,7 @@
     "cannot_retrieve_realtime_traffic": "Impossibile recuperare il traffico in tempo reale",
     "cannot_retrieve_system_info": "Impossibile recuperare le informazioni di sistema",
     "cannot_retrieve_service_status": "Impossibile recuperare lo stato del servizio",
+    "cannot_retrieve_wireguard_stats": "Impossibile recuperare le statistiche WireGuard",
     "cannot_retrieve_wan_traffic": "Impossibile recuperare il traffico WAN",
     "cannot_retrieve_wan_list": "Impossibile recuperare l'elenco delle WAN",
     "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico",
@@ -717,6 +718,8 @@
       "tunnels_connected": "tunnel connesso | tunnel connessi",
       "check_dns_configuration": "Controllare DNS",
       "tunnels_enabled": "tunnel abilitato | tunnel abilitati",
+      "wireguard_servers_enabled": "server abilitato | server abilitati",
+      "wireguard_peers_active": "peer attivo | peer attivi",
       "monitoring_disabled": "Monitoraggio disabilitato",
       "monitoring_disabled_tooltip": "Abilitare il log almeno in una chain per abilitare il monitoraggio delle minacce. Vai alla pagina {page}",
       "unavailable": "Non disponibile"

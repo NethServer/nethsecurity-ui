@@ -172,6 +172,9 @@ function openPeerDrawer() {
             {{ t('standalone.wireguard_tunnel.peer_networks') }}
           </NeTableHeadCell>
           <NeTableHeadCell>
+            {{ t('standalone.wireguard_tunnel.mtu') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.status') }}
           </NeTableHeadCell>
           <NeTableHeadCell>

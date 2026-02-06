@@ -5,12 +5,14 @@ import {
   NeSideDrawer,
   NeTextInput,
   NeToggle,
-  NeInlineNotification
+  NeInlineNotification,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { MessageBag } from '@/lib/validation.ts'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
+import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
 import type { Tunnel, Peer } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 import type { AxiosResponse } from 'axios'
@@ -44,6 +46,7 @@ const routeAllTraffic = ref(false)
 const routeAllTrafficLabel = computed<string>(() => toggleState(routeAllTraffic.value))
 const remoteNetworks = ref<string[]>([''])
 const localNetworks = ref<string[]>([''])
+const mtu = ref('')
 
 const disableForm = ref(true)
 const loading = ref(false)
@@ -67,6 +70,7 @@ watch(
       routeAllTraffic.value = false
       remoteNetworks.value = ['']
       localNetworks.value = ['']
+      mtu.value = ''
       if (peer != undefined) {
         enabled.value = peer.enabled
         peerName.value = peer.name
@@ -82,6 +86,11 @@ watch(
           localNetworks.value = peer.local_networks
         } else {
           localNetworks.value = ['']
+        }
+        if (peer.mtu && peer.mtu > 0) {
+          mtu.value = peer.mtu.toString()
+        } else {
+          mtu.value = ''
         }
         editing.value = true
       } else {
@@ -157,7 +166,8 @@ function submitForm() {
       pre_shared_key: preSharedKey.value,
       route_all_traffic: routeAllTraffic.value,
       local_networks: localNetworks.value,
-      remote_networks: remoteNetworks.value
+      remote_networks: remoteNetworks.value,
+      mtu: mtu.value
     })
   } else {
     method = ubusCall('ns.wireguard', 'edit-peer', {
@@ -169,7 +179,8 @@ function submitForm() {
       pre_shared_key: preSharedKey.value,
       route_all_traffic: routeAllTraffic.value,
       local_networks: localNetworks.value,
-      remote_networks: remoteNetworks.value
+      remote_networks: remoteNetworks.value,
+      mtu: mtu.value
     })
   }
   method
@@ -206,8 +217,20 @@ const saveButtonLabel = computed(() => {
 <template>
   <NeSideDrawer :is-shown="isShown" :title="drawerTitle" @close="emits('close')">
     <form class="space-y-8" @submit.prevent="submitForm">
-      <!-- TODO: fixme -->
-      <NeInlineNotification v-if="error != undefined" kind="error" title="testing" />
+      <NeInlineNotification
+        v-if="error != undefined"
+        :description="t(getAxiosErrorMessage(error))"
+        kind="error"
+      >
+        <template #title>
+          <template v-if="editing">
+            {{ t('standalone.wireguard_tunnel.error_editing_peer') }}
+          </template>
+          <template v-else>
+            {{ t('standalone.wireguard_tunnel.error_adding_peer') }}
+          </template>
+        </template>
+      </NeInlineNotification>
       <NeInlineNotification
         v-if="editing"
         kind="warning"
@@ -256,6 +279,14 @@ const saveButtonLabel = computed(() => {
         :add-item-label="t('standalone.wireguard_tunnel.add_network')"
         :general-invalid-message="t(validation.getFirstI18nKeyFor('remote_networks'))"
       />
+      <AdvancedSettingsDropdown>
+        <NeTextInput
+          v-model="mtu"
+          :disabled="disableForm"
+          :label="t('standalone.wireguard_tunnel.mtu')"
+          optional
+        />
+      </AdvancedSettingsDropdown>
       <hr />
       <div class="flex justify-end gap-6">
         <NeButton kind="tertiary" :disabled="disableForm" @click="$emit('close')">

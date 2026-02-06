@@ -101,6 +101,12 @@ const peerActions: NeDropdownItem[] = [
       </template>
       <template v-else> - </template>
     </NeTableCell>
+    <NeTableCell :data-label="t('standalone.wireguard_tunnel.mtu')">
+      <template v-if="peer.mtu && peer.mtu > 0">
+        {{ peer.mtu }}
+      </template>
+      <template v-else> - </template>
+    </NeTableCell>
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.status')">
       <div class="flex items-center gap-1">
         <template v-if="peer.enabled">

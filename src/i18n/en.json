@@ -2674,6 +2674,8 @@
       "error_fetching_server_setup": "Error fetching server setup",
       "error_fetching_server_setup_description": "There was an error fetching the data to add a Wireguard server, please try again later",
       "edit_server": "Edit server",
+      "error_editing_peer": "Error editing peer",
+      "error_adding_peer": "Error adding peer",
       "delete_tunnel_title": "Delete tunnel",
       "delete_tunnel_confirm": "Deleting the server tunnel '{name}' will remove all associated peers and disconnect them from the VPN.",
       "delete_peer_title": "Delete peer",

@@ -28,40 +28,49 @@ export function isCertificatesExpired(expiryTimestamp: number): boolean {
   return expiryTimestamp <= Date.now() / 1000
 }
 
-export function getCertificateStatus(
-  expiryTimestamp: number,
-  isClientTunnel: boolean = false,
-  tunnelDetailModal: boolean = false
-): CertificateStatusResult {
-  if (isCertificatesExpired(expiryTimestamp)) {
+export function getCertificateStatus(certificates: {
+  [key: string]: number
+}): CertificateStatusResult {
+  // Determine which certificate to check (client for client tunnels, server for server tunnels)
+
+  // Check if any certificate is expired
+  let isExpired = false
+  for (const cert of Object.values(certificates)) {
+    if (isCertificatesExpired(cert)) {
+      isExpired = true
+      break
+    }
+  }
+
+  if (isExpired) {
     return {
       show: true,
       icon: faCircleExclamation,
       colorClass: 'text-red-700 dark:text-red-500',
-      messageKey: tunnelDetailModal
-        ? isClientTunnel
-          ? 'standalone.openvpn_tunnel.client_cert_expired_complete_message'
-          : 'standalone.openvpn_tunnel.cert_expired_complete_message'
-        : isClientTunnel
-          ? 'standalone.openvpn_tunnel.client_cert_expired_message'
-          : 'standalone.openvpn_tunnel.cert_expired_message'
+      messageKey: 'standalone.openvpn_tunnel.cert_expired_message'
     }
   }
 
-  if (shouldShowCertExpiryBadge(expiryTimestamp)) {
+  let isExpiring = false
+  for (const cert of Object.values(certificates)) {
+    if (shouldShowCertExpiryBadge(cert)) {
+      isExpiring = true
+      break
+    }
+  }
+
+  if (isExpiring) {
+    // Get the minimum days until expiry among all certificates
+    const daysUntilExpiry = Math.min(
+      ...Object.values(certificates).map((cert) => getDaysUntilExpiry(cert))
+    )
     return {
       show: true,
       icon: faTriangleExclamation,
       colorClass: 'text-amber-700 dark:text-amber-500',
-      messageKey: tunnelDetailModal
-        ? isClientTunnel
-          ? 'standalone.openvpn_tunnel.client_cert_expiring_complete_message'
-          : 'standalone.openvpn_tunnel.cert_expiring_complete_message'
-        : isClientTunnel
-          ? 'standalone.openvpn_tunnel.client_cert_expiring_message'
-          : 'standalone.openvpn_tunnel.cert_expiring_message',
+      messageKey: 'standalone.openvpn_tunnel.cert_expiring_message',
       messageParams: {
-        days: getDaysUntilExpiry(expiryTimestamp)
+        days: daysUntilExpiry
       }
     }
   }
@@ -219,19 +228,13 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
             </NeButton>
             <p :class="[...getCellClasses(item)]">{{ item.ns_name }}</p>
             <NeTooltip
-              v-if="
-                item.cert_expiry_ts &&
-                getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).show
-              "
+              v-if="item.certificates && getCertificateStatus(item.certificates).show"
               interactive
             >
               <template #trigger>
                 <FontAwesomeIcon
-                  :icon="getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).icon"
-                  :class="[
-                    'h-4 w-4',
-                    getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item)).colorClass
-                  ]"
+                  :icon="getCertificateStatus(item.certificates).icon"
+                  :class="['h-4 w-4', getCertificateStatus(item.certificates).colorClass]"
                   aria-hidden="true"
                 />
               </template>
@@ -239,8 +242,8 @@ function checkIsClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientT
                 <p class="text-center">
                   {{
                     t(
-                      getCertificateStatus(item.cert_expiry_ts, checkIsClientTunnel(item))
-                        .messageKey!
+                      getCertificateStatus(item.certificates).messageKey!,
+                      getCertificateStatus(item.certificates).messageParams!
                     )
                   }}
                 </p>

@@ -6,7 +6,7 @@
 import { NeModal } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import type { ServerTunnel, ClientTunnel } from './TunnelManager.vue'
-import { watch, ref, computed } from 'vue'
+import { watch, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { getCertificateStatus } from './TunnelTable.vue'
 
@@ -33,14 +33,10 @@ function isClientTunnel(item: ServerTunnel | ClientTunnel): item is ClientTunnel
   return 'remote_host' in item
 }
 
-const certificateStatus = computed(() => {
-  if (!_itemToShow.value?.cert_expiry_ts) return { show: false }
-  return getCertificateStatus(
-    _itemToShow.value.cert_expiry_ts,
-    isClientTunnel(_itemToShow.value),
-    true
-  )
-})
+function getCertStatus(expirationTimestamp: number) {
+  if (!_itemToShow.value?.certificates) return { show: false }
+  return getCertificateStatus({ cert: expirationTimestamp })
+}
 </script>
 
 <template>
@@ -224,33 +220,91 @@ const certificateStatus = computed(() => {
         </p>
       </template>
 
-      <!-- cert_expiry_ts -->
-      <p class="text-sm font-semibold">
-        {{
-          isClientTunnel(_itemToShow!)
-            ? t('standalone.openvpn_tunnel.client_cert_expiry')
-            : t('standalone.openvpn_tunnel.cert_expiry')
-        }}
-      </p>
-      <div class="flex flex-col gap-2">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{
-            _itemToShow.cert_expiry_ts
-              ? new Date(_itemToShow.cert_expiry_ts * 1000).toLocaleString(locale)
-              : ''
-          }}
+      <!-- certificates -->
+      <template v-if="!isClientTunnel(_itemToShow!) && _itemToShow.certificates.server">
+        <p class="text-sm font-semibold">
+          {{ t('standalone.openvpn_tunnel.server_cert_expiration') }}
         </p>
-        <span v-if="certificateStatus.show" class="flex items-center gap-2">
-          <FontAwesomeIcon
-            :icon="certificateStatus.icon"
-            :class="['h-4 w-4', certificateStatus.colorClass]"
-            aria-hidden="true"
-          />
+        <div class="space-y-1">
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            {{ t(certificateStatus.messageKey!, certificateStatus.messageParams!) }}
+            {{ new Date(_itemToShow.certificates.server * 1000).toLocaleString(locale) }}
           </p>
-        </span>
-      </div>
+          <span
+            v-if="getCertStatus(_itemToShow.certificates.server).show"
+            class="flex items-center gap-2"
+          >
+            <FontAwesomeIcon
+              :icon="getCertStatus(_itemToShow.certificates.server).icon"
+              :class="['h-4 w-4', getCertStatus(_itemToShow.certificates.server).colorClass]"
+              aria-hidden="true"
+            />
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{
+                t(
+                  getCertStatus(_itemToShow.certificates.server).messageKey!,
+                  getCertStatus(_itemToShow.certificates.server).messageParams!
+                )
+              }}
+            </p>
+          </span>
+        </div>
+      </template>
+      <template v-if="_itemToShow.certificates.client">
+        <p class="text-sm font-semibold">
+          {{ t('standalone.openvpn_tunnel.client_cert_expiration') }}
+        </p>
+        <div class="space-y-1">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ new Date(_itemToShow.certificates.client * 1000).toLocaleString(locale) }}
+          </p>
+          <span
+            v-if="getCertStatus(_itemToShow.certificates.client).show"
+            class="flex items-center gap-2"
+          >
+            <FontAwesomeIcon
+              :icon="getCertStatus(_itemToShow.certificates.client).icon"
+              :class="['h-4 w-4', getCertStatus(_itemToShow.certificates.client).colorClass]"
+              aria-hidden="true"
+            />
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{
+                t(
+                  getCertStatus(_itemToShow.certificates.client).messageKey!,
+                  getCertStatus(_itemToShow.certificates.client).messageParams!
+                )
+              }}
+            </p>
+          </span>
+        </div>
+      </template>
+      <template v-if="_itemToShow.certificates.CA">
+        <p class="text-sm font-semibold">
+          {{ t('standalone.openvpn_tunnel.ca_cert_expiration') }}
+        </p>
+        <div class="space-y-1">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ new Date(_itemToShow.certificates.CA * 1000).toLocaleString(locale) }}
+          </p>
+          <span
+            v-if="getCertStatus(_itemToShow.certificates.CA).show"
+            class="flex items-center gap-2"
+          >
+            <FontAwesomeIcon
+              :icon="getCertStatus(_itemToShow.certificates.CA).icon"
+              :class="['h-4 w-4', getCertStatus(_itemToShow.certificates.CA).colorClass]"
+              aria-hidden="true"
+            />
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{
+                t(
+                  getCertStatus(_itemToShow.certificates.CA).messageKey!,
+                  getCertStatus(_itemToShow.certificates.CA).messageParams!
+                )
+              }}
+            </p>
+          </span>
+        </div>
+      </template>
     </div>
   </NeModal>
 </template>

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.0](https://github.com/NethServer/nethsecurity-ui/compare/2.11.0...2.12.0) (2026-02-06)
+
+
+### Features
+
+* **ovpntunnel:** show all cert expiration ([#690](https://github.com/NethServer/nethsecurity-ui/issues/690)) ([ba84e1b](https://github.com/NethServer/nethsecurity-ui/commit/ba84e1bf1e398fd0257b08503db662332c3ad371))
+
 ## [2.11.0](https://github.com/NethServer/nethsecurity-ui/compare/2.10.0...2.11.0) (2026-02-04)
 
 

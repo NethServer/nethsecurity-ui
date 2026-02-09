@@ -28,6 +28,7 @@ export type BasePeer = {
   local_networks: string[]
   reserved_ip: string
   config: string
+  mtu?: number
   active: false
   latest_handshake?: string
 }

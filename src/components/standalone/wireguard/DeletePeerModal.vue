@@ -20,6 +20,7 @@ const error = ref<Error>()
 watchEffect(() => {
   if (peer != undefined) {
     _internalPeer.value = peer
+    loading.value = false
   }
 })
 

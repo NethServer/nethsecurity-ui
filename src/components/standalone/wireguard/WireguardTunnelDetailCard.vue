@@ -68,8 +68,14 @@ const filteredPeers = computed<Peer[]>(() => {
   if (filter.length == 0) {
     return instance.peers
   } else {
+    const lowerFilter = filter.toLowerCase()
     return instance.peers.filter((peer) => {
-      return peer.name.toLowerCase().includes(filter.toLowerCase())
+      return (
+        peer.name.toLowerCase().includes(lowerFilter) ||
+        peer.reserved_ip.toLowerCase().includes(lowerFilter) ||
+        peer.remote_networks.some((network) => network.toLowerCase().includes(lowerFilter)) ||
+        peer.local_networks.some((network) => network.toLowerCase().includes(lowerFilter))
+      )
     })
   }
 })
@@ -170,6 +176,9 @@ function openPeerDrawer() {
           </NeTableHeadCell>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.peer_networks') }}
+          </NeTableHeadCell>
+          <NeTableHeadCell>
+            {{ t('standalone.wireguard_tunnel.mtu') }}
           </NeTableHeadCell>
           <NeTableHeadCell>
             {{ t('standalone.wireguard_tunnel.status') }}

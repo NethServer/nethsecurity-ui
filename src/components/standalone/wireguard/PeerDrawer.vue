@@ -40,7 +40,7 @@ const enabled = ref(true)
 const enabledLabel = computed<string>(() => toggleState(enabled.value))
 const peerName = ref('')
 const reservedIp = ref('')
-const preSharedKey = ref(false)
+const preSharedKey = ref(true)
 const preSharedKeyLabel = computed<string>(() => toggleState(preSharedKey.value))
 const routeAllTraffic = ref(false)
 const routeAllTrafficLabel = computed<string>(() => toggleState(routeAllTraffic.value))
@@ -66,7 +66,7 @@ watch(
       loading.value = false
       enabled.value = true
       peerName.value = ''
-      preSharedKey.value = false
+      preSharedKey.value = true
       routeAllTraffic.value = false
       remoteNetworks.value = ['']
       localNetworks.value = ['']

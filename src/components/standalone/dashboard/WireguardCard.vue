@@ -1,11 +1,11 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { NeCard, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIntervalFn } from '@vueuse/core'
@@ -15,7 +15,7 @@ const { t } = useI18n()
 
 const enabledServers = ref(0)
 const activePeers = ref(0)
-const loading = ref(false)
+const loading = ref(true)
 const error = ref<Error>()
 
 async function getCounters() {
@@ -29,11 +29,10 @@ async function getCounters() {
     enabledServers.value = instances.filter((instance: Tunnel) => instance.enabled).length
 
     // Count active peers across all servers
-    let activePeersCount = 0
+    activePeers.value = 0
     instances.forEach((instance: Tunnel) => {
-      activePeersCount += instance.peers.filter((peer) => peer.active).length
+      activePeers.value += instance.peers.filter((peer) => peer.active).length
     })
-    activePeers.value = activePeersCount
   } catch (err) {
     error.value = err as Error
   } finally {
@@ -68,20 +67,17 @@ useIntervalFn(
       <slot name="title"></slot>
     </template>
     <div>
-      <NeSkeleton v-if="loading" :lines="1" class="w-14"></NeSkeleton>
-      <div v-else>
-        <div>
-          <span class="text-xl">{{ enabledServers }}</span>
-          <span class="ml-2">{{
-            t('standalone.dashboard.wireguard_servers_enabled', enabledServers)
-          }}</span>
-        </div>
-        <div>
-          <span class="text-xl">{{ activePeers }}</span>
-          <span class="ml-2">
-            {{ t('standalone.dashboard.wireguard_peers_active', activePeers) }}
-          </span>
-        </div>
+      <div>
+        <span class="text-xl">{{ enabledServers }}</span>
+        <span class="ml-2">
+          {{ t('standalone.dashboard.wireguard_servers_enabled', enabledServers) }}
+        </span>
+      </div>
+      <div>
+        <span class="text-xl">{{ activePeers }}</span>
+        <span class="ml-2">
+          {{ t('standalone.dashboard.wireguard_peers_active', activePeers) }}
+        </span>
       </div>
     </div>
   </NeCard>

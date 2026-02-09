@@ -32,8 +32,8 @@ function deleteTunnel() {
     .then(() => emit('success'))
     .catch((err) => {
       error.value = err
-      loading.value = false
     })
+    .finally(() => loading.value = false)
 }
 </script>
 

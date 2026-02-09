@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.0](https://github.com/NethServer/nethsecurity-ui/compare/2.12.0...2.13.0) (2026-02-09)
+
+
+### Features
+
+* **wireguard:** mtu for peers and amenities ([#693](https://github.com/NethServer/nethsecurity-ui/issues/693)) ([b101f30](https://github.com/NethServer/nethsecurity-ui/commit/b101f309f533673bb476d903da4f6cf77ef6b948))
+
 ## [2.12.0](https://github.com/NethServer/nethsecurity-ui/compare/2.11.0...2.12.0) (2026-02-06)
 
 

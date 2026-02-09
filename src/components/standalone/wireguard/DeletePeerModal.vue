@@ -20,6 +20,7 @@ const error = ref<Error>()
 watchEffect(() => {
   if (peer != undefined) {
     _internalPeer.value = peer
+    loading.value = false
   }
 })
 
@@ -32,8 +33,8 @@ function deleteTunnel() {
     .then(() => emit('success'))
     .catch((err) => {
       error.value = err
+      loading.value = false
     })
-    .finally(() => loading.value = false)
 }
 </script>
 

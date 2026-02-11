@@ -1553,7 +1553,7 @@
       "diffie_hellman_group_tooltip": "Selezionare un metodo di scambio chiave per abilitare Perfect Forward Secrecy (PFS)",
       "diffie_hellman_group_pfs": "Gruppo Diffie-Hellman (PFS)",
       "close_action": "Azione di chiusura",
-      "close_action_tooltip": "Azione da eseguire dopo che un tunnel viene chiuso dal peer. \"none\" non fa alcuna azione, 'trap' tenta di riavviare un CHILD_SA fallito, 'start' cerca di ricreare immediatamente il CHILD_SA.",
+      "close_action_tooltip": "Azione da eseguire quando un tunnel viene chiuso dal peer. \"none\" non fa alcuna azione, 'trap' tenta di riavviare un CHILD_SA fallito quando rileva traffico che corrisponde alle policy (on-demand), 'start' cerca di ricreare immediatamente il CHILD_SA.",
       "restart": "Riavvia",
       "restart_confirmation_title": "Riavvia il servizio IPsec",
       "restart_confirmation_message": "Sei sicuro di voler riavviare il servizio IPsec? L'azione riavvia tutti i tunnel. Questo è richiesto solo dopo l'aggiunta o la rimozione di reti da un tunnel."

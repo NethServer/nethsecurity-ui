@@ -2148,7 +2148,7 @@
       "pfs_perfect_forward_secrecy_disabled": "PFS (Perfect Forward Secrecy) disabled",
       "compression": "Compression",
       "close_action": "Close action",
-      "close_action_tooltip": "Action to perform after a tunnel gets closed by the peer. 'none' does not take any action, 'trap' triest to restart a failed CHILD_SA , 'start' tries to immediately re-create the CHILD_SA.",
+      "close_action_tooltip": "Action to perform after a tunnel gets closed by the peer. 'none' does not take any action, 'trap' tries to restart the tunnel on-demand, as soon as matching traffic is detected, 'start' tries to immediately re-create the CHILD_SA.",
       "phase_one_ike": "Phase 1 (IKE)",
       "phase_two_esp": "Phase 2 (ESP)",
       "ike_version": "IKE version",

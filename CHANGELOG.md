@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.1](https://github.com/NethServer/nethsecurity-ui/compare/2.13.0...2.13.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* **ipsec:** better explanation of the "trap" option ([#698](https://github.com/NethServer/nethsecurity-ui/issues/698)) ([277b41e](https://github.com/NethServer/nethsecurity-ui/commit/277b41eb7755b32ba1905dea3996b36f86f17a43))
+
 ## [2.13.0](https://github.com/NethServer/nethsecurity-ui/compare/2.12.0...2.13.0) (2026-02-09)
 
 

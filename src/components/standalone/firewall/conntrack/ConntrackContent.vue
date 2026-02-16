@@ -23,17 +23,12 @@ import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChain, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { some } from 'lodash-es'
+import type { SomeItemAction } from 'valibot'
 
 const { t } = useI18n()
 
-export type ConntrackLabels =
-  | 'netify-init'
-  | 'netify-block'
-  | 'netify-analyzed'
-  | 'bulk'
-  | 'best_effort'
-  | 'video'
-  | 'voice'
+export type ConntrackLabels = 'netify-block' | 'netify-analyzed'
 
 export type ConntrackRecord = {
   destination: string
@@ -84,18 +79,24 @@ async function fetchConntrack() {
     isLoading.value = false
   }
 }
-function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
-  const lowerCaseFilter = filter.toLowerCase()
-  return records.filter(
-    (ConntrackRecord) =>
-      ConntrackRecord.source.toLowerCase().includes(lowerCaseFilter) ||
-      ConntrackRecord.destination.toLowerCase().includes(lowerCaseFilter) ||
-      ConntrackRecord.protocol.toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.state ?? '').toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.source_port ?? '').toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.destination_port ?? '').toLowerCase().includes(lowerCaseFilter)
-  )
+
+function matchString(value: string | undefined, filter: string) {
+  if (!value) {
+    return false
+  }
+  return value?.toLowerCase().includes(filter.toLowerCase())
 }
+
+const filters: Array<(a: ConntrackRecord) => boolean> = [
+  (record: ConntrackRecord) => matchString(record.source, filter.value),
+  (record: ConntrackRecord) => matchString(record.destination, filter.value),
+  (record: ConntrackRecord) => matchString(record.protocol, filter.value),
+  (record: ConntrackRecord) => matchString(record.state, filter.value),
+  (record: ConntrackRecord) => matchString(record.source_port, filter.value),
+  (record: ConntrackRecord) => matchString(record.destination_port, filter.value),
+  (record: ConntrackRecord) => matchString(record.id, filter.value),
+  (record: ConntrackRecord) => some(record.labels, (label) => matchString(label, filter.value))
+]
 
 function deleteAll() {
   selectedItem.value = undefined
@@ -114,7 +115,7 @@ function closeDeleteModal() {
 const filteredItems = computed(() => {
   return filter.value === ''
     ? conntrackRecords.value
-    : applyFilterToConntrackRecords(conntrackRecords.value, filter.value)
+    : conntrackRecords.value.filter((record) => filters.some((filter) => filter(record)))
 })
 
 function onRecordDeleted() {

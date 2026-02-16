@@ -83,7 +83,7 @@ function badgeFromLabel(label: ConntrackLabels): LabelBadge | null {
       <NeTableHeadCell>{{ t('standalone.conntrack.state') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.conntrack.timeout') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.conntrack.id') }}</NeTableHeadCell>
-      <NeTableHeadCell>{{ t('standalone.conntrack.netifyd_labels') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.conntrack.dpi_labels') }}</NeTableHeadCell>
       <NeTableHeadCell>
         <!-- no header for actions -->
       </NeTableHeadCell>
@@ -116,7 +116,7 @@ function badgeFromLabel(label: ConntrackLabels): LabelBadge | null {
         <NeTableCell :data-label="t('standalone.conntrack.id')">
           {{ item.id }}
         </NeTableCell>
-        <NeTableCell :data-label="t('standalone.conntrack.netifyd_labels')">
+        <NeTableCell :data-label="t('standalone.conntrack.dpi_labels')">
           <span
             v-if="item.labels != undefined && item.labels.length > 0"
             class="flex flex-wrap gap-2"

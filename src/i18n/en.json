@@ -2472,7 +2472,7 @@
       "conntrack_record_all_removed": "Connections deleted successfully",
       "labels": "Labels",
       "id": "ID",
-      "netifyd_labels": "Netifyd labels",
+      "dpi_labels": "DPI labels",
       "analyzed": "Analyzed",
       "blocked": "Blocked"
     },

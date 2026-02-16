@@ -2474,7 +2474,7 @@
       "id": "ID",
       "netifyd_labels": "Netifyd labels",
       "analyzed": "Analyzed",
-      "block": "Blocked"
+      "blocked": "Blocked"
     },
     "user_objects": {
       "title": "Users and objects"

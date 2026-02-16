@@ -54,9 +54,9 @@ function badgeFromLabel(label: ConntrackLabels): LabelBadge | null {
         kind: 'blue',
         icon: faMagnifyingGlassArrowRight
       }
-    case 'netify-block':
+    case 'netify-blocked':
       return {
-        label: t('standalone.conntrack.block'),
+        label: t('standalone.conntrack.blocked'),
         kind: 'rose',
         icon: faBan
       }
@@ -137,7 +137,7 @@ function badgeFromLabel(label: ConntrackLabels): LabelBadge | null {
           <template v-else>-</template>
         </NeTableCell>
         <NeTableCell :data-label="t('common.actions')">
-          <div class="align-center -ml-2.5 flex xl:ml-0 xl:justify-end">
+          <div class="flex 2xl:justify-end">
             <NeButton kind="tertiary" @click="emit('delete', item)">
               <template #prefix>
                 <FontAwesomeIcon :icon="faTrash" aria-hidden="true" class="h-4 w-4" />

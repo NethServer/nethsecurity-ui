@@ -2415,7 +2415,17 @@
       "outgoing": "Outgoing",
       "outgoing_description": "The connection has been initiated from local networks to the internet",
       "broadcast": "Broadcast",
-      "broadcast_description": "The connection is a broadcast connection"
+      "broadcast_description": "The connection is a broadcast connection",
+      "unable_to_get_flows_configuration": "Unable to get flows daemon configuration",
+      "unable_to_configure_flows_daemon": "Unable to configure flows daemon",
+      "daemon_disabled": "Flows daemon is disabled.",
+      "daemon_disabled_description": "Please enable it in the settings to view real-time network connections.",
+      "configure_flows_daemon": "Configure flows daemon",
+      "daemon_enabled": "Flows daemon enabled",
+      "persistence_after_expiration": "Flows persistence after expiration",
+      "persistence_after_expiration_description": "Keep flow information available for a short period after the flow has ended. This allows to view information about recently ended flows, which can be useful to investigate connections that are established and closed in a short time frame.",
+      "daemon_not_running": "Flows daemon is enabled but not running",
+      "daemon_not_running_description": "If you just enabled the daemon, commit changes and wait a few seconds for the daemon to start. If the problem persists, check the system logs for errors related to the flows daemon."
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

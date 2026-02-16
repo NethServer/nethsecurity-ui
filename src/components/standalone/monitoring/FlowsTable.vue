@@ -496,7 +496,6 @@ watch(flowDetails, (value) => {
 <template>
   <div class="space-y-8">
     <div class="space-y-4">
-      <p class="max-w-xl text-secondary-neutral">{{ t('standalone.flows.subtitle') }}</p>
       <NeInlineNotification
         v-if="error"
         kind="error"

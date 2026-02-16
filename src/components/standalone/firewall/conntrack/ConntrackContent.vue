@@ -27,7 +27,7 @@ import { useRouteQuery } from '@vueuse/router'
 
 const { t } = useI18n()
 
-export type ConntrackLabels = 'netify-block' | 'netify-analyzed'
+export type ConntrackLabels = 'netify-blocked' | 'netify-analyzed'
 
 export type ConntrackRecord = {
   destination: string

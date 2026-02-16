@@ -21,6 +21,8 @@ const notificationsStore = useNotificationsStore()
 
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faChain, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -145,13 +147,13 @@ function onRecordDeleted() {
           @click="deleteAll()"
         >
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faTrash" aria-hidden="true" />
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
         <NeButton kind="secondary" size="lg" class="ml-2 shrink-0" @click="fetchConntrack()">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
           </template>
           {{ t('standalone.conntrack.refresh_page') }}</NeButton
         >
@@ -178,11 +180,10 @@ function onRecordDeleted() {
       <NeEmptyState
         v-if="conntrackRecords.length == 0"
         :title="t('standalone.conntrack.no_connection_found')"
-        :icon="['fas', 'chain']"
+        :icon="faChain"
       >
         <NeButton kind="tertiary" @click="fetchConntrack">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" /> </template
+          <template #prefix> <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" /> </template
           >{{ t('standalone.conntrack.refresh_page') }}</NeButton
         >
       </NeEmptyState>
@@ -190,7 +191,7 @@ function onRecordDeleted() {
         v-else-if="filteredItems.length == 0"
         :title="t('standalone.conntrack.no_connection_found')"
         :description="t('standalone.conntrack.filter_change_suggestion')"
-        :icon="['fas', 'chain']"
+        :icon="faChain"
       >
         <NeButton kind="tertiary" @click="filter = ''"> {{ t('common.clear_filter') }}</NeButton>
       </NeEmptyState>

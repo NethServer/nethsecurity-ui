@@ -26,6 +26,15 @@ import { faChain, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
+export type ConntrackLabels =
+  | 'netify-init'
+  | 'netify-block'
+  | 'netify-analyzed'
+  | 'bulk'
+  | 'best_effort'
+  | 'video'
+  | 'voice'
+
 export type ConntrackRecord = {
   destination: string
   destination_port?: string
@@ -43,6 +52,7 @@ export type ConntrackRecord = {
   }
   state?: string
   timeout: string
+  labels?: ConntrackLabels[]
 }
 
 const isLoading = ref(false)
@@ -155,8 +165,8 @@ function onRecordDeleted() {
           <template #prefix>
             <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
           </template>
-          {{ t('standalone.conntrack.refresh_page') }}</NeButton
-        >
+          {{ t('standalone.conntrack.refresh_page') }}
+        </NeButton>
       </div>
     </div>
     <div class="flex items-center gap-4">
@@ -183,9 +193,11 @@ function onRecordDeleted() {
         :icon="faChain"
       >
         <NeButton kind="tertiary" @click="fetchConntrack">
-          <template #prefix> <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" /> </template
-          >{{ t('standalone.conntrack.refresh_page') }}</NeButton
-        >
+          <template #prefix>
+            <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
+          </template>
+          {{ t('standalone.conntrack.refresh_page') }}
+        </NeButton>
       </NeEmptyState>
       <NeEmptyState
         v-else-if="filteredItems.length == 0"
@@ -193,7 +205,7 @@ function onRecordDeleted() {
         :description="t('standalone.conntrack.filter_change_suggestion')"
         :icon="faChain"
       >
-        <NeButton kind="tertiary" @click="filter = ''"> {{ t('common.clear_filter') }}</NeButton>
+        <NeButton kind="tertiary" @click="filter = ''">{{ t('common.clear_filter') }}</NeButton>
       </NeEmptyState>
       <ConntrackRecordsTable
         v-if="filteredItems.length > 0"

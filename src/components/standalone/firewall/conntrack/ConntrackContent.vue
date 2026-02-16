@@ -23,8 +23,7 @@ import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChain, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
-import { some } from 'lodash-es'
-import type { SomeItemAction } from 'valibot'
+import { useRouteQuery } from '@vueuse/router'
 
 const { t } = useI18n()
 
@@ -57,7 +56,7 @@ const error = ref({
   notificationDetails: '',
   notificationTitle: ''
 })
-const filter = ref('')
+const filter = useRouteQuery('filter', '')
 const showDeleteModal = ref(false)
 
 onMounted(() => {
@@ -95,7 +94,8 @@ const filters: Array<(a: ConntrackRecord) => boolean> = [
   (record: ConntrackRecord) => matchString(record.source_port, filter.value),
   (record: ConntrackRecord) => matchString(record.destination_port, filter.value),
   (record: ConntrackRecord) => matchString(record.id, filter.value),
-  (record: ConntrackRecord) => some(record.labels, (label) => matchString(label, filter.value))
+  (record: ConntrackRecord) =>
+    record.labels?.some((label) => matchString(label, filter.value)) ?? false
 ]
 
 function deleteAll() {
@@ -145,24 +145,18 @@ function onRecordDeleted() {
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.conntrack.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
-    <div class="mb-4 flex flex-row justify-between">
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+    <div class="flex flex-wrap items-start gap-8">
+      <p class="mr-auto max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.conntrack.conntrack_description') }}
       </p>
-      <div class="shrink-0">
-        <NeButton
-          v-if="conntrackRecords.length > 0"
-          kind="tertiary"
-          size="lg"
-          class="ml-4 shrink-0"
-          @click="deleteAll()"
-        >
+      <div class="flex flex-wrap gap-2">
+        <NeButton v-if="conntrackRecords.length > 0" kind="tertiary" size="lg" @click="deleteAll()">
           <template #prefix>
             <FontAwesomeIcon :icon="faTrash" aria-hidden="true" />
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" class="ml-2 shrink-0" @click="fetchConntrack()">
+        <NeButton kind="secondary" size="lg" @click="fetchConntrack()">
           <template #prefix>
             <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
           </template>

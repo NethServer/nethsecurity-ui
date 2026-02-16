@@ -21,11 +21,7 @@ import type { ConntrackRecord } from './ConntrackContent.vue'
 import { ref } from 'vue'
 import { byteFormat1024 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  faBan,
-  faMagnifyingGlassArrowRight,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons'
+import { faBan, faMagnifyingGlassArrowRight, faTrash } from '@fortawesome/free-solid-svg-icons'
 import type { ConntrackLabels } from '@/components/standalone/firewall/conntrack/ConntrackContent.vue'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 const { t } = useI18n()

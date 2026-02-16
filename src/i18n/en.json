@@ -2470,7 +2470,6 @@
       "filter_change_suggestion": "Try changing your search filter",
       "conntrack_record_removed": "Connection deleted successfully",
       "conntrack_record_all_removed": "Connections deleted successfully",
-      "labels": "Labels",
       "id": "ID",
       "dpi_labels": "DPI labels",
       "analyzed": "Analyzed",

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.0](https://github.com/NethServer/nethsecurity-ui/compare/2.13.1...2.14.0) (2026-02-18)
+
+
+### Features
+
+* **conntrack:** added netifyd labels and IDs ([#702](https://github.com/NethServer/nethsecurity-ui/issues/702)) ([1e10808](https://github.com/NethServer/nethsecurity-ui/commit/1e10808b328f0cfd3cc0d59a4745f684015a2157))
+
 ## [2.13.1](https://github.com/NethServer/nethsecurity-ui/compare/2.13.0...2.13.1) (2026-02-12)
 
 

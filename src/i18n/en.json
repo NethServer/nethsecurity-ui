@@ -2469,7 +2469,11 @@
       "delete_all_record_message": "All connections will be dropped.",
       "filter_change_suggestion": "Try changing your search filter",
       "conntrack_record_removed": "Connection deleted successfully",
-      "conntrack_record_all_removed": "Connections deleted successfully"
+      "conntrack_record_all_removed": "Connections deleted successfully",
+      "id": "ID",
+      "dpi_labels": "DPI labels",
+      "analyzed": "Analyzed",
+      "blocked": "Blocked"
     },
     "user_objects": {
       "title": "Users and objects"

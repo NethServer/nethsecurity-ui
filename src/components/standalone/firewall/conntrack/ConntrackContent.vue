@@ -21,8 +21,13 @@ const notificationsStore = useNotificationsStore()
 
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { onMounted, ref, computed } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faChain, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { useRouteQuery } from '@vueuse/router'
 
 const { t } = useI18n()
+
+export type ConntrackLabels = 'netify-blocked' | 'netify-analyzed'
 
 export type ConntrackRecord = {
   destination: string
@@ -41,6 +46,7 @@ export type ConntrackRecord = {
   }
   state?: string
   timeout: string
+  labels?: ConntrackLabels[]
 }
 
 const isLoading = ref(false)
@@ -50,7 +56,7 @@ const error = ref({
   notificationDetails: '',
   notificationTitle: ''
 })
-const filter = ref('')
+const filter = useRouteQuery('filter', '')
 const showDeleteModal = ref(false)
 
 onMounted(() => {
@@ -72,18 +78,25 @@ async function fetchConntrack() {
     isLoading.value = false
   }
 }
-function applyFilterToConntrackRecords(records: ConntrackRecord[], filter: string) {
-  const lowerCaseFilter = filter.toLowerCase()
-  return records.filter(
-    (ConntrackRecord) =>
-      ConntrackRecord.source.toLowerCase().includes(lowerCaseFilter) ||
-      ConntrackRecord.destination.toLowerCase().includes(lowerCaseFilter) ||
-      ConntrackRecord.protocol.toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.state ?? '').toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.source_port ?? '').toLowerCase().includes(lowerCaseFilter) ||
-      (ConntrackRecord.destination_port ?? '').toLowerCase().includes(lowerCaseFilter)
-  )
+
+function matchString(value: string | undefined, filter: string) {
+  if (!value) {
+    return false
+  }
+  return value?.toLowerCase().includes(filter.toLowerCase())
 }
+
+const filters: Array<(a: ConntrackRecord) => boolean> = [
+  (record: ConntrackRecord) => matchString(record.source, filter.value),
+  (record: ConntrackRecord) => matchString(record.destination, filter.value),
+  (record: ConntrackRecord) => matchString(record.protocol, filter.value),
+  (record: ConntrackRecord) => matchString(record.state, filter.value),
+  (record: ConntrackRecord) => matchString(record.source_port, filter.value),
+  (record: ConntrackRecord) => matchString(record.destination_port, filter.value),
+  (record: ConntrackRecord) => matchString(record.id, filter.value),
+  (record: ConntrackRecord) =>
+    record.labels?.some((label) => matchString(label, filter.value)) ?? false
+]
 
 function deleteAll() {
   selectedItem.value = undefined
@@ -102,7 +115,7 @@ function closeDeleteModal() {
 const filteredItems = computed(() => {
   return filter.value === ''
     ? conntrackRecords.value
-    : applyFilterToConntrackRecords(conntrackRecords.value, filter.value)
+    : conntrackRecords.value.filter((record) => filters.some((filter) => filter(record)))
 })
 
 function onRecordDeleted() {
@@ -132,29 +145,23 @@ function onRecordDeleted() {
 <template>
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.conntrack.title') }}</NeHeading>
   <div class="flex flex-col gap-y-6">
-    <div class="mb-4 flex flex-row justify-between">
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+    <div class="flex flex-wrap items-start gap-8">
+      <p class="mr-auto max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
         {{ t('standalone.conntrack.conntrack_description') }}
       </p>
-      <div class="shrink-0">
-        <NeButton
-          v-if="conntrackRecords.length > 0"
-          kind="tertiary"
-          size="lg"
-          class="ml-4 shrink-0"
-          @click="deleteAll()"
-        >
+      <div class="flex flex-wrap gap-2">
+        <NeButton v-if="conntrackRecords.length > 0" kind="tertiary" size="lg" @click="deleteAll()">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faTrash" aria-hidden="true" />
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" class="ml-2 shrink-0" @click="fetchConntrack()">
+        <NeButton kind="secondary" size="lg" @click="fetchConntrack()">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
           </template>
-          {{ t('standalone.conntrack.refresh_page') }}</NeButton
-        >
+          {{ t('standalone.conntrack.refresh_page') }}
+        </NeButton>
       </div>
     </div>
     <div class="flex items-center gap-4">
@@ -178,21 +185,22 @@ function onRecordDeleted() {
       <NeEmptyState
         v-if="conntrackRecords.length == 0"
         :title="t('standalone.conntrack.no_connection_found')"
-        :icon="['fas', 'chain']"
+        :icon="faChain"
       >
         <NeButton kind="tertiary" @click="fetchConntrack">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'fa-refresh']" aria-hidden="true" /> </template
-          >{{ t('standalone.conntrack.refresh_page') }}</NeButton
-        >
+            <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
+          </template>
+          {{ t('standalone.conntrack.refresh_page') }}
+        </NeButton>
       </NeEmptyState>
       <NeEmptyState
         v-else-if="filteredItems.length == 0"
         :title="t('standalone.conntrack.no_connection_found')"
         :description="t('standalone.conntrack.filter_change_suggestion')"
-        :icon="['fas', 'chain']"
+        :icon="faChain"
       >
-        <NeButton kind="tertiary" @click="filter = ''"> {{ t('common.clear_filter') }}</NeButton>
+        <NeButton kind="tertiary" @click="filter = ''">{{ t('common.clear_filter') }}</NeButton>
       </NeEmptyState>
       <ConntrackRecordsTable
         v-if="filteredItems.length > 0"

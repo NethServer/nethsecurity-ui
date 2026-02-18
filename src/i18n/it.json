@@ -2235,7 +2235,11 @@
       "upload": "Upload",
       "download": "Download",
       "delete_conntrack_record_message": "La connessione tra host {source} e {destination} sarà eliminata.",
-      "filter_change_suggestion": "Prova a cambiare il filtro di ricerca"
+      "filter_change_suggestion": "Prova a cambiare il filtro di ricerca",
+      "id": "ID",
+      "dpi_labels": "Etichette DPI",
+      "analyzed": "Analizzato",
+      "blocked": "Bloccato"
     },
     "objects": {
       "save_host": "Salva host",

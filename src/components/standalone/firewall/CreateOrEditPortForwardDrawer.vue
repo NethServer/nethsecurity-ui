@@ -99,6 +99,18 @@ const supportedDestinationZones = computed<NeComboboxOption[]>(() => {
   }
 })
 
+const trafficType = ref<'select_protocols' | 'all_traffic'>('select_protocols')
+const trafficTypeOptions = [
+  {
+    id: 'select_protocols',
+    label: t('standalone.port_forward.select_protocols')
+  },
+  {
+    id: 'all_traffic',
+    label: t('standalone.port_forward.all_traffic')
+  }
+]
+
 // Form fields
 const id = ref('')
 const name = ref('')
@@ -125,7 +137,7 @@ const reflectionZones = ref<NeComboboxOption[]>([])
 const reflectionZonesRef = ref()
 const destinationZone = ref('')
 const destinationZoneRef = ref()
-const destinationAddressType = ref<'address' | 'object'>('address')
+const destinationAddressType = ref<'address' | 'object' | 'firewall'>('address')
 const destinationAddressObject = ref('')
 const destinationObjectRef = ref()
 const restrictType = ref<'address' | 'object'>('address')
@@ -140,6 +152,10 @@ const destinationAddressOptions = ref([
   {
     id: 'object',
     label: t('standalone.port_forward.select_an_object')
+  },
+  {
+    id: 'firewall',
+    label: t('standalone.port_forward.firewall')
   }
 ])
 
@@ -186,7 +202,13 @@ const restrictObjectsComboboxOptions = computed(() => {
   return [noObjectOption, ...restrictOptions]
 })
 
-const anyProtocolSelected = computed(() => protocols.value.length == 0)
+const filteredDestinationAddressOptions = computed(() => {
+  // when traffic type is 'all_traffic', exclude the firewall option
+  if (trafficType.value === 'all_traffic') {
+    return destinationAddressOptions.value.filter((option) => option.id !== 'firewall')
+  }
+  return destinationAddressOptions.value
+})
 
 function resetForm() {
   validationErrorBag.value.clear()
@@ -203,10 +225,15 @@ function resetForm() {
       destinationAddressType.value = 'object'
       destinationIP.value = ''
       destinationAddressObject.value = props.initialItem.ns_dst
-    } else {
-      // destination address is an IP address
+    } else if (props.initialItem.dest_ip && props.initialItem.dest_ip !== '127.0.0.1') {
+      // destination address is a custom IP address
       destinationAddressType.value = 'address'
       destinationIP.value = props.initialItem.dest_ip
+      destinationAddressObject.value = ''
+    } else {
+      // destination address is 127.0.0.1 (firewall's IP)
+      destinationAddressType.value = 'firewall'
+      destinationIP.value = ''
       destinationAddressObject.value = ''
     }
   } else {
@@ -268,10 +295,13 @@ async function fetchOptions() {
   try {
     supportedProtocols.value = (
       await ubusCall('ns.redirects', 'list-protocols')
-    ).data.protocols.map((proto: string) => ({
-      id: proto,
-      label: proto.toUpperCase()
-    }))
+    ).data.protocols
+      // filter out 'all' protocol as there is the dedicated 'all_traffic' option in the UI
+      .filter((proto: string) => proto.toLowerCase() !== 'all')
+      .map((proto: string) => ({
+        id: proto,
+        label: proto.toUpperCase()
+      }))
   } catch (err: any) {
     error.value.notificationTitle = t('error.cannot_retrieve_protocols')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
@@ -318,6 +348,16 @@ watchEffect(() => {
   resetForm()
 })
 
+// reset destination address type to 'address' when switching to all_traffic and firewall is selected
+watch(
+  () => trafficType.value,
+  (newTrafficType) => {
+    if (newTrafficType === 'all_traffic' && destinationAddressType.value === 'firewall') {
+      destinationAddressType.value = 'address'
+    }
+  }
+)
+
 function close() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
@@ -344,6 +384,14 @@ watch(
 
 function resetRestrictIPValidationErrors() {
   restrictIPValidationErrors.value = []
+}
+
+function handleSelectAllProtocolsManually() {
+  // prevent selecting all protocols
+  if (protocols.value.length === supportedProtocols.value.length && supportedProtocols.value.length > 0) {
+    // remove the last selected protocol
+    protocols.value.pop()
+  }
 }
 
 function runFieldValidators(
@@ -399,8 +447,12 @@ function validate(): boolean {
   const sourceDestinationPortValidators: [validationOutput[], string, Ref][] = [
     [
       [
-        // if destination port is present, source port is required
-        destinationPort.value ? validateRequired(sourcePort.value) : { valid: true },
+        // source port required when destination is firewall or destination port is present
+        destinationAddressType.value === 'firewall'
+          ? validateRequired(sourcePort.value)
+          : destinationPort.value
+            ? validateRequired(sourcePort.value)
+            : { valid: true },
         sourcePort.value
           ? validateAnyOf(
               [validatePort, validatePortRange],
@@ -427,26 +479,38 @@ function validate(): boolean {
     ]
   ]
 
-  const destinationIpRequired = sourcePort.value == '' || destinationPort.value == ''
+  // if traffic type is 'select_protocols', at least one protocol must be selected from the dropdown
+  const protocolValidators: [validationOutput[], string, Ref][] =
+    trafficType.value === 'select_protocols'
+      ? [[[validateRequiredOption(protocols.value)], 'protocols', protocolsRef]]
+      : []
+
+  // destination address validation based on type
+  const destinationValidators: [validationOutput[], string, Ref][] = []
+  
+  if (destinationAddressType.value === 'address') {
+    // type is 'address', IP is required and must be valid
+    destinationValidators.push([
+      [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)],
+      'destinationIP',
+      destinationIpRef
+    ])
+  } else if (destinationAddressType.value === 'object') {
+    // type is 'object'
+    destinationValidators.push([
+      [validateRequired(destinationAddressObject.value)],
+      'destinationAddressObject',
+      destinationObjectRef
+    ])
+  }
+  // if type is 'firewall', no validation needed as the destination address is the firewall's IP
+  // and the source port is checked above in sourceDestinationPortValidators
 
   const validators: [validationOutput[], string, Ref][] = [
     [[validateRequired(name.value)], 'name', nameRef],
-    ...(anyProtocolSelected.value ? [] : sourceDestinationPortValidators),
-    destinationAddressType.value === 'address'
-      ? [
-          destinationIpRequired
-            ? [validateRequired(destinationIP.value), validateIpAddress(destinationIP.value)]
-            : destinationIP.value
-              ? [validateIpAddress(destinationIP.value)]
-              : [{ valid: true }],
-          'destinationIP',
-          destinationIpRef
-        ]
-      : [
-          [validateRequired(destinationAddressObject.value)],
-          'destinationAddressObject',
-          destinationObjectRef
-        ],
+    ...protocolValidators,
+    ...(trafficType.value === 'all_traffic' ? [] : sourceDestinationPortValidators),
+    ...destinationValidators,
     [
       reflection.value ? [validateRequiredOption(reflectionZones.value)] : [],
       'reflectionZones',
@@ -478,11 +542,11 @@ async function createOrEditPortForward() {
       const payload: CreateEditPortForwardPayload = {
         dest_ip: '',
         ns_dst: '',
-        proto: anyProtocolSelected.value
+        proto: trafficType.value === 'all_traffic'
           ? ['all']
           : protocols.value.map((protoObj: NeComboboxOption) => protoObj.id),
-        src_dport: anyProtocolSelected.value ? '' : sourcePort.value,
-        dest_port: anyProtocolSelected.value ? '' : destinationPort.value,
+        src_dport: trafficType.value === 'all_traffic' ? '' : sourcePort.value,
+        dest_port: trafficType.value === 'all_traffic' ? '' : destinationPort.value,
         name: name.value,
         src_dip: wan.value === 'any' ? '' : wan.value,
         enabled: enabled.value ? '1' : '0',
@@ -503,10 +567,11 @@ async function createOrEditPortForward() {
       if (destinationAddressType.value === 'address') {
         // destination address
         payload.dest_ip = destinationIP.value
-      } else {
+      } else if (destinationAddressType.value === 'object') {
         // destination object
         payload.ns_dst = destinationAddressObject.value
       }
+      // if destinationAddressType is 'firewall', dest_ip and ns_dst remain empty
 
       if (restrictType.value === 'address') {
         // restrict addresses
@@ -583,11 +648,26 @@ async function createOrEditPortForward() {
         :disabled="isSubmittingRequest"
         :invalid-message="validationErrorBag.getFirstFor('name')"
       />
+
+      <NeRadioSelection
+        v-model="trafficType"  
+        :label="t('standalone.port_forward.traffic_type')"
+        :options="trafficTypeOptions"
+        :disabled="isSubmittingRequest"
+      />
+
+      <NeInlineNotification
+        v-show="trafficType === 'all_traffic'"
+        kind="info"
+        :title="t('standalone.port_forward.forward_all_traffic')"
+        :description="t('standalone.port_forward.forward_all_traffic_message')"
+      />
+
       <NeCombobox
+        v-show="trafficType !== 'all_traffic'"
         ref="protocolsRef"
         v-model="protocols"
         :label="t('standalone.port_forward.protocols')"
-        :helper-text="t('standalone.port_forward.protocol_helper')"
         :multiple="true"
         :options="supportedProtocols"
         :placeholder="t('standalone.port_forward.choose_protocol')"
@@ -599,24 +679,21 @@ async function createOrEditPortForward() {
         :selected-label="t('ne_combobox.selected')"
         :user-input-label="t('ne_combobox.user_input_label')"
         :optional-label="t('common.optional')"
+        @update:model-value="handleSelectAllProtocolsManually"
       />
-      <NeInlineNotification
-        v-if="anyProtocolSelected"
-        kind="info"
-        :title="t('standalone.port_forward.any_protocol')"
-        :description="t('standalone.port_forward.any_protocol_message')"
-      />
+
       <NeTextInput
-        v-if="!anyProtocolSelected"
+        v-show="trafficType !== 'all_traffic'"
         ref="sourcePortRef"
         v-model="sourcePort"
         :label="t('standalone.port_forward.source_port')"
         :invalid-message="validationErrorBag.getFirstFor('sourcePort')"
-        :optional="true"
+        :optional="destinationAddressType !== 'firewall'"
         :disabled="isSubmittingRequest"
         :optional-label="t('common.optional')"
-        :helper-text="t('standalone.port_forward.source_destination_port_helper')"
-      >
+        :helper-text="destinationAddressType !== 'firewall' ? t('standalone.port_forward.source_destination_port_helper') : ''"
+        :placeholder="t('standalone.port_forward.port_placeholder')"
+        >
         <template #tooltip>
           <NeTooltip>
             <template #content>
@@ -640,7 +717,7 @@ async function createOrEditPortForward() {
       <NeRadioSelection
         v-model="destinationAddressType"
         :label="t('standalone.port_forward.destination_address_type')"
-        :options="destinationAddressOptions"
+        :options="filteredDestinationAddressOptions"
         :disabled="isSubmittingRequest"
       >
         <template #tooltip>
@@ -658,9 +735,8 @@ async function createOrEditPortForward() {
         v-model="destinationIP"
         :label="t('standalone.port_forward.destination_address')"
         :invalid-message="validationErrorBag.getFirstFor('destinationIP')"
-        :helper-text="t('standalone.port_forward.leave_blank_for_firewall')"
         :disabled="isSubmittingRequest"
-        optional
+        :optional-label="t('common.optional')"
       />
       <!-- destination object -->
       <NeCombobox
@@ -688,15 +764,15 @@ async function createOrEditPortForward() {
         </template>
       </NeCombobox>
       <NeTextInput
-        v-if="!anyProtocolSelected"
+        v-show="trafficType !== 'all_traffic'"
         ref="destinationPortRef"
         v-model="destinationPort"
         :label="t('standalone.port_forward.destination_port')"
         :invalid-message="validationErrorBag.getFirstFor('destinationPort')"
         :optional="true"
         :optional-label="t('common.optional')"
-        :helper-text="t('standalone.port_forward.source_destination_port_helper')"
         :disabled="isSubmittingRequest"
+        :placeholder="t('standalone.port_forward.port_placeholder')"
       >
         <template #tooltip
           ><NeTooltip

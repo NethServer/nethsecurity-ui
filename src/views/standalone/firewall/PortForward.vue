@@ -252,7 +252,7 @@ onMounted(() => {
       <div class="ml-2 shrink-0">
         <NeButton
           v-if="Object.keys(portForwards).length > 0"
-          kind="secondary"
+          kind="primary"
           @click="openCreateEditDrawer(null)"
         >
           <template #prefix>

@@ -96,25 +96,25 @@ function getCellClasses(item: PortForward) {
       class="z-10"
     >
       <NeTableHead>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 16%">
           {{ t('standalone.port_forward.name') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.source_port') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.destination_port') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.protocols') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.wan_ip') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.restrict_access_from') }}
         </NeTableHeadCell>
-        <NeTableHeadCell>
+        <NeTableHeadCell style="width: 14%">
           {{ t('standalone.port_forward.status') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
@@ -165,7 +165,7 @@ function getCellClasses(item: PortForward) {
             <div v-else :class="getCellClasses(item)" class="flex flex-row items-center">
               <FontAwesomeIcon
                 :icon="item.enabled ? faCircleCheck : faCircleXmark"
-                class="mr-2 h-5 w-5"
+                :class="['mr-2', 'h-5', 'w-5', item.enabled ? 'text-green-700 dark:text-green-500' : '']" 
                 aria-hidden="true"
               />
               <p>

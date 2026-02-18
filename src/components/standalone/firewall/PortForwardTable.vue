@@ -165,7 +165,12 @@ function getCellClasses(item: PortForward) {
             <div v-else :class="getCellClasses(item)" class="flex flex-row items-center">
               <FontAwesomeIcon
                 :icon="item.enabled ? faCircleCheck : faCircleXmark"
-                :class="['mr-2', 'h-5', 'w-5', item.enabled ? 'text-green-700 dark:text-green-500' : '']" 
+                :class="[
+                  'mr-2',
+                  'h-5',
+                  'w-5',
+                  item.enabled ? 'text-green-700 dark:text-green-500' : ''
+                ]"
                 aria-hidden="true"
               />
               <p>

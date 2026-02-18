@@ -293,9 +293,7 @@ async function fetchOptions() {
   loading.value.listProtocolsAndZones = true
 
   try {
-    supportedProtocols.value = (
-      await ubusCall('ns.redirects', 'list-protocols')
-    ).data.protocols
+    supportedProtocols.value = (await ubusCall('ns.redirects', 'list-protocols')).data.protocols
       // filter out 'all' protocol as there is the dedicated 'all_traffic' option in the UI
       .filter((proto: string) => proto.toLowerCase() !== 'all')
       .map((proto: string) => ({
@@ -388,7 +386,10 @@ function resetRestrictIPValidationErrors() {
 
 function handleSelectAllProtocolsManually() {
   // prevent selecting all protocols
-  if (protocols.value.length === supportedProtocols.value.length && supportedProtocols.value.length > 0) {
+  if (
+    protocols.value.length === supportedProtocols.value.length &&
+    supportedProtocols.value.length > 0
+  ) {
     // remove the last selected protocol
     protocols.value.pop()
   }
@@ -487,7 +488,7 @@ function validate(): boolean {
 
   // destination address validation based on type
   const destinationValidators: [validationOutput[], string, Ref][] = []
-  
+
   if (destinationAddressType.value === 'address') {
     // type is 'address', IP is required and must be valid
     destinationValidators.push([
@@ -542,9 +543,10 @@ async function createOrEditPortForward() {
       const payload: CreateEditPortForwardPayload = {
         dest_ip: '',
         ns_dst: '',
-        proto: trafficType.value === 'all_traffic'
-          ? ['all']
-          : protocols.value.map((protoObj: NeComboboxOption) => protoObj.id),
+        proto:
+          trafficType.value === 'all_traffic'
+            ? ['all']
+            : protocols.value.map((protoObj: NeComboboxOption) => protoObj.id),
         src_dport: trafficType.value === 'all_traffic' ? '' : sourcePort.value,
         dest_port: trafficType.value === 'all_traffic' ? '' : destinationPort.value,
         name: name.value,
@@ -650,7 +652,7 @@ async function createOrEditPortForward() {
       />
 
       <NeRadioSelection
-        v-model="trafficType"  
+        v-model="trafficType"
         :label="t('standalone.port_forward.traffic_type')"
         :options="trafficTypeOptions"
         :disabled="isSubmittingRequest"
@@ -691,9 +693,13 @@ async function createOrEditPortForward() {
         :optional="destinationAddressType !== 'firewall'"
         :disabled="isSubmittingRequest"
         :optional-label="t('common.optional')"
-        :helper-text="destinationAddressType !== 'firewall' ? t('standalone.port_forward.source_destination_port_helper') : ''"
+        :helper-text="
+          destinationAddressType !== 'firewall'
+            ? t('standalone.port_forward.source_destination_port_helper')
+            : ''
+        "
         :placeholder="t('standalone.port_forward.port_placeholder')"
-        >
+      >
         <template #tooltip>
           <NeTooltip>
             <template #content>

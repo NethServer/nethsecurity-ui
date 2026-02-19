@@ -1,23 +1,18 @@
 <script lang="ts" setup>
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
-import FlowsTable from '@/components/standalone/monitoring/FlowsTable.vue'
 import {
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
-  NeSideDrawer,
-  NeSkeleton,
-  NeTextInput,
-  NeToggle
+  NeSkeleton
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges.ts'
-import { MessageBag } from '@/lib/validation.ts'
+import FlowConfigureDrawer from '@/components/standalone/monitoring/flows/FlowConfigureDrawer.vue'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus.ts'
+import FlowsTable from '@/components/standalone/monitoring/FlowsTable.vue'
 
 const { t } = useI18n()
-const uci = useUciPendingChangesStore()
 
 type FlowDaemonResponse = {
   data: {
@@ -29,122 +24,61 @@ type FlowDaemonResponse = {
   }
 }
 
-const { data, error, status } = useQuery({
-  queryKey: ['flow', 'daemon'],
+const { isSuccess, isError, isPending, data, error } = useQuery({
+  queryKey: ['flow', 'config'],
   queryFn: async () => ubusCall<FlowDaemonResponse>('ns.flows', 'get-configuration'),
   select: (data) => data.data
 })
 
+const configuringDaemon = ref(false)
 const enabled = ref(false)
 const expiredPersistence = ref('')
-watch(
-  data,
-  (val) => {
-    if (val != undefined) {
-      enabled.value = val.configuration.enabled
-      expiredPersistence.value = val.configuration.expired_persistence
-    }
-  },
-  { immediate: true }
-)
-
-const configuringDaemon = ref(false)
-
-type SetConfigPayload = {
-  enabled: boolean
-  expired_persistence: string
-}
-
-const validationBag = ref(new MessageBag())
-const queryClient = useQueryClient()
-const {
-  mutate,
-  isPending,
-  error: mutationError
-} = useMutation({
-  mutationFn: (payload: SetConfigPayload) => ubusCall('ns.flows', 'set-configuration', payload),
-  onSuccess: async () => {
-    await Promise.all([
-      uci.getChanges(),
-      queryClient.invalidateQueries({ queryKey: ['flow', 'daemon'] })
-    ])
-    configuringDaemon.value = false
-  },
-  onError: (err) => {
-    if (err instanceof ValidationError) {
-      validationBag.value = err.errorBag
-    }
-  },
-  onMutate: () => {
-    validationBag.value = new MessageBag()
+watch(data, (newData) => {
+  if (newData != undefined) {
+    enabled.value = newData.configuration.enabled
+    expiredPersistence.value = newData.configuration.expired_persistence
   }
 })
-
-function submit() {
-  mutate({
-    enabled: enabled.value,
-    expired_persistence: expiredPersistence.value
-  })
-}
 </script>
 
 <template>
-  <NeSkeleton v-if="status == 'pending'" :lines="10" />
-  <NeInlineNotification
-    v-else-if="status == 'error'"
-    :description="t(getAxiosErrorMessage(error))"
-    :title="t('standalone.flows.unable_to_get_flows_configuration')"
-    kind="error"
-  />
-  <div v-else class="space-y-4">
+  <div class="space-y-4">
     <div class="flex flex-wrap items-start gap-4">
       <p class="mr-auto max-w-xl text-secondary-neutral">{{ t('standalone.flows.subtitle') }}</p>
-      <NeButton kind="secondary" size="lg" @click="configuringDaemon = true">
-        {{ t('standalone.flows.configure_flows_daemon') }}
-      </NeButton>
+      <template v-if="isSuccess">
+        <NeButton
+          v-if="data!.configuration.enabled"
+          kind="secondary"
+          size="lg"
+          @click="configuringDaemon = true"
+        >
+          {{ t('standalone.flows.configure_flows_daemon') }}
+        </NeButton>
+      </template>
     </div>
+    <NeSkeleton v-if="isPending" :lines="10" />
     <NeInlineNotification
-      v-if="!data!.configuration.enabled"
-      :description="t('standalone.flows.daemon_disabled_description')"
-      :title="t('standalone.flows.daemon_disabled')"
-      kind="info"
+      v-else-if="isError"
+      :description="t(getAxiosErrorMessage(error))"
+      :title="t('standalone.unable_to_get_flows_configuration')"
+      kind="error"
     />
-    <FlowsTable v-else />
-  </div>
-  <NeSideDrawer
-    :is-shown="configuringDaemon"
-    :title="t('standalone.flows.configure_flows_daemon')"
-    @close="configuringDaemon = false"
-  >
-    <form v-if="status == 'success'" class="space-y-8" @submit.prevent="submit">
+    <template v-else>
       <NeInlineNotification
-        v-if="mutationError != null && validationBag.size < 1"
-        :description="t(getAxiosErrorMessage(mutationError))"
-        :title="t('standalone.flows.unable_to_configure_flows_daemon')"
-        kind="error"
+        v-if="!data!.configuration.enabled"
+        :description="t('standalone.flows.daemon_disabled_description')"
+        :primary-button-label="t('standalone.flows.configure_flows_daemon')"
+        :title="t('standalone.flows.daemon_disabled')"
+        kind="info"
+        @primary-click="configuringDaemon = true"
       />
-      <NeToggle
-        v-model="enabled"
-        :disabled="isPending"
-        :label="enabled ? t('common.enabled') : t('common.disabled')"
-        :top-label="t('standalone.flows.daemon_enabled')"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('enabled'))"
-      />
-      <NeTextInput
-        v-model="expiredPersistence"
-        :disabled="isPending"
-        :label="t('standalone.flows.persistence_after_expiration')"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('expired_persistence'))"
-      />
-      <hr />
-      <div class="flex flex-wrap justify-end gap-6">
-        <NeButton :disabled="isPending" kind="tertiary" @click="configuringDaemon = false">
-          {{ t('common.cancel') }}
-        </NeButton>
-        <NeButton :disabled="isPending" :loading="isPending" kind="primary" type="submit">
-          {{ t('common.configure') }}
-        </NeButton>
-      </div>
-    </form>
-  </NeSideDrawer>
+      <FlowsTable v-else />
+    </template>
+    <FlowConfigureDrawer
+      :enabled="enabled"
+      :expired-persistence="expiredPersistence"
+      :show="configuringDaemon"
+      @close="configuringDaemon = false"
+    />
+  </div>
 </template>

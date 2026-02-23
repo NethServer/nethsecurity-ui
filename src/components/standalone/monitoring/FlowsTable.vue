@@ -153,6 +153,7 @@ import {
   NeButton
 } from '@nethesis/vue-components'
 import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
+import RefreshProgressBar from '@/components/standalone/monitoring/flows/RefreshProgressBar.vue'
 import { useRouteQuery } from '@vueuse/router'
 import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
 import { faTable } from '@fortawesome/free-solid-svg-icons'
@@ -270,7 +271,7 @@ watch(queryDebounced, () => {
   }
 })
 
-const { data, isError, error, isPending } = useQuery({
+const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
   queryKey: [
     'flow',
     'list',
@@ -471,10 +472,7 @@ function resetFilters() {
             :options="refreshIntervalOptions"
             kind="radio"
           />
-          <!--
-          FIXME: add back progress bar when API supports it
-          <NeProgressBar :progress="progressBar" color="indigo" size="sm" />
-          -->
+          <RefreshProgressBar :data-updated-at="dataUpdatedAt" :interval="refreshIntervalsValue" />
         </div>
       </div>
     </div>

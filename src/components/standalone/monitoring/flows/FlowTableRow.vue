@@ -50,8 +50,14 @@ const badges = computed<Badge[]>(() => extractBadges(item))
 const sourceIp = computed<string>(() =>
   item.flow.local_origin ? item.flow.local_ip : item.flow.other_ip
 )
+const sourcePort = computed<number>(() =>
+  item.flow.local_origin ? item.flow.local_port : item.flow.other_port
+)
 const destinationIp = computed<string>(() =>
   item.flow.local_origin ? item.flow.other_ip : item.flow.local_ip
+)
+const destinationPort = computed<number>(() =>
+  item.flow.local_origin ? item.flow.other_port : item.flow.local_port
 )
 
 function formatRate(rate: number): string {
@@ -73,7 +79,7 @@ function formatRate(rate: number): string {
       </span>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.source')">
-      {{ sourceIp }}
+      {{ sourceIp }}:{{ sourcePort }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.destination')">
       <NeTooltip
@@ -81,24 +87,17 @@ function formatRate(rate: number): string {
         trigger-event="mouseenter click"
       >
         <template #content>
-          <p>Destination IP: {{ destinationIp }}</p>
+          <p>{{ t('standalone.flows.destination_ip') }}Destination IP: {{ destinationIp }}</p>
+          <p>{{ t('standalone.flows.destination_port') }} :{{ destinationPort }}</p>
           <p v-if="item.flow.host_server_name != undefined">
-            Destination DNS: {{ item.flow.host_server_name }}
+            {{ t('standalone.flows.destination_dns')}} : {{ item.flow.host_server_name }}
           </p>
         </template>
         <template #trigger>
-          {{ item.flow.dns_host_name ?? item.flow.host_server_name }}
+          {{ item.flow.dns_host_name ?? item.flow.host_server_name }}:{{ destinationPort }}
         </template>
       </NeTooltip>
-      <template v-else>
-        {{ destinationIp }}
-      </template>
-    </NeTableCell>
-    <NeTableCell :data-label="t('standalone.flows.duration')">
-      {{ flowAge }}
-    </NeTableCell>
-    <NeTableCell :data-label="t('standalone.flows.last_seen_at')">
-      {{ new Date(item.flow.last_seen_at).toLocaleTimeString() }}
+      <template v-else> {{ destinationIp }}:{{ destinationPort }} </template>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.download')">
       <div class="flex items-center gap-2">
@@ -113,6 +112,12 @@ function formatRate(rate: number): string {
         <span v-if="item.flow.local_origin">{{ formatRate(item.flow.local_rate) }}</span>
         <span v-else>{{ formatRate(item.flow.other_rate) }}</span>
       </div>
+    </NeTableCell>
+    <NeTableCell :data-label="t('standalone.flows.duration')">
+      {{ flowAge }}
+    </NeTableCell>
+    <NeTableCell :data-label="t('standalone.flows.last_seen_at')">
+      {{ new Date(item.flow.last_seen_at).toLocaleTimeString() }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.more_info')">
       <div class="flex items-start">

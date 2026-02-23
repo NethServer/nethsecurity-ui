@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { byteFormat1024, kbpsFormat, NeCard, NeModal, NeToggle } from '@nethesis/vue-components'
+import { byteFormat1024, kbpsFormat, NeModal } from '@nethesis/vue-components'
 import type { FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vue'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
@@ -18,7 +18,6 @@ const props = defineProps<{
 }>()
 
 const _flow = ref<FlowEvent>()
-const showCardView = ref(false)
 
 watch(
   () => props.flow,
@@ -309,18 +308,12 @@ function isStringArray(facts: Fact[] | string[]): facts is string[] {
     :title="t('standalone.flows.flow_details')"
     :visible="flow != undefined"
     kind="neutral"
-    :size="showCardView ? 'xxl' : 'lg'"
+    size="lg"
     @close="$emit('close')"
     @primary-click="$emit('close')"
   >
     <div class="space-y-4">
-      <!-- Toggle for card/list view -->
-      <div v-if="_flow != undefined" class="flex justify-end">
-        <NeToggle v-model="showCardView" label="Card view" />
-      </div>
-
-      <!-- List view -->
-      <div v-if="_flow != undefined && !showCardView">
+      <div v-if="_flow != undefined">
         <div v-for="entry in facts" :key="entry.title" class="mb-6">
           <h1 class="pb-2 text-xl">{{ entry.title }}</h1>
           <ul v-if="isStringArray(entry.facts)">
@@ -345,25 +338,10 @@ function isStringArray(facts: Fact[] | string[]): facts is string[] {
         </div>
       </div>
 
-      <!-- Card view -->
-      <div v-if="_flow != undefined && showCardView" class="gap-4 sm:grid sm:grid-cols-2">
-        <NeCard v-for="entry in facts" :key="entry.title">
-          <template #title>{{ entry.title }}</template>
-          <ul v-if="isStringArray(entry.facts)">
-            <li v-for="(item, index) in entry.facts" :key="index" class="list-inside list-disc">
-              {{ item }}
-            </li>
-          </ul>
-          <dl v-else class="*:sm:grid *:sm:grid-cols-2 *:sm:gap-4">
-            <div v-for="fact in entry.facts" :key="fact.label">
-              <dt>{{ fact.label }}</dt>
-              <dd>{{ fact.value }}</dd>
-            </div>
-          </dl>
-        </NeCard>
-      </div>
-
       <AdvancedSettingsDropdown>
+        <template #title>
+          {{ t('standalone.flows.raw_data') }}
+        </template>
         <pre class="col-span-full overflow-auto rounded-md bg-gray-50 p-4 text-sm dark:bg-gray-900">
         <code>{{ JSON.stringify(_flow, null, 2) }}</code>
       </pre>

@@ -3,7 +3,7 @@ import {
   faArrowDown,
   faArrowUp,
   faBroadcastTower,
-  faClockRotateLeft,
+  faMagnifyingGlass,
   faUsers
 } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
@@ -15,6 +15,12 @@ type FlowListResponse = {
     total: number
     last_page: number
     per_page: number
+    filters: {
+      applications: string[]
+      protocols: string[]
+      sources: string[]
+      destinations: string[]
+    }
   }
 }
 
@@ -117,7 +123,7 @@ export function extractBadges(entry: FlowEvent): Badge[] {
     badges.push({
       id: 'scanning',
       text: 'standalone.flows.scanning',
-      icon: faClockRotateLeft,
+      icon: faMagnifyingGlass,
       customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100'],
       content: 'standalone.flows.scanning_description'
     })
@@ -148,13 +154,40 @@ import {
 import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
 import { useRouteQuery } from '@vueuse/router'
 import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
-import { sortIps } from '@/lib/ipUtils.ts'
 import { faTable } from '@fortawesome/free-solid-svg-icons'
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
+import { refDebounced } from '@vueuse/core'
 
 const { t } = useI18n()
 const queryClient = useQueryClient()
+
+const applicationsFilter = useRouteQuery<string, string[]>('application', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+const protocolsFilter = useRouteQuery<string, string[]>('protocols', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+
+const sourceFilter = useRouteQuery<string, string[]>('source', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
+
+const destinationFilter = useRouteQuery<string, string[]>('destination', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
 
 const currentPage = ref(1)
 const perPage = useRouteQuery<string, number>('per_page', '10', {
@@ -201,12 +234,16 @@ const refreshIntervalOptions: RefreshFilterOption[] = [
     label: t('standalone.flows.refresh_interval', { value: 'off' })
   }
 ]
-const refreshIntervalSelection = useRouteQuery<string, RefreshInterval[]>('refresh_interval', '10s', {
-  transform: {
-    get: (val) => (val ? val.split(',') as RefreshInterval[] : ['10s']),
-    set: (val) => val.join(',')
+const refreshIntervalSelection = useRouteQuery<string, RefreshInterval[]>(
+  'refresh_interval',
+  '10s',
+  {
+    transform: {
+      get: (val) => (val ? (val.split(',') as RefreshInterval[]) : ['10s']),
+      set: (val) => val.join(',')
+    }
   }
-})
+)
 const refreshIntervalsValue = computed<number | false>(() => {
   if (flowDetails.value != undefined) {
     return false
@@ -224,18 +261,51 @@ const refreshIntervalsValue = computed<number | false>(() => {
   }
 })
 
+const query = useRouteQuery('query', '')
+const queryDebounced = refDebounced(query, 500)
+watch(queryDebounced, () => {
+  if (currentPage.value != 1) {
+    currentPage.value = 1
+  }
+})
+
 const { data, isError, error, isPending } = useQuery({
-  queryKey: ['flow', 'list', sortKey, sortDescending, perPage, currentPage],
+  queryKey: [
+    'flow',
+    'list',
+    queryDebounced,
+    sortKey,
+    sortDescending,
+    perPage,
+    currentPage,
+    applicationsFilter,
+    protocolsFilter,
+    sourceFilter,
+    destinationFilter
+  ],
   queryFn: async () =>
     ubusCall<FlowListResponse>('ns.flows', 'list', {
+      q: queryDebounced.value,
       sort_by: sortKey.value,
       desc: sortDescending.value,
       per_page: perPage.value,
-      page: currentPage.value
+      page: currentPage.value,
+      application: applicationsFilter.value,
+      protocol: protocolsFilter.value,
+      source: sourceFilter.value,
+      destination: destinationFilter.value
     }),
   placeholderData: keepPreviousData,
   refetchInterval: refreshIntervalsValue,
   select: (data) => data.data
+})
+
+watch(data, () => {
+  if (data.value != undefined) {
+    if (currentPage.value > data.value.last_page) {
+      currentPage.value = data.value.last_page
+    }
+  }
 })
 
 watch(refreshIntervalSelection, (val) => {
@@ -245,12 +315,8 @@ watch(refreshIntervalSelection, (val) => {
 })
 
 const applications = computed<FilterOption[]>(() => {
-  const appSet = new Set<string>()
-  data.value?.flows.forEach((flow) => {
-    appSet.add(flow.flow.detected_application_name)
-  })
-  return Array.from(appSet)
-    .map((app) => {
+  return (
+    data.value?.filters.applications.map((app) => {
       let label = app
       // Remove netify. prefix if present
       if (label.startsWith('netify.')) {
@@ -268,72 +334,39 @@ const applications = computed<FilterOption[]>(() => {
         id: app,
         label: label
       }
-    })
-    .sort((a, b) => a.label.localeCompare(b.label))
+    }) ?? []
+  )
 })
 
 const protocols = computed<FilterOption[]>(() => {
-  const protoSet = new Set<string>()
-  data.value?.flows.forEach((flow) => {
-    protoSet.add(flow.flow.detected_protocol_name)
-  })
-  return Array.from(protoSet)
-    .map((proto) => ({
-      id: proto,
-      label: proto
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+  return (
+    data.value?.filters.protocols.map((protocol) => ({
+      id: protocol,
+      label: protocol
+    })) ?? []
+  )
 })
 
 const badges = computed<FilterOption[]>(() => {
-  const badgeMap = new Map<string, Badge>()
-  data.value?.flows.forEach((flow) => {
-    extractBadges(flow).forEach((badge) => {
-      if (!badgeMap.has(badge.id)) {
-        badgeMap.set(badge.id, badge)
-      }
-    })
-  })
-  return Array.from(badgeMap.values())
-    .map((badge) => ({
-      id: badge.id,
-      label: t(badge.text)
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+  return []
 })
 
 const sourceIps = computed<FilterOption[]>(() => {
-  const ipSet = new Set<string>()
-  data.value?.flows.forEach((flow) => {
-    if (flow.flow.local_origin) {
-      return ipSet.add(flow.flow.local_ip)
-    } else {
-      return ipSet.add(flow.flow.other_ip)
-    }
-  })
-  return Array.from(ipSet)
-    .sort(sortIps)
-    .map((ip) => ({
-      id: ip,
-      label: ip
-    }))
+  return (
+    data.value?.filters.sources.map((sourceIp) => ({
+      id: sourceIp,
+      label: sourceIp
+    })) ?? []
+  )
 })
 
 const destinationIps = computed<FilterOption[]>(() => {
-  const ipSet = new Set<string>()
-  data.value?.flows.forEach((flow) => {
-    if (flow.flow.local_origin) {
-      return ipSet.add(flow.flow.other_ip)
-    } else {
-      return ipSet.add(flow.flow.local_ip)
-    }
-  })
-  return Array.from(ipSet)
-    .sort(sortIps)
-    .map((ip) => ({
-      id: ip,
-      label: ip
-    }))
+  return (
+    data.value?.filters.destinations.map((destinationIp) => ({
+      id: destinationIp,
+      label: destinationIp
+    })) ?? []
+  )
 })
 
 const onSort = (payload: SortEvent) => {
@@ -353,8 +386,9 @@ const onSort = (payload: SortEvent) => {
       />
       <div v-else-if="!isPending" class="flex flex-wrap items-start gap-6">
         <div class="mr-auto flex flex-wrap items-center gap-4">
-          <NeTextInput :placeholder="t('common.filter')" is-search />
+          <NeTextInput v-model="query" :placeholder="t('common.filter')" is-search />
           <NeDropdownFilter
+            v-model="applicationsFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.flows.application')"
@@ -366,6 +400,7 @@ const onSort = (payload: SortEvent) => {
             show-options-filter
           />
           <NeDropdownFilter
+            v-model="protocolsFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.flows.protocol')"
@@ -388,6 +423,7 @@ const onSort = (payload: SortEvent) => {
             show-options-filter
           />
           <NeDropdownFilter
+            v-model="sourceFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.flows.source')"
@@ -399,6 +435,7 @@ const onSort = (payload: SortEvent) => {
             show-options-filter
           />
           <NeDropdownFilter
+            v-model="destinationFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.flows.destination')"
@@ -454,17 +491,17 @@ const onSort = (payload: SortEvent) => {
         <NeTableHeadCell>
           {{ t('standalone.flows.destination') }}
         </NeTableHeadCell>
-        <NeTableHeadCell column-key="duration" sortable @sort="onSort">
-          {{ t('standalone.flows.duration') }}
-        </NeTableHeadCell>
-        <NeTableHeadCell column-key="last_seen_at" sortable @sort="onSort">
-          {{ t('standalone.flows.last_seen_at') }}
-        </NeTableHeadCell>
         <NeTableHeadCell column-key="download" sortable @sort="onSort">
           {{ t('standalone.flows.download') }}
         </NeTableHeadCell>
         <NeTableHeadCell column-key="upload" sortable @sort="onSort">
           {{ t('standalone.flows.upload') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell column-key="duration" sortable @sort="onSort">
+          {{ t('standalone.flows.duration') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell column-key="last_seen_at" sortable @sort="onSort">
+          {{ t('standalone.flows.last_seen_at') }}
         </NeTableHeadCell>
         <NeTableHeadCell />
       </NeTableHead>

@@ -2386,6 +2386,7 @@
       "source_port": "Source port",
       "source_mac": "Source MAC",
       "destination_ip": "Destination IP",
+      "destination_dns": "Destination DNS",
       "destination_port": "Destination port",
       "destination_mac": "Destination MAC",
       "traffic_inspection_details": "Traffic Inspection Details",
@@ -2409,8 +2410,6 @@
       "no_flows_found_description": "No flows found for the current filters. Try changing the search filters or wait for new connections to be established.",
       "scanning": "Scanning",
       "scanning_description": "The flow is currently being analyzed. Additional insights will be available once the scan completes.",
-      "risky": "Risky",
-      "risky_description": "The flow is considered risky and may contain malicious traffic.",
       "risks_detected": "Risks detected",
       "outgoing": "Outgoing",
       "outgoing_description": "The connection has been initiated from local networks to the internet",
@@ -2425,7 +2424,8 @@
       "persistence_after_expiration": "Flows persistence after expiration",
       "persistence_after_expiration_description": "Keep flow information available for a short period after the flow has ended. This allows to view information about recently ended flows, which can be useful to investigate connections that are established and closed in a short time frame.",
       "daemon_not_running": "Flows daemon is enabled but not running",
-      "daemon_not_running_description": "If you just enabled the daemon, commit changes and wait a few seconds for the daemon to start. If the problem persists, check the system logs for errors related to the flows daemon."
+      "daemon_not_running_description": "If you just enabled the daemon, commit changes and wait a few seconds for the daemon to start. If the problem persists, check the system logs for errors related to the flows daemon.",
+      "raw_data": "Raw data"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

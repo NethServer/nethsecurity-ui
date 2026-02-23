@@ -21,7 +21,9 @@ const icon = computed<IconDefinition>(() => {
 
 <template>
   <NeButton kind="tertiary" @click="model = !model">
-    {{ t('common.advanced_settings') }}
+    <slot name="title">
+      {{ t('common.advanced_settings') }}
+    </slot>
     <template #suffix>
       <FontAwesomeIcon :icon="icon" class="h-4 w-4" aria-hidden="true" />
     </template>

@@ -24,13 +24,20 @@ type FlowDaemonResponse = {
   }
 }
 
+const configuringDaemon = ref(false)
 const { isSuccess, isError, isPending, data, error } = useQuery({
   queryKey: ['flow', 'config'],
   queryFn: async () => ubusCall<FlowDaemonResponse>('ns.flows', 'get-configuration'),
-  select: (data) => data.data
+  select: (data) => data.data,
+  refetchInterval: () => {
+    if (configuringDaemon.value) {
+      return false
+    } else {
+      return 5000
+    }
+  }
 })
 
-const configuringDaemon = ref(false)
 const enabled = ref(false)
 const expiredPersistence = ref('')
 watch(data, (newData) => {
@@ -71,6 +78,12 @@ watch(data, (newData) => {
         :title="t('standalone.flows.daemon_disabled')"
         kind="info"
         @primary-click="configuringDaemon = true"
+      />
+      <NeInlineNotification
+        v-else-if="!data!.status"
+        :description="t('standalone.flows.daemon_not_running_description')"
+        :title="t('standalone.flows.daemon_not_running')"
+        kind="warning"
       />
       <FlowsTable v-else />
     </template>

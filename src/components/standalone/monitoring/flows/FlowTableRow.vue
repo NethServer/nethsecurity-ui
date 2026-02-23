@@ -90,7 +90,7 @@ function formatRate(rate: number): string {
           <p>{{ t('standalone.flows.destination_ip') }}Destination IP: {{ destinationIp }}</p>
           <p>{{ t('standalone.flows.destination_port') }} :{{ destinationPort }}</p>
           <p v-if="item.flow.host_server_name != undefined">
-            {{ t('standalone.flows.destination_dns')}} : {{ item.flow.host_server_name }}
+            {{ t('standalone.flows.destination_dns') }} : {{ item.flow.host_server_name }}
           </p>
         </template>
         <template #trigger>

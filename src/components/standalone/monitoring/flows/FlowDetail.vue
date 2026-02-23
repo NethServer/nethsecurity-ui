@@ -312,10 +312,10 @@ function isStringArray(facts: Fact[] | string[]): facts is string[] {
     @close="$emit('close')"
     @primary-click="$emit('close')"
   >
-    <div class="space-y-4">
-      <div v-if="_flow != undefined">
-        <div v-for="entry in facts" :key="entry.title" class="mb-6">
-          <h1 class="pb-2 text-xl">{{ entry.title }}</h1>
+    <div class="space-y-6">
+      <div v-if="_flow != undefined" class="space-y-8">
+        <div v-for="entry in facts" :key="entry.title">
+          <h1 class="pb-2">{{ entry.title }}</h1>
           <ul v-if="isStringArray(entry.facts)">
             <li
               v-for="(item, index) in entry.facts"

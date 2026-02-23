@@ -149,7 +149,8 @@ import {
   getAxiosErrorMessage,
   NeEmptyState,
   NeTableCell,
-  NeTableRow
+  NeTableRow,
+  NeButton
 } from '@nethesis/vue-components'
 import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.vue'
 import { useRouteQuery } from '@vueuse/router'
@@ -373,6 +374,14 @@ const onSort = (payload: SortEvent) => {
   sortKey.value = payload.key as SortableKeys
   sortDescending.value = payload.descending
 }
+
+function resetFilters() {
+  query.value = ''
+  applicationsFilter.value = []
+  protocolsFilter.value = []
+  sourceFilter.value = []
+  destinationFilter.value = []
+}
 </script>
 
 <template>
@@ -446,6 +455,9 @@ const onSort = (payload: SortEvent) => {
             kind="checkbox"
             show-options-filter
           />
+          <NeButton kind="tertiary" @click="resetFilters">
+            {{ t('common.clear_filters') }}
+          </NeButton>
         </div>
         <div class="space-y-2">
           <NeDropdownFilter
@@ -521,7 +533,11 @@ const onSort = (payload: SortEvent) => {
               :description="t('standalone.flows.no_flows_found_description')"
               :icon="faTable"
               :title="t('standalone.flows.no_flows_found')"
-            />
+            >
+              <NeButton @click="resetFilters">
+                {{ t('common.clear_filters') }}
+              </NeButton>
+            </NeEmptyState>
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>

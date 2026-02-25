@@ -4,6 +4,7 @@ import {
   faArrowUp,
   faBroadcastTower,
   faMagnifyingGlass,
+  faQuestion,
   faUsers
 } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
@@ -20,6 +21,7 @@ type FlowListResponse = {
       protocols: string[]
       sources: string[]
       destinations: string[]
+      tags: string[]
     }
   }
 }
@@ -29,6 +31,7 @@ export type FlowEvent = {
   interface: string
   internal: boolean
   flow: Flow
+  tags: string[]
 }
 
 export type Flow = {
@@ -76,59 +79,76 @@ export type Badge = {
   customClasses: string[]
 }
 
+export function matchBadge(tag: string): Badge {
+  switch (tag) {
+    case 'remote': {
+      return {
+        id: 'remote',
+        text: 'standalone.flows.remote',
+        icon: faArrowDown,
+        customClasses: ['bg-rose-100', 'text-rose-800', 'dark:bg-rose-700', 'dark:text-rose-100'],
+        content: 'standalone.flows.remote_description'
+      }
+    }
+    case 'outgoing': {
+      return {
+        id: 'outgoing',
+        text: 'standalone.flows.outgoing',
+        icon: faArrowUp,
+        customClasses: [
+          'bg-green-100',
+          'text-green-800',
+          'dark:bg-green-700',
+          'dark:text-green-100'
+        ],
+        content: 'standalone.flows.outgoing_description'
+      }
+    }
+    case 'internal': {
+      return {
+        id: 'local',
+        text: 'standalone.flows.internal',
+        icon: faUsers,
+        customClasses: ['bg-blue-100', 'text-blue-800', 'dark:bg-blue-700', 'dark:text-blue-100'],
+        content: 'standalone.flows.internal_description'
+      }
+    }
+    case 'broadcast': {
+      return {
+        id: 'broadcast',
+        text: 'standalone.flows.broadcast',
+        icon: faBroadcastTower,
+        customClasses: [
+          'bg-purple-100',
+          'text-purple-800',
+          'dark:bg-purple-700',
+          'dark:text-purple-100'
+        ],
+        content: 'standalone.flows.broadcast_description'
+      }
+    }
+    case 'scanning': {
+      return {
+        id: 'scanning',
+        text: 'standalone.flows.scanning',
+        icon: faMagnifyingGlass,
+        customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100'],
+        content: 'standalone.flows.scanning_description'
+      }
+    }
+    default: {
+      return {
+        id: tag,
+        text: tag,
+        icon: faQuestion,
+        customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100']
+      }
+    }
+  }
+}
+
 export function extractBadges(entry: FlowEvent): Badge[] {
-  const badges: Badge[] = []
-  if (!entry.flow.local_origin && entry.flow.other_type == 'remote') {
-    badges.push({
-      id: 'remote',
-      text: 'standalone.flows.remote',
-      icon: faArrowDown,
-      customClasses: ['bg-rose-100', 'text-rose-800', 'dark:bg-rose-700', 'dark:text-rose-100'],
-      content: 'standalone.flows.remote_description'
-    })
-  }
-  if (entry.flow.local_origin && entry.flow.other_type == 'remote') {
-    badges.push({
-      id: 'outgoing',
-      text: 'standalone.flows.outgoing',
-      icon: faArrowUp,
-      customClasses: ['bg-green-100', 'text-green-800', 'dark:bg-green-700', 'dark:text-green-100'],
-      content: 'standalone.flows.outgoing_description'
-    })
-  }
-  if (entry.flow.other_type == 'local') {
-    badges.push({
-      id: 'local',
-      text: 'standalone.flows.internal',
-      icon: faUsers,
-      customClasses: ['bg-blue-100', 'text-blue-800', 'dark:bg-blue-700', 'dark:text-blue-100'],
-      content: 'standalone.flows.internal_description'
-    })
-  }
-  if (entry.flow.other_type == 'broadcast') {
-    badges.push({
-      id: 'broadcast',
-      text: 'standalone.flows.broadcast',
-      icon: faBroadcastTower,
-      customClasses: [
-        'bg-purple-100',
-        'text-purple-800',
-        'dark:bg-purple-700',
-        'dark:text-purple-100'
-      ],
-      content: 'standalone.flows.broadcast_description'
-    })
-  }
-  if (entry.type == 'flow') {
-    badges.push({
-      id: 'scanning',
-      text: 'standalone.flows.scanning',
-      icon: faMagnifyingGlass,
-      customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100'],
-      content: 'standalone.flows.scanning_description'
-    })
-  }
-  return badges
+  return entry.tags.map((tag) => matchBadge(tag))
 }
 </script>
 
@@ -176,7 +196,12 @@ const protocolsFilter = useRouteQuery<string, string[]>('protocols', '', {
     set: (val) => val.join(',')
   }
 })
-
+const tagsFilter = useRouteQuery<string, string[]>('tags', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
 const sourceFilter = useRouteQuery<string, string[]>('source', '', {
   transform: {
     get: (val) => (val ? val.split(',') : []),
@@ -282,6 +307,7 @@ const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
     currentPage,
     applicationsFilter,
     protocolsFilter,
+    tagsFilter,
     sourceFilter,
     destinationFilter
   ],
@@ -295,7 +321,8 @@ const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
       application: applicationsFilter.value,
       protocol: protocolsFilter.value,
       source: sourceFilter.value,
-      destination: destinationFilter.value
+      destination: destinationFilter.value,
+      tag: tagsFilter.value
     }),
   placeholderData: keepPreviousData,
   refetchInterval: refreshIntervalsValue,
@@ -349,8 +376,16 @@ const protocols = computed<FilterOption[]>(() => {
   )
 })
 
-const badges = computed<FilterOption[]>(() => {
-  return []
+const tags = computed<FilterOption[]>(() => {
+  return (
+    data.value?.filters.tags.map((tag) => {
+      const badge = matchBadge(tag)
+      return {
+        id: badge.id,
+        label: t(badge.text)
+      }
+    }) ?? []
+  )
 })
 
 const sourceIps = computed<FilterOption[]>(() => {
@@ -380,6 +415,7 @@ function resetFilters() {
   query.value = ''
   applicationsFilter.value = []
   protocolsFilter.value = []
+  tagsFilter.value = []
   sourceFilter.value = []
   destinationFilter.value = []
 }
@@ -422,13 +458,14 @@ function resetFilters() {
             show-options-filter
           />
           <NeDropdownFilter
+            v-model="tagsFilter"
             :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
             :clear-search-label="t('ne_dropdown_filter.clear_search')"
             :label="t('standalone.flows.tags')"
             :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
             :no-options-label="t('ne_dropdown_filter.no_options')"
             :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
-            :options="badges"
+            :options="tags"
             kind="checkbox"
             show-options-filter
           />

@@ -65,7 +65,7 @@ const usersData = computed(() => props.users)
 
 // custom sorted items that keeps disabled items always at the end when sorting by connection status
 const sortedItems = computed(() => {
-  let items = [...usersData.value]
+  const items = [...usersData.value]
 
   if (sortKey.value === 'connected') {
     // separate enabled and disabled items

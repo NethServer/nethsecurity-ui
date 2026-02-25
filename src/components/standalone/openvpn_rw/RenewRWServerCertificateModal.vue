@@ -10,7 +10,6 @@ import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { useNotificationsStore } from '@/stores/notifications'
-import { message } from 'valibot'
 
 const props = defineProps<{
   visible: boolean

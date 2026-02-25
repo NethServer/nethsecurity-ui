@@ -66,17 +66,17 @@ const usersData = computed(() => props.users)
 // custom sorted items that keeps disabled items always at the end when sorting by connection status
 const sortedItems = computed(() => {
   let items = [...usersData.value]
-  
+
   if (sortKey.value === 'connected') {
     // separate enabled and disabled items
-    const enabledItems = items.filter(item => item.openvpn_enabled !== '0')
-    const disabledItems = items.filter(item => item.openvpn_enabled === '0')
-    
+    const enabledItems = items.filter((item) => item.openvpn_enabled !== '0')
+    const disabledItems = items.filter((item) => item.openvpn_enabled === '0')
+
     // check if all enabled items have the same connection status
-    const allConnected = enabledItems.every(item => item.connected === true)
-    const allNotConnected = enabledItems.every(item => item.connected === false)
+    const allConnected = enabledItems.every((item) => item.connected === true)
+    const allNotConnected = enabledItems.every((item) => item.connected === false)
     const allSameStatus = allConnected || allNotConnected
-    
+
     // only sort if items have different connection statuses
     if (!allSameStatus) {
       enabledItems.sort((a, b) => {
@@ -84,22 +84,22 @@ const sortedItems = computed(() => {
         const bConnected = b.connected ? 1 : 0
         return bConnected - aConnected
       })
-      
+
       // apply descending if needed
       if (sortDescending.value) {
         enabledItems.reverse()
       }
     }
-    
+
     return [...enabledItems, ...disabledItems]
   } else {
     // for 'name' sorting, use standard sort
     items.sort((a, b) => a.name.localeCompare(b.name))
-    
+
     if (sortDescending.value) {
       items.reverse()
     }
-    
+
     return items
   }
 })
@@ -192,7 +192,6 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
   const daysUntilExpiry = getDaysUntilExpiry(expiryTimestamp)
   return daysUntilExpiry < CERT_EXPIRY_WARNING_DAYS && daysUntilExpiry >= 0
 }
-
 </script>
 
 <template>
@@ -236,10 +235,11 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
     </NeTableHead>
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.id">
-        
         <!-- user -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.user')">
-          <div class="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_auto] gap-x-3 gap-y-2 items-center">
+          <div
+            class="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-2"
+          >
             <!-- Row 1, Col 1: Icon -->
             <NeAvatar alt="Avatar" size="sm" :squared="false" />
             <!-- Row 1, Col 2: Name and Description -->
@@ -252,7 +252,7 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
               </p>
             </div>
             <!-- Row 1, Col 3: Warnings and Badge -->
-            <div class="flex flex-col gap-y-1 items-start justify-center">
+            <div class="flex flex-col items-start justify-center gap-y-1">
               <!-- password not configured warning -->
               <NeTooltip
                 v-if="
@@ -279,7 +279,7 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
                     >
                   </div>
                 </template>
-              </NeTooltip>    
+              </NeTooltip>
               <!-- invalid user warning -->
               <NeTooltip v-if="item.valid === false">
                 <template #trigger>
@@ -318,7 +318,9 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
                       <span class="mr-2 inline-block font-semibold"
                         >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
                       >
-                      <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
+                      <span class="text-gray-300 dark:text-gray-500">{{
+                        item.virtual_address
+                      }}</span>
                     </div>
                     <div class="py-1">
                       <span class="mr-2 inline-block font-semibold"
@@ -358,7 +360,7 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
         </NeTableCell>
         <!-- expiration -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.expiration')">
-          <div class="flex flex-row gap-x-3 items-center">
+          <div class="flex flex-row items-center gap-x-3">
             <p :class="[getCellClasses(item)]">
               {{
                 item.expiration
@@ -367,7 +369,10 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
               }}
             </p>
             <!-- certificate expiring soon warning -->
-            <NeTooltip v-if="item.expiration && isCertificateExpiringSoon(Number(item.expiration))" interactive>
+            <NeTooltip
+              v-if="item.expiration && isCertificateExpiringSoon(Number(item.expiration))"
+              interactive
+            >
               <template #trigger>
                 <FontAwesomeIcon
                   :icon="faTriangleExclamation"
@@ -377,7 +382,13 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
               </template>
               <template #content>
                 <div class="text-center">
-                  <p>{{ t('standalone.openvpn_rw.certificate_expiring_tooltip', { days: getDaysUntilExpiry(Number(item.expiration)) }) }}</p>
+                  <p>
+                    {{
+                      t('standalone.openvpn_rw.certificate_expiring_tooltip', {
+                        days: getDaysUntilExpiry(Number(item.expiration))
+                      })
+                    }}
+                  </p>
                 </div>
               </template>
             </NeTooltip>
@@ -412,7 +423,10 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
         </NeTableCell>
         <!-- connection -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.connection')">
-          <div v-if="item.valid === false || item.openvpn_enabled === '0'" :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]">
+          <div
+            v-if="item.valid === false || item.openvpn_enabled === '0'"
+            :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]"
+          >
             <p>-</p>
           </div>
           <div v-else :class="['flex', 'flex-row', 'items-center', getCellClasses(item)]">
@@ -422,12 +436,14 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
                 'mr-2',
                 'h-5',
                 'w-5',
-                item.openvpn_enabled === '1' ?
-                  item.connected ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500'
-                : ''
+                item.openvpn_enabled === '1'
+                  ? item.connected
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-red-700 dark:text-red-500'
+                  : ''
               ]"
               aria-hidden="true"
-              />
+            />
             <p>
               {{
                 item.connected

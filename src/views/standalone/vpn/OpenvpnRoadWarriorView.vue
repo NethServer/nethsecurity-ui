@@ -333,6 +333,5 @@ onUnmounted(() => {
       @close="showRegenerateAllCertificatesModal = false"
       @all-certificates-regenerated="reloadServer"
     />
-
   </div>
 </template>

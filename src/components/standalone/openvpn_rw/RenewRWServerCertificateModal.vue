@@ -29,7 +29,6 @@ const error = ref({
 const isRenewing = ref(false)
 
 async function renewServerCertificate() {
-  
   if (props.instanceName) {
     try {
       error.value.notificationDescription = ''

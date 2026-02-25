@@ -33,7 +33,6 @@ const error = ref({
 const isRegenerating = ref(false)
 
 async function regenerateAllCertificates() {
-  
   if (props.instanceName) {
     try {
       error.value.notificationDescription = ''
@@ -74,24 +73,26 @@ function close() {
 
 <template>
   <NeModal
-      :visible="visible"
-      kind="warning"
-      :title="t('standalone.openvpn_rw.regenerate_all_certificates')"
-      :primary-label="t('standalone.openvpn_rw.regenerate')"
-      :cancel-label="t('common.cancel')"      
-      :primary-button-disabled="isRegenerating || serverName !== formRegenerateAllCertificates.server_name"
-      :primary-button-loading="isRegenerating"
-      primary-button-kind="danger"
-      :close-aria-label="t('common.close')"
-      @primary-click="regenerateAllCertificates()"
-      @close="close()"
-    >
-      {{ t('standalone.openvpn_rw.regenerate_all_certificates_message') }}
-      <NeTextInput
-        v-model="formRegenerateAllCertificates.server_name"
-        class="mt-4"
-        :disabled="isRegenerating"
-        :label="t('standalone.openvpn_rw.type_server_name', { server: serverName })"
-      />
-    </NeModal>
+    :visible="visible"
+    kind="warning"
+    :title="t('standalone.openvpn_rw.regenerate_all_certificates')"
+    :primary-label="t('standalone.openvpn_rw.regenerate')"
+    :cancel-label="t('common.cancel')"
+    :primary-button-disabled="
+      isRegenerating || serverName !== formRegenerateAllCertificates.server_name
+    "
+    :primary-button-loading="isRegenerating"
+    primary-button-kind="danger"
+    :close-aria-label="t('common.close')"
+    @primary-click="regenerateAllCertificates()"
+    @close="close()"
+  >
+    {{ t('standalone.openvpn_rw.regenerate_all_certificates_message') }}
+    <NeTextInput
+      v-model="formRegenerateAllCertificates.server_name"
+      class="mt-4"
+      :disabled="isRegenerating"
+      :label="t('standalone.openvpn_rw.type_server_name', { server: serverName })"
+    />
+  </NeModal>
 </template>

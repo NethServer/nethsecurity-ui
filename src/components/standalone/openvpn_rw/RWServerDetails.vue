@@ -7,7 +7,16 @@
 import { useI18n } from 'vue-i18n'
 import { NeDropdown, NeTooltip } from '@nethesis/vue-components'
 import type { RWServer } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
-import { faPenToSquare, faServer, faTrash, faUserGroup, faTriangleExclamation, faCircleExclamation, faArrowRotateRight, faRefresh } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPenToSquare,
+  faServer,
+  faTrash,
+  faUserGroup,
+  faTriangleExclamation,
+  faCircleExclamation,
+  faArrowRotateRight,
+  faRefresh
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t, locale } = useI18n()
@@ -17,7 +26,12 @@ defineProps<{
   connectedClients: number
 }>()
 
-const emit = defineEmits(['delete-server', 'edit-server', 'renew-server-certificate', 'regenerate-all-certificates'])
+const emit = defineEmits([
+  'delete-server',
+  'edit-server',
+  'renew-server-certificate',
+  'regenerate-all-certificates'
+])
 
 // certificates expiration warning
 const CERT_EXPIRY_WARNING_DAYS = 30
@@ -35,7 +49,6 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
 function isCertificatesExpired(expiryTimestamp: number): boolean {
   return expiryTimestamp <= Date.now() / 1000
 }
-
 </script>
 
 <template>
@@ -52,7 +65,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
       <div
         class="mr-10 ml-4 grow border-l border-gray-800 py-3 pl-4 text-sm md:ml-8 md:pl-8 dark:border-gray-600"
       >
-        <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 items-center">
+        <div class="grid grid-cols-1 items-center gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4">
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}</p>
             <div :class="['flex', 'flex-row', 'items-center']">
@@ -62,7 +75,9 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                   'mr-2',
                   'h-4',
                   'w-4',
-                  server.enabled == '1' ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500'
+                  server.enabled == '1'
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-red-700 dark:text-red-500'
                 ]"
                 aria-hidden="true"
               />
@@ -86,12 +101,20 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             <p>{{ t(`standalone.openvpn_rw.${server.ns_auth_mode}`) }}</p>
           </div>
           <div>
-            <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.certificates_expiration') }}</p>
+            <p class="mb-2 font-semibold">
+              {{ t('standalone.openvpn_rw.certificates_expiration') }}
+            </p>
             <!-- Server certificate row -->
-            <div class="flex flex-row items-center gap-x-2 mb-2">
+            <div class="mb-2 flex flex-row items-center gap-x-2">
               <p>Server {{ new Date(server.certificates.server * 1000).toLocaleString(locale) }}</p>
               <!-- certificate expiring soon warning -->
-              <NeTooltip v-if="server.certificates.server && isCertificateExpiringSoon(server.certificates.server)" interactive>
+              <NeTooltip
+                v-if="
+                  server.certificates.server &&
+                  isCertificateExpiringSoon(server.certificates.server)
+                "
+                interactive
+              >
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faTriangleExclamation"
@@ -101,7 +124,13 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 </template>
                 <template #content>
                   <div class="text-center">
-                    <p>{{ t('standalone.openvpn_rw.certificate_expiring_tooltip', { days: getDaysUntilExpiry(server.certificates.server) }) }}</p>
+                    <p>
+                      {{
+                        t('standalone.openvpn_rw.certificate_expiring_tooltip', {
+                          days: getDaysUntilExpiry(server.certificates.server)
+                        })
+                      }}
+                    </p>
                   </div>
                 </template>
               </NeTooltip>
@@ -125,7 +154,10 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             <div class="flex flex-row items-center gap-x-2">
               <p>CA {{ new Date(server.certificates.CA * 1000).toLocaleString(locale) }}</p>
               <!-- certificate expiring soon warning -->
-              <NeTooltip v-if="server.certificates.CA && isCertificateExpiringSoon(server.certificates.CA)" interactive>
+              <NeTooltip
+                v-if="server.certificates.CA && isCertificateExpiringSoon(server.certificates.CA)"
+                interactive
+              >
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faTriangleExclamation"
@@ -135,7 +167,13 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 </template>
                 <template #content>
                   <div class="text-center">
-                    <p>{{ t('standalone.openvpn_rw.certificate_expiring_tooltip', { days: getDaysUntilExpiry(server.certificates.CA) }) }}</p>
+                    <p>
+                      {{
+                        t('standalone.openvpn_rw.certificate_expiring_tooltip', {
+                          days: getDaysUntilExpiry(server.certificates.CA)
+                        })
+                      }}
+                    </p>
                   </div>
                 </template>
               </NeTooltip>

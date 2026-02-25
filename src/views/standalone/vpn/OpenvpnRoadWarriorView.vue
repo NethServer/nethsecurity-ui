@@ -59,8 +59,8 @@ export type RWServer = {
   ns_description: string
   ifconfig_pool?: string[]
   certificates: {
-    CA: number
-    server: number
+    CA?: number
+    server?: number
   }
 }
 

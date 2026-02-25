@@ -106,7 +106,14 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             </p>
             <!-- Server certificate row -->
             <div class="mb-2 flex flex-row items-center gap-x-2">
-              <p>Server {{ new Date(server.certificates.server * 1000).toLocaleString(locale) }}</p>
+              <p>
+                Server
+                {{
+                  server.certificates.server
+                    ? new Date(server.certificates.server * 1000).toLocaleString(locale)
+                    : '-'
+                }}
+              </p>
               <!-- certificate expiring soon warning -->
               <NeTooltip
                 v-if="
@@ -135,7 +142,12 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 </template>
               </NeTooltip>
               <!-- certificate expired warning -->
-              <NeTooltip v-if="isCertificatesExpired(server.certificates.server)" interactive>
+              <NeTooltip
+                v-if="
+                  server.certificates.server && isCertificatesExpired(server.certificates.server)
+                "
+                interactive
+              >
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faCircleExclamation"
@@ -152,7 +164,14 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             </div>
             <!-- CA certificate row -->
             <div class="flex flex-row items-center gap-x-2">
-              <p>CA {{ new Date(server.certificates.CA * 1000).toLocaleString(locale) }}</p>
+              <p>
+                CA
+                {{
+                  server.certificates.CA
+                    ? new Date(server.certificates.CA * 1000).toLocaleString(locale)
+                    : '-'
+                }}
+              </p>
               <!-- certificate expiring soon warning -->
               <NeTooltip
                 v-if="server.certificates.CA && isCertificateExpiringSoon(server.certificates.CA)"
@@ -178,7 +197,10 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 </template>
               </NeTooltip>
               <!-- certificate expired warning -->
-              <NeTooltip v-if="isCertificatesExpired(server.certificates.CA)" interactive>
+              <NeTooltip
+                v-if="server.certificates.CA && isCertificatesExpired(server.certificates.CA)"
+                interactive
+              >
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faCircleExclamation"

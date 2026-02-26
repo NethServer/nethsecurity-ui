@@ -223,7 +223,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
           :items="[
             {
               id: 'edit',
-              label: t('common.edit'),
+              label: t('standalone.openvpn_rw.edit_server'),
               icon: faPenToSquare,
               action: () => {
                 emit('edit-server')

@@ -28,6 +28,7 @@ import RenewRWServerCertificateModal from '@/components/standalone/openvpn_rw/Re
 import RegenerateRWAllCertificatesModal from '@/components/standalone/openvpn_rw/RegenerateRWAllCertificatesModal.vue'
 
 import ConnectionsHistory from '@/components/standalone/openvpn_rw/ConnectionsHistory.vue'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export type RWAuthenticationMode =
   | 'username_password'
@@ -103,6 +104,7 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
+const notificationsStore = useNotificationsStore()
 
 const isInitializingInstance = ref(false)
 const showDeleteServerModal = ref(false)
@@ -201,6 +203,19 @@ async function initAndConfigureServer() {
     }
   }
   showCreateOrEditServerModal.value = true
+}
+
+async function showNotificationAndReload(title: string, description: string) {
+  // show toast notification
+  setTimeout(() => {
+    notificationsStore.createNotification({
+      title: title,
+      description: description,
+      kind: 'success'
+    })
+  }, 500)
+  // reload server data
+  await reloadServer()
 }
 
 /**
@@ -324,14 +339,24 @@ onUnmounted(() => {
       :visible="showRenewServerCertificateModal"
       :instance-name="instanceName"
       @close="showRenewServerCertificateModal = false"
-      @server-certificate-renewed="reloadServer"
+      @server-certificate-renewed="
+        showNotificationAndReload(
+          t('standalone.openvpn_rw.server_certificate_renewed'),
+          t('standalone.openvpn_rw.server_certificate_renewed_message')
+        )
+      "
     />
     <RegenerateRWAllCertificatesModal
       :visible="showRegenerateAllCertificatesModal"
       :instance-name="instanceName"
       :server-name="serverName"
       @close="showRegenerateAllCertificatesModal = false"
-      @all-certificates-regenerated="reloadServer"
+      @all-certificates-regenerated="
+        showNotificationAndReload(
+          t('standalone.openvpn_rw.all_certificates_regenerated'),
+          t('standalone.openvpn_rw.all_certificates_regenerated_message')
+        )
+      "
     />
   </div>
 </template>

@@ -2019,7 +2019,9 @@
       "all_certificates_regenerated": "Certificates regenerated",
       "all_certificates_regenerated_message": "All certificates have been successfully regenerated.",
       "type_server_name": "Type the server name '{server}' to confirm",
-      "regenerate": "Regenerate"
+      "regenerate": "Regenerate",
+      "server": "Server",
+      "ca": "CA"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",

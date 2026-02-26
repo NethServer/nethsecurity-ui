@@ -15,7 +15,9 @@ import {
   faTriangleExclamation,
   faCircleExclamation,
   faArrowRotateRight,
-  faRefresh
+  faRefresh,
+  faCircleCheck,
+  faCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -69,8 +71,8 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
           <div>
             <p class="mb-2 font-semibold">{{ t('standalone.openvpn_rw.status') }}</p>
             <div :class="['flex', 'flex-row', 'items-center']">
-              <font-awesome-icon
-                :icon="['fas', server.enabled == '1' ? 'circle-check' : 'circle-xmark']"
+              <FontAwesomeIcon
+                :icon="server.enabled == '1' ? faCircleCheck : faCircleXmark"
                 :class="[
                   'mr-2',
                   'h-4',
@@ -107,7 +109,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             <!-- Server certificate row -->
             <div class="mb-2 flex flex-row items-center gap-x-2">
               <p>
-                Server
+                {{ t('standalone.openvpn_rw.server') }}
                 {{
                   server.certificates.server
                     ? new Date(server.certificates.server * 1000).toLocaleString(locale)
@@ -125,7 +127,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faTriangleExclamation"
-                    :class="['h-4 w-4 text-amber-700 dark:text-amber-500']"
+                    class="h-4 w-4 text-amber-700 dark:text-amber-500"
                     aria-hidden="true"
                   />
                 </template>
@@ -151,7 +153,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faCircleExclamation"
-                    :class="['h-4 w-4 text-red-700 dark:text-red-500']"
+                    class="h-4 w-4 text-red-700 dark:text-red-500"
                     aria-hidden="true"
                   />
                 </template>
@@ -165,7 +167,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
             <!-- CA certificate row -->
             <div class="flex flex-row items-center gap-x-2">
               <p>
-                CA
+                {{ t('standalone.openvpn_rw.ca') }}
                 {{
                   server.certificates.CA
                     ? new Date(server.certificates.CA * 1000).toLocaleString(locale)
@@ -180,7 +182,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faTriangleExclamation"
-                    :class="['h-4 w-4 text-amber-700 dark:text-amber-500']"
+                    class="h-4 w-4 text-amber-700 dark:text-amber-500"
                     aria-hidden="true"
                   />
                 </template>
@@ -204,7 +206,7 @@ function isCertificatesExpired(expiryTimestamp: number): boolean {
                 <template #trigger>
                   <FontAwesomeIcon
                     :icon="faCircleExclamation"
-                    :class="['h-4 w-4 text-red-700 dark:text-red-500']"
+                    class="h-4 w-4 text-red-700 dark:text-red-500"
                     aria-hidden="true"
                   />
                 </template>

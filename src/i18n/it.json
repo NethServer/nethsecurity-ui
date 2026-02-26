@@ -1879,7 +1879,9 @@
       "all_certificates_regenerated": "Certificati rigenerati",
       "all_certificates_regenerated_message": "I certificati sono stati rigenerati con successo.",
       "type_server_name": "Digita il nome del server '{server}' per confermare",
-      "regenerate": "Rigenera"
+      "regenerate": "Rigenera",
+      "server": "Server",
+      "ca": "CA"
     },
     "qos": {
       "interface": "Interfaccia",

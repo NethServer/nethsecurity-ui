@@ -9,7 +9,6 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
-import { useNotificationsStore } from '@/stores/notifications'
 
 const props = defineProps<{
   visible: boolean
@@ -19,7 +18,6 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'server-certificate-renewed'])
 
 const { t } = useI18n()
-const notificationsStore = useNotificationsStore()
 
 const error = ref({
   notificationDescription: '',
@@ -36,18 +34,7 @@ async function renewServerCertificate() {
       await ubusCall('ns.ovpnrw', 'renew-server-certificate', {
         instance: props.instanceName
       })
-
-      // show toast notification
-      setTimeout(() => {
-        notificationsStore.createNotification({
-          title: t('standalone.openvpn_rw.server_certificate_renewed'),
-          description: t('standalone.openvpn_rw.server_certificate_renewed_message'),
-          kind: 'success'
-        })
-      }, 500)
-
       emit('server-certificate-renewed')
-      emit('close')
     } catch (err: any) {
       error.value.notificationDescription = t(getAxiosErrorMessage(err))
       error.value.notificationDetails = err.toString()

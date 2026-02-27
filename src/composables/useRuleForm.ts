@@ -1,4 +1,4 @@
-//  Copyright (C) 2024 Nethesis S.r.l.
+//  Copyright (C) 2026 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useI18n } from 'vue-i18n'
@@ -73,16 +73,16 @@ export function useRuleForm(policies: Ref<Policy[]>, rule?: Ref<Rule | undefined
         sticky.value = rule.value.sticky
         srcObject.value = rule.value.ns_src ?? ''
         dstObject.value = rule.value.ns_dst ?? ''
-        if (srcObject.value != undefined) {
+        if (srcObject.value !== '') {
           srcType.value = 'object'
-        } else if (sourceAddress.value != '') {
+        } else if (sourceAddress.value !== '') {
           srcType.value = 'address'
         } else {
           srcType.value = 'any'
         }
-        if (dstObject.value != undefined) {
+        if (dstObject.value !== '') {
           dstType.value = 'object'
-        } else if (destinationAddress.value != '') {
+        } else if (destinationAddress.value !== '') {
           dstType.value = 'address'
         } else {
           dstType.value = 'any'

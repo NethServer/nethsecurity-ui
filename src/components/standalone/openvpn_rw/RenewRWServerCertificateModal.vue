@@ -8,7 +8,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
+import { NeModal, NeInlineNotification } from '@nethesis/vue-components'
 
 const props = defineProps<{
   visible: boolean
@@ -19,36 +19,32 @@ const emit = defineEmits(['close', 'server-certificate-renewed'])
 
 const { t } = useI18n()
 
-const error = ref({
-  notificationDescription: '',
-  notificationDetails: ''
-})
+const error = ref<Error>()
 const isRenewing = ref(false)
 
 async function renewServerCertificate() {
   if (props.instanceName) {
     try {
-      error.value.notificationDescription = ''
-      error.value.notificationDetails = ''
+      error.value = undefined
       isRenewing.value = true
       await ubusCall('ns.ovpnrw', 'renew-server-certificate', {
         instance: props.instanceName
       })
       emit('server-certificate-renewed')
+      emit('close')
     } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
+      error.value = err
     } finally {
       isRenewing.value = false
-      close()
     }
   }
 }
 
 function close() {
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  emit('close')
+  if (!isRenewing.value) {
+    error.value = undefined
+    emit('close')
+  }
 }
 </script>
 
@@ -66,6 +62,13 @@ function close() {
     @primary-click="renewServerCertificate()"
     @close="close()"
   >
+    <NeInlineNotification
+      v-if="error"
+      kind="error"
+      :title="t('error.cannot_renew_server_cert')"
+      :description="t(getAxiosErrorMessage(error))"
+      class="mb-2"
+    />
     {{ t('standalone.openvpn_rw.renew_server_certificate_message') }}
   </NeModal>
 </template>

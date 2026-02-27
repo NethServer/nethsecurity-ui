@@ -8,7 +8,7 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, NeTextInput } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
+import { NeModal, NeInlineNotification } from '@nethesis/vue-components'
 
 const props = defineProps<{
   visible: boolean
@@ -20,38 +20,34 @@ const emit = defineEmits(['close', 'all-certificates-regenerated'])
 
 const { t } = useI18n()
 
-const error = ref({
-  notificationDescription: '',
-  notificationDetails: ''
-})
-const serverName = ref('')
+const error = ref<Error>()
+const serverNameModal = ref('')
 const isRegenerating = ref(false)
 
 async function regenerateAllCertificates() {
   if (props.instanceName) {
     try {
-      error.value.notificationDescription = ''
-      error.value.notificationDetails = ''
+      error.value = undefined
       isRegenerating.value = true
       await ubusCall('ns.ovpnrw', 'regenerate-all-certificates', {
         instance: props.instanceName
       })
       emit('all-certificates-regenerated')
+      emit('close')
     } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
+      error.value = err
     } finally {
       isRegenerating.value = false
-      close()
     }
   }
 }
 
 function close() {
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  serverName.value = ''
-  emit('close')
+  if (!isRegenerating.value) {
+    error.value = undefined
+    serverNameModal.value = ''
+    emit('close')
+  }
 }
 </script>
 
@@ -62,16 +58,23 @@ function close() {
     :title="t('standalone.openvpn_rw.regenerate_all_certificates')"
     :primary-label="t('standalone.openvpn_rw.regenerate')"
     :cancel-label="t('common.cancel')"
-    :primary-button-disabled="isRegenerating || props.serverName !== serverName"
+    :primary-button-disabled="isRegenerating || props.serverName !== serverNameModal"
     :primary-button-loading="isRegenerating"
     primary-button-kind="danger"
     :close-aria-label="t('common.close')"
     @primary-click="regenerateAllCertificates()"
     @close="close()"
   >
+    <NeInlineNotification
+      v-if="error"
+      kind="error"
+      :title="t('error.cannot_renew_server_cert')"
+      :description="t(getAxiosErrorMessage(error))"
+      class="mb-2"
+    />
     {{ t('standalone.openvpn_rw.regenerate_all_certificates_message') }}
     <NeTextInput
-      v-model="serverName"
+      v-model="serverNameModal"
       class="mt-4"
       :disabled="isRegenerating"
       :label="t('standalone.openvpn_rw.type_server_name', { server: props.serverName })"

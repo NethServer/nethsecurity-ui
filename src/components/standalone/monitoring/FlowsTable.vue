@@ -17,8 +17,14 @@ type FlowListResponse = {
     last_page: number
     per_page: number
     filters: {
-      applications: string[]
-      protocols: string[]
+      applications: {
+        id: number
+        name: string
+      }[]
+      protocols: {
+        id: number
+        name: string
+      }[]
       sources: string[]
       destinations: string[]
       tags: string[]
@@ -38,7 +44,9 @@ export type Flow = {
   conntrack: {
     id: string
   }
+  detected_application: number
   detected_application_name: string
+  detected_protocol: number
   detected_protocol_name: string
   detection_guessed?: boolean
   detection_packets?: number
@@ -180,9 +188,11 @@ import { faTable } from '@fortawesome/free-solid-svg-icons'
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import { refDebounced } from '@vueuse/core'
+import { useNetifydStore } from '@/stores/standalone/netifyd.ts'
 
 const { t } = useI18n()
 const queryClient = useQueryClient()
+const netifydStore = useNetifydStore()
 
 const applicationsFilter = useRouteQuery<string, string[]>('application', '', {
   transform: {
@@ -326,7 +336,9 @@ const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
     }),
   placeholderData: keepPreviousData,
   refetchInterval: refreshIntervalsValue,
-  select: (data) => data.data
+  select: (data) => data.data,
+  refetchOnReconnect: () => refreshIntervalsValue.value != false,
+  refetchOnWindowFocus: () => refreshIntervalsValue.value != false
 })
 
 watch(data, () => {
@@ -344,36 +356,27 @@ watch(refreshIntervalSelection, (val) => {
 })
 
 const applications = computed<FilterOption[]>(() => {
-  return (
-    data.value?.filters.applications.map((app) => {
-      let label = app
-      // Remove netify. prefix if present
-      if (label.startsWith('netify.')) {
-        label = label.substring(7)
-      }
-      // Replace dashes with spaces
-      label = label.replace(/-/g, ' ')
-      // Capitalize first character of each word
-      label = label
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-
-      return {
-        id: app,
-        label: label
-      }
-    }) ?? []
-  )
+  if (data.value == undefined) {
+    return []
+  }
+  return data.value.filters.applications.map((application) => {
+    return {
+      id: application.name,
+      label: netifydStore.getApplicationNameById(application.id, application.name)
+    }
+  })
 })
 
 const protocols = computed<FilterOption[]>(() => {
-  return (
-    data.value?.filters.protocols.map((protocol) => ({
-      id: protocol,
-      label: protocol
-    })) ?? []
-  )
+  if (data.value == undefined) {
+    return []
+  }
+  return data.value.filters.protocols.map((protocol) => {
+    return {
+      id: protocol.name,
+      label: netifydStore.getProtocolNameById(protocol.id, protocol.name)
+    }
+  })
 })
 
 const tags = computed<FilterOption[]>(() => {

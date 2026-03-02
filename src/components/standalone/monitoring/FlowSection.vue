@@ -25,12 +25,13 @@ type FlowDaemonResponse = {
 }
 
 const configuringDaemon = ref(false)
+const daemonRunning = ref(false)
 const { isSuccess, isError, isPending, data, error } = useQuery({
   queryKey: ['flow', 'config'],
   queryFn: async () => ubusCall<FlowDaemonResponse>('ns.flows', 'get-configuration'),
   select: (data) => data.data,
   refetchInterval: () => {
-    if (configuringDaemon.value) {
+    if (configuringDaemon.value || daemonRunning.value) {
       return false
     } else {
       return 5000
@@ -42,6 +43,7 @@ const enabled = ref(false)
 const expiredPersistence = ref('')
 watch(data, (newData) => {
   if (newData != undefined) {
+    daemonRunning.value = newData.status
     enabled.value = newData.configuration.enabled
     expiredPersistence.value = newData.configuration.expired_persistence
   }

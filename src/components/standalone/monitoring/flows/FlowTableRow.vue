@@ -9,8 +9,14 @@ import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { differenceInSeconds } from 'date-fns'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowDown, faArrowUp, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowDown,
+  faArrowUp,
+  faCircleQuestion,
+  faMagnifyingGlassPlus
+} from '@fortawesome/free-solid-svg-icons'
 import FlowBadge from '@/components/standalone/monitoring/flows/FlowBadge.vue'
+import { type Application, type Protocol, useNetifydStore } from '@/stores/standalone/netifyd.ts'
 
 const { item } = defineProps<{
   item: FlowEvent
@@ -21,6 +27,7 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
+const netifydStore = useNetifydStore()
 
 const flowAge = computed<string>(() => {
   const totalSeconds = differenceInSeconds(item.flow.last_seen_at, item.flow.first_seen_at)
@@ -30,20 +37,9 @@ const flowAge = computed<string>(() => {
   return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
 })
 
-const applicationName = computed<string>(() => {
-  let name = item.flow.detected_application_name
-  // Remove netify. prefix if present
-  if (name.startsWith('netify.')) {
-    name = name.substring(7)
-  }
-  // Replace dashes with spaces
-  name = name.replace(/-/g, ' ')
-  // Capitalize first character of each word
-  return name
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-})
+const appDetails = computed<Application>(() => netifydStore.getApplicationByFlow(item.flow))
+
+const protocolDetails = computed<Protocol>(() => netifydStore.getProtocolByFlow(item.flow))
 
 const badges = computed<Badge[]>(() => extractBadges(item))
 
@@ -68,10 +64,14 @@ function formatRate(rate: number): string {
 <template>
   <NeTableRow>
     <NeTableCell :data-label="t('standalone.flows.application')">
-      {{ applicationName }}
+      <span class="flex items-center gap-4">
+        <img v-if="appDetails.icon" :src="appDetails.icon" class="size-6" :alt="appDetails.label" />
+        <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-6" />
+        <span>{{ appDetails.label }}</span>
+      </span>
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.protocol')">
-      {{ item.flow.detected_protocol_name }}
+      {{ protocolDetails.label }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.tags')">
       <span class="flex flex-wrap gap-2">
@@ -83,18 +83,18 @@ function formatRate(rate: number): string {
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.destination')">
       <NeTooltip
-        v-if="item.flow.dns_host_name != undefined || item.flow.host_server_name != undefined"
+        v-if="item.flow.host_server_name != undefined"
         trigger-event="mouseenter click"
       >
         <template #content>
           <p>{{ t('standalone.flows.destination_ip') }}: {{ destinationIp }}</p>
-          <p>{{ t('standalone.flows.destination_port') }} :{{ destinationPort }}</p>
-          <p v-if="item.flow.host_server_name != undefined">
-            {{ t('standalone.flows.destination_dns') }} : {{ item.flow.host_server_name }}
+          <p>{{ t('standalone.flows.destination_port') }}: {{ destinationPort }}</p>
+          <p v-if="item.flow.dns_host_name != undefined">
+            {{ t('standalone.flows.destination_dns') }} : {{ item.flow.dns_host_name }}
           </p>
         </template>
         <template #trigger>
-          {{ item.flow.dns_host_name ?? item.flow.host_server_name }}:{{ destinationPort }}
+          {{ item.flow.host_server_name }}:{{ destinationPort }}
         </template>
       </NeTooltip>
       <template v-else> {{ destinationIp }}:{{ destinationPort }} </template>

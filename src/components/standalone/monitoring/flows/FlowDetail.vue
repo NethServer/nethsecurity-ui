@@ -4,10 +4,11 @@ import type { FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vu
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { formatDistance } from 'date-fns'
-import { getNdpiRiskDescription } from '@/lib/standalone/ndpiRisks.ts'
 import AdvancedSettingsDropdown from '@/components/AdvancedSettingsDropdown.vue'
+import { useNetifydStore } from '@/stores/standalone/netifyd.ts'
 
 const { t } = useI18n()
+const netifydStore = useNetifydStore()
 
 defineEmits<{
   close: []
@@ -124,11 +125,11 @@ const facts = computed<FactsGroup[]>(() => {
     facts: [
       {
         label: t('standalone.flows.protocol'),
-        value: _flow.value.flow.detected_protocol_name
+        value: netifydStore.getProtocolByFlow(_flow.value.flow).label
       },
       {
         label: t('standalone.flows.application'),
-        value: _flow.value.flow.detected_application_name
+        value: netifydStore.getApplicationByFlow(_flow.value.flow).label
       },
       {
         label: t('standalone.flows.packets_analyzed'),
@@ -136,14 +137,6 @@ const facts = computed<FactsGroup[]>(() => {
       }
     ]
   })
-
-  // Risks Detected (conditional)
-  if ((_flow.value.flow.risks.risks?.length ?? 0) > 0) {
-    groups.push({
-      title: t('standalone.flows.risks_detected'),
-      facts: _flow.value.flow.risks.risks?.map((risk) => getNdpiRiskDescription(risk)) ?? []
-    })
-  }
 
   // Flow Info
   groups.push({

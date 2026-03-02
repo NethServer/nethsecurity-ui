@@ -27,8 +27,16 @@ const { t } = useI18n()
 
 const { tabs, selectedTab } = useTabs([
   {
-    name: 'traffic',
-    label: t('standalone.real_time_monitor.traffic')
+    name: 'daily-traffic',
+    label: t('standalone.real_time_monitor.daily_traffic')
+  },
+  {
+    name: 'live-flows',
+    label: t('standalone.real_time_monitor.live_flows')
+  },
+  {
+    name: 'top-talkers',
+    label: t('standalone.real_time_monitor.top_talkers')
   },
   {
     name: 'connectivity',
@@ -41,14 +49,6 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'security',
     label: t('standalone.real_time_monitor.security')
-  },
-  {
-    name: 'instant-traffic',
-    label: t('standalone.real_time_monitor.instant_traffic')
-  },
-  {
-    name: 'flows',
-    label: t('standalone.real_time_monitor.flows')
   }
 ])
 
@@ -167,11 +167,11 @@ function openGrafana() {
       class="mb-8"
       @select-tab="selectedTab = $event"
     />
-    <TrafficMonitor v-if="selectedTab === 'traffic'" />
+    <TrafficMonitor v-if="selectedTab === 'daily-traffic'" />
     <ConnectivityMonitor v-else-if="selectedTab === 'connectivity'" />
     <VpnMonitor v-else-if="selectedTab === 'vpn'" />
     <SecurityMonitor v-else-if="selectedTab === 'security'" />
-    <InstantTrafficMonitor v-else-if="selectedTab == 'instant-traffic'" />
-    <FlowSection v-else-if="selectedTab == 'flows'" />
+    <InstantTrafficMonitor v-else-if="selectedTab == 'top-talkers'" />
+    <FlowSection v-else-if="selectedTab == 'live-flows'" />
   </div>
 </template>

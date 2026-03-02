@@ -49,7 +49,6 @@ export const useNetifydStore = defineStore('netifyd', () => {
     }
   }
 
-
   function generateApplicationLabel(applicationName: string): string {
     let name = applicationName
     // Remove netify. prefix if present

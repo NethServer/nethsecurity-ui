@@ -2287,6 +2287,7 @@
       "cannot_open_grafana_message": "Grafana monitoring is available only after connecting the unit to a controller",
       "cannot_open_report_from_controller": "Cannot open report from a controlled unit. You can open the report by accessing the unit UI directly, or by accessing the controller UI, going to 'Unit manager' page, clicking the three dots menu of the unit and selecting 'Open metrics'.",
       "traffic": "Traffic",
+      "daily_traffic": "Daily traffic",
       "connectivity": "WAN uplinks",
       "vpn": "VPN",
       "security": "Security",
@@ -2298,7 +2299,7 @@
       "today_top_protocols": "Protocols",
       "no_protocols": "No protocols",
       "daily_total_traffic": "Daily total traffic",
-      "instant_traffic": "Real-time traffic",
+      "top_talkers": "Top Talkers",
       "today_traffic": "Today traffic",
       "recent_traffic": "Recent traffic",
       "host": "Host",
@@ -2358,7 +2359,7 @@
       "error_fetching_data": "Error fetching data",
       "remote_hosts": "Remote hosts",
       "no_data_available": "No data available",
-      "flows": "Flows"
+      "live_flows": "Live flows"
     },
     "flows": {
       "subtitle": "View real-time network connections, each row represents an active flow with live transfer rates and total traffic.",

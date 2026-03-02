@@ -82,10 +82,7 @@ function formatRate(rate: number): string {
       {{ sourceIp }}:{{ sourcePort }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.destination')">
-      <NeTooltip
-        v-if="item.flow.host_server_name != undefined"
-        trigger-event="mouseenter click"
-      >
+      <NeTooltip v-if="item.flow.host_server_name != undefined" trigger-event="mouseenter click">
         <template #content>
           <p>{{ t('standalone.flows.destination_ip') }}: {{ destinationIp }}</p>
           <p>{{ t('standalone.flows.destination_port') }}: {{ destinationPort }}</p>
@@ -93,9 +90,7 @@ function formatRate(rate: number): string {
             {{ t('standalone.flows.destination_dns') }} : {{ item.flow.dns_host_name }}
           </p>
         </template>
-        <template #trigger>
-          {{ item.flow.host_server_name }}:{{ destinationPort }}
-        </template>
+        <template #trigger> {{ item.flow.host_server_name }}:{{ destinationPort }} </template>
       </NeTooltip>
       <template v-else> {{ destinationIp }}:{{ destinationPort }} </template>
     </NeTableCell>

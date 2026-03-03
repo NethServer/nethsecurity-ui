@@ -24,7 +24,11 @@ import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges
 import { computed } from 'vue'
 import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
 import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
+import RenewRWServerCertificateModal from '@/components/standalone/openvpn_rw/RenewRWServerCertificateModal.vue'
+import RegenerateRWAllCertificatesModal from '@/components/standalone/openvpn_rw/RegenerateRWAllCertificatesModal.vue'
+
 import ConnectionsHistory from '@/components/standalone/openvpn_rw/ConnectionsHistory.vue'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export type RWAuthenticationMode =
   | 'username_password'
@@ -55,6 +59,10 @@ export type RWServer = {
   compress?: string
   ns_description: string
   ifconfig_pool?: string[]
+  certificates: {
+    CA?: number
+    server?: number
+  }
 }
 
 export type RWAccount = {
@@ -88,6 +96,7 @@ const RELOAD_INTERVAL = 10000
 const loading = ref(true)
 const loadingUsers = ref(true)
 const instanceName = ref('')
+const serverName = ref('')
 const instanceData = ref<RWServer>()
 const users = ref<RWAccount[]>([])
 const error = ref({
@@ -95,12 +104,15 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
+const notificationsStore = useNotificationsStore()
 
 const isInitializingInstance = ref(false)
 const showDeleteServerModal = ref(false)
 const showCreateOrEditServerModal = ref(false)
 const loadingError = ref(false)
 const fetchServerIntervalId = ref(0)
+const showRenewServerCertificateModal = ref(false)
+const showRegenerateAllCertificatesModal = ref(false)
 
 const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
 
@@ -147,6 +159,7 @@ async function fetchServer(setLoading: boolean = true) {
         await ubusCall('ns.ovpnrw', 'get-configuration', { instance: instanceName.value })
       ).data
       if (instanceData.value?.ns_description) {
+        serverName.value = instanceData.value.ns_description
         await fetchUsers(setLoading)
       }
     }
@@ -190,6 +203,19 @@ async function initAndConfigureServer() {
     }
   }
   showCreateOrEditServerModal.value = true
+}
+
+async function showNotificationAndReload(title: string, description: string) {
+  // show toast notification
+  setTimeout(() => {
+    notificationsStore.createNotification({
+      title: title,
+      description: description,
+      kind: 'success'
+    })
+  }, 500)
+  // reload server data
+  await reloadServer()
 }
 
 /**
@@ -283,6 +309,8 @@ onUnmounted(() => {
         :server="instanceData"
         @delete-server="showDeleteServerModal = true"
         @edit-server="showCreateOrEditServerModal = true"
+        @renew-server-certificate="showRenewServerCertificateModal = true"
+        @regenerate-all-certificates="showRegenerateAllCertificatesModal = true"
       />
 
       <RWAccountsManager
@@ -306,6 +334,29 @@ onUnmounted(() => {
       :is-shown="showCreateOrEditServerModal"
       @close="showCreateOrEditServerModal = false"
       @add-edit-server="reloadServer"
+    />
+    <RenewRWServerCertificateModal
+      :visible="showRenewServerCertificateModal"
+      :instance-name="instanceName"
+      @close="showRenewServerCertificateModal = false"
+      @server-certificate-renewed="
+        showNotificationAndReload(
+          t('standalone.openvpn_rw.server_certificate_renewed'),
+          t('standalone.openvpn_rw.server_certificate_renewed_message')
+        )
+      "
+    />
+    <RegenerateRWAllCertificatesModal
+      :visible="showRegenerateAllCertificatesModal"
+      :instance-name="instanceName"
+      :server-name="serverName"
+      @close="showRegenerateAllCertificatesModal = false"
+      @all-certificates-regenerated="
+        showNotificationAndReload(
+          t('standalone.openvpn_rw.all_certificates_regenerated'),
+          t('standalone.openvpn_rw.all_certificates_regenerated_message')
+        )
+      "
     />
   </div>
 </template>

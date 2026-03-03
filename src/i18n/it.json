@@ -427,7 +427,9 @@
     "duplicate_ip": "L'IP è già stato utilizzato",
     "duplicate_port": "La porta è già stata utilizzata",
     "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec",
-    "cannot_regenerate_cert": "Impossibile rigenerare i certificati"
+    "cannot_regenerate_cert": "Impossibile rigenerare i certificati",
+    "cannot_renew_server_cert": "Impossibile rinnovare il certificato del server",
+    "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1812,7 +1814,7 @@
       "download_configuration": "Scarica configurazione",
       "password_not_configured": "Password non configurata",
       "reserved_ip": "IP riservato",
-      "roadwarrior_accounts_description": "Gli utenti in questa lista posso collegarsi al server OpenVPN Road Warrior. Solamente gli utenti che hanno configurato una password possono utilizzare la modalità di autenticazione 'utente e password'. Se la modalità di autenticazione selezionata richiede un certificato x509, il certificato deve essere valido. Le modifiche agli utenti hanno effetto immediato.",
+      "roadwarrior_accounts_description": "Gli utenti in questa lista possono collegarsi al server OpenVPN Road Warrior. A seconda della modalità di autenticazione, è richiesta una password e/o un certificato x509 valido. Le modifiche hanno effetto immediato.",
       "disable_account_message": "L'utente è attualmente collegato via VPN. Disabilitando questo utente, la sessione VPN corrente verrà terminata.",
       "create_accounts_for_all_users": "Crea un account per ogni utente",
       "no_openvpn_rw_server_found": "Nessun server OpenVPN Road Warrior trovato",
@@ -1863,7 +1865,23 @@
         "road_warrior_server": "Server Road Warrior",
         "connections_history": "Cronologia delle connessioni"
       },
-      "user_not_valid": "Utente non valido: l'utente ha una configurazione VPN ma non è presente all'interno del database utenti remoto."
+      "user_not_valid": "Utente non valido: l'utente ha una configurazione VPN ma non è presente all'interno del database utenti remoto.",
+      "certificates_expiration": "Scadenza certificati",
+      "certificate_expiration": "Scadenza certificato",
+      "certificate_expiring_tooltip": "Il certificato scadrà tra {days} giorni",
+      "certificate_expired_tooltip": "Il certificato è scaduto",
+      "renew_server_certificate": "Rinnova certificato server",
+      "regenerate_all_certificates": "Rigenera tutti i certificati",
+      "renew_server_certificate_message": "Questa azione rinnoverà il certificato del server utilizzando l'Autorità di Certificazione (CA) esistente. Le configurazioni e i certificati dei client rimarranno validi.",
+      "regenerate_all_certificates_message": "Questa azione rigenererà l'Autorità di Certificazione (CA) e tutti i certificati del server. Tutti i certificati esistenti diventeranno invalidi e i client dovranno scaricare e installare i nuovi file di configurazione.",
+      "server_certificate_renewed": "Certificato server rinnovato",
+      "server_certificate_renewed_message": "Il certificato del server è stato rinnovato con successo.",
+      "all_certificates_regenerated": "Certificati rigenerati",
+      "all_certificates_regenerated_message": "I certificati sono stati rigenerati con successo.",
+      "type_server_name": "Digita il nome del server '{server}' per confermare",
+      "regenerate": "Rigenera",
+      "server": "Server",
+      "ca": "CA"
     },
     "qos": {
       "interface": "Interfaccia",

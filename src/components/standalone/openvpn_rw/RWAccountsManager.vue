@@ -279,7 +279,7 @@ function clearFilters() {
   <NeSkeleton v-if="isLoading" :lines="8" />
   <template v-else-if="users.length == 0">
     <NeEmptyState :title="t('standalone.openvpn_rw.no_users_found')" :icon="['fas', 'user-group']">
-      <NeButton kind="secondary" @click="openCreateEditDrawer()">
+      <NeButton kind="primary" @click="openCreateEditDrawer()">
         <template #prefix>
           <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
         </template>
@@ -330,7 +330,7 @@ function clearFilters() {
           </template>
           {{ t('standalone.openvpn_rw.download_all_configs') }}
         </NeButton>
-        <NeButton kind="secondary" @click="openCreateEditDrawer()">
+        <NeButton kind="primary" @click="openCreateEditDrawer()">
           <template #prefix>
             <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
           </template>

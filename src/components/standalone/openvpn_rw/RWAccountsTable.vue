@@ -16,13 +16,17 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
-  useItemPagination
+  useItemPagination,
+  NeSortDropdown,
+  type SortEvent,
+  NeBadge,
+  NeAvatar
 } from '@nethesis/vue-components'
 import type {
   RWAuthenticationMode,
   RWAccount
 } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   faArrowsRotate,
   faCircleArrowDown,
@@ -30,7 +34,10 @@ import {
   faCircleXmark,
   faCircleInfo,
   faTrash,
-  faPenToSquare
+  faPenToSquare,
+  faXmark,
+  faTriangleExclamation,
+  faCircleExclamation
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -51,8 +58,54 @@ const emit = defineEmits<{
   regenerateCertificate: [item: RWAccount]
 }>()
 
+const sortKey = ref<'name' | 'connected'>('connected')
+const sortDescending = ref(false)
+
+const usersData = computed(() => props.users)
+
+// custom sorted items that keeps disabled items always at the end when sorting by connection status
+const sortedItems = computed(() => {
+  const items = [...usersData.value]
+
+  if (sortKey.value === 'connected') {
+    // separate enabled and disabled items
+    const enabledItems = items.filter((item) => item.openvpn_enabled !== '0')
+    const disabledItems = items.filter((item) => item.openvpn_enabled === '0')
+
+    // check if all enabled items have the same connection status
+    const allConnected = enabledItems.every((item) => item.connected === true)
+    const allNotConnected = enabledItems.every((item) => item.connected === false)
+    const allSameStatus = allConnected || allNotConnected
+
+    // only sort if items have different connection statuses
+    if (!allSameStatus) {
+      enabledItems.sort((a, b) => {
+        const aConnected = a.connected ? 1 : 0
+        const bConnected = b.connected ? 1 : 0
+        return bConnected - aConnected
+      })
+
+      // apply descending if needed
+      if (sortDescending.value) {
+        enabledItems.reverse()
+      }
+    }
+
+    return [...enabledItems, ...disabledItems]
+  } else {
+    // for 'name' sorting, use standard sort
+    items.sort((a, b) => a.name.localeCompare(b.name))
+
+    if (sortDescending.value) {
+      items.reverse()
+    }
+
+    return items
+  }
+})
+
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(() => props.users, {
+const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
   itemsPerPage: pageSize
 })
 
@@ -121,21 +174,59 @@ function getDropdownItems(item: RWAccount) {
 function getCellClasses(item: RWAccount) {
   return item.openvpn_enabled === '0' ? ['opacity-50'] : []
 }
+
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as 'name' | 'connected'
+  sortDescending.value = payload.descending
+}
+
+// certificates expiration warning
+const CERT_EXPIRY_WARNING_DAYS = 30
+
+function getDaysUntilExpiry(expiryTimestamp: number): number {
+  const secondsUntilExpiry = expiryTimestamp - Date.now() / 1000
+  return Math.floor(secondsUntilExpiry / 86400)
+}
+
+function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
+  const daysUntilExpiry = getDaysUntilExpiry(expiryTimestamp)
+  return daysUntilExpiry < CERT_EXPIRY_WARNING_DAYS && daysUntilExpiry >= 0
+}
 </script>
 
 <template>
-  <NeTable :aria-label="t('standalone.openvpn_rw.roadwarrior_accounts')" card-breakpoint="xl">
+  <NeSortDropdown
+    v-model:sort-key="sortKey"
+    v-model:sort-descending="sortDescending"
+    :label="t('sort.sort')"
+    :options="[
+      { id: 'connected', label: t('standalone.openvpn_rw.connection') },
+      { id: 'name', label: t('standalone.openvpn_rw.user') }
+    ]"
+    :open-menu-aria-label="t('ne_dropdown.open_menu')"
+    :sort-by-label="t('sort.sort_by')"
+    :sort-direction-label="t('sort.direction')"
+    :ascending-label="t('sort.ascending')"
+    :descending-label="t('sort.descending')"
+    class="lg:hidden"
+  />
+  <NeTable
+    :sort-key="sortKey"
+    :sort-descending="sortDescending"
+    :aria-label="t('standalone.openvpn_rw.roadwarrior_accounts')"
+    card-breakpoint="xl"
+  >
     <NeTableHead>
-      <NeTableHeadCell>
-        {{ t('standalone.openvpn_rw.username') }}
+      <NeTableHeadCell sortable column-key="name" @sort="onSort">
+        {{ t('standalone.openvpn_rw.user') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
-        {{ t('standalone.openvpn_rw.expiration') }}
+        {{ t('standalone.openvpn_rw.certificate_expiration') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
         {{ t('standalone.openvpn_rw.reserved_ip') }}
       </NeTableHeadCell>
-      <NeTableHeadCell>
+      <NeTableHeadCell sortable column-key="connected" @sort="onSort">
         {{ t('standalone.openvpn_rw.connection') }}
       </NeTableHeadCell>
       <NeTableHeadCell>
@@ -144,105 +235,121 @@ function getCellClasses(item: RWAccount) {
     </NeTableHead>
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.id">
-        <!-- username -->
-        <NeTableCell :data-label="t('standalone.openvpn_rw.username')">
-          <div class="flex flex-row gap-x-3">
-            <p :class="[getCellClasses(item)]">
-              {{ item.name }}
-            </p>
-            <!-- password not configured warning -->
-            <NeTooltip
-              v-if="
-                item.local &&
-                !item.password &&
-                (authenticationMode === 'username_password' ||
-                  authenticationMode === 'username_password_certificate')
-              "
-              interactive
-            >
+        <!-- user -->
+        <NeTableCell :data-label="t('standalone.openvpn_rw.user')">
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <NeAvatar :squared="false" alt="Avatar" size="sm" />
+              <div>
+                <p v-if="item.description" :class="[getCellClasses(item)]">
+                  {{ item.description }}
+                </p>
+                <p :class="[getCellClasses(item)]">
+                  {{ item.name }}
+                </p>
+              </div>
+              <div class="flex items-center gap-2 self-start">
+                <NeTooltip
+                  v-if="
+                    item.local &&
+                    !item.password &&
+                    (authenticationMode === 'username_password' ||
+                      authenticationMode === 'username_password_certificate')
+                  "
+                  interactive
+                >
+                  <template #trigger>
+                    <FontAwesomeIcon :icon="faTriangleExclamation" class="h-4 w-4 text-amber-500" />
+                  </template>
+                  <template #content>
+                    <div class="text-center">
+                      <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
+                      <RouterLink
+                        class="text-primary-500 dark:text-primary-800"
+                        to="/standalone/users-objects/users-database"
+                      >
+                        {{ t('standalone.openvpn_rw.edit_user_database') }}
+                      </RouterLink>
+                    </div>
+                  </template>
+                </NeTooltip>
+                <NeTooltip v-if="item.valid === false">
+                  <template #trigger>
+                    <FontAwesomeIcon
+                      :icon="faCircleInfo"
+                      class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+                    />
+                  </template>
+                  <template #content>
+                    <div class="text-center">
+                      <p>{{ t('standalone.openvpn_rw.user_not_valid') }}</p>
+                    </div>
+                  </template>
+                </NeTooltip>
+              </div>
+              <NeBadge
+                v-if="item.openvpn_enabled === '0'"
+                :icon="faXmark"
+                :text="t('common.disabled')"
+                kind="secondary"
+              />
+            </div>
+            <NeTooltip v-if="item.connected" interactive placement="bottom">
               <template #trigger>
-                <font-awesome-icon
-                  :icon="['fas', 'triangle-exclamation']"
-                  class="h-4 w-4 text-amber-500"
-                />
+                <NeButton class="ml-8" kind="tertiary" size="sm">
+                  {{ t('standalone.openvpn_rw.more_info') }}
+                </NeButton>
               </template>
               <template #content>
-                <div class="text-center">
-                  <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
-                  <router-link
-                    class="text-primary-500 dark:text-primary-800"
-                    to="/standalone/users-objects/users-database"
-                    >{{ t('standalone.openvpn_rw.edit_user_database') }}</router-link
-                  >
-                </div>
-              </template>
-            </NeTooltip>
-            <NeTooltip v-if="item.valid === false">
-              <template #trigger>
-                <FontAwesomeIcon
-                  :icon="faCircleInfo"
-                  class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
-                />
-              </template>
-              <template #content>
-                <div class="text-center">
-                  <p>{{ t('standalone.openvpn_rw.user_not_valid') }}</p>
+                <div>
+                  <div class="px-2 py-1">
+                    <div class="py-1">
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.virtual_ip') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-500"
+                        >{{ item.virtual_address }}
+                      </span>
+                    </div>
+                    <div class="py-1">
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.remote_ip') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
+                    </div>
+                    <div class="py-1">
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.started') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-500">
+                        {{
+                          `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
+                            (item.since as number) * 1000
+                          ).toLocaleTimeString()}`
+                        }}
+                      </span>
+                    </div>
+                    <div class="py-1 align-top">
+                      <span class="mr-2 inline-block align-top font-semibold">
+                        {{ t('standalone.openvpn_rw.traffic') }}:
+                      </span>
+                      <span class="inline-block align-top text-gray-300 dark:text-gray-500">
+                        {{ parseInt(item.bytes_sent as string) / 1000 }} KB
+                        {{ t('standalone.openvpn_rw.sent') }}<br />{{
+                          parseInt(item.bytes_received as string) / 1000
+                        }}
+                        KB {{ t('standalone.openvpn_rw.received') }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </template>
             </NeTooltip>
           </div>
-          <!-- more info button -->
-          <NeTooltip v-if="item.connected" interactive placement="bottom">
-            <template #trigger>
-              <NeButton size="sm" kind="tertiary" class="-mx-2">{{
-                t('standalone.openvpn_rw.more_info')
-              }}</NeButton>
-            </template>
-            <template #content>
-              <div>
-                <div class="px-2 py-1">
-                  <div class="py-1">
-                    <span class="mr-2 inline-block font-semibold"
-                      >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
-                    >
-                    <span class="text-gray-300 dark:text-gray-500">{{ item.virtual_address }}</span>
-                  </div>
-                  <div class="py-1">
-                    <span class="mr-2 inline-block font-semibold"
-                      >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
-                    >
-                    <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
-                  </div>
-                  <div class="py-1">
-                    <span class="mr-2 inline-block font-semibold"
-                      >{{ t('standalone.openvpn_rw.started') }}:</span
-                    >
-                    <span class="text-gray-300 dark:text-gray-500">{{
-                      `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
-                        (item.since as number) * 1000
-                      ).toLocaleTimeString()}`
-                    }}</span>
-                  </div>
-                  <div class="py-1 align-top">
-                    <span class="mr-2 inline-block align-top font-semibold"
-                      >{{ t('standalone.openvpn_rw.traffic') }}:</span
-                    >
-                    <span class="inline-block align-top text-gray-300 dark:text-gray-500"
-                      >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
-                      {{ t('standalone.openvpn_rw.sent') }}<br />{{
-                        parseInt(item.bytes_received as string) / 1000
-                      }}
-                      KB {{ t('standalone.openvpn_rw.received') }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </template>
-          </NeTooltip>
         </NeTableCell>
         <!-- expiration -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.expiration')">
-          <div class="flex flex-row gap-x-3">
+          <div class="flex items-start gap-3">
             <p :class="[getCellClasses(item)]">
               {{
                 item.expiration
@@ -250,17 +357,43 @@ function getCellClasses(item: RWAccount) {
                   : '-'
               }}
             </p>
-            <!-- certificate expired warning -->
-            <NeTooltip v-if="item.expired" interactive>
+            <!-- certificate expiring soon warning -->
+            <NeTooltip
+              v-if="item.expiration && isCertificateExpiringSoon(Number(item.expiration))"
+              class
+              interactive
+            >
               <template #trigger>
-                <font-awesome-icon
-                  :icon="['fas', 'triangle-exclamation']"
-                  class="h-4 w-4 text-amber-500"
+                <FontAwesomeIcon
+                  :icon="faTriangleExclamation"
+                  class="size-4 text-amber-700 dark:text-amber-500"
+                  aria-hidden="true"
                 />
               </template>
               <template #content>
                 <div class="text-center">
-                  <p>{{ t('standalone.openvpn_rw.this_certificate_expired') }}</p>
+                  <p>
+                    {{
+                      t('standalone.openvpn_rw.certificate_expiring_tooltip', {
+                        days: getDaysUntilExpiry(Number(item.expiration))
+                      })
+                    }}
+                  </p>
+                </div>
+              </template>
+            </NeTooltip>
+            <!-- certificate expired warning -->
+            <NeTooltip v-if="item.expired" interactive>
+              <template #trigger>
+                <FontAwesomeIcon
+                  :icon="faCircleExclamation"
+                  class="h-4 w-4 text-red-700 dark:text-red-500"
+                  aria-hidden="true"
+                />
+              </template>
+              <template #content>
+                <div class="text-left">
+                  <p>{{ t('standalone.openvpn_rw.certificate_expired_tooltip') }}</p>
                   <p
                     class="cursor-pointer text-primary-500 dark:text-primary-800"
                     @click="emit('regenerateCertificate', item)"
@@ -280,17 +413,24 @@ function getCellClasses(item: RWAccount) {
         </NeTableCell>
         <!-- connection -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.connection')">
-          <div v-if="item.valid === false" class="flex flex-row items-center">
+          <div
+            v-if="item.valid === false || item.openvpn_enabled === '0'"
+            :class="['flex', 'flex-row', 'items-center', ...getCellClasses(item)]"
+          >
             <p>-</p>
           </div>
           <div v-else :class="['flex', 'flex-row', 'items-center', getCellClasses(item)]">
-            <font-awesome-icon
-              :icon="['fas', item.connected ? 'circle-check' : 'circle-xmark']"
+            <FontAwesomeIcon
+              :icon="item.connected ? faCircleCheck : faCircleXmark"
               :class="[
                 'mr-2',
                 'h-5',
                 'w-5',
-                item.connected ? 'text-green-600 dark:text-green-400' : ''
+                item.openvpn_enabled === '1'
+                  ? item.connected
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-red-700 dark:text-red-500'
+                  : ''
               ]"
               aria-hidden="true"
             />

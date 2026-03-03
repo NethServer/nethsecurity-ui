@@ -237,130 +237,119 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
       <NeTableRow v-for="item in paginatedItems" :key="item.id">
         <!-- user -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.user')">
-          <div
-            class="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-2"
-          >
-            <!-- Row 1, Col 1: Icon -->
-            <NeAvatar alt="Avatar" size="sm" :squared="false" />
-            <!-- Row 1, Col 2: Name and Description -->
-            <div class="flex flex-col">
-              <p v-if="item.description" :class="[getCellClasses(item)]">
-                {{ item.description }}
-              </p>
-              <p :class="[getCellClasses(item)]">
-                {{ item.name }}
-              </p>
-            </div>
-            <!-- Row 1, Col 3: Warnings and Badge -->
-            <div class="flex flex-col items-start justify-center gap-y-1">
-              <!-- password not configured warning -->
-              <NeTooltip
-                v-if="
-                  item.local &&
-                  !item.password &&
-                  (authenticationMode === 'username_password' ||
-                    authenticationMode === 'username_password_certificate')
-                "
-                interactive
-              >
-                <template #trigger>
-                  <font-awesome-icon
-                    :icon="['fas', 'triangle-exclamation']"
-                    class="h-4 w-4 text-amber-500"
-                  />
-                </template>
-                <template #content>
-                  <div class="text-center">
-                    <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
-                    <router-link
-                      class="text-primary-500 dark:text-primary-800"
-                      to="/standalone/users-objects/users-database"
-                      >{{ t('standalone.openvpn_rw.edit_user_database') }}</router-link
-                    >
-                  </div>
-                </template>
-              </NeTooltip>
-              <!-- invalid user warning -->
-              <NeTooltip v-if="item.valid === false">
-                <template #trigger>
-                  <FontAwesomeIcon
-                    :icon="faCircleInfo"
-                    class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
-                  />
-                </template>
-                <template #content>
-                  <div class="text-center">
-                    <p>{{ t('standalone.openvpn_rw.user_not_valid') }}</p>
-                  </div>
-                </template>
-              </NeTooltip>
-              <!-- disabled user -->
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <NeAvatar :squared="false" alt="Avatar" size="sm" />
+              <div>
+                <p v-if="item.description" :class="[getCellClasses(item)]">
+                  {{ item.description }}
+                </p>
+                <p :class="[getCellClasses(item)]">
+                  {{ item.name }}
+                </p>
+              </div>
+              <div class="flex items-center gap-2 self-start">
+                <NeTooltip
+                  v-if="
+                    item.local &&
+                    !item.password &&
+                    (authenticationMode === 'username_password' ||
+                      authenticationMode === 'username_password_certificate')
+                  "
+                  interactive
+                >
+                  <template #trigger>
+                    <FontAwesomeIcon :icon="faTriangleExclamation" class="h-4 w-4 text-amber-500" />
+                  </template>
+                  <template #content>
+                    <div class="text-center">
+                      <p>{{ t('standalone.openvpn_rw.password_not_configured') }}</p>
+                      <RouterLink
+                        class="text-primary-500 dark:text-primary-800"
+                        to="/standalone/users-objects/users-database"
+                      >
+                        {{ t('standalone.openvpn_rw.edit_user_database') }}
+                      </RouterLink>
+                    </div>
+                  </template>
+                </NeTooltip>
+                <NeTooltip v-if="item.valid === false">
+                  <template #trigger>
+                    <FontAwesomeIcon
+                      :icon="faCircleInfo"
+                      class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+                    />
+                  </template>
+                  <template #content>
+                    <div class="text-center">
+                      <p>{{ t('standalone.openvpn_rw.user_not_valid') }}</p>
+                    </div>
+                  </template>
+                </NeTooltip>
+              </div>
               <NeBadge
                 v-if="item.openvpn_enabled === '0'"
-                kind="secondary"
-                :text="t('common.disabled')"
                 :icon="faXmark"
+                :text="t('common.disabled')"
+                kind="secondary"
               />
             </div>
-            <!-- Row 2, Col 1: Empty -->
-            <div></div>
-            <!-- Row 2, Col 2: More info button -->
             <NeTooltip v-if="item.connected" interactive placement="bottom">
               <template #trigger>
-                <NeButton size="sm" kind="tertiary" class="-mx-2">{{
-                  t('standalone.openvpn_rw.more_info')
-                }}</NeButton>
+                <NeButton class="ml-8" kind="tertiary" size="sm">
+                  {{ t('standalone.openvpn_rw.more_info') }}
+                </NeButton>
               </template>
               <template #content>
                 <div>
                   <div class="px-2 py-1">
                     <div class="py-1">
-                      <span class="mr-2 inline-block font-semibold"
-                        >{{ t('standalone.openvpn_rw.virtual_ip') }}:</span
-                      >
-                      <span class="text-gray-300 dark:text-gray-500">{{
-                        item.virtual_address
-                      }}</span>
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.virtual_ip') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-500"
+                        >{{ item.virtual_address }}
+                      </span>
                     </div>
                     <div class="py-1">
-                      <span class="mr-2 inline-block font-semibold"
-                        >{{ t('standalone.openvpn_rw.remote_ip') }}:</span
-                      >
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.remote_ip') }}:
+                      </span>
                       <span class="text-gray-300 dark:text-gray-500">{{ item.real_address }}</span>
                     </div>
                     <div class="py-1">
-                      <span class="mr-2 inline-block font-semibold"
-                        >{{ t('standalone.openvpn_rw.started') }}:</span
-                      >
-                      <span class="text-gray-300 dark:text-gray-500">{{
-                        `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
-                          (item.since as number) * 1000
-                        ).toLocaleTimeString()}`
-                      }}</span>
+                      <span class="mr-2 inline-block font-semibold">
+                        {{ t('standalone.openvpn_rw.started') }}:
+                      </span>
+                      <span class="text-gray-300 dark:text-gray-500">
+                        {{
+                          `${new Date((item.since as number) * 1000).toLocaleDateString()} ${new Date(
+                            (item.since as number) * 1000
+                          ).toLocaleTimeString()}`
+                        }}
+                      </span>
                     </div>
                     <div class="py-1 align-top">
-                      <span class="mr-2 inline-block align-top font-semibold"
-                        >{{ t('standalone.openvpn_rw.traffic') }}:</span
-                      >
-                      <span class="inline-block align-top text-gray-300 dark:text-gray-500"
-                        >{{ parseInt(item.bytes_sent as string) / 1000 }} KB
+                      <span class="mr-2 inline-block align-top font-semibold">
+                        {{ t('standalone.openvpn_rw.traffic') }}:
+                      </span>
+                      <span class="inline-block align-top text-gray-300 dark:text-gray-500">
+                        {{ parseInt(item.bytes_sent as string) / 1000 }} KB
                         {{ t('standalone.openvpn_rw.sent') }}<br />{{
                           parseInt(item.bytes_received as string) / 1000
                         }}
-                        KB {{ t('standalone.openvpn_rw.received') }}</span
-                      >
+                        KB {{ t('standalone.openvpn_rw.received') }}
+                      </span>
                     </div>
                   </div>
                 </div>
               </template>
             </NeTooltip>
-            <!-- Row 2, Col 3: Empty -->
-            <div></div>
           </div>
         </NeTableCell>
         <!-- expiration -->
         <NeTableCell :data-label="t('standalone.openvpn_rw.expiration')">
-          <div class="flex flex-row items-center gap-x-3">
+          <div class="flex items-start gap-3">
             <p :class="[getCellClasses(item)]">
               {{
                 item.expiration
@@ -371,12 +360,13 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
             <!-- certificate expiring soon warning -->
             <NeTooltip
               v-if="item.expiration && isCertificateExpiringSoon(Number(item.expiration))"
+              class
               interactive
             >
               <template #trigger>
                 <FontAwesomeIcon
                   :icon="faTriangleExclamation"
-                  :class="['h-4 w-4 text-amber-700 dark:text-amber-500']"
+                  class="size-4 text-amber-700 dark:text-amber-500"
                   aria-hidden="true"
                 />
               </template>
@@ -397,7 +387,7 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
               <template #trigger>
                 <FontAwesomeIcon
                   :icon="faCircleExclamation"
-                  :class="['h-4 w-4 text-red-700 dark:text-red-500']"
+                  class="h-4 w-4 text-red-700 dark:text-red-500"
                   aria-hidden="true"
                 />
               </template>

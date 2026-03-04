@@ -93,28 +93,28 @@ function getCellClasses(item: PortForward) {
         t('standalone.port_forward.port_forwards_for_destination_name', { name: header })
       "
       card-breakpoint="xl"
-      class="z-10"
+      class="z-10 [&>table]:table-fixed"
     >
       <NeTableHead>
-        <NeTableHeadCell style="width: 16%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.name') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.source_port') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.destination_port') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.protocols') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.wan_ip') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.restrict_access_from') }}
         </NeTableHeadCell>
-        <NeTableHeadCell style="width: 14%">
+        <NeTableHeadCell>
           {{ t('standalone.port_forward.status') }}
         </NeTableHeadCell>
         <NeTableHeadCell>

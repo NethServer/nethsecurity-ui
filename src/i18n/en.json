@@ -1506,7 +1506,7 @@
       "source_port": "Source port",
       "source_port_tooltip": "Enter a single port or a a port range (e.g. '5500-5600'). Source port is required if a destination port is specified",
       "destination_port": "Destination port",
-      "destination_port_tooltip": "If you leave this field empty, the traffic will be redirected to the same port specified in the 'Source port' field. You can enter a single port or a a port range",
+      "destination_port_tooltip": "If you leave this field empty, the traffic will be redirected to the same port specified in the 'Source port' field",
       "protocols": "Protocols",
       "wan_ip": "WAN IP",
       "restrict_access_from": "Restrict access from",
@@ -1549,7 +1549,14 @@
       "restricted_object": "Restricted object",
       "restricted_object_tooltip": "All objects supported, except host sets containing IP ranges or nested objects",
       "no_object": "No object",
-      "port_forwards_for_destination_name": "Port forwards for destination '{name}'"
+      "port_forwards_for_destination_name": "Port forwards for destination '{name}'",
+      "traffic_type": "Traffic type",
+      "select_protocols": "Select protocols",
+      "all_traffic": "All traffic",
+      "forward_all_traffic": "Forward all traffic",
+      "forward_all_traffic_message": "All incoming traffic will be forwarded to the selected destination.\nThis bypasses firewall protection, exposes the destination host, and makes firewall services (e.g. UI, SSH) unreachable on this WAN IP.",
+      "firewall": "Firewall",
+      "port_placeholder": "e.g. 8080, 5500-5600"
     },
     "firewall_rules": {
       "title": "Firewall rules",

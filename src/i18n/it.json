@@ -1074,7 +1074,7 @@
       "disabled": "Disabilitato",
       "choose_protocol": "Scegli protocollo",
       "filter": "Filtra",
-      "destination_port_tooltip": "Se si lascia il campo vuoto, il traffico verrà ridirezionato alla stessa porta specificata nel campo \"Porta sorgente\". È possibile inserire una porta singola o un intervallo di porte",
+      "destination_port_tooltip": "Se si lascia il campo vuoto, il traffico verrà ridirezionato alla stessa porta specificata nel campo \"Porta sorgente\"",
       "any_protocol": "Qualunque protocollo",
       "source_destination_port_helper": "Lasciare vuoto per permettere tutte le porte",
       "protocol_helper": "Lasciare senza selezione per permettere tutti i protocolli in entrata",
@@ -1092,7 +1092,14 @@
       "save_port_forward": "Salva port forward",
       "destination_object": "Oggetto di destinazione",
       "restricted_object_tooltip": "Tutti gli oggetti supportati, tranne gli host set contenenti intervalli IP o oggetti nidificati",
-      "leave_blank_for_firewall": "Lascia vuoto per firewall"
+      "leave_blank_for_firewall": "Lascia vuoto per firewall",
+      "traffic_type": "Tipo di traffico",
+      "select_protocols": "Seleziona protocolli",
+      "all_traffic": "Tutto il traffico",
+      "forward_all_traffic": "Inoltra tutto il traffico",
+      "forward_all_traffic_message": "Tutto il traffico in arrivo verrà inoltrato alla destinazione selezionata.\nQuesto bypassa la protezione del firewall, espone l'host di destinazione e rende i servizi del firewall (ad es. UI, SSH) irraggiungibili su questo IP WAN.",
+      "firewall": "Firewall",
+      "port_placeholder": "es. 8080, 5500-5600"
     },
     "routes": {
       "route_type": "Tipo di rotta",

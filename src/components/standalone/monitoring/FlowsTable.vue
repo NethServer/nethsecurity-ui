@@ -144,6 +144,20 @@ export function matchBadge(tag: string): Badge {
         content: 'standalone.flows.scanning_description'
       }
     }
+    case 'blocked': {
+      return {
+        id: 'blocked',
+        text: 'standalone.flows.blocked',
+        icon: faCancel,
+        customClasses: [
+          'bg-amber-100',
+          'text-amber-800',
+          'dark:bg-amber-700',
+          'dark:text-amber-100'
+        ],
+        content: 'standalone.flows.blocked_description'
+      }
+    }
     default: {
       return {
         id: tag,
@@ -184,7 +198,7 @@ import FlowTableRow from '@/components/standalone/monitoring/flows/FlowTableRow.
 import RefreshProgressBar from '@/components/standalone/monitoring/flows/RefreshProgressBar.vue'
 import { useRouteQuery } from '@vueuse/router'
 import FlowDetail from '@/components/standalone/monitoring/flows/FlowDetail.vue'
-import { faTable } from '@fortawesome/free-solid-svg-icons'
+import { faCancel, faTable } from '@fortawesome/free-solid-svg-icons'
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import { refDebounced } from '@vueuse/core'

@@ -92,7 +92,7 @@ function submit() {
         :disabled="isPending"
         :invalid-message="t(validationBag.getFirstI18nKeyFor('enabled'))"
         :label="_enabled ? t('common.enabled') : t('common.disabled')"
-        :top-label="t('standalone.flows.daemon_enabled')"
+        :top-label="t('common.status')"
       />
       <NeTextInput
         v-model="_expiredPersistence"

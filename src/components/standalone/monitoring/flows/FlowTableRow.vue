@@ -57,8 +57,15 @@ const destinationPort = computed<number>(() =>
   <NeTableRow>
     <NeTableCell :data-label="t('standalone.flows.application')">
       <span class="flex items-center gap-4">
-        <img v-if="appDetails.icon" :src="appDetails.icon" class="size-6" :alt="appDetails.label" />
-        <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-6" />
+        <template v-if="netifydStore.applications.data != undefined">
+          <img
+            v-if="appDetails.icon"
+            :src="appDetails.icon"
+            class="size-6"
+            :alt="appDetails.label"
+          />
+          <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-6" />
+        </template>
         <span>{{ appDetails.label }}</span>
       </span>
     </NeTableCell>

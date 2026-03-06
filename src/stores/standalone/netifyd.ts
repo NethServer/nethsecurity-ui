@@ -26,19 +26,17 @@ export const useNetifydStore = defineStore('netifyd', () => {
   const applications = useQuery({
     queryKey: ['netifyd', 'applications'],
     queryFn: () => ubusCall<Response<Application>>('ns.dpi', 'list-application-catalog'),
-    select: (data) => data.data.values,
-    initialData: { data: { values: [] } }
+    select: (data) => data.data.values
   })
 
   const protocols = useQuery({
     queryKey: ['netifyd', 'protocols'],
     queryFn: () => ubusCall<Response<Application>>('ns.dpi', 'list-protocol-catalog'),
-    select: (data) => data.data.values,
-    initialData: { data: { values: [] } }
+    select: (data) => data.data.values
   })
 
   function getApplicationByFlow(flow: Flow): Application {
-    const app = applications.data.value.find((app) => app.id == flow.detected_application)
+    const app = applications.data.value?.find((app) => app.id == flow.detected_application)
     if (app != undefined) {
       return app
     }
@@ -65,7 +63,7 @@ export const useNetifydStore = defineStore('netifyd', () => {
   }
 
   function getProtocolByFlow(flow: Flow): Protocol {
-    const proto = protocols.data.value.find((proto) => proto.id == flow.detected_protocol)
+    const proto = protocols.data.value?.find((proto) => proto.id == flow.detected_protocol)
     if (proto != undefined) {
       return proto
     }
@@ -77,7 +75,7 @@ export const useNetifydStore = defineStore('netifyd', () => {
   }
 
   function getApplicationNameById(id: number, fallback: string): string {
-    const app = applications.data.value.find((app) => app.id == id)
+    const app = applications.data.value?.find((app) => app.id == id)
     if (app != undefined) {
       return app.label
     }
@@ -85,7 +83,7 @@ export const useNetifydStore = defineStore('netifyd', () => {
   }
 
   function getProtocolNameById(id: number, fallback: string): string {
-    const proto = protocols.data.value.find((proto) => proto.id == id)
+    const proto = protocols.data.value?.find((proto) => proto.id == id)
     if (proto != undefined) {
       return proto.label
     }

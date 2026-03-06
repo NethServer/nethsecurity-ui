@@ -12,6 +12,7 @@ import messages from '@intlify/unplugin-vue-i18n/messages'
 
 import App from './App.vue'
 import router from './router'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -37,5 +38,10 @@ app.use(
     messages
   })
 )
+
+// tanstack
+app.use(VueQueryPlugin, {
+  enableDevtoolsV6Plugin: true
+})
 
 app.mount('#app')

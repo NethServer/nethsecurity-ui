@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { byteFormat1024, kbpsFormat, NeModal } from '@nethesis/vue-components'
-import type { FlowEvent } from '@/components/standalone/monitoring/FlowsTable.vue'
+import type { FlowEvent } from '@/composables/useFlows'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { formatDistance } from 'date-fns'

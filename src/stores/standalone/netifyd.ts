@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useQuery } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
-import type { Flow } from '@/components/standalone/monitoring/FlowsTable.vue'
+import type { Flow } from '@/composables/useFlows.ts'
 
 export type Response<T> = {
   data: {

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { NeBadgeV2, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, h } from 'vue'
-import type { Badge } from '@/components/standalone/monitoring/FlowsTable.vue'
+import type { Badge } from '@/composables/useFlows'
 
 const { t } = useI18n()
 

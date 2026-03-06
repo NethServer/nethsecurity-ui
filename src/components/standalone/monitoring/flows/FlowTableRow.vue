@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import {
-  type Badge,
-  extractBadges,
-  type FlowEvent
-} from '@/components/standalone/monitoring/FlowsTable.vue'
 import { kbpsFormat, NeButton, NeTableCell, NeTableRow, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
@@ -17,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import FlowBadge from '@/components/standalone/monitoring/flows/FlowBadge.vue'
 import { type Application, type Protocol, useNetifydStore } from '@/stores/standalone/netifyd.ts'
+import { type FlowEvent, type Badge, extractBadges } from '@/composables/useFlows'
 
 const { item } = defineProps<{
   item: FlowEvent

@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.15.0](https://github.com/NethServer/nethsecurity-ui/compare/2.14.0...2.15.0) (2026-03-06)
+
+
+### Features
+
+* added netifyd flows ([#675](https://github.com/NethServer/nethsecurity-ui/issues/675)) ([6a51f53](https://github.com/NethServer/nethsecurity-ui/commit/6a51f5346cdbe921c94dc4270887f25ab51c24b6))
+* **openvpn-rw:** add certificates renewal functionalities ([#707](https://github.com/NethServer/nethsecurity-ui/issues/707)) ([d82b627](https://github.com/NethServer/nethsecurity-ui/commit/d82b6278dd14bd400f89f5897e17d2aceebb21d6))
+* **port-forward:** improve usability of the create and edit port-forward modal ([#704](https://github.com/NethServer/nethsecurity-ui/issues/704)) ([c32d365](https://github.com/NethServer/nethsecurity-ui/commit/c32d365ec369f87434edb9f142f2e95f432d25b1))
+
+
+### Bug Fixes
+
+* **dpi:** updated application count ([#712](https://github.com/NethServer/nethsecurity-ui/issues/712)) ([e17bc2a](https://github.com/NethServer/nethsecurity-ui/commit/e17bc2adcf4661a0142f87d0aee902e9f3c80fad))
+* **multiwan-rules:** improve condition checks for source and destination objects on edit drawer ([#709](https://github.com/NethServer/nethsecurity-ui/issues/709)) ([7bf1635](https://github.com/NethServer/nethsecurity-ui/commit/7bf163554041f9513063a4979587542329174fea))
+
 ## [2.14.0](https://github.com/NethServer/nethsecurity-ui/compare/2.13.1...2.14.0) (2026-02-18)
 
 

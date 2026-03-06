@@ -69,7 +69,7 @@ watch(data, (newData) => {
     <NeInlineNotification
       v-else-if="isError"
       :description="t(getAxiosErrorMessage(error))"
-      :title="t('standalone.unable_to_get_flows_configuration')"
+      :title="t('standalone.flows.unable_to_get_flows_configuration')"
       kind="error"
     />
     <template v-else>

@@ -8,7 +8,7 @@ import {
   NeToggle
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { MessageBag } from '@/lib/validation.ts'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus.ts'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
@@ -21,8 +21,10 @@ type SetConfigPayload = {
   expired_persistence: string
 }
 
-defineProps<{
+const props = defineProps<{
   show: boolean
+  enabled: boolean
+  expiredPersistence: string
 }>()
 
 const emit = defineEmits<{
@@ -32,8 +34,18 @@ const emit = defineEmits<{
 const uci = useUciPendingChangesStore()
 const queryClient = useQueryClient()
 
-const enabled = defineModel<boolean>('enabled', { default: false })
-const expiredPersistence = defineModel<string>('expiredPersistence', { default: '' })
+const _enabled = ref(false)
+const _expiredPersistence = ref('')
+
+watch(
+  () => props.show,
+  (isShown) => {
+    if (isShown) {
+      _enabled.value = props.enabled
+      _expiredPersistence.value = props.expiredPersistence
+    }
+  }
+)
 
 const validationBag = ref(new MessageBag())
 
@@ -56,8 +68,8 @@ const { mutate, error, status, isPending } = useMutation({
 
 function submit() {
   mutate({
-    enabled: enabled.value,
-    expired_persistence: expiredPersistence.value
+    enabled: _enabled.value,
+    expired_persistence: _expiredPersistence.value
   })
 }
 </script>
@@ -76,14 +88,14 @@ function submit() {
         kind="error"
       />
       <NeToggle
-        v-model="enabled"
+        v-model="_enabled"
         :disabled="isPending"
         :invalid-message="t(validationBag.getFirstI18nKeyFor('enabled'))"
-        :label="enabled ? t('common.enabled') : t('common.disabled')"
+        :label="_enabled ? t('common.enabled') : t('common.disabled')"
         :top-label="t('standalone.flows.daemon_enabled')"
       />
       <NeTextInput
-        v-model="expiredPersistence"
+        v-model="_expiredPersistence"
         :disabled="isPending"
         :invalid-message="t(validationBag.getFirstI18nKeyFor('expired_persistence'))"
         :label="t('standalone.flows.persistence_after_expiration')"

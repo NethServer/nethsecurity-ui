@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { kbpsFormat, NeButton, NeTableCell, NeTableRow, NeTooltip } from '@nethesis/vue-components'
+import { NeButton, NeTableCell, NeTableRow, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { differenceInSeconds } from 'date-fns'
@@ -12,7 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import FlowBadge from '@/components/standalone/monitoring/flows/FlowBadge.vue'
 import { type Application, type Protocol, useNetifydStore } from '@/stores/standalone/netifyd.ts'
-import { type FlowEvent, type Badge, extractBadges } from '@/composables/useFlows'
+import { type FlowEvent, type Badge, extractBadges, formatRate } from '@/composables/useFlows'
 
 const { item } = defineProps<{
   item: FlowEvent
@@ -51,10 +51,6 @@ const destinationIp = computed<string>(() =>
 const destinationPort = computed<number>(() =>
   item.flow.local_origin ? item.flow.other_port : item.flow.local_port
 )
-
-function formatRate(rate: number): string {
-  return kbpsFormat((rate * 8) / 1000)
-}
 </script>
 
 <template>

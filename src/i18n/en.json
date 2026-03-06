@@ -2428,7 +2428,8 @@
       "persistence_after_expiration_description": "Keep flow information available for a short period after the flow has ended. This allows to view information about recently ended flows, which can be useful to investigate connections that are established and closed in a short time frame.",
       "daemon_not_running": "Flows daemon is enabled but not running",
       "daemon_not_running_description": "If you just enabled the daemon, commit changes and wait a few seconds for the daemon to start. If the problem persists, check the system logs for errors related to the flows daemon.",
-      "raw_data": "Raw data"
+      "raw_data": "Raw data",
+      "table_aria_label": "Table of active flows"
     },
     "ping_latency_monitor": {
       "title": "Ping latency monitor",

@@ -8,6 +8,7 @@ import {
   faCancel
 } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { kbpsFormat } from '@nethesis/vue-components'
 
 export type FlowListResponse = {
   data: {
@@ -171,4 +172,8 @@ export function matchBadge(tag: string): Badge {
 
 export function extractBadges(entry: FlowEvent): Badge[] {
   return entry.tags.map((tag) => matchBadge(tag))
+}
+
+export function formatRate(rate: number): string {
+  return kbpsFormat((rate * 8) / 1000)
 }

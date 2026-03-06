@@ -145,7 +145,7 @@ watch(queryDebounced, () => {
   }
 })
 
-const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
+const { data, isError, error, isPending, isSuccess, dataUpdatedAt } = useQuery({
   queryKey: [
     'flow',
     'list',
@@ -356,6 +356,7 @@ function resetFilters() {
       </div>
     </div>
     <NeTable
+      v-if="isSuccess"
       :aria-label="t('standalone.flows.table_aria_label')"
       :loading="isPending"
       :skeleton-columns="11"

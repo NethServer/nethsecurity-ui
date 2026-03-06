@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { byteFormat1024, kbpsFormat, NeModal } from '@nethesis/vue-components'
-import type { FlowEvent } from '@/composables/useFlows'
+import { byteFormat1024, NeModal } from '@nethesis/vue-components'
+import { formatRate, type FlowEvent } from '@/composables/useFlows'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { formatDistance } from 'date-fns'
@@ -39,7 +39,7 @@ type Fact = {
 
 type FactsGroup = {
   title: string
-  facts: Fact[] | string[]
+  facts: Fact[]
 }
 
 const facts = computed<FactsGroup[]>(() => {
@@ -276,11 +276,6 @@ const downloadBytes = computed(() => {
   return _flow.value.flow.local_origin ? _flow.value.flow.other_bytes : _flow.value.flow.local_bytes
 })
 
-function formatRate(rate: number): string {
-  // Convert bytes/s to Kbps: (bytes * 8 bits/byte) / 1000
-  return kbpsFormat((rate * 8) / 1000)
-}
-
 const hostnameInformationVisible = computed<boolean>(() => {
   return [
     _flow.value?.flow.host_server_name != undefined,
@@ -288,10 +283,6 @@ const hostnameInformationVisible = computed<boolean>(() => {
     _flow.value?.flow.ssl?.client_sni != undefined
   ].some((value) => value)
 })
-
-function isStringArray(facts: Fact[] | string[]): facts is string[] {
-  return typeof facts[0] == 'string'
-}
 </script>
 
 <template>
@@ -309,16 +300,7 @@ function isStringArray(facts: Fact[] | string[]): facts is string[] {
       <div v-if="_flow != undefined" class="space-y-8">
         <div v-for="entry in facts" :key="entry.title">
           <h1 class="pb-2">{{ entry.title }}</h1>
-          <ul v-if="isStringArray(entry.facts)">
-            <li
-              v-for="(item, index) in entry.facts"
-              :key="index"
-              class="border-gray-200 px-4 py-2 not-last:border-b dark:border-gray-700"
-            >
-              {{ item }}
-            </li>
-          </ul>
-          <dl v-else>
+          <dl>
             <div
               v-for="item in entry.facts"
               :key="item.label"

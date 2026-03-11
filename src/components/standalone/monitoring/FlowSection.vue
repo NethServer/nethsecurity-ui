@@ -3,16 +3,24 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
-  NeSkeleton
+  NeSkeleton,
+  savePreference
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import FlowConfigureDrawer from '@/components/standalone/monitoring/flows/FlowConfigureDrawer.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import FlowsTable from '@/components/standalone/monitoring/FlowsTable.vue'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin.ts'
+import { isStandaloneMode } from '@/lib/config.ts'
+import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin.ts'
+import { getPreference } from '@nethesis/vue-components'
 
 const { t } = useI18n()
+const subscription = useSubscriptionStore()
+const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
 
 type FlowDaemonResponse = {
   data: {
@@ -48,11 +56,34 @@ watch(data, (newData) => {
     expiredPersistence.value = newData.configuration.expired_persistence
   }
 })
+
+const dismissedWarning = ref<boolean>(false)
+const fewAppsWarning = computed<boolean>(() => {
+  return !dismissedWarning.value && !subscription.isActive
+})
+
+function dismissWarning() {
+  savePreference('dismiss_flows_warning', true, loginStore.username)
+  dismissedWarning.value = true
+}
+
+onMounted(() => {
+  dismissedWarning.value = getPreference('dismiss_flows_warning', loginStore.username)
+})
 </script>
 
 <template>
   <div class="space-y-4">
     <div class="flex flex-wrap items-start gap-4">
+      <NeInlineNotification
+        v-if="fewAppsWarning && (data?.status ?? false)"
+        :description="t('standalone.flows.few_apps_warning_description')"
+        :title="t('standalone.flows.few_apps_warning')"
+        class="w-full"
+        kind="info"
+        show-close-button
+        @close="dismissWarning"
+      />
       <p class="mr-auto max-w-xl text-secondary-neutral">{{ t('standalone.flows.subtitle') }}</p>
       <template v-if="isSuccess">
         <NeButton

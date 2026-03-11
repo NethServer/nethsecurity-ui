@@ -150,12 +150,7 @@ export function matchBadge(tag: string): Badge {
         id: 'blocked',
         text: 'standalone.flows.blocked',
         icon: faCancel,
-        customClasses: [
-          'bg-amber-100',
-          'text-amber-800',
-          'dark:bg-amber-700',
-          'dark:text-amber-100'
-        ],
+        customClasses: ['bg-rose-100', 'text-rose-800', 'dark:bg-rose-700', 'dark:text-rose-100'],
         content: 'standalone.flows.blocked_description'
       }
     }

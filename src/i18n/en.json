@@ -2381,6 +2381,8 @@
       "remote": "Remote",
       "remote_description": "Connection has been established from internet to the firewall",
       "more_info": "More info",
+      "few_apps_warning": "Limited application visibility",
+      "few_apps_warning_description": "No subscription is enabled: only a reduced set of applications is available in flows. Register a subscription to unlock full DPI application detection and see more than 2600 applications.",
       "flow_details": "Flow details",
       "endpoint_information": "Endpoint information",
       "source_ip": "Source IP",

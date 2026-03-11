@@ -5,7 +5,7 @@ import type { Flow } from '@/composables/useFlows.ts'
 
 export type Response<T> = {
   data: {
-    values: T[]
+    values: T
   }
 }
 
@@ -25,13 +25,13 @@ export type Protocol = {
 export const useNetifydStore = defineStore('netifyd', () => {
   const applications = useQuery({
     queryKey: ['netifyd', 'applications'],
-    queryFn: () => ubusCall<Response<Application>>('ns.dpi', 'list-application-catalog'),
+    queryFn: () => ubusCall<Response<Application[]>>('ns.dpi', 'list-application-catalog'),
     select: (data) => data.data.values
   })
 
   const protocols = useQuery({
     queryKey: ['netifyd', 'protocols'],
-    queryFn: () => ubusCall<Response<Application>>('ns.dpi', 'list-protocol-catalog'),
+    queryFn: () => ubusCall<Response<Protocol[]>>('ns.dpi', 'list-protocol-catalog'),
     select: (data) => data.data.values
   })
 

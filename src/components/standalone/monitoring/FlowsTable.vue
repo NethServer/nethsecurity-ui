@@ -145,7 +145,7 @@ watch(queryDebounced, () => {
   }
 })
 
-const { data, isError, error, isPending, isSuccess, dataUpdatedAt } = useQuery({
+const { data, isError, error, isPending, dataUpdatedAt } = useQuery({
   queryKey: [
     'flow',
     'list',
@@ -356,7 +356,6 @@ function resetFilters() {
       </div>
     </div>
     <NeTable
-      v-if="isSuccess"
       :aria-label="t('standalone.flows.table_aria_label')"
       :loading="isPending"
       :skeleton-columns="11"
@@ -395,7 +394,7 @@ function resetFilters() {
         </NeTableHeadCell>
         <NeTableHeadCell />
       </NeTableHead>
-      <NeTableBody v-if="data!.total > 0">
+      <NeTableBody v-if="data?.total ?? 0 > 0">
         <FlowTableRow
           v-for="flow in data!.flows"
           :key="flow.flow.digest"
@@ -419,16 +418,16 @@ function resetFilters() {
           </NeTableCell>
         </NeTableRow>
       </NeTableBody>
-      <template v-if="!isPending && data!.total > 0" #paginator>
+      <template v-if="!isPending && (data?.total ?? 0 > 0)" #paginator>
         <NePaginator
           :current-page="currentPage"
           :nav-pagination-label="t('ne_table.pagination')"
           :next-label="t('ne_table.go_to_next_page')"
-          :page-size="data!.per_page"
+          :page-size="data?.per_page ?? 0"
           :page-size-label="t('ne_table.show')"
           :previous-label="t('ne_table.go_to_previous_page')"
           :range-of-total-label="t('ne_table.of')"
-          :total-rows="data!.total"
+          :total-rows="data?.total ?? 0"
           @select-page="
             (page: number) => {
               currentPage = page

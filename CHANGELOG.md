@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.15.1](https://github.com/NethServer/nethsecurity-ui/compare/2.15.0...2.15.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* flows adjustments ([02eeda0](https://github.com/NethServer/nethsecurity-ui/commit/02eeda083e7c870b0adb9278d9478081ef7eba87))
+* **port-forward:** update traffic type handling in form reset logic ([#717](https://github.com/NethServer/nethsecurity-ui/issues/717)) ([b4ee4d6](https://github.com/NethServer/nethsecurity-ui/commit/b4ee4d63691bae6419b4226f12c1d5ba7d5d2ee0))
+
 ## [2.15.0](https://github.com/NethServer/nethsecurity-ui/compare/2.14.0...2.15.0) (2026-03-06)
 
 

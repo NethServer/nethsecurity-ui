@@ -271,8 +271,10 @@ function resetForm() {
   }
 
   if (props.initialItem && props.initialItem?.protocol.some((proto) => proto === 'all')) {
+    trafficType.value = 'all_traffic'
     protocols.value = []
   } else {
+    trafficType.value = 'select_protocols'
     protocols.value = (props.initialItem?.protocol ?? ['tcp', 'udp']).map((proto: string) => ({
       id: proto,
       label: proto.toUpperCase()

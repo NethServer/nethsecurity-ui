@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.2](https://github.com/NethServer/nethsecurity-ui/compare/2.15.1...2.15.2) (2026-03-12)
+
+
+### Bug Fixes
+
+* **flows:** adjusted few apps warning ([b9948a7](https://github.com/NethServer/nethsecurity-ui/commit/b9948a7c57d4bc8f2c89396d0a46077aacb96ae1))
+
 ## [2.15.1](https://github.com/NethServer/nethsecurity-ui/compare/2.15.0...2.15.1) (2026-03-11)
 
 

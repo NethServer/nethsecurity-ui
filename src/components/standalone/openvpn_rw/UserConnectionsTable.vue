@@ -91,24 +91,42 @@ function formatDuration(seconds: number): string {
     :skeleton-rows="5"
   >
     <NeTableHead>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="account" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.account')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="startTime" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.start_time')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="endTime" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.end_time')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="duration" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.duration')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="virtualIpAddress" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.virtual_ip_address')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell :sortable="props.connectionsRecords.length > 0" column-key="remoteIpAddress" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.remote_ip_address')
-      }}</NeTableHeadCell>
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="account"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.account') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="startTime"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.start_time') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="endTime"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.end_time') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="duration"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.duration') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="virtualIpAddress"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.virtual_ip_address') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="remoteIpAddress"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.remote_ip_address') }}</NeTableHeadCell
+      >
       <NeTableHeadCell>{{ t('standalone.openvpn_rw.history.received_sent') }}</NeTableHeadCell>
     </NeTableHead>
     <NeTableBody v-if="props.connectionsRecords.length > 0">
@@ -135,38 +153,30 @@ function formatDuration(seconds: number): string {
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_rw.history.received_sent')">
           <div :class="['flex', 'flex-row', 'items-center']">
-            <FontAwesomeIcon
-              :icon="faArrowDown"
-              class="mr-2 h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faArrowDown" class="mr-2 h-4 w-4" aria-hidden="true" />
             {{ item?.bytesReceived ? byteFormat1024(item.bytesReceived) : '-' }} /
             {{ item?.bytesSent ? byteFormat1024(item.bytesSent) : '-' }}
-            <FontAwesomeIcon
-              :icon="faArrowUp" 
-              class="ml-2 h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faArrowUp" class="ml-2 h-4 w-4" aria-hidden="true" />
           </div>
         </NeTableCell>
       </NeTableRow>
     </NeTableBody>
     <NeTableBody v-else>
-        <NeTableRow>
-          <NeTableCell colspan="10">
-            <NeEmptyState
-              class="bg-white dark:bg-gray-950"
-              :description="t('standalone.openvpn_rw.history.no_connections_found_description')"
-              :icon="faTable"
-              :title="t('standalone.openvpn_rw.history.no_connections_found')"
-            >
-              <NeButton @click="emit('clear-filters')">
-                {{ t('common.clear_filters') }}
-              </NeButton>
-            </NeEmptyState>
-          </NeTableCell>
-        </NeTableRow>
-      </NeTableBody>
+      <NeTableRow>
+        <NeTableCell colspan="10">
+          <NeEmptyState
+            class="bg-white dark:bg-gray-950"
+            :description="t('standalone.openvpn_rw.history.no_connections_found_description')"
+            :icon="faTable"
+            :title="t('standalone.openvpn_rw.history.no_connections_found')"
+          >
+            <NeButton @click="emit('clear-filters')">
+              {{ t('common.clear_filters') }}
+            </NeButton>
+          </NeEmptyState>
+        </NeTableCell>
+      </NeTableRow>
+    </NeTableBody>
     <template #paginator>
       <NePaginator
         :current-page="currentPage"

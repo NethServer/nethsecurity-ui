@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -13,70 +13,38 @@ import {
   NeTableRow,
   NeTableCell,
   NePaginator,
-  useItemPagination,
   formatDateLoc,
   byteFormat1024,
-  useSort,
-  NeSortDropdown
+  NeSortDropdown,
+  NeEmptyState,
+  NeButton
 } from '@nethesis/vue-components'
 import type { ConnectionsRecord } from './ConnectionsHistory.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { ref, computed } from 'vue'
 import type { SortEvent } from '@nethesis/vue-components'
+import { faArrowDown, faArrowUp, faTable } from '@fortawesome/free-solid-svg-icons'
+
 const { t } = useI18n()
 
 const props = defineProps<{
   connectionsRecords: ConnectionsRecord[]
+  currentPage: number
+  totalRows: number
+  pageSize: number
+  sortKey: string
+  sortDescending: boolean
 }>()
 
-const pageSize = ref(10)
+const emit = defineEmits<{
+  (e: 'select-page', page: number): void
+  (e: 'select-page-size', size: number): void
+  (e: 'sort', payload: { key: string; descending: boolean }): void
+  (e: 'clear-filters'): void
+}>()
 
-const sortKey = ref<keyof ConnectionsRecord>('startTime')
-const sortDescending = ref(true)
-
-function compareIpAddresses(ip1: string, ip2: string): number {
-  const octets1 = ip1.split('.').map(Number)
-  const octets2 = ip2.split('.').map(Number)
-
-  for (let i = 0; i < 4; i++) {
-    if (octets1[i] !== octets2[i]) {
-      return octets1[i]! - octets2[i]!
-    }
-  }
-  return 0
+function onSort(payload: SortEvent) {
+  emit('sort', { key: payload.key, descending: payload.descending })
 }
-
-// Custom sorting functions
-const sortFunctions = {
-  endTime: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return (a.endTime ?? 0) - (b.endTime ?? 0)
-  },
-  duration: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return (a.duration ?? 0) - (b.duration ?? 0)
-  },
-  virtualIpAddress: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return compareIpAddresses(a.virtualIpAddress, b.virtualIpAddress)
-  },
-  remoteIpAddress: (a: ConnectionsRecord, b: ConnectionsRecord) => {
-    return compareIpAddresses(a.remoteIpAddress, b.remoteIpAddress)
-  }
-}
-
-const { sortedItems } = useSort(
-  computed(() => props.connectionsRecords),
-  sortKey,
-  sortDescending,
-  sortFunctions
-)
-
-const onSort = (payload: SortEvent) => {
-  sortKey.value = payload.key as keyof ConnectionsRecord
-  sortDescending.value = payload.descending
-}
-
-const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
-  itemsPerPage: pageSize
-})
 
 // Format duration in seconds to human readable format
 function formatDuration(seconds: number): string {
@@ -92,8 +60,9 @@ function formatDuration(seconds: number): string {
 
 <template>
   <NeSortDropdown
-    v-model:sort-key="sortKey"
-    v-model:sort-descending="sortDescending"
+    v-if="props.connectionsRecords.length > 0"
+    :sort-key="props.sortKey"
+    :sort-descending="props.sortDescending"
     :label="t('sort.sort')"
     :options="[
       { id: 'account', label: t('standalone.openvpn_rw.history.account') },
@@ -111,38 +80,57 @@ function formatDuration(seconds: number): string {
     :ascending-label="t('sort.ascending')"
     :descending-label="t('sort.descending')"
     class="xl:hidden"
+    @sort="onSort"
   />
   <NeTable
-    :sort-key="sortKey"
-    :sort-descending="sortDescending"
+    :sort-key="props.sortKey"
+    :sort-descending="props.sortDescending"
     :aria-label="t('standalone.openvpn_rw.history.connections_table')"
     card-breakpoint="xl"
     :skeleton-columns="5"
     :skeleton-rows="5"
   >
     <NeTableHead>
-      <NeTableHeadCell sortable column-key="account" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.account')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="startTime" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.start_time')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="endTime" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.end_time')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="duration" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.duration')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="virtualIpAddress" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.virtual_ip_address')
-      }}</NeTableHeadCell>
-      <NeTableHeadCell sortable column-key="remoteIpAddress" @sort="onSort">{{
-        t('standalone.openvpn_rw.history.remote_ip_address')
-      }}</NeTableHeadCell>
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="account"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.account') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="startTime"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.start_time') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="endTime"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.end_time') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="duration"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.duration') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="virtualIpAddress"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.virtual_ip_address') }}</NeTableHeadCell
+      >
+      <NeTableHeadCell
+        :sortable="props.connectionsRecords.length > 0"
+        column-key="remoteIpAddress"
+        @sort="onSort"
+        >{{ t('standalone.openvpn_rw.history.remote_ip_address') }}</NeTableHeadCell
+      >
       <NeTableHeadCell>{{ t('standalone.openvpn_rw.history.received_sent') }}</NeTableHeadCell>
     </NeTableHead>
-    <NeTableBody>
-      <NeTableRow v-for="item in paginatedItems" :key="item.startTime">
+    <NeTableBody v-if="props.connectionsRecords.length > 0">
+      <NeTableRow v-for="item in props.connectionsRecords" :key="item.startTime">
         <NeTableCell :data-label="t('standalone.openvpn_rw.history.account')">
           {{ item.account }}
         </NeTableCell>
@@ -165,38 +153,42 @@ function formatDuration(seconds: number): string {
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_rw.history.received_sent')">
           <div :class="['flex', 'flex-row', 'items-center']">
-            <FontAwesomeIcon
-              :icon="['fas', 'arrow-down']"
-              class="mr-2 h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faArrowDown" class="mr-2 h-4 w-4" aria-hidden="true" />
             {{ item?.bytesReceived ? byteFormat1024(item.bytesReceived) : '-' }} /
             {{ item?.bytesSent ? byteFormat1024(item.bytesSent) : '-' }}
-            <FontAwesomeIcon :icon="['fas', 'arrow-up']" class="ml-2 h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faArrowUp" class="ml-2 h-4 w-4" aria-hidden="true" />
           </div>
+        </NeTableCell>
+      </NeTableRow>
+    </NeTableBody>
+    <NeTableBody v-else>
+      <NeTableRow>
+        <NeTableCell colspan="10">
+          <NeEmptyState
+            class="bg-white dark:bg-gray-950"
+            :description="t('standalone.openvpn_rw.history.no_connections_found_description')"
+            :icon="faTable"
+            :title="t('standalone.openvpn_rw.history.no_connections_found')"
+          >
+            <NeButton @click="emit('clear-filters')">
+              {{ t('common.clear_filters') }}
+            </NeButton>
+          </NeEmptyState>
         </NeTableCell>
       </NeTableRow>
     </NeTableBody>
     <template #paginator>
       <NePaginator
         :current-page="currentPage"
-        :total-rows="props.connectionsRecords.length"
+        :total-rows="totalRows"
         :page-size="pageSize"
         :nav-pagination-label="t('ne_table.pagination')"
         :next-label="t('ne_table.go_to_next_page')"
         :previous-label="t('ne_table.go_to_previous_page')"
         :range-of-total-label="t('ne_table.of')"
         :page-size-label="t('ne_table.show')"
-        @select-page="
-          (page: number) => {
-            currentPage = page
-          }
-        "
-        @select-page-size="
-          (size: number) => {
-            pageSize = size
-          }
-        "
+        @select-page="(page: number) => emit('select-page', page)"
+        @select-page-size="(size: number) => emit('select-page-size', size)"
       />
     </template>
   </NeTable>

@@ -44,8 +44,8 @@ type ConnectionsHistoryResponse = {
     current_page: number
     last_page: number
     per_page: number
-    results: number,
-    total: number,
+    results: number
+    total: number
     filters: {
       accounts: string[]
     }
@@ -87,7 +87,15 @@ const accountsFilter = useRouteQuery<string, string[]>('accounts', '', {
 const currentPage = ref(1)
 const perPage = ref(10)
 
-type SortableKeys = 'account' | 'startTime' | 'endTime' | 'duration' | 'virtualIpAddress' | 'remoteIpAddress' | 'bytesReceived' | 'bytesSent'
+type SortableKeys =
+  | 'account'
+  | 'startTime'
+  | 'endTime'
+  | 'duration'
+  | 'virtualIpAddress'
+  | 'remoteIpAddress'
+  | 'bytesReceived'
+  | 'bytesSent'
 const sortKey = useRouteQuery<SortableKeys>('sort', 'startTime')
 const sortDescending = useRouteQuery<string, boolean>('descending', 'true', {
   transform: {
@@ -209,7 +217,9 @@ async function downloadAllHistory() {
       await deleteFile(res.data.csv_path)
     }
   } catch (exception: any) {
-    downloadError.value.notificationTitle = t('standalone.openvpn_rw.history.cannot_download_history')
+    downloadError.value.notificationTitle = t(
+      'standalone.openvpn_rw.history.cannot_download_history'
+    )
     downloadError.value.notificationDescription = t(getAxiosErrorMessage(exception))
     downloadError.value.notificationDetails = exception.toString()
   }
@@ -301,9 +311,22 @@ async function downloadAllHistory() {
       :page-size="perPage"
       :sort-key="sortKey"
       :sort-descending="sortDescending"
-      @select-page="(page: number) => { currentPage = page }"
-      @select-page-size="(size: number) => { perPage = size }"
-      @sort="({ key, descending }: { key: string; descending: boolean }) => { sortKey = key as typeof sortKey; sortDescending = descending }"
+      @select-page="
+        (page: number) => {
+          currentPage = page
+        }
+      "
+      @select-page-size="
+        (size: number) => {
+          perPage = size
+        }
+      "
+      @sort="
+        ({ key, descending }: { key: string; descending: boolean }) => {
+          sortKey = key as typeof sortKey
+          sortDescending = descending
+        }
+      "
       @clear-filters="clearFilters"
     />
     <NeEmptyState

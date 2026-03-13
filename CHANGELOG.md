@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.3](https://github.com/NethServer/nethsecurity-ui/compare/2.15.2...2.15.3) (2026-03-13)
+
+
+### Bug Fixes
+
+* limiting bond name to 2 characters ([51247e0](https://github.com/NethServer/nethsecurity-ui/commit/51247e0568cedaa1dc6a251b514f7b2863aec636))
+
 ## [2.15.2](https://github.com/NethServer/nethsecurity-ui/compare/2.15.1...2.15.2) (2026-03-12)
 
 

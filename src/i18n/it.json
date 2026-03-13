@@ -2352,7 +2352,6 @@
       "interface_name_traffic": "Traffico {name}",
       "site_to_site_vpn": "VPN Site-to-Site",
       "rw_openvpn": "OpenVPN RW",
-      "instant_traffic": "Traffico in tempo reale",
       "recent_traffic": "Traffico recente",
       "wan_events": "Eventi WAN",
       "blocked_threats": "Minacce bloccate",

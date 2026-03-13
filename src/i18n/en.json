@@ -1118,6 +1118,7 @@
       "delete_bond": "Delete bond",
       "bond_identifier": "Bond identifier",
       "bond_identifier_helper": "Maximum 2 characters",
+      "bond_identifier_placeholder": "e.g. b0, b1",
       "management_ipv4_address_cidr": "Management IPv4 address (CIDR notation)",
       "management_ipv4_address_cidr_tooltip": "This IP address is for internal use only and won't be the primary address of the bond. Make sure it's not already used in your network",
       "create_bond": "Create bond",

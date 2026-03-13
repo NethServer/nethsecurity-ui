@@ -910,6 +910,7 @@
       "delete_bond": "Elimina bond",
       "bond_identifier": "Identificativo bond",
       "bond_identifier_helper": "Massimo 2 caratteri",
+      "bond_identifier_placeholder": "es. b0, b1",
       "management_ipv4_address_cidr": "Indirizzo IPv4 di gestione (notazione CIDR)",
       "create_bond": "Crea bond",
       "configure_bond": "Configura bond",

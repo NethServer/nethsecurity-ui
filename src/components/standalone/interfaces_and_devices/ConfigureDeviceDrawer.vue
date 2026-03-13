@@ -1008,6 +1008,11 @@ async function listZonesForDeviceConfig() {
               ? t('standalone.interfaces_and_devices.bond_identifier')
               : t('standalone.interfaces_and_devices.interface_name')
           "
+          :placeholder="
+            isCreatingBond
+              ? t('standalone.interfaces_and_devices.bond_identifier_placeholder')
+              : undefined
+          "
           :helper-text="
             isCreatingBond
               ? t('standalone.interfaces_and_devices.bond_identifier_helper')

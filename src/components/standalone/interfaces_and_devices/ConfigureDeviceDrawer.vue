@@ -675,7 +675,7 @@ function validate() {
       if (isConfiguringFromScratch.value) {
         let maxLen = 13
         if (logicalIfaceType.value == 'bond') {
-          maxLen = 10
+          maxLen = 2
         }
         if (protocol.value == 'pppoe') {
           maxLen = 5
@@ -1005,8 +1005,13 @@ async function listZonesForDeviceConfig() {
           v-model.trim="interfaceName"
           :label="
             isCreatingBond
-              ? t('standalone.interfaces_and_devices.bond_name')
+              ? t('standalone.interfaces_and_devices.bond_identifier')
               : t('standalone.interfaces_and_devices.interface_name')
+          "
+          :helper-text="
+            isCreatingBond
+              ? t('standalone.interfaces_and_devices.bond_identifier_helper')
+              : undefined
           "
           :invalid-message="t(error.interfaceName)"
           :disabled="!isConfiguringFromScratch || loading.configure"

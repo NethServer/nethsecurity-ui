@@ -89,6 +89,7 @@ const localNetworksOptions = ref<NeComboboxOption[]>([])
 
 const id = ref('')
 const generatedPresharedKey = ref('')
+const wasDisabled = ref(false)
 
 // Step 1 fields
 const enabled = ref(true)
@@ -249,6 +250,7 @@ async function resetForm() {
   id.value = props.itemToEdit?.id ?? ''
   name.value = tunnelData?.ns_name ?? ''
   enabled.value = tunnelData ? tunnelData.enabled === '1' : true
+  wasDisabled.value = tunnelData ? tunnelData.enabled === '0' : false
   wanIpAddress.value = tunnelData?.local_ip ?? ''
   remoteIpAddress.value = tunnelData?.gateway ?? ''
   remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
@@ -447,6 +449,10 @@ async function createOrEditTunnel() {
   try {
     isSavingChanges.value = true
     await ubusCall('ns.ipsectunnel', requestType, payload)
+    // enabling disabled tunnel from edit drawer -> call enable-tunnel like kebab menu does
+    if (isEditing && wasDisabled.value && enabled.value) {
+      await ubusCall('ns.ipsectunnel', 'enable-tunnel', { id: id.value })
+    }
     emit('add-edit-tunnel')
     close()
   } catch (err: any) {

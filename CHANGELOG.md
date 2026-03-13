@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.4](https://github.com/NethServer/nethsecurity-ui/compare/2.15.3...2.15.4) (2026-03-13)
+
+
+### Bug Fixes
+
+* **bond:** added placeholder ([3db9949](https://github.com/NethServer/nethsecurity-ui/commit/3db9949b77734167d37753fb10f6bea7f2fe9301))
+
 ## [2.15.3](https://github.com/NethServer/nethsecurity-ui/compare/2.15.2...2.15.3) (2026-03-13)
 
 

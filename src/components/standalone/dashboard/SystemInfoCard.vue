@@ -93,9 +93,9 @@ async function getSystemInfo() {
     const res = await ubusCall('ns.dashboard', 'system-info')
     systemInfo.value = res.data.result
 
-    freeMemory.value = systemInfo.value.memory.available_bytes
-    const usedMemory = systemInfo.value.memory.used_bytes
-    totalMemory.value = usedMemory + freeMemory.value
+    totalMemory.value = systemInfo.value.memory.MemTotal
+    freeMemory.value = systemInfo.value.memory.MemAvailable
+    const usedMemory = totalMemory.value - freeMemory.value
     memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
 
     freeRoot.value = systemInfo.value.storage['/'].available_bytes

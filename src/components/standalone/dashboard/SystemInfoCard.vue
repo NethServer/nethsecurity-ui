@@ -93,9 +93,22 @@ async function getSystemInfo() {
     const res = await ubusCall('ns.dashboard', 'system-info')
     systemInfo.value = res.data.result
 
-    freeMemory.value = systemInfo.value.memory.available_bytes
-    const usedMemory = systemInfo.value.memory.used_bytes
-    totalMemory.value = usedMemory + freeMemory.value
+    // Support both old format (available_bytes, used_bytes) and new format (mem_total, mem_available)
+    // Introduced by https://github.com/NethServer/nethsecurity/pull/1569, can be removed after the next release since controllers should be updated
+    if (
+      systemInfo.value.memory.mem_total != undefined &&
+      systemInfo.value.memory.mem_available != undefined
+    ) {
+      // New format
+      totalMemory.value = systemInfo.value.memory.mem_total
+      freeMemory.value = systemInfo.value.memory.mem_available
+    } else {
+      // Old format
+      freeMemory.value = systemInfo.value.memory.available_bytes
+      const usedMemory = systemInfo.value.memory.used_bytes
+      totalMemory.value = usedMemory + freeMemory.value
+    }
+    const usedMemory = totalMemory.value - freeMemory.value
     memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
 
     freeRoot.value = systemInfo.value.storage['/'].available_bytes

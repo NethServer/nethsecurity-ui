@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.5](https://github.com/NethServer/nethsecurity-ui/compare/2.15.4...2.15.5) (2026-03-18)
+
+
+### Bug Fixes
+
+* **dashboard:** get total memory from meminfo ([#726](https://github.com/NethServer/nethsecurity-ui/issues/726)) ([e1e9074](https://github.com/NethServer/nethsecurity-ui/commit/e1e90745952c286aece5d3671b335a876eb1f219))
+
 ## [2.15.4](https://github.com/NethServer/nethsecurity-ui/compare/2.15.3...2.15.4) (2026-03-13)
 
 

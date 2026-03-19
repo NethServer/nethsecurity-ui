@@ -2352,7 +2352,6 @@
       "interface_name_traffic": "Traffico {name}",
       "site_to_site_vpn": "VPN Site-to-Site",
       "rw_openvpn": "OpenVPN RW",
-      "instant_traffic": "Traffico in tempo reale",
       "recent_traffic": "Traffico recente",
       "wan_events": "Eventi WAN",
       "blocked_threats": "Minacce bloccate",
@@ -2962,7 +2961,7 @@
     "report_issue_description": "Se il problema persiste e desideri segnalarlo, segui questi passi",
     "copy_the_command": "Copia comando",
     "report_issue_step_1": "{copyTheCommand} fallito",
-    "report_issue_step_3": "Riporta il problema, assicurati di fornire sia il comando che l'output corrispondente"
+    "report_issue_step_3": "Segnala il problema, assicurandoti di fornire sia il comando che il suo output corrispondente"
   },
   "ne_dropdown_filter": {
     "clear_filter": "Rimuovi filtro",

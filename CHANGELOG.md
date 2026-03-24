@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.6](https://github.com/NethServer/nethsecurity-ui/compare/2.15.5...2.15.6) (2026-03-24)
+
+
+### Bug Fixes
+
+* **flows:** showing url domain if available ([066c5e9](https://github.com/NethServer/nethsecurity-ui/commit/066c5e9ce5bcf60074592039182f59440fdee0ad))
+
 ## [2.15.5](https://github.com/NethServer/nethsecurity-ui/compare/2.15.4...2.15.5) (2026-03-18)
 
 

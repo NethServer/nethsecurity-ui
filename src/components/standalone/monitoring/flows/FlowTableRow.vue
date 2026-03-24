@@ -81,15 +81,23 @@ const destinationPort = computed<number>(() =>
       {{ sourceIp }}:{{ sourcePort }}
     </NeTableCell>
     <NeTableCell :data-label="t('standalone.flows.destination')">
-      <NeTooltip v-if="item.flow.host_server_name != undefined" trigger-event="mouseenter click">
+      <NeTooltip
+        v-if="item.flow.host_server_name != undefined || item.flow.dns_host_name != undefined"
+        trigger-event="mouseenter click"
+      >
         <template #content>
           <p>{{ t('standalone.flows.destination_ip') }}: {{ destinationIp }}</p>
           <p>{{ t('standalone.flows.destination_port') }}: {{ destinationPort }}</p>
           <p v-if="item.flow.dns_host_name != undefined">
-            {{ t('standalone.flows.destination_dns') }} : {{ item.flow.dns_host_name }}
+            {{ t('standalone.flows.associated_dns') }} : {{ item.flow.dns_host_name }}
+          </p>
+          <p v-if="item.flow.host_server_name">
+            {{ t('standalone.flows.server_name_hint') }}: {{ item.flow.host_server_name }}
           </p>
         </template>
-        <template #trigger> {{ item.flow.host_server_name }}:{{ destinationPort }} </template>
+        <template #trigger>
+          {{ item.flow.dns_host_name ?? item.flow.host_server_name }}:{{ destinationPort }}
+        </template>
       </NeTooltip>
       <template v-else> {{ destinationIp }}:{{ destinationPort }} </template>
     </NeTableCell>

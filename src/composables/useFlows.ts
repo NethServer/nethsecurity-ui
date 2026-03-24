@@ -2,7 +2,6 @@ import {
   faArrowDown,
   faArrowUp,
   faBroadcastTower,
-  faMagnifyingGlass,
   faQuestion,
   faUsers,
   faCancel
@@ -134,15 +133,6 @@ export function matchBadge(tag: string): Badge {
           'dark:text-purple-100'
         ],
         content: 'standalone.flows.broadcast_description'
-      }
-    }
-    case 'scanning': {
-      return {
-        id: 'scanning',
-        text: 'standalone.flows.scanning',
-        icon: faMagnifyingGlass,
-        customClasses: ['bg-gray-100', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-gray-100'],
-        content: 'standalone.flows.scanning_description'
       }
     }
     case 'blocked': {

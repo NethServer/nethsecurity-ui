@@ -85,24 +85,17 @@ const facts = computed<FactsGroup[]>(() => {
   if (hostnameInformationVisible.value) {
     const hostnameFacts: Fact[] = []
 
-    if (_flow.value.flow.host_server_name) {
-      hostnameFacts.push({
-        label: t('standalone.flows.hostname'),
-        value: _flow.value.flow.host_server_name
-      })
-    }
-
     if (_flow.value.flow.dns_host_name) {
       hostnameFacts.push({
-        label: t('standalone.flows.domain'),
+        label: t('standalone.flows.associated_dns'),
         value: _flow.value.flow.dns_host_name
       })
     }
 
-    if (_flow.value.flow.ssl?.client_sni) {
+    if (_flow.value.flow.host_server_name) {
       hostnameFacts.push({
-        label: t('standalone.flows.tls_sni_hostname'),
-        value: _flow.value.flow.ssl.client_sni
+        label: t('standalone.flows.hostname'),
+        value: _flow.value.flow.host_server_name
       })
     }
 
@@ -279,8 +272,7 @@ const downloadBytes = computed(() => {
 const hostnameInformationVisible = computed<boolean>(() => {
   return [
     _flow.value?.flow.host_server_name != undefined,
-    _flow.value?.flow.dns_host_name != undefined,
-    _flow.value?.flow.ssl?.client_sni != undefined
+    _flow.value?.flow.dns_host_name != undefined
   ].some((value) => value)
 })
 </script>

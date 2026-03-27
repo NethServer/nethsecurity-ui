@@ -429,7 +429,8 @@
     "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec",
     "cannot_regenerate_cert": "Impossibile rigenerare i certificati",
     "cannot_renew_server_cert": "Impossibile rinnovare il certificato del server",
-    "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati"
+    "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati",
+    "cannot_retrieve_ovpn_rw_connection_history": "Impossibile recuperare la cronologia delle connessioni, riprova più tardi"
   },
   "login": {
     "sign_in": "Accedi",
@@ -1854,7 +1855,7 @@
         "download_history": "Scarica la cronologia del server",
         "received_sent": "Ricevuto / Inviato",
         "no_connections_found": "Nessuna connessione trovata",
-        "connection_history_description": "Questa pagina mostra la cronologia delle connessioni effettuate dagli utenti al server OpenVPN Road Warrior. La cronologia delle connessioni è memorizzata nella RAM e viene persa quando l'unità viene riavviata.",
+        "connection_history_description": "Questa pagina mostra la cronologia delle connessioni effettuate dagli utenti al server OpenVPN Road Warrior. La cronologia delle connessioni è memorizzata nella RAM e viene persa quando l'unità viene riavviata. Se è stato configurato uno storage esterno, la cronologia delle connessioni sarà mantenuta anche dopo il riavvio.",
         "account": "Account",
         "filter_change_suggestion": "Prova a cambiare i filtri di ricerca",
         "last_week": "Settimana scorsa",
@@ -1868,7 +1869,8 @@
         "last_month": "Mese precedente",
         "reset_filter": "Ripristina filtri",
         "all": "Qualsiasi",
-        "reset_filters": "Ripristina filtri"
+        "reset_filters": "Ripristina filtri",
+        "no_connections_found_description": "Nessuna connessione trovata per i filtri attuali. Prova a cambiare i filtri di ricerca o attendi che vengano stabilite nuove connessioni."
       },
       "tabs": {
         "road_warrior_server": "Server Road Warrior",

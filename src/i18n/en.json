@@ -431,7 +431,8 @@
     "cannot_regenerate_cert": "Cannot regenerate certificates",
     "cannot_renew_server_cert": "Cannot renew server certificate",
     "cannot_regenerate_all_certs": "Cannot regenerate all certificates",
-    "cannot_retrieve_flows": "Cannot retrieve flows, please try again later"
+    "cannot_retrieve_flows": "Cannot retrieve flows, please try again later",
+    "cannot_retrieve_ovpn_rw_connection_history": "Cannot retrieve connection history, please try again later"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -1997,7 +1998,7 @@
         "virtual_ip_address": "Virtual IP address",
         "remote_ip_address": "Remote IP address",
         "received_sent": "Received / Sent",
-        "connection_history_description": "This page shows the history of connections made by users to the OpenVPN Road Warrior server. The connection history is stored in RAM and is lost when the unit is rebooted.",
+        "connection_history_description": "This page shows the history of connections made by users to the OpenVPN Road Warrior server. The connection history is stored in RAM and is lost when the unit is rebooted. If an external storage has been configured, the connection history will be persisted across reboots.",
         "download_history": "Download server history",
         "filter_change_suggestion": "Try changing the search filters",
         "no_connections_found": "No connections found",
@@ -2015,7 +2016,8 @@
         "reset_filter": "Reset filter",
         "filter_accounts": "Filter accounts",
         "cannot_download_history": "Cannot download history",
-        "cannot_fetch_history": "Cannot fetch history"
+        "cannot_fetch_history": "Cannot fetch history",
+        "no_connections_found_description": "No connections found found for the current filters. Try changing the search filters or wait for new connections to be established."
       },
       "certificates_expiration": "Certificates expiration",
       "certificate_expiration": "Certificate expiration",

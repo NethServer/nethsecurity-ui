@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -19,7 +19,11 @@ import {
   type FilterOption
 } from '@nethesis/vue-components'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
-import { onMounted, ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useQuery, keepPreviousData } from '@tanstack/vue-query'
+import { useRouteQuery } from '@vueuse/router'
+import { refDebounced } from '@vueuse/core'
+import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -34,134 +38,146 @@ export type ConnectionsRecord = {
   virtualIpAddress: string
 }
 
-const isLoading = ref(false)
-const connectionsRecords = ref<ConnectionsRecord[]>([])
-const error = ref({
-  notificationDescription: '',
-  notificationDetails: '',
-  notificationTitle: ''
-})
-const textFilter = ref('')
+type ConnectionsHistoryResponse = {
+  data: {
+    connections: ConnectionsRecord[]
+    current_page: number
+    last_page: number
+    per_page: number
+    results: number
+    total: number
+    filters: {
+      accounts: string[]
+    }
+  }
+}
 
 const props = defineProps<{
   instance: string
 }>()
 
-type RangeFilterOptions = 'all' | 'last_3_months' | 'last_month' | 'last_week' | 'today'
+type RangeFilterOption = 'all' | 'last_3_months' | 'last_month' | 'last_week' | 'today'
 
-// filter time range to populate NeDropdownFilter timeRangeFilter options
-const timeRangeFilter = ref<[RangeFilterOptions, ...RangeFilterOptions[]]>(['today'])
-const timeRangeFilterOptions = ref<FilterOption[]>([
-  {
-    id: 'today',
-    label: t('standalone.openvpn_rw.history.today')
-  },
-  {
-    id: 'last_week',
-    label: t('standalone.openvpn_rw.history.last_week')
-  },
-  {
-    id: 'last_month',
-    label: t('standalone.openvpn_rw.history.last_month')
-  },
-  {
-    id: 'last_3_months',
-    label: t('standalone.openvpn_rw.history.last_3_months')
-  },
-  {
-    id: 'all',
-    label: t('standalone.openvpn_rw.history.all')
+const timeRangeFilterOptions: FilterOption[] = [
+  { id: 'today', label: t('standalone.openvpn_rw.history.today') },
+  { id: 'last_week', label: t('standalone.openvpn_rw.history.last_week') },
+  { id: 'last_month', label: t('standalone.openvpn_rw.history.last_month') },
+  { id: 'last_3_months', label: t('standalone.openvpn_rw.history.last_3_months') },
+  { id: 'all', label: t('standalone.openvpn_rw.history.all') }
+]
+
+// route-persisted filters
+const textFilter = useRouteQuery('q', '')
+const textFilterDebounced = refDebounced(textFilter, 500)
+
+const timeRangeFilter = useRouteQuery<string, RangeFilterOption[]>('time_range', 'all', {
+  transform: {
+    get: (val) => (val ? ([val] as RangeFilterOption[]) : ['all']),
+    set: (val) => val[0] ?? 'all'
   }
-])
+})
 
-// filter accounts to populate NeDropdownFilter accountsFilter options
-const accountsFilter = ref<Array<any>>([])
+const accountsFilter = useRouteQuery<string, string[]>('accounts', '', {
+  transform: {
+    get: (val) => (val ? val.split(',') : []),
+    set: (val) => val.join(',')
+  }
+})
 
-// Computed property to get unique accounts within the selected time range
-const uniqueAccounts = computed(() => {
-  const filteredRecords = applyFilterToConntrackRecords(
-    connectionsRecords.value,
-    '',
-    timeRangeFilter.value[0],
-    []
-  )
-  return Array.from(new Set(filteredRecords.map((record) => record.account))).sort((a, b) =>
-    a.localeCompare(b)
-  )
+const currentPage = ref(1)
+const perPage = ref(10)
+
+type SortableKeys =
+  | 'account'
+  | 'startTime'
+  | 'endTime'
+  | 'duration'
+  | 'virtualIpAddress'
+  | 'remoteIpAddress'
+  | 'bytesReceived'
+  | 'bytesSent'
+const sortKey = useRouteQuery<SortableKeys>('sort', 'startTime')
+const sortDescending = useRouteQuery<string, boolean>('descending', 'true', {
+  transform: {
+    get: (val) => val == 'true',
+    set: (val) => val.toString()
+  }
+})
+
+// reset page when filters change
+watch(textFilterDebounced, () => {
+  if (currentPage.value !== 1) {
+    currentPage.value = 1
+  }
+})
+
+watch(timeRangeFilter, () => {
+  if (currentPage.value !== 1) {
+    currentPage.value = 1
+  }
+})
+
+watch(accountsFilter, () => {
+  if (currentPage.value !== 1) {
+    currentPage.value = 1
+  }
+})
+
+watch(perPage, () => {
+  if (currentPage.value !== 1) {
+    currentPage.value = 1
+  }
+})
+
+const { data, isError, error, isPending, isSuccess } = useQuery({
+  queryKey: [
+    'ovpnrw',
+    'connection-history',
+    textFilterDebounced,
+    timeRangeFilter,
+    accountsFilter,
+    perPage,
+    currentPage,
+    sortKey,
+    sortDescending
+  ],
+  queryFn: async () =>
+    ubusCall<ConnectionsHistoryResponse>('ns.ovpnrw', 'connection-history', {
+      instance: props.instance,
+      q: textFilterDebounced.value.toLowerCase(),
+      time_range: timeRangeFilter.value[0],
+      accounts: accountsFilter.value,
+      page: currentPage.value,
+      per_page: perPage.value,
+      sort_by: sortKey.value,
+      desc: sortDescending.value
+    }),
+  placeholderData: keepPreviousData,
+  select: (res) => res.data,
+  refetchOnReconnect: false,
+  refetchOnWindowFocus: false,
+  refetchInterval: false,
+  retry: false
+})
+
+watch(data, (newData) => {
+  if (newData != undefined && currentPage.value > newData.last_page) {
+    currentPage.value = newData.last_page
+  }
 })
 
 const accountFilterOptions = computed<FilterOption[]>(() => {
-  return uniqueAccounts.value.map((account) => ({
-    id: account,
-    label: account
-  }))
-})
-
-// filter items based on timeRange and accountsFilter
-function applyFilterToConntrackRecords(
-  records: ConnectionsRecord[],
-  textFilter: string,
-  timeRange: string,
-  accountsFilter: string[]
-) {
-  const lowerCaseFilter = textFilter.toLowerCase()
-  const now = new Date()
-  let startDate: Date | null = null
-
-  if (timeRange === 'today') {
-    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  } else if (timeRange === 'last_week') {
-    startDate = new Date(now)
-    startDate.setDate(now.getDate() - 7)
-  } else if (timeRange === 'last_month') {
-    startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-  } else if (timeRange === 'last_3_months') {
-    startDate = new Date(now)
-    startDate.setMonth(now.getMonth() - 3)
-    startDate.setDate(1) // Set to the start of the month
-  } else if (timeRange === 'all') {
-    startDate = null
-  }
-
-  return records.filter((connectionsRecord: ConnectionsRecord) => {
-    // Assuming startTime is in seconds, convert to ms
-    const recordDate = connectionsRecord.startTime
-      ? new Date(connectionsRecord.startTime * 1000)
-      : new Date(0)
-
-    const matchesTextFilter =
-      connectionsRecord.account.toLowerCase().includes(lowerCaseFilter) ||
-      connectionsRecord.remoteIpAddress.toLowerCase().includes(lowerCaseFilter) ||
-      connectionsRecord.virtualIpAddress.toLowerCase().includes(lowerCaseFilter)
-
-    const matchesTimeRangeFilter = startDate ? recordDate >= startDate : true
-
-    const matchesAccountFilter =
-      accountsFilter.length === 0 || accountsFilter.includes(connectionsRecord.account)
-
-    return matchesTextFilter && matchesTimeRangeFilter && matchesAccountFilter
-  })
-}
-
-// filter items
-const filteredItems = computed(() => {
-  if (
-    ['all', 'today', 'last_week', 'last_month', 'last_3_months'].includes(timeRangeFilter.value[0])
-  ) {
-    return applyFilterToConntrackRecords(
-      connectionsRecords.value,
-      textFilter.value,
-      timeRangeFilter.value[0],
-      accountsFilter.value
-    )
-  } else {
-    return connectionsRecords.value
-  }
+  return (
+    data.value?.filters.accounts.map((account) => ({
+      id: account,
+      label: account
+    })) ?? []
+  )
 })
 
 // clean error object
 function cleanError() {
-  error.value = {
+  downloadError.value = {
     notificationTitle: '',
     notificationDescription: '',
     notificationDetails: ''
@@ -171,11 +187,17 @@ function cleanError() {
 // clear filters
 function clearFilters() {
   textFilter.value = ''
-  timeRangeFilter.value = ['today']
+  timeRangeFilter.value = ['all']
   accountsFilter.value = []
 }
 
 // download all history from csv file
+const downloadError = ref({
+  notificationDescription: '',
+  notificationDetails: '',
+  notificationTitle: ''
+})
+
 async function downloadAllHistory() {
   cleanError()
   try {
@@ -192,46 +214,16 @@ async function downloadAllHistory() {
       link.href = fileURL
       link.download = res.data.csv_path.replace('.csv', '') + '-' + Date.now().toString() + '.csv'
       link.click()
-
       await deleteFile(res.data.csv_path)
     }
   } catch (exception: any) {
-    error.value.notificationTitle = t('standalone.openvpn_rw.history.cannot_download_history')
-    error.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    error.value.notificationDetails = exception.toString()
+    downloadError.value.notificationTitle = t(
+      'standalone.openvpn_rw.history.cannot_download_history'
+    )
+    downloadError.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    downloadError.value.notificationDetails = exception.toString()
   }
 }
-
-// fetch connection history
-async function fetchConnectionHistory() {
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  try {
-    isLoading.value = true
-    connectionsRecords.value = (
-      await ubusCall('ns.ovpnrw', 'connection-history', {
-        instance: props.instance,
-        time_interval: 'all'
-      })
-    ).data
-  } catch (err: any) {
-    error.value.notificationTitle = t('standalone.openvpn_rw.history.cannot_fetch_history')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// fetch connection history on component mount
-onMounted(() => {
-  fetchConnectionHistory()
-})
-
-// when timeRangeFilter changes, reset to [] accountsFilter
-watch(timeRangeFilter, () => {
-  accountsFilter.value = []
-})
 </script>
 
 <template>
@@ -242,7 +234,7 @@ watch(timeRangeFilter, () => {
       </p>
       <div class="shrink-0">
         <NeButton
-          v-if="connectionsRecords.length > 0"
+          v-if="isSuccess && data!.results > 0"
           kind="secondary"
           size="lg"
           class="ml-4 shrink-0"
@@ -259,7 +251,7 @@ watch(timeRangeFilter, () => {
         </NeButton>
       </div>
     </div>
-    <div v-if="connectionsRecords.length > 0" class="flex items-center gap-4">
+    <div v-if="data?.total !== 0" class="flex items-center gap-4">
       <NeTextInput
         v-model="textFilter"
         class="max-w-xs"
@@ -290,36 +282,57 @@ watch(timeRangeFilter, () => {
         :options-filter-placeholder="t('standalone.openvpn_rw.history.filter_accounts')"
         :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
       />
-      <NeButton kind="tertiary" :disabled="isLoading" @click="clearFilters">
+      <NeButton kind="tertiary" :disabled="isPending" @click="clearFilters">
         {{ t('standalone.openvpn_rw.history.reset_filters') }}
       </NeButton>
     </div>
     <NeInlineNotification
-      v-if="error.notificationDescription"
+      v-if="downloadError.notificationDescription"
       kind="error"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
+      :title="downloadError.notificationTitle"
+      :description="downloadError.notificationDescription"
     >
-      <template v-if="error.notificationDetails" #details>
-        {{ error.notificationDetails }}
+      <template v-if="downloadError.notificationDetails" #details>
+        {{ downloadError.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="isLoading" :lines="10" size="lg" />
-    <template v-else>
-      <NeEmptyState
-        v-if="connectionsRecords.length == 0"
-        :title="t('standalone.openvpn_rw.history.no_connections_found')"
-        :icon="['fas', 'clock-rotate-left']"
-      >
-      </NeEmptyState>
-      <NeEmptyState
-        v-else-if="filteredItems.length == 0"
-        :title="t('standalone.openvpn_rw.history.no_connections_found')"
-        :description="t('standalone.openvpn_rw.history.filter_change_suggestion')"
-        :icon="['fas', 'clock-rotate-left']"
-      >
-      </NeEmptyState>
-      <UserConnectionsTable v-if="filteredItems.length > 0" :connections-records="filteredItems" />
-    </template>
+    <NeInlineNotification
+      v-if="isError"
+      kind="error"
+      :title="t('error.cannot_retrieve_ovpn_rw_connection_history')"
+      :description="t(getAxiosErrorMessage(error))"
+    />
+    <NeSkeleton v-if="isPending" :lines="10" size="lg" />
+    <UserConnectionsTable
+      v-if="isSuccess && data!.total > 0"
+      :connections-records="data!.connections"
+      :current-page="currentPage"
+      :total-rows="data!.results"
+      :page-size="perPage"
+      :sort-key="sortKey"
+      :sort-descending="sortDescending"
+      @select-page="
+        (page: number) => {
+          currentPage = page
+        }
+      "
+      @select-page-size="
+        (size: number) => {
+          perPage = size
+        }
+      "
+      @sort="
+        ({ key, descending }: { key: string; descending: boolean }) => {
+          sortKey = key as typeof sortKey
+          sortDescending = descending
+        }
+      "
+      @clear-filters="clearFilters"
+    />
+    <NeEmptyState
+      v-if="data?.total === 0"
+      :title="t('standalone.openvpn_rw.history.no_connections_found')"
+      :icon="faClockRotateLeft"
+    />
   </div>
 </template>

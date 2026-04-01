@@ -70,7 +70,8 @@
     "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica.",
     "remove": "Eliminare",
     "connected": "Connesso",
-    "not_connected": "Non connesso"
+    "not_connected": "Non connesso",
+    "port": "Porta"
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
@@ -429,7 +430,8 @@
     "cannot_restart_ipsec": "Impossibile riavviare il servizio IPsec",
     "cannot_regenerate_cert": "Impossibile rigenerare i certificati",
     "cannot_renew_server_cert": "Impossibile rinnovare il certificato del server",
-    "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati"
+    "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati",
+    "cannot_retrieve_flows": "Impossibile recuperare i flussi, si prega di riprovare più tardi"
   },
   "login": {
     "sign_in": "Accedi",
@@ -658,7 +660,10 @@
       "shutdown": "Spegnimento",
       "shut_down_unit": "Spegni unità",
       "pending_changes_warning_reboot": "Ci sono modifiche non salvate. Verranno perse se il sistema si riavvia.",
-      "pending_changes_warning_shutdown": "Ci sono modifiche non salvate. Verranno perse se il sistema si spegne."
+      "pending_changes_warning_shutdown": "Ci sono modifiche non salvate. Verranno perse se il sistema si spegne.",
+      "shutdown_description": "Spegnere l'unità per manutenzione, trasferimento o dismissione.",
+      "reboot_completed": "Riavvio completato, caricamento in corso..",
+      "reboot_timeout_error": "L'unità non risponde. Si prega di controllare la connessione e provare a ricaricare la pagina."
     },
     "network": {
       "title": "Rete"
@@ -731,7 +736,6 @@
       "expiration": "Scadenza",
       "remote_support": "Supporto remoto",
       "register": "Registra",
-      "end_session": "Termina sessione",
       "invalid_secret_or_server_not_found": "Token non valido o server non trovato",
       "authentication_token_placeholder": "Incolla il token qui",
       "no_expiration": "Nessuna scadenza",
@@ -763,7 +767,10 @@
       "sync_now": "Sincronizza ora",
       "sync_not_attempted": "Sincronizzazione non eseguita",
       "last_attempted_sync": "Ultima tentativo di sincronizzazione: {date}",
-      "sync_not_attempted_description": "Dall'ultimo avvio l'unità non ha tentato di sincronizzarsi con il portale remoto. È possibile forzare una sincronizzazione cliccando sul pulsante 'Sincronizza ora' più sotto."
+      "sync_not_attempted_description": "Dall'ultimo avvio l'unità non ha tentato di sincronizzarsi con il portale remoto. È possibile forzare una sincronizzazione cliccando sul pulsante 'Sincronizza ora' più sotto.",
+      "remote_support_session_active": "Sessione di supporto remoto attiva",
+      "remote_support_session_description": "La sessione si chiuderà automaticamente il {date}. E' possibile terminarla in qualsiasi momento.",
+      "stop_session": "Termina sessione"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",
@@ -2352,7 +2359,6 @@
       "interface_name_traffic": "Traffico {name}",
       "site_to_site_vpn": "VPN Site-to-Site",
       "rw_openvpn": "OpenVPN RW",
-      "instant_traffic": "Traffico in tempo reale",
       "recent_traffic": "Traffico recente",
       "wan_events": "Eventi WAN",
       "blocked_threats": "Minacce bloccate",
@@ -2409,7 +2415,10 @@
       "min_latency": "Latenza minima",
       "no_data_available": "Nessun dato disponibile",
       "avg_latency": "Latenza media",
-      "remote_hosts": "Host remoti"
+      "remote_hosts": "Host remoti",
+      "daily_traffic": "Traffico giornaliero",
+      "top_talkers": "Top Talkers",
+      "live_flows": "Live flows"
     },
     "ping_latency_monitor": {
       "title": "Monitor latenza ping",
@@ -2611,7 +2620,10 @@
       "allow": "Consenti",
       "event_list_no_events": "Nessun evento oggi, tutto bene",
       "no_events_found": "Nessun evento trovato",
-      "enable_rule_modal_description": "Abilitare la regola '{description}'' identificata da '{id}'?"
+      "enable_rule_modal_description": "Abilitare la regola '{description}'' identificata da '{id}'?",
+      "home_net": "Home network",
+      "home_net_tooltip": "Le reti domestiche definiscono le reti interne protette. Specifica gli indirizzi IP o subnet Snort dovrebbe considerare come reti locali. Questo aiuta a ridurre i falsi positivi distinguendo il traffico locale da minacce esterne.",
+      "add_network": "Aggiungi rete (notazione CIDR)"
     },
     "ha": {
       "disabled": "Disabilitato",
@@ -2681,7 +2693,9 @@
       "download_configuration": "Scarica configurazione",
       "warning_editing_server": "Attenzione",
       "warning_editing_peer": "Attenzione",
-      "connection": "Connessione"
+      "connection": "Connessione",
+      "error_editing_peer": "Errore nella modifica del peer",
+      "error_adding_peer": "Errore nell'aggiunta del peer"
     },
     "wireguard_peers": {
       "description": "In questa pagina è possibile importare un file di configurazione generato da qualsiasi server WireGuard. È inoltre possibile configurare manualmente un client per collegarlo a qualsiasi dispositivo che supporta WireGuard.",
@@ -2708,6 +2722,74 @@
       "add_route": "Aggiungi rotta",
       "add_tunnel": "Aggiungi tunnel",
       "delete_tunnel": "Elimina tunnel"
+    },
+    "flows": {
+      "subtitle": "Visualizza connessioni di rete in tempo reale, ogni riga rappresenta un flusso attivo con le velocità di trasferimento in tempo reale e traffico totale.",
+      "application": "Applicazione",
+      "protocol": "Protocollo",
+      "source": "Sorgente",
+      "destination": "Destinazione",
+      "origin": "Origine",
+      "duration": "Durata",
+      "download": "Download",
+      "upload": "Upload",
+      "total_download": "Tot. download",
+      "total_upload": "Tot. upload",
+      "refresh_interval": "Intervallo di aggiornamento: { value }",
+      "tags": "Etichette",
+      "internal": "Interno",
+      "internal_description": "La connessione è tra le reti locali",
+      "remote": "Remoto",
+      "remote_description": "La connessione è stata stabilita da internet al firewall",
+      "more_info": "Maggiori informazioni",
+      "source_ip": "IP sorgente",
+      "source_port": "Porta sorgente",
+      "source_mac": "MAC sorgente",
+      "destination_ip": "IP destinazione",
+      "associated_dns": "DNS associato",
+      "server_name_hint": "Nome del server",
+      "destination_port": "Porta di destinazione",
+      "destination_mac": "MAC di destinazione",
+      "raw_data": "Dati grezzi",
+      "table_aria_label": "Tabella dei flussi attivi",
+      "flow_details": "Dettagli flusso",
+      "endpoint_information": "Informazioni endpoint",
+      "download_bytes": "Byte scaricati",
+      "total_bytes": "Byte totali",
+      "no_flows_found": "Nessun flusso trovato",
+      "conntrack_id": "ID conntrack",
+      "hostname": "Hostname",
+      "domain": "Dominio",
+      "blocked_description": "La connessione è stata bloccata dal motore DPI",
+      "last_seen_at": "Ultimo rilevamento",
+      "traffic_inspection_details": "Dettagli sul traffico",
+      "flow_info": "Informazioni sul flusso",
+      "first_seen_at": "Connessione rilevata il",
+      "packets_analyzed": "Pacchetti analizzati",
+      "detection_guessed": "Analisi ipotizzata",
+      "hostname_information": "Informazioni sul nome host",
+      "tls_sni_hostname": "TLS SNI hostname",
+      "traffic_flow": "Flusso del traffico",
+      "upload_rate": "Velocità di upload",
+      "download_rate": "Velocità di download",
+      "upload_bytes": "Byte caricati",
+      "no_flows_found_description": "Nessun flusso trovato per i filtri attuali. Prova a modificare i filtri di ricerca o aspettare che vengano analizzate nuove connessioni.",
+      "outgoing": "In uscita",
+      "outgoing_description": "La connessione è stata avviata dalle reti locali a Internet",
+      "broadcast": "Broadcast",
+      "broadcast_description": "La connessione è un broadcast",
+      "unable_to_get_flows_configuration": "Impossibile ottenere la configurazione del demone dei flow",
+      "unable_to_configure_flows_daemon": "Impossibile configurare il demone dei flow",
+      "daemon_disabled": "Il demone dei flow è disabilitato.",
+      "daemon_disabled_description": "Si prega di abilitarlo nelle impostazioni per visualizzare le connessioni di rete in tempo reale.",
+      "configure_flows_daemon": "Configura il demone dei flow",
+      "daemon_enabled": "Demone dei flussi abilitato",
+      "persistence_after_expiration": "Persistenza dei flussi dopo la scadenza",
+      "persistence_after_expiration_description": "Mantieni le informazioni sul flusso disponibili per un breve periodo dopo la fine del flusso stesso. Questo consente di visualizzare le informazioni sui flussi terminati di recente, il che può essere utile per indagare sulle connessioni stabilite e chiuse in un breve arco di tempo.",
+      "daemon_not_running": "Il demone dei flow è abilitato ma non è in esecuzione",
+      "daemon_not_running_description": "Se hai appena abilitato il demone, salva le modifiche e attendi qualche secondo per permettere al demone di avviarsi. Se il problema persiste, controlla i log per eventuali errori riguardanti il demone dei flow.",
+      "few_apps_warning": "I flussi in tempo reale includono il set standard di applicazioni e protocolli, pertanto parte del traffico potrebbe apparire come “Sconosciuto”. Abbonati per sbloccare il rilevamento DPI completo e riconoscere oltre 2600 applicazioni.",
+      "blocked": "Bloccato"
     }
   },
   "controller": {

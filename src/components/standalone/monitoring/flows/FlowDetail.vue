@@ -107,14 +107,8 @@ const facts = computed<FactsGroup[]>(() => {
     }
   }
 
-  // Traffic Inspection Details
-  const trafficInspectionTitle =
-    _flow.value.type == 'flow'
-      ? t('standalone.flows.partial_traffic_inspection')
-      : t('standalone.flows.traffic_inspection_details')
-
   groups.push({
-    title: trafficInspectionTitle,
+    title: t('standalone.flows.traffic_inspection_details'),
     facts: [
       {
         label: t('standalone.flows.protocol'),

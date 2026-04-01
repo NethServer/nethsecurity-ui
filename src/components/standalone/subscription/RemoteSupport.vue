@@ -39,18 +39,18 @@ const isLoadingSessionStatus = ref(true)
 const error = ref('')
 const isProcessingRequest = ref(false)
 const sessionId = ref('')
-const expiresInSeconds = ref<number | null>(null)
+const expiryTime = ref<number | null>(null)
 
 async function startSession() {
   const startDonResponse = await makeDonRequest('start')
   sessionId.value = startDonResponse.data.session_id
-  expiresInSeconds.value = startDonResponse.data.expires_in_seconds
+  expiryTime.value = startDonResponse.data.expiry_time
 }
 
 async function stopSession() {
   await makeDonRequest('stop')
   sessionId.value = ''
-  expiresInSeconds.value = null
+  expiryTime.value = null
 }
 
 async function getSessionStatus() {
@@ -58,10 +58,10 @@ async function getSessionStatus() {
   const statusResponse = await makeDonRequest('status')
   if (statusResponse.data.result === 'no_session') {
     sessionId.value = ''
-    expiresInSeconds.value = null
+    expiryTime.value = null
   } else {
     sessionId.value = statusResponse.data.session_id
-    expiresInSeconds.value = statusResponse.data.expires_in_seconds
+    expiryTime.value = statusResponse.data.expiry_time
   }
   isLoadingSessionStatus.value = false
 }
@@ -118,12 +118,12 @@ onMounted(() => {
 
         <!-- Session active notification -->
         <NeInlineNotification
-          v-if="expiresInSeconds"
+          v-if="expiryTime"
           kind="info"
           :title="t('standalone.subscription.remote_support_session_active')"
           :description="
             t('standalone.subscription.remote_support_session_description', {
-              date: formatDateLoc(new Date(Date.now() + expiresInSeconds * 1000), 'PPp')
+              date: formatDateLoc(new Date(expiryTime * 1000), 'PPp')
             })
           "
           class="mt-6"

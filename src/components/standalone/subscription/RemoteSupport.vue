@@ -11,7 +11,8 @@ import {
   NeInlineNotification,
   NeButton,
   NeSkeleton,
-  getAxiosErrorMessage
+  getAxiosErrorMessage,
+  formatDateLoc
 } from '@nethesis/vue-components'
 import { toRefs } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
@@ -38,15 +39,18 @@ const isLoadingSessionStatus = ref(true)
 const error = ref('')
 const isProcessingRequest = ref(false)
 const sessionId = ref('')
+const expiryTime = ref<number | null>(null)
 
 async function startSession() {
   const startDonResponse = await makeDonRequest('start')
   sessionId.value = startDonResponse.data.session_id
+  expiryTime.value = startDonResponse.data.expiry_time
 }
 
 async function stopSession() {
   await makeDonRequest('stop')
   sessionId.value = ''
+  expiryTime.value = null
 }
 
 async function getSessionStatus() {
@@ -54,8 +58,10 @@ async function getSessionStatus() {
   const statusResponse = await makeDonRequest('status')
   if (statusResponse.data.result === 'no_session') {
     sessionId.value = ''
+    expiryTime.value = null
   } else {
     sessionId.value = statusResponse.data.session_id
+    expiryTime.value = statusResponse.data.expiry_time
   }
   isLoadingSessionStatus.value = false
 }
@@ -110,13 +116,26 @@ onMounted(() => {
           :copy-value-label="t('standalone.subscription.copy_id')"
         />
 
-        <div class="mt-6 flex justify-end">
+        <!-- Session active notification -->
+        <NeInlineNotification
+          v-if="expiryTime"
+          kind="info"
+          :title="t('standalone.subscription.remote_support_session_active')"
+          :description="
+            t('standalone.subscription.remote_support_session_description', {
+              date: formatDateLoc(new Date(expiryTime * 1000), 'PPp')
+            })
+          "
+          class="mt-6"
+        />
+
+        <div class="mt-6 flex justify-start">
           <NeButton
             kind="primary"
             :disabled="isProcessingRequest"
             :loading="isProcessingRequest"
             @click="stopSession()"
-            >{{ t('standalone.subscription.end_session') }}</NeButton
+            >{{ t('standalone.subscription.stop_session') }}</NeButton
           >
         </div>
       </div>

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://github.com/NethServer/nethsecurity-ui/compare/2.15.6...2.16.0) (2026-04-01)
+
+
+### Features
+
+* **remote-support:** add session expiration information and related translations ([#715](https://github.com/NethServer/nethsecurity-ui/issues/715)) ([421e3c5](https://github.com/NethServer/nethsecurity-ui/commit/421e3c545c46ebf349b0d03057ab8a30fb9b703a))
+
 ## [2.15.6](https://github.com/NethServer/nethsecurity-ui/compare/2.15.5...2.15.6) (2026-03-24)
 
 

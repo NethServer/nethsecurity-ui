@@ -1,4 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>NethServer/.github:vue3"]
+  "extends": ["local>NethServer/.github:vue3"],
+  "constraints": {
+    "node": "22.22.0"
+  },
+  "constraintsFiltering": "strict",
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "automerge": true
+    }
+  ]
 }

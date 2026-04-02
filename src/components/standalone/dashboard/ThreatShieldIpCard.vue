@@ -43,9 +43,8 @@ const error = ref({
 
 const isLoggingDisabled = computed(() => {
   return (
-    !threatShieldConfig.value?.ban_logforwardlan &&
-    !threatShieldConfig.value?.ban_logforwardwan &&
-    !threatShieldConfig.value?.ban_loginput &&
+    !threatShieldConfig.value?.ban_logoutbound &&
+    !threatShieldConfig.value?.ban_loginbound &&
     !threatShieldConfig.value?.ban_logprerouting
   )
 })

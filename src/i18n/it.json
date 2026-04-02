@@ -2083,7 +2083,6 @@
       "local_blocklist_description": "Inserisci un indirizzo IPv4/IPv6 valido con notazione CIDR opzionale, un indirizzo MAC o un nome host che deve essere sempre bloccato da Threat Shield IP.",
       "logging_description": "Il monitoraggio delle minacce terrà conto e mostrerà solo le minacce che sono state salvate nel log.",
       "log_prerouting_chain": "Log dei pacchetti bloccati nella chain di pre-routing",
-      "log_input_chain": "Log dei pacchetti bloccati nella chain di input",
       "log_forward_chain": "Log dei pacchetti bloccati nella chain di forward",
       "log_forward_lan_chain": "Log dei pacchetti bloccati inoltrati dalla LAN",
       "ban_after_n_attempts_tooltip": "Il numero di volte che un IP deve apparire nel log prima di essere contrassegnato come sospetto e bloccato.",

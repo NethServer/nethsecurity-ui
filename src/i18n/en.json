@@ -1754,7 +1754,6 @@
       "logging": "Logging",
       "logging_description": "Threats monitoring will take account and show only threats that have been logged.",
       "log_prerouting_chain": "Log packets blocked in pre-routing chain",
-      "log_input_chain": "Log packets blocked in input chain",
       "log_forward_chain": "Log packets blocked in forward chain",
       "log_forward_lan_chain": "Log packets blocked forwarded from LAN",
       "block_brute_force": "Block brute force attacks",

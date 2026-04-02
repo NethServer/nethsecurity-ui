@@ -45,13 +45,13 @@ const {
 const badge = computed(() => getStatusBadge(overview.value?.services.banip))
 const serviceCounter = computed(() => overview.value?.counters.threat_shield_ip)
 
-const isLoggingDisabled = computed(
-  () =>
-    !tsSettings.value?.ban_logforwardlan &&
-    !tsSettings.value?.ban_logforwardwan &&
-    !tsSettings.value?.ban_loginput &&
+const isLoggingDisabled = computed(() => {
+  return (
+    !tsSettings.value?.ban_logoutbound &&
+    !tsSettings.value?.ban_loginbound &&
     !tsSettings.value?.ban_logprerouting
-)
+  )
+})
 
 const isPending = computed(() => isOverviewPending.value || isSettingsPending.value)
 const isError = computed(() => isOverviewError.value || isSettingsError.value)

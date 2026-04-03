@@ -223,7 +223,7 @@ const tags = computed<FilterOption[]>(() => {
     data.value?.filters.tags.map((tag) => {
       const badge = matchBadge(tag)
       return {
-        id: badge.id,
+        id: tag,
         label: t(badge.text)
       }
     }) ?? []

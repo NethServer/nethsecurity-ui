@@ -6,16 +6,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import NeTable from '../NeTable.vue'
-import { NeDropdown, NeModal, NeLink } from '@nethesis/vue-components'
-import { NeButton } from '@nethesis/vue-components'
+import {
+  NeDropdown,
+  NeModal,
+  NeLink,
+  NeButton,
+  NeTable,
+  NeTableHead,
+  NeTableHeadCell,
+  NeTableBody,
+  NeTableRow,
+  NeTableCell,
+  NePaginator,
+  NeSortDropdown,
+  useItemPagination,
+  useSort,
+  type SortEvent
+} from '@nethesis/vue-components'
 import type { IpsecTunnel } from '@/views/standalone/vpn/IPsecTunnelView.vue'
 import {
   faCircleCheck,
   faCircleXmark,
   faTrash,
-  faMagnifyingGlassPlus
+  faMagnifyingGlassPlus,
+  faPenToSquare,
+  faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 
@@ -35,38 +52,26 @@ function closeDetailsModal() {
   selectedTunnel.value = null
 }
 
-defineProps<{
+const props = defineProps<{
   tunnels: IpsecTunnel[]
 }>()
 
 const emit = defineEmits(['tunnel-delete', 'tunnel-edit', 'tunnel-toggle-enable'])
 
-const tableHeaders = [
-  {
-    label: t('standalone.ipsec_tunnel.name'),
-    key: 'name'
-  },
-  {
-    label: t('standalone.ipsec_tunnel.local_networks'),
-    key: 'local_networks'
-  },
-  {
-    label: t('standalone.ipsec_tunnel.remote_networks'),
-    key: 'remote_networks'
-  },
-  {
-    label: t('standalone.ipsec_tunnel.status'),
-    key: 'status'
-  },
-  {
-    label: t('standalone.ipsec_tunnel.connection'),
-    key: 'connection'
-  },
-  {
-    label: '',
-    key: 'menu'
-  }
-]
+const sortKey = ref<keyof IpsecTunnel>('name')
+const sortDescending = ref(false)
+
+const { sortedItems } = useSort(() => props.tunnels, sortKey, sortDescending)
+
+const pageSize = ref(10)
+const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
+  itemsPerPage: pageSize
+})
+
+const onSort = (payload: SortEvent) => {
+  sortKey.value = payload.key as keyof IpsecTunnel
+  sortDescending.value = payload.descending
+}
 
 function getDropdownItems(item: IpsecTunnel) {
   const items = []
@@ -95,119 +100,176 @@ function getDropdownItems(item: IpsecTunnel) {
 
   return items
 }
-
-function getCellClasses(item: IpsecTunnel) {
-  return item.enabled === '1'
-    ? ['text-green-700', 'dark:text-green-400']
-    : ['text-gray-700', 'dark:text-gray-400']
-}
 </script>
 
 <template>
-  <NeTable :data="tunnels" :headers="tableHeaders">
-    <template #name="{ item }: { item: IpsecTunnel }">
-      <div class="flex items-center gap-2">
-        <NeButton
-          v-if="item.enabled === '1'"
-          kind="tertiary"
-          size="sm"
-          @click="openDetailsModal(item)"
-        >
-          <font-awesome-icon :icon="faMagnifyingGlassPlus" class="h-4 w-4" aria-hidden="true" />
-        </NeButton>
-        <span v-else class="w-8"></span>
-        <p>{{ item.name }}</p>
-      </div>
-    </template>
-    <template #local_networks="{ item }: { item: IpsecTunnel }">
-      <template v-if="item.local.length > 0">
-        <p v-for="(local, idx) in item.local.slice(0, 2)" :key="local">
-          {{ local }}{{ item.local.length > 2 && idx == 1 ? '...' : '' }}
-        </p>
-      </template>
-      <p v-else>-</p>
-    </template>
-    <template #remote_networks="{ item }: { item: IpsecTunnel }">
-      <template v-if="item.remote.length > 0">
-        <p v-for="(remote, idx) in item.remote.slice(0, 2)" :key="remote">
-          {{ remote }}{{ item.remote.length > 2 && idx == 1 ? '...' : '' }}
-        </p>
-      </template>
-      <p v-else>-</p>
-    </template>
-    <template #status="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-row', 'items-center']">
-        <font-awesome-icon
-          :icon="['fas', item.enabled === '1' ? 'circle-check' : 'circle-xmark']"
-          :class="['mr-2', 'h-5', 'w-5', ...getCellClasses(item)]"
-          aria-hidden="true"
-        />
-        <p>
-          {{
-            item.enabled === '1'
-              ? t('standalone.ipsec_tunnel.enabled')
-              : t('standalone.ipsec_tunnel.disabled')
-          }}
-        </p>
-      </div>
-    </template>
-    <template #connection="{ item }: { item: IpsecTunnel }">
-      <div :class="['flex', 'flex-col']">
-        <div class="flex items-center">
-          <font-awesome-icon
-            :icon="[
-              'fas',
-              item.connected === 'yes'
-                ? 'circle-check'
-                : item.connected === 'warning'
-                  ? 'triangle-exclamation'
-                  : 'circle-xmark'
-            ]"
-            :class="[
-              'mr-2',
-              'h-5',
-              'w-5',
-              item.enabled === '0'
-                ? 'text-gray-700 dark:text-gray-400'
-                : item.connected === 'yes'
-                  ? 'text-green-700 dark:text-green-500'
-                  : item.connected === 'warning'
-                    ? 'text-amber-500'
-                    : 'text-red-600 dark:text-red-400'
-            ]"
-            aria-hidden="true"
-          />
-          <div>
-            <p>
-              {{
-                item.connected === 'yes'
-                  ? t('standalone.ipsec_tunnel.connected')
-                  : item.connected === 'warning'
-                    ? t('standalone.ipsec_tunnel.warning')
-                    : t('standalone.ipsec_tunnel.not_connected')
-              }}
-            </p>
-            <NeLink v-if="item.connected === 'warning'" @click="openDetailsModal(item)">
-              {{ t('standalone.ipsec_tunnel.more_info') }}
-            </NeLink>
+  <NeSortDropdown
+    v-model:sort-key="sortKey"
+    v-model:sort-descending="sortDescending"
+    :label="t('sort.sort')"
+    :options="[{ id: 'name', label: t('standalone.ipsec_tunnel.name') }]"
+    :open-menu-aria-label="t('ne_dropdown.open_menu')"
+    :sort-by-label="t('sort.sort_by')"
+    :sort-direction-label="t('sort.direction')"
+    :ascending-label="t('sort.ascending')"
+    :descending-label="t('sort.descending')"
+    class="mb-2 xl:hidden"
+  />
+  <NeTable
+    :sort-key="sortKey"
+    :sort-descending="sortDescending"
+    :aria-label="t('standalone.ipsec_tunnel.title')"
+    card-breakpoint="xl"
+  >
+    <NeTableHead>
+      <NeTableHeadCell sortable column-key="name" @sort="onSort">
+        {{ t('standalone.ipsec_tunnel.name') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.ipsec_tunnel.local_networks') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.ipsec_tunnel.remote_networks') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.ipsec_tunnel.status') }}</NeTableHeadCell>
+      <NeTableHeadCell>{{ t('standalone.ipsec_tunnel.connection') }}</NeTableHeadCell>
+      <NeTableHeadCell>
+        <!-- no header for actions -->
+      </NeTableHeadCell>
+    </NeTableHead>
+    <NeTableBody>
+      <NeTableRow v-for="item in paginatedItems" :key="item.id">
+        <NeTableCell :data-label="t('standalone.ipsec_tunnel.name')">
+          <div class="flex items-center gap-2">
+            <NeButton
+              v-if="item.enabled === '1'"
+              kind="tertiary"
+              size="sm"
+              @click="openDetailsModal(item)"
+            >
+              <FontAwesomeIcon :icon="faMagnifyingGlassPlus" class="h-4 w-4" aria-hidden="true" />
+            </NeButton>
+            <span v-else class="w-8"></span>
+            <p :class="item.enabled === '0' ? 'opacity-50' : ''">{{ item.name }}</p>
           </div>
-        </div>
-      </div>
-    </template>
-    <template #menu="{ item }: { item: IpsecTunnel }">
-      <div class="align-center flex justify-end">
-        <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">
-          <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'pen-to-square']"
-              class="h-4 w-4"
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.ipsec_tunnel.local_networks')">
+          <template v-if="item.local.length > 0">
+            <p
+              v-for="(local, idx) in item.local.slice(0, 2)"
+              :key="local"
+              :class="item.enabled === '0' ? 'opacity-50' : ''"
+            >
+              {{ local }}{{ item.local.length > 2 && idx == 1 ? '...' : '' }}
+            </p>
+          </template>
+          <p v-else>-</p>
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.ipsec_tunnel.remote_networks')">
+          <template v-if="item.remote.length > 0">
+            <p
+              v-for="(remote, idx) in item.remote.slice(0, 2)"
+              :key="remote"
+              :class="item.enabled === '0' ? 'opacity-50' : ''"
+            >
+              {{ remote }}{{ item.remote.length > 2 && idx == 1 ? '...' : '' }}
+            </p>
+          </template>
+          <p v-else>-</p>
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.ipsec_tunnel.status')">
+          <div :class="['flex', 'flex-row', 'items-center']">
+            <FontAwesomeIcon
+              :icon="item.enabled === '1' ? faCircleCheck : faCircleXmark"
+              :class="[
+                'mr-2',
+                'h-5',
+                'w-5',
+                item.enabled === '0' ? 'opacity-50' : ['text-green-700', 'dark:text-green-500']
+              ]"
               aria-hidden="true"
             />
-          </template>
-          {{ t('common.edit') }}
-        </NeButton>
-        <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
-      </div>
+            <p :class="item.enabled === '0' ? 'opacity-50' : ''">
+              {{
+                item.enabled === '1'
+                  ? t('standalone.ipsec_tunnel.enabled')
+                  : t('standalone.ipsec_tunnel.disabled')
+              }}
+            </p>
+          </div>
+        </NeTableCell>
+        <NeTableCell :data-label="t('standalone.ipsec_tunnel.connection')">
+          <div :class="['flex', 'flex-col']">
+            <div class="flex items-center">
+              <FontAwesomeIcon
+                :icon="
+                  item.connected === 'yes'
+                    ? faCircleCheck
+                    : item.connected === 'warning'
+                      ? faTriangleExclamation
+                      : faCircleXmark
+                "
+                :class="[
+                  'mr-2',
+                  'h-5',
+                  'w-5',
+                  item.enabled === '0'
+                    ? 'opacity-50'
+                    : item.connected === 'yes'
+                      ? 'text-green-700 dark:text-green-500'
+                      : item.connected === 'warning'
+                        ? 'text-amber-700 dark:text-amber-500'
+                        : 'text-red-700 dark:text-red-500'
+                ]"
+                aria-hidden="true"
+              />
+              <div>
+                <p :class="item.enabled === '0' ? 'opacity-50' : ''">
+                  {{
+                    item.connected === 'yes'
+                      ? t('standalone.ipsec_tunnel.connected')
+                      : item.connected === 'warning'
+                        ? t('standalone.ipsec_tunnel.warning')
+                        : t('standalone.ipsec_tunnel.not_connected')
+                  }}
+                </p>
+                <NeLink v-if="item.connected === 'warning'" @click="openDetailsModal(item)">
+                  {{ t('standalone.ipsec_tunnel.more_info') }}
+                </NeLink>
+              </div>
+            </div>
+          </div>
+        </NeTableCell>
+        <NeTableCell :data-label="t('common.actions')">
+          <div class="align-center flex justify-end">
+            <NeButton kind="tertiary" @click="emit('tunnel-edit', item)">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
+              </template>
+              {{ t('common.edit') }}
+            </NeButton>
+            <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+          </div>
+        </NeTableCell>
+      </NeTableRow>
+    </NeTableBody>
+    <template #paginator>
+      <NePaginator
+        :current-page="currentPage"
+        :total-rows="sortedItems.length"
+        :page-size="pageSize"
+        :nav-pagination-label="t('ne_table.pagination')"
+        :next-label="t('ne_table.go_to_next_page')"
+        :previous-label="t('ne_table.go_to_previous_page')"
+        :range-of-total-label="t('ne_table.of')"
+        :page-size-label="t('ne_table.show')"
+        @select-page="
+          (page: number) => {
+            currentPage = page
+          }
+        "
+        @select-page-size="
+          (size: number) => {
+            pageSize = size
+          }
+        "
+      />
     </template>
   </NeTable>
 
@@ -235,15 +297,15 @@ function getCellClasses(item: IpsecTunnel) {
             :key="child.name"
             class="flex items-center text-sm"
           >
-            <font-awesome-icon
-              :icon="['fas', child.installed ? 'circle-check' : 'circle-xmark']"
+            <FontAwesomeIcon
+              :icon="child.installed ? faCircleCheck : faCircleXmark"
               :class="[
                 'mr-2',
                 'h-4',
                 'w-4',
                 child.installed
-                  ? 'text-green-700 dark:text-green-400'
-                  : 'text-red-600 dark:text-red-400'
+                  ? 'text-green-700 dark:text-green-500'
+                  : 'text-red-700 dark:text-red-500'
               ]"
               aria-hidden="true"
             />

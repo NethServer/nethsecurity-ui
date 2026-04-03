@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.17.0](https://github.com/NethServer/nethsecurity-ui/compare/2.16.0...2.17.0) (2026-04-03)
+
+
+### Features
+
+* **ipsec-tunnels:** enhance table structure and add sorting functionality ([#728](https://github.com/NethServer/nethsecurity-ui/issues/728)) ([4c3d71d](https://github.com/NethServer/nethsecurity-ui/commit/4c3d71d09ba6925cc8c25d05298ef86f74fcd2a0))
+
+
+### Bug Fixes
+
+* **flows:** using 'internal' instead of 'local' for local traffic ([#736](https://github.com/NethServer/nethsecurity-ui/issues/736)) ([0213054](https://github.com/NethServer/nethsecurity-ui/commit/021305444b76e5aaf7a16afa449ed9061f258fa1))
+
 ## [2.16.0](https://github.com/NethServer/nethsecurity-ui/compare/2.15.6...2.16.0) (2026-04-01)
 
 

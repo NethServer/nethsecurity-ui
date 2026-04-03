@@ -3,8 +3,9 @@
   "extends": ["local>NethServer/.github:vue3"],
   "packageRules": [
     {
-      "matchPackageNames": ["node"],
-      "allowedVersions": "22.22.0"
+      "description": "Node.js and its types should be updated together and respect the OpenWRT version where it's built on.",
+      "matchPackageNames": ["node", "@types/node"],
+      "allowedVersions": "<= 22.22.0"
     },
     {
       "matchDatasources": ["npm"],

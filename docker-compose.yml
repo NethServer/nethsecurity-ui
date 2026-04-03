@@ -1,0 +1,11 @@
+services:
+  dev:
+    build:
+      dockerfile: Containerfile
+      target: dev
+      args:
+        UID: ${UID}
+        GID: ${GID}
+    volumes:
+      - ./:/app
+    network_mode: host

@@ -2242,7 +2242,7 @@
       "sending_data_to_controller_tooltip_link": "subscription",
       "last_sent": "Ultimo invio: {date}",
       "sending_data_to_controller_tooltip": "Monitoraggio completo disponibile su Grafana con NethSecurity {subscription_link}",
-      "no_last_sent": "Dai in preparazione per la trasmissione",
+      "no_last_sent": "Dati in preparazione per la trasmissione",
       "connect_unit_message": "I log delle unità saranno trasmessi al Controller per gli scopi di archiviazione, monitoraggio e analisi dell'utilizzo della rete. Se non si desidera che questi dati lascino il dispositivo, non collegare la unità al Controller.",
       "unit_description": "Descrizione",
       "unit_description_tooltip": "Inserire un testo descrittivo per trovare facilmente l'unità all'interno del controller. Richiede versione controller 2.0.0 o successiva.",

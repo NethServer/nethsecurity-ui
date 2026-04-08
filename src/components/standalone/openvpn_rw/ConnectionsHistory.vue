@@ -129,12 +129,34 @@ watch(perPage, () => {
   }
 })
 
+const startTime = computed<number | null>(() => {
+  const now = new Date()
+  const timeRange = timeRangeFilter.value[0]
+  if (timeRange === 'today') {
+    return Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000)
+  } else if (timeRange === 'last_week') {
+    const d = new Date(now)
+    d.setDate(now.getDate() - 7)
+    return Math.floor(d.getTime() / 1000)
+  } else if (timeRange === 'last_month') {
+    const d = new Date(now)
+    d.setDate(now.getDate() - 30)
+    return Math.floor(d.getTime() / 1000)
+  } else if (timeRange === 'last_3_months') {
+    const d = new Date(now)
+    d.setDate(now.getDate() - 90)
+    return Math.floor(d.getTime() / 1000)
+  } else {
+    return null
+  }
+})
+
 const { data, isError, error, isPending, isSuccess } = useQuery({
   queryKey: [
     'ovpnrw',
     'connection-history',
     textFilterDebounced,
-    timeRangeFilter,
+    startTime,
     accountsFilter,
     perPage,
     currentPage,
@@ -145,7 +167,7 @@ const { data, isError, error, isPending, isSuccess } = useQuery({
     ubusCall<ConnectionsHistoryResponse>('ns.ovpnrw', 'connection-history', {
       instance: props.instance,
       q: textFilterDebounced.value.toLowerCase(),
-      time_range: timeRangeFilter.value[0],
+      ...(startTime.value !== null && { start_time: startTime.value }),
       accounts: accountsFilter.value,
       page: currentPage.value,
       per_page: perPage.value,

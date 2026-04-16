@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.0](https://github.com/NethServer/nethsecurity-ui/compare/2.17.0...2.18.0) (2026-04-16)
+
+
+### Features
+
+* **ovpnrw:** connections history from storage if available ([#720](https://github.com/NethServer/nethsecurity-ui/issues/720)) ([be886b5](https://github.com/NethServer/nethsecurity-ui/commit/be886b562031dc5f0b10b304666a1cf5d08c5726))
+
 ## [2.17.0](https://github.com/NethServer/nethsecurity-ui/compare/2.16.0...2.17.0) (2026-04-07)
 
 

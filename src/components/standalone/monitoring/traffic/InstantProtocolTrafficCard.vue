@@ -24,12 +24,14 @@ import { type TopItem } from '@/composables/useTopTalkers'
 import { refDebounced } from '@vueuse/core'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useNetifydStore } from '@/stores/standalone/netifyd'
 
 const { topProtocols } = defineProps<{
   topProtocols: TopItem[]
 }>()
 
 const { t } = useI18n()
+const netifydStore = useNetifydStore()
 
 const filter = ref('')
 const filterDebounced = refDebounced(filter, 400)
@@ -39,6 +41,10 @@ const filteredItems = computed<TopItem[]>(() => {
     item.name.toLowerCase().includes(filterDebounced.value.toLowerCase())
   )
 })
+
+function resolveProtocol(item: TopItem) {
+  return netifydStore.getProtocolByName(item.name)
+}
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => filteredItems.value, {
@@ -80,7 +86,7 @@ function formatTraffic(value: number) {
         </NeTableRow>
         <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
           <NeTableCell :data-label="t('standalone.real_time_monitor.protocol')">
-            {{ item.name }}
+            {{ resolveProtocol(item).label }}
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.traffic')">
             {{ formatTraffic(item.value) }}

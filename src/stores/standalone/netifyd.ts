@@ -62,6 +62,37 @@ export const useNetifydStore = defineStore('netifyd', () => {
       .join(' ')
   }
 
+  function normalizeApplicationName(name: string): string {
+    return name.replace(/^\d+\./, '')
+  }
+
+  function getApplicationByName(name: string): Application {
+    const normalizedName = normalizeApplicationName(name)
+    if (normalizedName.toLowerCase().includes('netify.unclassified')) {
+      return {
+        id: 0,
+        tag: normalizedName,
+        label: 'Unknown'
+      }
+    }
+
+    const app = applications.data.value?.find((app) => {
+      return [app.tag, app.label, generateApplicationLabel(app.tag)].some(
+        (value) => value.toLowerCase() === normalizedName.toLowerCase()
+      )
+    })
+
+    if (app != undefined) {
+      return app
+    }
+
+    return {
+      id: 0,
+      tag: normalizedName,
+      label: generateApplicationLabel(normalizedName)
+    }
+  }
+
   function getProtocolByFlow(flow: Flow): Protocol {
     const proto = protocols.data.value?.find((proto) => proto.id == flow.detected_protocol)
     if (proto != undefined) {
@@ -90,11 +121,29 @@ export const useNetifydStore = defineStore('netifyd', () => {
     return fallback
   }
 
+  function getProtocolByName(name: string): Protocol {
+    const proto = protocols.data.value?.find((proto) => {
+      return [proto.tag, proto.label].some((value) => value.toLowerCase() === name.toLowerCase())
+    })
+
+    if (proto != undefined) {
+      return proto
+    }
+
+    return {
+      id: 0,
+      tag: name,
+      label: name.toUpperCase()
+    }
+  }
+
   return {
     applications,
     protocols,
     getApplicationByFlow,
     getProtocolByFlow,
+    getApplicationByName,
+    getProtocolByName,
     getApplicationNameById,
     getProtocolNameById
   }

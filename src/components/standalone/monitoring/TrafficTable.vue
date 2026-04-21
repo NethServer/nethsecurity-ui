@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { faSearch, faTable } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faSearch, faTable } from '@fortawesome/free-solid-svg-icons'
 import {
   byteFormat1024,
   NeEmptyState,
@@ -20,8 +20,9 @@ import { refDebounced } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import type { TrafficRecord } from '@/composables/useTrafficStats'
 import { type AvailableFilters, useTrafficFilter } from '@/composables/useTrafficFilter'
+import { useNetifydStore } from '@/stores/standalone/netifyd'
 
-const { trafficEntries, title } = defineProps<{
+const { trafficEntries, title, filterableKey } = defineProps<{
   trafficEntries: TrafficRecord[]
   title: string
   filterable?: boolean
@@ -29,6 +30,7 @@ const { trafficEntries, title } = defineProps<{
 }>()
 
 const { t } = useI18n()
+const netifydStore = useNetifydStore()
 
 const filters = useTrafficFilter()
 
@@ -40,6 +42,29 @@ const trafficEntriesFiltered = computed(() => {
     return (item?.label ?? item.id).toLowerCase().includes(filterDebounced.value.toLowerCase())
   })
 })
+
+const isApplicationTable = computed(() => filterableKey === 'app')
+const isProtocolTable = computed(() => filterableKey === 'protocol')
+
+function resolveLabel(item: TrafficRecord): string {
+  if (isApplicationTable.value) {
+    return netifydStore.getApplicationByName(item.id).label
+  }
+
+  if (isProtocolTable.value) {
+    return netifydStore.getProtocolByName(item.id).label
+  }
+
+  return item?.label ?? item.id
+}
+
+function resolveIcon(item: TrafficRecord) {
+  if (!isApplicationTable.value) {
+    return undefined
+  }
+
+  return netifydStore.getApplicationByName(item.id).icon
+}
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFiltered.value, {
@@ -81,11 +106,32 @@ const { currentPage, paginatedItems } = useItemPagination(() => trafficEntriesFi
                     value: item.id
                   })
                 "
-                >{{ item?.label ?? item.id }}</NeLink
               >
+                <span v-if="isApplicationTable" class="flex items-center gap-3">
+                  <img
+                    v-if="resolveIcon(item)"
+                    :src="resolveIcon(item)"
+                    class="size-5"
+                    :alt="resolveLabel(item)"
+                  />
+                  <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-5" />
+                  <span>{{ resolveLabel(item) }}</span>
+                </span>
+                <span v-else>{{ resolveLabel(item) }}</span>
+              </NeLink>
             </template>
             <template v-else>
-              {{ item?.label ?? item.id }}
+              <span v-if="isApplicationTable" class="flex items-center gap-3">
+                <img
+                  v-if="resolveIcon(item)"
+                  :src="resolveIcon(item)"
+                  class="size-5"
+                  :alt="resolveLabel(item)"
+                />
+                <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-5" />
+                <span>{{ resolveLabel(item) }}</span>
+              </span>
+              <span v-else>{{ resolveLabel(item) }}</span>
             </template>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.traffic')">

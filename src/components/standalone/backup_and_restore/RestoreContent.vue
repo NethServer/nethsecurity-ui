@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
@@ -83,6 +83,20 @@ const errorRestore = ref({
   backup: ''
 })
 
+// The passphrase input flips from "Optional" to required whenever the
+// selected backup is encrypted. We detect that from the id suffix: the
+// ingest pipeline writes .gpg only when the appliance encrypted the
+// payload with the configured passphrase.
+const isPassphraseRequired = computed(() => {
+  if (typeRestore.value === 'from_backup') {
+    return formRestore.value.backup.toLowerCase().endsWith('.gpg')
+  }
+  if (typeRestore.value === 'upload_file' && formRestore.value.file) {
+    return (formRestore.value.file as File).name.toLowerCase().endsWith('.gpg')
+  }
+  return false
+})
+
 onMounted(() => {
   getSubscription()
 })
@@ -110,11 +124,14 @@ async function getBackups() {
       const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
         listBackups.value = res.data.values.backups
-          .sort((a: any, b: any) => Number(b.created) - Number(a.created))
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
+          )
           .map((item: any) => ({
             id: item.id,
             label:
-              formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+              formatDateLoc(new Date(item.uploaded_at), 'PPpp') +
               ' (' +
               byteFormat1024(item.size) +
               ')'
@@ -149,6 +166,17 @@ function validateRestore(): boolean {
 
     if (!isValidationOk && !isFocusInput) {
       focusElement(backupRef)
+    }
+  }
+
+  if (isPassphraseRequired.value) {
+    const { valid, errMessage } = validateRequired(formRestore.value.passphrase)
+    if (!valid) {
+      errorRestore.value.passphrase = t(errMessage as string)
+      isValidationOk = false
+      if (!isFocusInput) {
+        focusElement(passphraseRef)
+      }
     }
   }
 
@@ -355,7 +383,7 @@ function setRestoreTimer() {
           :invalid-message="errorRestore.passphrase"
           :label="t('standalone.backup_and_restore.restore.passphrase')"
           is-password
-          optional
+          :optional="!isPassphraseRequired"
           :optional-label="t('common.optional')"
         >
           <template #tooltip>

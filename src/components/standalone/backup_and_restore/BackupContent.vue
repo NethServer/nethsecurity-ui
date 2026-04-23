@@ -60,10 +60,11 @@ const retryTimeout = ref<ReturnType<typeof setTimeout>>()
 
 interface Backup {
   id: string
-  name: string
-  created: BigInteger
+  filename: string
+  uploaded_at: string
   size: number
   mimetype: string
+  sha256?: string
 }
 
 const loading = computed((): boolean => {
@@ -183,8 +184,11 @@ async function getBackups() {
       const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
         listBackups.value = res.data.values.backups
-        // sort by created date in unix timestamp
-        listBackups.value.sort((a, b) => Number(b.created) - Number(a.created))
+        // newest first — the server already sorts, but keep the guard
+        // so a stray ordering change upstream doesn't break the UI.
+        listBackups.value.sort(
+          (a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
+        )
       }
     } catch (exception: unknown) {
       if (exception instanceof Error) {
@@ -233,6 +237,9 @@ function successRunBackup() {
 
 function successSetPassphrase() {
   showPassphraseDrawer.value = false
+  // Refresh the store so the "Passphrase not configured" warning and the
+  // "Run backup" disabled state update without a full page reload.
+  backups.loadData()
 }
 
 function getMimetypeDescription(mimetype: string) {
@@ -258,7 +265,7 @@ function getDropdownItems(item: Backup) {
       action: () => {
         openDeleteBackup(
           item.id,
-          formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') +
+          formatDateLoc(new Date(item.uploaded_at), 'PPpp') +
             ' (' +
             byteFormat1024(item.size) +
             ')'
@@ -509,11 +516,11 @@ function successDeleteBackup() {
           </NeTableHeadCell>
         </NeTableHead>
         <NeTableBody>
-          <NeTableRow v-for="item in listBackups" :key="item.name">
+          <NeTableRow v-for="item in listBackups" :key="item.id">
             <NeTableCell :data-label="t('standalone.backup_and_restore.backup.date')">
               <div>
                 <FontAwesomeIcon :icon="faClock" class="mr-2" />
-                {{ formatDateLoc(new Date(Number(item.created) * 1000), 'PPpp') }}
+                {{ formatDateLoc(new Date(item.uploaded_at), 'PPpp') }}
               </div>
             </NeTableCell>
             <NeTableCell :data-label="t('standalone.backup_and_restore.backup.mimetype')">
@@ -533,7 +540,7 @@ function successDeleteBackup() {
               <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
                 <NeButton
                   :kind="'tertiary'"
-                  @click="openDownloadEnterprise(item.id, item.mimetype, item.created.toString())"
+                  @click="openDownloadEnterprise(item.id, item.mimetype, item.uploaded_at)"
                 >
                   <template #prefix>
                     <FontAwesomeIcon :icon="faArrowCircleDown" />

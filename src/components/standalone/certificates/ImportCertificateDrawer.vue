@@ -180,7 +180,11 @@ watch(
           <NeFormItemLabel>{{ t('standalone.certificates.chain_file') }}</NeFormItemLabel>
           <NeFormItemLabel>{{ t('common.optional') }}</NeFormItemLabel>
         </div>
-        <NeFileInput v-model="chainFile" :dropzone-label="t('ne_file_input.dropzone_label')" />
+        <NeFileInput
+          v-model="chainFile"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('chain_path'))"
+          :dropzone-label="t('ne_file_input.dropzone_label')"
+        />
       </div>
       <hr />
       <div class="flex justify-end">

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/NethServer/nethsecurity-ui/compare/2.18.0...2.18.1) (2026-04-29)
+
+
+### Bug Fixes
+
+* forgot to bump required api version ([8081b0d](https://github.com/NethServer/nethsecurity-ui/commit/8081b0dbc5e74449c211ca7bd525f43f9b708910))
+
 ## [2.18.0](https://github.com/NethServer/nethsecurity-ui/compare/2.17.0...2.18.0) (2026-04-16)
 
 

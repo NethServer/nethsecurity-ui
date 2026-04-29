@@ -2,7 +2,7 @@
   "name": "nethsecurity-ui",
   "version": "2.18.0",
   "config": {
-    "requiredApiVersion": "~3.5.0"
+    "requiredApiVersion": "~3.6.0"
   },
   "private": true,
   "type": "module",

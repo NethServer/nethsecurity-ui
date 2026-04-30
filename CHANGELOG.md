@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.2](https://github.com/NethServer/nethsecurity-ui/compare/2.18.1...2.18.2) (2026-04-30)
+
+
+### Bug Fixes
+
+* **certificates:** added message labels for certificate drawer ([#748](https://github.com/NethServer/nethsecurity-ui/issues/748)) ([5e9cfa1](https://github.com/NethServer/nethsecurity-ui/commit/5e9cfa19c5344782804fd028bdac2c9db1498f68))
+
 ## [2.18.1](https://github.com/NethServer/nethsecurity-ui/compare/2.18.0...2.18.1) (2026-04-29)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.0](https://github.com/NethServer/nethsecurity-ui/compare/2.18.2...2.19.0) (2026-04-30)
+
+
+### Features
+
+* added icons and better labels to daily traffic view ([#743](https://github.com/NethServer/nethsecurity-ui/issues/743)) ([ffa3354](https://github.com/NethServer/nethsecurity-ui/commit/ffa33549f6bff52bc9a5a4490938804c5bd967f8))
+
 ## [2.18.2](https://github.com/NethServer/nethsecurity-ui/compare/2.18.1...2.18.2) (2026-04-30)
 
 

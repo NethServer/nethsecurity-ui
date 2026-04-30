@@ -24,12 +24,15 @@ import { type TopItem } from '@/composables/useTopTalkers'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { refDebounced } from '@vueuse/core'
+import { useNetifydStore } from '@/stores/standalone/netifyd'
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 
 const { topApps } = defineProps<{
   topApps: TopItem[]
 }>()
 
 const { t } = useI18n()
+const netifydStore = useNetifydStore()
 
 const filter = ref('')
 const filterDebounced = refDebounced(filter, 400)
@@ -39,6 +42,10 @@ const filteredItems = computed<TopItem[]>(() => {
     item.name.toLowerCase().includes(filterDebounced.value.toLowerCase())
   )
 })
+
+function resolveApplication(item: TopItem) {
+  return netifydStore.getApplicationByName(item.name)
+}
 
 const pageSize = ref(10)
 const { currentPage, paginatedItems } = useItemPagination(() => filteredItems.value, {
@@ -80,7 +87,16 @@ function formatTraffic(value: number) {
         </NeTableRow>
         <NeTableRow v-for="(item, index) in paginatedItems" v-else :key="index">
           <NeTableCell :data-label="t('standalone.real_time_monitor.application')">
-            {{ item.name }}
+            <span class="flex items-center gap-3">
+              <img
+                v-if="resolveApplication(item).icon"
+                :src="resolveApplication(item).icon"
+                class="size-5"
+                :alt="resolveApplication(item).label"
+              />
+              <FontAwesomeIcon v-else :icon="faCircleQuestion" class="size-5" />
+              <span>{{ resolveApplication(item).label }}</span>
+            </span>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.real_time_monitor.traffic')">
             {{ formatTraffic(item.value) }}

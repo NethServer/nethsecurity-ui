@@ -32,20 +32,23 @@ import TrafficTable from '@/components/standalone/monitoring/TrafficTable.vue'
 import { useI18n } from 'vue-i18n'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import type { AvailableFilters } from '@/composables/useTrafficFilter'
+import { useNetifydStore } from '@/stores/standalone/netifyd'
 
 const themeStore = useThemeStore()
+const netifydStore = useNetifydStore()
 
 const { t } = useI18n()
 
 const {
   title,
   data,
-  filterable = false
+  filterable = false,
+  filterableKey
 } = defineProps<{
   title: string
   data?: TrafficRecord[]
   filterable?: boolean
-  filterableKey?: AvailableFilters
+  filterableKey: AvailableFilters
 }>()
 
 const dataLimited = computed(() => {
@@ -86,8 +89,19 @@ const pieDatasets = computed(() => {
   ]
 })
 
+const isApplicationData = computed(() => filterableKey === 'app')
+const isProtocolData = computed(() => filterableKey === 'protocol')
+
 const pieLabels = computed(() => {
-  return dataLimited.value.map((value) => value?.label ?? value.id)
+  return dataLimited.value.map((value) => {
+    if (isApplicationData.value) {
+      return netifydStore.getApplicationByName(value.id).label
+    }
+    if (isProtocolData.value) {
+      return netifydStore.getProtocolByName(value.id).label
+    }
+    return value?.label ?? value.id
+  })
 })
 </script>
 

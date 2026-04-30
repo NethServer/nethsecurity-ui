@@ -23,12 +23,14 @@ import TrafficCard from '@/components/standalone/monitoring/TrafficCard.vue'
 import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { type AvailableFilters, useTrafficFilter } from '@/composables/useTrafficFilter'
 import NeBreadcrumbs, { type BreadcrumbItem } from '@/components/NeBreadcrumbs.vue'
+import { useNetifydStore } from '@/stores/standalone/netifyd'
 
 type FilterableBreadcrumbItem = BreadcrumbItem & {
   key: string
 }
 
 const themeStore = useThemeStore()
+const netifydStore = useNetifydStore()
 const { get, list, remove, misses, contains } = useTrafficFilter()
 const { data, error, loading, loadData } = useTrafficStats()
 
@@ -51,16 +53,7 @@ const filtersToBreadcrumb = computed<FilterableBreadcrumbItem[]>(() => {
       let label = ''
       switch (filter.key) {
         case 'app':
-          if (filter.value.startsWith('netify.')) {
-            label = filter.value.slice(7)
-          } else {
-            label = filter.value
-          }
-          if (label == 'unknown') {
-            label = t('common.unknown')
-          } else {
-            label = label.charAt(0).toUpperCase() + label.slice(1)
-          }
+          label = netifydStore.getApplicationByName(filter.value).label
           break
         case 'client':
           label = filter.value
@@ -69,7 +62,7 @@ const filtersToBreadcrumb = computed<FilterableBreadcrumbItem[]>(() => {
           label = filter.value
           break
         case 'protocol':
-          label = filter.value.toUpperCase()
+          label = netifydStore.getProtocolByName(filter.value).label
           break
         default:
           label = t(`standalone.real_time_monitor.${String(filter.key)}`)
@@ -96,10 +89,15 @@ const resolvedHostname = computed(
     data.value.clients.find((client) => client.id == get('client'))?.label ?? undefined
 )
 
-const applicationName = computed(
-  (): string | undefined =>
-    data.value.applications?.find((app) => app.id == get('app'))?.label ?? undefined
-)
+const resolvedApplicationName = computed(() => {
+  const application = data.value.applications?.find((app) => app.id == get('app'))?.label
+  return application ? netifydStore.getApplicationByName(application).label : undefined
+})
+
+const resolvedProtocolName = computed(() => {
+  const protocol = get('protocol')
+  return protocol ? netifydStore.getProtocolByName(protocol).label : undefined
+})
 
 const hoursLabels = computed(() => {
   return data.value.hourly_traffic.map((value) => value.id)
@@ -145,11 +143,14 @@ const hoursDatasets = computed(() => {
               <p class="text-lg nth-2:text-base">{{ get('client') }}</p>
             </SimpleStat>
           </NeCard>
-          <NeCard v-if="applicationName" :title="t('standalone.real_time_monitor.application')">
-            <SimpleStat> {{ applicationName }}</SimpleStat>
+          <NeCard
+            v-if="resolvedApplicationName"
+            :title="t('standalone.real_time_monitor.application')"
+          >
+            <SimpleStat> {{ resolvedApplicationName }}</SimpleStat>
           </NeCard>
-          <NeCard v-if="contains('protocol')" :title="t('standalone.real_time_monitor.protocol')">
-            <SimpleStat> {{ get('protocol').toUpperCase() }}</SimpleStat>
+          <NeCard v-if="resolvedProtocolName" :title="t('standalone.real_time_monitor.protocol')">
+            <SimpleStat> {{ resolvedProtocolName }}</SimpleStat>
           </NeCard>
           <NeCard v-if="contains('host')" :title="t('standalone.real_time_monitor.remote_hosts')">
             <SimpleStat>

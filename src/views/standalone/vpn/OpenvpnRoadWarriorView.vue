@@ -63,6 +63,8 @@ export type RWServer = {
     CA?: number
     server?: number
   }
+  tun_mtu: string
+  mssfix: string
 }
 
 export type RWAccount = {

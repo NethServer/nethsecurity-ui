@@ -599,6 +599,17 @@ export const validatePositiveInteger = (value: string): validationOutput => {
   return { valid: true }
 }
 
+export const validateStrictlyPositiveInteger = (value: string): validationOutput => {
+  if (/\D/.test(value)) {
+    return { valid: false, errMessage: 'error.invalid_positive_integer' }
+  }
+  const intValue = Number.parseInt(value)
+  if (intValue <= 0) {
+    return { valid: false, errMessage: 'error.invalid_positive_integer' }
+  }
+  return { valid: true }
+}
+
 export const validateFutureDate = (value: Date): validationOutput => {
   if (value.getTime() < new Date().getTime()) {
     return { valid: false, errMessage: 'error.invalid_future_date' }

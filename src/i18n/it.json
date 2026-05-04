@@ -190,6 +190,7 @@
     "cannot_retrieve_netdata_configuration": "Impossibile recuperare la configurazione Netdata",
     "cannot_retrieve_tunnel_options": "Impossibile recuperare le opzioni del tunnel",
     "invalid_negative_integer": "Inserire un numero intero maggiore o uguale a 0",
+    "invalid_positive_integer": "Inserire un numero intero maggiore di 0",
     "cannot_cancel_update_schedule": "Impossibile annullare la programmazione dell'aggiornamento",
     "cannot_retrieve_tunnel_defaults": "Impossibile recuperare i valori di default del tunnel",
     "cannot_retrieve_system_board": "Impossibile recuperare la system board",
@@ -1513,7 +1514,9 @@
       "real_address": "Indirizzo reale",
       "since": "Inizio connessione",
       "virtual_address": "Indirizzo virtuale",
-      "remote_host": "Host remoti"
+      "remote_host": "Host remoti",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "ipsec_tunnel": {
       "local_identifier_tooltip": "Inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",
@@ -1902,7 +1905,9 @@
       "type_server_name": "Digita il nome del server '{server}' per confermare",
       "regenerate": "Rigenera",
       "server": "Server",
-      "ca": "CA"
+      "ca": "CA",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "qos": {
       "interface": "Interfaccia",

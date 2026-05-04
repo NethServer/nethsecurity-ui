@@ -13,7 +13,8 @@ import {
   validatePort,
   validateRequired,
   type validationOutput,
-  validateIp4Address
+  validateIp4Address,
+  validateStrictlyPositiveInteger
 } from '@/lib/validation'
 import {
   NeInlineNotification,
@@ -73,6 +74,10 @@ const publicIpOrHostname = ref<string[]>([])
 const protocol = ref('udp')
 const port = ref('')
 const portRef = ref()
+const tunMtu = ref('')
+const tunMtuRef = ref()
+const mssfix = ref('')
+const mssfixRef = ref()
 const routeTrafficThroughVpn = ref(false)
 const pushCustomNetworkRoutes = ref<string[]>([])
 const clientToClientNetworkTraffic = ref(false)
@@ -246,6 +251,8 @@ function resetForm() {
   publicIpOrHostname.value = serverData?.ns_public_ip ?? []
   protocol.value = serverData?.proto ?? 'udp'
   port.value = serverData?.port ?? ''
+  tunMtu.value = serverData?.tun_mtu ?? ''
+  mssfix.value = serverData?.mssfix ?? ''
   pushCustomNetworkRoutes.value = serverData?.ns_local ?? []
   compression.value = serverData?.compress ?? 'disabled'
   cipher.value = serverData?.cipher ?? 'auto'
@@ -370,6 +377,16 @@ function validate() {
     [[validateRequired(name.value)], 'ns_description', nameRef],
     [[validateRequired(userDatabase.value)], 'ns_user_db', userDatabaseRef],
     [[validateRequired(port.value), validatePort(port.value)], 'port', portRef],
+    [
+      [validateRequired(tunMtu.value), validateStrictlyPositiveInteger(tunMtu.value)],
+      'tun_mtu',
+      tunMtuRef
+    ],
+    [
+      [validateRequired(mssfix.value), validateStrictlyPositiveInteger(mssfix.value)],
+      'mssfix',
+      mssfixRef
+    ],
     ...(mode.value === 'bridged' ? bridgedServerValidators : routedServerValidators)
   ]
 
@@ -434,7 +451,9 @@ async function createOrEditServer() {
         .map((option) => ({
           option: option.key,
           value: option.value
-        }))
+        })),
+      tun_mtu: tunMtu.value,
+      mssfix: mssfix.value
     })
   } catch (err: any) {
     if (err instanceof ValidationError) {
@@ -662,6 +681,18 @@ watch(
           v-model="port"
           :label="t('standalone.openvpn_rw.port')"
           :invalid-message="t(validationErrorBag.getFirstFor('port'))"
+        />
+        <NeTextInput
+          ref="tunMtuRef"
+          v-model="tunMtu"
+          :label="t('standalone.openvpn_rw.tun_mtu')"
+          :invalid-message="t(validationErrorBag.getFirstFor('tun_mtu'))"
+        />
+        <NeTextInput
+          ref="mssfixRef"
+          v-model="mssfix"
+          :label="t('standalone.openvpn_rw.mssfix')"
+          :invalid-message="t(validationErrorBag.getFirstFor('mssfix'))"
         />
         <div>
           <NeFormItemLabel>{{

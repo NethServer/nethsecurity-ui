@@ -16,7 +16,7 @@ import {
   validateRequiredOption,
   validateUciName,
   type validationOutput,
-  validateStrictlyPositiveInteger
+  validateIpv4Mtu
 } from '@/lib/validation'
 import {
   NeCombobox,
@@ -410,8 +410,8 @@ function validate() {
   // shared form fields validation
   const sharedFieldsValidators: [validationOutput[], string][] = [
     [[validateRequired(name.value), validateUciName(name.value, 10)], 'ns_name'],
-    [[validateRequired(tunMtu.value), validateStrictlyPositiveInteger(tunMtu.value)], 'tun_mtu'],
-    [[validateRequired(mssfix.value), validateStrictlyPositiveInteger(mssfix.value)], 'mssfix'],
+    [[validateRequired(tunMtu.value), validateIpv4Mtu(tunMtu.value)], 'tun_mtu'],
+    [[validateRequired(mssfix.value), validateIpv4Mtu(mssfix.value)], 'mssfix'],
     ...(topology.value === 'p2p' ? p2pValidators : [])
   ]
 

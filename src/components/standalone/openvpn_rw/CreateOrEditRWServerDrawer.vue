@@ -14,7 +14,7 @@ import {
   validateRequired,
   type validationOutput,
   validateIp4Address,
-  validateStrictlyPositiveInteger
+  validateIpv4Mtu
 } from '@/lib/validation'
 import {
   NeInlineNotification,
@@ -377,16 +377,8 @@ function validate() {
     [[validateRequired(name.value)], 'ns_description', nameRef],
     [[validateRequired(userDatabase.value)], 'ns_user_db', userDatabaseRef],
     [[validateRequired(port.value), validatePort(port.value)], 'port', portRef],
-    [
-      [validateRequired(tunMtu.value), validateStrictlyPositiveInteger(tunMtu.value)],
-      'tun_mtu',
-      tunMtuRef
-    ],
-    [
-      [validateRequired(mssfix.value), validateStrictlyPositiveInteger(mssfix.value)],
-      'mssfix',
-      mssfixRef
-    ],
+    [[validateRequired(tunMtu.value), validateIpv4Mtu(tunMtu.value)], 'tun_mtu', tunMtuRef],
+    [[validateRequired(mssfix.value), validateIpv4Mtu(mssfix.value)], 'mssfix', mssfixRef],
     ...(mode.value === 'bridged' ? bridgedServerValidators : routedServerValidators)
   ]
 

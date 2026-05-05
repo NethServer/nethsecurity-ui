@@ -125,7 +125,8 @@ const defaultOptions: any = {
 }
 
 const allOptions = computed(() => {
-  return merge(typeof props.options === 'object' ? props.options : {}, defaultOptions)
+  const customOptions = props.options && typeof props.options === 'object' ? props.options : {}
+  return merge({}, defaultOptions, customOptions)
 })
 
 const chartData: any = computed(() => {

@@ -197,6 +197,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/monitoring/PingLatencyMonitorView.vue')
   },
   {
+    path: 'monitoring/metrics',
+    name: 'MetricsMonitor',
+    component: () => import('../views/standalone/monitoring/MetricsView.vue')
+  },
+  {
     path: 'account',
     name: 'Account',
     component: () => import('../views/standalone/AccountView.vue')

@@ -47,12 +47,12 @@ onMounted(() => {
 async function getConfiguration() {
   loading.value = true
   try {
-    const res = await ubusCall('ns.netdata', 'get-configuration', {})
+    const res = await ubusCall('ns.telegraf', 'get-configuration', {})
     if (res?.data?.hosts) {
       formPing.value.hostList = res.data.hosts
     }
   } catch (exception: any) {
-    errorConfiguration.value.notificationTitle = t('error.cannot_retrieve_netdata_configuration')
+    errorConfiguration.value.notificationTitle = t('error.cannot_retrieve_telegraf_configuration')
     errorConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
     errorConfiguration.value.notificationDetails = exception.toString()
   } finally {
@@ -88,7 +88,7 @@ function save() {
       hosts: formPing.value.hostList.filter((item) => item)
     }
 
-    ubusCall('ns.netdata', 'set-hosts', payload)
+    ubusCall('ns.telegraf', 'set-hosts', payload)
       .then((response) => {
         if (response?.data?.success && response.data.success) {
           getConfiguration()

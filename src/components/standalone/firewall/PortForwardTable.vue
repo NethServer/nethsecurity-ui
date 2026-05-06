@@ -15,14 +15,17 @@ import {
   NeTableBody,
   NeTableRow,
   NeTableCell,
-  NeButton
+  NeButton,
+  NeTooltip
 } from '@nethesis/vue-components'
 import ObjectTooltip from '@/components/standalone/users_objects/ObjectTooltip.vue'
 import {
   faCircleCheck,
   faCircleXmark,
   faClone,
+  faList,
   faPenToSquare,
+  faThumbTack,
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -124,7 +127,45 @@ function getCellClasses(item: PortForward) {
       <NeTableBody>
         <NeTableRow v-for="item in portForwards" :key="item.id">
           <NeTableCell :data-label="t('standalone.port_forward.name')">
-            <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+            <div class="flex w-full items-center justify-between gap-2">
+              <div class="flex-1">
+                <p :class="[...getCellClasses(item)]">{{ item.name }}</p>
+              </div>
+              <div class="flex flex-wrap items-center justify-end gap-4">
+                <!-- logging info -->
+                <NeTooltip trigger-event="mouseenter focus" v-if="item.enabled && item.log">
+                  <template #trigger>
+                    <NeLink>
+                      <FontAwesomeIcon
+                        :icon="faList"
+                        class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                      />
+                    </NeLink>
+                  </template>
+                  <template #content>
+                    <span> {{ t('standalone.port_forward.logging_enabled') }} </span>
+                  </template>
+                </NeTooltip>
+                <!-- hairpin NAT -->
+                <NeTooltip trigger-event="mouseenter focus" v-if="item.enabled && item.reflection">
+                  <template #trigger>
+                    <NeLink>
+                      <FontAwesomeIcon
+                        :icon="faThumbTack"
+                        class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                      />
+                    </NeLink>
+                  </template>
+                  <template #content>
+                    <span>{{
+                      t('standalone.port_forward.hairpin_nat_enabled', {
+                        zones: item.reflection_zone?.map((z: string) => z.toUpperCase()).join(', ')
+                      })
+                    }}</span>
+                  </template>
+                </NeTooltip>
+              </div>
+            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.port_forward.source_port')">
             <p :class="[...getCellClasses(item)]">

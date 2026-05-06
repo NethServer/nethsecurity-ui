@@ -18,7 +18,8 @@ import {
   NeTableCell,
   NePaginator,
   NeEmptyState,
-  useItemPagination
+  useItemPagination,
+  NeTooltip
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -33,7 +34,13 @@ import {
   getZoneColorClasses,
   getIconFromZone
 } from '@/lib/standalone/network'
-import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowRight,
+  faBan,
+  faList,
+  faPenToSquare,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const firewallConfig = useFirewallStore()
@@ -89,7 +96,7 @@ function editZone(zone: Zone) {
       </p>
       <div>
         <!-- TODO: add settings -->
-        <NeButton kind="secondary" size="lg" @click="createZone">
+        <NeButton kind="primary" size="lg" @click="createZone">
           <template #prefix>
             <FontAwesomeIcon :icon="['fas', 'circle-plus']" />
           </template>
@@ -123,7 +130,6 @@ function editZone(zone: Zone) {
           t('standalone.zones_and_policies.traffic_to_same_zone')
         }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.zones_and_policies.interfaces') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('standalone.zones_and_policies.logging') }}</NeTableHeadCell>
         <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
@@ -140,14 +146,33 @@ function editZone(zone: Zone) {
         </NeTableRow>
         <NeTableRow v-for="item in paginatedItems" v-else :key="item.name">
           <NeTableCell :data-label="t('standalone.zones_and_policies.zone')">
-            <div class="flex items-center gap-x-4">
-              <div
-                :class="getZoneColorClasses(item.name)"
-                class="flex h-10 w-10 items-center justify-center rounded-full"
-              >
-                <FontAwesomeIcon :icon="getIconFromZone(item.name)" class="h-5 w-5" />
+            <div class="flex w-full items-center justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-x-4">
+                  <div
+                    :class="getZoneColorClasses(item.name)"
+                    class="flex h-10 w-10 items-center justify-center rounded-full"
+                  >
+                    <FontAwesomeIcon :icon="getIconFromZone(item.name)" class="h-5 w-5" />
+                  </div>
+                  <span class="uppercase">{{ item.name }}</span>
+                </div>
               </div>
-              <span class="uppercase">{{ item.name }}</span>
+              <div>
+                <NeTooltip trigger-event="mouseenter focus" v-if="item.logging">
+                  <template #trigger>
+                    <NeLink>
+                      <FontAwesomeIcon
+                        :icon="faList"
+                        class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                      />
+                    </NeLink>
+                  </template>
+                  <template #content>
+                    <span> {{ t('standalone.zones_and_policies.logging_enabled') }} </span>
+                  </template>
+                </NeTooltip>
+              </div>
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.allow_forwards_to')">
@@ -171,24 +196,38 @@ function editZone(zone: Zone) {
                 -</template
               >
               <template v-else-if="getTrafficToWan(item, firewallConfig.forwardings)">
-                <FontAwesomeIcon :icon="['fas', 'arrow-right']" />
+                <FontAwesomeIcon :icon="faArrowRight" class="text-green-700 dark:text-green-500" />
                 <p>ACCEPT</p>
               </template>
               <template v-else>
-                <FontAwesomeIcon :icon="['fas', 'ban']" />
+                <FontAwesomeIcon :icon="faBan" class="text-rose-700 dark:text-rose-500" />
                 <p>REJECT</p>
               </template>
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.traffic_to_firewall')">
             <div class="flex items-center gap-x-2">
-              <FontAwesomeIcon :icon="['fas', trafficIcon(item.input)]" />
+              <FontAwesomeIcon
+                :icon="['fas', trafficIcon(item.input)]"
+                :class="[
+                  item.input === TrafficPolicy.ACCEPT
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-rose-700 dark:text-rose-500'
+                ]"
+              />
               {{ item.input.toUpperCase() }}
             </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.zones_and_policies.traffic_to_same_zone')">
             <div class="flex items-center gap-x-2">
-              <FontAwesomeIcon :icon="['fas', trafficIcon(item.forward)]" />
+              <FontAwesomeIcon
+                :icon="['fas', trafficIcon(item.forward)]"
+                :class="[
+                  item.forward === TrafficPolicy.ACCEPT
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-rose-700 dark:text-rose-500'
+                ]"
+              />
               {{ item.forward.toUpperCase() }}
             </div>
           </NeTableCell>
@@ -197,16 +236,6 @@ function editZone(zone: Zone) {
               {{ item.interfaces.join(', ') }}
             </template>
             <template v-else>-</template>
-          </NeTableCell>
-          <NeTableCell :data-label="t('standalone.zones_and_policies.logging')">
-            <div class="flex items-center gap-2">
-              <font-awesome-icon
-                :icon="['fas', item.logging ? 'circle-check' : 'circle-xmark']"
-                :class="['h-4 w-4', { 'text-green-600 dark:text-green-400': item.logging }]"
-                aria-hidden="true"
-              />
-              {{ item.logging ? t('common.enabled') : t('common.disabled') }}
-            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="-ml-2.5 flex 2xl:ml-0">

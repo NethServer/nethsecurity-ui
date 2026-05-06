@@ -1051,7 +1051,8 @@
       "zone_dmz_color": "Orange",
       "preset_active_title": "Preset selezionato",
       "preset_active_description": "Quando si crea questa zona, il sistema aggiungerà automaticamente le regole firewall per consentire l'accesso ai servizi essenziali. È possibile visualizzarli o modificarli in qualsiasi momento sotto Firewall > Regole > Regole di input.",
-      "choose_one_or_more_zones": "Scegliere una o più zone"
+      "choose_one_or_more_zones": "Scegliere una o più zone",
+      "logging_enabled": "Logging abilitato"
     },
     "port_forward": {
       "disable": "Disabilita",
@@ -1078,6 +1079,8 @@
       "status": "Stato",
       "title": "Port forward",
       "hairpin_nat_zones": "Hairpin NAT abilitato sulle seguenti zone",
+      "hairpin_nat_enabled": "Hairpin NAT abilitato su {zones}",
+      "logging_enabled": "Logging abilitato",
       "log": "Log",
       "wan_ip": "IP WAN",
       "destination_port": "Porta di destinazione",
@@ -1996,7 +1999,8 @@
       "destination_object": "Oggetto di destinazione",
       "inactive": "Inattiva",
       "zone_no_longer_exists": "Questa regola è stata disattivata perché utilizza una zona che non esiste più",
-      "disabled_rule": "Questa regola è stata disabilitata manualmente, ma può essere riattivata"
+      "disabled_rule": "Questa regola è stata disabilitata manualmente, ma può essere riattivata",
+      "logging_enabled": "Logging abilitato"
     },
     "certificates": {
       "title": "Certificati",

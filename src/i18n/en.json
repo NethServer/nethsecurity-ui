@@ -75,7 +75,7 @@
   },
   "error": {
     "generic_error": "Something went wrong",
-    "network_error": "Network error",
+    "network_error": "Network error. Check your connection and reload the page.",
     "network_timeout": "Network timeout",
     "http_401": "Authentication error",
     "http_403": "Authorization error",

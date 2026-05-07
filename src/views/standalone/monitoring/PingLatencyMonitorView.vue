@@ -3,10 +3,10 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
   NeInlineNotification,
   NeButton,
@@ -16,92 +16,58 @@ import {
 } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import NeMultiTextInput from '@/components/standalone/NeMultiTextInput.vue'
-import { validateHost } from '@/lib/validation'
-import { AxiosError } from 'axios'
+import { MessageBag } from '@/lib/validation'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+
 const { t } = useI18n()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
 
-const formPing = ref({
-  hostList: ['']
-})
-const loading = ref(true)
-const saving = ref(false)
+const hosts = ref<string[]>([''])
+const validationBag = ref(new MessageBag())
 
-const errorConfiguration = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
-})
-const errorSaving = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
-})
-const errorForm = ref({
-  hostList: ['']
+const { data, isPending, isError, error } = useQuery({
+  queryKey: ['telegraf', 'config'],
+  queryFn: () => ubusCall('ns.telegraf', 'get-configuration', {}),
+  select: (res) => res.data
 })
 
-onMounted(() => {
-  getConfiguration()
-})
-
-async function getConfiguration() {
-  loading.value = true
-  try {
-    const res = await ubusCall('ns.telegraf', 'get-configuration', {})
-    if (res?.data?.hosts) {
-      formPing.value.hostList = res.data.hosts
+watch(
+  data,
+  (newData) => {
+    if (newData?.hosts?.length) {
+      hosts.value = newData.hosts
     }
-  } catch (exception: any) {
-    errorConfiguration.value.notificationTitle = t('error.cannot_retrieve_telegraf_configuration')
-    errorConfiguration.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    errorConfiguration.value.notificationDetails = exception.toString()
-  } finally {
-    loading.value = false
-  }
-}
+  },
+  { immediate: true }
+)
 
-function validate() {
-  let isValidationOk = true
+const hostErrors = computed(() =>
+  hosts.value.map((_, i) => t(validationBag.value.getFirstI18nKeyFor(`hosts.${i}`)))
+)
 
-  for (const [index, item] of formPing.value.hostList.entries()) {
-    if (item) {
-      const { valid, errMessage } = validateHost(item)
-
-      if (!valid) {
-        errorForm.value.hostList[index] = t(errMessage as string)
-        isValidationOk = false
-      }
+const {
+  mutate,
+  status: mutateStatus,
+  error: mutateError,
+  isPending: isSaving
+} = useMutation({
+  mutationFn: () => ubusCall('ns.telegraf', 'set-hosts', { hosts: hosts.value.filter((h) => h) }),
+  onMutate: () => validationBag.value.clear(),
+  onSuccess: async () => {
+    await Promise.all([
+      uci.getChanges(),
+      queryClient.invalidateQueries({ queryKey: ['telegraf', 'config'] })
+    ])
+  },
+  onError: (e: Error) => {
+    if (e instanceof ValidationError) {
+      validationBag.value = e.errorBag
     }
   }
-
-  return isValidationOk
-}
-
-function save() {
-  errorForm.value = {
-    hostList: ['']
-  }
-  if (validate()) {
-    saving.value = true
-
-    const payload = {
-      hosts: formPing.value.hostList.filter((item) => item)
-    }
-
-    ubusCall('ns.telegraf', 'set-hosts', payload)
-      .then((response) => {
-        if (response?.data?.success && response.data.success) {
-          getConfiguration()
-        }
-      })
-      .catch((exception: AxiosError) => {
-        errorSaving.value.notificationTitle = t('error.cannot_save_configuration')
-        errorSaving.value.notificationDescription = t(getAxiosErrorMessage(exception))
-        errorSaving.value.notificationDetails = exception.toString()
-      })
-      .finally(() => (saving.value = false))
-  }
-}
+})
 </script>
 
 <template>
@@ -112,54 +78,43 @@ function save() {
     <p class="mb-6 max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
       {{ t('standalone.ping_latency_monitor.description') }}
     </p>
-    <NeSkeleton v-if="loading" :lines="5" />
+    <NeSkeleton v-if="isPending" :lines="5" />
     <NeInlineNotification
-      v-if="!loading && errorConfiguration.notificationTitle"
+      v-else-if="isError"
       class="my-4"
       kind="error"
-      :title="errorConfiguration.notificationTitle"
-      :description="errorConfiguration.notificationDescription"
-    >
-      <template v-if="errorConfiguration.notificationDetails" #details>
-        {{ errorConfiguration.notificationDetails }}
-      </template>
-    </NeInlineNotification>
-    <template v-if="!loading && !errorConfiguration.notificationTitle">
-      <div class="max-w-md">
+      :title="t('error.cannot_retrieve_telegraf_configuration')"
+      :description="t(getAxiosErrorMessage(error))"
+    />
+    <template v-else>
+      <form class="max-w-md space-y-6" @submit.prevent="mutate()">
         <NeMultiTextInput
-          ref="hostListRef"
-          v-model="formPing.hostList"
+          v-model="hosts"
           :title="t('standalone.ping_latency_monitor.host_to_monitor')"
           :add-item-label="t('standalone.ping_latency_monitor.add_host')"
-          :invalid-messages="errorForm.hostList"
-          :disable-inputs="saving"
-          :disable-add-button="saving"
+          :invalid-messages="hostErrors"
+          :disable-inputs="isSaving"
+          :disable-add-button="isSaving"
           optional
           :optional-label="t('common.optional')"
         />
-        <div class="mt-6">
-          <hr />
-        </div>
         <NeInlineNotification
-          v-if="errorSaving.notificationTitle"
+          v-if="mutateStatus === 'error' && validationBag.size < 1"
           class="my-4"
           kind="error"
-          :title="errorSaving.notificationTitle"
-          :description="errorSaving.notificationDescription"
-        >
-          <template v-if="errorSaving.notificationDetails" #details>
-            {{ errorSaving.notificationDetails }}
-          </template>
-        </NeInlineNotification>
-        <div class="flex justify-end py-6">
-          <NeButton :disabled="saving" :kind="'primary'" :loading="saving" @click="save()">
+          :title="t('error.cannot_save_configuration')"
+          :description="t(getAxiosErrorMessage(mutateError))"
+        />
+        <hr />
+        <div class="flex justify-end">
+          <NeButton :disabled="isSaving" kind="primary" :loading="isSaving" type="submit">
             <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('common.save') }}
           </NeButton>
         </div>
-      </div>
+      </form>
     </template>
   </div>
 </template>

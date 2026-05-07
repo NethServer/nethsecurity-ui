@@ -14,7 +14,8 @@ import {
   getAxiosErrorMessage,
   deleteFromStorage,
   getStringFromStorage,
-  saveToStorage
+  saveToStorage,
+  NeCheckbox
 } from '@nethesis/vue-components'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref, watch } from 'vue'
@@ -261,18 +262,11 @@ async function verifyOtp() {
               />
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                  <input
+                  <NeCheckbox
                     id="remember-me"
                     v-model="rememberMe"
-                    name="remember-me"
-                    type="checkbox"
-                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
+                    :label="t('login.remember_me')"
                   />
-                  <label
-                    for="remember-me"
-                    class="ml-3 block text-sm leading-6 text-gray-900 dark:text-gray-100"
-                    >{{ t('login.remember_me') }}</label
-                  >
                 </div>
                 <div class="text-sm leading-6">
                   <NeLink

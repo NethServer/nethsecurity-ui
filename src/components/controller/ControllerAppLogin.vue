@@ -8,6 +8,7 @@ import {
   getAxiosErrorMessage,
   getStringFromStorage,
   NeButton,
+  NeCheckbox,
   NeHeading,
   NeInlineNotification,
   NeLink,
@@ -215,18 +216,7 @@ function isFormInvalid() {
             />
             <div class="flex items-center justify-between">
               <div class="flex items-center">
-                <input
-                  id="remember-me"
-                  v-model="rememberMe"
-                  name="remember-me"
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:text-primary-600 dark:focus:ring-primary-400"
-                />
-                <label
-                  for="remember-me"
-                  class="ml-3 block text-sm leading-6 text-gray-900 dark:text-gray-100"
-                  >{{ t('login.remember_me') }}</label
-                >
+                <NeCheckbox id="remember-me" v-model="rememberMe" :label="t('login.remember_me')" />
               </div>
 
               <div class="text-sm leading-6">

@@ -75,7 +75,7 @@
   },
   "error": {
     "generic_error": "Qualcosa è andato storto",
-    "network_error": "Errore di rete",
+    "network_error": "Errore di rete. Controlla la connessione e ricarica la pagina.",
     "network_timeout": "Timeout di rete",
     "http_401": "Errore di autenticazione",
     "http_403": "Errore di autorizzazione",

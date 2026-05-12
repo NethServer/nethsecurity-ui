@@ -1,0 +1,932 @@
+{
+  "src/ControllerApp.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/StandaloneApp.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/DeleteModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/charts/BasicBarChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/charts/BasicPieChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/charts/TimeLineChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/controller/ControllerAppLogin.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/controller/PlatformInfoModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/account_settings/ChangePasswordDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/account_settings/DeleteSSHKeyModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/account_settings/GenerateSSHKeyPairDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/account_settings/TwoFactorAuth.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/account_settings/two_fa/ConfigureTwoFaDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/controller/account_settings/two_fa/RevokeTwoFaModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/controller/unit_groups/CreateOrEditUnitGroupDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/AddUnitModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/BatchUnitImageUpdate.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/CancelUpdateModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/OpenSshModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/controller/units/RemoveUnitModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/ScheduleUpdateDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/controller/units/SendOrRevokeSshKeyDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/controller/units/UnitsTable.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/units/UpdateUnitsPackagesModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/controller/users/CreateOrEditUserDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/controller/users/DeleteUserModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/FilterableListItemLayout.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/NeTable.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/SideMenu.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/StandaloneAppLogin.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/UciChangesModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/backup_and_restore/DeleteBackupModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/backup_and_restore/DownloadBackupModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/backup_and_restore/MigrationDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/backup_and_restore/RestoreContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    }
+  },
+  "src/components/standalone/backup_and_restore/RunBackupModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/certificates/CreateLetsEncryptCertificateDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/certificates/DeleteCertificateModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/certificates/ImportCertificateDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/dashboard/InternetConnectionCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dashboard/ServiceCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/dashboard/SystemInfoCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/dashboard/ThreatShieldIpCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/CreateOrEditStaticLeaseDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/DeleteDnsRecordModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/DeleteStaticLeaseModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/DhcpManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/DnsManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/dns_dhcp/DynamicLeases.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dns_dhcp/EditDhcpInterfaceDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/dns_dhcp/ScanNetwork.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/dns_dhcp/StaticLeases.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/DeleteDpiExceptionModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/DeleteDpiRuleModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/DpiExceptions.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/DpiRuleCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/DpiRules.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/dpi/ManageDpiRuleModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/standalone/factory_reset/FactoryResetContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/firewall/CreateOrEditPortForwardDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/firewall/conntrack/ConntrackContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/conntrack/DeleteConntrackRecordModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/CreateOrEditNatRuleDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/firewall/nat/CreateOrEditNetmapRuleDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/firewall/nat/DeleteNatRuleModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/DeleteNetmapModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/EditNatHelperDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/NatHelpers.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/NatRulesContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/nat/NetmapContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/rules/CreateOrEditFirewallRuleDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/firewall/rules/DeleteFirewallRuleModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/firewall/rules/FirewallRulesContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/hotspot/SettingsContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/hotspot/StatusContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/ConfigureDeviceDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 20
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/CreateOrEditAliasInterfaceDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/CreateVlanDeviceDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/DeleteAliasModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/DeleteDeviceModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/interfaces_and_devices/UnconfigureDeviceModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/ipsec_tunnel/CreateOrEditTunnelDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/ipsec_tunnel/DeleteTunnelModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/monitoring/ConnectivityMonitor.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/monitoring/NetifyInformaticsContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/monitoring/SecurityMonitor.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 14
+    }
+  },
+  "src/components/standalone/monitoring/TrafficByHourChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/standalone/monitoring/VpnMonitor.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    }
+  },
+  "src/components/standalone/monitoring/connectivity/InterfaceTrafficCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/monitoring/connectivity/WanConnectionsCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/monitoring/security/BlockedIpsByHourChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/monitoring/security/BlockedPacketsByHourChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/monitoring/traffic/InterfaceTrafficChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/monitoring/vpn/ClientSessionsCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/monitoring/vpn/ClientsTrafficByHourCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/monitoring/vpn/ConnectedClientsByHourCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/monitoring/vpn/ConnectedClientsByHourChart.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/monitoring/vpn/CurrentlyConnectedClientsCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/monitoring/vpn/TrafficByClientByHourCard.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/components/standalone/multi-wan/RuleManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/ConnectionsHistory.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/CreateOrEditRWAccountDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/standalone/openvpn_rw/DeleteRWAccountModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/DeleteRWServerModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/RWAccountsManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/openvpn_rw/RegenerateRWAllCertificatesModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/RenewCertificateDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_rw/RenewRWServerCertificateModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/CreateOrEditTunnelDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/DeleteTunnelModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/DownloadTunnelModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/ImportConfigurationDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/RegenerateCertsModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/TunnelManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/openvpn_tunnel/TunnelTable.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/qos/CreateOrEditQoSInterfaceDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/qos/DeleteQoSInterfaceModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/reverse_proxy/CreateOrEditProxyDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/reverse_proxy/DeleteProxyModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/routes/CreateOrEditRouteDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/routes/RoutesContent.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/security/threat_shield/AllowlistTab.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/security/threat_shield/BlocklistTab.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/security/threat_shield/CreateOrEditAddressDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/security/threat_shield/DeleteAddressModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/security/threat_shield/LocalBlocklistTab.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/security/threat_shield/SettingsTab.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/security/threat_shield_dns/CreateBypassDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/security/threat_shield_dns/CreateOrEditAllowedDomainDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/security/threat_shield_dns/CreateOrEditBlockedDomainDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/subscription/CancelSubscriptionModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/subscription/RemoteSupport.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/subscription/UnitSubscription.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/system_settings/GeneralSettings.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 11
+    }
+  },
+  "src/components/standalone/system_settings/TimeSynchronization.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/update/ScheduleUpdateDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/update/UpdatePackagesModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/update/UploadImageDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/components/standalone/users_database/CreateOrEditDatabaseDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/components/standalone/users_database/CreateOrEditUserDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/users_database/DeleteDatabaseModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/users_database/DeleteUserModal.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/users_database/UsersDatabaseManager.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/components/standalone/users_objects/CreateOrEditDomainSetDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/standalone/users_objects/CreateOrEditHostSetDrawer.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "src/components/standalone/users_objects/ObjectUsages.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useDomainSets.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useHostSets.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useLatencyAndQualityReport.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useNetworkDevices.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useRuleForm.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/composables/useTopTalkers.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/composables/useUciNetworkConfig.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/lib/fontawesome.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/lib/standalone/network.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    }
+  },
+  "src/lib/standalone/ubus.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    }
+  },
+  "src/lib/twoFa.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/lib/validation.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/stores/controller/accounts.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/stores/controller/units.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/stores/notifications.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/stores/standalone/firewall.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/stores/standalone/threatShield.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 14
+    }
+  },
+  "src/stores/standalone/uciPendingChanges.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/views/controller/UnitTerminalView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/firewall/PortForward.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/views/standalone/monitoring/PingLatencyMonitorView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/monitoring/RealTimeMonitoringView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/network/InterfacesAndDevicesView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 40
+    }
+  },
+  "src/views/standalone/network/QoSView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/views/standalone/network/ReverseProxyView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/security/FlashStartView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/security/ThreatShieldDnsView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/system/CertificatesView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/views/standalone/system/ControllerView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "src/views/standalone/system/RebootAndShutdownView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/views/standalone/system/StorageView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/views/standalone/system/SubscriptionView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/views/standalone/system/UpdateView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/views/standalone/users_objects/UsersDatabaseView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "src/views/standalone/vpn/IPsecTunnelView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "src/views/standalone/vpn/OpenvpnRoadWarriorView.vue": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  }
+}

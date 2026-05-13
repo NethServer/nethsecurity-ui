@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.20.0](https://github.com/NethServer/nethsecurity-ui/compare/2.19.0...2.20.0) (2026-05-13)
+
+
+### Features
+
+* **openvpn:** add tun_mtu and mssfix configuration management for instances ([#753](https://github.com/NethServer/nethsecurity-ui/issues/753)) ([4fd7ed9](https://github.com/NethServer/nethsecurity-ui/commit/4fd7ed964bf4cb5528cc91406e84a773bef5d322))
+
+
+### Bug Fixes
+
+* label typo ([#755](https://github.com/NethServer/nethsecurity-ui/issues/755)) ([3c8ec41](https://github.com/NethServer/nethsecurity-ui/commit/3c8ec418d2f5a82ab058278a59af3f9e2b91fad6))
+* using NeCheckbox instead of input and improved network error message ([#758](https://github.com/NethServer/nethsecurity-ui/issues/758)) ([c2a5624](https://github.com/NethServer/nethsecurity-ui/commit/c2a562498bb8d704c1d6dea6638b9806ec0d6eeb))
+
 ## [2.19.0](https://github.com/NethServer/nethsecurity-ui/compare/2.18.2...2.19.0) (2026-04-30)
 
 

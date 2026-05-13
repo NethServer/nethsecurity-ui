@@ -17,6 +17,8 @@ import {
   faCircleXmark,
   faCopy,
   faGripVertical,
+  faList,
+  faTag,
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { useHostSets } from '@/composables/useHostSets'
@@ -354,9 +356,9 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 <!-- name -->
                 <td :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <div
-                    class="flex items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
+                    class="flex w-full items-center justify-between gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
                   >
-                    <div>
+                    <div class="flex-1">
                       <div :class="{ 'opacity-50': !isEnabled(rule) }">
                         {{ rule.name }}
                       </div>
@@ -393,24 +395,39 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                         </NeTooltip>
                       </div>
                     </div>
-                    <!-- show details icon -->
-                    <NeTooltip>
-                      <template #trigger>
-                        <NeLink>
-                          <FontAwesomeIcon :icon="['fas', 'magnifying-glass-plus']" />
-                        </NeLink>
-                      </template>
-                      <template #content>
-                        <div>
-                          <span> {{ t('standalone.firewall_rules.tags') }}: </span>
-                          <span>{{ rule.ns_tag?.join(', ') || '-' }}</span>
-                        </div>
-                        <div>
-                          <span> {{ t('standalone.firewall_rules.logging') }}: </span>
-                          <span>{{ rule.log ? t('common.enabled') : t('common.disabled') }}</span>
-                        </div>
-                      </template>
-                    </NeTooltip>
+                    <div class="flex flex-wrap items-center justify-end gap-4">
+                      <!-- logging info -->
+                      <NeTooltip
+                        trigger-event="mouseenter focus"
+                        v-if="isEnabled(rule) && rule.log"
+                      >
+                        <template #trigger>
+                          <NeLink>
+                            <FontAwesomeIcon
+                              :icon="faList"
+                              class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                            />
+                          </NeLink>
+                        </template>
+                        <template #content>
+                          <span> {{ t('standalone.firewall_rules.logging_enabled') }} </span>
+                        </template>
+                      </NeTooltip>
+                      <!-- tags -->
+                      <NeTooltip trigger-event="mouseenter focus" v-if="rule.ns_tag.length > 0">
+                        <template #trigger>
+                          <NeLink>
+                            <FontAwesomeIcon
+                              :icon="faTag"
+                              class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                            />
+                          </NeLink>
+                        </template>
+                        <template #content>
+                          <span>{{ rule.ns_tag?.join(', ') }}</span>
+                        </template>
+                      </NeTooltip>
+                    </div>
                   </div>
                 </td>
                 <!-- source -->

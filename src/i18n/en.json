@@ -1506,7 +1506,8 @@
       "zone_dmz_color": "Orange",
       "preset_active_title": "Preset selected",
       "preset_active_description": "When you create this zone, the system will automatically add firewall rules to allow access to essential services. You can view or modify them anytime under Firewall > Rules > Input Rules.",
-      "choose_one_or_more_zones": "Choose one or more zones"
+      "choose_one_or_more_zones": "Choose one or more zones",
+      "logging_enabled": "Logging enabled"
     },
     "port_forward": {
       "title": "Port forward",
@@ -1538,6 +1539,8 @@
       "log": "Log",
       "hairpin_nat": "Hairpin NAT",
       "hairpin_nat_zones": "Hairpin NAT enabled on following zones",
+      "hairpin_nat_enabled": "Hairpin NAT enabled on {zones}",
+      "logging_enabled": "Logging enabled",
       "choose_zone": "Choose zone",
       "choose_protocol": "Choose protocol",
       "protocol_helper": "Leave unselected for any source protocol",
@@ -1643,7 +1646,8 @@
       "destination_object": "Destination object",
       "inactive": "Inactive",
       "zone_no_longer_exists": "This rule is inactive because it uses a zone that no longer exists",
-      "disabled_rule": "This rule has been manually disabled, but can be re-enabled"
+      "disabled_rule": "This rule has been manually disabled, but can be re-enabled",
+      "logging_enabled": "Logging enabled"
     },
     "firewall": {
       "title": "Firewall"

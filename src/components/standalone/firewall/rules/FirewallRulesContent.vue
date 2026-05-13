@@ -282,7 +282,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
       </div>
       <NeButton
         v-if="loading.listRules || rules.length"
-        kind="secondary"
+        kind="primary"
         size="lg"
         class="ml-6 shrink-0"
         @click="showCreateRuleDrawer"

@@ -15,7 +15,8 @@ import {
   validateRequired,
   validateRequiredOption,
   validateUciName,
-  type validationOutput
+  type validationOutput,
+  validateIpv4Mtu
 } from '@/lib/validation'
 import {
   NeCombobox,
@@ -45,6 +46,8 @@ type TunnelDefaults = {
   ifconfig_remote: string
   route: string[]
   remote: string[]
+  tun_mtu: string
+  mssfix: string
 }
 
 type SharedTunnelPayload = {
@@ -60,6 +63,8 @@ type SharedTunnelPayload = {
   compress?: string
   cipher?: string
   auth?: string
+  tun_mtu: string
+  mssfix: string
 }
 
 type ClientTunnelPayload = {
@@ -117,6 +122,8 @@ const protocol = ref<'tcp' | 'udp'>('udp')
 const compression = ref('disabled')
 const digest = ref('SHA256')
 const cipher = ref('AES-256-GCM')
+const tunMtu = ref('')
+const mssfix = ref('')
 
 // Server tunnel form fields
 const publicEndpoints = ref<string[]>([''])
@@ -281,6 +288,8 @@ async function resetForm() {
     name.value = tunnelData.ns_name
     enabled.value = tunnelData.enabled === '1'
     port.value = tunnelData.port
+    tunMtu.value = tunnelData.tun_mtu
+    mssfix.value = tunnelData.mssfix
     protocol.value = tunnelData.proto
     localP2pIp.value = tunnelData.ifconfig_local ?? ''
     remoteP2pIp.value = tunnelData.ifconfig_remote ?? ''
@@ -337,6 +346,8 @@ async function resetForm() {
         .data as TunnelDefaults
 
       port.value = defaultsPayload.port.toString()
+      tunMtu.value = defaultsPayload.tun_mtu
+      mssfix.value = defaultsPayload.mssfix
       localP2pIp.value = defaultsPayload.ifconfig_local
       remoteP2pIp.value = defaultsPayload.ifconfig_remote
       presharedKey.value = defaultsPayload.secret
@@ -399,6 +410,8 @@ function validate() {
   // shared form fields validation
   const sharedFieldsValidators: [validationOutput[], string][] = [
     [[validateRequired(name.value), validateUciName(name.value, 10)], 'ns_name'],
+    [[validateRequired(tunMtu.value), validateIpv4Mtu(tunMtu.value)], 'tun_mtu'],
+    [[validateRequired(mssfix.value), validateIpv4Mtu(mssfix.value)], 'mssfix'],
     ...(topology.value === 'p2p' ? p2pValidators : [])
   ]
 
@@ -516,6 +529,8 @@ async function createOrEditTunnel() {
         ...(isEditing ? { id: id.value } : {}),
         ns_name: name.value,
         port: port.value,
+        tun_mtu: tunMtu.value,
+        mssfix: mssfix.value,
         proto: protocol.value,
         compress: compression.value === 'disabled' ? '' : compression.value,
         enabled: enabled.value ? '1' : '0',
@@ -862,6 +877,18 @@ watch(
           v-model="protocol"
           :label="t('standalone.openvpn_tunnel.protocol')"
           :options="protocolOptions"
+        />
+        <NeTextInput
+          ref="tunMtuRef"
+          v-model="tunMtu"
+          :label="t('standalone.openvpn_tunnel.tun_mtu')"
+          :invalid-message="t(validationErrorBag.getFirstFor('tun_mtu'))"
+        />
+        <NeTextInput
+          ref="mssfixRef"
+          v-model="mssfix"
+          :label="t('standalone.openvpn_tunnel.mssfix')"
+          :invalid-message="t(validationErrorBag.getFirstFor('mssfix'))"
         />
         <NeCombobox
           v-model="compression"

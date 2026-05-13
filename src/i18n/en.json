@@ -2039,7 +2039,9 @@
       "type_server_name": "Type the server name '{server}' to confirm",
       "regenerate": "Regenerate",
       "server": "Server",
-      "ca": "CA"
+      "ca": "CA",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "openvpn_tunnel": {
       "title": "OpenVPN tunnel",
@@ -2136,7 +2138,9 @@
       "real_address": "Real address",
       "since": "Connection start",
       "virtual_address": "Virtual address",
-      "remote_host": "Remote hosts"
+      "remote_host": "Remote hosts",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "ipsec_tunnel": {
       "title": "IPsec tunnel",

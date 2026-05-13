@@ -1513,7 +1513,9 @@
       "real_address": "Indirizzo reale",
       "since": "Inizio connessione",
       "virtual_address": "Indirizzo virtuale",
-      "remote_host": "Host remoti"
+      "remote_host": "Host remoti",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "ipsec_tunnel": {
       "local_identifier_tooltip": "Inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",
@@ -1902,7 +1904,9 @@
       "type_server_name": "Digita il nome del server '{server}' per confermare",
       "regenerate": "Rigenera",
       "server": "Server",
-      "ca": "CA"
+      "ca": "CA",
+      "tun_mtu": "MTU",
+      "mssfix": "MSSFix"
     },
     "qos": {
       "interface": "Interfaccia",

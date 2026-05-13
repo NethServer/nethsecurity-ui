@@ -734,6 +734,17 @@ export function validateNoSpaces(value: string): validationOutput {
 }
 
 /**
+ * Validate if the string doesn't have curly braces.
+ * @param value
+ */
+export function validateNoCurlyBraces(value: string): validationOutput {
+  if (value.includes('{') || value.includes('}')) {
+    return { valid: false, errMessage: 'error.curly_braces_not_allowed' }
+  }
+  return { valid: true }
+}
+
+/**
  * Validate a 6-digit code
  *
  * * Examples of valid values:

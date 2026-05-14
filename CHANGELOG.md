@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.1](https://github.com/NethServer/nethsecurity-ui/compare/2.20.0...2.20.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* **ipsec:** reject curly braces in pre-shared keys ([#763](https://github.com/NethServer/nethsecurity-ui/issues/763)) ([37420eb](https://github.com/NethServer/nethsecurity-ui/commit/37420eb22721c019636f73dfa01ce8b11ee8a92d))
+
 ## [2.20.0](https://github.com/NethServer/nethsecurity-ui/compare/2.19.0...2.20.0) (2026-05-13)
 
 

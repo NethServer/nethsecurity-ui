@@ -23,7 +23,7 @@
     "status": "Stato",
     "any": "Qualsiasi",
     "loading": "Caricamento",
-    "eg_value": "Es. {value}",
+    "eg_value": "es. {value}",
     "name": "Nome",
     "plus_num_others": "+{num} altro | +{num} altri",
     "more_info": "Più info",

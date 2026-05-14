@@ -8,6 +8,7 @@ import {
   MessageBag,
   validateHost,
   validateIp4Cidr,
+  validateNoCurlyBraces,
   validatePositiveInteger,
   validateRequired,
   validateRequiredOption,
@@ -355,12 +356,10 @@ function validateFormByStep(step: number): boolean {
     if (presharedKeyMode.value === 'generate') {
       return true
     } else {
-      const validator = validateRequired(presharedKey.value)
-      if (!validator.valid) {
-        validationErrorBag.value.set('presharedKey', [t(validator.errMessage as string)])
-        return false
-      }
-      return true
+      return runValidators(
+        [validateRequired(presharedKey.value), validateNoCurlyBraces(presharedKey.value)],
+        'presharedKey'
+      )
     }
   } else {
     const step3Validators: [validationOutput[], string][] = [
@@ -611,7 +610,15 @@ watch(
           v-model="presharedKey"
           :invalid-message="validationErrorBag.getFirstFor('presharedKey')"
           :label="id ? t('standalone.ipsec_tunnel.pre_shared_key') : ''"
-        />
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.ipsec_tunnel.pre_shared_key_invalid_chars_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeTextInput>
         <NeCopyField v-else :value="generatedPresharedKey" />
 
         <div>

@@ -50,7 +50,7 @@ interface ForwardingResponse {
   ipset?: string
 }
 
-export type FirewallRuleAction = 'DROP' | 'REJECT' | 'ACCEPT'
+export type FirewallRuleAction = 'DROP' | 'REJECT' | 'ACCEPT' | 'NOTRACK'
 export type NatRuleAction = 'SNAT' | 'MASQUERADE' | 'ACCEPT'
 
 export interface FirewallRule {

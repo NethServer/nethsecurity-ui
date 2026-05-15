@@ -184,6 +184,8 @@ function getRuleActionIcon(ruleTarget: string) {
     case 'DROP':
     case 'REJECT':
       return 'ban'
+    case 'NOTRACK':
+      return 'eye-slash'
     default:
       return 'circle-question'
   }
@@ -200,6 +202,8 @@ function getRuleActionColor(rule: FirewallRule) {
     case 'DROP':
     case 'REJECT':
       return 'text-rose-700 dark:text-rose-500'
+    case 'NOTRACK':
+      return 'text-gray-700 dark:text-gray-500'
     default:
       return ''
   }

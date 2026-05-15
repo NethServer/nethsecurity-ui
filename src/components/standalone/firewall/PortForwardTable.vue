@@ -133,7 +133,7 @@ function getCellClasses(item: PortForward) {
               </div>
               <div class="flex flex-wrap items-center justify-end gap-4">
                 <!-- logging info -->
-                <NeTooltip trigger-event="mouseenter focus" v-if="item.enabled && item.log">
+                <NeTooltip v-if="item.enabled && item.log" trigger-event="mouseenter focus">
                   <template #trigger>
                     <NeLink>
                       <FontAwesomeIcon
@@ -147,7 +147,7 @@ function getCellClasses(item: PortForward) {
                   </template>
                 </NeTooltip>
                 <!-- hairpin NAT -->
-                <NeTooltip trigger-event="mouseenter focus" v-if="item.enabled && item.reflection">
+                <NeTooltip v-if="item.enabled && item.reflection" trigger-event="mouseenter focus">
                   <template #trigger>
                     <NeLink>
                       <FontAwesomeIcon

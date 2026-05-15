@@ -8,7 +8,7 @@ import { faChartLine } from '@fortawesome/free-solid-svg-icons'
 import { NeCard, NeEmptyState } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import TimeLineChart from '@/components/charts/TimeLineChart.vue'
-import type { ChartData } from '@/composables/useMetricsCharts'
+import type { ChartData } from '@/lib/standalone/metricsCharts'
 
 defineProps<{
   title: string
@@ -18,13 +18,14 @@ defineProps<{
   datasetSuffix?: string
   useKbpsFormat?: boolean
   height?: string
+  loading?: boolean
 }>()
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <NeCard :title="title">
+  <NeCard :title="title" :loading="loading">
     <TimeLineChart
       v-if="chart?.labels?.length"
       :labels="chart.labels"

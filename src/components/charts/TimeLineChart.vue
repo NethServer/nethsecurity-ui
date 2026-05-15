@@ -130,7 +130,11 @@ const allOptions = computed(() => {
 })
 
 const chartData: any = computed(() => {
-  return { labels: props.labels, datasets: props.datasets }
+  // Deep-clone to strip Vue readonly proxies before handing data to Chart.js.
+  // Chart.js internally mutates dataset objects (attaches _meta, controllers, etc.)
+  // and Vue will block those mutations with "target is readonly" warnings if the
+  // objects are still wrapped in a shallowReadonly prop proxy.
+  return JSON.parse(JSON.stringify({ labels: props.labels, datasets: props.datasets }))
 })
 
 const chartStyle = computed(() => {

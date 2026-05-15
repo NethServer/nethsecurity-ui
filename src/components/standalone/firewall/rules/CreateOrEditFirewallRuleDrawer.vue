@@ -112,6 +112,10 @@ const actionOptions = ref([
   {
     id: 'ACCEPT',
     label: 'ACCEPT'
+  },
+  {
+    id: 'NOTRACK',
+    label: 'NOTRACK'
   }
 ])
 

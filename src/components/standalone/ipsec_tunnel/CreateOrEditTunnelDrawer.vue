@@ -59,7 +59,7 @@ type CreateEditIpsecTunnelPayload = {
   }
   ipcomp: string
   closeaction?: string
-  dpdaction: 'restart' | 'none'
+  dpdaction: TunnelDpdAction
   remote_subnet: string[]
   local_subnet: string[]
   ns_name: string
@@ -71,6 +71,9 @@ type CreateEditIpsecTunnelPayload = {
   remote_identifier: string
   pre_shared_key: string
 }
+
+type DpdAction = 'clear' | 'trap' | 'restart'
+type TunnelDpdAction = DpdAction | 'none'
 
 const { t } = useI18n()
 
@@ -104,7 +107,7 @@ const remoteIdentifier = ref('')
 // Step 2 fields
 const presharedKeyMode = ref<'generate' | 'import'>('generate')
 const presharedKey = ref('')
-const dpd = ref(false)
+const dpdAction = ref<DpdAction>('clear')
 const enableCompression = ref(false)
 const closeAction = ref('none')
 
@@ -151,6 +154,11 @@ const closeActionOptions: NeComboboxOption[] = [
   { id: 'none', label: 'none' },
   { id: 'trap', label: 'trap' },
   { id: 'start', label: 'start' }
+]
+const dpdActionOptions: NeComboboxOption[] = [
+  { id: 'clear', label: 'clear' },
+  { id: 'trap', label: 'trap' },
+  { id: 'restart', label: 'restart' }
 ]
 const encryptionOptions = ref<NeComboboxOption[]>([])
 const integrityOptions = ref<NeComboboxOption[]>([])
@@ -253,7 +261,7 @@ async function resetForm() {
   wanIpAddress.value = tunnelData?.local_ip ?? ''
   remoteIpAddress.value = tunnelData?.gateway ?? ''
   remoteNetworks.value = tunnelData?.remote_subnet ?? ['']
-  dpd.value = tunnelData ? tunnelData.dpdaction == 'restart' : false
+  dpdAction.value = normalizeDpdAction(tunnelData?.dpdaction)
   enableCompression.value = tunnelData ? tunnelData.ipcomp === 'true' : false
   closeAction.value = tunnelData?.closeaction ?? 'none'
   ikeVersion.value = tunnelData?.keyexchange ?? ikeVersionOptions[0].id
@@ -403,6 +411,18 @@ function handlePreviousStep() {
   }
 }
 
+function normalizeDpdAction(action?: string | null): DpdAction {
+  switch (action) {
+    case 'trap':
+    case 'restart':
+    case 'clear':
+      return action
+    case 'none':
+    default:
+      return 'clear'
+  }
+}
+
 async function createOrEditTunnel() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
@@ -425,7 +445,7 @@ async function createOrEditTunnel() {
     ipcomp: enableCompression.value ? 'true' : 'false',
     closeaction: closeAction.value,
     enabled: enabled.value ? '1' : '0',
-    dpdaction: dpd.value ? 'restart' : 'none',
+    dpdaction: dpdAction.value,
     keyexchange: ikeVersion.value,
     remote_subnet: remoteNetworks.value.filter((x) => x != ''),
     local_subnet: localNetworks.value
@@ -621,17 +641,25 @@ watch(
         </NeTextInput>
         <NeCopyField v-else :value="generatedPresharedKey" />
 
-        <div>
-          <NeFormItemLabel>{{
-            t('standalone.ipsec_tunnel.dpd_dead_peer_detection')
-          }}</NeFormItemLabel>
-          <NeToggle
-            v-model="dpd"
-            :label="
-              dpd ? t('standalone.ipsec_tunnel.enabled') : t('standalone.ipsec_tunnel.disabled')
-            "
-          />
-        </div>
+        <NeCombobox
+          v-model="dpdAction"
+          :label="t('standalone.ipsec_tunnel.dpd_dead_peer_detection')"
+          :options="dpdActionOptions"
+          :no-options-label="t('ne_combobox.no_options_label')"
+          :no-results-label="t('ne_combobox.no_results')"
+          :limited-options-label="t('ne_combobox.limited_options_label')"
+          :selected-label="t('ne_combobox.selected')"
+          :user-input-label="t('ne_combobox.user_input_label')"
+          :optional-label="t('common.optional')"
+        >
+          <template #tooltip>
+            <NeTooltip>
+              <template #content>
+                {{ t('standalone.ipsec_tunnel.dpd_dead_peer_detection_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeCombobox>
         <div>
           <NeFormItemLabel>{{ t('standalone.ipsec_tunnel.compression') }}</NeFormItemLabel>
           <NeToggle

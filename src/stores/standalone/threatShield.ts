@@ -7,7 +7,6 @@ import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { getAxiosErrorMessage, sortByProperty } from '@nethesis/vue-components'
 import { defineStore } from 'pinia'
 import { useUciPendingChangesStore } from './uciPendingChanges'
-import { useNotificationsStore } from '../notifications'
 
 export type Blocklist = {
   name: string
@@ -36,7 +35,6 @@ export type DnsAllowedDomain = {
 export const useThreatShieldStore = defineStore('threatShield', () => {
   const { t, te } = useI18n()
   const uciChangesStore = useUciPendingChangesStore()
-  const notificationsStore = useNotificationsStore()
   const dnsBlocklists = ref<Blocklist[]>([])
   const dnsSettings = ref<DnsSettings>()
   const dnsZones = ref<string[]>([])
@@ -190,17 +188,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
 
     try {
       await ubusCall('ns.threatshield', method, domain)
-
-      if (!isEditing) {
-        // applied instantly, show notification (only if creating)
-        notificationsStore.createNotification({
-          kind: 'success',
-          title: t('standalone.threat_shield_dns.blocked_domain_added_title'),
-          description: t('standalone.threat_shield_dns.blocked_domain_added_description', {
-            domain: domain.address
-          })
-        })
-      }
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
 
@@ -223,17 +211,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
 
     try {
       await ubusCall('ns.threatshield', method, domain)
-
-      if (!isEditing) {
-        // applied instantly, show notification (only if creating)
-        notificationsStore.createNotification({
-          kind: 'success',
-          title: t('standalone.threat_shield_dns.allowed_domain_added_title'),
-          description: t('standalone.threat_shield_dns.allowed_domain_added_description', {
-            domain: domain.address
-          })
-        })
-      }
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
 
@@ -278,14 +256,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
       await ubusCall('ns.threatshield', 'dns-delete-blocked', {
         address: domain
       })
-      // applied instantly, show notification
-      notificationsStore.createNotification({
-        kind: 'success',
-        title: t('standalone.threat_shield_dns.blocked_domain_deleted_title'),
-        description: t('standalone.threat_shield_dns.blocked_domain_deleted_description', {
-          domain
-        })
-      })
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
       errorDeleteDnsBlockedDomain.value = t(getAxiosErrorMessage(err))
@@ -310,14 +281,7 @@ export const useThreatShieldStore = defineStore('threatShield', () => {
       await ubusCall('ns.threatshield', 'dns-delete-allowed', {
         address: domain
       })
-      // applied instantly, show notification
-      notificationsStore.createNotification({
-        kind: 'success',
-        title: t('standalone.threat_shield_dns.allowed_domain_deleted_title'),
-        description: t('standalone.threat_shield_dns.allowed_domain_deleted_description', {
-          domain
-        })
-      })
+      uciChangesStore.getChanges()
     } catch (err: any) {
       console.error(err)
       errorDeleteDnsAllowedDomain.value = t(getAxiosErrorMessage(err))

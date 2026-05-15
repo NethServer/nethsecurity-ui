@@ -849,11 +849,6 @@
       "count": 4
     }
   },
-  "src/views/standalone/monitoring/PingLatencyMonitorView.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "src/views/standalone/monitoring/RealTimeMonitoringView.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1

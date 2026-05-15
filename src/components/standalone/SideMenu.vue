@@ -51,6 +51,10 @@ const navigation: Ref<MenuItem[]> = ref([
       {
         name: 'standalone.ping_latency_monitor.title',
         to: 'monitoring/ping-latency-monitor'
+      },
+      {
+        name: 'standalone.metrics.title',
+        to: 'monitoring/metrics'
       }
     ]
   },

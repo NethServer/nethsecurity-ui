@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "eslint . --max-warnings 1229",
+    "lint": "eslint . --max-warnings 60",
     "lint-fix": "npm run lint -- --fix",
     "format": "prettier --list-different src/",
     "format-fix": "prettier --write src/",

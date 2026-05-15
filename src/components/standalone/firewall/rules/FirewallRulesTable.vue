@@ -398,8 +398,8 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     <div class="flex flex-wrap items-center justify-end gap-4">
                       <!-- logging info -->
                       <NeTooltip
-                        trigger-event="mouseenter focus"
                         v-if="isEnabled(rule) && rule.log"
+                        trigger-event="mouseenter focus"
                       >
                         <template #trigger>
                           <NeLink>
@@ -414,7 +414,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                         </template>
                       </NeTooltip>
                       <!-- tags -->
-                      <NeTooltip trigger-event="mouseenter focus" v-if="rule.ns_tag.length > 0">
+                      <NeTooltip v-if="rule.ns_tag.length > 0" trigger-event="mouseenter focus">
                         <template #trigger>
                           <NeLink>
                             <FontAwesomeIcon

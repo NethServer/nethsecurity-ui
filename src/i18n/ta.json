@@ -133,6 +133,7 @@
     "cannot_retrieve_backup_info": "காப்புப் பிரதி தகவலை மீட்டெடுக்க முடியாது",
     "cannot_retrieve_flashstart_configuration": "உள்ளமைவை மீட்டெடுக்க முடியவில்லை",
     "cannot_retrieve_netdata_configuration": "உள்ளமைவை மீட்டெடுக்க முடியவில்லை",
+    "cannot_retrieve_telegraf_configuration": "Telegraf உள்ளமைவை மீட்டெடுக்க முடியவில்லை",
     "cannot_retrieve_dpi_rules": "DPI விதிகளை மீட்டெடுக்க முடியாது",
     "cannot_retrieve_dpi_exceptions": "DPI விதிவிலக்குகளை மீட்டெடுக்க முடியாது",
     "cannot_create_dpi_exception": "DPI விதிவிலக்கை உருவாக்க முடியாது",

@@ -159,7 +159,7 @@ function editZone(zone: Zone) {
                 </div>
               </div>
               <div>
-                <NeTooltip trigger-event="mouseenter focus" v-if="item.logging">
+                <NeTooltip v-if="item.logging" trigger-event="mouseenter focus">
                   <template #trigger>
                     <NeLink>
                       <FontAwesomeIcon

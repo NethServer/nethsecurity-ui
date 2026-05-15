@@ -146,7 +146,7 @@
 }
 
 @utility text-primary-neutral {
-  @apply text-gray-600 dark:text-gray-50;
+  @apply text-gray-900 dark:text-gray-50;
 }
 
 @utility text-secondary {
@@ -154,7 +154,7 @@
 }
 
 @utility text-secondary-neutral {
-  @apply dark:text-gray-200;
+  @apply text-gray-700 dark:text-gray-200;
 }
 
 @utility text-tertiary-neutral {

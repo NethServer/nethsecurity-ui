@@ -17,11 +17,12 @@ import type { AxiosResponse } from 'axios'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
 
 type BackupData = {
-  created: number
+  uploaded_at: string
   id: string
   mimetype: string
-  name: string
+  filename: string
   size: number
+  sha256?: string
 }
 
 type BackupResponse = AxiosResponse<{
@@ -45,9 +46,11 @@ watchEffect(() => {
     latestBackupLoading.value = true
     ubusCall('ns.backup', 'registered-list-backups')
       .then((response: BackupResponse) => {
-        const backup = response.data.values.backups.sort((a, b) => b.created - a.created).shift()
+        const backup = response.data.values.backups
+          .sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
+          .shift()
         if (backup != undefined) {
-          lastBackup.value = formatDateLoc(new Date(backup.created * 1000), 'PPpp')
+          lastBackup.value = formatDateLoc(new Date(backup.uploaded_at), 'PPpp')
         } else {
           lastBackup.value = undefined
         }

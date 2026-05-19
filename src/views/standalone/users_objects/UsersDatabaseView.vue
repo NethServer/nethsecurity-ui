@@ -7,8 +7,7 @@ import {
   NeSkeleton,
   NeInlineNotification,
   getAxiosErrorMessage,
-  NeTabs,
-  NeTooltip
+  NeTabs
 } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -31,10 +30,7 @@ const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
 
-const loading = ref({
-  listDatabases: true,
-  getSubscriptionInfo: true
-})
+const loadingDatabases = ref(true)
 const databases = ref<UserDatabase[]>([])
 const error = ref({
   listDatabases: '',
@@ -43,13 +39,12 @@ const error = ref({
   getSubscriptionInfoDetails: ''
 })
 const showCreateDrawer = ref(false)
-const activeSubscription = ref(false)
 
 const { tabs, selectedTab } = useTabs([])
 
 async function fetchDatabases(resetSelectedTab: boolean = false) {
   try {
-    loading.value.listDatabases = true
+    loadingDatabases.value = true
     if (resetSelectedTab) {
       selectedTab.value = ''
     }
@@ -65,7 +60,7 @@ async function fetchDatabases(resetSelectedTab: boolean = false) {
     error.value.listDatabases = t(getAxiosErrorMessage(err))
     error.value.listDatabasesDetails = err.toString()
   } finally {
-    loading.value.listDatabases = false
+    loadingDatabases.value = false
   }
 }
 
@@ -76,30 +71,14 @@ async function reloadDatabases(resetSelectedTab: boolean = false) {
 
 onMounted(() => {
   fetchDatabases()
-  fetchSubscriptionInfo()
 })
-
-async function fetchSubscriptionInfo() {
-  loading.value.getSubscriptionInfo = true
-
-  try {
-    const res = await ubusCall('ns.subscription', 'info')
-
-    activeSubscription.value = (res.data?.systemd_id && res.data?.active) || false
-  } catch (err: any) {
-    error.value.getSubscriptionInfo = t(getAxiosErrorMessage(err))
-    error.value.getSubscriptionInfoDetails = err.toString()
-  } finally {
-    loading.value.getSubscriptionInfo = false
-  }
-}
 </script>
 
 <template>
   <div class="mb-6 flex flex-row items-center justify-between">
     <NeHeading tag="h3">{{ t('standalone.users_database.title') }}</NeHeading>
-    <!-- add remote database button (subscription only) -->
-    <NeButton v-if="activeSubscription" kind="secondary" @click="showCreateDrawer = true"
+    <!-- add remote database button -->
+    <NeButton kind="secondary" @click="showCreateDrawer = true"
       ><template #prefix>
         <font-awesome-icon
           :icon="['fas', 'circle-plus']"
@@ -108,20 +87,6 @@ async function fetchSubscriptionInfo() {
         /> </template
       >{{ t('standalone.users_database.add_remote_database') }}</NeButton
     >
-    <!-- disabled add remote database button for community -->
-    <NeTooltip v-else trigger-event="mouseenter focus" placement="bottom">
-      <template #trigger>
-        <NeButton kind="secondary" disabled>
-          <template #prefix>
-            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
-          </template>
-          {{ t('standalone.users_database.add_remote_database') }}
-        </NeButton>
-      </template>
-      <template #content>
-        {{ t('standalone.users_database.add_remote_database_tooltip') }}
-      </template>
-    </NeTooltip>
   </div>
   <!-- list databases error -->
   <NeInlineNotification
@@ -147,7 +112,7 @@ async function fetchSubscriptionInfo() {
       {{ error.listDatabasesDetails }}
     </template></NeInlineNotification
   >
-  <NeSkeleton v-if="loading.listDatabases || loading.getSubscriptionInfo" :lines="10" size="lg" />
+  <NeSkeleton v-if="loadingDatabases" :lines="10" size="lg" />
   <div v-else-if="!error.listDatabases && !error.getSubscriptionInfo">
     <NeTabs
       :selected="selectedTab"

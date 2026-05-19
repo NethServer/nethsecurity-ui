@@ -4,13 +4,10 @@ import {
   NeButton,
   NeHeading,
   NeInlineNotification,
-  NeLink,
   NeModal,
   NeSkeleton,
-  NeToggle,
-  NeTooltip
+  NeToggle
 } from '@nethesis/vue-components'
-import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'
@@ -21,7 +18,6 @@ import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesMo
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 import { getProductName } from '@/lib/config'
 import { useNotificationsStore } from '@/stores/notifications'
-import { useRouter } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export type PackageUpdate = {
@@ -38,7 +34,6 @@ export type SystemUpdate = {
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
-const router = useRouter()
 
 const loading = ref(true)
 const error = ref({
@@ -62,7 +57,6 @@ const isApplyingSystemUpdate = ref(false)
 const noPackageUpdatesAvailable = ref(false)
 
 const automaticUpdatesEnabled = ref(false)
-const isSubscriptionActive = ref(false)
 const isChangingAutomaticUpdatesSetting = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
@@ -92,10 +86,6 @@ async function fetchUpdatesStatus() {
     if (lastPackageUpdateCheckResponse.lastCheck > 0) {
       lastPackageUpdateCheck.value = new Date(lastPackageUpdateCheckResponse.lastCheck * 1000)
     }
-
-    const subscriptionResponse = await ubusCall('ns.subscription', 'info')
-    isSubscriptionActive.value =
-      subscriptionResponse.data.systemd_id != '' && subscriptionResponse.data.active
 
     automaticUpdatesEnabled.value = (
       await ubusCall('ns.update', 'get-automatic-updates-status')
@@ -265,30 +255,11 @@ onMounted(() => {
       <div class="mt-6">
         <NeToggle
           v-model="automaticUpdatesEnabled"
-          :disabled="!isSubscriptionActive || isChangingAutomaticUpdatesSetting"
+          :disabled="isChangingAutomaticUpdatesSetting"
           :label="automaticUpdatesEnabled ? t('common.enabled') : t('common.disabled')"
           :top-label="t('standalone.update.automatic_updates')"
           @update:model-value="handleAutomaticUpdatesToggle"
-        >
-          <template #topTooltip>
-            <NeTooltip>
-              <template #content>
-                <p>
-                  {{ t('standalone.update.automatic_updates_tooltip') }}
-                </p>
-                <NeLink
-                  inverted-theme
-                  @click="
-                    () => {
-                      router.push(`${getStandaloneRoutePrefix()}/system/subscription`)
-                    }
-                  "
-                  >{{ t('standalone.update.go_to_subscription') }}</NeLink
-                >
-              </template>
-            </NeTooltip>
-          </template>
-        </NeToggle>
+        />
       </div>
     </template>
   </FormLayout>

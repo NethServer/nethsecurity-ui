@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useAlerts } from '@/composables/useAlerts'
-import { faArrowRight, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { NeBadgeV2, NeButton, NeCard, NeLink, NeSkeleton } from '@nethesis/vue-components'
+import { NeBadgeV2, NeCard, NeLink, NeSkeleton } from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
@@ -39,12 +39,6 @@ function goToAlerts() {
         <span v-if="alertCount" class="mr-1 text-xl">{{ alertCount }}</span>
         {{ t('standalone.metrics.active_alerts', { count: alertCount }) }}
       </p>
-      <NeButton v-if="alertCount" kind="tertiary" @click="goToAlerts">
-        <div class="flex items-center gap-2">
-          <FontAwesomeIcon :icon="faArrowRight" />
-          {{ t('standalone.metrics.go_to_alerts') }}
-        </div>
-      </NeButton>
     </div>
   </NeCard>
 </template>

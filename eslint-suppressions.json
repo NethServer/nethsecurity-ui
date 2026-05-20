@@ -911,7 +911,7 @@
   },
   "src/views/standalone/users_objects/UsersDatabaseView.vue": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 2
+      "count": 1
     }
   },
   "src/views/standalone/vpn/IPsecTunnelView.vue": {

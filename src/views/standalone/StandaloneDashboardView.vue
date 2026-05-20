@@ -19,6 +19,7 @@ import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingSt
 import BackupStatusCard from '@/components/standalone/dashboard/BackupStatusCard.vue'
 import HaStatusCard from '@/components/standalone/dashboard/HaStatusCard.vue'
 import WireguardCard from '@/components/standalone/dashboard/WireguardCard.vue'
+import AlertsCard from '@/components/standalone/dashboard/AlertsCard.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -49,13 +50,8 @@ function goTo(path: string) {
         </NeLink>
       </template>
     </ServiceCard>
-    <!-- dpi-core -->
-    <ServiceCard
-      service-name="netifyd"
-      has-status
-      :title="t('standalone.dashboard.dpi_core')"
-      :icon="['fas', 'bolt']"
-    />
+    <!-- alerts -->
+    <AlertsCard />
     <!-- openvpn rw -->
     <ServiceCard
       service-name="openvpn_rw"

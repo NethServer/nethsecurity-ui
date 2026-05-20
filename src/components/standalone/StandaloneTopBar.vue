@@ -18,6 +18,7 @@ import { isStandaloneMode } from '@/lib/config'
 import UciChangesModal from './UciChangesModal.vue'
 import {
   faAward,
+  faBell,
   faCircleUser,
   faMoon,
   faRightFromBracket,
@@ -25,6 +26,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import { useAlerts } from '@/composables/useAlerts'
 
 const emit = defineEmits(['openSidebar'])
 
@@ -34,6 +36,7 @@ const themeStore = useThemeStore()
 const uciChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
 const subscriptionStore = useSubscriptionStore()
+const { notifications: alertNotifications } = useAlerts()
 
 const showUciChangesModal = ref(false)
 const isChangesButtonFlashing = ref(false)
@@ -94,6 +97,22 @@ watch(
   () => notificationsStore.numNotifications,
   (newNum, oldNum) => {
     if (newNum > oldNum) {
+      // briefly shake notifications icon
+      setTimeout(() => {
+        shakeNotificationsIcon.value = true
+      }, 700)
+
+      setTimeout(() => {
+        shakeNotificationsIcon.value = false
+      }, 2700)
+    }
+  }
+)
+
+watch(
+  () => alertNotifications.value.length,
+  (newAlerts, oldAlerts) => {
+    if (newAlerts > oldAlerts) {
       // briefly shake notifications icon
       setTimeout(() => {
         shakeNotificationsIcon.value = true
@@ -223,14 +242,22 @@ function openNotificationsDrawer() {
           <template #trigger>
             <button
               type="button"
-              :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]"
+              :class="['relative -m-2.5 flex p-2.5', topBarButtonsColorClasses]"
               @click="openNotificationsDrawer"
             >
               <span class="sr-only">{{ t('common.shell.show_notifications') }}</span>
-              <font-awesome-icon
-                :icon="['fas', 'bell']"
+              <FontAwesomeIcon
+                :icon="faBell"
                 :class="['h-6 w-6 shrink-0', { 'fa-shake': shakeNotificationsIcon }]"
                 style="--fa-animation-duration: 2s"
+                aria-hidden="true"
+              />
+              <!-- notification indicator -->
+              <span
+                v-if="
+                  notificationsStore.numNotifications > 0 || alertNotifications.length > 0
+                "
+                class="absolute top-2.5 right-2.5 size-3 rounded-full border border-elevation-0 bg-icon-danger"
                 aria-hidden="true"
               />
             </button>

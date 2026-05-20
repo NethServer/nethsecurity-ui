@@ -2479,10 +2479,10 @@
       "alerts_description": "Current pending and firing alerts evaluated by vmalert.",
       "alerts_table_aria_label": "Table of current monitoring alerts",
       "alert": "Alert",
-      "state": "State",
+      "status": "Status",
       "severity": "Severity",
       "triggered_by": "Triggered by",
-      "active_since": "Active since",
+      "started_at": "Started at",
       "service": "Service",
       "group": "Group",
       "no_alerts_yet": "No alerts yet",
@@ -2493,7 +2493,10 @@
       "critical": "Critical",
       "warning": "Warning",
       "info": "Info",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "go_to_alerts": "Go to Alerts",
+      "active_alerts": "@:standalone.metrics.no_alerts_description | active alert | active alerts",
+      "no_alerts": "No alerts"
     },
     "metrics_monitor": {
       "description": "Historical view of key system metrics collected by Telegraf and stored in VictoriaMetrics. Select a time range to adjust the chart window.",

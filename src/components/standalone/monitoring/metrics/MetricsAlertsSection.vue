@@ -4,9 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuery } from '@tanstack/vue-query'
 import {
   NeBadgeV2,
   type NeBadgeV2Kind,
@@ -20,56 +19,12 @@ import {
   NeTableRow,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { ubusCall } from '@/lib/standalone/ubus'
-import type { AxiosResponse } from 'axios'
+import { useAlerts, type Alert } from '@/composables/useAlerts'
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
-
-interface MetricsAlert {
-  activeAt: string
-  annotations: Record<string, string>
-  labels: Record<string, string>
-  name: string
-  source?: string
-  state: string
-}
-
-interface ListAlertsResponse {
-  alerts?: MetricsAlert[]
-  error?: string
-}
-
-const { interval } = defineProps<{
-  interval: number | false
-}>()
-
-const emit = defineEmits<{
-  updatedAt: [number]
-}>()
 
 const { t, locale } = useI18n()
 
-const { data, error, isError, isPending, dataUpdatedAt } = useQuery({
-  queryKey: ['metrics-alerts'],
-  queryFn: async () => {
-    const res = await ubusCall<AxiosResponse<ListAlertsResponse>>('ns.telegraf', 'list-alerts')
-
-    if (res.data.error) {
-      throw new Error(res.data.error)
-    }
-
-    return res.data.alerts ?? []
-  },
-  refetchInterval: interval,
-  refetchOnWindowFocus: interval != false
-})
-
-watch(
-  dataUpdatedAt,
-  (value) => {
-    emit('updatedAt', value)
-  },
-  { immediate: true }
-)
+const { data, error, isError, isPending } = useAlerts()
 
 const errorDescription = computed(() => {
   const currentError = error.value
@@ -82,7 +37,7 @@ const errorDescription = computed(() => {
   return t('error.generic_error')
 })
 
-function getLocalizedAnnotation(alert: MetricsAlert, annotation: 'summary' | 'description') {
+function getLocalizedAnnotation(alert: Alert, annotation: 'summary' | 'description') {
   const localeCode = locale.value.split('-')[0]
 
   return (
@@ -117,7 +72,7 @@ function getSeverityBadgeKind(severity: string | undefined): NeBadgeV2Kind {
   }
 }
 
-function getSeverityLabel(alert: MetricsAlert) {
+function getSeverityLabel(alert: Alert) {
   switch (alert.labels.severity) {
     case 'critical':
       return t('standalone.metrics.critical')
@@ -130,7 +85,7 @@ function getSeverityLabel(alert: MetricsAlert) {
   }
 }
 
-function getStateLabel(alert: MetricsAlert) {
+function getStateLabel(alert: Alert) {
   switch (alert.state) {
     case 'firing':
       return t('standalone.metrics.firing')
@@ -181,9 +136,9 @@ function formatActiveAt(activeAt: string) {
       <NeTableHead>
         <NeTableHeadCell>{{ t('standalone.metrics.severity') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.metrics.alert') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('standalone.metrics.state') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.metrics.status') }}</NeTableHeadCell>
         <NeTableHeadCell>{{ t('standalone.metrics.triggered_by') }}</NeTableHeadCell>
-        <NeTableHeadCell>{{ t('standalone.metrics.active_since') }}</NeTableHeadCell>
+        <NeTableHeadCell>{{ t('standalone.metrics.started_at') }}</NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
         <NeTableRow v-for="alert in data!" :key="`${alert.name}-${alert.activeAt}`">
@@ -205,7 +160,7 @@ function formatActiveAt(activeAt: string) {
               </p>
             </div>
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.metrics.state')">
+          <NeTableCell :data-label="t('standalone.metrics.status')">
             <NeBadgeV2 :kind="getStateBadgeKind(alert.state)" size="xs">
               {{ getStateLabel(alert) }}
             </NeBadgeV2>
@@ -222,7 +177,7 @@ function formatActiveAt(activeAt: string) {
               </p>
             </div>
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.metrics.active_since')">
+          <NeTableCell :data-label="t('standalone.metrics.started_at')">
             {{ formatActiveAt(alert.activeAt) }}
           </NeTableCell>
         </NeTableRow>

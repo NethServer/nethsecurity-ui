@@ -78,7 +78,7 @@ const pageDescription = computed(() =>
       <p class="max-w-xl text-sm text-gray-500 dark:text-gray-400">
         {{ pageDescription }}
       </p>
-      <div class="flex flex-col gap-2">
+      <div v-if="selectedTab === 'charts'" class="flex flex-col gap-2">
         <NeCombobox
           v-model="selectedRefreshId"
           :options="REFRESH_INTERVALS"
@@ -99,6 +99,6 @@ const pageDescription = computed(() =>
       :interval="interval"
       @updated-at="updatedAt = $event"
     />
-    <MetricsAlertsSection v-else :interval="interval" @updated-at="updatedAt = $event" />
+    <MetricsAlertsSection v-else />
   </div>
 </template>

@@ -165,6 +165,18 @@
   @apply text-green-700 dark:text-green-500;
 }
 
+@utility text-danger {
+  @apply text-rose-700 dark:text-rose-500;
+}
+
 @utility text-disabled {
   @apply text-gray-400 dark:text-gray-600;
+}
+
+@utility bg-icon-danger {
+  @apply bg-rose-700 dark:bg-rose-500;
+}
+
+@utility border-elevation-0 {
+  @apply border-white dark:border-gray-950;
 }

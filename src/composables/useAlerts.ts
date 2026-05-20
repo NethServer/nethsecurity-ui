@@ -1,0 +1,81 @@
+import { ubusCall } from '@/lib/standalone/ubus'
+import { useQuery } from '@tanstack/vue-query'
+import type { AxiosResponse } from 'axios'
+import type { NeNotificationV2 } from '@nethesis/vue-components'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+export type Alert = {
+  id?: string
+  activeAt: string
+  annotations: Record<string, string>
+  labels: Record<string, string>
+  name: string
+  source?: string
+  state: string
+}
+
+type ListAlertsResponse = {
+  alerts: Alert[]
+}
+
+function getSeverityBadgeKind(severity: string | undefined): NeNotificationV2['kind'] {
+  switch (severity) {
+    case 'critical':
+      return 'error'
+    case 'warning':
+      return 'warning'
+    default:
+      return 'info'
+  }
+}
+
+export function useAlerts() {
+  const { locale, t } = useI18n()
+
+  const { data, error, status, isPending, isError, dataUpdatedAt } = useQuery({
+    queryKey: ['metrics', 'alerts'],
+    queryFn: async () =>
+      await ubusCall<AxiosResponse<ListAlertsResponse>>('ns.telegraf', 'list-alerts'),
+    select: (response) => response.data.alerts,
+    refetchInterval: 5000
+  })
+
+  const notifications = computed<NeNotificationV2[]>(() => {
+    if (!data.value) {
+      return []
+    }
+
+    return data.value.map((alert) => {
+      const summary =
+        alert.annotations[`summary_${locale.value}`] ||
+        alert.annotations['summary_en'] ||
+        alert.name
+      const description =
+        alert.annotations[`description_${locale.value}`] ||
+        alert.annotations['description_en'] ||
+        ''
+
+      return {
+        id: alert.id ?? `${alert.name}-${alert.activeAt}`,
+        kind: getSeverityBadgeKind(alert.labels.severity),
+        title: summary,
+        description: description,
+        timestamp: new Date(alert.activeAt),
+        firstButtonLabel: t('standalone.metrics.go_to_alerts'),
+        firstButtonAction: 'goto_alerts',
+        isShown: true
+      }
+    })
+  })
+
+  return {
+    data,
+    notifications,
+    error,
+    status,
+    isPending,
+    isError,
+    dataUpdatedAt
+  }
+}

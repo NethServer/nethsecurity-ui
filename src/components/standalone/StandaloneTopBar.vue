@@ -254,9 +254,7 @@ function openNotificationsDrawer() {
               />
               <!-- notification indicator -->
               <span
-                v-if="
-                  notificationsStore.numNotifications > 0 || alertNotifications.length > 0
-                "
+                v-if="notificationsStore.numNotifications > 0 || alertNotifications.length > 0"
                 class="absolute top-2.5 right-2.5 size-3 rounded-full border border-elevation-0 bg-icon-danger"
                 aria-hidden="true"
               />

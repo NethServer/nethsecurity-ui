@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -15,11 +15,12 @@ import {
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import DeleteModal from '@/components/DeleteModal.vue'
-import { faCheck, faShield, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faShield, faCirclePlus, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import BypassCard from './BypassCard.vue'
 import CreateBypassDrawer from './CreateBypassDrawer.vue'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
 import TsDisabledEmptyState from './TsDisabledEmptyState.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const tsStore = useThreatShieldStore()
@@ -109,9 +110,9 @@ function clearFilter() {
               :disabled="tsStore.loadingListDnsBypass || tsStore.loadingListDnsSettings"
               class="max-w-xs sm:max-w-sm"
             />
-            <NeButton kind="secondary" size="lg" @click="showCreateBypassDrawer">
+            <NeButton kind="primary" size="lg" @click="showCreateBypassDrawer">
               <template #prefix>
-                <font-awesome-icon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('standalone.threat_shield_dns.add_bypass') }}
             </NeButton>
@@ -125,7 +126,7 @@ function clearFilter() {
           >
             <NeButton kind="primary" size="lg" @click="showCreateBypassDrawer">
               <template #prefix>
-                <font-awesome-icon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('standalone.threat_shield_dns.add_bypass') }}
             </NeButton>
@@ -135,7 +136,7 @@ function clearFilter() {
             v-else-if="!filteredBypasses.length && !tsStore.loadingListDnsBypass"
             :title="t('standalone.threat_shield_dns.no_filter_bypasses_found')"
             :description="t('common.try_changing_search_filters')"
-            :icon="['fas', 'circle-info']"
+            :icon="faCircleInfo"
             class="mt-4"
           >
             <NeButton kind="tertiary" @click="clearFilter">

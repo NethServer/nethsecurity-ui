@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -22,6 +22,8 @@ import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.v
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useFirewallStore } from '@/stores/standalone/firewall'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const firewallConfig = useFirewallStore()
@@ -91,13 +93,13 @@ function showDeleteRuleModal(rule: DpiRule) {
       </div>
       <NeButton
         v-if="rules.length"
-        kind="secondary"
+        kind="primary"
         size="lg"
         class="ml-6 shrink-0"
         @click="showCreateRuleModal"
       >
         <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
         </template>
         {{ t('standalone.dpi.create_rule') }}</NeButton
       >
@@ -125,11 +127,11 @@ function showDeleteRuleModal(rule: DpiRule) {
       <NeEmptyState
         v-if="isEmpty(rules)"
         :title="t('standalone.dpi.no_rules_found')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
       >
         <NeButton kind="primary" size="lg" @click="showCreateRuleModal">
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
           </template>
           {{ t('standalone.dpi.create_rule') }}</NeButton
         >

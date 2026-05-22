@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -25,6 +25,8 @@ import {
   validateRequired
 } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -167,18 +169,15 @@ onMounted(() => {
       </NeTextInput>
       <NeToggle v-model="logDnsQueries" :label="t('standalone.dns_dhcp.log_dns_queries')" />
       <hr />
-      <div class="flex justify-end">
+      <div class="flex justify-start">
         <NeButton
           kind="primary"
           :disabled="isUpdatingDnsConfig"
           :loading="isUpdatingDnsConfig"
           @click="updateDnsConfig"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'floppy-disk']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
+        >
+          <template #prefix>
+            <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ t('common.save') }}</NeButton
         >
       </div>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -9,7 +9,8 @@ import NeTable from '../NeTable.vue'
 import { NeDropdown } from '@nethesis/vue-components'
 import { NeButton } from '@nethesis/vue-components'
 import type { DnsRecord } from './DnsRecords.vue'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faPenToSquare, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 
@@ -64,9 +65,14 @@ function getDropdownItems(item: DnsRecord) {
     </template>
     <template #wildcard="{ item }: { item: DnsRecord }">
       <div :class="['flex', 'flex-row', 'items-center']">
-        <font-awesome-icon
-          :icon="['fas', item.wildcard ? 'circle-check' : 'circle-xmark']"
-          class="mr-2 h-5 w-5"
+        <FontAwesomeIcon
+          :icon="item.wildcard ? faCircleCheck : faXmark"
+          :class="[
+            'mr-2',
+            'h-5',
+            'w-5',
+            item.wildcard ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500'
+          ]"
           aria-hidden="true"
         />
         {{ item.wildcard ? t('standalone.dns_dhcp.enabled') : t('standalone.dns_dhcp.disabled') }}
@@ -76,11 +82,7 @@ function getDropdownItems(item: DnsRecord) {
       <div class="align-center flex justify-end">
         <NeButton kind="tertiary" @click="emit('record-edit', item)">
           <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'pen-to-square']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('common.edit') }}
         </NeButton>

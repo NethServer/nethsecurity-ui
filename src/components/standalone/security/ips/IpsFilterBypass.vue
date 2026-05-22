@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -146,7 +146,7 @@ function handleDeleted() {
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
         <NeButton
           v-if="bypasses.length > 0"
-          kind="secondary"
+          kind="primary"
           size="lg"
           @click="creatingBypass = true"
         >

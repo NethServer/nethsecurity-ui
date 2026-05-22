@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -100,7 +100,7 @@ function allowIp() {
 </script>
 
 <template>
-  <NeButton v-bind="$attrs" @click="drawerOpen = true">
+  <NeButton v-bind="$attrs" kind="primary" @click="drawerOpen = true">
     <template #prefix>
       <FontAwesomeIcon :icon="faSearch" aria-hidden="true" class="h-4 w-4" />
     </template>

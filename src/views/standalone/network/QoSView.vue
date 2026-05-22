@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -21,6 +21,8 @@ import QoSInterfaceTable from '@/components/standalone/qos/QoSInterfaceTable.vue
 import DeleteQoSInterfaceModal from '@/components/standalone/qos/DeleteQoSInterfaceModal.vue'
 import CreateOrEditQoSInterfaceDrawer from '@/components/standalone/qos/CreateOrEditQoSInterfaceDrawer.vue'
 import { useFirewallStore } from '@/stores/standalone/firewall'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faChartSimple, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 export type QoSInterface = {
   interface: string
@@ -112,14 +114,10 @@ onMounted(() => {
       </p>
       <NeButton
         v-if="qosInterfaces.length > 0"
-        kind="secondary"
+        kind="primary"
         @click="openCreateEditInterfaceDrawer()"
         ><template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'circle-plus']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
+          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
         >{{ t('standalone.qos.add_qos_interface') }}</NeButton
       >
     </div>
@@ -145,14 +143,10 @@ onMounted(() => {
       <NeEmptyState
         v-if="qosInterfaces.length == 0"
         :title="t('standalone.qos.no_interface_found')"
-        :icon="['fas', 'chart-simple']"
-        ><NeButton kind="secondary" @click="openCreateEditInterfaceDrawer()"
+        :icon="faChartSimple"
+        ><NeButton kind="primary" @click="openCreateEditInterfaceDrawer()"
           ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ t('standalone.qos.add_qos_interface') }}</NeButton
         ></NeEmptyState
       >

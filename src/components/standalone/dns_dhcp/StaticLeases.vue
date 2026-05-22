@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -151,7 +151,7 @@ function clearFilters() {
         {{ t('standalone.dns_dhcp.static_leases_description') }}
       </p>
       <div class="ml-2 shrink-0">
-        <NeButton v-if="items.length > 0" kind="secondary" @click="openCreateEditDrawer()">
+        <NeButton v-if="items.length > 0" kind="primary" @click="openCreateEditDrawer()">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>

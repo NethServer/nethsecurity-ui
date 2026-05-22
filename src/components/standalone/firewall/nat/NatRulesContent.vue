@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -21,6 +21,8 @@ import { ubusCall } from '@/lib/standalone/ubus'
 import NatRulesTable from './NatRulesTable.vue'
 import DeleteNatRuleModal from './DeleteNatRuleModal.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faCirclePlus, faNetworkWired } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -100,7 +102,7 @@ function hideCreateOrEditRuleDrawer() {
         @click="showCreateRuleDrawer"
       >
         <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
         </template>
         {{ t('standalone.nat.add_nat_rule') }}</NeButton
       >
@@ -125,12 +127,12 @@ function hideCreateOrEditRuleDrawer() {
           <!-- empty state -->
           <NeEmptyState
             :title="t('standalone.nat.no_rules_found')"
-            :icon="['fas', 'network-wired']"
+            :icon="faNetworkWired"
             class="mt-4"
           >
-            <NeButton kind="secondary" size="lg" @click="showCreateRuleDrawer">
+            <NeButton kind="primary" size="lg" @click="showCreateRuleDrawer">
               <template #prefix>
-                <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
               </template>
               {{ t('standalone.nat.add_nat_rule') }}</NeButton
             >

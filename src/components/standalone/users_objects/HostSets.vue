@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -24,6 +24,8 @@ import CannotDeleteObjectModal from './CannotDeleteObjectModal.vue'
 import { useHostSets, type HostSet } from '@/composables/useHostSets'
 import { useObjectStore } from '@/stores/standalone/objects'
 import type { IpVersionFilter } from '@/views/standalone/users_objects/ObjectsView.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 type ObjectTypeFilter =
   | 'host'
@@ -176,14 +178,14 @@ function clearFilters() {
       </div>
       <NeButton
         v-if="loadingListHostSets || hostSets.length"
-        kind="secondary"
+        kind="primary"
         size="lg"
         class="shrink-0"
         :disabled="loadingListHostSets"
         @click="showCreateHostSetDrawer"
       >
         <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
         </template>
         {{ t('standalone.objects.add_host_set') }}
       </NeButton>
@@ -240,7 +242,7 @@ function clearFilters() {
       <NeEmptyState
         v-if="!hostSets.length && !loadingListHostSets"
         :title="t('standalone.objects.no_host_sets')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         class="mt-4"
       >
         <NeButton
@@ -251,7 +253,7 @@ function clearFilters() {
           @click="showCreateHostSetDrawer"
         >
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
           </template>
           {{ t('standalone.objects.add_host_set') }}
         </NeButton>
@@ -261,7 +263,7 @@ function clearFilters() {
         v-else-if="!filteredHostSets.length && !loadingListHostSets"
         :title="t('standalone.objects.no_hosts_found')"
         :description="t('common.try_changing_search_filters')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         class="mt-4"
       >
         <NeButton kind="tertiary" @click="clearFilters"> {{ t('common.clear_filters') }}</NeButton>

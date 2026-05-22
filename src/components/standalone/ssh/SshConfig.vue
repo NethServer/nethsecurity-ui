@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -21,6 +21,7 @@ import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { MessageBag, ValidationError } from '@/lib/validation'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -155,7 +156,7 @@ function load() {
       </div>
     </form>
     <!-- Save Button -->
-    <div class="flex justify-end">
+    <div class="flex justify-start">
       <NeButton
         :disabled="submitting"
         :loading="submitting"
@@ -164,7 +165,7 @@ function load() {
         @click.prevent="submit()"
       >
         <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'floppy-disk']" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faFloppyDisk" aria-hidden="true" />
         </template>
         {{ t('common.save') }}
       </NeButton>

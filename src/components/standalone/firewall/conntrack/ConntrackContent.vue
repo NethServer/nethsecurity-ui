@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -156,7 +156,7 @@ function onRecordDeleted() {
           </template>
           {{ t('standalone.conntrack.delete_all') }}
         </NeButton>
-        <NeButton kind="secondary" size="lg" @click="fetchConntrack()">
+        <NeButton kind="primary" size="lg" @click="fetchConntrack()">
           <template #prefix>
             <FontAwesomeIcon :icon="faRefresh" aria-hidden="true" />
           </template>

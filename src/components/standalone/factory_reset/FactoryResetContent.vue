@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -18,6 +18,7 @@ import {
 import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import { faArrowRotateLeft, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const RESET_WAIT_TIME = 45000
@@ -124,7 +125,7 @@ function setResetTimer() {
           </p>
           <div class="flex">
             <FontAwesomeIcon
-              :icon="['fa', 'circle-info']"
+              :icon="faCircleInfo"
               class="mt-1 mr-2 text-indigo-700 dark:text-indigo-300"
             />
             <p class="mb-8">
@@ -137,9 +138,9 @@ function setResetTimer() {
             {{ t('standalone.factory_reset.current_version') }}: {{ currentVersion }}
           </p>
           <div>
-            <NeButton kind="secondary" @click="showModalFactoryReset = true">
+            <NeButton kind="primary" @click="showModalFactoryReset = true">
               <template #prefix>
-                <FontAwesomeIcon :icon="['fa', 'arrow-rotate-left']" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faArrowRotateLeft" aria-hidden="true" />
               </template>
               {{ t('standalone.factory_reset.perform_factory_reset') }}
             </NeButton>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -28,6 +28,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
+import { faRotate } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const RESTORE_WAIT_TIME = 45000
@@ -291,13 +292,13 @@ function setRestoreTimer() {
           <div class="mr-auto self-start">
             <NeButton
               class="ml-"
-              kind="secondary"
+              kind="primary"
               size="lg"
               type="submit"
               @click="showRestoreDrawer = true"
             >
               <template #prefix>
-                <FontAwesomeIcon :icon="['fa', 'rotate']" />
+                <FontAwesomeIcon :icon="faRotate" />
               </template>
               {{ t('standalone.backup_and_restore.restore.restore_backup') }}
             </NeButton>

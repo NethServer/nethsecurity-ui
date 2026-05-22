@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -10,6 +10,7 @@ import { NeLink, NeInlineNotification, NeButton } from '@nethesis/vue-components
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MigrationDrawer from '@/components/standalone/backup_and_restore/MigrationDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import { faArrowCircleUp, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 
@@ -38,7 +39,7 @@ function successMigration() {
           {{ t('standalone.backup_and_restore.migration.description') }}
           <div class="mt-4">
             <NeLink href="https://docs.nethsecurity.org/en/latest/migration.html" target="_blank">
-              <FontAwesomeIcon class="mr-2" :icon="['fa', 'arrow-up-right-from-square']" />
+              <FontAwesomeIcon class="mr-2" :icon="faArrowUpRightFromSquare" />
               {{ t('standalone.backup_and_restore.migration.description_link') }}
             </NeLink>
           </div>
@@ -48,13 +49,13 @@ function successMigration() {
         <div class="mr-auto self-start">
           <NeButton
             class="ml-6"
-            kind="secondary"
+            kind="primary"
             size="lg"
             type="submit"
             @click="showMigrationDrawer = true"
           >
             <template #prefix>
-              <FontAwesomeIcon :icon="['fa', 'arrow-circle-up']" />
+              <FontAwesomeIcon :icon="faArrowCircleUp" />
             </template>
             {{ t('standalone.backup_and_restore.migration.upload_file') }}
           </NeButton>

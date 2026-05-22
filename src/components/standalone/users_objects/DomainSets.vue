@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -24,6 +24,8 @@ import ObjectUsagesModal from './ObjectUsagesModal.vue'
 import { useDomainSets, type DomainSet } from '@/composables/useDomainSets'
 import { useObjectStore } from '@/stores/standalone/objects'
 import type { IpVersionFilter } from '@/views/standalone/users_objects/ObjectsView.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -126,14 +128,14 @@ function clearFilters() {
       </div>
       <NeButton
         v-if="loadingListDomainSets || domainSets.length"
-        kind="secondary"
+        kind="primary"
         size="lg"
         :disabled="loadingListDomainSets"
         class="shrink-0"
         @click="showCreateDomainSetDrawer"
       >
         <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
         </template>
         {{ t('standalone.objects.add_domain_set') }}
       </NeButton>
@@ -179,18 +181,18 @@ function clearFilters() {
       <NeEmptyState
         v-if="!domainSets.length && !loadingListDomainSets"
         :title="t('standalone.objects.no_domain_sets')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         class="mt-4"
       >
         <NeButton
-          kind="secondary"
+          kind="primary"
           size="lg"
           class="shrink-0"
           :disabled="loadingListDomainSets"
           @click="showCreateDomainSetDrawer"
         >
           <template #prefix>
-            <FontAwesomeIcon :icon="['fas', 'circle-plus']" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
           </template>
           {{ t('standalone.objects.add_domain_set') }}
         </NeButton>
@@ -200,7 +202,7 @@ function clearFilters() {
         v-else-if="!filteredDomainSets.length && !loadingListDomainSets"
         :title="t('standalone.objects.no_domain_sets_found')"
         :description="t('common.try_changing_search_filters')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         class="mt-4"
       >
         <NeButton kind="tertiary" @click="clearFilters">

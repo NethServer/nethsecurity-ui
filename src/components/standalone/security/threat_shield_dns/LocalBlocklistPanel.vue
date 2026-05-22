@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -19,6 +19,7 @@ import { useThreatShieldStore, type DnsBlockedDomain } from '@/stores/standalone
 import TsDisabledEmptyState from './TsDisabledEmptyState.vue'
 import CreateOrEditBlockedDomainDrawer from './CreateOrEditBlockedDomainDrawer.vue'
 import BlockedDomainsTable from './BlockedDomainsTable.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const tsStore = useThreatShieldStore()
@@ -113,9 +114,9 @@ function clearFilter() {
               "
               class="max-w-xs sm:max-w-sm"
             />
-            <NeButton kind="secondary" size="lg" @click="showCreateOrEditBlockedDomainDrawer">
+            <NeButton kind="primary" size="lg" @click="showCreateOrEditBlockedDomainDrawer">
               <template #prefix>
-                <font-awesome-icon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('standalone.threat_shield_dns.add_domain') }}
             </NeButton>
@@ -129,7 +130,7 @@ function clearFilter() {
           >
             <NeButton kind="primary" size="lg" @click="showCreateOrEditBlockedDomainDrawer">
               <template #prefix>
-                <font-awesome-icon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+                <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('standalone.threat_shield_dns.add_domain') }}
             </NeButton>

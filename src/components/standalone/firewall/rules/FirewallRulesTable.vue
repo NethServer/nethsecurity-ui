@@ -525,6 +525,6 @@ tr.drop-target > td {
 }
 
 tr.drop-over > td {
-  @apply bg-primary-900 py-7;
+  @apply bg-cyan-100 py-7 dark:bg-cyan-900;
 }
 </style>

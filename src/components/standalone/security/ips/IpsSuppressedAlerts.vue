@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -145,7 +145,7 @@ function handleDeleted() {
     <template v-else-if="suppressedAlerts.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
-        <NeButton kind="secondary" size="lg" @click="suppressingAlert = true">
+        <NeButton kind="primary" size="lg" @click="suppressingAlert = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
           </template>

@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2026 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import {
@@ -16,6 +21,8 @@ import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import AddressTable from './AddressTable.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -77,14 +84,11 @@ onMounted(() => {
       </p>
       <NeButton
         v-if="localBlocklist.length > 0"
-        kind="secondary"
+        kind="primary"
         @click="openCreateEditAddressDrawer()"
-        ><template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'circle-plus']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
+      >
+        <template #prefix>
+          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
         >{{ t('standalone.threat_shield.add_address') }}</NeButton
       >
     </div>
@@ -104,17 +108,13 @@ onMounted(() => {
       <NeEmptyState
         v-if="localBlocklist.length == 0"
         :title="t('standalone.threat_shield.local_blocklist_is_empty')"
-        :icon="['fas', 'shield']"
-        ><NeButton kind="secondary" @click="openCreateEditAddressDrawer()"
+        :icon="faShield"
+        ><NeButton kind="primary" @click="openCreateEditAddressDrawer()"
           ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.threat_shield.add_address') }}</NeButton
-        ></NeEmptyState
-      >
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
+          >{{ t('standalone.threat_shield.add_address') }}
+        </NeButton>
+      </NeEmptyState>
       <AddressTable
         v-else
         :address-list="localBlocklist"

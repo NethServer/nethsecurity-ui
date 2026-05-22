@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -60,7 +60,14 @@ import { zonesSorting } from '@/stores/standalone/firewall'
 import DeleteBondModal from '@/components/standalone/interfaces_and_devices/DeleteBondModal.vue'
 import DeviceButtons from '@/components/standalone/interfaces_and_devices/DeviceButtons.vue'
 import type { UciNetworkConfig } from '@/composables/useUciNetworkConfig'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleCheck,
+  faTrash,
+  faPenToSquare,
+  faCirclePlus,
+  faChevronUp,
+  faChevronDown
+} from '@fortawesome/free-solid-svg-icons'
 
 const LIST_DEVICES_INTERVAL_TIME = 10000
 const { t, te } = useI18n()
@@ -582,13 +589,13 @@ function formatPackets(packets: number) {
       <div class="flex justify-end gap-4">
         <NeButton kind="tertiary" size="lg" @click="showCreateVlanDeviceDrawer">
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.interfaces_and_devices.create_vlan_device') }}
         </NeButton>
-        <NeButton size="lg" @click="showCreateLogicalInterfaceDrawer">
+        <NeButton kind="primary" size="lg" @click="showCreateLogicalInterfaceDrawer">
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'plus']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.interfaces_and_devices.create_logical_interface') }}
         </NeButton>
@@ -652,7 +659,7 @@ function formatPackets(packets: number) {
                               device
                             )}`"
                           >
-                            <font-awesome-icon
+                            <FontAwesomeIcon
                               :icon="['fas', getInterfaceIconName(device)]"
                               aria-hidden="true"
                               :class="`h-5 w-5 ${getIconForegroundStyle(device)}`"
@@ -692,13 +699,12 @@ function formatPackets(packets: number) {
                               @click="toggleExpandAlias(device)"
                             >
                               <template #suffix>
-                                <font-awesome-icon
-                                  :icon="[
-                                    'fas',
+                                <FontAwesomeIcon
+                                  :icon="
                                     isExpandedAlias[getName(device) || '']
-                                      ? 'chevron-up'
-                                      : 'chevron-down'
-                                  ]"
+                                      ? faChevronUp
+                                      : faChevronDown
+                                  "
                                   class="h-3 w-3"
                                   aria-hidden="true"
                                 />
@@ -719,13 +725,12 @@ function formatPackets(packets: number) {
                               @click="toggleExpandBridge(device)"
                             >
                               <template #suffix>
-                                <font-awesome-icon
-                                  :icon="[
-                                    'fas',
+                                <FontAwesomeIcon
+                                  :icon="
                                     isExpandedBridge[device.name || '']
-                                      ? 'chevron-up'
-                                      : 'chevron-down'
-                                  ]"
+                                      ? faChevronUp
+                                      : faChevronDown
+                                  "
                                   class="h-3 w-3"
                                   aria-hidden="true"
                                 />
@@ -742,13 +747,12 @@ function formatPackets(packets: number) {
                               @click="toggleExpandBond(device)"
                             >
                               <template #suffix>
-                                <font-awesome-icon
-                                  :icon="[
-                                    'fas',
+                                <FontAwesomeIcon
+                                  :icon="
                                     isExpandedBond[getName(device) || '']
-                                      ? 'chevron-up'
-                                      : 'chevron-down'
-                                  ]"
+                                      ? faChevronUp
+                                      : faChevronDown
+                                  "
                                   class="h-3 w-3"
                                   aria-hidden="true"
                                 />
@@ -914,9 +918,9 @@ function formatPackets(packets: number) {
                             v-if="isDeviceUp(device, allDevices)"
                             class="mb-2 flex items-center gap-2"
                           >
-                            <font-awesome-icon
-                              :icon="['fas', 'circle-check']"
-                              class="h-4 w-4"
+                            <FontAwesomeIcon
+                              :icon="faCircleCheck"
+                              class="h-4 w-4 text-green-700 dark:text-green-500"
                               aria-hidden="true"
                             />
                             <span>{{ t('standalone.interfaces_and_devices.up') }}</span>
@@ -983,8 +987,8 @@ function formatPackets(packets: number) {
                               @click="showEditAliasInterfaceDrawer(alias, device)"
                             >
                               <template #prefix>
-                                <font-awesome-icon
-                                  :icon="['fas', 'pen-to-square']"
+                                <FontAwesomeIcon
+                                  :icon="faPenToSquare"
                                   class="h-4 w-4"
                                   aria-hidden="true"
                                 />
@@ -1031,8 +1035,8 @@ function formatPackets(packets: number) {
                                 @click="showEditAliasInterfaceDrawer(alias, device)"
                               >
                                 <template #prefix>
-                                  <font-awesome-icon
-                                    :icon="['fas', 'pen-to-square']"
+                                  <FontAwesomeIcon
+                                    :icon="faPenToSquare"
                                     class="h-4 w-4"
                                     aria-hidden="true"
                                   />

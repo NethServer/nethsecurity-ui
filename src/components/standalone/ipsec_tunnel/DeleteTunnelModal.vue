@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -65,6 +65,8 @@ function close() {
     :primary-button-disabled="isDeleting"
     :primary-button-loading="isDeleting"
     :close-aria-label="t('common.close')"
+    :cancel-label="t('common.cancel')"
+    primary-button-kind="danger"
     @primary-click="deleteTunnel()"
     @close="close()"
   >

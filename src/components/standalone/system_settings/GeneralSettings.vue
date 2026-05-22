@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -7,6 +7,8 @@
 import { getUciConfig, ubusCall } from '@/lib/standalone/ubus'
 import { validateHostname, validateRequired } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   NeCombobox,
   NeButton,
@@ -318,7 +320,7 @@ async function syncWithNtpServer() {
         </div>
       </div>
       <!-- save button -->
-      <div class="flex justify-end py-6">
+      <div class="flex justify-start py-6">
         <NeButton
           kind="primary"
           size="lg"
@@ -327,7 +329,7 @@ async function syncWithNtpServer() {
           @click="save"
         >
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('common.save') }}
         </NeButton>

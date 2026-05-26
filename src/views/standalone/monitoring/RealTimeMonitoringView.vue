@@ -17,7 +17,6 @@ import TrafficMonitor from '@/components/standalone/monitoring/TrafficMonitor.vu
 import ConnectivityMonitor from '@/components/standalone/monitoring/ConnectivityMonitor.vue'
 import VpnMonitor from '@/components/standalone/monitoring/VpnMonitor.vue'
 import SecurityMonitor from '@/components/standalone/monitoring/SecurityMonitor.vue'
-import { isStandaloneMode } from '@/lib/config'
 import { onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import InstantTrafficMonitor from '@/components/standalone/monitoring/InstantTrafficMonitor.vue'
@@ -91,10 +90,6 @@ async function getControllerSettings() {
   }
 }
 
-function openNetdata() {
-  window.open('http://' + window.location.hostname + ':19999')
-}
-
 function openGrafana() {
   window.open(controllerUrl.value + '/grafana')
 }
@@ -106,27 +101,6 @@ function openGrafana() {
         {{ t('standalone.real_time_monitor.title') }}
       </NeHeading>
       <div class="flex gap-4">
-        <!-- link to netdata -->
-        <NeButton v-if="isStandaloneMode()" kind="tertiary" size="lg" @click="openNetdata()">
-          <template #prefix>
-            <FontAwesomeIcon :icon="['fa', 'arrow-up-right-from-square']" />
-          </template>
-          {{ t('standalone.real_time_monitor.open_report') }}
-        </NeButton>
-        <!-- cannot open netdata from a controlled unit -->
-        <NeTooltip v-else trigger-event="mouseenter focus" placement="bottom">
-          <template #trigger>
-            <NeButton kind="tertiary" size="lg" disabled>
-              <template #prefix>
-                <FontAwesomeIcon :icon="['fa', 'arrow-up-right-from-square']" />
-              </template>
-              {{ t('standalone.real_time_monitor.open_report') }}
-            </NeButton>
-          </template>
-          <template #content>
-            {{ t('standalone.real_time_monitor.cannot_open_report_from_controller') }}
-          </template>
-        </NeTooltip>
         <!-- link to grafana -->
         <NeButton
           v-if="isLinkedToController || loading.getControllerSettings"

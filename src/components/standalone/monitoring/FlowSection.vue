@@ -49,13 +49,17 @@ const { isSuccess, isError, isPending, data, error } = useQuery({
 
 const enabled = ref(false)
 const expiredPersistence = ref('')
-watch(data, (newData) => {
-  if (newData != undefined) {
-    daemonRunning.value = newData.status
-    enabled.value = newData.configuration.enabled
-    expiredPersistence.value = newData.configuration.expired_persistence
-  }
-})
+watch(
+  data,
+  (newData) => {
+    if (newData != undefined) {
+      daemonRunning.value = newData.status
+      enabled.value = newData.configuration.enabled
+      expiredPersistence.value = newData.configuration.expired_persistence
+    }
+  },
+  { immediate: true }
+)
 
 const dismissedWarning = ref<boolean>(false)
 const fewAppsWarning = computed<boolean>(() => {

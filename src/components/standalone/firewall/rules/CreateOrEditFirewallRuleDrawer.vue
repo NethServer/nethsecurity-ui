@@ -100,24 +100,31 @@ const errorBag = ref(new MessageBag())
 const sourceAddressesErrors = ref<string[]>([])
 const destinationAddressesErrors = ref<string[]>([])
 
-const actionOptions = ref([
-  {
-    id: 'DROP',
-    label: 'DROP'
-  },
-  {
-    id: 'REJECT',
-    label: 'REJECT'
-  },
-  {
-    id: 'ACCEPT',
-    label: 'ACCEPT'
-  },
-  {
-    id: 'NOTRACK',
-    label: 'NOTRACK'
+const actionOptions = computed(() => {
+  const options = [
+    {
+      id: 'DROP',
+      label: 'DROP'
+    },
+    {
+      id: 'REJECT',
+      label: 'REJECT'
+    },
+    {
+      id: 'ACCEPT',
+      label: 'ACCEPT'
+    },
+    {
+      id: 'NOTRACK',
+      label: 'NOTRACK'
+    }
+  ]
+  // NOTRACK cannot be selected when creating output rules.
+  if (props.ruleType === 'output' && isCreatingRule.value) {
+    return options.filter((option) => option.id !== 'NOTRACK')
   }
-])
+  return options
+})
 
 const positionOptions = ref([
   {
@@ -580,6 +587,10 @@ function validate() {
     const sourceZoneValidation = validateRequired(sourceZone.value)
     if (!sourceZoneValidation.valid) {
       errorBag.value.set('src', [t(String(sourceZoneValidation.errMessage))])
+      isValidationOk = false
+      focusElement(sourceZoneRef)
+    } else if (action.value === 'NOTRACK' && sourceZone.value === '*') {
+      errorBag.value.set('src', [t('standalone.firewall_rules.notrack_requires_specific_source_zone')])
       isValidationOk = false
       focusElement(sourceZoneRef)
     }

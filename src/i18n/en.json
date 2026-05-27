@@ -1599,6 +1599,7 @@
       "source_addresses": "Source addresses",
       "source_addresses_tooltip": "Enter one or more IPv4/IPv6 addresses, CIDR networks (e.g. 10.10.10.0/24) or IP ranges (e.g. 10.10.10.1-10.10.10.5).",
       "source_zone": "Source zone",
+      "notrack_requires_specific_source_zone": "NOTRACK rules require a specific source zone.",
       "source_zone_tooltip": "Specifies the traffic source zone, which must be distinct from the destination zone. Choose a zone or select 'Any' to include any zone.",
       "destination_addresses": "Destination addresses",
       "destination_addresses_tooltip": "Enter one or more IPv4/IPv6 addresses, CIDR networks (e.g. 10.10.10.0/24) or IP ranges (e.g. 10.10.10.1-10.10.10.5).",

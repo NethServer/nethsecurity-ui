@@ -1,4 +1,4 @@
-//  Copyright (C) 2024 Nethesis S.r.l.
+//  Copyright (C) 2026 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { config, library } from '@fortawesome/fontawesome-svg-core'
@@ -39,8 +39,13 @@ import {
   faCopy as fasCopy,
   faDiagramProject as fasDiagramProject,
   faDownLeftAndUpRightToCenter,
+  faEarthAfrica as fasEarthAfrica,
   faEarthAmericas as fasEarthAmericas,
+  faEarthAsia as fasEarthAsia,
+  faEarthEurope as fasEarthEurope,
+  faEarthOceania as fasEarthOceania,
   faEllipsisVertical as fasEllipsisVertical,
+  faChevronRight as fasChevronRight,
   faFloppyDisk as fasFloppyDisk,
   faGear as fasGear,
   faGlobe as fasGlobe,
@@ -153,6 +158,7 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCircleUser)
   library.add(fasChevronDown)
   library.add(fasChevronUp)
+  library.add(fasChevronRight)
   library.add(fasXmark)
   library.add(fasGear)
   library.add(falGear)
@@ -166,7 +172,11 @@ export async function loadFontAwesome(app: any) {
   library.add(fasCircleXmark)
   library.add(fasCircleCheck)
   library.add(fasLocationDot)
+  library.add(fasEarthAfrica)
   library.add(fasEarthAmericas)
+  library.add(fasEarthAsia)
+  library.add(fasEarthEurope)
+  library.add(fasEarthOceania)
   library.add(fasEllipsisVertical)
   library.add(fasCopy)
   library.add(fasUnlock)

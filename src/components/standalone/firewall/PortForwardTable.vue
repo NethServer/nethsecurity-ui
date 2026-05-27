@@ -133,12 +133,18 @@ function getCellClasses(item: PortForward) {
               </div>
               <div class="flex flex-wrap items-center justify-end gap-4">
                 <!-- logging info -->
-                <NeTooltip v-if="item.enabled && item.log" trigger-event="mouseenter focus">
+                <NeTooltip v-if="item.log" trigger-event="mouseenter focus">
                   <template #trigger>
                     <NeLink>
                       <FontAwesomeIcon
                         :icon="faList"
-                        class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                        :class="[
+                          'h-4',
+                          'w-4',
+                          item.enabled
+                            ? 'text-indigo-800 dark:text-indigo-300'
+                            : getCellClasses(item)
+                        ]"
                       />
                     </NeLink>
                   </template>
@@ -147,12 +153,18 @@ function getCellClasses(item: PortForward) {
                   </template>
                 </NeTooltip>
                 <!-- hairpin NAT -->
-                <NeTooltip v-if="item.enabled && item.reflection" trigger-event="mouseenter focus">
+                <NeTooltip v-if="item.reflection" trigger-event="mouseenter focus">
                   <template #trigger>
                     <NeLink>
                       <FontAwesomeIcon
                         :icon="faThumbTack"
-                        class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                        :class="[
+                          'h-4',
+                          'w-4',
+                          item.enabled
+                            ? 'text-indigo-800 dark:text-indigo-300'
+                            : getCellClasses(item)
+                        ]"
                       />
                     </NeLink>
                   </template>

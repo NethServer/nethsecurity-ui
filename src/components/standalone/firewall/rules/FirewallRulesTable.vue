@@ -401,15 +401,18 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                     </div>
                     <div class="flex flex-wrap items-center justify-end gap-4">
                       <!-- logging info -->
-                      <NeTooltip
-                        v-if="isEnabled(rule) && rule.log"
-                        trigger-event="mouseenter focus"
-                      >
+                      <NeTooltip v-if="rule.log" trigger-event="mouseenter focus">
                         <template #trigger>
                           <NeLink>
                             <FontAwesomeIcon
                               :icon="faList"
-                              class="h-4 w-4 text-indigo-800 dark:text-indigo-300"
+                              :class="[
+                                'h-4',
+                                'w-4',
+                                isEnabled(rule)
+                                  ? 'text-indigo-800 dark:text-indigo-300'
+                                  : 'text-gray-500 opacity-50 dark:text-gray-400'
+                              ]"
                             />
                           </NeLink>
                         </template>

@@ -1992,6 +1992,7 @@
       "forward_rules_description": "Configura le regole che definiscono come i pacchetti transitano tra le zone. La priorità è definita dall'ordine delle regole, con la prima che fa match che ha la precedenza.",
       "service_ports": "{protocols} qualunque porta | {protocols} porta {ports} | {protocols} porte {ports}",
       "source_zone": "Zona sorgente",
+      "notrack_requires_specific_source_zone": "Le regole NOTRACK richiedono una zona sorgente specifica.",
       "enter_one_or_more_addresses": "Inserire uno o più indirizzi",
       "source_type": "Tipo sorgente",
       "destination_type": "Tipo di destinazione",

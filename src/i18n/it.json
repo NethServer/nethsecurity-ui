@@ -2492,7 +2492,7 @@
       "alerts_table_aria_label": "Tabella degli avvisi di monitoraggio correnti",
       "alert": "Avviso",
       "status": "Stato",
-      "severity": "Gravita",
+      "severity": "Gravità",
       "triggered_by": "Rilevato da",
       "started_at": "Avviato il",
       "service": "Servizio",

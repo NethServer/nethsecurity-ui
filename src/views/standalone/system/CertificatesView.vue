@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -145,7 +145,7 @@ onMounted(() => {
             </template>
             {{ t('standalone.certificates.import_certificate') }}
           </NeButton>
-          <NeButton kind="secondary" @click="showCreateCertificateDrawer = true">
+          <NeButton kind="primary" @click="showCreateCertificateDrawer = true">
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
             </template>

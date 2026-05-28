@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -113,7 +113,7 @@ onMounted(() => {
       </p>
       <template v-if="proxies.length > 0">
         <div class="ml-2 flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
-          <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+          <NeButton kind="primary" @click="openCreateEditDrawer(null)">
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
             </template>

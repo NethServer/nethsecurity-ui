@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -20,6 +20,15 @@ import {
 import { ref, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { NatHelper } from '@/stores/standalone/firewall'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {
+  faCircleCheck,
+  faCircleInfo,
+  faCircleXmark,
+  faPenToSquare,
+  faTable,
+  faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   filteredNatHelpers: {
@@ -67,7 +76,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
         <NeTableCell colspan="4">
           <NeEmptyState
             :title="t('ne_table.no_items')"
-            :icon="['fas', 'table']"
+            :icon="faTable"
             class="bg-white dark:bg-gray-950"
           />
         </NeTableCell>
@@ -78,7 +87,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
           <NeEmptyState
             :title="t('standalone.nat_helpers.no_nat_helpers_found')"
             :description="t('common.try_changing_search_filters')"
-            :icon="['fas', 'circle-info']"
+            :icon="faCircleInfo"
             class="bg-white dark:bg-gray-950"
           >
             <NeButton kind="tertiary" @click="emit('clearFilters')">
@@ -93,9 +102,14 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.nat_helpers.status')">
           <div class="flex items-center gap-2">
-            <font-awesome-icon
-              :icon="['fas', item.enabled ? 'circle-check' : 'circle-xmark']"
-              :class="['h-4 w-4', { 'text-green-600 dark:text-green-400': item.enabled }]"
+            <FontAwesomeIcon
+              :icon="item.enabled ? faCircleCheck : faCircleXmark"
+              :class="[
+                'h-4 w-4',
+                item.enabled
+                  ? 'text-green-700 dark:text-green-500'
+                  : 'text-red-700 dark:text-red-500'
+              ]"
               aria-hidden="true"
             />
             {{ item.enabled ? t('common.enabled') : t('common.disabled') }}
@@ -113,10 +127,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
             <!-- module enabled but not loaded warning -->
             <NeTooltip v-if="item.enabled && !item.loaded">
               <template #trigger>
-                <font-awesome-icon
-                  :icon="['fas', 'triangle-exclamation']"
-                  class="h-4 w-4 text-amber-500"
-                />
+                <FontAwesomeIcon :icon="faTriangleExclamation" class="h-4 w-4 text-amber-500" />
               </template>
               <template #content>
                 <p>
@@ -138,11 +149,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.filteredNa
           <div class="-ml-2.5 flex xl:ml-0 xl:justify-end">
             <NeButton kind="tertiary" @click="emit('editNatHelper', item)">
               <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'pen-to-square']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
+                <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('common.edit') }}
             </NeButton>

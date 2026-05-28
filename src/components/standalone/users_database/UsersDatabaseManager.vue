@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -26,7 +26,13 @@ import CreateOrEditUserDrawer from './CreateOrEditUserDrawer.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { CanceledError } from 'axios'
 import { onUnmounted } from 'vue'
-import { faDatabase, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCirclePlus,
+  faDatabase,
+  faPenToSquare,
+  faTrash,
+  faUserGroup
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export type User = {
@@ -181,11 +187,7 @@ onMounted(() => {
           @click="showEditDatabaseDrawer = true"
         >
           <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'pen-to-square']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('common.edit') }}
         </NeButton>
@@ -216,16 +218,13 @@ onMounted(() => {
       </div>
       <NeButton
         v-if="database.type === 'local' && users.length > 0"
-        kind="secondary"
+        kind="primary"
         @click="openCreateEditUserDrawer()"
         ><template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'circle-plus']"
-            class="h-4 w-4"
-            aria-hidden="true"
-          /> </template
-        >{{ t('standalone.users_database.add_user') }}</NeButton
-      >
+          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ t('standalone.users_database.add_user') }}
+      </NeButton>
     </div>
     <NeInlineNotification
       v-if="error.notificationDescription"
@@ -243,21 +242,18 @@ onMounted(() => {
       <NeEmptyState
         v-if="users.length == 0"
         :title="t('standalone.users_database.no_users_found')"
-        :icon="['fas', 'user-group']"
+        :icon="faUserGroup"
         :class="[database.type == 'local' ? '' : 'pb-3']"
         ><NeButton
           v-if="database.type === 'local'"
-          kind="secondary"
+          kind="primary"
           @click="openCreateEditUserDrawer()"
           ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.users_database.add_user') }}</NeButton
-        ></NeEmptyState
-      >
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.users_database.add_user') }}
+        </NeButton>
+      </NeEmptyState>
       <UsersTable
         v-else
         :is-ldap-database="database.type === 'ldap'"

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -18,6 +18,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faArrowsRotate, faPowerOff } from '@fortawesome/free-solid-svg-icons'
 
 type requestType = 'poweroff' | 'reboot'
 const POLL_INTERVAL = 3000
@@ -139,9 +140,9 @@ onUnmounted(() => {
       <NeSkeleton v-if="loading" :lines="6" />
       <template v-else>
         <div>
-          <NeButton kind="secondary" size="lg" @click="showRebootModal = true">
+          <NeButton kind="primary" size="lg" @click="showRebootModal = true">
             <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'arrows-rotate']" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faArrowsRotate" aria-hidden="true" />
             </template>
             {{ t('standalone.reboot_and_shutdown.reboot_unit') }}
           </NeButton>
@@ -156,7 +157,7 @@ onUnmounted(() => {
         <div>
           <NeButton kind="secondary" size="lg" @click="showShutdownModal = true">
             <template #prefix>
-              <FontAwesomeIcon :icon="['fas', 'power-off']" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faPowerOff" aria-hidden="true" />
             </template>
             {{ t('standalone.reboot_and_shutdown.shut_down_unit') }}
           </NeButton>

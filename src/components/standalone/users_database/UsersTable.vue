@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -19,8 +19,16 @@ import {
   NeTooltip
 } from '@nethesis/vue-components'
 import type { User } from './UsersDatabaseManager.vue'
-import { faCircleMinus, faCrown, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleCheck,
+  faCircleMinus,
+  faCircleXmark,
+  faCrown,
+  faPenToSquare,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
   users: User[]
@@ -113,9 +121,16 @@ function getDropdownItems(item: User) {
         <template v-if="!props.isLdapDatabase">
           <NeTableCell :data-label="t('standalone.users_database.password')">
             <div :class="['flex', 'flex-row', 'items-center']">
-              <font-awesome-icon
-                :icon="['fas', item.password ? 'circle-check' : 'circle-xmark']"
-                class="mr-2 h-5 w-5"
+              <FontAwesomeIcon
+                :icon="item.password ? faCircleCheck : faCircleXmark"
+                :class="[
+                  'mr-2',
+                  'h-5',
+                  'w-5',
+                  item.password
+                    ? 'text-green-700 dark:text-green-500'
+                    : 'text-red-700 dark:text-red-500'
+                ]"
                 aria-hidden="true"
               />
               <p>
@@ -131,11 +146,7 @@ function getDropdownItems(item: User) {
             <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">
               <NeButton kind="tertiary" @click="emit('edit', item)">
                 <template #prefix>
-                  <font-awesome-icon
-                    :icon="['fas', 'pen-to-square']"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                  />
+                  <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
                 </template>
                 {{ t('common.edit') }}
               </NeButton>

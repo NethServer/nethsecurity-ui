@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -106,7 +106,7 @@ const {
           :description="t(getAxiosErrorMessage(mutateError))"
         />
         <hr />
-        <div class="flex justify-end">
+        <div class="flex justify-start">
           <NeButton :disabled="isSaving" kind="primary" :loading="isSaving" type="submit">
             <template #prefix>
               <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />

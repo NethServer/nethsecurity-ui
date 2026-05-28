@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -15,6 +15,8 @@ import {
   NeTextInput,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
   fetchItemsFunction: () => Promise<T[]>
@@ -99,11 +101,11 @@ onMounted(() => {
       <div class="ml-2 shrink-0">
         <NeButton
           v-if="!readonly && items.length > 0"
-          kind="secondary"
+          kind="primary"
           @click="openCreateEditDrawer()"
         >
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ addItemButtonLabel }}
         </NeButton>
@@ -125,15 +127,11 @@ onMounted(() => {
       <NeEmptyState
         v-if="items.length == 0"
         :title="noItemsFoundMessage"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         :class="[readonly ? 'pb-2' : '']"
-        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer()"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
+        ><NeButton v-if="!readonly" kind="primary" @click="openCreateEditDrawer()">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ addItemButtonLabel }}</NeButton
         ></NeEmptyState
       >
@@ -141,7 +139,7 @@ onMounted(() => {
         v-else-if="filteredItems.length == 0"
         :title="noFilteredItemsFoundMessage"
         :description="noFilteredItemsFoundDescription"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
       />
       <slot
         v-else

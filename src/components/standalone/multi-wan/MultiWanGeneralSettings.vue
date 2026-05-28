@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -23,6 +23,7 @@ import type { AxiosResponse } from 'axios'
 import { AxiosError } from 'axios'
 import { MessageBag, validateHost } from '@/lib/validation'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -190,7 +191,7 @@ onMounted(() => {
               size="lg"
               @click="data.track_ip.splice(index, 1)"
             >
-              <FontAwesomeIcon :icon="['fas', 'trash']" aria-hidden="true" />
+              <FontAwesomeIcon :icon="faTrash" aria-hidden="true" />
             </NeButton>
           </div>
         </template>
@@ -201,9 +202,14 @@ onMounted(() => {
           </p>
         </template>
         <div class="flex">
-          <NeButton :disabled="sending" class="ml-auto" @click="data.track_ip.push('')">
+          <NeButton
+            :disabled="sending"
+            class="-ml-2.5"
+            kind="tertiary"
+            @click="data.track_ip.push('')"
+          >
             <template #prefix>
-              <FontAwesomeIcon icon="add" />
+              <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.multi_wan.add_hostname_or_ip') }}
           </NeButton>
@@ -287,9 +293,11 @@ onMounted(() => {
         />
       </div>
     </FormLayout>
-    <hr />
-    <NeButton :disabled="sending" :loading="sending" kind="primary" @click="sendData()">
-      {{ t('common.save') }}
-    </NeButton>
+    <hr class="my-8" />
+    <FormLayout>
+      <NeButton :disabled="sending" :loading="sending" kind="primary" @click="sendData()">
+        {{ t('common.save') }}
+      </NeButton>
+    </FormLayout>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -22,6 +22,8 @@ import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -331,7 +333,8 @@ function resetNtpServerErrors() {
         </div>
       </Transition>
       <!-- save button -->
-      <div class="flex justify-end py-6">
+      <hr class="my-8" />
+      <FormLayout>
         <NeButton
           kind="primary"
           size="lg"
@@ -340,11 +343,11 @@ function resetNtpServerErrors() {
           @click="save"
         >
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'floppy-disk']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('common.save') }}
         </NeButton>
-      </div>
+      </FormLayout>
     </div>
   </div>
 </template>

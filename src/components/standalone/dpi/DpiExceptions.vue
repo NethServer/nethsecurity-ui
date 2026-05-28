@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -18,6 +18,8 @@ import DeleteDpiExceptionModal from './DeleteDpiExceptionModal.vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DpiExceptionCard from './DpiExceptionCard.vue'
 import CreateOrDeleteDpiExceptionDrawer from './CreateOrDeleteDpiExceptionDrawer.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 export type DpiException = {
   'config-name': string
@@ -83,13 +85,9 @@ onMounted(() => {
       </p>
       <template v-if="exceptions.length > 0">
         <div class="ml-2 flex shrink-0 flex-col gap-x-0 gap-y-2 sm:flex-row sm:gap-x-2 sm:gap-y-0">
-          <NeButton kind="secondary" @click="openCreateEditDrawer(null)">
+          <NeButton kind="primary" @click="openCreateEditDrawer(null)">
             <template #prefix>
-              <font-awesome-icon
-                :icon="['fas', 'circle-plus']"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
+              <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
             </template>
             {{ t('standalone.dpi.add_exception') }}
           </NeButton>
@@ -110,14 +108,10 @@ onMounted(() => {
       <NeEmptyState
         v-if="exceptions.length == 0"
         :title="t('standalone.dpi.no_exception_found')"
-        :icon="['fas', 'circle-info']"
+        :icon="faCircleInfo"
         ><NeButton kind="primary" @click="openCreateEditDrawer(null)"
           ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-plus']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ t('standalone.dpi.add_exception') }}</NeButton
         ></NeEmptyState
       >

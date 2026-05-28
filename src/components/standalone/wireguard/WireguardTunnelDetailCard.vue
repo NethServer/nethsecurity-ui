@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2026 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import {
   NeBadgeV2,
@@ -94,7 +99,7 @@ function openPeerDrawer() {
   <NeCard>
     <div class="space-y-6">
       <div class="flex flex-wrap gap-8">
-        <div class="mr-auto space-y-2">
+        <div class="mr-auto space-y-4">
           <div class="flex items-center gap-8">
             <NeHeading tag="h4">{{ instance.name }}</NeHeading>
             <NeBadgeV2 v-if="instance.enabled" kind="green" size="xs">
@@ -132,7 +137,12 @@ function openPeerDrawer() {
           </div>
         </div>
         <div class="flex items-start gap-2">
-          <NeButton v-if="instance.peers.length > 0" kind="secondary" @click="openPeerDrawer">
+          <NeButton
+            v-if="instance.peers.length > 0"
+            kind="primary"
+            size="lg"
+            @click="openPeerDrawer"
+          >
             <template #prefix>
               <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
             </template>

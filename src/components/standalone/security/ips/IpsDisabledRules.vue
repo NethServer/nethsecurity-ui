@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2025 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -142,7 +142,7 @@ function handleEnabled() {
     <template v-else-if="rules.length > 0">
       <div class="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
-        <NeButton v-if="rules.length > 0" kind="secondary" size="lg" @click="disablingRule = true">
+        <NeButton v-if="rules.length > 0" kind="primary" size="lg" @click="disablingRule = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faXmarkCircle" aria-hidden="true" class="h-4 w-4" />
           </template>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -572,7 +572,7 @@ function goToInterfaces() {
           :title="error.notificationTitle"
           :description="error.notificationDescription"
         />
-        <div class="flex justify-end">
+        <div class="flex justify-start">
           <NeButton :disabled="logging" :loading="logging" kind="primary" size="lg" type="submit">
             <template #prefix>
               <FontAwesomeIcon :icon="faRightToBracket" />

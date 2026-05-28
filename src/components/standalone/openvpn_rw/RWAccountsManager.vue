@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -28,6 +28,7 @@ import RenewCertificateDrawer from './RenewCertificateDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import { downloadFile, deleteFile } from '@/lib/standalone/fileUpload'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircleArrowDown, faCirclePlus, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 
 type ConnectionFilter = 'all' | 'connected' | 'not_connected'
 type ExpirationFilter = 'all' | 'expired' | 'not_expired'
@@ -278,10 +279,10 @@ function clearFilters() {
   >
   <NeSkeleton v-if="isLoading" :lines="8" />
   <template v-else-if="users.length == 0">
-    <NeEmptyState :title="t('standalone.openvpn_rw.no_users_found')" :icon="['fas', 'user-group']">
+    <NeEmptyState :title="t('standalone.openvpn_rw.no_users_found')" :icon="faUserGroup">
       <NeButton kind="primary" @click="openCreateEditDrawer()">
         <template #prefix>
-          <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
         </template>
         {{ t('standalone.openvpn_rw.add_vpn_account') }}
       </NeButton>
@@ -291,7 +292,7 @@ function clearFilters() {
     <div
       class="flex flex-col-reverse items-start justify-between gap-8 xl:flex-row xl:items-center"
     >
-      <div class="flex flex-row gap-x-3">
+      <div class="flex flex-row items-center gap-x-3">
         <NeTextInput v-model="textFilter" :placeholder="t('common.filter')" />
         <NeDropdownFilter
           v-model="expirationFilter"
@@ -322,17 +323,13 @@ function clearFilters() {
       <div class="flex flex-row gap-x-3">
         <NeButton kind="tertiary" @click="downloadAllConfigurations()">
           <template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'fa-circle-arrow-down']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            />
+            <FontAwesomeIcon :icon="faCircleArrowDown" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.openvpn_rw.download_all_configs') }}
         </NeButton>
         <NeButton kind="primary" @click="openCreateEditDrawer()">
           <template #prefix>
-            <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-4 w-4" aria-hidden="true" />
+            <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
           </template>
           {{ t('standalone.openvpn_rw.add_vpn_account') }}
         </NeButton>
@@ -350,11 +347,7 @@ function clearFilters() {
       @enable-disable="handleToggleAccountEnableRequest"
       @regenerate-certificate="openRenewCertificateDrawer"
     />
-    <NeEmptyState
-      v-else
-      :title="t('standalone.openvpn_rw.no_users_found')"
-      :icon="['fas', 'user-group']"
-    />
+    <NeEmptyState v-else :title="t('standalone.openvpn_rw.no_users_found')" :icon="faUserGroup" />
   </template>
   <DeleteRWAccountModal
     :visible="showDeleteAccountModal"

@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2026 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import type { Peer } from '@/views/standalone/vpn/WireguardTunnelView.vue'
 import {
@@ -110,11 +115,14 @@ const peerActions: NeDropdownItem[] = [
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.status')">
       <div class="flex items-center gap-1">
         <template v-if="peer.enabled">
-          <FontAwesomeIcon :icon="faCircleCheck" class="size-4 text-enabled" />
+          <FontAwesomeIcon
+            :icon="faCircleCheck"
+            class="size-4 text-green-700 dark:text-green-500"
+          />
           {{ t('common.enabled') }}
         </template>
         <template v-else>
-          <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
+          <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-red-700 dark:text-red-500" />
           {{ t('common.disabled') }}
         </template>
       </div>
@@ -122,11 +130,14 @@ const peerActions: NeDropdownItem[] = [
     <NeTableCell :data-label="t('standalone.wireguard_tunnel.connection')">
       <div class="flex items-center gap-2">
         <template v-if="peer.active">
-          <FontAwesomeIcon :icon="faCircleCheck" class="size-4 text-enabled" />
+          <FontAwesomeIcon
+            :icon="faCircleCheck"
+            class="size-4 text-green-700 dark:text-green-500"
+          />
           {{ t('common.connected') }}
         </template>
         <template v-else>
-          <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-disabled" />
+          <FontAwesomeIcon :icon="faCircleXmark" class="size-4 text-red-700 dark:text-red-500" />
           {{ t('common.not_connected') }}
         </template>
         <template v-if="peer.latest_handshake != undefined">

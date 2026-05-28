@@ -2858,7 +2858,8 @@
       "persistence_after_expiration_description": "Mantieni le informazioni sul flusso disponibili per un breve periodo dopo la fine del flusso stesso. Questo consente di visualizzare le informazioni sui flussi terminati di recente, il che può essere utile per indagare sulle connessioni stabilite e chiuse in un breve arco di tempo.",
       "daemon_not_running": "Il demone dei flow è abilitato ma non è in esecuzione",
       "daemon_not_running_description": "Se hai appena abilitato il demone, salva le modifiche e attendi qualche secondo per permettere al demone di avviarsi. Se il problema persiste, controlla i log per eventuali errori riguardanti il demone dei flow.",
-      "few_apps_warning": "I flussi in tempo reale includono il set standard di applicazioni e protocolli, pertanto parte del traffico potrebbe apparire come “Sconosciuto”. Abbonati per sbloccare il rilevamento DPI completo e riconoscere oltre 2600 applicazioni.",
+      "few_apps_warning": "Abbonati per sbloccare il rilevamento DPI completo",
+      "few_apps_warning_description": "I flussi in tempo reale includono solo applicazioni e protocolli standard, quindi parte del traffico potrebbe apparire come \"Sconosciuto\". Abbonati per rilevare oltre 2600 applicazioni.",
       "blocked": "Bloccato"
     }
   },

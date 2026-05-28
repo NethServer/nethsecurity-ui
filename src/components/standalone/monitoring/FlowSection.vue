@@ -81,7 +81,8 @@ onMounted(() => {
     <div class="flex flex-wrap items-start gap-4">
       <NeInlineNotification
         v-if="fewAppsWarning && (data?.status ?? false)"
-        :description="t('standalone.flows.few_apps_warning')"
+        :title="t('standalone.flows.few_apps_warning')"
+        :description="t('standalone.flows.few_apps_warning_description')"
         class="w-full"
         kind="info"
         show-close-button

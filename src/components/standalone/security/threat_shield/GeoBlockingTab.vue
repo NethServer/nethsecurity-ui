@@ -1,3 +1,5 @@
+GeoBlockingTab.vue - 05/06/2026 - 14.30
+
 <!--
   Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
@@ -9,7 +11,8 @@ import { ref, computed } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { useNotificationsStore } from '@/stores/notifications'
+import { useRouter } from 'vue-router'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import {
   faCircleCheck,
   faCircleXmark,
@@ -19,33 +22,40 @@ import {
   faEarthAsia,
   faEarthEurope,
   faEarthOceania,
-  faChevronRight
+  faChevronRight,
+  faChevronLeft,
+  faGlobe,
+  faMagnifyingGlass,
+  faShield,
+  faArrowRight,
+  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-  NeHeading,
   NeTextInput,
   NeButton,
   NeCheckbox,
-  NeCombobox,
   NeBadge,
   NeToggle,
+  NeEmptyState,
   NeInlineNotification,
-  type NeComboboxOption
+  NeSkeleton,
+  NeDropdownFilter,
+  getAxiosErrorMessage,
+  type FilterOption
 } from '@nethesis/vue-components'
 
 const { t } = useI18n()
+const router = useRouter()
 const uciChangesStore = useUciPendingChangesStore()
-const notificationsStore = useNotificationsStore()
 
 const error = ref({
+  notificationTitle: '',
   notificationDescription: '',
   notificationDetails: ''
 })
 const fetchError = ref(false)
-const loading = ref(false)
-const showDeleteAddressModal = ref(false)
-const showCreateOrEditAddressDrawer = ref(false)
+const loading = ref(true)
 
 // --- Regions data ---
 
@@ -62,85 +72,24 @@ type Region = {
   countries: Country[]
 }
 
-const regions = ref<Region[]>([
-  {
-    id: 'africa',
-    nameKey: 'standalone.threat_shield.africa',
-    icon: faEarthAfrica,
-    countries: [
-      { code: 'DZ', name: 'Algeria', selected: false },
-      { code: 'AO', name: 'Angola', selected: false },
-      { code: 'BJ', name: 'Benin', selected: false },
-      { code: 'BW', name: 'Botswana', selected: false },
-      { code: 'IO', name: 'British Indian Ocean Territory', selected: false },
-      { code: 'BF', name: 'Burkina Faso', selected: false },
-      { code: 'BI', name: 'Burundi', selected: false }
-    ]
-  },
-  {
-    id: 'americas',
-    nameKey: 'standalone.threat_shield.americas',
-    icon: faEarthAmericas,
-    countries: [
-      { code: 'AR', name: 'Argentina', selected: false },
-      { code: 'BR', name: 'Brazil', selected: false },
-      { code: 'CA', name: 'Canada', selected: false },
-      { code: 'CL', name: 'Chile', selected: false },
-      { code: 'CO', name: 'Colombia', selected: false },
-      { code: 'MX', name: 'Mexico', selected: false },
-      { code: 'US', name: 'United States', selected: false }
-    ]
-  },
-  {
-    id: 'asia',
-    nameKey: 'standalone.threat_shield.asia',
-    icon: faEarthAsia,
-    countries: [
-      { code: 'CN', name: 'China', selected: false },
-      { code: 'IN', name: 'India', selected: false },
-      { code: 'JP', name: 'Japan', selected: false },
-      { code: 'KR', name: 'South Korea', selected: false },
-      { code: 'RU', name: 'Russia', selected: false }
-    ]
-  },
-  {
-    id: 'europe',
-    nameKey: 'standalone.threat_shield.europe',
-    icon: faEarthEurope,
-    countries: [
-      { code: 'FR', name: 'France', selected: false },
-      { code: 'DE', name: 'Germany', selected: false },
-      { code: 'IT', name: 'Italy', selected: false },
-      { code: 'ES', name: 'Spain', selected: false },
-      { code: 'GB', name: 'United Kingdom', selected: false }
-    ]
-  },
-  {
-    id: 'oceania',
-    nameKey: 'standalone.threat_shield.oceania',
-    icon: faEarthOceania,
-    countries: [
-      { code: 'AU', name: 'Australia', selected: false },
-      { code: 'FJ', name: 'Fiji', selected: false },
-      { code: 'NZ', name: 'New Zealand', selected: false }
-    ]
-  }
-])
-
-/** Regions that have at least one country selected (i.e. enabled). */
-const enabledRegions = computed(() => regions.value.filter((r) => isRegionEnabled(r)))
-
-function isRegionEnabled(region: Region): boolean {
-  return region.countries.some((c) => c.selected)
+const REGION_META: Record<string, { nameKey: string; icon: typeof faEarthAfrica }> = {
+  africa: { nameKey: 'standalone.threat_shield.africa', icon: faEarthAfrica },
+  americas: { nameKey: 'standalone.threat_shield.americas', icon: faEarthAmericas },
+  asia: { nameKey: 'standalone.threat_shield.asia', icon: faEarthAsia },
+  europe: { nameKey: 'standalone.threat_shield.europe', icon: faEarthEurope },
+  oceania: { nameKey: 'standalone.threat_shield.oceania', icon: faEarthOceania },
+  others: { nameKey: 'standalone.threat_shield.others', icon: faGlobe }
 }
+
+const regions = ref<Region[]>([])
 
 function blockedCountriesCount(region: Region): number {
   return region.countries.filter((c) => c.selected).length
 }
 
-/** Total number of blocked countries across all regions. */
+// total number of blocked countries across all regions (only if service is enabled)
 const totalBlockedCountries = computed(() =>
-  regions.value.reduce((sum, r) => sum + blockedCountriesCount(r), 0)
+  savedServiceEnabled.value ? savedBlockedCountriesCount.value : 0
 )
 
 const selectedRegionId = ref<string | null>(null)
@@ -150,11 +99,24 @@ const selectedRegion = computed(
 )
 
 const countrySearch = ref('')
+const countryStatusFilter = ref<string[]>([])
+
+const countryStatusFilterOptions = computed<FilterOption[]>(() => [
+  { id: 'blocked', label: t('standalone.threat_shield.status_blocked') },
+  { id: 'not_blocked', label: t('standalone.threat_shield.status_not_blocked') }
+])
 
 const filteredCountries = computed(() =>
-  selectedRegion.value?.countries.filter((c) =>
-    `${c.name} (${c.code})`.toLowerCase().includes(countrySearch.value.toLowerCase())
-  ) ?? []
+  selectedRegion.value?.countries.filter((c) => {
+    const matchesSearch = `${localCountryName(c.code, c.name)} (${c.code})`
+      .toLowerCase()
+      .includes(countrySearch.value.toLowerCase())
+    const matchesStatus =
+      countryStatusFilter.value.length === 0 ||
+      (countryStatusFilter.value.includes('blocked') && c.selected) ||
+      (countryStatusFilter.value.includes('not_blocked') && !c.selected)
+    return matchesSearch && matchesStatus
+  }) ?? []
 )
 
 const selectedCountriesCount = computed(
@@ -162,9 +124,10 @@ const selectedCountriesCount = computed(
 )
 
 function selectRegion(regionId: string) {
-  // Toggle: clicking the already-open region closes the panel
+  // clicking the already-open region closes the panel
   selectedRegionId.value = selectedRegionId.value === regionId ? null : regionId
   countrySearch.value = ''
+  countryStatusFilter.value = []
 }
 
 function selectAll() {
@@ -175,24 +138,49 @@ function deselectAll() {
   selectedRegion.value?.countries.forEach((c) => (c.selected = false))
 }
 
-// Unit country combobox
-const unitCountryOptions = ref<NeComboboxOption[]>([
-  { id: 'IT', label: 'Italy' },
-  { id: 'FR', label: 'France' },
-  { id: 'DE', label: 'Germany' },
-  { id: 'ES', label: 'Spain' },
-  { id: 'US', label: 'United States' }
-])
-const selectedUnitCountry = ref<string>('IT')
+function localCountryName(code: string, fallback: string) {
+  const key = 'standalone.threat_shield.countries.' + code
+  const val = t(key)
+  return val === key ? fallback : val
+}
 
 const savingRegions = ref(false)
-
-/** Controls visibility of the intro card vs the main configuration UI.
- *  Will be driven by actual service state once API integration is in place. */
 const isServiceEnabled = ref(false)
+const savedServiceEnabled = ref(false)
+const savedBlockedCountriesCount = ref(0)
+const isThreatShieldEnabled = ref(false)
 
-async function saveRegions() {
-  // TODO: implement save
+async function saveGeoblockingConfiguration() {
+  savingRegions.value = true
+  error.value.notificationDescription = ''
+  error.value.notificationTitle = ''
+  error.value.notificationDetails = ''
+
+  try {
+    // extract all blocked country codes across all regions
+    const blockedCountries = regions.value.flatMap((region) =>
+      region.countries.filter((c) => c.selected).map((c) => c.code)
+    )
+
+    const payload = {
+      enabled: isServiceEnabled.value,
+      countries: blockedCountries
+    }
+
+    await ubusCall('ns.threatshield', 'set-geoblocking-configuration', payload)
+    await uciChangesStore.getChanges()
+
+    // update saved state to reflect what was just persisted
+    savedServiceEnabled.value = isServiceEnabled.value
+    savedBlockedCountriesCount.value = isServiceEnabled.value ? blockedCountries.length : 0
+
+  } catch (err: any) {
+    error.value.notificationTitle = t('error.cannot_save_configuration')
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+  } finally {
+    savingRegions.value = false
+  }
 }
 
 async function fetchCountries() {
@@ -200,17 +188,40 @@ async function fetchCountries() {
   error.value.notificationDetails = ''
   fetchError.value = false
 
-  /* try {
-      loading.value = true
-      allowlist.value = (await ubusCall('ns.threatshield', 'list-allowed')).data.data
+  try {
+    loading.value = true
+    const response = (await ubusCall('ns.threatshield', 'geoblocking-configuration')).data
+    isThreatShieldEnabled.value = (
+      await ubusCall('ns.threatshield', 'list-settings')
+    ).data.data.enabled
+    isServiceEnabled.value = response.enabled
+    savedServiceEnabled.value = response.enabled
+    regions.value = (response.regions as Record<string, { code: string; description: string; blocked: boolean }[]>[]).flatMap((regionObj) =>
+      Object.entries(regionObj).map(([regionId, countries]) => {
+        const meta = REGION_META[regionId] ?? { nameKey: regionId, icon: faGlobe }
+        return {
+          id: regionId,
+          nameKey: meta.nameKey,
+          icon: meta.icon,
+          countries: countries.map((c) => ({
+            code: c.code,
+            name: c.description,
+            selected: c.blocked
+          }))
+        }
+      })
+    )
+    // initialize saved count from loaded data
+    savedBlockedCountriesCount.value = response.enabled
+      ? regions.value.reduce((sum, r) => sum + blockedCountriesCount(r), 0)
+      : 0
   } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
-      fetchError.value = true
+    error.value.notificationDescription = t(getAxiosErrorMessage(err))
+    error.value.notificationDetails = err.toString()
+    fetchError.value = true
   } finally {
-      loading.value = false
+    loading.value = false
   }
-  */
 }
 
 onMounted(() => {
@@ -219,245 +230,353 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-6 mb-7">
-    <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-      {{ t('standalone.threat_shield.geoblocking_description') }}
-    </p>
-  </div>
 
-  <!-- Geo IP blocking summary card -->
-  <div
-    class="flex flex-col rounded-md border-l-4 border-indigo-500 dark:border-indigo-400 bg-gray-100 dark:bg-gray-800 sm:shadow sm:rounded-lg md:flex-row md:items-stretch p-2 mb-3"
-  >
-    <!-- Div 1: icon + title -->
-    <div
-      class="flex items-center gap-4 px-6 py-4 shrink-0 md:border-r md:border-gray-300 md:dark:border-gray-600"
+  <!-- show skeleton when loading -->
+  <NeSkeleton v-if="loading" :lines="6" size="lg" />
+  
+  <!-- show error/template when loading is completed -->
+  <div v-else class="flex flex-col gap-y-2">
+    
+    <!-- show error notification if there is an error -->
+    <NeInlineNotification
+      v-if="error.notificationTitle"
+      kind="error"
+      :title="error.notificationTitle"
+      :description="error.notificationDescription"
+      class="my-2"
+      ><template v-if="error.notificationDetails" #details>
+        {{ error.notificationDetails }}
+      </template></NeInlineNotification
     >
-      <div
-        class="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-900 dark:bg-gray-50"
-      >
-        <FontAwesomeIcon
-          :icon="faLocationDot"
-          aria-hidden="true"
-          class="h-4 w-4 text-gray-300 dark:text-gray-600"
-        />
-      </div>
-      <span class="whitespace-nowrap text-base font-medium text-gray-900 dark:text-gray-100">
-        {{ t('standalone.threat_shield.geo_ip_blocking') }}
-      </span>
-    </div>
 
-    <!-- Div 2: blocked countries + status, fills remaining space -->
-    <div class="flex flex-1 flex-col md:flex-row md:items-center justify-center">
-      <!-- Blocked countries cell -->
-      <div
-        class="flex flex-1 items-center px-6 py-4 md:justify-center"
-      >
-        <div class="flex w-full items-center justify-between md:w-auto md:gap-8">
-          <span class="text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
-            {{ t('standalone.threat_shield.blocked_countries') }}
-          </span>
-          <span class="text-3xl font-medium leading-9 text-gray-700 dark:text-gray-200">
-            {{ totalBlockedCountries }}
-          </span>
-        </div>
-      </div>
+    <!-- show geoip blocking content if there is no fetch error -->
+    <template v-if="!fetchError">
 
-      <!-- Status cell -->
-      <div class="flex flex-1 items-center px-6 py-4 md:justify-center">
-        <div class="flex w-full items-center justify-between md:w-auto md:gap-8">
-          <span class="text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
-            {{ t('common.status') }}
-          </span>
-          <div class="flex items-center gap-2">
-            <FontAwesomeIcon
-              :icon="true ? faCircleCheck : faCircleXmark"
-              :class="['size-4', true ? 'text-enabled' : 'text-disabled']"
-              aria-hidden="true"
-            />
-            <span class="whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-              {{ true ? t('common.enabled') : t('common.disabled') }}
+      <!-- geoblocking service description -->
+      <div :class="['flex','flex-col', 'gap-y-6', 'mb-7', selectedRegionId !== null ? 'max-md:hidden' : '']">
+        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.threat_shield.geoblocking_description') }}
+        </p>
+      </div>
+      
+      <!-- banip not active: show empty state -->
+      <NeEmptyState
+        v-if="!isThreatShieldEnabled"
+        :title="t('standalone.threat_shield.threat_shield_disabled')"
+        :description="t('standalone.threat_shield.threat_shield_disabled_description')"
+        :icon="faShield"
+        class="pb-8"
+      >
+        <NeButton
+          kind="primary"
+          @click="router.push(`${getStandaloneRoutePrefix()}/security/threat-shield-ip?tab=settings`)"
+        >
+          <template #prefix>
+            <FontAwesomeIcon :icon="faArrowRight" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.threat_shield.go_to_settings') }}
+        </NeButton>
+      </NeEmptyState>
+
+      <!-- banip active: show geoblocking UI -->
+      <template v-else>
+        <div
+          :class="['flex','flex-col', 'rounded-md', 'border-l-6', 'border-indigo-500', 'dark:border-indigo-400', 'bg-white', 'dark:bg-gray-950', 'sm:shadow', 'sm:rounded-lg', 'md:flex-row', 'md:items-stretch', 'p-2', 'mb-1', selectedRegionId !== null ? 'max-md:hidden' : '']"
+        >
+          <!-- icon + title -->
+          <div
+            class="flex items-center gap-4 px-6 py-4 shrink-0 md:border-r md:border-gray-200 md:dark:border-gray-700"
+          >
+            <div
+              class="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-900 dark:bg-gray-50"
+            >
+              <FontAwesomeIcon
+                :icon="faLocationDot"
+                aria-hidden="true"
+                class="h-4 w-4 text-gray-300 dark:text-gray-600"
+              />
+            </div>
+            <span class="whitespace-nowrap text-base font-medium text-primary-neutral dark:text-primary-neutral">
+              {{ t('standalone.threat_shield.geo_ip_blocking') }}
             </span>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Service card -->
-  <div class="mt-6 flex flex-col gap-6 rounded-lg bg-white dark:bg-gray-950 p-6 shadow-md">
-
-    <!-- Title + toggle -->
-    <div class="flex flex-col gap-2">
-      <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {{ t('standalone.threat_shield.geo_ip_blocking') }}
-      </h2>
-      <NeToggle
-        v-model="isServiceEnabled"
-        :label="isServiceEnabled ? t('common.enabled') : t('common.disabled')"
-      />
-    </div>
-
-    <!-- Warning: visible only when enabled -->
-    <NeInlineNotification
-      v-if="isServiceEnabled"
-      kind="warning"
-      :title="t('standalone.threat_shield.avoid_blocking_title')"
-      :description="t('standalone.threat_shield.avoid_blocking_description')"
-    />
-
-    <!-- Regions and countries section -->
-    <div class="flex flex-col gap-2">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {{ t('standalone.threat_shield.regions_and_countries') }}
-      </h3>
-
-      <!-- Empty state: when disabled -->
-      <div
-        v-if="!isServiceEnabled"
-        class="flex flex-col items-center gap-5 rounded-md bg-gray-100 dark:bg-gray-700 px-8 py-7"
-      >
-        <FontAwesomeIcon
-          :icon="faLocationDot"
-          class="size-12 text-gray-400 dark:text-gray-500"
-          aria-hidden="true"
-        />
-        <div class="flex flex-col items-center gap-1 text-center">
-          <p class="text-base font-medium text-gray-700 dark:text-gray-200">
-            {{ t('standalone.threat_shield.service_disabled') }}
-          </p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ t('standalone.threat_shield.service_disabled_description') }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Regions + countries panel: when enabled -->
-      <div
-        v-if="isServiceEnabled"
-        class="flex flex-col gap-4 md:flex-row md:h-100"
-      >
-        
-        <!-- Left: regions list -->
-        <div class="flex w-full shrink-0 flex-col gap-2 overflow-y-auto md:w-1/2">
-          <div
-            v-for="region in regions"
-            :key="region.id"
-            class="relative flex cursor-pointer items-center rounded-md px-5 py-4 transition-colors justify-center"
-            :class="
-              selectedRegionId === region.id
-                ? 'bg-gray-100 dark:bg-gray-700'
-                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-            "
-            @click="selectRegion(region.id)"
-          >
-            <!-- Left: icon + name + country count -->
-            <div class="flex min-w-0 flex-1 items-center gap-3">
-              <FontAwesomeIcon
-                :icon="region.icon"
-                aria-hidden="true"
-                class="size-8 shrink-0 text-gray-600 dark:text-gray-300"
-              />
-              <div class="flex min-w-0 flex-col text-sm leading-5">
-                <span class="truncate font-medium text-gray-900 dark:text-gray-100">
-                  {{ t(region.nameKey) }}
+          <!-- blocked countries + status -->
+          <div class="flex flex-1 flex-col md:flex-row md:items-center justify-center">
+            <!-- blocked countries cell -->
+            <div
+              class="flex flex-1 items-center px-6 py-4 md:justify-center"
+            >
+              <div class="flex w-full items-center justify-between md:w-auto md:gap-8">
+                <span class="text-sm font-medium text-primary-neutral dark:text-primary-neutral whitespace-nowrap">
+                  {{ t('standalone.threat_shield.blocked_countries') }}
                 </span>
-                <span class="truncate text-gray-500 dark:text-gray-400">
-                  {{ t('standalone.threat_shield.countries_count', { count: region.countries.length }) }}
+                <span class="text-3xl font-medium leading-9 text-secondary-neutral dark:text-secondary-neutral">
+                  {{ totalBlockedCountries }}
                 </span>
               </div>
             </div>
-            <!-- Center: badge with number of blocked countries --> 
-            <div class="absolute inset-x-0 flex items-center justify-center">
-              <NeBadge
-                v-if="blockedCountriesCount(region) > 0"
-                kind="custom"
-                custom-color-classes="bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
-                :text="t('standalone.threat_shield.n_blocked', { count: blockedCountriesCount(region) })"
-              />
+            <!-- status cell -->
+            <div class="flex flex-1 items-center px-6 py-4 md:justify-center">
+              <div class="flex w-full items-center justify-between md:w-auto md:gap-8">
+                <span class="text-sm font-medium text-primary-neutral dark:text-primary-neutral whitespace-nowrap">
+                  {{ t('common.status') }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <FontAwesomeIcon
+                    :icon="savedServiceEnabled ? faCircleCheck : faCircleXmark"
+                    :class="['size-4', savedServiceEnabled ? 'text-enabled' : 'text-disabled']"
+                    aria-hidden="true"
+                  />
+                  <span class="text-sm font-medium text-secondary-neutral dark:text-secondary-neutral whitespace-nowrap">
+                    {{ savedServiceEnabled ? t('common.enabled') : t('common.disabled') }}
+                  </span>
+                </div>
+              </div>
             </div>
-            <!-- Right: chevron -->
-            <FontAwesomeIcon
-              :icon="faChevronRight"
-              class="size-4 shrink-0 text-gray-400"
-              aria-hidden="true"
+          </div>
+        </div>
+
+        <!-- service card -->
+        <div class="mt-2 flex flex-col rounded-lg bg-white dark:bg-gray-950 p-6 shadow-md">
+
+          <!-- title + toggle -->
+          <div class="flex flex-col gap-2" :class="[selectedRegionId !== null ? 'max-md:hidden' : '']">
+            <h2 class="text-lg font-medium text-primary-neutral dark:text-primary-neutral ">
+              {{ t('standalone.threat_shield.geo_ip_blocking') }}
+            </h2>
+            <NeToggle
+              v-model="isServiceEnabled"
+              :label="isServiceEnabled ? t('common.enabled') : t('common.disabled')"
             />
           </div>
-        </div>
-        
-        <!-- Right: countries panel for selected region -->
-        <div
-          v-if="selectedRegion"
-          class="flex flex-1 flex-col gap-4 overflow-hidden"
-        >
-          <!-- Info header -->
-          <p class="text-lg font-medium leading-7 text-gray-500 dark:text-gray-400">
-            {{
-              t('standalone.threat_shield.countries_blocked_in', {
-                selected: selectedCountriesCount,
-                total: selectedRegion.countries.length,
-                region: t(selectedRegion.nameKey)
-              })
-            }}
-          </p>
-          <!-- Search -->
-          <NeTextInput
-            v-model="countrySearch"
-            :placeholder="t('standalone.threat_shield.search_country')"
-            class="w-full"
-          >
-            <template #prefix>
-              <FontAwesomeIcon
-                :icon="['fas', 'magnifying-glass']"
-                class="size-4 text-gray-400"
-                aria-hidden="true"
-              />
-            </template>
-          </NeTextInput>
-          <!-- Select / Deselect buttons -->
-          <div class="flex gap-4">
-            <NeButton kind="tertiary" size="sm" @click="selectAll">
-              {{ t('standalone.threat_shield.select_all') }}
-            </NeButton>
-            <NeButton kind="tertiary" size="sm" @click="deselectAll">
-              {{ t('standalone.threat_shield.deselect_all') }}
-            </NeButton>
-          </div>
-          <!-- Country list -->
-          <div class="flex flex-1 flex-col gap-2 overflow-y-auto pr-2">
+
+          <!-- warning message -->
+          <NeInlineNotification
+            v-if="isServiceEnabled"
+            kind="warning"
+            class="mt-4"
+            :class="[selectedRegionId !== null ? 'max-md:hidden' : '']"
+            :title="t('standalone.threat_shield.avoid_blocking_title')"
+            :description="t('standalone.threat_shield.avoid_blocking_description')"
+          />
+
+          <!-- regions and countries section -->
+          <div class="flex flex-col gap-2 mt-4">
+            <h3
+              v-if="isServiceEnabled"
+              :class="[selectedRegionId !== null ? 'max-md:hidden' : '']"
+              class="text-lg font-medium text-primary-neutral dark:text-primary-neutral">
+              {{ t('standalone.threat_shield.regions_and_countries') }}
+            </h3>
+
+            <!-- service is enabled, show regions + countries panel -->
             <div
-              v-for="country in filteredCountries"
-              :key="country.code"
-              class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-2"
+              v-if="isServiceEnabled"
+              class="flex flex-col gap-4 md:grid md:grid-cols-[1fr_1px_1fr] md:gap-5 mb-4"
             >
-              <NeCheckbox
-                v-model="country.selected"
-                :label="`${country.name} (${country.code})`"
+              
+              <!-- left panel: regions list (hidden on mobile when a region is selected) -->
+              <div
+                class="flex flex-col gap-2"
+                :class="{ 'hidden md:flex': selectedRegionId !== null }"
+              >
+                <div
+                  v-for="region in regions"
+                  :key="region.id"
+                  style="grid-template-columns: 1fr 1fr auto;"
+                  :class="['bg-gray-50', 'dark:bg-gray-900', 'hover:bg-gray-100', 'dark:hover:bg-gray-800', 'grid', 'cursor-pointer', 'items-center', 'rounded-md', 'px-5', 'py-4', 'transition-colors',
+                    selectedRegionId === region.id
+                      ? 'border-cyan-500 dark:border-cyan-200 border-2'
+                      : ''
+                  ]"
+                  @click="selectRegion(region.id)"
+                >       
+                  <!-- icon + name + country count -->
+                  <div class="flex min-w-0 items-center gap-3">
+                    <FontAwesomeIcon
+                      :icon="region.icon"
+                      aria-hidden="true"
+                      class="size-8 shrink-0 text-primary-neutral dark:text-primary-neutral"
+                    />
+                    <div class="flex min-w-0 flex-col text-sm leading-5">
+                      <span class="truncate font-medium text-primary-neutral dark:text-primary-neutral">
+                        {{ t(region.nameKey) }}
+                      </span>
+                      <span class="truncate text-tertiary-neutral dark:text-gray-400">
+                        {{ t('standalone.threat_shield.countries_count', { count: region.countries.length }) }}
+                      </span>
+                    </div>
+                  </div>
+                  <!-- badge with number of blocked countries --> 
+                  <div class="flex justify-start">
+                    <NeBadge
+                      v-if="blockedCountriesCount(region) > 0"
+                      kind="custom"
+                      custom-color-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
+                      :text="t('standalone.threat_shield.n_blocked', { count: blockedCountriesCount(region) })"
+                      :rounded="true"
+                      size="xs"
+                    />
+                  </div>
+                  <!-- chevron -->
+                  <FontAwesomeIcon
+                    :icon="faChevronRight"
+                    class="size-4 shrink-0 text-primary-neutral dark:text-primary-neutral"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+
+              <!-- vertical divider -->
+              <div class="hidden md:block bg-gray-200 dark:bg-gray-700" />
+              
+              <!-- right panel: empty state when no region is selected -->
+              <NeEmptyState
+                v-if="!selectedRegion"
+                :icon="faLocationDot"
+                :title="t('standalone.threat_shield.no_region_selected')"
+                :description="t('standalone.threat_shield.no_region_selected_description')"
+                class="hidden md:flex flex-col justify-center items-center text-center bg-white dark:bg-gray-950"
               />
-              <NeBadge
-                v-if="country.selected"
-                kind="custom"
-                custom-color-classes="bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
-                :text="t('standalone.threat_shield.blocked')"
-                :rounded="true"
-                size="xs"
-              />
+              
+              <!-- right panel: countries panel for selected region -->
+              <div
+                v-if="selectedRegion"
+                class="flex flex-col gap-4 md:relative"
+              >
+                <!-- mobile back button -->
+                <div
+                  class="flex items-center gap-2 cursor-pointer md:hidden"
+                  @click="selectedRegionId = null"
+                >
+                  <FontAwesomeIcon
+                    :icon="faChevronLeft"
+                    class="size-5 text-primary-neutral dark:text-primary-neutral"
+                    aria-hidden="true"
+                  />
+                  <h3
+                    class="text-2xl font-medium text-primary-neutral dark:text-primary-neutral">
+                    {{ t(selectedRegion.nameKey) }}
+                  </h3>
+                </div>
+                <div class="flex flex-col gap-4 md:absolute md:inset-0 md:overflow-hidden">
+                  <!-- info header -->
+                  <div class="flex flex-wrap items-center justify-between gap-2 mt-1 mr-1">
+                    <p class="text-lg font-medium text-secondary-neutral dark:text-secondary-neutral">
+                      {{
+                        t('standalone.threat_shield.countries_blocked_in', {
+                          selected: selectedCountriesCount,
+                          total: selectedRegion.countries.length,
+                          region: t(selectedRegion.nameKey)
+                        })
+                      }}
+                    </p>
+                    <!-- block all / allow all buttons -->
+                    <div class="flex gap-4">
+                      <NeButton kind="tertiary" size="sm" @click="selectAll">
+                        {{ t('standalone.threat_shield.block_all') }}
+                      </NeButton>
+                      <NeButton kind="tertiary" size="sm" @click="deselectAll">
+                        {{ t('standalone.threat_shield.allow_all') }}
+                      </NeButton>
+                    </div>
+                  </div>
+                  <!-- filters row: search + status dropdown -->
+                  <div class="flex gap-4 items-center">
+                    <NeTextInput
+                      v-model="countrySearch"
+                      :placeholder="t('standalone.threat_shield.filter_country')"
+                      class="flex-1"
+                    >
+                      <template #prefix>
+                        <FontAwesomeIcon
+                          :icon="faMagnifyingGlass"
+                          class="size-4 text-primary-neutral dark:text-primary-neutral"
+                          aria-hidden="true"
+                        />
+                      </template>
+                    </NeTextInput>
+                    <NeDropdownFilter
+                      v-model="countryStatusFilter"
+                      kind="checkbox"
+                      :label="t('standalone.threat_shield.status_filter_label')"
+                      :options="countryStatusFilterOptions"
+                      :clear-search-label="t('ne_dropdown_filter.clear_search')"
+                      :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+                      :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+                      :no-options-label="t('ne_dropdown_filter.no_options')"
+                      :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+                      :align-to-right=true
+                      class="mr-1"
+                    />
+                  </div>
+                  <!-- country list -->
+                  <div class="flex flex-1 flex-col gap-2 min-h-0 overflow-y-auto pr-2">
+                    <div
+                      v-for="country in filteredCountries"
+                      :key="country.code"
+                      class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-2"
+                    >
+                      <NeCheckbox
+                        v-model="country.selected"
+                        :label="`${localCountryName(country.code, country.name)} (${country.code})`"
+                      />
+                      <NeBadge
+                        v-if="country.selected"
+                        kind="custom"
+                        custom-color-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
+                        :text="t('standalone.threat_shield.blocked')"
+                        :rounded="true"
+                        size="xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- save/apply changes button -->
+          <div class="mt-2">
+            <!-- mobile: show "Block selected" button when region is selected, which closes the countries panel -->
+            <NeButton
+              v-if="isThreatShieldEnabled && isServiceEnabled && selectedRegionId !== null"
+              kind="primary"
+              class="w-full md:hidden"
+              @click="selectedRegionId = null"
+            >
+              {{ t('standalone.threat_shield.block_selected') }}
+            </NeButton>
+            <!-- mobile: show "Save" button when no region is selected (regions list view) -->
+            <NeButton
+              v-if="isThreatShieldEnabled && selectedRegionId === null"
+              kind="primary"
+              class="w-full md:hidden"
+              :loading="savingRegions"
+              @click="saveGeoblockingConfiguration"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faFloppyDisk" class="size-4" aria-hidden="true" />
+              </template>
+              {{ t('common.save') }}
+            </NeButton>
+            <!-- desktop/tablet: show "Save" button always when threat shield is enabled -->
+            <NeButton
+              v-if="isThreatShieldEnabled"
+              kind="primary"
+              class="w-full hidden md:inline-flex md:w-auto"
+              :loading="savingRegions"
+              @click="saveGeoblockingConfiguration"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faFloppyDisk" class="size-4" aria-hidden="true" />
+              </template>
+              {{ t('common.save') }}
+            </NeButton>
+          </div>
         </div>
-      </div>
-    
-    </div>
-
-    <!-- Save button -->
-    <div>
-      <NeButton kind="primary" class="w-full sm:w-auto" :loading="savingRegions" @click="saveRegions">
-        <template #prefix>
-          <FontAwesomeIcon :icon="['fas', 'floppy-disk']" class="size-4" aria-hidden="true" />
-        </template>
-        {{ t('common.save') }}
-      </NeButton>
-    </div>
-
+      </template>
+    </template>
   </div>
 </template>

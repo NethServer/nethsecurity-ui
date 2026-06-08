@@ -1849,7 +1849,7 @@
       "enable_service": "Enable",
       "avoid_blocking_title": "Avoid blocking access to this unit",
       "avoid_blocking_description": "To avoid losing access, add your current IP address to the local allowlist before saving the configuration.",
-      "block_selected": "Block selected",
+      "go_back_to_regions": "Go back to regions",
       "others": "Others",
       "countries": {
         "AF": "Afghanistan",

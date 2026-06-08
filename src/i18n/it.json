@@ -2181,7 +2181,7 @@
       "enable_service": "Abilita",
       "avoid_blocking_title": "Non perdere l'accesso al firewall",
       "avoid_blocking_description": "Per evitare di perdere l'accesso, aggiungi il tuo indirizzo IP corrente alla allowlist locale prima di salvare la configurazione.",
-      "block_selected": "Blocca selezionati",
+      "go_back_to_regions": "Torna alle regioni",
       "others": "Altri",
       "countries": {
         "AF": "Afghanistan",

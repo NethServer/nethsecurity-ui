@@ -603,14 +603,14 @@ onMounted(() => {
 
           <!-- save/apply changes button -->
           <div class="mt-2">
-            <!-- mobile: show "Block selected" button when region is selected, which closes the countries panel -->
+            <!-- mobile: show "Go back to regions" button when region is selected, which closes the countries panel -->
             <NeButton
               v-if="isThreatShieldEnabled && isServiceEnabled && selectedRegionId !== null"
               kind="primary"
               class="w-full md:hidden"
               @click="selectedRegionId = null"
             >
-              {{ t('standalone.threat_shield.block_selected') }}
+              {{ t('standalone.threat_shield.go_back_to_regions') }}
             </NeButton>
             <!-- mobile: show "Save" button when no region is selected (regions list view) -->
             <NeButton

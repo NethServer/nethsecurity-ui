@@ -1,5 +1,3 @@
-GeoBlockingTab.vue - 05/06/2026 - 14.30
-
 <!--
   Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
@@ -392,13 +390,13 @@ onMounted(() => {
           <NeInlineNotification
             v-if="isServiceEnabled"
             kind="warning"
-            :class="['mt-4', selectedRegionId !== null ? 'max-md:hidden' : '']"
+            :class="['mt-5', selectedRegionId !== null ? 'max-md:hidden' : '']"
             :title="t('standalone.threat_shield.avoid_blocking_title')"
             :description="t('standalone.threat_shield.avoid_blocking_description')"
           />
 
           <!-- regions and countries section -->
-          <div class="mt-4 flex flex-col gap-2">
+          <div class="mt-5 flex flex-col gap-2">
             <h3
               v-if="isServiceEnabled"
               :class="[

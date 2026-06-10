@@ -33,17 +33,17 @@ import {
   NeTextInput,
   NeButton,
   NeCheckbox,
-  NeBadge,
   NeToggle,
   NeEmptyState,
   NeInlineNotification,
   NeSkeleton,
   NeDropdownFilter,
   getAxiosErrorMessage,
-  type FilterOption
+  type FilterOption,
+  NeBadgeV2
 } from '@nethesis/vue-components'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const uciChangesStore = useUciPendingChangesStore()
 
@@ -52,7 +52,6 @@ const error = ref({
   notificationDescription: '',
   notificationDetails: ''
 })
-const fetchError = ref(false)
 const loading = ref(true)
 
 // --- Regions data ---
@@ -137,10 +136,12 @@ function deselectAll() {
   selectedRegion.value?.countries.forEach((c) => (c.selected = false))
 }
 
+const countryDisplayNames = computed(
+  () => new Intl.DisplayNames([locale.value], { type: 'region' })
+)
+
 function localCountryName(code: string, fallback: string) {
-  const key = 'standalone.threat_shield.countries.' + code
-  const val = t(key)
-  return val === key ? fallback : val
+  return countryDisplayNames.value.of(code) ?? fallback
 }
 
 const savingRegions = ref(false)
@@ -182,9 +183,9 @@ async function saveGeoblockingConfiguration() {
 }
 
 async function fetchCountries() {
+  error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
-  fetchError.value = false
 
   try {
     loading.value = true
@@ -219,9 +220,9 @@ async function fetchCountries() {
       ? regions.value.reduce((sum, r) => sum + blockedCountriesCount(r), 0)
       : 0
   } catch (err: unknown) {
+    error.value.notificationTitle = t('error.cannot_retrieve_threat_shield_settings')
     error.value.notificationDescription = t(getAxiosErrorMessage(err))
     error.value.notificationDetails = String(err)
-    fetchError.value = true
   } finally {
     loading.value = false
   }
@@ -250,8 +251,8 @@ onMounted(() => {
       </template></NeInlineNotification
     >
 
-    <!-- show geoip blocking content if there is no fetch error -->
-    <template v-if="!fetchError">
+    <!-- show geoip blocking content if regions were loaded successfully -->
+    <template v-if="regions.length > 0">
       <!-- geoblocking service description -->
       <div
         :class="[
@@ -390,13 +391,13 @@ onMounted(() => {
           <NeInlineNotification
             v-if="isServiceEnabled"
             kind="warning"
-            :class="['mt-5', selectedRegionId !== null ? 'max-md:hidden' : '']"
+            :class="['mt-6', selectedRegionId !== null ? 'max-md:hidden' : '']"
             :title="t('standalone.threat_shield.avoid_blocking_title')"
             :description="t('standalone.threat_shield.avoid_blocking_description')"
           />
 
           <!-- regions and countries section -->
-          <div class="mt-5 flex flex-col gap-2">
+          <div class="mt-6 flex flex-col gap-2">
             <h3
               v-if="isServiceEnabled"
               :class="[
@@ -425,7 +426,7 @@ onMounted(() => {
                 ]"
               >
                 <div
-                  v-for="region in regions"
+                  v-for="region in regions.filter((r) => r.countries.length > 0)"
                   :key="region.id"
                   style="grid-template-columns: 1fr 1fr auto"
                   :class="[
@@ -470,18 +471,18 @@ onMounted(() => {
                   </div>
                   <!-- badge with number of blocked countries -->
                   <div class="flex justify-start">
-                    <NeBadge
+                    <NeBadgeV2
                       v-if="blockedCountriesCount(region) > 0"
                       kind="custom"
-                      custom-color-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
-                      :text="
+                      size="xs"
+                      custom-kind-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
+                    >
+                      {{
                         t('standalone.threat_shield.n_blocked', {
                           count: blockedCountriesCount(region)
                         })
-                      "
-                      :rounded="true"
-                      size="xs"
-                    />
+                      }}
+                    </NeBadgeV2>
                   </div>
                   <!-- chevron -->
                   <FontAwesomeIcon
@@ -584,14 +585,14 @@ onMounted(() => {
                         v-model="country.selected"
                         :label="`${localCountryName(country.code, country.name)} (${country.code})`"
                       />
-                      <NeBadge
+                      <NeBadgeV2
                         v-if="country.selected"
                         kind="custom"
-                        custom-color-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
-                        :text="t('standalone.threat_shield.blocked')"
-                        :rounded="true"
                         size="xs"
-                      />
+                        custom-kind-classes="font-medium bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-100"
+                      >
+                        {{ t('standalone.threat_shield.blocked') }}
+                      </NeBadgeV2>
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.22.0](https://github.com/NethServer/nethsecurity-ui/compare/2.21.0...2.22.0) (2026-06-11)
+
+
+### Features
+
+* **threatshield:** geo blocking enabled for threat shield ip ([#777](https://github.com/NethServer/nethsecurity-ui/issues/777)) ([272e1d6](https://github.com/NethServer/nethsecurity-ui/commit/272e1d6efc2cf3e48133587f0b94ab109359d35c))
+
+
+### Bug Fixes
+
+* **firewall-section:** update tooltips visibility and styles ([#773](https://github.com/NethServer/nethsecurity-ui/issues/773)) ([ec2c822](https://github.com/NethServer/nethsecurity-ui/commit/ec2c822567f3c66f1dfeb1d5f4914928ff6e6583))
+
 ## [2.21.0](https://github.com/NethServer/nethsecurity-ui/compare/2.20.1...2.21.0) (2026-06-11)
 
 

@@ -21,6 +21,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { useQueryClient } from '@tanstack/vue-query'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import NeMultiTextInput from '../../NeMultiTextInput.vue'
@@ -28,6 +29,7 @@ import { MessageBag } from '@/lib/validation'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const queryClient = useQueryClient()
 
 const isThreatShieldEnabled = ref(false)
 const isLogPreroutingEnabled = ref(false)
@@ -229,6 +231,7 @@ async function saveSettings() {
       ban_udplimit: isBlockUdpDosEnabled.value ? Number(blockUdpDosLimit.value) : 0
     })
     reloadSettings()
+    queryClient.removeQueries({ queryKey: ['threatshield'] })
   } catch (err: any) {
     error.value.editSettings = t(getAxiosErrorMessage(err))
     error.value.editSettingsDetails = err.toString()

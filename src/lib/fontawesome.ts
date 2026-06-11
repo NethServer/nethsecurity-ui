@@ -1,4 +1,4 @@
-//  Copyright (C) 2024 Nethesis S.r.l.
+//  Copyright (C) 2026 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { config, library } from '@fortawesome/fontawesome-svg-core'

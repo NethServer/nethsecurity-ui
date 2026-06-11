@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -12,6 +12,7 @@ import BlocklistTab from '@/components/standalone/security/threat_shield/Blockli
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
 import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
 import BannedIpsTab from '@/components/standalone/security/threat_shield/BannedIpsTab.vue'
+import GeoBlockingTab from '@/components/standalone/security/threat_shield/GeoBlockingTab.vue'
 
 export type BanIpLocalAddress = {
   address: string
@@ -24,6 +25,10 @@ const { tabs, selectedTab } = useTabs([
   {
     name: 'blocklist',
     label: t('standalone.threat_shield.blocklist')
+  },
+  {
+    name: 'geoblocking',
+    label: t('standalone.threat_shield.geoblocking')
   },
   {
     name: 'allowlist',
@@ -60,5 +65,6 @@ const { tabs, selectedTab } = useTabs([
     <LocalBlocklistTab v-if="selectedTab === 'localBlocklist'" />
     <BannedIpsTab v-if="selectedTab === 'bannedIps'" />
     <SettingsTab v-if="selectedTab === 'settings'" />
+    <GeoBlockingTab v-if="selectedTab === 'geoblocking'" />
   </div>
 </template>

@@ -160,6 +160,7 @@ onMounted(() => {
       <NeEmptyState
         v-if="!isThreatShieldEnabled"
         :title="t('standalone.threat_shield.threat_shield_disabled')"
+        :description="t('standalone.threat_shield.threat_shield_disabled_description')"
         :icon="['fas', 'shield']"
         class="pb-8"
         ><NeButton

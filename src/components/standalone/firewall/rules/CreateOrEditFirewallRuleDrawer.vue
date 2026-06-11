@@ -590,7 +590,9 @@ function validate() {
       isValidationOk = false
       focusElement(sourceZoneRef)
     } else if (action.value === 'NOTRACK' && sourceZone.value === '*') {
-      errorBag.value.set('src', [t('standalone.firewall_rules.notrack_requires_specific_source_zone')])
+      errorBag.value.set('src', [
+        t('standalone.firewall_rules.notrack_requires_specific_source_zone')
+      ])
       isValidationOk = false
       focusElement(sourceZoneRef)
     }

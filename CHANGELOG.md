@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.21.0](https://github.com/NethServer/nethsecurity-ui/compare/2.20.1...2.21.0) (2026-06-11)
+
+
+### Features
+
+* added alerts in dashboard, replaced dpi status ([4a53cb5](https://github.com/NethServer/nethsecurity-ui/commit/4a53cb567bdf36c49a3b0727d02fef7fe9aab43b))
+* expose metrics from Victoria ([#754](https://github.com/NethServer/nethsecurity-ui/issues/754)) ([5ba4d4e](https://github.com/NethServer/nethsecurity-ui/commit/5ba4d4e3c1397df60a6cead7ea5a275062ce426c))
+* **firewall-logging:** unify traffic logging option visualization ([#756](https://github.com/NethServer/nethsecurity-ui/issues/756)) ([37cc708](https://github.com/NethServer/nethsecurity-ui/commit/37cc70835b6b43300971002a9264cee8fa41951d))
+* **firewall:** added NOTRACK for firewall rules ([#767](https://github.com/NethServer/nethsecurity-ui/issues/767)) ([7e751b7](https://github.com/NethServer/nethsecurity-ui/commit/7e751b7c26a1f20d81fd0f5350d575996c39adfa))
+* **ipsec:** convert DPD to combobox ([#768](https://github.com/NethServer/nethsecurity-ui/issues/768)) ([f2d5173](https://github.com/NethServer/nethsecurity-ui/commit/f2d5173c52a41470fbe18e3b6c25f9effb5c5a55))
+* **threat shield dns:** use staged commits ([#766](https://github.com/NethServer/nethsecurity-ui/issues/766)) ([5c30b4c](https://github.com/NethServer/nethsecurity-ui/commit/5c30b4cda59568028809cb8c668d51620aa175ce))
+
+
+### Bug Fixes
+
+* **dashboard:** removed button from alert card ([ff8fc76](https://github.com/NethServer/nethsecurity-ui/commit/ff8fc7666f3ddfff28773d46772a39e419dc872f))
+* **firewall:** adding validation when creating NOTRACK rule ([8de2706](https://github.com/NethServer/nethsecurity-ui/commit/8de27067e443207fad94fc74101bfcda79c28afd))
+* **flows:** fixed configure drawer empty in some situations ([7c7f487](https://github.com/NethServer/nethsecurity-ui/commit/7c7f48755f725707bfa2f1d30c628fc5e47a74bc))
+* **flows:** updated banner of real time monitor few apps ([6108c88](https://github.com/NethServer/nethsecurity-ui/commit/6108c8809b0b9cdd23f8c955ba4a8f2c265c029e))
+* updated required api version ([4af3408](https://github.com/NethServer/nethsecurity-ui/commit/4af34082d39559806031f9a4736bf706ca9d578f))
+
 ## [2.20.1](https://github.com/NethServer/nethsecurity-ui/compare/2.20.0...2.20.1) (2026-05-14)
 
 

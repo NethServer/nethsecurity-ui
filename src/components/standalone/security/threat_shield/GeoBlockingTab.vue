@@ -89,8 +89,7 @@ const {
   queryKey: ['threatshield', 'geoblocking-configuration'],
   queryFn: () =>
     ubusCall<{ data: GeoBlockingResponse }>('ns.threatshield', 'geoblocking-configuration'),
-  select: (res) => res.data,
-  gcTime: 0
+  select: (res) => res.data
 })
 
 const {
@@ -102,8 +101,7 @@ const {
   queryKey: ['threatshield', 'settings'],
   queryFn: () =>
     ubusCall<{ data: { data: { enabled: boolean } } }>('ns.threatshield', 'list-settings'),
-  select: (res) => res.data.data,
-  gcTime: 0
+  select: (res) => res.data.data
 })
 
 const loading = computed(() => isLoadingGeoConfig.value || isLoadingSettings.value)

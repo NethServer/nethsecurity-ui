@@ -5,10 +5,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { onMounted } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import {
@@ -29,6 +29,7 @@ import {
   faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   NeTextInput,
   NeButton,
@@ -46,30 +47,29 @@ import {
 const { t, locale } = useI18n()
 const router = useRouter()
 const uciChangesStore = useUciPendingChangesStore()
+const queryClient = useQueryClient()
 
-const error = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
-})
-const loading = ref(true)
+// --- Types ---
 
-// --- Regions data ---
+type GeoBlockingResponse = {
+  enabled: boolean
+  regions: Record<string, string[]>
+  blocked_regions: string[]
+}
 
 type Country = {
   code: string
-  name: string
   selected: boolean
 }
 
 type Region = {
   id: string
   nameKey: string
-  icon: typeof faEarthAfrica
+  icon: IconDefinition
   countries: Country[]
 }
 
-const REGION_META: Record<string, { nameKey: string; icon: typeof faEarthAfrica }> = {
+const REGION_META: Record<string, { nameKey: string; icon: IconDefinition }> = {
   africa: { nameKey: 'standalone.threat_shield.africa', icon: faEarthAfrica },
   americas: { nameKey: 'standalone.threat_shield.americas', icon: faEarthAmericas },
   asia: { nameKey: 'standalone.threat_shield.asia', icon: faEarthAsia },
@@ -78,16 +78,75 @@ const REGION_META: Record<string, { nameKey: string; icon: typeof faEarthAfrica 
   others: { nameKey: 'standalone.threat_shield.others', icon: faGlobe }
 }
 
+// --- fetch data queries ---
+
+const {
+  data: geoConfig,
+  isPending: isLoadingGeoConfig,
+  isError: isGeoConfigError,
+  error: geoConfigError
+} = useQuery({
+  queryKey: ['threatshield', 'geoblocking-configuration'],
+  queryFn: () =>
+    ubusCall<{ data: GeoBlockingResponse }>('ns.threatshield', 'geoblocking-configuration'),
+  select: (res) => res.data,
+  gcTime: 0
+})
+
+const {
+  data: threatShieldSettings,
+  isPending: isLoadingSettings,
+  isError: isSettingsError,
+  error: settingsError
+} = useQuery({
+  queryKey: ['threatshield', 'settings'],
+  queryFn: () =>
+    ubusCall<{ data: { data: { enabled: boolean } } }>('ns.threatshield', 'list-settings'),
+  select: (res) => res.data.data,
+  gcTime: 0
+})
+
+const loading = computed(() => isLoadingGeoConfig.value || isLoadingSettings.value)
+const isThreatShieldEnabled = computed(() => threatShieldSettings.value?.enabled ?? false)
+const savedServiceEnabled = computed(() => geoConfig.value?.enabled ?? false)
+const savedBlockedCountriesCount = computed(() =>
+  savedServiceEnabled.value ? (geoConfig.value?.blocked_regions.length ?? 0) : 0
+)
+const totalBlockedCountries = computed(() =>
+  savedServiceEnabled.value ? savedBlockedCountriesCount.value : 0
+)
+
+// --- sync of original configuration and UI state ---
+
 const regions = ref<Region[]>([])
+const isServiceEnabled = ref(false)
+
+watch(
+  geoConfig,
+  (config) => {
+    if (!config) return
+    isServiceEnabled.value = config.enabled
+    const blockedSet = new Set(config.blocked_regions)
+    regions.value = Object.entries(config.regions)
+      .filter(([, codes]) => codes.length > 0)
+      .map(([regionId, codes]) => {
+        const meta = REGION_META[regionId] ?? { nameKey: regionId, icon: faGlobe }
+        return {
+          id: regionId,
+          nameKey: meta.nameKey,
+          icon: meta.icon,
+          countries: codes.map((code) => ({ code, selected: blockedSet.has(code) }))
+        }
+      })
+  },
+  { immediate: true }
+)
+
+// --- region/country helpers ---
 
 function blockedCountriesCount(region: Region): number {
   return region.countries.filter((c) => c.selected).length
 }
-
-// total number of blocked countries across all regions (only if service is enabled)
-const totalBlockedCountries = computed(() =>
-  savedServiceEnabled.value ? savedBlockedCountriesCount.value : 0
-)
 
 const selectedRegionId = ref<string | null>(null)
 
@@ -106,7 +165,7 @@ const countryStatusFilterOptions = computed<FilterOption[]>(() => [
 const filteredCountries = computed(
   () =>
     selectedRegion.value?.countries.filter((c) => {
-      const matchesSearch = `${localCountryName(c.code, c.name)} (${c.code})`
+      const matchesSearch = `${localCountryName(c.code)} (${c.code})`
         .toLowerCase()
         .includes(countrySearch.value.toLowerCase())
       const matchesStatus =
@@ -140,97 +199,33 @@ const countryDisplayNames = computed(
   () => new Intl.DisplayNames([locale.value], { type: 'region' })
 )
 
-function localCountryName(code: string, fallback: string) {
-  return countryDisplayNames.value.of(code) ?? fallback
+function localCountryName(code: string) {
+  return countryDisplayNames.value.of(code) ?? code
 }
 
-const savingRegions = ref(false)
-const isServiceEnabled = ref(false)
-const savedServiceEnabled = ref(false)
-const savedBlockedCountriesCount = ref(0)
-const isThreatShieldEnabled = ref(false)
+// --- save geoblocking configuration query ---
 
-async function saveGeoblockingConfiguration() {
-  savingRegions.value = true
-  error.value.notificationDescription = ''
-  error.value.notificationTitle = ''
-  error.value.notificationDetails = ''
-
-  try {
-    // extract all blocked country codes across all regions
-    const blockedCountries = regions.value.flatMap((region) =>
-      region.countries.filter((c) => c.selected).map((c) => c.code)
-    )
-
-    const payload = {
-      enabled: isServiceEnabled.value,
-      countries: blockedCountries
-    }
-
-    await ubusCall('ns.threatshield', 'set-geoblocking-configuration', payload)
-    await uciChangesStore.getChanges()
-
-    // update saved state to reflect what was just persisted
-    savedServiceEnabled.value = isServiceEnabled.value
-    savedBlockedCountriesCount.value = isServiceEnabled.value ? blockedCountries.length : 0
-  } catch (err: unknown) {
-    error.value.notificationTitle = t('error.cannot_save_configuration')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = String(err)
-  } finally {
-    savingRegions.value = false
+const {
+  mutate: saveConfig,
+  isPending: isSaving,
+  error: saveError
+} = useMutation({
+  mutationFn: (payload: { enabled: boolean; countries: string[] }) =>
+    ubusCall('ns.threatshield', 'set-geoblocking-configuration', payload),
+  onSuccess: async () => {
+    await Promise.all([
+      uciChangesStore.getChanges(),
+      queryClient.invalidateQueries({ queryKey: ['threatshield', 'geoblocking-configuration'] })
+    ])
   }
-}
-
-async function fetchCountries() {
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-
-  try {
-    loading.value = true
-    const response = (await ubusCall('ns.threatshield', 'geoblocking-configuration')).data
-    isThreatShieldEnabled.value = (
-      await ubusCall('ns.threatshield', 'list-settings')
-    ).data.data.enabled
-    isServiceEnabled.value = response.enabled
-    savedServiceEnabled.value = response.enabled
-    regions.value = (
-      response.regions as Record<
-        string,
-        { code: string; description: string; blocked: boolean }[]
-      >[]
-    ).flatMap((regionObj) =>
-      Object.entries(regionObj).map(([regionId, countries]) => {
-        const meta = REGION_META[regionId] ?? { nameKey: regionId, icon: faGlobe }
-        return {
-          id: regionId,
-          nameKey: meta.nameKey,
-          icon: meta.icon,
-          countries: countries.map((c) => ({
-            code: c.code,
-            name: c.description,
-            selected: c.blocked
-          }))
-        }
-      })
-    )
-    // initialize saved count from loaded data
-    savedBlockedCountriesCount.value = response.enabled
-      ? regions.value.reduce((sum, r) => sum + blockedCountriesCount(r), 0)
-      : 0
-  } catch (err: unknown) {
-    error.value.notificationTitle = t('error.cannot_retrieve_threat_shield_settings')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = String(err)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchCountries()
 })
+
+function saveGeoblockingConfiguration() {
+  const blockedCountries = regions.value.flatMap((region) =>
+    region.countries.filter((c) => c.selected).map((c) => c.code)
+  )
+  saveConfig({ enabled: isServiceEnabled.value, countries: blockedCountries })
+}
 </script>
 
 <template>
@@ -241,15 +236,18 @@ onMounted(() => {
   <div v-else class="flex flex-col gap-y-2">
     <!-- show error notification if there is an error -->
     <NeInlineNotification
-      v-if="error.notificationTitle"
+      v-if="isGeoConfigError || isSettingsError || saveError"
       kind="error"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
+      :title="
+        saveError
+          ? t('error.cannot_save_configuration')
+          : t('error.cannot_retrieve_threat_shield_settings')
+      "
+      :description="t(getAxiosErrorMessage(saveError ?? geoConfigError ?? settingsError))"
       class="my-2"
-      ><template v-if="error.notificationDetails" #details>
-        {{ error.notificationDetails }}
-      </template></NeInlineNotification
     >
+      <template #details>{{ String(saveError ?? geoConfigError ?? settingsError) }}</template>
+    </NeInlineNotification>
 
     <!-- show geoip blocking content if regions were loaded successfully -->
     <template v-if="regions.length > 0">
@@ -537,7 +535,7 @@ onMounted(() => {
                     </p>
                     <!-- block all / allow all buttons -->
                     <div class="flex gap-4">
-                      <NeButton kind="tertiary" size="sm" @click="selectAll">
+                      <NeButton kind="tertiary" size="sm" class="ml-1" @click="selectAll">
                         {{ t('standalone.threat_shield.block_all') }}
                       </NeButton>
                       <NeButton kind="tertiary" size="sm" @click="deselectAll">
@@ -583,7 +581,7 @@ onMounted(() => {
                     >
                       <NeCheckbox
                         v-model="country.selected"
-                        :label="`${localCountryName(country.code, country.name)} (${country.code})`"
+                        :label="`${localCountryName(country.code)} (${country.code})`"
                       />
                       <NeBadgeV2
                         v-if="country.selected"
@@ -616,7 +614,7 @@ onMounted(() => {
               v-if="isThreatShieldEnabled && selectedRegionId === null"
               kind="primary"
               class="w-full md:hidden"
-              :loading="savingRegions"
+              :loading="isSaving"
               @click="saveGeoblockingConfiguration"
             >
               <template #prefix>
@@ -629,7 +627,7 @@ onMounted(() => {
               v-if="isThreatShieldEnabled"
               kind="primary"
               class="hidden w-full md:inline-flex md:w-auto"
-              :loading="savingRegions"
+              :loading="isSaving"
               @click="saveGeoblockingConfiguration"
             >
               <template #prefix>

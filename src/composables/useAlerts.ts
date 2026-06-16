@@ -38,7 +38,7 @@ export function useAlerts() {
     queryFn: async () =>
       await ubusCall<AxiosResponse<ListAlertsResponse>>('ns.telegraf', 'list-alerts'),
     select: (response) => response.data.alerts,
-    refetchInterval: 5000
+    refetchInterval: 15000
   })
 
   const notifications = computed<NeNotificationV2[]>(() => {

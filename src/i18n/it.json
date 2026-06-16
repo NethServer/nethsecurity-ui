@@ -23,7 +23,7 @@
     "status": "Stato",
     "any": "Qualsiasi",
     "loading": "Caricamento",
-    "eg_value": "Es. {value}",
+    "eg_value": "es. {value}",
     "name": "Nome",
     "plus_num_others": "+{num} altro | +{num} altri",
     "more_info": "Più info",
@@ -2494,9 +2494,6 @@
       "time_range_hours": "Ultima {num} ora | Ultime {num} ore",
       "time_range_days": "Ultimo {num} giorno | Ultimi {num} giorni",
       "refresh_interval": "Aggiornamento automatico",
-      "refresh_off": "Disattivato",
-      "refresh_30s": "Ogni 30 secondi",
-      "refresh_60s": "Ogni 60 secondi",
       "system_section": "Sistema",
       "network_section": "Rete",
       "connections": "Connessioni (conntrack)",
@@ -2536,7 +2533,6 @@
       "unknown": "Sconosciuto",
       "go_to_alerts": "Vai agli avvisi",
       "active_alerts": "@:standalone.metrics.no_alerts_description | avviso attivo | avvisi attivi",
-      "system_degraded": "Sistema degradato",
       "no_alerts": "Nessun avviso"
     },
     "metrics_monitor": {

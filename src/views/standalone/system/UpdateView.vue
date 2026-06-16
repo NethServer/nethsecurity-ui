@@ -18,8 +18,8 @@ import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesMo
 import SystemUpdateInProgressModal from '@/components/standalone/update/SystemUpdateInProgressModal.vue'
 import { getProductName } from '@/lib/config'
 import { useNotificationsStore } from '@/stores/notifications'
+import { useSystemActionStore } from '@/stores/standalone/systemAction'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 export type PackageUpdate = {
   package: string
   currentVersion: string
@@ -34,6 +34,7 @@ export type SystemUpdate = {
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
+const systemActionStore = useSystemActionStore()
 
 const loading = ref(true)
 const error = ref({
@@ -73,6 +74,12 @@ function cleanError() {
   error.value.notificationTitle = ''
   error.value.notificationDescription = ''
   error.value.notificationDetails = ''
+}
+
+function onSystemUpdateStarted() {
+  isApplyingSystemUpdate.value = true
+  // Pause polling queries (e.g. alerts) while the device reboots/updates
+  systemActionStore.setSystemActionInProgress(true)
 }
 
 async function fetchUpdatesStatus() {
@@ -397,12 +404,12 @@ onMounted(() => {
     :schedule-to-edit="scheduleDate"
     @close="showScheduleUpdateDrawer = false"
     @schedule-saved="fetchUpdatesStatus"
-    @system-update-requested="isApplyingSystemUpdate = true"
+    @system-update-requested="onSystemUpdateStarted"
   />
   <UploadImageDrawer
     :is-shown="showUploadImageDrawer"
     @close="showUploadImageDrawer = false"
-    @update-requested="isApplyingSystemUpdate = true"
+    @update-requested="onSystemUpdateStarted"
   />
   <SystemUpdateInProgressModal :visible="isApplyingSystemUpdate" />
 </template>

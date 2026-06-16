@@ -11,6 +11,7 @@ import { NeProgressBar, NeInlineNotification, getAxiosErrorMessage } from '@neth
 import { NeModal } from '@nethesis/vue-components'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSystemActionStore } from '@/stores/standalone/systemAction'
 
 const UPDATE_WAIT_TIME = 20000
 
@@ -26,6 +27,7 @@ const error = ref({
 const emit = defineEmits(['close', 'packages-updated'])
 
 const { t } = useI18n()
+const systemActionStore = useSystemActionStore()
 
 const isSubmittingUpdateRequest = ref(false)
 const isUpdatingPackages = ref(false)
@@ -34,6 +36,8 @@ const { startTimer, currentProgress, clearTimer } = useTimer({
   duration: UPDATE_WAIT_TIME,
   progressStep: 0.5,
   onTimerFinish: () => {
+    // Resume polling queries (e.g. alerts): services are back up
+    systemActionStore.setSystemActionInProgress(false)
     emit('packages-updated')
     clearTimer()
     close()
@@ -52,6 +56,8 @@ async function updatePackages() {
     isSubmittingUpdateRequest.value = true
     await ubusCall('ns.update', 'install-package-updates')
     isUpdatingPackages.value = true
+    // Pause polling queries (e.g. alerts) while services restart during install
+    systemActionStore.setSystemActionInProgress(true)
     startTimer()
   } catch (err: any) {
     error.value.notificationDescription = t(getAxiosErrorMessage(err))

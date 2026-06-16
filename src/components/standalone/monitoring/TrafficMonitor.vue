@@ -157,7 +157,7 @@ const hoursDatasets = computed(() => {
               <p class="text-lg">{{ get('host') }}</p>
             </SimpleStat>
           </NeCard>
-          <NeCard :title="t('standalone.real_time_monitor.daily_total_traffic')">
+          <NeCard :title="t('standalone.real_time_monitor.traffic_analyzed_today')">
             <SimpleStat>
               <span v-if="data.total_traffic != 0">{{ byteFormat1024(data.total_traffic) }}</span>
               <span v-else> - </span>

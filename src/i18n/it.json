@@ -2444,7 +2444,7 @@
       "description": "Analisi approfondita delle prestazioni del sistema e delle applicazioni, metriche dettagliate e visualizzazioni. I dati di monitoraggio vengono memorizzati in RAM e ripristinati al riavvio dell'unità. Se l'unità è collegata a un controller remoto, le metriche vengono salvate anche sul controller e persistono al riavvio dell'unità .",
       "times_blocked": "Numero blocchi",
       "timestamp": "Data e ora",
-      "daily_total_traffic": "Traffico totale giornaliero",
+      "traffic_analyzed_today": "Traffico analizzato oggi",
       "public_ip_address": "Indirizzo IP pubblico",
       "latency_and_packet_delivery_rate": "Latenza e delivery rate pacchetti",
       "error_fetching_data": "Errore nel recupero dei dati",

@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.22.1](https://github.com/NethServer/nethsecurity-ui/compare/2.22.0...2.22.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* disable alert pooling during updates ([#784](https://github.com/NethServer/nethsecurity-ui/issues/784)) ([c07d0ad](https://github.com/NethServer/nethsecurity-ui/commit/c07d0adeacc2f91e1bdb461e121544ded518e582))
+* **monitoring:** using correct label for netifyd analyzed traffic ([#782](https://github.com/NethServer/nethsecurity-ui/issues/782)) ([4dce9dd](https://github.com/NethServer/nethsecurity-ui/commit/4dce9dd4acdf25688e4ce34925728aa191eb4718))
+
 ## [2.22.0](https://github.com/NethServer/nethsecurity-ui/compare/2.21.0...2.22.0) (2026-06-11)
 
 

@@ -68,7 +68,7 @@
     "password_confirmation_required_description": "Si prega di confermare la password per procedere",
     "automated": "Sistema",
     "automated_tooltip": "Questo elemento è gestito dal sistema e non è possibile la modifica.",
-    "remove": "Eliminare",
+    "remove": "Rimuovi",
     "connected": "Connesso",
     "not_connected": "Non connesso",
     "port": "Porta"

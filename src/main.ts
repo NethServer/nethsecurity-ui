@@ -40,8 +40,6 @@ app.use(
 )
 
 // tanstack
-app.use(VueQueryPlugin, {
-  enableDevtoolsV6Plugin: true
-})
+app.use(VueQueryPlugin)
 
 app.mount('#app')

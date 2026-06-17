@@ -4,6 +4,7 @@ import type { AxiosResponse } from 'axios'
 import type { NeNotificationV2 } from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSystemActionStore } from '@/stores/standalone/systemAction'
 
 export type Alert = {
   id?: string
@@ -32,13 +33,18 @@ function getSeverityBadgeKind(severity: string | undefined): NeNotificationV2['k
 
 export function useAlerts() {
   const { locale, t } = useI18n()
+  const systemActionStore = useSystemActionStore()
 
   const { data, error, status, isPending, isError, dataUpdatedAt } = useQuery({
     queryKey: ['metrics', 'alerts'],
     queryFn: async () =>
       await ubusCall<AxiosResponse<ListAlertsResponse>>('ns.telegraf', 'list-alerts'),
     select: (response) => response.data.alerts,
-    refetchInterval: 5000
+    refetchInterval: 15000,
+    // Pause polling while a disruptive system action (reboot, update, image
+    // flash) is in progress: the device is temporarily unreachable and the UI
+    // reloads once the action completes, re-enabling the query.
+    enabled: computed(() => !systemActionStore.isSystemActionInProgress)
   })
 
   const notifications = computed<NeNotificationV2[]>(() => {

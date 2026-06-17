@@ -19,6 +19,7 @@ import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
 import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
 import WizardShell from './views/standalone/wizard/WizardShell.vue'
 import ToastNotificationsArea from './components/ToastNotificationsArea.vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
@@ -184,4 +185,5 @@ function configureAxios() {
       <StandaloneAppLogin />
     </template>
   </template>
+  <VueQueryDevtools />
 </template>

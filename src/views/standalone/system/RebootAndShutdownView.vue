@@ -18,6 +18,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { useSystemActionStore } from '@/stores/standalone/systemAction'
 import { faArrowsRotate, faPowerOff } from '@fortawesome/free-solid-svg-icons'
 
 type requestType = 'poweroff' | 'reboot'
@@ -27,6 +28,7 @@ const POLL_TIMEOUT = 60000 * 3 // 3 minutes
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
+const systemActionStore = useSystemActionStore()
 
 const hostname = ref('')
 const loading = ref(true)
@@ -95,6 +97,8 @@ async function getHostname() {
 async function performRequest(type: requestType) {
   try {
     isPerformingRequest.value = true
+    // Pause polling queries (e.g. alerts) while the device goes offline
+    systemActionStore.setSystemActionInProgress(true)
     await ubusCall('ns.power', type)
 
     if (type == 'reboot') {
@@ -102,6 +106,8 @@ async function performRequest(type: requestType) {
       startPolling()
     }
   } catch (err: any) {
+    // Re-enable polling queries since the action did not start
+    systemActionStore.setSystemActionInProgress(false)
     modalRequestError.value = t(getAxiosErrorMessage(err))
   } finally {
     isPerformingRequest.value = false

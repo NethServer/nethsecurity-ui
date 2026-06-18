@@ -224,14 +224,21 @@ async function listDevices() {
     // check and retrieve VPN networks only the first time
 
     if (loading.value.networkDevices) {
+      const openvpnTunnelDevices = allDevices.value.filter((d) => isOpenVpnTunnel(d))
+      const hasIpsec = allDevices.value.some((d) => isIpsec(d))
+
       for (const device of allDevices.value) {
         if (isOpenVpnRw(device)) {
           fetchOpenVpnRwNetwork(device)
-        } else if (isOpenVpnTunnel(device)) {
-          fetchOpenVpnTunnelNetworks(device)
-        } else if (isIpsec(device)) {
-          fetchIpsecNetworks()
         }
+      }
+
+      if (openvpnTunnelDevices.length > 0) {
+        fetchOpenVpnTunnelNetworks(openvpnTunnelDevices)
+      }
+
+      if (hasIpsec) {
+        fetchIpsecNetworks()
       }
     }
   } catch (err: any) {
@@ -280,29 +287,31 @@ async function fetchIpsecNetworks() {
   }
 }
 
-async function fetchOpenVpnTunnelNetworks(device: DeviceOrIface) {
+async function fetchOpenVpnTunnelNetworks(devices: DeviceOrIface[]) {
   error.value.getVpnNetworks = ''
   error.value.getVpnNetworksDetails = ''
 
   try {
     const res = await ubusCall('ns.ovpntunnel', 'list-tunnels')
-
     const tunnels = res.data
-    const tunnelName = device.openvpn.ns_name
 
-    if (device.openvpn.server) {
-      // server tunnel
-      const tunFound = tunnels.servers.find((tun: any) => tun.ns_name === tunnelName)
+    for (const device of devices) {
+      const tunnelName = device.openvpn.ns_name
 
-      if (tunFound) {
-        vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
-      }
-    } else {
-      // client tunnel
-      const tunFound = tunnels.clients.find((tun: any) => tun.ns_name === tunnelName)
+      if (device.openvpn.server) {
+        // server tunnel
+        const tunFound = tunnels.servers.find((tun: any) => tun.ns_name === tunnelName)
 
-      if (tunFound) {
-        vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
+        if (tunFound) {
+          vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
+        }
+      } else {
+        // client tunnel
+        const tunFound = tunnels.clients.find((tun: any) => tun.ns_name === tunnelName)
+
+        if (tunFound) {
+          vpnNetworks.value.openvpn[tunnelName] = tunFound.remote_network
+        }
       }
     }
   } catch (err: any) {

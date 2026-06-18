@@ -1,3 +1,8 @@
+<!--
+  Copyright (C) 2026 Nethesis S.r.l.
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <script lang="ts" setup>
 import type { DhcpInterface } from '@/components/standalone/dns_dhcp/DhcpManager.vue'
 import {
@@ -35,11 +40,11 @@ const borderColor = computed((): string => {
   return getZoneBorderColorClasses(zoneName)
 })
 
-const range = computed((): string | undefined => {
-  if (dhcpInterface.first != undefined && dhcpInterface.last != undefined) {
-    return `${dhcpInterface.first} - ${dhcpInterface.last}`
+const allRanges = computed((): Array<string> => {
+  if (dhcpInterface.ranges && dhcpInterface.ranges.length > 0) {
+    return dhcpInterface.ranges.map(({ first, last }) => `${first} - ${last}`)
   }
-  return undefined
+  return []
 })
 
 const dhcpOptions = computed(() => {
@@ -133,7 +138,12 @@ const visibleOptions = computed(() => {
         />
       </p>
       <div v-if="dhcpInterface.active" class="space-y-1 font-normal">
-        <p v-if="range != undefined">{{ t('standalone.dns_dhcp.ip_range') }}: {{ range }}</p>
+        <div v-if="allRanges.length > 0" class="flex gap-2">
+          <span class="shrink-0">{{ t('standalone.dns_dhcp.ip_range') }}:</span>
+          <div class="flex flex-col gap-0.5">
+            <span v-for="(range, index) in allRanges" :key="index">{{ range }}</span>
+          </div>
+        </div>
         <p v-if="leaseTime != undefined">
           {{ t('standalone.dns_dhcp.lease_time') }}: {{ leaseTime }}
         </p>

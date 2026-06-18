@@ -252,6 +252,7 @@
     "cannot_create_dpi_exception": "Impossibile creare l'eccezione DPI",
     "cannot_edit_dpi_exception": "Impossibile modificare l'eccezione DPI",
     "last_must_be_greater_than_first": "Assicurarsi che l'ultimo IP nel range sia più grande del primo IP",
+    "ip_out_of_class_range": "L'indirizzo IP non appartiene alla classe dell'interfaccia",
     "invalid_address": "Inserire un indirizzo IP valido con notazione CIDR opzionale, un indirizzo MAC, un nome host o un FQDN",
     "cannot_delete_dpi_exception": "Impossibile eliminare l'eccezione DPI",
     "duplicate": "Valore duplicato",
@@ -1258,7 +1259,11 @@
       "soft_binding": "Soft binding",
       "scan_network_reservation": "Riservato",
       "scan_network_reservation_ip_reserved": "IP riservato",
-      "scan_network_reservation_ip_not_reserved": "IP non riservato"
+      "scan_network_reservation_ip_not_reserved": "IP non riservato",
+      "add_ip_range": "Aggiungi intervallo IP",
+      "ip_ranges": "Intervalli IP",
+      "ip_range_start": "Inizio intervallo IP",
+      "ip_range_end": "Fine intervallo IP"
     },
     "storage": {
       "vendor": "Produttore",

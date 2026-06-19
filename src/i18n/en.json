@@ -1317,7 +1317,7 @@
       "mac_binding_tooltip": "Filters traffic based on IP-MAC bindings defined in the static lease configuration.",
       "soft": "Soft",
       "strict": "Strict",
-      "ip_range": "IP range",
+      "ip_range": "IP range | IP ranges",
       "plus_n_others": "+{n} other | +{n} others",
       "soft_binding": "Soft binding",
       "soft_binding_description": "Allows hosts without a reservation, blocks mismatched IP/MAC",

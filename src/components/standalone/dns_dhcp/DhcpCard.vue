@@ -13,14 +13,8 @@ import {
 } from '@/lib/standalone/network.ts'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed } from 'vue'
-import {
-  faCheck,
-  faCircleCheck,
-  faCircleXmark,
-  faPenToSquare,
-  faXmark
-} from '@fortawesome/free-solid-svg-icons'
-import { NeBadge, NeButton, NeLink, NeTooltip } from '@nethesis/vue-components'
+import { faCircleCheck, faCircleXmark, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { NeButton, NeLink, NeTooltip } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useFirewallStore } from '@/stores/standalone/firewall.ts'
 
@@ -80,9 +74,14 @@ const visibleOptions = computed(() => {
             class="h-4 w-4"
           />
         </div>
-        <span class="text-base leading-6 font-medium">
-          {{ interfaceName }}<br />{{ dhcpInterface.device }}
-        </span>
+        <div class="flex flex-col">
+          <span class="text-base leading-6 font-medium text-primary-neutral">
+            {{ interfaceName }}
+          </span>
+          <span class="text-sm text-tertiary-neutral">
+            {{ dhcpInterface.device }}
+          </span>
+        </div>
       </div>
       <div>
         <NeButton kind="tertiary" size="sm" @click="$emit('edit', dhcpInterface)">
@@ -93,10 +92,15 @@ const visibleOptions = computed(() => {
         </NeButton>
       </div>
     </div>
-    <div class="space-y-2 text-tertiary-neutral">
-      <p class="flex items-center gap-3">
-        <span>{{ t('standalone.dns_dhcp.mac_binding') }}:</span>
-        <span class="space-x-1">
+
+    <!-- MAC binding section -->
+    <div class="space-y-2">
+      <p class="text-sm font-medium text-primary-neutral">
+        {{ t('standalone.dns_dhcp.mac_binding') }}
+      </p>
+      <div class="flex items-center justify-between text-sm text-tertiary-neutral">
+        <span>{{ t('common.status') }}</span>
+        <span class="flex items-center gap-1.5">
           <template v-if="dhcpInterface.ns_binding != undefined && dhcpInterface.ns_binding == 0">
             <FontAwesomeIcon :icon="faCircleXmark" class="text-offline" />
             <span>{{ t('common.disabled') }}</span>
@@ -114,44 +118,61 @@ const visibleOptions = computed(() => {
             </span>
           </template>
         </span>
-      </p>
-      <hr />
+      </div>
     </div>
-    <div class="space-y-1 text-sm">
-      <p class="flex items-center">
-        {{ t('standalone.dns_dhcp.dhcp') }}
-        <NeBadge
-          v-if="dhcpInterface.active"
-          :icon="faCheck"
-          :text="t('common.enabled')"
-          class="ml-auto"
-          kind="success"
-          size="xs"
-        />
-        <NeBadge
-          v-else
-          :icon="faXmark"
-          :text="t('common.disabled')"
-          class="ml-auto"
-          kind="secondary"
-          size="xs"
-        />
-      </p>
-      <div v-if="dhcpInterface.active" class="space-y-1 font-normal">
-        <div v-if="allRanges.length > 0" class="flex gap-2">
-          <span class="shrink-0">{{ t('standalone.dns_dhcp.ip_range') }}:</span>
-          <div class="flex flex-col gap-0.5">
+
+    <!-- DHCP section -->
+    <div class="mt-6 space-y-2">
+      <p class="text-sm font-medium text-primary-neutral">{{ t('standalone.dns_dhcp.dhcp') }}</p>
+
+      <!-- status -->
+      <div class="flex items-center justify-between text-sm text-tertiary-neutral">
+        <span>{{ t('common.status') }}</span>
+        <span class="flex items-center gap-1.5">
+          <FontAwesomeIcon
+            :icon="dhcpInterface.active ? faCircleCheck : faCircleXmark"
+            :class="dhcpInterface.active ? 'text-online' : 'text-offline'"
+          />
+          <span>{{ dhcpInterface.active ? t('common.enabled') : t('common.disabled') }}</span>
+        </span>
+      </div>
+
+      <template v-if="dhcpInterface.active">
+        <hr />
+        <!-- IP ranges -->
+        <div
+          v-if="allRanges.length > 0"
+          class="flex justify-between gap-4 text-sm text-tertiary-neutral"
+        >
+          <span class="shrink-0">
+            {{ t('standalone.dns_dhcp.ip_range', allRanges.length) }}
+          </span>
+          <div class="flex flex-col items-end gap-0.5">
             <span v-for="(range, index) in allRanges" :key="index">{{ range }}</span>
           </div>
         </div>
-        <p v-if="leaseTime != undefined">
-          {{ t('standalone.dns_dhcp.lease_time') }}: {{ leaseTime }}
-        </p>
+        <hr />
+        <!-- lease time -->
+        <div
+          v-if="leaseTime != undefined"
+          class="flex items-center justify-between text-sm text-tertiary-neutral"
+        >
+          <span>
+            {{ t('standalone.dns_dhcp.lease_time') }}
+          </span>
+          <span>{{ leaseTime }}</span>
+        </div>
+
+        <!-- DHCP options -->
         <template v-if="visibleOptions.length > 3">
-          <p v-for="dhcpOption in visibleOptions.slice(0, 2)" :key="dhcpOption.key">
-            {{ dhcpOption.key }}: {{ dhcpOption.value }}
-          </p>
-          <p v-if="visibleOptions.length > 2">
+          <template v-for="dhcpOption in visibleOptions.slice(0, 2)" :key="dhcpOption.key">
+            <hr />
+            <div class="flex items-center justify-between text-sm text-tertiary-neutral">
+              <span>{{ dhcpOption.key }}</span>
+              <span>{{ dhcpOption.value }}</span>
+            </div>
+          </template>
+          <div v-if="visibleOptions.length > 2" class="flex justify-end">
             <NeTooltip>
               <template #trigger>
                 <NeLink>
@@ -164,14 +185,18 @@ const visibleOptions = computed(() => {
                 </p>
               </template>
             </NeTooltip>
-          </p>
+          </div>
         </template>
         <template v-else>
-          <p v-for="dhcpOption in visibleOptions" :key="dhcpOption.key">
-            {{ dhcpOption.key }}: {{ dhcpOption.value }}
-          </p>
+          <template v-for="dhcpOption in visibleOptions" :key="dhcpOption.key">
+            <hr />
+            <div class="flex items-center justify-between text-sm text-tertiary-neutral">
+              <span>{{ dhcpOption.key }}</span>
+              <span>{{ dhcpOption.value }}</span>
+            </div>
+          </template>
         </template>
-      </div>
+      </template>
     </div>
   </div>
 </template>

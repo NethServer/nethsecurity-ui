@@ -1251,7 +1251,7 @@
       "strict_binding_description": "Solo gli host con una reservation sono permessi, gli altri sono bloccati",
       "dhcp": "DHCP",
       "strict": "Strict",
-      "ip_range": "Intervallo IP",
+      "ip_range": "Intervallo IP | Intervalli IP",
       "soft": "Soft",
       "soft_binding_description": "Consente host senza reservation, blocca gli IP/MAC non corrispondenti",
       "custom": "Personallizzato",

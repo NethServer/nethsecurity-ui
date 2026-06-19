@@ -30,7 +30,12 @@ import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { ipv4ToInt } from '@/lib/ipUtils'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faChevronDown, faChevronUp, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronDown,
+  faChevronUp,
+  faCirclePlus,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   isShown: boolean
@@ -451,7 +456,7 @@ watch(
           </div>
           <NeButton kind="tertiary" @click="addIpRange()">
             <template #prefix>
-              <FontAwesomeIcon :icon="faPlus" />
+              <FontAwesomeIcon :icon="faCirclePlus" />
             </template>
             {{ t('standalone.dns_dhcp.add_ip_range') }}
           </NeButton>

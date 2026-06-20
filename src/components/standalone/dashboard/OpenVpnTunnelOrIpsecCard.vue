@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface TunnelCounters {
@@ -15,7 +15,9 @@ interface TunnelCounters {
 }
 
 const props = defineProps({
-  method: { type: String, required: true }
+  method: { type: String, required: true },
+  initialCounters: { type: Object as PropType<TunnelCounters | undefined>, default: undefined },
+  deferInitialLoad: { type: Boolean, default: false }
 })
 
 const { t } = useI18n()
@@ -24,9 +26,10 @@ const { t } = useI18n()
 const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
 const counters = ref<TunnelCounters>({ enabled: 0, connected: 0 })
 const counterIntervalId = ref(0)
+const initialized = ref(false)
 
 const loading = ref({
-  getCounters: false
+  getCounters: true
 })
 
 const error = ref({
@@ -34,18 +37,45 @@ const error = ref({
   description: ''
 })
 
-onMounted(() => {
-  getCounters()
+const isWaitingForInitialData = computed(() => props.deferInitialLoad && !initialized.value)
 
-  // periodically reload data
-  counterIntervalId.value = setInterval(getCounters, REFRESH_INTERVAL)
+onMounted(() => {
+  if (!props.deferInitialLoad) {
+    initializeData()
+  }
 })
+
+watch(
+  () => props.deferInitialLoad,
+  (deferInitialLoad) => {
+    if (!deferInitialLoad) {
+      initializeData()
+    }
+  }
+)
 
 onUnmounted(() => {
   if (counterIntervalId.value) {
     clearInterval(counterIntervalId.value)
   }
 })
+
+function initializeData() {
+  if (initialized.value) {
+    return
+  }
+
+  initialized.value = true
+
+  if (props.initialCounters) {
+    counters.value = props.initialCounters
+    loading.value.getCounters = false
+  } else {
+    getCounters()
+  }
+
+  counterIntervalId.value = setInterval(getCounters, REFRESH_INTERVAL)
+}
 
 async function getCounters() {
   // show skeleton only the first time
@@ -72,7 +102,7 @@ async function getCounters() {
   <NeCard
     :icon="['fas', 'globe']"
     :skeleton-lines="2"
-    :loading="loading.getCounters"
+    :loading="loading.getCounters || isWaitingForInitialData"
     :error-title="error.title"
     :error-description="error.description"
   >

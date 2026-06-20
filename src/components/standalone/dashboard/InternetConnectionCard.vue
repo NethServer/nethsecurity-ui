@@ -6,11 +6,25 @@
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
 import { NeBadge, NeCard, NeLink, NeTooltip, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute, useRouter } from 'vue-router'
+
+type ServiceStatus = 'ok' | 'warning' | 'disabled' | 'error' | string
+
+const props = defineProps({
+  initialInternetStatus: {
+    type: String as PropType<ServiceStatus | undefined>,
+    default: undefined
+  },
+  initialDnsConfiguredStatus: {
+    type: String as PropType<ServiceStatus | undefined>,
+    default: undefined
+  },
+  deferInitialLoad: { type: Boolean, default: false }
+})
 
 const { t } = useI18n()
 const router = useRouter()
@@ -18,13 +32,14 @@ const route = useRoute()
 
 // random refresh interval between 20 and 30 seconds
 const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const internetStatus = ref<any>(null)
-const dnsConfiguredStatus = ref<any>(null)
+const internetStatus = ref<ServiceStatus | null>(null)
+const dnsConfiguredStatus = ref<ServiceStatus | null>(null)
 const statusIntervalId = ref(0)
+const initialized = ref(false)
 
 const loading = ref({
-  getInternetStatus: false,
-  getDnsConfiguredStatus: false
+  getInternetStatus: true,
+  getDnsConfiguredStatus: true
 })
 
 const error = ref({
@@ -32,18 +47,52 @@ const error = ref({
   description: ''
 })
 
-onMounted(() => {
-  loadData()
+const isWaitingForInitialData = computed(() => props.deferInitialLoad && !initialized.value)
 
-  // periodically reload data
-  statusIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+onMounted(() => {
+  if (!props.deferInitialLoad) {
+    initializeData()
+  }
 })
+
+watch(
+  () => props.deferInitialLoad,
+  (deferInitialLoad) => {
+    if (!deferInitialLoad) {
+      initializeData()
+    }
+  }
+)
 
 onUnmounted(() => {
   if (statusIntervalId.value) {
     clearInterval(statusIntervalId.value)
   }
 })
+
+function initializeData() {
+  if (initialized.value) {
+    return
+  }
+
+  initialized.value = true
+
+  if (props.initialInternetStatus !== undefined) {
+    internetStatus.value = props.initialInternetStatus
+    loading.value.getInternetStatus = false
+  } else {
+    fetchInternetStatus()
+  }
+
+  if (props.initialDnsConfiguredStatus !== undefined) {
+    dnsConfiguredStatus.value = props.initialDnsConfiguredStatus
+    loading.value.getDnsConfiguredStatus = false
+  } else {
+    fetchDnsConfiguredStatus()
+  }
+
+  statusIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+}
 
 function loadData() {
   fetchInternetStatus()
@@ -139,15 +188,17 @@ function goToDns() {
     :title="t('standalone.dashboard.internet_connection')"
     :icon="['fas', 'earth-americas']"
     :skeleton-lines="2"
-    :loading="loading.getInternetStatus || loading.getDnsConfiguredStatus"
+    :loading="
+      loading.getInternetStatus || loading.getDnsConfiguredStatus || isWaitingForInitialData
+    "
     :error-title="error.title"
     :error-description="error.description"
   >
     <div class="space-y-4">
       <NeBadge
-        :kind="getBadgeKind(internetStatus)"
-        :text="getBadgeText(internetStatus)"
-        :icon="getBadgeIcon(internetStatus)"
+        :kind="getBadgeKind(internetStatus ?? 'error')"
+        :text="getBadgeText(internetStatus ?? 'error')"
+        :icon="getBadgeIcon(internetStatus ?? 'error')"
       />
       <NeTooltip v-if="dnsConfiguredStatus === 'warning'" class="block">
         <template #trigger>

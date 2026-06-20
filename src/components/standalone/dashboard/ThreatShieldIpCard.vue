@@ -13,27 +13,37 @@ import {
   NeTooltip,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute } from 'vue-router'
 
+type ServiceStatus = 'ok' | 'warning' | 'disabled' | 'error' | string
+
+const props = defineProps({
+  initialStatus: { type: String as PropType<ServiceStatus | undefined>, default: undefined },
+  initialCounter: { type: Number as PropType<number | undefined>, default: undefined },
+  initialMonitoringDisabled: { type: Boolean as PropType<boolean | undefined>, default: undefined },
+  deferInitialLoad: { type: Boolean, default: false }
+})
+
 const { t } = useI18n()
 const route = useRoute()
 
 // random refresh interval between 20 and 30 seconds
 const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const serviceStatus = ref<any>(null)
-const serviceCounter = ref<any>(null)
-const threatShieldConfig = ref<any>(null)
+const serviceStatus = ref<ServiceStatus | null>(null)
+const serviceCounter = ref<number | null>(null)
+const monitoringDisabled = ref(false)
 const intervalId = ref(0)
+const initialized = ref(false)
 
 const loading = ref({
-  getServiceStatus: false,
-  getServiceCounter: false,
-  getThreatShieldConfig: false
+  getServiceStatus: true,
+  getServiceCounter: true,
+  getThreatShieldConfig: true
 })
 
 const error = ref({
@@ -41,27 +51,60 @@ const error = ref({
   description: ''
 })
 
-const isLoggingDisabled = computed(() => {
-  return (
-    !threatShieldConfig.value?.ban_logforwardlan &&
-    !threatShieldConfig.value?.ban_logforwardwan &&
-    !threatShieldConfig.value?.ban_loginput &&
-    !threatShieldConfig.value?.ban_logprerouting
-  )
-})
+const isLoggingDisabled = computed(() => monitoringDisabled.value)
+const isWaitingForInitialData = computed(() => props.deferInitialLoad && !initialized.value)
 
 onMounted(() => {
-  loadData()
-
-  // periodically reload data
-  intervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+  if (!props.deferInitialLoad) {
+    initializeData()
+  }
 })
+
+watch(
+  () => props.deferInitialLoad,
+  (deferInitialLoad) => {
+    if (!deferInitialLoad) {
+      initializeData()
+    }
+  }
+)
 
 onUnmounted(() => {
   if (intervalId.value) {
     clearInterval(intervalId.value)
   }
 })
+
+function initializeData() {
+  if (initialized.value) {
+    return
+  }
+
+  initialized.value = true
+
+  if (props.initialStatus !== undefined) {
+    serviceStatus.value = props.initialStatus
+    loading.value.getServiceStatus = false
+  } else {
+    getServiceStatus()
+  }
+
+  if (props.initialCounter !== undefined) {
+    serviceCounter.value = props.initialCounter
+    loading.value.getServiceCounter = false
+  } else {
+    getServiceCounter()
+  }
+
+  if (props.initialMonitoringDisabled !== undefined) {
+    monitoringDisabled.value = props.initialMonitoringDisabled
+    loading.value.getThreatShieldConfig = false
+  } else {
+    getThreatShieldConfig()
+  }
+
+  intervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+}
 
 function loadData() {
   getServiceStatus()
@@ -113,7 +156,11 @@ async function getThreatShieldConfig() {
   try {
     loading.value.getThreatShieldConfig = true
     const res = await ubusCall('ns.threatshield', 'list-settings')
-    threatShieldConfig.value = res.data.data
+    monitoringDisabled.value =
+      !res.data.data.ban_logforwardlan &&
+      !res.data.data.ban_logforwardwan &&
+      !res.data.data.ban_loginput &&
+      !res.data.data.ban_logprerouting
   } catch (err: any) {
     console.error(err)
     error.value.title = t('error.cannot_retrieve_threat_shield_settings')
@@ -171,7 +218,12 @@ function goTo(path: string) {
   <NeCard
     :icon="['fas', 'shield']"
     :skeleton-lines="2"
-    :loading="loading.getServiceStatus || loading.getServiceCounter"
+    :loading="
+      loading.getServiceStatus ||
+      loading.getServiceCounter ||
+      loading.getThreatShieldConfig ||
+      isWaitingForInitialData
+    "
     :error-title="error.title"
     :error-description="error.description"
   >
@@ -184,9 +236,9 @@ function goTo(path: string) {
     <div class="space-y-3">
       <!-- status -->
       <NeBadge
-        :kind="getBadgeKind(serviceStatus)"
-        :text="getBadgeText(serviceStatus)"
-        :icon="getBadgeIcon(serviceStatus)"
+        :kind="getBadgeKind(serviceStatus ?? 'error')"
+        :text="getBadgeText(serviceStatus ?? 'error')"
+        :icon="getBadgeIcon(serviceStatus ?? 'error')"
       />
       <!-- monitoring disabled warning -->
       <NeTooltip v-if="isLoggingDisabled" class="inline-block">

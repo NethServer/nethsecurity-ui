@@ -15,13 +15,21 @@ import {
   byteFormat1024,
   NeSpinner
 } from '@nethesis/vue-components'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, type PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash-es'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
 import type { SystemUpdate } from '@/views/standalone/system/UpdateView.vue'
+
+const props = defineProps({
+  initialSystemInfo: {
+    type: Object as PropType<Record<string, any> | undefined>,
+    default: undefined
+  },
+  deferInitialLoad: { type: Boolean, default: false }
+})
 
 const { t } = useI18n()
 const router = useRouter()
@@ -47,6 +55,7 @@ const tmpfsUsagePerc = ref(0)
 const freeDataStorage = ref(0)
 const totalDataStorage = ref(0)
 const dataStorageUsagePerc = ref(0)
+const initialized = ref(false)
 
 const loading = ref({
   getSystemInfo: true,
@@ -57,6 +66,8 @@ const error = ref({
   title: '',
   description: ''
 })
+
+const isWaitingForInitialData = computed(() => props.deferInitialLoad && !initialized.value)
 
 const isUpdateAvailable = computed(
   () =>
@@ -69,17 +80,43 @@ const isUpdateScheduled = computed(
 )
 
 onMounted(() => {
-  loadData()
-
-  // periodically reload system info
-  loadDataIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+  if (!props.deferInitialLoad) {
+    initializeData()
+  }
 })
+
+watch(
+  () => props.deferInitialLoad,
+  (deferInitialLoad) => {
+    if (!deferInitialLoad) {
+      initializeData()
+    }
+  }
+)
 
 onUnmounted(() => {
   if (loadDataIntervalId.value) {
     clearInterval(loadDataIntervalId.value)
   }
 })
+
+function initializeData() {
+  if (initialized.value) {
+    return
+  }
+
+  initialized.value = true
+
+  if (props.initialSystemInfo) {
+    applySystemInfo(props.initialSystemInfo)
+    loading.value.getSystemInfo = false
+  } else {
+    getSystemInfo()
+  }
+
+  getUpdatesStatus()
+  loadDataIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+}
 
 function loadData() {
   error.value.title = ''
@@ -88,43 +125,47 @@ function loadData() {
   getUpdatesStatus()
 }
 
+function applySystemInfo(data: Record<string, any>) {
+  systemInfo.value = data
+
+  // Support both old format (available_bytes, used_bytes) and new format (mem_total, mem_available)
+  // Introduced by https://github.com/NethServer/nethsecurity/pull/1569, can be removed after the next release since controllers should be updated
+  if (
+    systemInfo.value.memory.mem_total != undefined &&
+    systemInfo.value.memory.mem_available != undefined
+  ) {
+    // New format
+    totalMemory.value = systemInfo.value.memory.mem_total
+    freeMemory.value = systemInfo.value.memory.mem_available
+  } else {
+    // Old format
+    freeMemory.value = systemInfo.value.memory.available_bytes
+    const usedMemory = systemInfo.value.memory.used_bytes
+    totalMemory.value = usedMemory + freeMemory.value
+  }
+  const usedMemory = totalMemory.value - freeMemory.value
+  memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
+
+  freeRoot.value = systemInfo.value.storage['/'].available_bytes
+  const usedRoot = systemInfo.value.storage['/'].used_bytes
+  totalRoot.value = usedRoot + freeRoot.value
+  rootUsagePerc.value = round((usedRoot / totalRoot.value) * 100)
+
+  freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes
+  const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes
+  totalTmpfs.value = usedTmpfs + freeTmpfs.value
+  tmpfsUsagePerc.value = round((usedTmpfs / totalTmpfs.value) * 100)
+
+  freeDataStorage.value = systemInfo.value.storage['/mnt/data'].available_bytes
+  const usedDataStorage = systemInfo.value.storage['/mnt/data'].used_bytes
+  totalDataStorage.value = usedDataStorage + freeDataStorage.value
+  dataStorageUsagePerc.value = round((usedDataStorage / totalDataStorage.value) * 100)
+}
+
 async function getSystemInfo() {
   try {
     const res = await ubusCall('ns.dashboard', 'system-info')
-    systemInfo.value = res.data.result
-
-    // Support both old format (available_bytes, used_bytes) and new format (mem_total, mem_available)
-    // Introduced by https://github.com/NethServer/nethsecurity/pull/1569, can be removed after the next release since controllers should be updated
-    if (
-      systemInfo.value.memory.mem_total != undefined &&
-      systemInfo.value.memory.mem_available != undefined
-    ) {
-      // New format
-      totalMemory.value = systemInfo.value.memory.mem_total
-      freeMemory.value = systemInfo.value.memory.mem_available
-    } else {
-      // Old format
-      freeMemory.value = systemInfo.value.memory.available_bytes
-      const usedMemory = systemInfo.value.memory.used_bytes
-      totalMemory.value = usedMemory + freeMemory.value
-    }
-    const usedMemory = totalMemory.value - freeMemory.value
-    memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
-
-    freeRoot.value = systemInfo.value.storage['/'].available_bytes
-    const usedRoot = systemInfo.value.storage['/'].used_bytes
-    totalRoot.value = usedRoot + freeRoot.value
-    rootUsagePerc.value = round((usedRoot / totalRoot.value) * 100)
-
-    freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes
-    const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes
-    totalTmpfs.value = usedTmpfs + freeTmpfs.value
-    tmpfsUsagePerc.value = round((usedTmpfs / totalTmpfs.value) * 100)
-
-    freeDataStorage.value = systemInfo.value.storage['/mnt/data'].available_bytes
-    const usedDataStorage = systemInfo.value.storage['/mnt/data'].used_bytes
-    totalDataStorage.value = usedDataStorage + freeDataStorage.value
-    dataStorageUsagePerc.value = round((usedDataStorage / totalDataStorage.value) * 100)
+    applySystemInfo(res.data.result)
   } catch (err: any) {
     console.error(err)
     error.value.title = t('error.cannot_retrieve_system_info')
@@ -166,7 +207,7 @@ async function getUpdatesStatus() {
   <NeCard
     :title="t('standalone.dashboard.system')"
     :skeleton-lines="5"
-    :loading="loading.getSystemInfo"
+    :loading="loading.getSystemInfo || isWaitingForInitialData"
     :error-title="error.title"
     :error-description="error.description"
   >

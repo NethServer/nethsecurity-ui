@@ -158,7 +158,7 @@
 }
 
 @utility text-tertiary-neutral {
-  @apply text-gray-600 dark:text-gray-300;
+  @apply text-gray-600 dark:text-gray-400;
 }
 
 @utility text-enabled {

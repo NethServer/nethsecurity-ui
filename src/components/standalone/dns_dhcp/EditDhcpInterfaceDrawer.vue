@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -16,6 +16,7 @@ import {
   getAxiosErrorMessage,
   NeButton,
   type NeComboboxOption,
+  NeFormItemLabel,
   NeInlineNotification,
   NeRadioSelection,
   NeSideDrawer,
@@ -27,8 +28,14 @@ import {
 import NeMultiTextInput, { type KeyValueItem } from '../NeMultiTextInput.vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { ipv4ToInt } from '@/lib/ipUtils'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronDown,
+  faChevronUp,
+  faCirclePlus,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{
   isShown: boolean
@@ -57,8 +64,8 @@ const availableDhcpOptions = ref<NeComboboxOption[]>([])
 // Form fields
 const iface = ref('')
 const enableDhcp = ref(false)
-const rangeIpStart = ref('')
-const rangeIpEnd = ref('')
+const classStartIp = ref('')
+const classEndIp = ref('')
 const leaseTime = ref('')
 const dhcpOptions = ref<KeyValueItem[]>([])
 const force = ref(true)
@@ -70,6 +77,20 @@ type RadioOption = {
   id: typeof macIpBindingType.value
   label: string
   description: string
+}
+
+type IpRange = { firstIp: string; lastIp: string }
+const ipRanges = ref<IpRange[]>([{ firstIp: '', lastIp: '' }])
+
+function addIpRange() {
+  if (ipRanges.value.some((range) => range.firstIp === '' && range.lastIp === '')) {
+    return
+  }
+  ipRanges.value.push({ firstIp: '', lastIp: '' })
+}
+
+function removeIpRange(index: number) {
+  ipRanges.value.splice(index, 1)
 }
 
 const macIpBindingSelections: RadioOption[] = [
@@ -93,10 +114,19 @@ async function resetForm() {
         await ubusCall('ns.dhcp', 'get-interface', { interface: props.interfaceToEdit })
       ).data
       iface.value = interfaceResponse.interface
-      rangeIpStart.value = interfaceResponse.first
-      rangeIpEnd.value = interfaceResponse.last
       leaseTime.value = interfaceResponse.leasetime
       enableDhcp.value = interfaceResponse.active
+      classStartIp.value = interfaceResponse.class_start_ip ?? ''
+      classEndIp.value = interfaceResponse.class_end_ip ?? ''
+      // map ranges to ipRanges format
+      if (interfaceResponse.ranges && interfaceResponse.ranges.length > 0) {
+        ipRanges.value = interfaceResponse.ranges.map((range: { first: string; last: string }) => ({
+          firstIp: range.first,
+          lastIp: range.last
+        }))
+      } else {
+        ipRanges.value = [{ firstIp: '', lastIp: '' }]
+      }
       dhcpOptions.value = interfaceResponse.options.map((optionObj: { [key: string]: string }) => {
         const key: keyof typeof optionObj = Object.keys(optionObj)[0]!
         return { key, value: optionObj[key] }
@@ -124,13 +154,14 @@ async function resetForm() {
   } else {
     iface.value = ''
     enableDhcp.value = false
-    rangeIpStart.value = ''
-    rangeIpEnd.value = ''
     leaseTime.value = ''
+    ipRanges.value = [{ firstIp: '', lastIp: '' }]
     dhcpOptions.value = []
     force.value = true
     enableMacIpBinding.value = false
     macIpBindingType.value = 'soft'
+    classStartIp.value = ''
+    classEndIp.value = ''
   }
 }
 
@@ -197,9 +228,67 @@ function validate() {
     }
   }
 
+  // ranges validation
+  let validRanges = true
+  for (const [index, range] of ipRanges.value.entries()) {
+    const bothEmpty = range.firstIp === '' && range.lastIp === ''
+    if (bothEmpty) continue
+
+    if (range.firstIp === '') {
+      validationErrorBag.value.set(`ranges.${index}.first`, ['error.required'])
+      validRanges = false
+    } else {
+      const firstIpValidator = validateIpAddress(range.firstIp)
+      if (!firstIpValidator.valid) {
+        validationErrorBag.value.set(`ranges.${index}.first`, [
+          firstIpValidator.errMessage as string
+        ])
+        validRanges = false
+      } else if (
+        classStartIp.value &&
+        classEndIp.value &&
+        (ipv4ToInt(range.firstIp) < ipv4ToInt(classStartIp.value) ||
+          ipv4ToInt(range.firstIp) > ipv4ToInt(classEndIp.value))
+      ) {
+        validationErrorBag.value.set(`ranges.${index}.first`, ['error.ip_out_of_class_range'])
+        validRanges = false
+      }
+    }
+
+    const firstIpValid =
+      range.firstIp !== '' &&
+      validateIpAddress(range.firstIp).valid &&
+      (!classStartIp.value ||
+        !classEndIp.value ||
+        (ipv4ToInt(range.firstIp) >= ipv4ToInt(classStartIp.value) &&
+          ipv4ToInt(range.firstIp) <= ipv4ToInt(classEndIp.value)))
+
+    if (range.lastIp === '') {
+      validationErrorBag.value.set(`ranges.${index}.last`, ['error.required'])
+      validRanges = false
+    } else {
+      const lastIpValidator = validateIpAddress(range.lastIp)
+      if (!lastIpValidator.valid) {
+        validationErrorBag.value.set(`ranges.${index}.last`, [lastIpValidator.errMessage as string])
+        validRanges = false
+      } else if (firstIpValid && ipv4ToInt(range.lastIp) <= ipv4ToInt(range.firstIp)) {
+        validationErrorBag.value.set(`ranges.${index}.last`, [
+          'error.last_must_be_greater_than_first'
+        ])
+        validRanges = false
+      } else if (
+        classStartIp.value &&
+        classEndIp.value &&
+        (ipv4ToInt(range.lastIp) < ipv4ToInt(classStartIp.value) ||
+          ipv4ToInt(range.lastIp) > ipv4ToInt(classEndIp.value))
+      ) {
+        validationErrorBag.value.set(`ranges.${index}.last`, ['error.ip_out_of_class_range'])
+        validRanges = false
+      }
+    }
+  }
+
   const validators: [validationOutput[], string][] = [
-    [[validateRequired(rangeIpStart.value), validateIpAddress(rangeIpStart.value)], 'first'],
-    [[validateRequired(rangeIpEnd.value), validateIpAddress(rangeIpEnd.value)], 'last'],
     [[validateRequired(leaseTime.value), validateLeaseTime(leaseTime.value)], 'leasetime']
   ]
 
@@ -208,7 +297,8 @@ function validate() {
       .map(([validator, label]) => runValidators(validator, label))
       .every((result) => result) &&
     validDhcpOptionValues &&
-    validDhcpOptionKeys
+    validDhcpOptionKeys &&
+    validRanges
   )
 }
 
@@ -227,8 +317,12 @@ async function saveChanges() {
       }
       await ubusCall('ns.dhcp', 'edit-interface', {
         interface: iface.value,
-        first: rangeIpStart.value,
-        last: rangeIpEnd.value,
+        ranges: ipRanges.value
+          .filter((range) => range.firstIp !== '' || range.lastIp !== '')
+          .map((range) => ({
+            first: range.firstIp,
+            last: range.lastIp
+          })),
         active: enableDhcp.value,
         leasetime: leaseTime.value,
         options: dhcpOptions.value.map((option) => ({ [option.key]: option.value })),
@@ -297,9 +391,9 @@ watch(
       </template>
     </NeInlineNotification>
     <NeSkeleton v-if="loading" :lines="10" />
-    <div v-else class="space-y-8">
+    <div v-else class="space-y-12">
       <div class="space-y-6">
-        <div class="space-y-4">
+        <div class="space-y-1">
           <h5 class="text-lg font-medium text-secondary">
             {{ t('standalone.dns_dhcp.mac_binding') }}
           </h5>
@@ -325,7 +419,7 @@ watch(
         </div>
       </div>
       <div class="space-y-6">
-        <div class="space-y-4">
+        <div class="space-y-1">
           <h5 class="text-lg font-medium text-secondary">
             {{ t('standalone.dns_dhcp.dhcp') }}
           </h5>
@@ -335,16 +429,38 @@ watch(
             :top-label="t('common.status')"
           />
         </div>
-        <NeTextInput
-          v-model="rangeIpStart"
-          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('first'))"
-          :label="t('standalone.dns_dhcp.range_ip_start')"
-        />
-        <NeTextInput
-          v-model="rangeIpEnd"
-          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('last'))"
-          :label="t('standalone.dns_dhcp.range_ip_end')"
-        />
+        <div class="space-y-2">
+          <NeFormItemLabel>{{ t('standalone.dns_dhcp.ip_ranges') }}</NeFormItemLabel>
+          <div v-for="(range, index) in ipRanges" :key="index" class="flex items-start gap-x-2">
+            <NeTextInput
+              v-model="range.firstIp"
+              :invalid-message="t(validationErrorBag.getFirstI18nKeyFor(`ranges.${index}.first`))"
+              :placeholder="t('standalone.dns_dhcp.ip_range_start')"
+              class="min-w-0 flex-1"
+            />
+            <NeTextInput
+              v-model="range.lastIp"
+              :invalid-message="t(validationErrorBag.getFirstI18nKeyFor(`ranges.${index}.last`))"
+              :placeholder="t('standalone.dns_dhcp.ip_range_end')"
+              class="min-w-0 flex-1"
+            />
+            <NeButton
+              kind="tertiary"
+              size="md"
+              :disabled="ipRanges.length <= 1"
+              class="mt-1"
+              @click="removeIpRange(index)"
+            >
+              <FontAwesomeIcon :icon="faTrash" aria-hidden="true" class="h-4 w-4" />
+            </NeButton>
+          </div>
+          <NeButton kind="tertiary" @click="addIpRange()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" />
+            </template>
+            {{ t('standalone.dns_dhcp.add_ip_range') }}
+          </NeButton>
+        </div>
         <NeTextInput
           v-model="leaseTime"
           :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('leasetime'))"

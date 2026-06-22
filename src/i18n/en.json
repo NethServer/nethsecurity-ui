@@ -260,6 +260,7 @@
     "cannot_update_packages": "Cannot update packages",
     "cannot_update_system": "Cannot update system",
     "last_must_be_greater_than_first": "Ensure that the last IP in the range is greater than the first IP",
+    "ip_out_of_class_range": "IP address is outside of the interface class range",
     "cannot_delete_proxy": "Cannot delete proxy",
     "cannot_retrieve_proxies": "Cannot retrieve proxies",
     "cannot_create_proxy": "Cannot create proxy",
@@ -1316,7 +1317,7 @@
       "mac_binding_tooltip": "Filters traffic based on IP-MAC bindings defined in the static lease configuration.",
       "soft": "Soft",
       "strict": "Strict",
-      "ip_range": "IP range",
+      "ip_range": "IP range | IP ranges",
       "plus_n_others": "+{n} other | +{n} others",
       "soft_binding": "Soft binding",
       "soft_binding_description": "Allows hosts without a reservation, blocks mismatched IP/MAC",
@@ -1325,7 +1326,11 @@
       "custom": "Custom",
       "scan_network_reservation": "Reservation",
       "scan_network_reservation_ip_reserved": "IP reserved",
-      "scan_network_reservation_ip_not_reserved": "IP not reserved"
+      "scan_network_reservation_ip_not_reserved": "IP not reserved",
+      "add_ip_range": "Add IP range",
+      "ip_ranges": "IP ranges",
+      "ip_range_start": "Range IP start",
+      "ip_range_end": "Range IP end"
     },
     "routes": {
       "title": "Routes",

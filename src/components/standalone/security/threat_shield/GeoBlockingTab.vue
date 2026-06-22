@@ -456,7 +456,7 @@ function saveGeoblockingConfiguration() {
                       >
                         {{ t(region.nameKey) }}
                       </span>
-                      <span class="truncate text-tertiary-neutral dark:text-gray-400">
+                      <span class="truncate text-tertiary-neutral">
                         {{
                           t('standalone.threat_shield.countries_count', {
                             count: region.countries.length

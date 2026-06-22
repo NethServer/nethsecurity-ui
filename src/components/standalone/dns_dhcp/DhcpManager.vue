@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -24,13 +24,13 @@ type BindingType = 0 | 1 | 2
 
 export type DhcpInterface = {
   device: string
-  start: string
-  end: string
   active: boolean
   options: Record<string, string>
   zone: string
-  first?: string
-  last?: string
+  ranges: Array<{
+    first: string
+    last: string
+  }>
   ns_binding?: BindingType
 }
 

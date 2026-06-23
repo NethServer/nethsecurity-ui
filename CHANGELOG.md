@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.22.2](https://github.com/NethServer/nethsecurity-ui/compare/2.22.1...2.22.2) (2026-06-23)
+
+
+### Features
+
+* **dhcp:** support multiple dhcp ranges ([#788](https://github.com/NethServer/nethsecurity-ui/issues/788)) ([e8f97d8](https://github.com/NethServer/nethsecurity-ui/commit/e8f97d8ef628ddd818a3bc65ce8236478dd1d114))
+
+
+### Performance Improvements
+
+* **interfaces:** calling VPNs info once ([#785](https://github.com/NethServer/nethsecurity-ui/issues/785)) ([ee06628](https://github.com/NethServer/nethsecurity-ui/commit/ee06628522527615c672a1fb85fd32a4982ad5c7))
+
+
+### Miscellaneous Chores
+
+* translations update from Hosted Weblate ([#786](https://github.com/NethServer/nethsecurity-ui/issues/786)) ([11227c3](https://github.com/NethServer/nethsecurity-ui/commit/11227c398d96c1364454ebc3f270e84e130cb084))
+
 ## [2.22.1](https://github.com/NethServer/nethsecurity-ui/compare/2.22.0...2.22.1) (2026-06-17)
 
 

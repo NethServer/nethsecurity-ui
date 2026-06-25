@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.3](https://github.com/NethServer/nethsecurity-ui/compare/2.22.2...2.22.3) (2026-06-25)
+
+
+### Bug Fixes
+
+* **ovpn-rw:** update error message for certificate regeneration failure ([#791](https://github.com/NethServer/nethsecurity-ui/issues/791)) ([1c21af4](https://github.com/NethServer/nethsecurity-ui/commit/1c21af4760e0db07d4cc1969ed02e1c76e501f7d))
+
 ## [2.22.2](https://github.com/NethServer/nethsecurity-ui/compare/2.22.1...2.22.2) (2026-06-23)
 
 

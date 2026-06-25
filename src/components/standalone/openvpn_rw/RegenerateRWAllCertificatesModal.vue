@@ -68,7 +68,7 @@ function close() {
     <NeInlineNotification
       v-if="error"
       kind="error"
-      :title="t('error.cannot_renew_server_cert')"
+      :title="t('error.cannot_regenerate_all_certs')"
       :description="t(getAxiosErrorMessage(error))"
       class="mb-2"
     />

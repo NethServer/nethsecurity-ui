@@ -169,12 +169,24 @@ function requestSync() {
           <NeTextInput
             :label="t('standalone.subscription.system_id')"
             :disabled="true"
-            :model-value="subscriptionData.systemd_id"
+            :model-value="
+              subscriptionData.type === 'enterprise' && subscriptionData.server_id
+                ? String(subscriptionData.server_id)
+                : subscriptionData.systemd_id
+            "
           />
           <div>
             <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.subscription.plan') }}</NeHeading>
             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
               {{ subscriptionData.plan }}
+            </p>
+          </div>
+          <div v-if="subscriptionData.organization">
+            <NeHeading tag="h6" class="mb-1.5">{{
+              t('standalone.subscription.company')
+            }}</NeHeading>
+            <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
+              {{ subscriptionData.organization }}
             </p>
           </div>
           <div>

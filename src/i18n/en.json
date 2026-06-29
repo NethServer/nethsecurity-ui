@@ -630,6 +630,7 @@
       "start_session": "Start session",
       "system_id": "System ID",
       "plan": "Plan",
+      "company": "Company",
       "expiration": "Expiration",
       "no_expiration": "No expiration",
       "status": "Status",

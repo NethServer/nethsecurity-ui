@@ -14,6 +14,7 @@ import {
   NeButton,
   NeHeading,
   NeInlineNotification,
+  NeLink,
   NeSkeleton,
   NeTextInput
 } from '@nethesis/vue-components'
@@ -88,7 +89,9 @@ async function subscribe() {
     emit('subscription-update')
     subscriptionStore.loadData()
   } catch (e: any) {
-    if (e.response.data.message == 'invalid_secret_or_server_not_found') {
+    if (e.response.data.message == 'system_already_registered') {
+      errors.value.request = t('standalone.subscription.system_already_registered')
+    } else if (e.response.data.message == 'invalid_secret_or_server_not_found') {
       errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')
     } else {
       errors.value.request = t(getAxiosErrorMessage(e))
@@ -169,12 +172,32 @@ function requestSync() {
           <NeTextInput
             :label="t('standalone.subscription.system_id')"
             :disabled="true"
-            :model-value="subscriptionData.systemd_id"
+            :model-value="
+              subscriptionData.type === 'enterprise' && subscriptionData.server_id
+                ? String(subscriptionData.server_id)
+                : subscriptionData.systemd_id
+            "
           />
+          <NeLink
+            v-if="subscriptionData.system_url"
+            :href="subscriptionData.system_url"
+            target="_blank"
+            class="-mt-6 text-sm"
+          >
+            {{ t('standalone.subscription.view_on_portal') }}
+          </NeLink>
           <div>
             <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.subscription.plan') }}</NeHeading>
             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
               {{ subscriptionData.plan }}
+            </p>
+          </div>
+          <div v-if="subscriptionData.organization">
+            <NeHeading tag="h6" class="mb-1.5">{{
+              t('standalone.subscription.company')
+            }}</NeHeading>
+            <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
+              {{ subscriptionData.organization }}
             </p>
           </div>
           <div>

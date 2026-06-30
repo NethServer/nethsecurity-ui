@@ -14,11 +14,17 @@ import { NeInlineNotification, NeHeading, getAxiosErrorMessage } from '@nethesis
 
 /** * @deprecated use SubscriptionDataType in subscription.ts */
 export type SubscriptionDataType = {
-  server_id: number
+  server_id: number | string
   systemd_id: string
   plan: string
   expiration: number
   active: boolean
+  // enterprise units (migrated to the new my): type='enterprise' and the
+  // organization name; community units keep the legacy plan name and no org.
+  type?: string
+  organization?: string
+  // enterprise: link to the system page on the my portal
+  system_url?: string
 }
 
 const { t } = useI18n()

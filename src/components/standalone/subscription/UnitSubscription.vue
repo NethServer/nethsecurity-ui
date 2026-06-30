@@ -14,6 +14,7 @@ import {
   NeButton,
   NeHeading,
   NeInlineNotification,
+  NeLink,
   NeSkeleton,
   NeTextInput
 } from '@nethesis/vue-components'
@@ -177,6 +178,14 @@ function requestSync() {
                 : subscriptionData.systemd_id
             "
           />
+          <NeLink
+            v-if="subscriptionData.system_url"
+            :href="subscriptionData.system_url"
+            target="_blank"
+            class="-mt-6 text-sm"
+          >
+            {{ t('standalone.subscription.view_on_portal') }}
+          </NeLink>
           <div>
             <NeHeading tag="h6" class="mb-1.5">{{ t('standalone.subscription.plan') }}</NeHeading>
             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">

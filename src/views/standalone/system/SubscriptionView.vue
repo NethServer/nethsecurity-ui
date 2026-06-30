@@ -23,6 +23,8 @@ export type SubscriptionDataType = {
   // organization name; community units keep the legacy plan name and no org.
   type?: string
   organization?: string
+  // enterprise: link to the system page on the my portal
+  system_url?: string
 }
 
 const { t } = useI18n()

@@ -265,10 +265,7 @@ function getDropdownItems(item: Backup) {
       action: () => {
         openDeleteBackup(
           item.id,
-          formatDateLoc(new Date(item.uploaded_at), 'PPpp') +
-            ' (' +
-            byteFormat1024(item.size) +
-            ')'
+          formatDateLoc(new Date(item.uploaded_at), 'PPpp') + ' (' + byteFormat1024(item.size) + ')'
         )
       }
     }

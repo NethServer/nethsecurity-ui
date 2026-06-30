@@ -88,7 +88,9 @@ async function subscribe() {
     emit('subscription-update')
     subscriptionStore.loadData()
   } catch (e: any) {
-    if (e.response.data.message == 'invalid_secret_or_server_not_found') {
+    if (e.response.data.message == 'system_already_registered') {
+      errors.value.request = t('standalone.subscription.system_already_registered')
+    } else if (e.response.data.message == 'invalid_secret_or_server_not_found') {
       errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')
     } else {
       errors.value.request = t(getAxiosErrorMessage(e))

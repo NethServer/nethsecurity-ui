@@ -2163,7 +2163,7 @@
       "asia": "Asia",
       "europe": "Europa",
       "oceania": "Oceania",
-      "geoblocking_description": "Blocca o consenti il traffico in entrata e in uscita in base all'origine geografica. Seleziona interi continenti e definisci eccezioni a livello di paese quando necessario.",
+      "geoblocking_description": "Blocca o consenti il traffico in entrata verso l'unità firewall in base all'origine geografica. Seleziona interi continenti e definisci eccezioni a livello di paese quando necessario.",
       "geo_ip_blocking": "Blocco Geo IP",
       "blocked_countries": "Paesi bloccati",
       "regions": "Regioni",

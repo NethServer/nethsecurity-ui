@@ -1831,7 +1831,7 @@
       "asia": "Asia",
       "europe": "Europe",
       "oceania": "Oceania",
-      "geoblocking_description": "Block or allow inbound and outbound traffic based on geographic origin. Select entire continents and define country-level exceptions when needed.",
+      "geoblocking_description": "Block or allow inbound traffic to the firewall unit based on geographic origin. Select entire continents and define country-level exceptions when needed.",
       "geo_ip_blocking": "Geo IP blocking",
       "blocked_countries": "Blocked countries",
       "regions": "Regions",

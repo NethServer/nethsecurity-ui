@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { AxiosError, type AxiosResponse } from 'axios'
 import {
@@ -47,6 +47,7 @@ const error = ref<string>()
 const deleteError = ref<string>()
 
 const keyToDelete = ref<SshKey>()
+const uploadSshKeyInput = useTemplateRef('uploadSshKeyInput')
 
 onMounted(() => {
   load()
@@ -86,7 +87,7 @@ function addKey() {
     .catch((reason: Error) => {
       if (reason instanceof ValidationError) {
         validationErrors.value = reason.errorBag
-        focusElement('uploadSshKeyInput')
+        focusElement(uploadSshKeyInput)
       } else if (!(reason instanceof UnauthorizedAction)) {
         error.value = t(getAxiosErrorMessage(reason))
       }

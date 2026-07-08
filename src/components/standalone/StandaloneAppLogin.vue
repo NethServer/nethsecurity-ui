@@ -270,7 +270,7 @@ async function verifyOtp() {
                 </div>
                 <div class="text-sm leading-6">
                   <NeLink
-                    href="https://docs.nethsecurity.org/en/latest/remote_access.html#default-credentials"
+                    href="https://docs.nethsecurity.org/docs/administrator-manual/installation/remote_access#default_credentials-section"
                     target="_blank"
                     class="font-medium"
                   >

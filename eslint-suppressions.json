@@ -194,31 +194,6 @@
       "count": 2
     }
   },
-  "src/components/standalone/dashboard/InternetConnectionCard.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 4
-    }
-  },
-  "src/components/standalone/dashboard/OpenVpnTunnelOrIpsecCard.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
-  "src/components/standalone/dashboard/ServiceCard.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 4
-    }
-  },
-  "src/components/standalone/dashboard/SystemInfoCard.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 2
-    }
-  },
-  "src/components/standalone/dashboard/ThreatShieldIpCard.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 6
-    }
-  },
   "src/components/standalone/dns_dhcp/CreateOrEditDnsRecordDrawer.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1

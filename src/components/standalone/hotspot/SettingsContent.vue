@@ -9,6 +9,7 @@ import {
   NeCombobox,
   NeInlineNotification,
   NeButton,
+  NeLink,
   NeSkeleton,
   NeTooltip,
   NeTextInput,
@@ -776,9 +777,9 @@ function goToInterfaces() {
           <span class="text-gray-500 dark:text-gray-400">
             {{ t('standalone.hotspot.settings.connected_manager') }}
           </span>
-          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+          <NeLink :href="`https://${managerHost}`" target="_blank" class="text-right font-medium">
             {{ managerHost }}
-          </span>
+          </NeLink>
         </div>
       </div>
       <NeInlineNotification

@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import {
   NeCombobox,
   NeInlineNotification,
@@ -17,7 +17,13 @@ import {
   type NeComboboxOption
 } from '@nethesis/vue-components'
 import { type NeNotification, NeModal } from '@nethesis/vue-components'
-import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSave,
+  faRightToBracket,
+  faCloud,
+  faChevronDown,
+  faChevronUp
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { useI18n } from 'vue-i18n'
@@ -82,6 +88,11 @@ const configurationForm = ref<Configuration>({
 
 const isError = ref(false)
 const isLoggedIn = ref(false)
+const oidcLogging = ref(false)
+const legacyLoginExpanded = ref(false)
+const accountName = ref('')
+const accountUser = ref('')
+const managerHost = ref('')
 const viewConfiguration = ref(false)
 const activeConfiguration = ref(false)
 const loadingParentHotspot = ref(false)
@@ -135,7 +146,7 @@ onMounted(() => {
   getHostname()
 })
 
-async function getListParents() {
+async function getListParents(retry = false) {
   loadingParentHotspot.value = true
 
   // Retrieve parent hotspot
@@ -152,6 +163,12 @@ async function getListParents() {
       }
     }
   } catch (exception: any) {
+    if (retry) {
+      // a transient network error towards the hotspot manager right after
+      // the login would scare the user for nothing: try once more
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      return getListParents(false)
+    }
     isError.value = true
     errorListParents.value.notificationTitle = t('error.cannot_retrieve_parent_hotspot')
     errorListParents.value.notificationDescription = t(getAxiosErrorMessage(exception))
@@ -195,6 +212,10 @@ async function getConfiguration() {
       } else {
         isLoggedIn.value = false
       }
+
+      accountName.value = configuration.account_name ?? ''
+      accountUser.value = configuration.account_user ?? ''
+      managerHost.value = configuration.manager_host ?? ''
 
       configurationForm.value.parentHotspot = String(configuration.hotspot_id)
       configurationForm.value.unitDescription = configuration.unit_description
@@ -285,13 +306,7 @@ function login() {
     ubusCall('ns.dedalo', 'login', payload)
       .then((response) => {
         if (response.data && response.data.response && response.data.response === 'success') {
-          isLoggedIn.value = true
-          errorListParents.value = { ...objError }
-          errorListDevices.value = { ...objError }
-          errorGetConfiguration.value = { ...objError }
-          getListParents()
-          getListDevices()
-          getConfiguration()
+          refreshAfterLogin()
         } else {
           error.value.notificationTitle = t('error.cannot_login_hotspot')
           error.value.notificationDescription = t('error.cannot_login_hotspot_description')
@@ -307,6 +322,116 @@ function login() {
       })
   }
 }
+
+function refreshAfterLogin() {
+  isLoggedIn.value = true
+  errorListParents.value = { ...objError }
+  errorListDevices.value = { ...objError }
+  errorGetConfiguration.value = { ...objError }
+  getListParents(true)
+  getListDevices()
+  getConfiguration()
+}
+
+let oidcPollTimer: number | undefined
+let oidcPollDeadline = 0
+
+function stopOidcPolling() {
+  if (oidcPollTimer) {
+    clearInterval(oidcPollTimer)
+    oidcPollTimer = undefined
+  }
+  oidcLogging.value = false
+}
+
+async function oidcLogin() {
+  clearErrors()
+  oidcLogging.value = true
+
+  try {
+    const res = await ubusCall('ns.dedalo', 'oidc-start', { host: loginForm.value.hostname })
+    if (!res?.data?.verification_url) {
+      throw new Error('pairing_start_failed')
+    }
+    // the popup runs the OIDC login on the hotspot manager: with an active
+    // My Nethesis session it completes without user interaction, then the
+    // unit picks up the session token by polling
+    const popup = window.open(
+      res.data.verification_url,
+      'nethspot-pairing',
+      'popup,width=520,height=680'
+    )
+    if (!popup) {
+      oidcLogging.value = false
+      error.value.notificationTitle = t('error.cannot_login_hotspot')
+      error.value.notificationDescription = t(
+        'standalone.hotspot.settings.login_oidc_popup_blocked'
+      )
+      return
+    }
+    oidcPollDeadline = Date.now() + (res.data.expires_in ?? 600) * 1000
+    oidcPollTimer = window.setInterval(oidcPoll, (res.data.interval ?? 2) * 1000)
+  } catch (exception: any) {
+    oidcLogging.value = false
+    error.value.notificationTitle = t('error.cannot_login_hotspot')
+    if (exception.response?.data?.message === 'oidc_not_supported') {
+      error.value.notificationDescription = t(
+        'standalone.hotspot.settings.login_oidc_not_supported'
+      )
+    } else if (
+      exception.response?.data?.message === 'pairing_start_failed' ||
+      exception.message === 'pairing_start_failed'
+    ) {
+      error.value.notificationDescription = t(
+        'standalone.hotspot.settings.login_oidc_start_failed'
+      )
+    } else {
+      error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+    }
+  }
+}
+
+async function oidcPoll() {
+  if (Date.now() > oidcPollDeadline) {
+    stopOidcPolling()
+    error.value.notificationTitle = t('error.cannot_login_hotspot')
+    error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
+    return
+  }
+
+  try {
+    const res = await ubusCall('ns.dedalo', 'oidc-poll', {})
+    const status = res?.data?.status
+    if (status === 'success') {
+      stopOidcPolling()
+      const notification: NeNotification = {
+        id: uid(),
+        kind: 'success',
+        title: t('standalone.hotspot.settings.login_oidc_success', {
+          account: res.data.account_name
+        }),
+        timestamp: new Date()
+      }
+      notificationsStore.addNotification(notification)
+      refreshAfterLogin()
+    } else if (status === 'failed') {
+      stopOidcPolling()
+      error.value.notificationTitle = t('error.cannot_login_hotspot')
+      error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_failed', {
+        error: res.data.error ?? 'unknown'
+      })
+    } else if (status === 'expired') {
+      stopOidcPolling()
+      error.value.notificationTitle = t('error.cannot_login_hotspot')
+      error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
+    }
+    // pending: keep polling
+  } catch {
+    // transient error talking to the unit: keep polling until the deadline
+  }
+}
+
+onUnmounted(() => stopOidcPolling())
 
 function clearErrors() {
   error.value = {
@@ -535,52 +660,91 @@ function goToInterfaces() {
       :description="t('standalone.hotspot.settings.login_description')"
       class="max-w-3xl"
     >
-      <form @submit="login()">
-        <div class="mb-8 flex flex-col gap-y-4">
-          <NeTextInput
-            ref="hostnameRef"
-            v-model="loginForm.hostname"
-            :invalid-message="error.hostname"
-            :label="t('standalone.hotspot.settings.login_hostname')"
+      <NeInlineNotification
+        v-if="error.notificationTitle"
+        class="my-4"
+        kind="error"
+        :title="error.notificationTitle"
+        :description="error.notificationDescription"
+      />
+      <NeInlineNotification
+        v-if="oidcLogging"
+        class="my-4"
+        kind="info"
+        :title="t('standalone.hotspot.settings.login_oidc_waiting')"
+        :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
+        :primary-button-label="t('common.cancel')"
+        @primary-click="stopOidcPolling()"
+      />
+      <NeButton
+        :disabled="oidcLogging || logging"
+        :loading="oidcLogging"
+        kind="primary"
+        size="lg"
+        @click.prevent="oidcLogin()"
+      >
+        <template #prefix>
+          <FontAwesomeIcon :icon="faCloud" />
+        </template>
+        {{ t('standalone.hotspot.settings.login_with_my_nethesis') }}
+      </NeButton>
+      <hr class="my-6" />
+      <NeButton
+        kind="tertiary"
+        size="sm"
+        class="-ml-2 mb-4"
+        @click="legacyLoginExpanded = !legacyLoginExpanded"
+      >
+        <template #suffix>
+          <FontAwesomeIcon
+            :icon="legacyLoginExpanded ? faChevronUp : faChevronDown"
+            class="h-3 w-3"
+            aria-hidden="true"
           />
-          <NeTextInput
-            ref="usernameRef"
-            v-model="loginForm.username"
-            :invalid-message="error.username"
-            :label="t('standalone.hotspot.settings.login_username')"
-          >
-            <template #tooltip>
-              <NeTooltip>
-                <template #content>
-                  {{ t('standalone.hotspot.settings.login_helper_username') }}
-                </template>
-              </NeTooltip>
-            </template>
-          </NeTextInput>
-          <NeTextInput
-            ref="passwordRef"
-            v-model="loginForm.password"
-            is-password
-            :invalid-message="error.password"
-            :label="t('standalone.hotspot.settings.login_password')"
-          />
-        </div>
-        <NeInlineNotification
-          v-if="error.notificationTitle"
-          class="my-4"
-          kind="error"
-          :title="error.notificationTitle"
-          :description="error.notificationDescription"
-        />
-        <div class="flex justify-start">
-          <NeButton :disabled="logging" :loading="logging" kind="primary" size="lg" type="submit">
-            <template #prefix>
-              <FontAwesomeIcon :icon="faRightToBracket" />
-            </template>
-            {{ t('standalone.hotspot.settings.login') }}
-          </NeButton>
-        </div>
-      </form>
+        </template>
+        {{ t('standalone.hotspot.settings.legacy_login') }}
+      </NeButton>
+      <Transition name="slide-down">
+        <form v-show="legacyLoginExpanded" @submit="login()">
+          <div class="mb-8 flex flex-col gap-y-4">
+            <NeTextInput
+              ref="hostnameRef"
+              v-model="loginForm.hostname"
+              :invalid-message="error.hostname"
+              :label="t('standalone.hotspot.settings.login_hostname')"
+            />
+            <NeTextInput
+              ref="usernameRef"
+              v-model="loginForm.username"
+              :invalid-message="error.username"
+              :label="t('standalone.hotspot.settings.login_username')"
+            >
+              <template #tooltip>
+                <NeTooltip>
+                  <template #content>
+                    {{ t('standalone.hotspot.settings.login_helper_username') }}
+                  </template>
+                </NeTooltip>
+              </template>
+            </NeTextInput>
+            <NeTextInput
+              ref="passwordRef"
+              v-model="loginForm.password"
+              is-password
+              :invalid-message="error.password"
+              :label="t('standalone.hotspot.settings.login_password')"
+            />
+          </div>
+          <div class="flex justify-start">
+            <NeButton :disabled="logging || oidcLogging" :loading="logging" kind="secondary" size="lg" type="submit">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faRightToBracket" />
+              </template>
+              {{ t('standalone.hotspot.settings.login') }}
+            </NeButton>
+          </div>
+        </form>
+      </Transition>
     </FormLayout>
     <FormLayout
       v-if="!loadingParentHotspot && !loadingListDevices && viewConfiguration"
@@ -588,6 +752,35 @@ function goToInterfaces() {
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
     >
+      <div
+        v-if="isLoggedIn && accountName"
+        class="mb-6 divide-y divide-gray-200 rounded-md border border-gray-200 text-sm dark:divide-gray-700 dark:border-gray-700"
+      >
+        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+          <span class="text-gray-500 dark:text-gray-400">
+            {{ t('standalone.hotspot.settings.connected_account') }}
+          </span>
+          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+            {{ accountName }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+          <span class="text-gray-500 dark:text-gray-400">
+            {{ t('standalone.hotspot.settings.connected_user') }}
+          </span>
+          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+            {{ accountUser }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+          <span class="text-gray-500 dark:text-gray-400">
+            {{ t('standalone.hotspot.settings.connected_manager') }}
+          </span>
+          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+            {{ managerHost }}
+          </span>
+        </div>
+      </div>
       <NeInlineNotification
         v-if="emptyDevices"
         class="my-4"

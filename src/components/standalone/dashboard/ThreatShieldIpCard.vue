@@ -4,7 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { NeBadgeV2, NeCard, NeLink, NeTooltip, getAxiosErrorMessage } from '@nethesis/vue-components'
+import {
+  NeBadgeV2,
+  NeCard,
+  NeLink,
+  NeTooltip,
+  getAxiosErrorMessage
+} from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

@@ -16,12 +16,8 @@ const { data: overview, isPending, isError, error } = useDashboardOverview()
 const enabledServers = computed(() => overview.value?.vpn.wireguard?.enabled_servers ?? 0)
 const activePeers = computed(() => overview.value?.vpn.wireguard?.active_peers ?? 0)
 
-const errorTitle = computed(() =>
-  isError.value ? t('error.cannot_retrieve_wireguard_stats') : ''
-)
-const errorDescription = computed(() =>
-  isError.value ? t(getAxiosErrorMessage(error.value)) : ''
-)
+const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_wireguard_stats') : ''))
+const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))
 </script>
 
 <template>

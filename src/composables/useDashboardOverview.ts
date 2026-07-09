@@ -104,7 +104,8 @@ export function useDashboardOverview() {
   // deduplicates them into a single HTTP request per refresh interval
   return useQuery({
     queryKey: ['dashboard', 'overview'],
-    queryFn: () => ubusCall<DashboardOverviewResponse>('ns.dashboard', 'dashboard-v2'),
+    queryFn: ({ signal }) =>
+      ubusCall<DashboardOverviewResponse>('ns.dashboard', 'dashboard-v2', {}, { signal }),
     select: (res) => res.data.result,
     refetchInterval: DASHBOARD_REFRESH_INTERVAL
   })

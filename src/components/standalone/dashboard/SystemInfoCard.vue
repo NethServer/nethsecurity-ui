@@ -53,7 +53,8 @@ const systemInfo = computed(() => overview.value?.system ?? null)
 
 const { data: systemUpdateData, isFetching: isUpdateStatusFetching } = useQuery({
   queryKey: ['dashboard', 'check-system-update'],
-  queryFn: () => ubusCall<SystemUpdateResponse>('ns.update', 'check-system-update'),
+  queryFn: ({ signal }) =>
+    ubusCall<SystemUpdateResponse>('ns.update', 'check-system-update', {}, { signal }),
   select: (res) => res.data,
   refetchInterval: UPDATE_CHECK_INTERVAL,
   staleTime: UPDATE_CHECK_INTERVAL,

@@ -51,10 +51,13 @@ const {
   error: internetError
 } = useQuery({
   queryKey: ['dashboard', 'internet-status'],
-  queryFn: () =>
-    ubusCall<ServiceStatusResponse>('ns.dashboard', 'service-status', {
-      service: 'internet'
-    }),
+  queryFn: ({ signal }) =>
+    ubusCall<ServiceStatusResponse>(
+      'ns.dashboard',
+      'service-status',
+      { service: 'internet' },
+      { signal }
+    ),
   select: (res) => res.data.result.status,
   refetchInterval: DASHBOARD_REFRESH_INTERVAL
 })

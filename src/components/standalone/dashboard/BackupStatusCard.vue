@@ -43,7 +43,8 @@ const {
   error: latestBackupError
 } = useQuery({
   queryKey: ['dashboard', 'backup', 'last'],
-  queryFn: () => ubusCall<BackupResponse>('ns.backup', 'registered-list-backups'),
+  queryFn: ({ signal }) =>
+    ubusCall<BackupResponse>('ns.backup', 'registered-list-backups', {}, { signal }),
   select: (response) => {
     const backup = response.data.values.backups.sort((a, b) => b.created - a.created).shift()
     return backup != undefined ? formatDateLoc(new Date(backup.created * 1000), 'PPpp') : undefined

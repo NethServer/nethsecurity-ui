@@ -35,8 +35,8 @@ const queryClient = useQueryClient()
 
 const isThreatShieldEnabled = ref(false)
 const isLogPreroutingEnabled = ref(false)
-const isLoginBoundEnabled = ref(false)
-const isLogoutBoundEnabled = ref(false)
+const isLogInboundEnabled = ref(false)
+const isLogOutboundEnabled = ref(false)
 const isBlockBruteForceEnabled = ref(false)
 const banTime = ref('')
 const maxFailedAccesses = ref('')
@@ -102,8 +102,8 @@ async function fetchSettings() {
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
     isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
-    isLoginBoundEnabled.value = threatShieldConfig.ban_loginbound
-    isLogoutBoundEnabled.value = threatShieldConfig.ban_logoutbound
+    isLogInboundEnabled.value = threatShieldConfig.ban_loginbound
+    isLogOutboundEnabled.value = threatShieldConfig.ban_logoutbound
     isBlockBruteForceEnabled.value = threatShieldConfig.ban_loglimit
     banTime.value = threatShieldConfig.ban_nftexpiry
     maxFailedAccesses.value = threatShieldConfig.ban_logcount.toString()
@@ -218,8 +218,8 @@ async function saveSettings() {
     await ubusCall('ns.threatshield', 'edit-settings', {
       enabled: isThreatShieldEnabled.value,
       ban_logprerouting: isLogPreroutingEnabled.value,
-      ban_loginbound: isLoginBoundEnabled.value,
-      ban_logoutbound: isLogoutBoundEnabled.value,
+      ban_loginbound: isLogInboundEnabled.value,
+      ban_logoutbound: isLogOutboundEnabled.value,
       ban_loglimit: isBlockBruteForceEnabled.value,
       ban_nftexpiry: banTime.value,
       ban_logcount: Number(maxFailedAccesses.value),
@@ -284,7 +284,7 @@ onMounted(() => {
               <div class="mb-8 space-y-6">
                 <!-- monitoring not working warning -->
                 <NeInlineNotification
-                  v-if="!isLogPreroutingEnabled && !isLoginBoundEnabled && !isLogoutBoundEnabled"
+                  v-if="!isLogPreroutingEnabled && !isLogInboundEnabled && !isLogOutboundEnabled"
                   kind="warning"
                   :title="t('standalone.threat_shield.threats_monitoring_disabled')"
                   :description="t('standalone.threat_shield.threats_monitoring_disabled_message')"
@@ -297,15 +297,15 @@ onMounted(() => {
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
-                  v-model="isLoginBoundEnabled"
-                  :top-label="t('standalone.threat_shield.log_forward_chain')"
-                  :label="isLoginBoundEnabled ? t('common.enabled') : t('common.disabled')"
+                  v-model="isLogInboundEnabled"
+                  :top-label="t('standalone.threat_shield.log_input_chain')"
+                  :label="isLogInboundEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
-                  v-model="isLogoutBoundEnabled"
+                  v-model="isLogOutboundEnabled"
                   :top-label="t('standalone.threat_shield.log_forward_lan_chain')"
-                  :label="isLogoutBoundEnabled ? t('common.enabled') : t('common.disabled')"
+                  :label="isLogOutboundEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
               </div>

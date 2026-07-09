@@ -14,9 +14,15 @@ import { useI18n } from 'vue-i18n'
 import ToastNotificationsArea from '../ToastNotificationsArea.vue'
 import NotificationDrawer from '../NotificationDrawer.vue'
 import StandaloneTopBar from './StandaloneTopBar.vue'
+import { useAlerts } from '@/composables/useAlerts'
 
 const themeStore = useThemeStore()
 const { t } = useI18n()
+
+// Alerts are only relevant for a real device (standalone or a managed unit),
+// which is exactly what this shell renders. Fetching lives here so the
+// controller's own shell never triggers the ns.telegraf list-alerts call.
+const { notifications: alertNotifications } = useAlerts()
 
 const sidebarOpen = ref(false)
 
@@ -138,7 +144,7 @@ const logoFilename = computed(() => {
         </div>
       </main>
     </div>
-    <NotificationDrawer :close-on-click-outside="true" />
+    <NotificationDrawer :close-on-click-outside="true" :alert-notifications="alertNotifications" />
     <ToastNotificationsArea />
   </div>
 </template>

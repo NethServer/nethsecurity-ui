@@ -10,17 +10,23 @@ import {
   NeToastNotificationV2,
   NeToastNotification
 } from '@nethesis/vue-components'
+import type { NeNotificationV2 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from '@/stores/notifications'
 import { isEmpty } from 'lodash-es'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
-import { useAlerts } from '@/composables/useAlerts'
 import { useRoute, useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 
+// Alert notifications are fetched only where they are meaningful (standalone
+// mode / inside a managed unit) and passed in by the shell. On the controller's
+// own pages no alerts are provided, so `ns.telegraf list-alerts` is never called.
+const props = withDefaults(defineProps<{ alertNotifications?: NeNotificationV2[] }>(), {
+  alertNotifications: () => []
+})
+
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()
-const { notifications: alertNotifications } = useAlerts()
 
 function closeDrawer() {
   notificationsStore.setNotificationDrawerOpen(false)

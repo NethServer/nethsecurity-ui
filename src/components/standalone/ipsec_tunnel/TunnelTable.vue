@@ -346,8 +346,7 @@ function getDropdownItems(item: IpsecTunnel) {
         <pre
           v-if="showRawOutput"
           class="mt-2 max-h-96 overflow-auto rounded bg-gray-100 p-3 text-sm whitespace-pre-wrap dark:bg-gray-800"
-          >{{ selectedTunnel.raw_output }}</pre
-        >
+          >{{ selectedTunnel.raw_output }}</pre>
       </div>
     </template>
   </NeModal>

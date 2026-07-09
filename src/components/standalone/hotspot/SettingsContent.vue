@@ -4,13 +4,15 @@
 -->
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import {
+  NeCard,
   NeCombobox,
   NeInlineNotification,
   NeButton,
   NeLink,
   NeSkeleton,
+  NeSpinner,
   NeTooltip,
   NeTextInput,
   focusElement,
@@ -18,20 +20,16 @@ import {
   type NeComboboxOption
 } from '@nethesis/vue-components'
 import { type NeNotification, NeModal } from '@nethesis/vue-components'
-import {
-  faSave,
-  faRightToBracket,
-  faCloud,
-  faChevronDown,
-  faChevronUp
-} from '@fortawesome/free-solid-svg-icons'
+import { faSave, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FormLayout from '@/components/standalone/FormLayout.vue'
+import myNethesisIconUrl from '@/assets/my-nethesis.svg'
 import { useI18n } from 'vue-i18n'
 import { validateIp4Cidr, validateRequired } from '@/lib/validation'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
+import { useSubscriptionStore } from '@/stores/standalone/subscription'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { uid } from 'uid/single'
@@ -40,6 +38,9 @@ import { useNotificationsStore } from '@/stores/notifications'
 const { t } = useI18n()
 const uciPendingChangesStore = useUciPendingChangesStore()
 const notificationsStore = useNotificationsStore()
+// the My Nethesis login authenticates the user on the hotspot manager via
+// the my.nethesis.it identity: offer it only on enterprise-subscribed units
+const subscriptionStore = useSubscriptionStore()
 
 interface Login {
   hostname: string
@@ -90,7 +91,9 @@ const configurationForm = ref<Configuration>({
 const isError = ref(false)
 const isLoggedIn = ref(false)
 const oidcLogging = ref(false)
-const legacyLoginExpanded = ref(false)
+const myLoginAvailable = computed(
+  () => subscriptionStore.isActive && subscriptionStore.isEnterprise
+)
 const accountName = ref('')
 const accountUser = ref('')
 const managerHost = ref('')
@@ -141,6 +144,9 @@ onMounted(() => {
   errorListParents.value = { ...objError }
   errorListDevices.value = { ...objError }
   errorGetConfiguration.value = { ...objError }
+  // the subscription may have changed since the store was first loaded
+  // (e.g. the unit was just registered): refresh it on every visit
+  subscriptionStore.loadData()
   getListParents()
   getListDevices()
   getConfiguration()
@@ -654,9 +660,14 @@ function goToInterfaces() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loadingParentHotspot || loadingListDevices" :lines="8" />
+    <NeSkeleton
+      v-if="loadingParentHotspot || loadingListDevices || subscriptionStore.loading"
+      :lines="8"
+    />
     <FormLayout
-      v-if="!isLoggedIn && !loadingParentHotspot && !loadingListDevices"
+      v-if="
+        !isLoggedIn && !loadingParentHotspot && !loadingListDevices && !subscriptionStore.loading
+      "
       :title="t('standalone.hotspot.settings.login')"
       :description="t('standalone.hotspot.settings.login_description')"
       class="max-w-3xl"
@@ -668,45 +679,51 @@ function goToInterfaces() {
         :title="error.notificationTitle"
         :description="error.notificationDescription"
       />
-      <NeInlineNotification
-        v-if="oidcLogging"
-        class="my-4"
-        kind="info"
-        :title="t('standalone.hotspot.settings.login_oidc_waiting')"
-        :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
-        :primary-button-label="t('common.cancel')"
-        @primary-click="stopOidcPolling()"
-      />
-      <NeButton
-        :disabled="oidcLogging || logging"
-        :loading="oidcLogging"
-        kind="primary"
-        size="lg"
-        @click.prevent="oidcLogin()"
-      >
-        <template #prefix>
-          <FontAwesomeIcon :icon="faCloud" />
-        </template>
-        {{ t('standalone.hotspot.settings.login_with_my_nethesis') }}
-      </NeButton>
-      <hr class="my-6" />
-      <NeButton
-        kind="tertiary"
-        size="sm"
-        class="-ml-2 mb-4"
-        @click="legacyLoginExpanded = !legacyLoginExpanded"
-      >
-        <template #suffix>
-          <FontAwesomeIcon
-            :icon="legacyLoginExpanded ? faChevronUp : faChevronDown"
-            class="h-3 w-3"
-            aria-hidden="true"
-          />
-        </template>
-        {{ t('standalone.hotspot.settings.legacy_login') }}
-      </NeButton>
-      <Transition name="slide-down">
-        <form v-show="legacyLoginExpanded" @submit="login()">
+      <template v-if="myLoginAvailable">
+        <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
+          {{ t('standalone.hotspot.settings.automatic_login') }}
+        </div>
+        <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+          {{ t('standalone.hotspot.settings.automatic_login_description') }}
+        </p>
+        <div>
+          <NeButton
+            :disabled="oidcLogging || logging"
+            kind="secondary"
+            size="lg"
+            @click.prevent="oidcLogin()"
+          >
+            <template #prefix>
+              <img :src="myNethesisIconUrl" class="h-5 w-5" alt="" aria-hidden="true" />
+            </template>
+            {{ t('standalone.hotspot.settings.login_with_my_nethesis') }}
+            <template #suffix>
+              <NeSpinner v-if="oidcLogging" size="4" />
+            </template>
+          </NeButton>
+        </div>
+        <NeInlineNotification
+          v-if="oidcLogging"
+          class="my-4"
+          kind="info"
+          :title="t('standalone.hotspot.settings.login_oidc_waiting')"
+          :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
+          :primary-button-label="t('common.cancel')"
+          @primary-click="stopOidcPolling()"
+        />
+        <div class="my-6 flex items-center gap-3">
+          <hr class="grow border-gray-200 dark:border-gray-700" />
+          <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('common.or') }}</span>
+          <hr class="grow border-gray-200 dark:border-gray-700" />
+        </div>
+        <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
+          {{ t('standalone.hotspot.settings.manual_login') }}
+        </div>
+        <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+          {{ t('standalone.hotspot.settings.manual_login_description') }}
+        </p>
+      </template>
+      <form @submit="login()">
           <div class="mb-8 flex flex-col gap-y-4">
             <NeTextInput
               ref="hostnameRef"
@@ -745,7 +762,6 @@ function goToInterfaces() {
             </NeButton>
           </div>
         </form>
-      </Transition>
     </FormLayout>
     <FormLayout
       v-if="!loadingParentHotspot && !loadingListDevices && viewConfiguration"
@@ -753,35 +769,39 @@ function goToInterfaces() {
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
     >
-      <div
+      <NeCard
         v-if="isLoggedIn && accountName"
-        class="mb-6 divide-y divide-gray-200 rounded-md border border-gray-200 text-sm dark:divide-gray-700 dark:border-gray-700"
+        :title="t('standalone.hotspot.settings.connected_account_title')"
+        :icon="['fas', 'wifi']"
+        class="mb-6"
       >
-        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
-          <span class="text-gray-500 dark:text-gray-400">
-            {{ t('standalone.hotspot.settings.connected_account') }}
-          </span>
-          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
-            {{ accountName }}
-          </span>
+        <div class="divide-y divide-gray-200 text-sm dark:divide-gray-700">
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_account') }}
+            </span>
+            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+              {{ accountName }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_user') }}
+            </span>
+            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+              {{ accountUser }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_manager') }}
+            </span>
+            <NeLink :href="`https://${managerHost}`" target="_blank" class="text-right font-medium">
+              {{ managerHost }}
+            </NeLink>
+          </div>
         </div>
-        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
-          <span class="text-gray-500 dark:text-gray-400">
-            {{ t('standalone.hotspot.settings.connected_user') }}
-          </span>
-          <span class="text-right font-medium text-gray-900 dark:text-gray-50">
-            {{ accountUser }}
-          </span>
-        </div>
-        <div class="flex items-center justify-between gap-4 px-4 py-2.5">
-          <span class="text-gray-500 dark:text-gray-400">
-            {{ t('standalone.hotspot.settings.connected_manager') }}
-          </span>
-          <NeLink :href="`https://${managerHost}`" target="_blank" class="text-right font-medium">
-            {{ managerHost }}
-          </NeLink>
-        </div>
-      </div>
+      </NeCard>
       <NeInlineNotification
         v-if="emptyDevices"
         class="my-4"
@@ -940,7 +960,7 @@ function goToInterfaces() {
           :title="t('standalone.hotspot.settings.configuration_save_info')"
           :description="t('standalone.hotspot.settings.configuration_save_info_description')"
         />
-        <div class="flex justify-end">
+        <div class="flex justify-start">
           <div>
             <NeButton
               v-if="isLoggedIn"
@@ -959,7 +979,16 @@ function goToInterfaces() {
         </div>
       </form>
     </FormLayout>
-    <hr class="my-8" />
+    <hr
+      v-if="
+        !loadingParentHotspot &&
+        !loadingListDevices &&
+        isLoggedIn &&
+        activeConfiguration &&
+        !emptyDevices
+      "
+      class="my-8"
+    />
     <FormLayout
       v-if="
         !loadingParentHotspot &&

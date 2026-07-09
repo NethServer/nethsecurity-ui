@@ -21,9 +21,7 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 // Alert notifications are fetched only where they are meaningful (standalone
 // mode / inside a managed unit) and passed in by the shell. On the controller's
 // own pages no alerts are provided, so `ns.telegraf list-alerts` is never called.
-const props = withDefaults(defineProps<{ alertNotifications?: NeNotificationV2[] }>(), {
-  alertNotifications: () => []
-})
+const { alertNotifications = [] } = defineProps<{ alertNotifications?: NeNotificationV2[] }>()
 
 const { t } = useI18n()
 const notificationsStore = useNotificationsStore()

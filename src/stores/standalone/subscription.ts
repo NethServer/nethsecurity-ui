@@ -21,6 +21,7 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   const loading = ref(true)
   const error = ref<Error>()
   const isActive = ref(false)
+  const isEnterprise = ref(false)
 
   function loadData() {
     loading.value = true
@@ -28,6 +29,7 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     ubusCall('ns.subscription', 'info')
       .then((res: SubscriptionStatusResponse) => {
         isActive.value = res.data.active ?? false
+        isEnterprise.value = res.data.type === 'enterprise'
       })
       .catch((err) => {
         error.value = err
@@ -45,6 +47,7 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     loading,
     loadData,
     isActive,
+    isEnterprise,
     error
   }
 })

@@ -1,6 +1,7 @@
 {
   "common": {
     "save": "Salva",
+    "or": "oppure",
     "cancel": "Annulla",
     "search": "Ricerca",
     "help": "Aiuto",
@@ -1348,8 +1349,11 @@
         "login_description": "Esegui il login per modificare la configurazione dell'hotspot o deregistrare l'hotspot.",
         "configuration_network_device_helper": "Scegli un dispositivo di rete: l'hotspot intercetterà tutte le connessioni su questa interfaccia di rete e richiederà l'autenticazione ai client connessi.",
         "login_helper_username": "Inserisci il nome utente utilizzato per accedere all'istanza del hotspot manager.",
+        "automatic_login": "Login automatico",
+        "automatic_login_description": "Autenticati con il tuo account My Nethesis.",
+        "manual_login": "Login manuale",
+        "manual_login_description": "Inserisci le credenziali del hotspot manager.",
         "login_with_my_nethesis": "Login with My Nethesis",
-        "legacy_login": "Login legacy",
         "login_oidc_waiting": "In attesa di autenticazione",
         "login_oidc_waiting_description": "Completa l'accesso nella finestra del browser appena aperta; l'unità verrà collegata automaticamente.",
         "login_oidc_success": "Autenticato come {account}",
@@ -1357,6 +1361,7 @@
         "login_oidc_failed": "Autenticazione non autorizzata ({error}).",
         "login_oidc_not_supported": "Il hotspot manager non supporta ancora il login con My Nethesis.",
         "login_oidc_popup_blocked": "Il browser ha bloccato la finestra di login: consenti i popup per questo sito e riprova.",
+        "connected_account_title": "Account collegato",
         "connected_account": "Account",
         "connected_user": "Autenticato da",
         "connected_manager": "Hotspot manager",

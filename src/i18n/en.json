@@ -14,6 +14,7 @@
       "about": "About",
       "platform_info": "Controller information"
     },
+    "or": "or",
     "platform": {
       "controller_version": "Controller version",
       "logs_retention_days": "Log retention days",
@@ -1409,8 +1410,11 @@
         "login_username": "Username",
         "login_password": "Password",
         "login_helper_username": "Enter the username used to access the hotspot manager instance.",
+        "automatic_login": "Automatic login",
+        "automatic_login_description": "Authenticate with your My Nethesis account.",
+        "manual_login": "Manual login",
+        "manual_login_description": "Enter the hotspot manager credentials.",
         "login_with_my_nethesis": "Login with My Nethesis",
-        "legacy_login": "Legacy login",
         "login_oidc_waiting": "Waiting for authentication",
         "login_oidc_waiting_description": "Complete the login in the browser window that just opened; the unit will be connected automatically.",
         "login_oidc_success": "Authenticated as {account}",
@@ -1418,6 +1422,7 @@
         "login_oidc_failed": "Authentication was not authorized ({error}).",
         "login_oidc_not_supported": "The hotspot manager does not support My Nethesis login yet.",
         "login_oidc_popup_blocked": "The browser blocked the login window: allow popups for this site and try again.",
+        "connected_account_title": "Connected account",
         "connected_account": "Account",
         "connected_user": "Authenticated by",
         "connected_manager": "Hotspot manager",

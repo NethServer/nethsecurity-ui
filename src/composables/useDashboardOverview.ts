@@ -3,7 +3,6 @@
 
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useQuery } from '@tanstack/vue-query'
-import type { AxiosResponse } from 'axios'
 
 export type ServiceStatus = 'ok' | 'warning' | 'error' | 'disabled' | null
 
@@ -89,8 +88,13 @@ export type DashboardOverview = {
 export type DashboardServiceName = keyof DashboardOverview['services']
 export type DashboardCounterName = keyof DashboardOverview['counters']
 
+// ubusCall returns the HTTP body (it already unwraps the AxiosResponse). The
+// api-server wraps every ubus result under `data`, and the ns.dashboard script
+// wraps its output under `result`.
 type DashboardOverviewResponse = {
-  result: DashboardOverview
+  data: {
+    result: DashboardOverview
+  }
 }
 
 export const DASHBOARD_REFRESH_INTERVAL = 20_000
@@ -100,8 +104,7 @@ export function useDashboardOverview() {
   // deduplicates them into a single HTTP request per refresh interval
   return useQuery({
     queryKey: ['dashboard', 'overview'],
-    queryFn: () =>
-      ubusCall<AxiosResponse<DashboardOverviewResponse>>('ns.dashboard', 'dashboard-v2'),
+    queryFn: () => ubusCall<DashboardOverviewResponse>('ns.dashboard', 'dashboard-v2'),
     select: (res) => res.data.result,
     refetchInterval: DASHBOARD_REFRESH_INTERVAL
   })

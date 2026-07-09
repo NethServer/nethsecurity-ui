@@ -19,7 +19,6 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@tanstack/vue-query'
-import type { AxiosResponse } from 'axios'
 import {
   DASHBOARD_REFRESH_INTERVAL,
   useDashboardOverview,
@@ -31,9 +30,13 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
+// ubusCall returns the HTTP body: the api-server wraps the ubus result under
+// `data`, and ns.dashboard wraps its output under `result`
 type ServiceStatusResponse = {
-  result: {
-    status: ServiceStatus
+  data: {
+    result: {
+      status: ServiceStatus
+    }
   }
 }
 
@@ -49,7 +52,7 @@ const {
 } = useQuery({
   queryKey: ['dashboard', 'internet-status'],
   queryFn: () =>
-    ubusCall<AxiosResponse<ServiceStatusResponse>>('ns.dashboard', 'service-status', {
+    ubusCall<ServiceStatusResponse>('ns.dashboard', 'service-status', {
       service: 'internet'
     }),
   select: (res) => res.data.result.status,

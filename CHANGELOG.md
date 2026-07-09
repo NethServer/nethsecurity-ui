@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.23.1](https://github.com/NethServer/nethsecurity-ui/compare/2.23.0...2.23.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* adjusted props ([6a542a5](https://github.com/NethServer/nethsecurity-ui/commit/6a542a5033ef42443479c2582942d7ae7bea9707))
+* alerts removed from controller dashboard ([35173dd](https://github.com/NethServer/nethsecurity-ui/commit/35173ddb34cf0238acc9b6d4792e7a5d46a875fb))
+* updated help link in standalone login ([329adf1](https://github.com/NethServer/nethsecurity-ui/commit/329adf1113456c3351086a27facd73eb2bbbc493))
+
 ## [2.23.0](https://github.com/NethServer/nethsecurity-ui/compare/2.22.2...2.23.0) (2026-07-02)
 
 

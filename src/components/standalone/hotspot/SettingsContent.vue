@@ -26,7 +26,7 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import myNethesisIconUrl from '@/assets/my-nethesis.svg'
 import { useI18n } from 'vue-i18n'
 import { validateIp4Cidr, validateRequired } from '@/lib/validation'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { AxiosError } from 'axios'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { useSubscriptionStore } from '@/stores/standalone/subscription'
@@ -132,6 +132,9 @@ const objError = {
   maxClientsAllowed: ''
 }
 const error = ref({ ...objError })
+// My Nethesis login errors are shown under the automatic-login button
+// (same spot as the waiting notification), not in the top banner
+const oidcError = ref({ ...objError })
 const errorListParents = ref({ ...objError })
 const errorListDevices = ref({ ...objError })
 const errorGetConfiguration = ref({ ...objError })
@@ -370,8 +373,8 @@ async function oidcLogin() {
     )
     if (!popup) {
       oidcLogging.value = false
-      error.value.notificationTitle = t('error.cannot_login_hotspot')
-      error.value.notificationDescription = t(
+      oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
+      oidcError.value.notificationDescription = t(
         'standalone.hotspot.settings.login_oidc_popup_blocked'
       )
       return
@@ -380,20 +383,24 @@ async function oidcLogin() {
     oidcPollTimer = window.setInterval(oidcPoll, (res.data.interval ?? 2) * 1000)
   } catch (exception: any) {
     oidcLogging.value = false
-    error.value.notificationTitle = t('error.cannot_login_hotspot')
-    if (exception.response?.data?.message === 'oidc_not_supported') {
-      error.value.notificationDescription = t(
+    oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
+    // expected outcomes of the user-provided host come back as validation
+    // errors (400, no global toast)
+    const hostError =
+      exception instanceof ValidationError ? exception.errorBag.getFirstFor('host') : ''
+    if (hostError === 'oidc_not_supported') {
+      oidcError.value.notificationDescription = t(
         'standalone.hotspot.settings.login_oidc_not_supported'
       )
     } else if (
-      exception.response?.data?.message === 'pairing_start_failed' ||
+      hostError === 'pairing_start_failed' ||
       exception.message === 'pairing_start_failed'
     ) {
-      error.value.notificationDescription = t(
+      oidcError.value.notificationDescription = t(
         'standalone.hotspot.settings.login_oidc_start_failed'
       )
     } else {
-      error.value.notificationDescription = t(getAxiosErrorMessage(exception))
+      oidcError.value.notificationDescription = t(getAxiosErrorMessage(exception))
     }
   }
 }
@@ -401,8 +408,8 @@ async function oidcLogin() {
 async function oidcPoll() {
   if (Date.now() > oidcPollDeadline) {
     stopOidcPolling()
-    error.value.notificationTitle = t('error.cannot_login_hotspot')
-    error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
+    oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
+    oidcError.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
     return
   }
 
@@ -423,14 +430,14 @@ async function oidcPoll() {
       refreshAfterLogin()
     } else if (status === 'failed') {
       stopOidcPolling()
-      error.value.notificationTitle = t('error.cannot_login_hotspot')
-      error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_failed', {
-        error: res.data.error ?? 'unknown'
+      oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
+      oidcError.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_failed', {
+        error: res.data.reason ?? 'unknown'
       })
     } else if (status === 'expired') {
       stopOidcPolling()
-      error.value.notificationTitle = t('error.cannot_login_hotspot')
-      error.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
+      oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
+      oidcError.value.notificationDescription = t('standalone.hotspot.settings.login_oidc_expired')
     }
     // pending: keep polling
   } catch {
@@ -454,6 +461,7 @@ function clearErrors() {
     dhcpLimit: '',
     maxClientsAllowed: ''
   }
+  oidcError.value = { ...objError }
 }
 
 function validateConfiguration(): boolean {
@@ -710,6 +718,13 @@ function goToInterfaces() {
           :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
           :primary-button-label="t('common.cancel')"
           @primary-click="stopOidcPolling()"
+        />
+        <NeInlineNotification
+          v-if="oidcError.notificationTitle"
+          class="my-4"
+          kind="error"
+          :title="oidcError.notificationTitle"
+          :description="oidcError.notificationDescription"
         />
         <div class="my-6 flex items-center gap-3">
           <hr class="grow border-gray-200 dark:border-gray-700" />

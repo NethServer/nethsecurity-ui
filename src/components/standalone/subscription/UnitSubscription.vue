@@ -20,7 +20,7 @@ import {
 } from '@nethesis/vue-components'
 import type { SubscriptionDataType } from '@/views/standalone/system/SubscriptionView.vue'
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { validateRequired } from '@/lib/validation'
 import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
@@ -89,9 +89,10 @@ async function subscribe() {
     emit('subscription-update')
     subscriptionStore.loadData()
   } catch (e: any) {
-    if (e.response.data.message == 'system_already_registered') {
+    // expected outcomes come back as validation errors (400, no global toast)
+    if (e instanceof ValidationError && e.errorBag.getFirstFor('secret') == 'system_already_registered') {
       errors.value.request = t('standalone.subscription.system_already_registered')
-    } else if (e.response.data.message == 'invalid_secret_or_server_not_found') {
+    } else if (e.response?.data?.message == 'invalid_secret_or_server_not_found') {
       errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')
     } else {
       errors.value.request = t(getAxiosErrorMessage(e))

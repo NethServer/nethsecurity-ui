@@ -15,6 +15,8 @@ export type SubscriptionDataType = {
   // organization name; community units keep the legacy plan name and no org.
   type?: string
   organization?: string
+  // enterprise: the system name given on my at creation time
+  system_name?: string
 }
 
 export const useSubscriptionStore = defineStore('subscription', () => {

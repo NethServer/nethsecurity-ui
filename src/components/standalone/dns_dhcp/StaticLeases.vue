@@ -191,8 +191,8 @@ function clearFilters() {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="loading" :lines="10" />
-    <template v-else>
+    <NeSkeleton v-show="loading" :lines="10" />
+    <div v-show="!loading">
       <NeEmptyState
         v-if="items.length == 0"
         :title="t('standalone.dns_dhcp.no_reservation_configured')"
@@ -218,7 +218,7 @@ function clearFilters() {
         @lease-delete="openDeleteModal"
         @lease-edit="openCreateEditDrawer"
       />
-    </template>
+    </div>
   </div>
   <CreateOrEditStaticLeaseDrawer
     :is-shown="showCreateEditDrawer"

@@ -171,8 +171,8 @@ function clearFilters() {
         {{ error.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <NeSkeleton v-if="loading" :lines="10" />
-    <template v-else>
+    <NeSkeleton v-show="loading" :lines="10" />
+    <div v-show="!loading">
       <NeEmptyState
         v-if="items.length == 0"
         :title="t('standalone.dns_dhcp.no_dynamic_lease_found')"
@@ -190,7 +190,7 @@ function clearFilters() {
         :show-dynamic-leases="true"
         @create-static-lease-from-dynamic="openCreateStaticLeaseDrawer"
       />
-    </template>
+    </div>
   </div>
   <CreateOrEditStaticLeaseDrawer
     :is-shown="showCreateStaticLeaseDrawer"

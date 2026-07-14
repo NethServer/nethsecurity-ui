@@ -10,17 +10,42 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useDashboardOverview } from '@/composables/useDashboardOverview'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
+
+type HaStatusResponse = {
+  data: {
+    state: string
+    role: string
+    status: string
+    last_sync_status: string
+    last_sync_time: number
+  }
+}
 
 const { t } = useI18n()
 
-const { data: overview, isPending, isError, error } = useDashboardOverview()
+const {
+  data: ha,
+  isPending,
+  isError,
+  error
+} = useQuery({
+  queryKey: ['dashboard', 'ha', 'status'],
+  queryFn: ({ signal }) => ubusCall<HaStatusResponse>('ns.ha', 'status', {}, { signal }),
+  select: (res) => ({
+    status: res.data.status,
+    role: res.data.role,
+    state: res.data.state,
+    lastSyncStatus: res.data.last_sync_status.toLowerCase().replace(/ /g, '_'),
+    lastSyncTime: res.data.last_sync_time
+  }),
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
 
-const ha = computed(() => overview.value?.ha)
-const lastSyncStatus = computed(() =>
-  (ha.value?.last_sync_status ?? '').toLowerCase().replace(/ /g, '_')
-)
-const lastSyncTime = computed(() => Number(ha.value?.last_sync_time) || 0)
+const lastSyncStatus = computed(() => ha.value?.lastSyncStatus ?? '')
+const lastSyncTime = computed(() => Number(ha.value?.lastSyncTime) || 0)
 
 const errorTitle = computed(() => (isError.value ? t('standalone.ha.failed_to_fetch_info') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

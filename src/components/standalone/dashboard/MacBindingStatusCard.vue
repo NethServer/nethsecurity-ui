@@ -5,13 +5,32 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useDashboardOverview } from '@/composables/useDashboardOverview'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus.ts'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
+
+type ListInterfacesResponse = {
+  data: {
+    [name: string]: {
+      ns_binding: number
+    }
+  }
+}
 
 const { t } = useI18n()
 
-const { data: overview, isPending, isError, error } = useDashboardOverview()
-
-const enabled = computed(() => overview.value?.mac_binding?.enabled ?? false)
+const {
+  data: enabled,
+  isPending,
+  isError,
+  error
+} = useQuery({
+  queryKey: ['dashboard', 'mac-binding'],
+  queryFn: ({ signal }) =>
+    ubusCall<ListInterfacesResponse>('ns.dhcp', 'list-interfaces', {}, { signal }),
+  select: (res) => Object.values(res.data).some((item) => item.ns_binding != 0),
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
 
 const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_service_status') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

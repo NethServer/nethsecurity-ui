@@ -18,21 +18,62 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute } from 'vue-router'
-import { useDashboardOverview } from '@/composables/useDashboardOverview'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus'
+import {
+  DASHBOARD_REFRESH_INTERVAL,
+  useDashboardOverview
+} from '@/composables/useDashboardOverview'
 import { getStatusBadge } from '@/lib/standalone/dashboard'
+
+type ThreatShieldSettingsResponse = {
+  data: {
+    data: {
+      ban_logforwardlan: boolean
+      ban_logforwardwan: boolean
+      ban_loginput: boolean
+      ban_logprerouting: boolean
+    }
+  }
+}
 
 const { t } = useI18n()
 const route = useRoute()
 
-const { data: overview, isPending, isError, error } = useDashboardOverview()
+const {
+  data: overview,
+  isPending: isOverviewPending,
+  isError: isOverviewError,
+  error: overviewError
+} = useDashboardOverview()
+
+const {
+  data: tsSettings,
+  isPending: isSettingsPending,
+  isError: isSettingsError,
+  error: settingsError
+} = useQuery({
+  queryKey: ['dashboard', 'threat-shield', 'settings'],
+  queryFn: ({ signal }) =>
+    ubusCall<ThreatShieldSettingsResponse>('ns.threatshield', 'list-settings', {}, { signal }),
+  select: (res) => res.data.data,
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
 
 const badge = computed(() => getStatusBadge(overview.value?.services.banip))
 const serviceCounter = computed(() => overview.value?.counters.threat_shield_ip)
 
-// show the warning only when the logging flags are actually known
 const isLoggingDisabled = computed(
-  () => overview.value?.threat_shield != null && !overview.value.threat_shield.logging_enabled
+  () =>
+    !tsSettings.value?.ban_logforwardlan &&
+    !tsSettings.value?.ban_logforwardwan &&
+    !tsSettings.value?.ban_loginput &&
+    !tsSettings.value?.ban_logprerouting
 )
+
+const isPending = computed(() => isOverviewPending.value || isSettingsPending.value)
+const isError = computed(() => isOverviewError.value || isSettingsError.value)
+const error = computed(() => overviewError.value ?? settingsError.value)
 
 const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_service_status') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

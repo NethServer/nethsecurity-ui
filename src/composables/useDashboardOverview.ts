@@ -36,19 +36,6 @@ export type TunnelCounters = {
   connected: number
 }
 
-export type WireguardSummary = {
-  enabled_servers: number
-  active_peers: number
-}
-
-export type HaSummary = {
-  status: 'enabled' | 'disabled' | 'unknown'
-  role: 'primary' | 'backup' | 'unknown'
-  state: string
-  last_sync_status: string
-  last_sync_time: number | string
-}
-
 // Every section can degrade to null if the corresponding subsystem fails on
 // the firewall; the section name is then listed in `errors`.
 export type DashboardOverview = {
@@ -69,19 +56,7 @@ export type DashboardOverview = {
   vpn: {
     ipsec: TunnelCounters | null
     ovpn: TunnelCounters | null
-    wireguard: WireguardSummary | null
   }
-  threat_shield: {
-    logging_enabled: boolean
-  } | null
-  mac_binding: {
-    enabled: boolean
-  } | null
-  ips: {
-    enabled: boolean
-    events: number
-  } | null
-  ha: HaSummary | null
   errors: string[]
 }
 

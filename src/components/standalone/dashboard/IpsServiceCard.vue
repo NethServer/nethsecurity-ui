@@ -5,13 +5,32 @@ import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useDashboardOverview } from '@/composables/useDashboardOverview'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
+
+type SnortStatusResponse = {
+  data: {
+    status: {
+      enabled: boolean
+      events: number
+    }
+  }
+}
 
 const { t } = useI18n()
 
-const { data: overview, isPending, isError, error } = useDashboardOverview()
-
-const ips = computed(() => overview.value?.ips)
+const {
+  data: ips,
+  isPending,
+  isError,
+  error
+} = useQuery({
+  queryKey: ['dashboard', 'ips', 'status'],
+  queryFn: ({ signal }) => ubusCall<SnortStatusResponse>('ns.snort', 'status', {}, { signal }),
+  select: (res) => res.data.status,
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
 
 const errorTitle = computed(() => (isError.value ? t('standalone.ips.failed_to_fetch_info') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

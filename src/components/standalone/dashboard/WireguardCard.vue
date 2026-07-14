@@ -7,14 +7,40 @@
 import { NeCard, getAxiosErrorMessage } from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useDashboardOverview } from '@/composables/useDashboardOverview'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
+import type { Tunnel } from '@/views/standalone/vpn/WireguardTunnelView.vue'
+
+type ListServersResponse = {
+  data: {
+    instances: Tunnel[]
+  }
+}
 
 const { t } = useI18n()
 
-const { data: overview, isPending, isError, error } = useDashboardOverview()
+const {
+  data: counters,
+  isPending,
+  isError,
+  error
+} = useQuery({
+  queryKey: ['dashboard', 'wireguard', 'servers'],
+  queryFn: ({ signal }) =>
+    ubusCall<ListServersResponse>('ns.wireguard', 'list-servers', {}, { signal }),
+  select: (res) => ({
+    enabledServers: res.data.instances.filter((instance) => instance.enabled).length,
+    activePeers: res.data.instances.reduce(
+      (sum, instance) => sum + instance.peers.filter((peer) => peer.active).length,
+      0
+    )
+  }),
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
 
-const enabledServers = computed(() => overview.value?.vpn.wireguard?.enabled_servers ?? 0)
-const activePeers = computed(() => overview.value?.vpn.wireguard?.active_peers ?? 0)
+const enabledServers = computed(() => counters.value?.enabledServers ?? 0)
+const activePeers = computed(() => counters.value?.activePeers ?? 0)
 
 const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_wireguard_stats') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

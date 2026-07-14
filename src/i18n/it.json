@@ -758,6 +758,7 @@
       "copy_id": "Copia ID",
       "cancel_registration": "Annulla subscription",
       "inactive": "Inattivo",
+      "system_name": "Nome sistema",
       "system_id": "ID sistema",
       "start_session": "Avvia sessione",
       "dpi_filter": "2600+ applicazioni per filtro DPI",

@@ -192,6 +192,7 @@ function close() {
             :time-picker-inline="true"
             :disabled="sendingSchedule"
             :readonly="sendingSchedule"
+            :week-start="1"
           />
         </div>
       </template>

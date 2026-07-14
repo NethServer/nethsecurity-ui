@@ -119,14 +119,14 @@
 }
 
 @layer vendor {
-  .dp__theme_dark {
+  .dp--theme-dark {
     --dp-background-color: var(--color-gray-950);
     --dp-primary-color: var(--color-primary-500);
     --dp-primary-text-color: var(--color-gray-950);
     --dp-border-color-hover: var(--color-primary-500);
   }
 
-  .dp__theme_light {
+  .dp--theme-light {
     --dp-primary-color: var(--color-primary-700);
     --dp-border-color-hover: var(--dp-primary-color);
   }

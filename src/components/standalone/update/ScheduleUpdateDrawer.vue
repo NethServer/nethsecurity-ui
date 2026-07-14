@@ -200,6 +200,7 @@ watch(
                     minute: '2-digit'
                   }) ?? ''
               "
+              :week-start="1"
             />
             <p
               v-if="scheduleDateValidationError"

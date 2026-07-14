@@ -218,6 +218,7 @@ const someUnitsFailed = ref(false)
             :disabled-dates="(date: Date) => date < new Date()"
             :readonly="loading"
             :time-picker-inline="true"
+            :week-start="1"
           />
         </div>
       </template>

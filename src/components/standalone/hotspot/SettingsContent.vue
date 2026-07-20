@@ -395,7 +395,7 @@ async function oidcLogin(host?: string) {
     }
     oidcPollDeadline = Date.now() + (res.data.expires_in ?? 600) * 1000
     oidcPollTimer = window.setInterval(oidcPoll, (res.data.interval ?? 2) * 1000)
-  } catch (exception: any) {
+  } catch (exception: unknown) {
     oidcLogging.value = false
     oidcError.value.notificationTitle = t('error.cannot_login_hotspot')
     // expected outcomes of the user-provided host come back as validation
@@ -408,7 +408,7 @@ async function oidcLogin(host?: string) {
       )
     } else if (
       hostError === 'pairing_start_failed' ||
-      exception.message === 'pairing_start_failed'
+      (exception instanceof Error && exception.message === 'pairing_start_failed')
     ) {
       oidcError.value.notificationDescription = t(
         'standalone.hotspot.settings.login_oidc_start_failed'

@@ -18,24 +18,12 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute } from 'vue-router'
-import { useQuery } from '@tanstack/vue-query'
-import { ubusCall } from '@/lib/standalone/ubus'
 import {
   DASHBOARD_REFRESH_INTERVAL,
   useDashboardOverview
 } from '@/composables/useDashboardOverview'
+import { useThreatShieldSettings } from '@/composables/useThreatShieldSettings'
 import { getStatusBadge } from '@/lib/standalone/dashboard'
-
-type ThreatShieldSettingsResponse = {
-  data: {
-    data: {
-      ban_logforwardlan: boolean
-      ban_logforwardwan: boolean
-      ban_loginput: boolean
-      ban_logprerouting: boolean
-    }
-  }
-}
 
 const { t } = useI18n()
 const route = useRoute()
@@ -52,13 +40,7 @@ const {
   isPending: isSettingsPending,
   isError: isSettingsError,
   error: settingsError
-} = useQuery({
-  queryKey: ['dashboard', 'threat-shield', 'settings'],
-  queryFn: ({ signal }) =>
-    ubusCall<ThreatShieldSettingsResponse>('ns.threatshield', 'list-settings', {}, { signal }),
-  select: (res) => res.data.data,
-  refetchInterval: DASHBOARD_REFRESH_INTERVAL
-})
+} = useThreatShieldSettings({ refetchInterval: DASHBOARD_REFRESH_INTERVAL })
 
 const badge = computed(() => getStatusBadge(overview.value?.services.banip))
 const serviceCounter = computed(() => overview.value?.counters.threat_shield_ip)

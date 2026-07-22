@@ -2,19 +2,21 @@
 import {
   formatDateLoc,
   getAxiosErrorMessage,
-  NeBadge,
+  NeBadgeV2,
   NeCard,
   NeLink
 } from '@nethesis/vue-components'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 import { getStandaloneRoutePrefix } from '@/lib/router.ts'
 import { useI18n } from 'vue-i18n'
-import { computed, ref, watchEffect } from 'vue'
+import { computed } from 'vue'
 import { faClock, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
+import { useQuery } from '@tanstack/vue-query'
 import type { AxiosResponse } from 'axios'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
 
 type BackupData = {
   created: number
@@ -35,31 +37,24 @@ const backups = useBackupsStore()
 
 const { t } = useI18n()
 
-const latestBackupLoading = ref(true)
-const latestBackupError = ref<Error>()
-const lastBackup = ref<string>()
-
-watchEffect(() => {
-  if (subscription.isActive) {
-    latestBackupError.value = undefined
-    latestBackupLoading.value = true
-    ubusCall('ns.backup', 'registered-list-backups')
-      .then((response: BackupResponse) => {
-        const backup = response.data.values.backups.sort((a, b) => b.created - a.created).shift()
-        if (backup != undefined) {
-          lastBackup.value = formatDateLoc(new Date(backup.created * 1000), 'PPpp')
-        } else {
-          lastBackup.value = undefined
-        }
-      })
-      .catch(() => {
-        lastBackup.value = undefined
-      })
-  }
+const {
+  data: lastBackup,
+  isPending: latestBackupLoading,
+  error: latestBackupError
+} = useQuery({
+  queryKey: ['dashboard', 'backup', 'last'],
+  queryFn: ({ signal }) =>
+    ubusCall<BackupResponse>('ns.backup', 'registered-list-backups', {}, { signal }),
+  select: (response) => {
+    const backup = response.data.values.backups.sort((a, b) => b.created - a.created).shift()
+    return backup != undefined ? formatDateLoc(new Date(backup.created * 1000), 'PPpp') : undefined
+  },
+  enabled: () => subscription.isActive,
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
 })
 
 const loading = computed((): boolean => {
-  return [subscription.loading, latestBackupLoading.value, backups.loading].every((entry) => entry)
+  return [subscription.loading, latestBackupLoading.value, backups.loading].some((entry) => entry)
 })
 
 const error = computed((): string | undefined => {
@@ -101,13 +96,10 @@ const error = computed((): string | undefined => {
           {{ t('standalone.backup_and_restore.backup.no_backups') }}
         </template>
       </p>
-      <NeBadge
-        v-if="!backups.isPassPhraseSet"
-        :icon="faTriangleExclamation"
-        :text="t('standalone.backup_and_restore.backup.passphrase_not_configured')"
-        class="text-center"
-        kind="warning"
-      />
+      <NeBadgeV2 v-if="!backups.isPassPhraseSet" kind="amber" class="text-center">
+        <FontAwesomeIcon :icon="faTriangleExclamation" class="size-4" />
+        {{ t('standalone.backup_and_restore.backup.passphrase_not_configured') }}
+      </NeBadgeV2>
     </div>
   </NeCard>
 </template>

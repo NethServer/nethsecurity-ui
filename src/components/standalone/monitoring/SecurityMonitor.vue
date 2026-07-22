@@ -91,6 +91,8 @@ async function getThreatShieldSettings() {
   error.value.getThreatShieldSettingsDetails = ''
 
   try {
+    // @deprecated fetch via useThreatShieldSettings() composable
+    // (@/composables/useThreatShieldSettings) — adds abort-on-unmount signaling
     const res = await ubusCall('ns.threatshield', 'list-settings')
     isThreatShieldEnabled.value = res.data.data.enabled
 

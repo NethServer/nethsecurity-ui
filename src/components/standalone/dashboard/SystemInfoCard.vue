@@ -15,48 +15,82 @@ import {
   byteFormat1024,
   NeSpinner
 } from '@nethesis/vue-components'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { round } from 'lodash-es'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
 import type { SystemUpdate } from '@/views/standalone/system/UpdateView.vue'
+import { useQuery } from '@tanstack/vue-query'
+import { faServer, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { useDashboardOverview, type StorageEntry } from '@/composables/useDashboardOverview'
 
 const { t } = useI18n()
 const router = useRouter()
 
-// random refresh interval between 20 and 30 seconds
-const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const systemInfo = ref<any>({})
-const loadDataIntervalId = ref(0)
-const systemUpdateData = ref<SystemUpdate | null>(null)
+type SystemUpdateResponse = {
+  data: SystemUpdate
+}
 
-const freeMemory = ref(0)
-const totalMemory = ref(0)
-const memoryUsagePerc = ref(0)
+type Usage = {
+  free: number
+  total: number
+  perc: number
+}
 
-const freeRoot = ref(0)
-const totalRoot = ref(0)
-const rootUsagePerc = ref(0)
+// check-system-update queries the remote update server: poll it sparingly
+const UPDATE_CHECK_INTERVAL = 30 * 60 * 1000
 
-const freeTmpfs = ref(0)
-const totalTmpfs = ref(0)
-const tmpfsUsagePerc = ref(0)
+const {
+  data: overview,
+  isPending: isSystemInfoPending,
+  isError: isSystemInfoError,
+  error: systemInfoError
+} = useDashboardOverview()
 
-const freeDataStorage = ref(0)
-const totalDataStorage = ref(0)
-const dataStorageUsagePerc = ref(0)
+const systemInfo = computed(() => overview.value?.system ?? null)
 
-const loading = ref({
-  getSystemInfo: true,
-  getUpdatesStatus: true
+const { data: systemUpdateData, isFetching: isUpdateStatusFetching } = useQuery({
+  queryKey: ['dashboard', 'check-system-update'],
+  queryFn: ({ signal }) =>
+    ubusCall<SystemUpdateResponse>('ns.update', 'check-system-update', {}, { signal }),
+  select: (res) => res.data,
+  refetchInterval: UPDATE_CHECK_INTERVAL,
+  staleTime: UPDATE_CHECK_INTERVAL,
+  // run only after system-info has returned data
+  enabled: computed(() => !!systemInfo.value)
 })
 
-const error = ref({
-  title: '',
-  description: ''
+const errorTitle = computed(() =>
+  isSystemInfoError.value ? t('error.cannot_retrieve_system_info') : ''
+)
+const errorDescription = computed(() =>
+  isSystemInfoError.value ? t(getAxiosErrorMessage(systemInfoError.value)) : ''
+)
+
+function usageFromStorage(entry?: StorageEntry): Usage {
+  const free = entry?.available_bytes ?? 0
+  const used = entry?.used_bytes ?? 0
+  const total = free + used
+  return { free, total, perc: total ? round((used / total) * 100) : 0 }
+}
+
+const memory = computed<Usage>(() => {
+  const mem = systemInfo.value?.memory
+  if (!mem) {
+    return { free: 0, total: 0, perc: 0 }
+  }
+
+  const total = mem.mem_total
+  const free = mem.mem_available
+  const used = total - free
+  return { free, total, perc: total ? round((used / total) * 100) : 0 }
 })
+
+const root = computed<Usage>(() => usageFromStorage(systemInfo.value?.storage['/']))
+const tmpfs = computed<Usage>(() => usageFromStorage(systemInfo.value?.storage['tmpfs']))
+const dataStorage = computed<Usage>(() => usageFromStorage(systemInfo.value?.storage['/mnt/data']))
 
 const isUpdateAvailable = computed(
   () =>
@@ -67,72 +101,6 @@ const isUpdateAvailable = computed(
 const isUpdateScheduled = computed(
   () => systemUpdateData.value?.scheduledAt && systemUpdateData.value.scheduledAt != -1
 )
-
-onMounted(() => {
-  loadData()
-
-  // periodically reload system info
-  loadDataIntervalId.value = setInterval(loadData, REFRESH_INTERVAL)
-})
-
-onUnmounted(() => {
-  if (loadDataIntervalId.value) {
-    clearInterval(loadDataIntervalId.value)
-  }
-})
-
-function loadData() {
-  error.value.title = ''
-  error.value.description = ''
-  getSystemInfo()
-  getUpdatesStatus()
-}
-
-async function getSystemInfo() {
-  try {
-    const res = await ubusCall('ns.dashboard', 'system-info')
-    systemInfo.value = res.data.result
-
-    // Support both old format (available_bytes, used_bytes) and new format (mem_total, mem_available)
-    // Introduced by https://github.com/NethServer/nethsecurity/pull/1569, can be removed after the next release since controllers should be updated
-    if (
-      systemInfo.value.memory.mem_total != undefined &&
-      systemInfo.value.memory.mem_available != undefined
-    ) {
-      // New format
-      totalMemory.value = systemInfo.value.memory.mem_total
-      freeMemory.value = systemInfo.value.memory.mem_available
-    } else {
-      // Old format
-      freeMemory.value = systemInfo.value.memory.available_bytes
-      const usedMemory = systemInfo.value.memory.used_bytes
-      totalMemory.value = usedMemory + freeMemory.value
-    }
-    const usedMemory = totalMemory.value - freeMemory.value
-    memoryUsagePerc.value = round((usedMemory / totalMemory.value) * 100)
-
-    freeRoot.value = systemInfo.value.storage['/'].available_bytes
-    const usedRoot = systemInfo.value.storage['/'].used_bytes
-    totalRoot.value = usedRoot + freeRoot.value
-    rootUsagePerc.value = round((usedRoot / totalRoot.value) * 100)
-
-    freeTmpfs.value = systemInfo.value.storage['tmpfs'].available_bytes
-    const usedTmpfs = systemInfo.value.storage['tmpfs'].used_bytes
-    totalTmpfs.value = usedTmpfs + freeTmpfs.value
-    tmpfsUsagePerc.value = round((usedTmpfs / totalTmpfs.value) * 100)
-
-    freeDataStorage.value = systemInfo.value.storage['/mnt/data'].available_bytes
-    const usedDataStorage = systemInfo.value.storage['/mnt/data'].used_bytes
-    totalDataStorage.value = usedDataStorage + freeDataStorage.value
-    dataStorageUsagePerc.value = round((usedDataStorage / totalDataStorage.value) * 100)
-  } catch (err: any) {
-    console.error(err)
-    error.value.title = t('error.cannot_retrieve_system_info')
-    error.value.description = t(getAxiosErrorMessage(err))
-  } finally {
-    loading.value.getSystemInfo = false
-  }
-}
 
 function getProgressBarColor(progress: number) {
   if (progress < 75) {
@@ -151,30 +119,21 @@ function goToSystemSettings() {
 function goToUpdates() {
   router.push(`${getStandaloneRoutePrefix()}/system/update`)
 }
-
-async function getUpdatesStatus() {
-  try {
-    systemUpdateData.value = (await ubusCall('ns.update', 'check-system-update')).data
-    // Ignore error: toast error notification is enough here
-  } finally {
-    loading.value.getUpdatesStatus = false
-  }
-}
 </script>
 
 <template>
   <NeCard
     :title="t('standalone.dashboard.system')"
     :skeleton-lines="5"
-    :loading="loading.getSystemInfo"
-    :error-title="error.title"
-    :error-description="error.description"
+    :loading="isSystemInfoPending"
+    :error-title="errorTitle"
+    :error-description="errorDescription"
   >
     <div class="mt-3 mb-2 flex items-center">
       <div
         class="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary-400 dark:bg-primary-700"
       >
-        <FontAwesomeIcon :icon="['fas', 'server']" class="h-5 w-5 text-white" />
+        <FontAwesomeIcon :icon="faServer" class="h-5 w-5 text-white" />
       </div>
       <div>{{ systemInfo?.hardware || '-' }}</div>
     </div>
@@ -184,10 +143,10 @@ async function getUpdatesStatus() {
         <div class="inline-flex items-center gap-1">
           <span>{{ systemInfo?.hostname || '-' }}</span>
           <!-- warning for default hostname -->
-          <NeTooltip v-if="systemInfo.hostname === 'NethSec'" interactive class="leading-none">
+          <NeTooltip v-if="systemInfo?.hostname === 'NethSec'" interactive class="leading-none">
             <template #trigger>
-              <font-awesome-icon
-                :icon="['fas', 'warning']"
+              <FontAwesomeIcon
+                :icon="faWarning"
                 class="h-4 w-4 text-amber-700 dark:text-amber-500"
                 aria-hidden="true"
               />
@@ -212,12 +171,12 @@ async function getUpdatesStatus() {
         <span class="mr-3 font-semibold">{{ t('standalone.dashboard.operating_system') }}</span>
         <div class="inline-flex items-center gap-2">
           <span>{{ systemInfo?.version?.release || '-' }}</span>
-          <NeSpinner v-if="loading.getUpdatesStatus" size="4" />
+          <NeSpinner v-if="isUpdateStatusFetching" size="4" />
           <!-- warning for image update available -->
           <NeTooltip v-if="isUpdateAvailable && !isUpdateScheduled" class="leading-none">
             <template #trigger>
-              <font-awesome-icon
-                :icon="['fas', 'warning']"
+              <FontAwesomeIcon
+                :icon="faWarning"
                 class="h-4 w-4 text-amber-700 dark:text-amber-500"
                 aria-hidden="true"
               />
@@ -251,14 +210,14 @@ async function getUpdatesStatus() {
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.memory_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {
-              free: byteFormat1024(freeMemory),
-              total: byteFormat1024(totalMemory)
+              free: byteFormat1024(memory.free),
+              total: byteFormat1024(memory.total)
             })
           }}</span>
           <NeProgressBar
-            :progress="memoryUsagePerc"
+            :progress="memory.perc"
             size="sm"
-            :color="getProgressBarColor(memoryUsagePerc)"
+            :color="getProgressBarColor(memory.perc)"
             class="my-1"
           />
         </div>
@@ -266,14 +225,14 @@ async function getUpdatesStatus() {
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.root_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {
-              free: byteFormat1024(freeRoot),
-              total: byteFormat1024(totalRoot)
+              free: byteFormat1024(root.free),
+              total: byteFormat1024(root.total)
             })
           }}</span>
           <NeProgressBar
-            :progress="rootUsagePerc"
+            :progress="root.perc"
             size="sm"
-            :color="getProgressBarColor(rootUsagePerc)"
+            :color="getProgressBarColor(root.perc)"
             class="my-1"
           />
         </div>
@@ -281,29 +240,29 @@ async function getUpdatesStatus() {
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.tmpfs_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {
-              free: byteFormat1024(freeTmpfs),
-              total: byteFormat1024(totalTmpfs)
+              free: byteFormat1024(tmpfs.free),
+              total: byteFormat1024(tmpfs.total)
             })
           }}</span>
           <NeProgressBar
-            :progress="tmpfsUsagePerc"
+            :progress="tmpfs.perc"
             size="sm"
-            :color="getProgressBarColor(tmpfsUsagePerc)"
+            :color="getProgressBarColor(tmpfs.perc)"
             class="my-1"
           />
         </div>
-        <div v-if="freeDataStorage != 0 || totalDataStorage != 0">
+        <div v-if="dataStorage.free != 0 || dataStorage.total != 0">
           <span class="mr-3 font-semibold">{{ t('standalone.dashboard.storage_usage') }}</span>
           <span>{{
             t('standalone.dashboard.usage_free_of_total', {
-              free: byteFormat1024(freeDataStorage),
-              total: byteFormat1024(totalDataStorage)
+              free: byteFormat1024(dataStorage.free),
+              total: byteFormat1024(dataStorage.total)
             })
           }}</span>
           <NeProgressBar
-            :progress="dataStorageUsagePerc"
+            :progress="dataStorage.perc"
             size="sm"
-            :color="getProgressBarColor(dataStorageUsagePerc)"
+            :color="getProgressBarColor(dataStorage.perc)"
             class="my-1"
           />
         </div>

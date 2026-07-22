@@ -1,41 +1,24 @@
 <script lang="ts" setup>
-import { useIpsStatusStore } from '@/stores/standalone/ipsStatus'
-import { getAxiosErrorMessage, NeCard, NeLink, NeSkeleton } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { getAxiosErrorMessage, NeBadgeV2, NeCard, NeLink } from '@nethesis/vue-components'
+import { computed } from 'vue'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useI18n } from 'vue-i18n'
-import IpsEnabledBadge from '@/components/standalone/security/ips/IpsEnabledBadge.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
+import { useIpsStatus } from '@/composables/useIpsStatus'
 
-const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const ips = useIpsStatusStore()
-const intervalId = ref(0)
 const { t } = useI18n()
-const errorTitle = ref<string>()
-const errorDescription = ref<string>()
 
-onMounted(() => {
-  ips.fetchStatus()
-  intervalId.value = setInterval(ips.fetchStatus, REFRESH_INTERVAL)
-})
+const {
+  data: ips,
+  isPending,
+  isError,
+  error
+} = useIpsStatus({ refetchInterval: DASHBOARD_REFRESH_INTERVAL })
 
-onUnmounted(() => {
-  if (intervalId.value) {
-    clearInterval(intervalId.value)
-  }
-})
-
-watch(
-  () => ips.error,
-  (error) => {
-    if (error) {
-      errorTitle.value = t('standalone.ips.failed_to_fetch_info')
-      errorDescription.value = t(getAxiosErrorMessage(error))
-    } else {
-      errorTitle.value = ''
-      errorDescription.value = ''
-    }
-  }
-)
+const errorTitle = computed(() => (isError.value ? t('standalone.ips.failed_to_fetch_info') : ''))
+const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))
 </script>
 
 <template>
@@ -43,7 +26,7 @@ watch(
     :error-description="errorDescription"
     :error-title="errorTitle"
     :icon="['fas', 'shield']"
-    :loading="ips.loading"
+    :loading="isPending"
     :skeleton-lines="2"
   >
     <template #title>
@@ -51,16 +34,19 @@ watch(
         {{ t('standalone.ips.sidebar_title') }}
       </NeLink>
     </template>
-    <NeSkeleton v-if="ips.loading" />
-    <div v-else class="space-y-3">
-      <IpsEnabledBadge
-        :disabled-label="t('standalone.dashboard.inactive')"
-        :enabled-label="t('standalone.dashboard.active')"
-      />
+    <div class="space-y-3">
+      <NeBadgeV2 v-if="ips?.enabled" kind="green">
+        <FontAwesomeIcon :icon="faCheck" class="size-4" />
+        {{ t('standalone.dashboard.active') }}
+      </NeBadgeV2>
+      <NeBadgeV2 v-else kind="gray">
+        <FontAwesomeIcon :icon="faXmark" class="size-4" />
+        {{ t('standalone.dashboard.inactive') }}
+      </NeBadgeV2>
       <div>
         <p>
-          <span class="mr-1 text-xl">{{ ips.events }}</span>
-          {{ t('standalone.ips.events_today', ips.events) }}
+          <span class="mr-1 text-xl">{{ ips?.events ?? '-' }}</span>
+          {{ t('standalone.ips.events_today', ips?.events ?? 0) }}
         </p>
       </div>
     </div>

@@ -10,6 +10,13 @@ type IpsStatus = AxiosResponse<{
   }
 }>
 
+/**
+ * @deprecated Use the `useIpsStatus()` composable
+ * (`@/composables/useIpsStatus`) instead. It fetches `ns.snort status` via
+ * TanStack Query with an abort signal, so the request is cancelled when the
+ * consuming component unmounts. This store fetches manually on mount without
+ * signaling and is kept only until its consumers are migrated.
+ */
 export const useIpsStatusStore = defineStore('ipsStatus', () => {
   const enabled = ref<boolean>(false)
   const events = ref<number>(0)

@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
+import { vmQuery } from '@/lib/standalone/victoriaMetrics'
 import {
   NeBadge,
   NeCard,
@@ -97,8 +98,9 @@ async function getServiceCounter() {
   error.value.description = ''
 
   try {
-    const res = await ubusCall('ns.dashboard', 'counter', { service: 'threat_shield_ip' })
-    serviceCounter.value = res.data.result.count
+    const res = await vmQuery('sum(count_over_time(banip_packet_len[1h]))')
+    const value = res.data?.result?.[0]?.value?.[1]
+    serviceCounter.value = value !== undefined ? Math.trunc(Number(value)) : 0
   } catch (err: any) {
     console.error(err)
     error.value.title = t('error.cannot_retrieve_service_status')

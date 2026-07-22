@@ -4,61 +4,164 @@
 -->
 
 <script setup lang="ts">
+import { ubusCall } from '@/lib/standalone/ubus'
+import { vmQuery } from '@/lib/standalone/victoriaMetrics'
 import {
-  NeBadgeV2,
+  NeBadge,
   NeCard,
   NeLink,
+  NeSkeleton,
   NeTooltip,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute } from 'vue-router'
-import {
-  DASHBOARD_REFRESH_INTERVAL,
-  useDashboardOverview
-} from '@/composables/useDashboardOverview'
-import { useThreatShieldSettings } from '@/composables/useThreatShieldSettings'
-import { getStatusBadge } from '@/lib/standalone/dashboard'
 
 const { t } = useI18n()
 const route = useRoute()
 
-const {
-  data: overview,
-  isPending: isOverviewPending,
-  isError: isOverviewError,
-  error: overviewError
-} = useDashboardOverview()
+// random refresh interval between 20 and 30 seconds
+const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
+const serviceStatus = ref<any>(null)
+const serviceCounter = ref<any>(null)
+const threatShieldConfig = ref<any>(null)
+const intervalId = ref(0)
 
-const {
-  data: tsSettings,
-  isPending: isSettingsPending,
-  isError: isSettingsError,
-  error: settingsError
-} = useThreatShieldSettings({ refetchInterval: DASHBOARD_REFRESH_INTERVAL })
+const loading = ref({
+  getServiceStatus: false,
+  getServiceCounter: false,
+  getThreatShieldConfig: false
+})
 
-const badge = computed(() => getStatusBadge(overview.value?.services.banip))
-const serviceCounter = computed(() => overview.value?.counters.threat_shield_ip)
+const error = ref({
+  title: '',
+  description: ''
+})
 
 const isLoggingDisabled = computed(() => {
   return (
-    !tsSettings.value?.ban_logoutbound &&
-    !tsSettings.value?.ban_loginbound &&
-    !tsSettings.value?.ban_logprerouting
+    !threatShieldConfig.value?.ban_logoutbound &&
+    !threatShieldConfig.value?.ban_loginbound &&
+    !threatShieldConfig.value?.ban_logprerouting
   )
 })
 
-const isPending = computed(() => isOverviewPending.value || isSettingsPending.value)
-const isError = computed(() => isOverviewError.value || isSettingsError.value)
-const error = computed(() => overviewError.value ?? settingsError.value)
+onMounted(() => {
+  loadData()
 
-const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_service_status') : ''))
-const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))
+  // periodically reload data
+  intervalId.value = setInterval(loadData, REFRESH_INTERVAL)
+})
+
+onUnmounted(() => {
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
+  }
+})
+
+function loadData() {
+  getServiceStatus()
+  getServiceCounter()
+  getThreatShieldConfig()
+}
+
+async function getServiceStatus() {
+  // show skeleton only the first time
+  if (!intervalId.value) {
+    loading.value.getServiceStatus = true
+  }
+  error.value.title = ''
+  error.value.description = ''
+
+  try {
+    const res = await ubusCall('ns.dashboard', 'service-status', { service: 'banip' })
+    serviceStatus.value = res.data.result.status
+  } catch (err: any) {
+    console.error(err)
+    error.value.title = t('error.cannot_retrieve_service_status')
+    error.value.description = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.getServiceStatus = false
+  }
+}
+
+async function getServiceCounter() {
+  // show skeleton only the first time
+  if (!intervalId.value) {
+    loading.value.getServiceCounter = true
+  }
+  error.value.title = ''
+  error.value.description = ''
+
+  try {
+    const res = await vmQuery('sum(count_over_time(banip_blocked_bytes[1h]))')
+    const value = res.data?.result?.[0]?.value?.[1]
+    serviceCounter.value = value !== undefined ? Math.trunc(Number(value)) : 0
+  } catch (err: any) {
+    console.error(err)
+    error.value.title = t('error.cannot_retrieve_service_status')
+    error.value.description = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.getServiceCounter = false
+  }
+}
+
+async function getThreatShieldConfig() {
+  try {
+    loading.value.getThreatShieldConfig = true
+    const res = await ubusCall('ns.threatshield', 'list-settings')
+    threatShieldConfig.value = res.data.data
+  } catch (err: any) {
+    console.error(err)
+    error.value.title = t('error.cannot_retrieve_threat_shield_settings')
+    error.value.description = t(getAxiosErrorMessage(err))
+  } finally {
+    loading.value.getThreatShieldConfig = false
+  }
+}
+
+function getBadgeKind(status: string) {
+  switch (status) {
+    case 'ok':
+      return 'success'
+    case 'warning':
+      return 'warning'
+    case 'disabled':
+      return 'secondary'
+    default:
+      return 'error'
+  }
+}
+
+function getBadgeText(status: string) {
+  switch (status) {
+    case 'ok':
+      return t('standalone.dashboard.active')
+    case 'warning':
+      return t('standalone.dashboard.warning')
+    case 'disabled':
+      return t('standalone.dashboard.inactive')
+    default:
+      return t('standalone.dashboard.unknown')
+  }
+}
+
+function getBadgeIcon(status: string) {
+  switch (status) {
+    case 'ok':
+      return faCheck
+    case 'warning':
+      return faWarning
+    case 'disabled':
+      return faXmark
+    default:
+      return faXmark
+  }
+}
 
 function goTo(path: string) {
   router.push(`${getStandaloneRoutePrefix(route)}${path}`)
@@ -69,9 +172,9 @@ function goTo(path: string) {
   <NeCard
     :icon="['fas', 'shield']"
     :skeleton-lines="2"
-    :loading="isPending"
-    :error-title="errorTitle"
-    :error-description="errorDescription"
+    :loading="loading.getServiceStatus || loading.getServiceCounter"
+    :error-title="error.title"
+    :error-description="error.description"
   >
     <!-- title slot -->
     <template #title>
@@ -81,17 +184,19 @@ function goTo(path: string) {
     </template>
     <div class="space-y-3">
       <!-- status -->
-      <NeBadgeV2 :kind="badge.kind">
-        <FontAwesomeIcon :icon="badge.icon" class="size-4" />
-        {{ t(badge.textKey) }}
-      </NeBadgeV2>
+      <NeBadge
+        :kind="getBadgeKind(serviceStatus)"
+        :text="getBadgeText(serviceStatus)"
+        :icon="getBadgeIcon(serviceStatus)"
+      />
       <!-- monitoring disabled warning -->
       <NeTooltip v-if="isLoggingDisabled" class="inline-block">
         <template #trigger>
-          <NeBadgeV2 kind="amber">
-            <FontAwesomeIcon :icon="faWarning" class="size-4" />
-            {{ t('standalone.dashboard.monitoring_disabled') }}
-          </NeBadgeV2>
+          <NeBadge
+            kind="warning"
+            :text="t('standalone.dashboard.monitoring_disabled')"
+            :icon="faWarning"
+          />
         </template>
         <template #content>
           <i18n-t keypath="standalone.dashboard.monitoring_disabled_tooltip" tag="p" scope="global">
@@ -104,8 +209,9 @@ function goTo(path: string) {
         </template>
       </NeTooltip>
       <!-- counter -->
-      <div>
-        <span class="text-xl">{{ serviceCounter ?? '-' }}</span>
+      <NeSkeleton v-if="loading.getServiceCounter" :lines="1" class="w-14"></NeSkeleton>
+      <div v-else>
+        <span class="text-xl">{{ serviceCounter }}</span>
         <span class="ml-2">{{ t('standalone.dashboard.blocked_ips_last_hour') }}</span>
       </div>
     </div>

@@ -26,6 +26,8 @@ import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import NeMultiTextInput from '../../NeMultiTextInput.vue'
 import { MessageBag } from '@/lib/validation'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 
 const { t } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
@@ -33,9 +35,8 @@ const queryClient = useQueryClient()
 
 const isThreatShieldEnabled = ref(false)
 const isLogPreroutingEnabled = ref(false)
-const isLogInputEnabled = ref(false)
-const isLogForwardEnabled = ref(false)
-const isLogForwardLanEnabled = ref(false)
+const isLogInboundEnabled = ref(false)
+const isLogOutboundEnabled = ref(false)
 const isBlockBruteForceEnabled = ref(false)
 const banTime = ref('')
 const maxFailedAccesses = ref('')
@@ -78,9 +79,8 @@ type ListSettingsResponse = {
     data: {
       ban_icmplimit: number
       ban_logcount: string
-      ban_logforwardlan: boolean
-      ban_logforwardwan: boolean
-      ban_loginput: boolean
+      ban_logoutbound: boolean
+      ban_loginbound: boolean
       ban_loglimit: boolean
       ban_logprerouting: boolean
       ban_logterm: string[]
@@ -102,9 +102,8 @@ async function fetchSettings() {
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
     isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
-    isLogInputEnabled.value = threatShieldConfig.ban_loginput
-    isLogForwardEnabled.value = threatShieldConfig.ban_logforwardwan
-    isLogForwardLanEnabled.value = threatShieldConfig.ban_logforwardlan
+    isLogInboundEnabled.value = threatShieldConfig.ban_loginbound
+    isLogOutboundEnabled.value = threatShieldConfig.ban_logoutbound
     isBlockBruteForceEnabled.value = threatShieldConfig.ban_loglimit
     banTime.value = threatShieldConfig.ban_nftexpiry
     maxFailedAccesses.value = threatShieldConfig.ban_logcount.toString()
@@ -219,9 +218,8 @@ async function saveSettings() {
     await ubusCall('ns.threatshield', 'edit-settings', {
       enabled: isThreatShieldEnabled.value,
       ban_logprerouting: isLogPreroutingEnabled.value,
-      ban_loginput: isLogInputEnabled.value,
-      ban_logforwardwan: isLogForwardEnabled.value,
-      ban_logforwardlan: isLogForwardLanEnabled.value,
+      ban_loginbound: isLogInboundEnabled.value,
+      ban_logoutbound: isLogOutboundEnabled.value,
       ban_loglimit: isBlockBruteForceEnabled.value,
       ban_nftexpiry: banTime.value,
       ban_logcount: Number(maxFailedAccesses.value),
@@ -286,12 +284,7 @@ onMounted(() => {
               <div class="mb-8 space-y-6">
                 <!-- monitoring not working warning -->
                 <NeInlineNotification
-                  v-if="
-                    !isLogPreroutingEnabled &&
-                    !isLogInputEnabled &&
-                    !isLogForwardEnabled &&
-                    !isLogForwardLanEnabled
-                  "
+                  v-if="!isLogPreroutingEnabled && !isLogInboundEnabled && !isLogOutboundEnabled"
                   kind="warning"
                   :title="t('standalone.threat_shield.threats_monitoring_disabled')"
                   :description="t('standalone.threat_shield.threats_monitoring_disabled_message')"
@@ -304,21 +297,15 @@ onMounted(() => {
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
-                  v-model="isLogInputEnabled"
+                  v-model="isLogInboundEnabled"
                   :top-label="t('standalone.threat_shield.log_input_chain')"
-                  :label="isLogInputEnabled ? t('common.enabled') : t('common.disabled')"
+                  :label="isLogInboundEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
                 <NeToggle
-                  v-model="isLogForwardEnabled"
-                  :top-label="t('standalone.threat_shield.log_forward_chain')"
-                  :label="isLogForwardEnabled ? t('common.enabled') : t('common.disabled')"
-                  :disabled="loading.editSettings"
-                />
-                <NeToggle
-                  v-model="isLogForwardLanEnabled"
+                  v-model="isLogOutboundEnabled"
                   :top-label="t('standalone.threat_shield.log_forward_lan_chain')"
-                  :label="isLogForwardLanEnabled ? t('common.enabled') : t('common.disabled')"
+                  :label="isLogOutboundEnabled ? t('common.enabled') : t('common.disabled')"
                   :disabled="loading.editSettings"
                 />
               </div>
@@ -494,11 +481,7 @@ onMounted(() => {
               @click="saveSettings()"
             >
               <template #prefix>
-                <font-awesome-icon
-                  :icon="['fas', 'floppy-disk']"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                />
+                <FontAwesomeIcon :icon="faFloppyDisk" class="h-4 w-4" aria-hidden="true" />
               </template>
               {{ t('common.save') }}
             </NeButton>

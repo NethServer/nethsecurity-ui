@@ -2495,9 +2495,9 @@
     "metrics": {
       "title": "Metriche",
       "time_range": "Intervallo di tempo",
-      "time_range_minutes": "Ultimo {num} minuto | Ultimi {num} minuti",
-      "time_range_hours": "Ultima {num} ora | Ultime {num} ore",
-      "time_range_days": "Ultimo {num} giorno | Ultimi {num} giorni",
+      "time_range_minutes": "Ultimo minuto | Ultimi {count} minuti",
+      "time_range_hours": "Ultima ora | Ultime {count} ore",
+      "time_range_days": "Ultimo giorno | Ultimi {count} giorni",
       "refresh_interval": "Aggiornamento automatico",
       "system_section": "Sistema",
       "network_section": "Rete",

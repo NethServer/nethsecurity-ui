@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.23.2](https://github.com/NethServer/nethsecurity-ui/compare/2.23.1...2.23.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @vuepic/vue-datepicker to v14 ([#778](https://github.com/NethServer/nethsecurity-ui/issues/778)) ([0837adb](https://github.com/NethServer/nethsecurity-ui/commit/0837adb60510cc9b7745d82328164df75cac87f6))
+* **metrics:** wrong variable usage for italian translation ([a90b193](https://github.com/NethServer/nethsecurity-ui/commit/a90b1934f1d9035afe5802c229f4c577e42f0fff))
+* **ui:** preserve page size for lease tables ([#798](https://github.com/NethServer/nethsecurity-ui/issues/798)) ([3eeca38](https://github.com/NethServer/nethsecurity-ui/commit/3eeca38e6d08177d9ea4a2bb7fa04de8338ba530))
+
 ## [2.23.1](https://github.com/NethServer/nethsecurity-ui/compare/2.23.0...2.23.1) (2026-07-09)
 
 

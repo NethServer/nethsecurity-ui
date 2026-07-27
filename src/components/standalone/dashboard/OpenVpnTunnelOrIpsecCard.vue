@@ -4,97 +4,51 @@
 -->
 
 <script setup lang="ts">
-import { ubusCall } from '@/lib/standalone/ubus'
-import { NeCard, NeSkeleton, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { NeCard, getAxiosErrorMessage } from '@nethesis/vue-components'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useDashboardOverview } from '@/composables/useDashboardOverview'
 
-interface TunnelCounters {
-  enabled: number
-  connected: number
-}
-
-const props = defineProps({
-  method: { type: String, required: true }
-})
+const props = defineProps<{
+  method: 'ipsec-tunnels' | 'ovpn-tunnels'
+}>()
 
 const { t } = useI18n()
 
-// random refresh interval between 20 and 30 seconds
-const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const counters = ref<TunnelCounters>({ enabled: 0, connected: 0 })
-const counterIntervalId = ref(0)
+const { data: overview, isPending, isError, error } = useDashboardOverview()
 
-const loading = ref({
-  getCounters: false
+const counters = computed(() => {
+  const vpn = overview.value?.vpn
+  const tunnelCounters = props.method === 'ipsec-tunnels' ? vpn?.ipsec : vpn?.ovpn
+  return tunnelCounters ?? { enabled: 0, connected: 0 }
 })
 
-const error = ref({
-  title: '',
-  description: ''
-})
-
-onMounted(() => {
-  getCounters()
-
-  // periodically reload data
-  counterIntervalId.value = setInterval(getCounters, REFRESH_INTERVAL)
-})
-
-onUnmounted(() => {
-  if (counterIntervalId.value) {
-    clearInterval(counterIntervalId.value)
-  }
-})
-
-async function getCounters() {
-  // show skeleton only the first time
-  if (!counterIntervalId.value) {
-    loading.value.getCounters = true
-  }
-  error.value.title = ''
-  error.value.description = ''
-
-  try {
-    const res = await ubusCall('ns.dashboard', props.method)
-    counters.value = res.data.result
-  } catch (err: any) {
-    console.error(err)
-    error.value.title = t('error.cannot_retrieve_service_status')
-    error.value.description = t(getAxiosErrorMessage(err))
-  } finally {
-    loading.value.getCounters = false
-  }
-}
+const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_service_status') : ''))
+const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))
 </script>
 
 <template>
   <NeCard
     :icon="['fas', 'globe']"
     :skeleton-lines="2"
-    :loading="loading.getCounters"
-    :error-title="error.title"
-    :error-description="error.description"
+    :loading="isPending"
+    :error-title="errorTitle"
+    :error-description="errorDescription"
   >
     <!-- title slot -->
     <template #title>
       <slot name="title"></slot>
     </template>
     <div>
-      <NeSkeleton v-if="loading.getCounters" :lines="1" class="w-14"></NeSkeleton>
-      <div v-else>
-        <div>
-          <span class="text-xl">{{ counters.enabled }}</span>
-          <span class="ml-2">{{
-            t('standalone.dashboard.tunnels_enabled', counters.enabled)
-          }}</span>
-        </div>
-        <div>
-          <span class="text-xl">{{ counters.connected }}</span>
-          <span class="ml-2">{{
-            t('standalone.dashboard.tunnels_connected', counters.connected)
-          }}</span>
-        </div>
+      <div>
+        <span class="text-xl">{{ counters.enabled }}</span>
+        <span class="ml-2">{{ t('standalone.dashboard.tunnels_enabled', counters.enabled) }}</span>
+      </div>
+      <div>
+        <span class="text-xl">{{ counters.connected }}</span>
+        <span class="ml-2">{{
+          t('standalone.dashboard.tunnels_connected', counters.connected)
+        }}</span>
       </div>
     </div>
   </NeCard>

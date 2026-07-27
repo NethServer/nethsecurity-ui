@@ -98,6 +98,8 @@ type ListSettingsResponse = {
 async function fetchSettings() {
   try {
     loading.value.listSettings = true
+    // @deprecated fetch via useThreatShieldSettings() composable
+    // (@/composables/useThreatShieldSettings) — adds abort-on-unmount signaling
     const res = await ubusCall<ListSettingsResponse>('ns.threatshield', 'list-settings')
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled

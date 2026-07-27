@@ -99,6 +99,8 @@ const {
   error: settingsError
 } = useQuery({
   queryKey: ['threatshield', 'settings'],
+  // @deprecated fetch via useThreatShieldSettings() composable
+  // (@/composables/useThreatShieldSettings) — adds abort-on-unmount signaling
   queryFn: () =>
     ubusCall<{ data: { data: { enabled: boolean } } }>('ns.threatshield', 'list-settings'),
   select: (res) => res.data.data

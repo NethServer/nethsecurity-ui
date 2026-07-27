@@ -1,58 +1,65 @@
 <script lang="ts" setup>
-import { useHaStatusStore } from '@/stores/standalone/haStatus'
 import {
   getAxiosErrorMessage,
+  NeBadgeV2,
   NeCard,
-  NeBadge,
-  NeSkeleton,
   NeTooltip,
   formatDateLoc
 } from '@nethesis/vue-components'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCheck, faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useQuery } from '@tanstack/vue-query'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
 
-const REFRESH_INTERVAL = 20000 + Math.random() * 10 * 1000
-const ha = useHaStatusStore()
-const intervalId = ref(0)
+type HaStatusResponse = {
+  data: {
+    state: string
+    role: string
+    status: string
+    last_sync_status: string
+    last_sync_time: number
+  }
+}
+
 const { t } = useI18n()
-const errorTitle = ref<string>()
-const errorDescription = ref<string>()
 
-onMounted(() => {
-  ha.fetchStatus()
-  intervalId.value = setInterval(ha.fetchStatus, REFRESH_INTERVAL)
+const {
+  data: ha,
+  isPending,
+  isError,
+  error
+} = useQuery({
+  queryKey: ['dashboard', 'ha', 'status'],
+  queryFn: ({ signal }) => ubusCall<HaStatusResponse>('ns.ha', 'status', {}, { signal }),
+  select: (res) => ({
+    status: res.data.status,
+    role: res.data.role,
+    state: res.data.state,
+    lastSyncStatus: res.data.last_sync_status.toLowerCase().replace(/ /g, '_'),
+    lastSyncTime: res.data.last_sync_time
+  }),
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
 })
 
-onUnmounted(() => {
-  if (intervalId.value) {
-    clearInterval(intervalId.value)
-  }
-})
+const lastSyncStatus = computed(() => ha.value?.lastSyncStatus ?? '')
+const lastSyncTime = computed(() => Number(ha.value?.lastSyncTime) || 0)
 
-watch(
-  () => ha.error,
-  (error) => {
-    if (error) {
-      errorTitle.value = t('standalone.ha.failed_to_fetch_info')
-      errorDescription.value = t(getAxiosErrorMessage(error))
-    } else {
-      errorTitle.value = ''
-      errorDescription.value = ''
-    }
-  }
-)
+const errorTitle = computed(() => (isError.value ? t('standalone.ha.failed_to_fetch_info') : ''))
+const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))
 
 function getBadgeKind(status: string) {
   switch (status) {
     case 'enabled':
     case 'up_to_date':
     case 'successfull':
-      return 'success'
+      return 'green'
     case 'disabled':
-      return 'secondary'
+      return 'gray'
     default:
-      return 'error'
+      return 'rose'
   }
 }
 
@@ -93,21 +100,18 @@ function getBadgeIcon(status: string) {
     :error-description="errorDescription"
     :error-title="errorTitle"
     :icon="['fas', 'server']"
-    :loading="ha.loading"
+    :loading="isPending"
     :skeleton-lines="2"
   >
     <template #title>
       {{ t('standalone.ha.sidebar_title') }}
     </template>
-    <NeSkeleton v-if="ha.loading" />
-    <div v-else class="space-y-3">
-      <NeBadge
-        v-if="ha.status"
-        :kind="getBadgeKind(ha.status)"
-        :text="getBadgeText(ha.status)"
-        :icon="getBadgeIcon(ha.status)"
-      />
-      <ul v-if="ha.status === 'enabled'">
+    <div class="space-y-3">
+      <NeBadgeV2 v-if="ha?.status" :kind="getBadgeKind(ha.status)">
+        <FontAwesomeIcon :icon="getBadgeIcon(ha.status)" class="size-4" />
+        {{ getBadgeText(ha.status) }}
+      </NeBadgeV2>
+      <ul v-if="ha?.status === 'enabled'">
         <li>
           <span class="mr-3 font-semibold">{{ t('standalone.ha.role') }}</span
           ><span>{{ t('standalone.ha.' + ha.role) }}</span>
@@ -120,16 +124,16 @@ function getBadgeIcon(status: string) {
               <template #content>
                 <span class="mr-3 font-semibold">{{ t('standalone.ha.last_sync_status') }}</span
                 ><span>{{
-                  ha.lastSyncStatus
-                    ? t('standalone.ha.' + ha.lastSyncStatus)
+                  lastSyncStatus
+                    ? t('standalone.ha.' + lastSyncStatus)
                     : t('standalone.dashboard.unavailable')
                 }}</span
                 ><br />
 
                 <span class="mr-3 font-semibold">{{ t('standalone.ha.last_sync_time') }}</span>
                 <span>{{
-                  ha.lastSyncTime > 0
-                    ? formatDateLoc(new Date(ha.lastSyncTime * 1000), 'PPpp')
+                  lastSyncTime > 0
+                    ? formatDateLoc(new Date(lastSyncTime * 1000), 'PPpp')
                     : t('standalone.dashboard.unavailable')
                 }}</span>
               </template>
@@ -138,11 +142,10 @@ function getBadgeIcon(status: string) {
         </li>
 
         <li v-if="ha.role === 'backup'" class="pt-3">
-          <NeBadge
-            :kind="'warning'"
-            :icon="['fas', 'triangle-exclamation']"
-            :text="t('standalone.ha.backup_warning')"
-          />
+          <NeBadgeV2 kind="amber">
+            <FontAwesomeIcon :icon="faTriangleExclamation" class="size-4" />
+            {{ t('standalone.ha.backup_warning') }}
+          </NeBadgeV2>
         </li>
       </ul>
     </div>

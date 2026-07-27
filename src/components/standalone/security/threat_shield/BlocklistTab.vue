@@ -78,6 +78,8 @@ async function fetchBlocklists() {
   try {
     loading.value = true
     blocklists.value = (await ubusCall('ns.threatshield', 'list-blocklist')).data.data
+    // @deprecated fetch via useThreatShieldSettings() composable
+    // (@/composables/useThreatShieldSettings) — adds abort-on-unmount signaling
     isThreatShieldEnabled.value = (
       await ubusCall('ns.threatshield', 'list-settings')
     ).data.data.enabled

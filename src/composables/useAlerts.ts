@@ -1,6 +1,5 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useQuery } from '@tanstack/vue-query'
-import type { AxiosResponse } from 'axios'
 import type { NeNotificationV2 } from '@nethesis/vue-components'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -17,7 +16,9 @@ export type Alert = {
 }
 
 type ListAlertsResponse = {
-  alerts: Alert[]
+  data: {
+    alerts: Alert[]
+  }
 }
 
 function getSeverityBadgeKind(severity: string | undefined): NeNotificationV2['kind'] {
@@ -37,8 +38,8 @@ export function useAlerts() {
 
   const { data, error, status, isPending, isError, dataUpdatedAt } = useQuery({
     queryKey: ['metrics', 'alerts'],
-    queryFn: async () =>
-      await ubusCall<AxiosResponse<ListAlertsResponse>>('ns.telegraf', 'list-alerts'),
+    queryFn: ({ signal }) =>
+      ubusCall<ListAlertsResponse>('ns.telegraf', 'list-alerts', {}, { signal }),
     select: (response) => response.data.alerts,
     refetchInterval: 15000,
     // Pause polling while a disruptive system action (reboot, update, image

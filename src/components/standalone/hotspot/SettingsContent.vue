@@ -808,89 +808,6 @@ function goToInterfaces() {
       :description="t('standalone.hotspot.description')"
       class="max-w-3xl"
     >
-      <NeCard
-        v-if="accountName && (isLoggedIn || sessionExpired)"
-        :title="t('standalone.hotspot.settings.connected_account_title')"
-        :icon="['fas', 'wifi']"
-        class="mb-6"
-      >
-        <div class="divide-y divide-gray-200 text-sm dark:divide-gray-700">
-          <div class="flex items-center justify-between gap-4 py-2.5">
-            <span class="text-gray-500 dark:text-gray-400">
-              {{ t('standalone.hotspot.settings.connected_session') }}
-            </span>
-            <NeBadge
-              :text="
-                isLoggedIn
-                  ? t('standalone.hotspot.settings.session_active')
-                  : t('standalone.hotspot.settings.session_expired')
-              "
-              :kind="isLoggedIn ? 'success' : 'warning'"
-              size="sm"
-            />
-          </div>
-          <div class="flex items-center justify-between gap-4 py-2.5">
-            <span class="text-gray-500 dark:text-gray-400">
-              {{ t('standalone.hotspot.settings.connected_account') }}
-            </span>
-            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
-              {{ accountName }}
-            </span>
-          </div>
-          <div class="flex items-center justify-between gap-4 py-2.5">
-            <span class="text-gray-500 dark:text-gray-400">
-              {{ t('standalone.hotspot.settings.connected_user') }}
-            </span>
-            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
-              {{ accountUser }}
-            </span>
-          </div>
-          <div class="flex items-center justify-between gap-4 py-2.5">
-            <span class="text-gray-500 dark:text-gray-400">
-              {{ t('standalone.hotspot.settings.connected_manager') }}
-            </span>
-            <NeLink :href="`https://${managerHost}`" target="_blank" class="text-right font-medium">
-              {{ managerHost }}
-            </NeLink>
-          </div>
-        </div>
-        <template v-if="sessionExpired && myLoginAvailable">
-          <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            {{ t('standalone.hotspot.settings.session_expired_description') }}
-          </p>
-          <div class="mt-4">
-            <NeButton
-              :disabled="oidcLogging || logging"
-              kind="secondary"
-              @click.prevent="oidcLogin(managerHost)"
-            >
-              <template #prefix>
-                <img :src="myNethesisIconUrl" class="h-5 w-5" alt="" aria-hidden="true" />
-              </template>
-              {{ t('standalone.hotspot.settings.login_with_my_nethesis') }}
-              <template #suffix>
-                <NeSpinner v-if="oidcLogging" size="4" />
-              </template>
-            </NeButton>
-          </div>
-          <NeInlineNotification
-            v-if="oidcLogging"
-            class="mt-4"
-            kind="info"
-            :title="t('standalone.hotspot.settings.login_oidc_waiting')"
-            :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
-            :primary-button-label="t('common.cancel')"
-            @primary-click="stopOidcPolling()"
-          />
-          <NeInlineNotification
-            v-if="oidcError.notificationTitle"
-            class="mt-4"
-            kind="error"
-            :title="oidcError.notificationTitle"
-            :description="oidcError.notificationDescription"
-          />
-        </template>
-      </NeCard>
       <!-- with an expired session the fields would be disabled placeholders:
            hide the form until the user logs in again -->
       <template v-if="viewConfiguration && !sessionExpired">
@@ -1080,9 +997,8 @@ function goToInterfaces() {
       v-if="
         !loadingParentHotspot &&
         !loadingListDevices &&
-        isLoggedIn &&
-        activeConfiguration &&
-        !emptyDevices
+        accountName &&
+        (isLoggedIn || sessionExpired)
       "
       class="my-8"
     />
@@ -1090,13 +1006,101 @@ function goToInterfaces() {
       v-if="
         !loadingParentHotspot &&
         !loadingListDevices &&
-        isLoggedIn &&
-        activeConfiguration &&
-        !emptyDevices
+        accountName &&
+        (isLoggedIn || sessionExpired)
       "
-      :title="t('standalone.hotspot.settings.unregister')"
+      :title="t('standalone.hotspot.settings.connection')"
+      :description="t('standalone.hotspot.settings.connection_description')"
       class="max-w-3xl"
     >
+      <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
+        {{ t('common.status') }}
+      </div>
+      <NeCard
+        :title="t('standalone.hotspot.settings.connected_account_title')"
+        :icon="['fas', 'wifi']"
+        class="mb-6"
+      >
+        <div class="divide-y divide-gray-200 text-sm dark:divide-gray-700">
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_session') }}
+            </span>
+            <NeBadge
+              :text="
+                isLoggedIn
+                  ? t('standalone.hotspot.settings.session_active')
+                  : t('standalone.hotspot.settings.session_expired')
+              "
+              :kind="isLoggedIn ? 'success' : 'warning'"
+              size="sm"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_account') }}
+            </span>
+            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+              {{ accountName }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_user') }}
+            </span>
+            <span class="text-right font-medium text-gray-900 dark:text-gray-50">
+              {{ accountUser }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-2.5">
+            <span class="text-gray-500 dark:text-gray-400">
+              {{ t('standalone.hotspot.settings.connected_manager') }}
+            </span>
+            <NeLink :href="`https://${managerHost}`" target="_blank" class="text-right font-medium">
+              {{ managerHost }}
+            </NeLink>
+          </div>
+        </div>
+        <template v-if="sessionExpired && myLoginAvailable">
+          <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            {{ t('standalone.hotspot.settings.session_expired_description') }}
+          </p>
+          <div class="mt-4">
+            <NeButton
+              :disabled="oidcLogging || logging"
+              kind="secondary"
+              @click.prevent="oidcLogin(managerHost)"
+            >
+              <template #prefix>
+                <img :src="myNethesisIconUrl" class="h-5 w-5" alt="" aria-hidden="true" />
+              </template>
+              {{ t('standalone.hotspot.settings.login_with_my_nethesis') }}
+              <template #suffix>
+                <NeSpinner v-if="oidcLogging" size="4" />
+              </template>
+            </NeButton>
+          </div>
+          <NeInlineNotification
+            v-if="oidcLogging"
+            class="mt-4"
+            kind="info"
+            :title="t('standalone.hotspot.settings.login_oidc_waiting')"
+            :description="t('standalone.hotspot.settings.login_oidc_waiting_description')"
+            :primary-button-label="t('common.cancel')"
+            @primary-click="stopOidcPolling()"
+          />
+          <NeInlineNotification
+            v-if="oidcError.notificationTitle"
+            class="mt-4"
+            kind="error"
+            :title="oidcError.notificationTitle"
+            :description="oidcError.notificationDescription"
+          />
+        </template>
+      </NeCard>
+      <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
+        {{ t('standalone.hotspot.settings.unregister') }}
+      </div>
       <NeButton size="md" @click="showUnregisterModal = true">
         {{ t('standalone.hotspot.settings.unregister_unit') }}
       </NeButton>

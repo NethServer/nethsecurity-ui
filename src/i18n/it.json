@@ -1362,6 +1362,8 @@
         "login_oidc_failed": "Autenticazione non autorizzata ({error}).",
         "login_oidc_not_supported": "Il hotspot manager non supporta ancora il login con My Nethesis.",
         "login_oidc_popup_blocked": "Il browser ha bloccato la finestra di login: consenti i popup per questo sito e riprova.",
+        "connection": "Connessione hotspot",
+        "connection_description": "Gestisci l'account collegato al hotspot manager.",
         "connected_account_title": "Account collegato",
         "connected_account": "Account",
         "connected_user": "Autenticato da",

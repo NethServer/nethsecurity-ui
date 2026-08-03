@@ -108,8 +108,16 @@ function buildDatasets(
   return series.datasets.map((ds, i) => makeDataset(ds, palette[i % palette.length]!))
 }
 
+function bytesPerSecToKbps(data: number[]): number[] {
+  return data.map((v) => (v * 8) / 1000)
+}
+
 function buildTrafficDatasets(series: MetricSeries, isLight: boolean): object[] {
-  return buildDatasets(series, [CYAN_600, INDIGO_600], [CYAN_500, INDIGO_500], isLight)
+  const kbpsSeries: MetricSeries = {
+    labels: series.labels,
+    datasets: series.datasets.map((ds) => ({ label: ds.label, data: bytesPerSecToKbps(ds.data) }))
+  }
+  return buildDatasets(kbpsSeries, [CYAN_600, INDIGO_600], [CYAN_500, INDIGO_500], isLight)
 }
 
 function buildLatencyDatasets(series: MetricSeries, isLight: boolean): object[] {

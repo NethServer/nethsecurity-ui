@@ -8,13 +8,13 @@ import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
-import axios, { type AxiosRequestConfig, CanceledError } from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
-import { useNotificationsStore } from './stores/notifications'
+import { getUbusReproductionCommand } from '@/lib/axiosErrorCommand'
 import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
 import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
 import WizardShell from './views/standalone/wizard/WizardShell.vue'
@@ -23,7 +23,6 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 const loginStore = useLoginStore()
 const unitsStore = useUnitsStore()
-const notificationsStore = useNotificationsStore()
 const { locale } = useI18n({ useScope: 'global' })
 const route = useRoute()
 const sudoStore = useSudoStore()
@@ -94,6 +93,16 @@ function configureAxios() {
         console.error('[interceptor]', error.response.data.message)
       }
 
+      if (error.config) {
+        const ubusCommand = getUbusReproductionCommand(error.config)
+
+        if (ubusCommand) {
+          console.error('[interceptor] reproduce this call on the unit with:')
+          // logged on its own so it's easy to select and copy
+          console.error(ubusCommand)
+        }
+      }
+
       if (error.response?.status == 401) {
         if (isStandaloneMode()) {
           if (error.response?.data?.message !== 'incorrect Username or Password') {
@@ -140,30 +149,6 @@ function configureAxios() {
             }
           }, 200)
         })
-      } else {
-        // show error notification only if error is not caused from cancellation
-        // and if it isn't a validation error
-        // and if it isn't caused by one of the update endpoints because of the system rebooting
-        // and if it isn't caused by a net::ERR_CONNECTION_REFUSED when applying a migration (probably because of nginx restarting or the machine's ip addresses changing)
-        if (
-          !(error instanceof CanceledError) &&
-          !error.response?.data?.data?.validation?.errors?.length &&
-          !(
-            error.config.url.includes('/ubus/call') &&
-            (JSON.parse(error.config.data)?.method === 'install-uploaded-image' ||
-              JSON.parse(error.config.data)?.method === 'update-system') &&
-            // if the error is caused by a system reboot, the response will not have a payload (since it's caused by a net::ERR_CONNECTION_REFUSED)
-            (!error.response || !error.response.data)
-          ) &&
-          !(
-            error.config.url.includes('/ubus/call') &&
-            (JSON.parse(error.config.data)?.path === 'ns.migration' ||
-              JSON.parse(error.config.data)?.method === 'upload') &&
-            (!error.response || !error.response.data)
-          )
-        ) {
-          notificationsStore.createNotificationFromAxiosError(error)
-        }
       }
       return Promise.reject(error)
     }

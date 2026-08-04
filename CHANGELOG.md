@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.23.3](https://github.com/NethServer/nethsecurity-ui/compare/2.23.2...2.23.3) (2026-08-04)
+
+
+### Bug Fixes
+
+* adjusting rate of data, assumed wrong format from the API ([#804](https://github.com/NethServer/nethsecurity-ui/issues/804)) ([4302211](https://github.com/NethServer/nethsecurity-ui/commit/43022119831922a58292fa98674d8db208d549a4))
+* removing error notifications ([#803](https://github.com/NethServer/nethsecurity-ui/issues/803)) ([b2f6763](https://github.com/NethServer/nethsecurity-ui/commit/b2f6763fbde6630d67cb4baf7938dfae9d0e1990))
+
 ## [2.23.2](https://github.com/NethServer/nethsecurity-ui/compare/2.23.1...2.23.2) (2026-07-27)
 
 

@@ -8,8 +8,8 @@ import { type NeNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { isEmpty } from 'lodash-es'
 import { isStandaloneMode } from '@/lib/config'
+import { getUbusReproductionCommand } from '@/lib/axiosErrorCommand'
 
 const NOTIFICATIONS_LIMIT = 30
 const DEFAULT_NOTIFICATION_TIMEOUT = 5000
@@ -163,17 +163,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   const copyUbusApiCommandToClipboard = (notification: NeNotification) => {
-    const inputData = JSON.parse(notification.payload.config.data)
-    const ubusPath = inputData.path
-    const ubusMethod = inputData.method
-    const inputPayload = inputData.payload
-    let command = ``
+    const command = getUbusReproductionCommand(notification.payload.config)
 
-    if (!isEmpty(inputPayload)) {
-      command += `echo '${JSON.stringify(inputPayload)}' | `
+    if (command) {
+      navigator.clipboard.writeText(command)
     }
-    command += `/usr/libexec/rpcd/${ubusPath} call ${ubusMethod}`
-    navigator.clipboard.writeText(command)
   }
 
   const showErrorDetails = (notification: NeNotification) => {

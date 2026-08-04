@@ -14,6 +14,7 @@ import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getPreference } from '@nethesis/vue-components'
+import { getUbusReproductionCommand } from '@/lib/axiosErrorCommand'
 import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
 import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
 import WizardShell from './views/standalone/wizard/WizardShell.vue'
@@ -90,6 +91,16 @@ function configureAxios() {
       // print specific error message, if available
       if (error.response?.data?.message) {
         console.error('[interceptor]', error.response.data.message)
+      }
+
+      if (error.config) {
+        const ubusCommand = getUbusReproductionCommand(error.config)
+
+        if (ubusCommand) {
+          console.error('[interceptor] reproduce this call on the unit with:')
+          // logged on its own so it's easy to select and copy
+          console.error(ubusCommand)
+        }
       }
 
       if (error.response?.status == 401) {

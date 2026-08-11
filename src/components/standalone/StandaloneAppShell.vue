@@ -110,11 +110,7 @@ const sidebarOpen = ref(false)
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-2 pb-4 dark:border-gray-700 dark:bg-gray-950"
       >
         <div class="flex h-16 shrink-0 items-center">
-          <img
-            class="h-8 w-auto px-3"
-            :src="logoUrl"
-            :alt="`${getCompanyName()} logo`"
-          />
+          <img class="h-8 w-auto px-3" :src="logoUrl" :alt="`${getCompanyName()} logo`" />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">

@@ -12,7 +12,8 @@
       "account": "Account",
       "controlled_unit_tooltip": "This unit has been opened by a Controller",
       "about": "About",
-      "platform_info": "Controller information"
+      "platform_info": "Controller information",
+      "back_to_controller": "Back to Controller"
     },
     "platform": {
       "controller_version": "Controller version",
@@ -496,7 +497,11 @@
     "incorrect_username_or_password": "Incorrect username or password",
     "privacy_policy": "Privacy policy",
     "session_has_expired": "Session has expired",
-    "please_sign_in_again": "Please sign in again"
+    "please_sign_in_again": "Please sign in again",
+    "unit_session_expired_title": "Session expired",
+    "unit_session_expired_description": "The session for this {product} unit is no longer valid.",
+    "unit_session_expired_hint_title": "Reopen this unit from the Controller",
+    "unit_session_expired_hint_description": "This unit is managed by a Controller, which holds its credentials. Go back to the Controller and open the unit again to start a new session."
   },
   "standalone": {
     "wizard": {

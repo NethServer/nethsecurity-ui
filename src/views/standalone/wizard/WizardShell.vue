@@ -148,12 +148,7 @@ function goToPreviousStep() {
         aria-hidden="true"
       />
       <!-- logo -->
-      <img
-        :src="logoUrl"
-        :alt="`${getCompanyName()} logo`"
-        aria-hidden="true"
-        class="mb-14 h-14"
-      />
+      <img :src="logoUrl" :alt="`${getCompanyName()} logo`" aria-hidden="true" class="mb-14 h-14" />
       <p>{{ t('standalone.wizard.finish_message') }}</p>
     </div>
   </div>
@@ -168,12 +163,7 @@ function goToPreviousStep() {
       >
         <div class="space-y-6">
           <!-- logo -->
-          <img
-            class="h-10"
-            :src="logoUrl"
-            :alt="`${getCompanyName()} logo`"
-            aria-hidden="true"
-          />
+          <img class="h-10" :src="logoUrl" :alt="`${getCompanyName()} logo`" aria-hidden="true" />
           <NeHeading tag="h4">
             {{ t('standalone.wizard.setup_wizard') }}
           </NeHeading>

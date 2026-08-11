@@ -25,7 +25,12 @@ import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/confi
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
+import { getScopedStorageKey } from '@/lib/storage'
 import loginLogoUrl from '@/assets/login_logo.svg'
+
+// scoped because every proxied unit UI shares the controller's origin, and therefore its
+// localStorage namespace
+const rememberedUsernameKey = getScopedStorageKey('standaloneUsername')
 
 const username = ref('')
 const usernameRef = ref()
@@ -63,7 +68,7 @@ watch(step, () => {
 
 onMounted(() => {
   // read username from storage, if present
-  const usernameFromStorage = getStringFromStorage('standaloneUsername')
+  const usernameFromStorage = getStringFromStorage(rememberedUsernameKey)
 
   if (usernameFromStorage) {
     rememberMe.value = true
@@ -86,9 +91,9 @@ async function login() {
 
     // set or remove username to/from local storage
     if (rememberMe.value) {
-      saveToStorage('standaloneUsername', username.value)
+      saveToStorage(rememberedUsernameKey, username.value)
     } else {
-      deleteFromStorage('standaloneUsername')
+      deleteFromStorage(rememberedUsernameKey)
     }
 
     // check if 2fa is enabled

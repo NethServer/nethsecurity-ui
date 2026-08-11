@@ -1,7 +1,8 @@
 //  Copyright (C) 2024 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
+import { isManagedByController } from '@/lib/deployment'
 import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
@@ -238,7 +239,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: isStandaloneMode() ? '/standalone' : '/controller'
+      redirect: isStandaloneBuild() ? '/standalone' : '/controller'
     },
     // standalone
     {
@@ -293,8 +294,9 @@ const router = createRouter({
 
 // redirect to wizard page if not completed
 router.beforeEach(async (to) => {
-  if (!isStandaloneMode()) {
-    // do not check wizard in controller mode
+  if (isManagedByController()) {
+    // a unit reached through a controller is already set up, and trapping it in the wizard would
+    // leave the operator with no way out
     return true
   }
   const setupWizardStore = useSetupWizardStore()

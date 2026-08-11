@@ -1,14 +1,15 @@
 <script lang="ts" setup>
-import { NeCombobox, type NeComboboxOption, savePreference } from '@nethesis/vue-components'
+import { NeCombobox, type NeComboboxOption } from '@nethesis/vue-components'
+import { saveUiPreference } from '@/lib/storage'
 import { useI18n } from 'vue-i18n'
 import { computed, watch } from 'vue'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { capitalize } from 'lodash-es'
 
 const { t, locale, availableLocales } = useI18n({ useScope: 'global' })
-const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+const loginStore = isStandaloneBuild() ? useStandaloneLoginStore() : useControllerLoginStore()
 
 const supportedLanguages = computed((): NeComboboxOption[] => {
   return availableLocales.map((locale) => {
@@ -23,7 +24,7 @@ const supportedLanguages = computed((): NeComboboxOption[] => {
 })
 
 watch(locale, () => {
-  savePreference('locale', locale.value, loginStore.username)
+  saveUiPreference('locale', locale.value, loginStore.username)
 })
 </script>
 

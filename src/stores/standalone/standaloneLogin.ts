@@ -8,12 +8,14 @@ import axios from 'axios'
 import { deleteFromStorage, saveToStorage, getJsonFromStorage } from '@nethesis/vue-components'
 import { useRoute, useRouter } from 'vue-router'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { getProductName, getStandaloneApiEndpoint, isStandaloneMode } from '@/lib/config'
+import { getProductName, getStandaloneApiEndpoint, isStandaloneBuild } from '@/lib/config'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThemeStore } from '../theme'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useTitle } from '@vueuse/core'
 import { useSetupWizardStore } from './setupWizard'
+import { getSessionStorageKey } from '@/lib/storage'
+import { jwtDecode } from 'jwt-decode'
 
 export const TOKEN_REFRESH_INTERVAL = 1000 * 60 * 30 // half an hour
 
@@ -32,14 +34,51 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     return !isEmpty(username.value)
   })
 
-  const loadUserFromStorage = () => {
-    const loginInfo = getJsonFromStorage('standaloneLoginInfo')
+  /**
+   * localStorage key holding this session. Covers all three deployments: the unit serving its own
+   * UI, the unit proxied by a controller under /<uuid>/, and the controller bundle rendering the
+   * legacy embedded route (where the unit id is a route param, not a path prefix).
+   */
+  const sessionStorageKey = () =>
+    getSessionStorageKey(isStandaloneBuild() ? undefined : (route.params.unitId as string))
 
-    if (loginInfo) {
-      username.value = loginInfo.username
-      token.value = loginInfo.token
-      tokenRefreshedTime.value = loginInfo.tokenRefreshedTime
+  const saveSession = (user: string, jwtToken: string, refreshedTime: number) => {
+    saveToStorage(sessionStorageKey(), {
+      username: user,
+      token: jwtToken,
+      tokenRefreshedTime: refreshedTime
+    })
+  }
+
+  const loadUserFromStorage = () => {
+    const key = sessionStorageKey()
+    const loginInfo = getJsonFromStorage(key)
+
+    if (!loginInfo?.token) {
+      return
     }
+
+    // A session handed over by a controller was minted by retrieveAndSaveUnitToken(), which does
+    // not know the unit's username, so recover it from the token itself.
+    let claims: { id?: string; exp?: number }
+    try {
+      claims = jwtDecode(loginInfo.token)
+    } catch (err) {
+      console.warn('[login]', 'discarding an unreadable stored session', err)
+      deleteFromStorage(key)
+      return
+    }
+
+    if (claims.exp && claims.exp * 1000 <= Date.now()) {
+      // Discard rather than load: an expired token would 401 on the first call, and in proxied
+      // mode there is no way to re-mint it from here.
+      deleteFromStorage(key)
+      return
+    }
+
+    username.value = loginInfo.username ?? claims.id ?? ''
+    token.value = loginInfo.token
+    tokenRefreshedTime.value = loginInfo.tokenRefreshedTime ?? 0
   }
 
   const login = async (user: string, password: string) => {
@@ -53,12 +92,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   const loginSuccessful = async (user: string, jwtToken: string) => {
-    const loginInfo = {
-      username: user,
-      token: jwtToken,
-      tokenRefreshedTime: tokenRefreshedTime.value
-    }
-    saveToStorage('standaloneLoginInfo', loginInfo)
+    saveSession(user, jwtToken, tokenRefreshedTime.value)
 
     username.value = user
     token.value = jwtToken
@@ -70,16 +104,22 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
   }
 
   const logout = async () => {
-    await axios.post(
-      `${getStandaloneApiEndpoint()}/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token.value}`
+    try {
+      await axios.post(
+        `${getStandaloneApiEndpoint()}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token.value}`
+          }
         }
-      }
-    )
-    deleteFromStorage('standaloneLoginInfo')
+      )
+    } catch (err) {
+      // The token is often already dead by the time we get here (expired session, unit rebooted).
+      // Clearing local state is what actually matters, so never let this reject.
+      console.warn('[login]', 'logout request failed, clearing the local session anyway', err)
+    }
+    deleteFromStorage(sessionStorageKey())
     username.value = ''
     token.value = ''
     tokenRefreshedTime.value = 0
@@ -101,25 +141,9 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       const jwtToken = res.data.token
       const refreshedTime = new Date().getTime()
 
-      if (isStandaloneMode()) {
-        const loginInfo = {
-          username: username.value,
-          token: jwtToken,
-          tokenRefreshedTime: refreshedTime
-        }
-        saveToStorage('standaloneLoginInfo', loginInfo)
-      } else {
-        // a controller is managing this unit
-        const unit = route.params.unitId as string
-
-        const unitLoginInfo = {
-          unit,
-          token: jwtToken,
-          tokenRefreshedTime: refreshedTime
-        }
-
-        saveToStorage(`unit-${unit}`, unitLoginInfo)
-      }
+      // One write for all three deployments: sessionStorageKey() resolves to standaloneLoginInfo
+      // at the root and to unit-<uuid> when a controller is involved.
+      saveSession(username.value, jwtToken, refreshedTime)
       token.value = jwtToken
       tokenRefreshedTime.value = refreshedTime
       return jwtToken
@@ -190,6 +214,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     isLoggedIn,
     isSessionExpired,
     loadUserFromStorage,
+    saveSession,
     login,
     logout,
     setUsername,

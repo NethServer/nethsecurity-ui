@@ -25,6 +25,11 @@ export default defineConfig({
   },
   define: {
     UI_VERSION: JSON.stringify(process.env.npm_package_version),
-    REQUIRED_API_VERSION: JSON.stringify(process.env.npm_package_config_requiredApiVersion)
+    REQUIRED_API_VERSION: JSON.stringify(process.env.npm_package_config_requiredApiVersion),
+    // First ns-ui release whose bundle can be served under a path prefix, and therefore the first
+    // one the controller can link to directly at /<uuid>/ instead of embedding its own copy.
+    MIN_UI_VERSION_FOR_DIRECT_SERVE: JSON.stringify(
+      process.env.npm_package_config_minUiVersionForDirectServe
+    )
   }
 })

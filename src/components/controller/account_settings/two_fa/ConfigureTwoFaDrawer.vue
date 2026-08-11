@@ -21,7 +21,7 @@ import { ValidationError } from '@/lib/standalone/ubus'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useNotificationsStore } from '@/stores/notifications'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const props = defineProps({
@@ -117,7 +117,7 @@ async function verifyOtp() {
     return
   }
   loading.value.verifyOtp = true
-  const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+  const loginStore = isStandaloneBuild() ? useStandaloneLoginStore() : useControllerLoginStore()
 
   try {
     await verifyTwoFaOtp(loginStore.username, loginStore.token, otp.value)

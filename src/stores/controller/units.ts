@@ -34,6 +34,11 @@ interface UnitInfo {
   unit_name: string
   version: string
   api_version: string
+  /**
+   * ns-ui package version. Absent on units whose ns-api predates it — which is exactly what the
+   * direct-serve gate needs, since those units cannot serve their UI under a path prefix either.
+   */
+  ui_version?: string
   version_update: string
   scheduled_update: number
   description?: string

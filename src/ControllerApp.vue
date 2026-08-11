@@ -38,7 +38,7 @@ onMounted(async () => {
 
   // set favicon
   const favIcon = useFavicon()
-  favIcon.value = '/favicon-controller.ico'
+  favIcon.value = `${import.meta.env.BASE_URL}favicon-controller.ico`
 })
 
 function configureAxios() {

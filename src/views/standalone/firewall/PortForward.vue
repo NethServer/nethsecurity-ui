@@ -86,7 +86,8 @@ const showDeleteModal = ref(false)
 const selectedItem = ref<PortForward | null>(null)
 
 const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
-  return filter.value == ''
+  const lowerCaseFilter = filter.value.toLowerCase()
+  return lowerCaseFilter == ''
     ? portForwards.value
     : Object.fromEntries(
         Object.entries(portForwards.value)
@@ -94,14 +95,15 @@ const filteredPortForwards = computed<Record<string, PortForward[]>>(() => {
             k,
             v.filter(
               (el) =>
-                el.name.includes(filter.value) ||
-                el.source_port.includes(filter.value) ||
-                el.destination_port.includes(filter.value) ||
-                el.protocol.filter((prot) => prot.includes(filter.value)).length > 0 ||
-                el.wan.includes(filter.value) ||
-                el.dest_ip.includes(filter.value) ||
+                el.name.toLowerCase().includes(lowerCaseFilter) ||
+                el.source_port.includes(lowerCaseFilter) ||
+                el.destination_port.includes(lowerCaseFilter) ||
+                el.protocol.filter((prot) => prot.toLowerCase().includes(lowerCaseFilter)).length >
+                  0 ||
+                el.wan.toLowerCase().includes(lowerCaseFilter) ||
+                el.dest_ip.toLowerCase().includes(lowerCaseFilter) ||
                 (el.restrict instanceof Array &&
-                  el.restrict.filter((rs) => rs.includes(filter.value)).length > 0)
+                  el.restrict.filter((rs) => rs.toLowerCase().includes(lowerCaseFilter)).length > 0)
             )
           ])
           .filter(([, v]) => (v?.length ?? 0) > 0)

@@ -13,8 +13,8 @@ import {
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
-import { useThemeStore } from '@/stores/theme'
 import { getCompanyName } from '@/lib/config'
+import { useAppLogo } from '@/composables/useAppLogo'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
@@ -31,7 +31,7 @@ import wizardLoaderUrl from '@/assets/wizard-loader.svg'
 type Step = 'welcome' | 'password' | 'ssh' | 'port9090' | 'port443' | 'summary'
 
 const { t } = useI18n()
-const themeStore = useThemeStore()
+const { logoUrl } = useAppLogo()
 const wizardStore = useSetupWizardStore()
 const currentStep = ref<Step>('welcome')
 const steps: Step[] = ['password', 'ssh', 'port9090', 'port443', 'summary']
@@ -39,14 +39,6 @@ const inputRules = ref<FirewallRule[]>([])
 const loadingListInputRules = ref(false)
 const errorListInputRules = ref('')
 const errorListInputRulesDetails = ref('')
-
-const logoFilename = computed(() => {
-  if (themeStore.isLight) {
-    return 'logo_light.svg'
-  } else {
-    return 'logo_dark.svg'
-  }
-})
 
 const currentStepNum = computed(() => {
   return steps.indexOf(currentStep.value) + 1
@@ -157,7 +149,7 @@ function goToPreviousStep() {
       />
       <!-- logo -->
       <img
-        :src="`/${logoFilename}`"
+        :src="logoUrl"
         :alt="`${getCompanyName()} logo`"
         aria-hidden="true"
         class="mb-14 h-14"
@@ -178,7 +170,7 @@ function goToPreviousStep() {
           <!-- logo -->
           <img
             class="h-10"
-            :src="`/${logoFilename}`"
+            :src="logoUrl"
             :alt="`${getCompanyName()} logo`"
             aria-hidden="true"
           />

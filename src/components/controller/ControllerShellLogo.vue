@@ -4,24 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { getCompanyName } from '@/lib/config'
-import { useThemeStore } from '@/stores/theme'
+import { useAppLogo } from '@/composables/useAppLogo'
 
-const themeStore = useThemeStore()
-
-const logoFilename = computed(() => {
-  if (themeStore.isLight) {
-    return 'logo_light.svg'
-  } else {
-    return 'logo_dark.svg'
-  }
-})
+const { logoUrl } = useAppLogo()
 </script>
 
 <template>
   <div class="flex h-16 shrink-0 flex-col items-start justify-center pt-3 pl-3">
-    <img class="h-7 w-auto" :src="`/${logoFilename}`" :alt="`${getCompanyName()} logo`" />
+    <img class="h-7 w-auto" :src="logoUrl" :alt="`${getCompanyName()} logo`" />
     <span class="text-base text-primary-700 dark:text-primary-500">Controller</span>
   </div>
 </template>

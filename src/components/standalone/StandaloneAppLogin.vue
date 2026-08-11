@@ -25,6 +25,7 @@ import { getProductName, getCompanyName, getPrivacyPolicyUrl } from '@/lib/confi
 import { jwtDecode } from 'jwt-decode'
 import { verifyTwoFaOtp } from '@/lib/twoFa'
 import { ValidationError } from '@/lib/standalone/ubus'
+import loginLogoUrl from '@/assets/login_logo.svg'
 
 const username = ref('')
 const usernameRef = ref()
@@ -329,7 +330,7 @@ async function verifyOtp() {
       class="relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 to-primary-800 lg:flex"
     >
       <img
-        src="/login_logo.svg"
+        :src="loginLogoUrl"
         :alt="`${getCompanyName()} logo`"
         class="w-2/3 xl:w-2/5 3xl:w-1/3 5xl:w-1/4"
       />

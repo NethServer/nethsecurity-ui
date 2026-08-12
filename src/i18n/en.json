@@ -439,7 +439,8 @@
     "cannot_renew_server_cert": "Cannot renew server certificate",
     "cannot_regenerate_all_certs": "Cannot regenerate all certificates",
     "cannot_retrieve_flows": "Cannot retrieve flows, please try again later",
-    "cannot_retrieve_ovpn_rw_connection_history": "Cannot retrieve connection history, please try again later"
+    "cannot_retrieve_ovpn_rw_connection_history": "Cannot retrieve connection history, please try again later",
+    "cannot_retrieve_installed_packages": "Cannot retrieve installed packages, please try again later"
   },
   "ne_text_input": {
     "show_password": "Show password",
@@ -859,6 +860,14 @@
       "bug_security_fixes_description": "Security and minor bugfixes are distributed using packages.",
       "updated_at": "Updated at {lastCheck}",
       "check_for_fixes": "Check for fixes",
+      "installed_packages": "Installed packages",
+      "installed_packages_description": "List of the packages currently installed on the unit.",
+      "package_name": "Package",
+      "package_version": "Version",
+      "package_description": "Description",
+      "no_installed_packages": "No installed packages",
+      "no_installed_packages_found": "No packages found",
+      "no_installed_packages_found_description": "Try changing your search filter.",
       "system_update": "System update",
       "system_update_description": "New features are released with images. If a new image is available you can update the system to a new version. Alternatively upload a compatible firmware image.",
       "system_update_first_tip": "Backup your configuration before updating your {productName} system",

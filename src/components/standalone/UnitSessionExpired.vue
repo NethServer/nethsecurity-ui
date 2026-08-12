@@ -11,17 +11,9 @@ import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
 import loginLogoUrl from '@/assets/login_logo.svg'
 
-/**
- * Shown instead of the login form when this UI is served through a controller and the handed-over
- * session is missing or expired.
- *
- * The login form would be a dead end here: the unit's credentials are provisioned and held by the
- * controller, so the operator has never seen them. The only way forward is to go back to the
- * controller and reopen the unit, which mints a fresh token.
- *
- * Deliberately not an automatic redirect — if the controller cannot mint a token, an automatic
- * bounce would ping-pong between the two SPAs.
- */
+// Replaces the login form when proxied: the unit's credentials live in the controller, so the
+// operator cannot fill it in. Not an automatic redirect, or a controller that fails to mint a
+// token would ping-pong between the two SPAs.
 const { t } = useI18n()
 
 function backToController() {

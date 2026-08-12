@@ -12,6 +12,7 @@ import { useI18n } from 'vue-i18n'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import ScheduleUpdateDrawer from '@/components/standalone/update/ScheduleUpdateDrawer.vue'
 import UploadImageDrawer from '@/components/standalone/update/UploadImageDrawer.vue'
+import InstalledPackagesModal from '@/components/standalone/update/InstalledPackagesModal.vue'
 import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import UpdatePackagesModal from '@/components/standalone/update/UpdatePackagesModal.vue'
@@ -20,6 +21,7 @@ import { getProductName } from '@/lib/config'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useSystemActionStore } from '@/stores/standalone/systemAction'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 export type PackageUpdate = {
   package: string
   currentVersion: string
@@ -62,6 +64,7 @@ const isChangingAutomaticUpdatesSetting = ref(false)
 
 const showScheduleUpdateDrawer = ref(false)
 const showUploadImageDrawer = ref(false)
+const showInstalledPackagesModal = ref(false)
 const showConfirmCancelScheduleDrawer = ref(false)
 
 const scheduleDate = computed(() =>
@@ -241,18 +244,26 @@ onMounted(() => {
           })
         }}
       </p>
-      <NeButton
-        :disabled="isCheckingPackageUpdates || disableRemoteUpdates"
-        :loading="isCheckingPackageUpdates"
-        @click="checkPackageUpdates"
-      >
-        <template #prefix>
-          <font-awesome-icon
-            :icon="['fas', 'arrows-rotate']"
-            class="h-4 w-4"
-            aria-hidden="true" /></template
-        >{{ t('standalone.update.check_for_fixes') }}</NeButton
-      >
+      <div class="flex flex-wrap items-center gap-3">
+        <NeButton
+          :disabled="isCheckingPackageUpdates || disableRemoteUpdates"
+          :loading="isCheckingPackageUpdates"
+          @click="checkPackageUpdates"
+        >
+          <template #prefix>
+            <font-awesome-icon
+              :icon="['fas', 'arrows-rotate']"
+              class="h-4 w-4"
+              aria-hidden="true" /></template
+          >{{ t('standalone.update.check_for_fixes') }}</NeButton
+        >
+        <NeButton kind="tertiary" @click="showInstalledPackagesModal = true">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faBoxOpen" class="h-4 w-4" aria-hidden="true" />
+          </template>
+          {{ t('standalone.update.installed_packages') }}
+        </NeButton>
+      </div>
       <NeInlineNotification
         v-if="noPackageUpdatesAvailable"
         kind="success"
@@ -410,6 +421,10 @@ onMounted(() => {
     :is-shown="showUploadImageDrawer"
     @close="showUploadImageDrawer = false"
     @update-requested="onSystemUpdateStarted"
+  />
+  <InstalledPackagesModal
+    :visible="showInstalledPackagesModal"
+    @close="showInstalledPackagesModal = false"
   />
   <SystemUpdateInProgressModal :visible="isApplyingSystemUpdate" />
 </template>

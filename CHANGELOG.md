@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.23.4](https://github.com/NethServer/nethsecurity-ui/compare/2.23.3...2.23.4) (2026-08-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pinia to v4 ([#802](https://github.com/NethServer/nethsecurity-ui/issues/802)) ([650f694](https://github.com/NethServer/nethsecurity-ui/commit/650f694b67bb1078d448cb08f01bd2187aec09da))
+* **port-forward:** add case insensitive search for filter functionality ([#808](https://github.com/NethServer/nethsecurity-ui/issues/808)) ([0fd36b3](https://github.com/NethServer/nethsecurity-ui/commit/0fd36b3b879297581ce0c43d47bf8f800f8bf191))
+
 ## [2.23.3](https://github.com/NethServer/nethsecurity-ui/compare/2.23.2...2.23.3) (2026-08-04)
 
 

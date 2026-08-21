@@ -167,6 +167,9 @@ function handleCloseDeleteModal() {
     :title="t('standalone.ssh.ssh_keys.title')"
   >
     <div class="space-y-4">
+      <p v-if="sshKeys.length > 0">
+        {{ t('standalone.ssh.ssh_keys.public_keys_label') }}
+      </p>
       <ul class="space-y-2">
         <li v-for="key in sshKeys" :key="key.key" class="flex items-center gap-2">
           <div class="min-w-0 grow rounded border border-gray-200 p-3 text-xs dark:border-gray-700">

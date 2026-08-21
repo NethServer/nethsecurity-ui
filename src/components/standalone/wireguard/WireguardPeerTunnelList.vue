@@ -178,7 +178,7 @@ useIntervalFn(
           </template>
           {{ t('standalone.wireguard_peers.import_peer_tunnel') }}
         </NeButton>
-        <NeButton kind="secondary" @click="showTunnelDrawer = true">
+        <NeButton kind="tertiary" @click="showTunnelDrawer = true">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="size-4" />
           </template>

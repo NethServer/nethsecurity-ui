@@ -26,7 +26,7 @@ import {
   useItemPagination,
   useSort
 } from '@nethesis/vue-components'
-import { faCircleInfo, faCirclePlus, faShield, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faBellSlash, faCircleInfo, faShield, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall } from '@/lib/standalone/ubus'
 import type { AxiosResponse } from 'axios'
@@ -147,9 +147,9 @@ function handleDeleted() {
         <NeTextInput v-model.trim="filter" :placeholder="t('common.filter')" is-search />
         <NeButton kind="primary" size="lg" @click="suppressingAlert = true">
           <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+            <FontAwesomeIcon :icon="faBellSlash" aria-hidden="true" class="h-4 w-4" />
           </template>
-          {{ t('standalone.ips.add_bypass') }}
+          {{ t('standalone.ips.add_suppressed_alert') }}
         </NeButton>
       </div>
       <NeTable
@@ -244,7 +244,7 @@ function handleDeleted() {
     <NeEmptyState v-else :icon="faShield" :title="t('standalone.ips.no_suppressed_alerts')">
       <NeButton kind="primary" size="lg" @click="suppressingAlert = true">
         <template #prefix>
-          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" class="h-4 w-4" />
+          <FontAwesomeIcon :icon="faBellSlash" aria-hidden="true" class="h-4 w-4" />
         </template>
         {{ t('standalone.ips.add_suppressed_alert') }}
       </NeButton>

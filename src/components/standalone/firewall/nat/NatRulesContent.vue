@@ -96,7 +96,7 @@ function hideCreateOrEditRuleDrawer() {
       </div>
       <NeButton
         v-if="loading.listRules || natRules.length"
-        kind="secondary"
+        kind="primary"
         size="lg"
         class="shrink-0"
         @click="showCreateRuleDrawer"

@@ -716,7 +716,7 @@
         "add_key_button": "Add key",
         "unnamed_key": "Unnamed key",
         "add_new_ssh_key": {
-          "label": "Add new SSH key",
+          "label": "New SSH key",
           "placeholder": "Paste SSH key here..."
         },
         "delete_key_modal": {

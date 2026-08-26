@@ -540,7 +540,7 @@
         "add_key_button": "Aggiungi chiave",
         "unnamed_key": "Chiave senza nome",
         "add_new_ssh_key": {
-          "label": "Aggiungi nuova chiave SSH",
+          "label": "Nuova chiave SSH",
           "placeholder": "Incolla qui la chiave SSH..."
         },
         "delete_key_modal": {

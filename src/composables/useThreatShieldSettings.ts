@@ -8,10 +8,9 @@ import { useQuery } from '@tanstack/vue-query'
 // list-settings payload, so all are optional here.
 export type ThreatShieldSettings = {
   enabled?: boolean
-  ban_logforwardlan?: boolean
-  ban_logforwardwan?: boolean
-  ban_loginput?: boolean
   ban_logprerouting?: boolean
+  ban_loginbound: boolean
+  ban_logoutbound: boolean
 }
 
 // api-server wraps the ubus result under `data`, and ns.threatshield wraps its

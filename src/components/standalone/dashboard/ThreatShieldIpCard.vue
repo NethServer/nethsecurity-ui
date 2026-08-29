@@ -18,12 +18,14 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import router from '@/router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRoute } from 'vue-router'
+import { useQuery } from '@tanstack/vue-query'
 import {
   DASHBOARD_REFRESH_INTERVAL,
   useDashboardOverview
 } from '@/composables/useDashboardOverview'
 import { useThreatShieldSettings } from '@/composables/useThreatShieldSettings'
 import { getStatusBadge } from '@/lib/standalone/dashboard'
+import { vmQuery } from '@/lib/standalone/victoriaMetrics'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -42,20 +44,39 @@ const {
   error: settingsError
 } = useThreatShieldSettings({ refetchInterval: DASHBOARD_REFRESH_INTERVAL })
 
+// the blocked IPs counter is read straight from VictoriaMetrics, since banIP
+// exposes it as a metric instead of a ubus counter
+const {
+  data: serviceCounter,
+  isPending: isCounterPending,
+  isError: isCounterError,
+  error: counterError
+} = useQuery({
+  queryKey: ['dashboard', 'threat-shield-ip-counter'],
+  queryFn: () => vmQuery('sum(count_over_time(banip_blocked_bytes[1h]))'),
+  select: (res) => {
+    const value = res.data?.result?.[0]?.value?.[1]
+    return value !== undefined ? Math.trunc(Number(value)) : 0
+  },
+  refetchInterval: DASHBOARD_REFRESH_INTERVAL
+})
+
 const badge = computed(() => getStatusBadge(overview.value?.services.banip))
-const serviceCounter = computed(() => overview.value?.counters.threat_shield_ip)
 
 const isLoggingDisabled = computed(
   () =>
-    !tsSettings.value?.ban_logforwardlan &&
-    !tsSettings.value?.ban_logforwardwan &&
-    !tsSettings.value?.ban_loginput &&
+    !tsSettings.value?.ban_logoutbound &&
+    !tsSettings.value?.ban_loginbound &&
     !tsSettings.value?.ban_logprerouting
 )
 
-const isPending = computed(() => isOverviewPending.value || isSettingsPending.value)
-const isError = computed(() => isOverviewError.value || isSettingsError.value)
-const error = computed(() => overviewError.value ?? settingsError.value)
+const isPending = computed(
+  () => isOverviewPending.value || isSettingsPending.value || isCounterPending.value
+)
+const isError = computed(
+  () => isOverviewError.value || isSettingsError.value || isCounterError.value
+)
+const error = computed(() => overviewError.value ?? settingsError.value ?? counterError.value)
 
 const errorTitle = computed(() => (isError.value ? t('error.cannot_retrieve_service_status') : ''))
 const errorDescription = computed(() => (isError.value ? t(getAxiosErrorMessage(error.value)) : ''))

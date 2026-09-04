@@ -58,7 +58,7 @@ const errorDownloadBackup = ref({ ...objNotification })
 
 function getBackupName() {
   if (props.selectedBackupTime) {
-    return formatDateLoc(new Date(Number(props.selectedBackupTime) * 1000), 'PPpp')
+    return formatDateLoc(new Date(props.selectedBackupTime), 'PPpp')
   } else {
     return props.unitName
   }
@@ -104,7 +104,12 @@ async function downloadBackup() {
       const link = document.createElement('a')
       link.href = fileURL
       if (props.selectedBackupTime && !props.unencrypted) {
-        link.download = 'backup-' + props.unitName + '-' + props.selectedBackupTime + extension
+        // selectedBackupTime is an RFC3339 string from the my API.
+        // Reduce it to an epoch-second integer so the downloaded file
+        // name does not contain the ":" characters that some file
+        // systems and shells refuse.
+        const epoch = Math.floor(new Date(props.selectedBackupTime).getTime() / 1000)
+        link.download = 'backup-' + props.unitName + '-' + epoch + extension
       } else {
         link.download = 'backup-' + props.unitName + '-' + Date.now().toString() + extension
       }

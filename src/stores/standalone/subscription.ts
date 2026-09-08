@@ -17,6 +17,7 @@ export type SubscriptionDataType = {
   organization?: string
   // enterprise: the system name given on my at creation time
   system_name?: string
+  migrated?: boolean
 }
 
 export const useSubscriptionStore = defineStore('subscription', () => {

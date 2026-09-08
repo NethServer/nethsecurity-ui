@@ -25,6 +25,7 @@ import { validateRequired } from '@/lib/validation'
 import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 import type { AxiosResponse } from 'axios'
+import { useMutation } from '@tanstack/vue-query'
 
 const { t } = useI18n()
 
@@ -161,6 +162,15 @@ function requestSync() {
       loadingRequestSync.value = false
     })
 }
+
+const {
+  mutate: migrate,
+  isPending: isMigrating,
+  error: migrateError
+} = useMutation({
+  mutationFn: () => ubusCall('ns.subscription', 'migrate'),
+  onSuccess: () => window.location.reload()
+})
 </script>
 
 <template>
@@ -282,7 +292,22 @@ function requestSync() {
             :title="t('error.cancel_registration_error')"
             :description="errors.request"
           />
+          <NeInlineNotification
+            v-if="migrateError"
+            kind="error"
+            :title="t('error.migration_error')"
+            :description="t(getAxiosErrorMessage(migrateError))"
+          />
           <div class="flex gap-4">
+            <NeButton
+              v-if="lastSyncStatus?.status == 'error' && subscriptionData.migrated == false"
+              kind="primary"
+              :disabled="isMigrating"
+              :loading="isMigrating"
+              @click="migrate"
+            >
+              {{ t('standalone.subscription.migrate') }}
+            </NeButton>
             <NeButton
               :disabled="loadingRequestSync"
               :loading="loadingRequestSync"

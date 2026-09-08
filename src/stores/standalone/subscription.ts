@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import { onMounted, ref } from 'vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
+import {
+  DPI_LOADED_APPLICATIONS_KEY,
+  DPI_LOADED_PROTOCOLS_KEY
+} from '@/composables/useDpiCatalog.ts'
 import type { AxiosResponse } from 'axios'
 
 type SubscriptionStatusResponse = AxiosResponse<SubscriptionDataType>
@@ -14,6 +19,7 @@ export type SubscriptionDataType = {
 }
 
 export const useSubscriptionStore = defineStore('subscription', () => {
+  const queryClient = useQueryClient()
   const loading = ref(true)
   const error = ref<Error>()
   const isActive = ref(false)
@@ -23,7 +29,14 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     error.value = undefined
     ubusCall('ns.subscription', 'info')
       .then((res: SubscriptionStatusResponse) => {
-        isActive.value = res.data.active ?? false
+        const active = res.data.active ?? false
+
+        if (active !== isActive.value) {
+          queryClient.invalidateQueries({ queryKey: DPI_LOADED_APPLICATIONS_KEY })
+          queryClient.invalidateQueries({ queryKey: DPI_LOADED_PROTOCOLS_KEY })
+        }
+
+        isActive.value = active
       })
       .catch((err) => {
         error.value = err

@@ -53,7 +53,7 @@ async function deleteBackup() {
     }
 
     const res = await ubusCall('ns.backup', methodCall, payload)
-    if (res?.data?.result === 'success') {
+    if (res?.data?.message === 'success') {
       emit('close')
       backups.loadData()
     }

@@ -77,6 +77,12 @@ async function cancelSubscription() {
     @primary-click="cancelSubscription"
   >
     <div class="space-y-2">
+      <NeInlineNotification
+        kind="warning"
+        :title="t('standalone.subscription.cancel_irreversible_title')"
+        :description="t('standalone.subscription.cancel_irreversible_description')"
+        class="mb-4!"
+      />
       <p>{{ t('standalone.subscription.confirm_cancel_subscription') }}:</p>
       <ul class="list-inside list-disc">
         <li>{{ t('standalone.subscription.dpi_filter') }}</li>

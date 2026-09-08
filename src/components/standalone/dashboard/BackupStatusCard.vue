@@ -19,11 +19,12 @@ import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { DASHBOARD_REFRESH_INTERVAL } from '@/composables/useDashboardOverview'
 
 type BackupData = {
-  created: number
+  uploaded_at: string
   id: string
   mimetype: string
-  name: string
+  filename: string
   size: number
+  sha256?: string
 }
 
 type BackupResponse = AxiosResponse<{
@@ -46,8 +47,10 @@ const {
   queryFn: ({ signal }) =>
     ubusCall<BackupResponse>('ns.backup', 'registered-list-backups', {}, { signal }),
   select: (response) => {
-    const backup = response.data.values.backups.sort((a, b) => b.created - a.created).shift()
-    return backup != undefined ? formatDateLoc(new Date(backup.created * 1000), 'PPpp') : undefined
+    const backup = response.data.values.backups
+      .sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
+      .shift()
+    return backup != undefined ? formatDateLoc(new Date(backup.uploaded_at), 'PPpp') : undefined
   },
   enabled: () => subscription.isActive,
   refetchInterval: DASHBOARD_REFRESH_INTERVAL

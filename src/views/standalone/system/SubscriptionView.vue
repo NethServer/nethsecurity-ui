@@ -27,6 +27,7 @@ export type SubscriptionDataType = {
   system_name?: string
   // enterprise: link to the system page on the my portal
   system_url?: string
+  migrated?: boolean
 }
 
 const { t } = useI18n()

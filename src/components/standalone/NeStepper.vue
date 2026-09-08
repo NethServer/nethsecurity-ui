@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -11,18 +11,27 @@ const {
   totalSteps,
   currentStep,
   stepLabel,
-  labelColorClasses = 'text-primary-600 dark:text-primary-500'
+  barSize = 'sm',
+  labelColorClasses = 'text-primary-600 dark:text-primary-500',
+  barColorClasses = 'bg-primary-600 dark:bg-primary-500'
 } = defineProps<{
   totalSteps: number
   currentStep: number
   stepLabel: string
+  barSize?: 'sm' | 'md' | 'lg' | 'xl'
   labelColorClasses?: string
+  barColorClasses?: string
 }>()
 </script>
 
 <template>
   <div>
-    <NeProgressBar :progress="(currentStep / totalSteps) * 100" size="sm" />
+    <NeProgressBar
+      :progress="(currentStep / totalSteps) * 100"
+      :size="barSize"
+      color="custom"
+      :custom-color-classes="barColorClasses"
+    />
     <div class="mt-2 flex flex-row">
       <div v-for="i in range(1, totalSteps + 1)" :key="i" class="flex grow basis-0 justify-center">
         <p v-if="i == currentStep" class="text-xs font-semibold" :class="labelColorClasses">

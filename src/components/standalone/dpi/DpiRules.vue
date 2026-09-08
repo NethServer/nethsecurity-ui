@@ -5,164 +5,310 @@
 
 <script setup lang="ts">
 import {
-  NeCard,
-  NeInlineNotification,
-  NeSkeleton,
-  NeButton,
   getAxiosErrorMessage,
-  NeEmptyState
+  NeButton,
+  NeDropdownFilter,
+  NeEmptyState,
+  NeInlineNotification,
+  NeTextInput,
+  type FilterOption
 } from '@nethesis/vue-components'
-import { onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { isEmpty } from 'lodash-es'
-import type { DpiRule } from '@/lib/standalone/dpi'
-import DpiRuleCard from '@/components/standalone/dpi/DpiRuleCard.vue'
-import ManageDpiRuleModal from '@/components/standalone/dpi/ManageDpiRuleModal.vue'
-import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import { useFirewallStore } from '@/stores/standalone/firewall'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { faCircleInfo, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { refDebounced } from '@vueuse/core'
+import { useRoute, useRouter } from 'vue-router'
+import { getStandaloneRoutePrefix } from '@/lib/router'
+import {
+  faArrowRightLong,
+  faCirclePlus,
+  faMagnifyingGlass,
+  faShield
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {
+  moveRuleIdToEdge,
+  reorderRuleIds,
+  useDpiRules,
+  useOrderDpiRules,
+  useToggleDpiRule,
+  type DpiRule,
+  type DpiRulePosition
+} from '@/composables/useDpiRules'
+import DpiRulesTable from '@/components/standalone/dpi/DpiRulesTable.vue'
+import CreateOrEditDpiRuleDrawer from '@/components/standalone/dpi/CreateOrEditDpiRuleDrawer.vue'
+import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.vue'
+import RenameDpiRuleDrawer from '@/components/standalone/dpi/RenameDpiRuleDrawer.vue'
 
 const { t } = useI18n()
-const firewallConfig = useFirewallStore()
-const uciChangesStore = useUciPendingChangesStore()
-const rules = ref<DpiRule[]>([])
-const isShownManageRuleModal = ref(false)
-const currentRule = ref<DpiRule>()
-const isShownDeleteRuleModal = ref(false)
+const route = useRoute()
+const router = useRouter()
 
-const loading = ref({
-  listRules: true
+const nameFilter = ref('')
+const sourceFilter = ref<string[]>([])
+const groupFilter = ref<string[]>([])
+const actionFilter = ref<string[]>([])
+const search = refDebounced(nameFilter, 400)
+
+const { data: allRules, isLoading: isLoadingAll, isError, error } = useDpiRules()
+
+const { mutate: orderRules, isPending: isReordering } = useOrderDpiRules()
+const { mutate: toggleRule } = useToggleDpiRule()
+
+const isFiltered = computed(
+  () =>
+    search.value.trim() !== '' ||
+    sourceFilter.value.length > 0 ||
+    groupFilter.value.length > 0 ||
+    actionFilter.value.length > 0
+)
+
+const filteredRules = computed(() => {
+  const name = search.value.trim().toLowerCase()
+
+  return (allRules.value ?? []).filter((rule) => {
+    if (name && !rule.name.toLowerCase().includes(name)) {
+      return false
+    }
+    if (sourceFilter.value.length) {
+      if (!rule.source.some((entry) => sourceFilter.value.includes(entry))) {
+        return false
+      }
+    }
+    if (groupFilter.value.length) {
+      if (!rule.appgroups.some((appgroup) => groupFilter.value.includes(appgroup.id))) {
+        return false
+      }
+    }
+    if (actionFilter.value.length && !actionFilter.value.includes(rule.action)) {
+      return false
+    }
+    return true
+  })
 })
 
-const error = ref({
-  listRules: '',
-  listRulesDetails: ''
-})
+const rules = computed<DpiRule[]>(() => filteredRules.value)
+const isLoading = computed(() => isLoadingAll.value)
+const hasRules = computed(() => rules.value.length > 0)
 
-onMounted(() => {
-  loadData()
-})
-
-function loadData() {
-  listRules()
-  firewallConfig.fetch()
-  uciChangesStore.getChanges()
-}
-
-async function listRules() {
-  loading.value.listRules = true
-  error.value.listRules = ''
-  error.value.listRulesDetails = ''
-
-  try {
-    const res = await ubusCall('ns.dpi', 'list-rules')
-    rules.value = res.data.values
-  } catch (err: any) {
-    console.error(err)
-    error.value.listRules = t(getAxiosErrorMessage(err))
-    error.value.listRulesDetails = err.toString()
-  } finally {
-    loading.value.listRules = false
+const sourceFilterOptions = computed<FilterOption[]>(() => {
+  const sources = new Set<string>()
+  for (const rule of allRules.value ?? []) {
+    for (const source of rule.source) {
+      sources.add(source)
+    }
   }
+  return [...sources]
+    .map((source) => ({ id: source, label: source }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const groupFilterOptions = computed<FilterOption[]>(() => {
+  const byId = new Map<string, string>()
+  for (const rule of allRules.value ?? []) {
+    for (const appgroup of rule.appgroups) {
+      byId.set(appgroup.id, appgroup.name)
+    }
+  }
+  return [...byId.entries()]
+    .map(([id, label]) => ({ id, label }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const actionFilterOptions = computed<FilterOption[]>(() => [
+  { id: 'block', label: t('standalone.dpi.block') },
+  { id: 'allow', label: t('standalone.dpi.allow') }
+])
+
+const ruleToEdit = ref<DpiRule>()
+const isDuplicating = ref(false)
+const isShownRuleDrawer = ref(false)
+const ruleToRename = ref<DpiRule>()
+const isShownRenameDrawer = ref(false)
+const ruleToDelete = ref<DpiRule>()
+const isShownDeleteModal = ref(false)
+
+function createRule() {
+  ruleToEdit.value = undefined
+  isDuplicating.value = false
+  isShownRuleDrawer.value = true
 }
 
-function showCreateRuleModal() {
-  currentRule.value = undefined
-  isShownManageRuleModal.value = true
+// an unmanaged rule has nothing else to edit, only its name
+function editRule(rule: DpiRule) {
+  if (!rule.managed) {
+    ruleToRename.value = rule
+    isShownRenameDrawer.value = true
+    return
+  }
+
+  ruleToEdit.value = rule
+  isDuplicating.value = false
+  isShownRuleDrawer.value = true
 }
 
-function showEditRuleModal(rule: DpiRule) {
-  currentRule.value = rule
-  isShownManageRuleModal.value = true
+function duplicateRule(rule: DpiRule) {
+  ruleToEdit.value = rule
+  isDuplicating.value = true
+  isShownRuleDrawer.value = true
 }
 
-function showDeleteRuleModal(rule: DpiRule) {
-  currentRule.value = rule
-  isShownDeleteRuleModal.value = true
+function deleteRule(rule: DpiRule) {
+  ruleToDelete.value = rule
+  isShownDeleteModal.value = true
+}
+
+function onReorder(movedId: string, targetIndex: number) {
+  orderRules(reorderRuleIds(allRules.value ?? [], movedId, targetIndex))
+}
+
+function onMove(rule: DpiRule, edge: DpiRulePosition) {
+  orderRules(moveRuleIdToEdge(allRules.value ?? [], rule.id, edge))
+}
+
+function resetFilters() {
+  nameFilter.value = ''
+  sourceFilter.value = []
+  groupFilter.value = []
+  actionFilter.value = []
+}
+
+function goToApplicationGroups() {
+  router.push(`${getStandaloneRoutePrefix(route)}/security/dpi?tab=application-groups`)
 }
 </script>
 
 <template>
   <div>
-    <div class="mb-8 flex items-start justify-between">
-      <div class="max-w-2xl text-gray-500 dark:text-gray-400">
-        {{ t('standalone.dpi.rules_description') }}
-      </div>
-      <NeButton
-        v-if="rules.length"
-        kind="primary"
-        size="lg"
-        class="ml-6 shrink-0"
-        @click="showCreateRuleModal"
-      >
-        <template #prefix>
-          <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
-        </template>
-        {{ t('standalone.dpi.create_rule') }}</NeButton
-      >
-    </div>
     <NeInlineNotification
-      v-if="error.listRules"
+      v-if="isError"
       kind="error"
       :title="t('error.cannot_retrieve_dpi_rules')"
-      :description="error.listRules"
-      class="mb-5"
-    >
-      <template v-if="error.listRulesDetails" #details>
-        {{ error.listRulesDetails }}
-      </template>
-    </NeInlineNotification>
-    <!-- skeleton -->
-    <template v-else-if="loading.listRules">
-      <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 2xl:grid-cols-3">
-        <NeCard v-for="index in 3" :key="index">
-          <NeSkeleton size="lg" :lines="5" />
-        </NeCard>
-      </div>
+      :description="t(getAxiosErrorMessage(error))"
+      class="mb-8"
+    />
+    <DpiRulesTable v-if="isLoading" :rules="[]" loading />
+    <template v-else-if="!hasRules && !isFiltered">
+      <NeEmptyState
+        :title="t('standalone.dpi.no_rules_configured')"
+        :description="t('standalone.dpi.no_rules_configured_description')"
+        :icon="faShield"
+        class="text-center [&>div>div]:max-w-2xl"
+      >
+        <div class="flex flex-col items-center gap-5">
+          <NeButton kind="primary" size="lg" @click="createRule">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
+            </template>
+            {{ t('standalone.dpi.add_rule') }}
+          </NeButton>
+          <NeButton kind="tertiary" size="lg" @click="goToApplicationGroups">
+            {{ t('standalone.dpi.go_to_application_group') }}
+            <template #suffix>
+              <FontAwesomeIcon :icon="faArrowRightLong" aria-hidden="true" />
+            </template>
+          </NeButton>
+        </div>
+      </NeEmptyState>
     </template>
     <template v-else>
-      <NeEmptyState
-        v-if="isEmpty(rules)"
-        :title="t('standalone.dpi.no_rules_found')"
-        :icon="faCircleInfo"
-      >
-        <NeButton kind="primary" size="lg" @click="showCreateRuleModal">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <p class="max-w-2xl text-sm leading-5 text-tertiary-neutral">
+          {{ t('standalone.dpi.rules_evaluation_order') }}
+        </p>
+        <NeButton kind="primary" size="lg" @click="createRule">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
           </template>
-          {{ t('standalone.dpi.create_rule') }}</NeButton
-        >
-      </NeEmptyState>
-      <!-- rules -->
-      <div v-else class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 2xl:grid-cols-3">
-        <DpiRuleCard
-          v-for="(rule, index) in rules"
-          :key="index"
-          :rule="rule"
-          :zones="firewallConfig.zones"
-          @edit-rule="showEditRuleModal"
-          @delete-rule="showDeleteRuleModal"
-          @reload-data="loadData"
-        />
+          {{ t('standalone.dpi.add_rule') }}
+        </NeButton>
       </div>
+      <div class="mb-6 flex flex-wrap items-center gap-3">
+        <NeTextInput
+          v-model="nameFilter"
+          is-search
+          :clear-search-label="t('common.clear_filter')"
+          :placeholder="t('standalone.dpi.filter_rules')"
+          class="w-56"
+        />
+        <NeDropdownFilter
+          v-model="sourceFilter"
+          kind="checkbox"
+          :label="t('standalone.dpi.source')"
+          :options="sourceFilterOptions"
+          :clear-search-label="t('ne_dropdown_filter.clear_search')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        />
+        <NeDropdownFilter
+          v-model="groupFilter"
+          kind="checkbox"
+          :label="t('standalone.dpi.match')"
+          :options="groupFilterOptions"
+          :clear-search-label="t('ne_dropdown_filter.clear_search')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        />
+        <NeDropdownFilter
+          v-model="actionFilter"
+          kind="checkbox"
+          :label="t('standalone.dpi.action')"
+          :options="actionFilterOptions"
+          :clear-search-label="t('ne_dropdown_filter.clear_search')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        />
+        <NeButton v-if="isFiltered" kind="tertiary" size="lg" @click="resetFilters">
+          {{ t('common.reset_filters') }}
+        </NeButton>
+      </div>
+      <NeEmptyState
+        v-if="!hasRules"
+        :title="t('standalone.dpi.no_rules_found')"
+        :description="t('standalone.dpi.no_rules_found_description')"
+        :icon="faMagnifyingGlass"
+        class="text-center [&>div>div]:max-w-2xl"
+      >
+        <NeButton kind="tertiary" size="lg" @click="resetFilters">
+          {{ t('common.reset_filters') }}
+        </NeButton>
+      </NeEmptyState>
+      <DpiRulesTable
+        v-else
+        :rules="rules"
+        :busy="isReordering"
+        :can-reorder="!isFiltered"
+        @edit="editRule"
+        @duplicate="duplicateRule"
+        @delete="deleteRule"
+        @toggle="(rule) => toggleRule({ id: rule.id, enabled: !rule.enabled })"
+        @move="onMove"
+        @reorder="onReorder"
+      />
     </template>
-    <!-- manage dpi rule modal -->
-    <ManageDpiRuleModal
-      :visible="isShownManageRuleModal"
-      :rule-to-edit="currentRule"
-      :all-rules="rules"
-      @close="isShownManageRuleModal = false"
-      @reload-data="loadData"
+    <CreateOrEditDpiRuleDrawer
+      :is-shown="isShownRuleDrawer"
+      :rule-to-edit="ruleToEdit"
+      :duplicate="isDuplicating"
+      @close="isShownRuleDrawer = false"
+      @save="isShownRuleDrawer = false"
     />
-    <!-- delete rule modal -->
+    <RenameDpiRuleDrawer
+      :is-shown="isShownRenameDrawer"
+      :rule="ruleToRename"
+      @close="isShownRenameDrawer = false"
+      @renamed="isShownRenameDrawer = false"
+    />
     <DeleteDpiRuleModal
-      :visible="isShownDeleteRuleModal"
-      :rule="currentRule"
-      @close="isShownDeleteRuleModal = false"
-      @reload-data="loadData"
+      :visible="isShownDeleteModal"
+      :rule="ruleToDelete"
+      @close="isShownDeleteModal = false"
+      @deleted="isShownDeleteModal = false"
     />
   </div>
 </template>

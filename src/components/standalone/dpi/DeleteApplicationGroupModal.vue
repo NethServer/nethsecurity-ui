@@ -7,11 +7,15 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
-import { useDeleteDpiRule, type DpiRule } from '@/composables/useDpiRules'
+import { ValidationError } from '@/lib/standalone/ubus'
+import {
+  useDeleteApplicationGroup,
+  type DpiApplicationGroup
+} from '@/composables/useApplicationGroups'
 
-const { visible = false, rule = undefined } = defineProps<{
+const { visible = false, group = undefined } = defineProps<{
   visible?: boolean
-  rule?: DpiRule
+  group?: DpiApplicationGroup
 }>()
 
 const emit = defineEmits<{
@@ -23,7 +27,7 @@ const { t } = useI18n()
 
 const deleteError = ref<Error>()
 
-const { mutate: deleteRule, isPending } = useDeleteDpiRule()
+const { mutate: deleteGroup, isPending } = useDeleteApplicationGroup()
 
 watch(
   () => visible,
@@ -35,13 +39,16 @@ watch(
 )
 
 function confirmDelete() {
-  if (!rule) {
+  if (!group) {
     return
   }
 
-  deleteRule(rule.id, {
+  deleteGroup(group.id, {
     onSuccess: () => emit('deleted'),
     onError: (e: Error) => {
+      if (e instanceof ValidationError && e.errorBag.has('id')) {
+        return
+      }
       deleteError.value = e
     }
   })
@@ -52,21 +59,21 @@ function confirmDelete() {
   <NeModal
     :visible="visible"
     kind="warning"
-    :title="t('standalone.dpi.delete_rule')"
+    :title="t('standalone.dpi.delete_application_group')"
     :primary-label="t('common.delete')"
     :cancel-label="t('common.cancel')"
     primary-button-kind="danger"
-    :primary-button-loading="isPending"
     :primary-button-disabled="isPending"
+    :primary-button-loading="isPending"
     :close-aria-label="t('common.close')"
     @close="emit('close')"
     @primary-click="confirmDelete"
   >
-    {{ t('standalone.dpi.confirm_delete_rule', { name: rule?.name ?? '' }) }}
+    {{ t('standalone.dpi.confirm_delete_application_group', { name: group?.name ?? '' }) }}
     <NeInlineNotification
       v-if="deleteError"
       kind="error"
-      :title="t('error.cannot_delete_rule')"
+      :title="t('error.cannot_delete_application_group')"
       :description="t(getAxiosErrorMessage(deleteError))"
       class="mt-4"
     />

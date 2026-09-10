@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { Blocklist } from './BlocklistTab.vue'
+import type { Blocklist, BlocklistDirection } from './BlocklistTab.vue'
 import { useI18n } from 'vue-i18n'
 import {
   NeProgressBar,
@@ -20,6 +20,9 @@ import {
 } from '@nethesis/vue-components'
 import { range } from 'lodash-es'
 import { ref } from 'vue'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { faArrowDown, faArrowRightArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
   blocklists: Blocklist[]
@@ -63,13 +66,41 @@ function getTypeIcon(item: Blocklist) {
 function getBlocklistName(blocklist: Blocklist) {
   return props.kind === 'ip' ? blocklist.description : blocklist.name
 }
+
+type DirectionIcon = {
+  icon: IconDefinition
+  rotationClass: string
+}
+
+const directionIcons: Record<BlocklistDirection, DirectionIcon> = {
+  in: { icon: faArrowDown, rotationClass: 'rotate-45' },
+  out: { icon: faArrowUp, rotationClass: 'rotate-45' },
+  inout: { icon: faArrowRightArrowLeft, rotationClass: '-rotate-45' }
+}
+
+function getDirectionLabel(item: Blocklist) {
+  switch (item.direction) {
+    case 'in':
+      return t('standalone.threat_shield.direction_in')
+    case 'out':
+      return t('standalone.threat_shield.direction_out')
+    case 'inout':
+      return t('standalone.threat_shield.direction_inout')
+    default:
+      return '-'
+  }
+}
+
+function getPortsLabel(item: Blocklist) {
+  return item.ports?.length ? item.ports.join(', ') : '-'
+}
 </script>
 
 <template>
   <NeTable
     :aria-label="t('standalone.threat_shield.blocklist')"
     card-breakpoint="xl"
-    :skeleton-columns="4"
+    :skeleton-columns="kind == 'ip' ? 6 : 4"
     :skeleton-rows="8"
     :loading="loading"
     class="z-10"
@@ -79,6 +110,12 @@ function getBlocklistName(blocklist: Blocklist) {
       <NeTableHeadCell>{{ t('standalone.threat_shield.type') }}</NeTableHeadCell>
       <NeTableHeadCell v-if="kind == 'dns'">
         {{ t('standalone.threat_shield.description') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell v-if="kind == 'ip'">
+        {{ t('standalone.threat_shield.direction') }}
+      </NeTableHeadCell>
+      <NeTableHeadCell v-if="kind == 'ip'">
+        {{ t('standalone.threat_shield.ports') }}
       </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.threat_shield.confidence') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
@@ -102,6 +139,21 @@ function getBlocklistName(blocklist: Blocklist) {
               ? t(`standalone.threat_shield_dns.description_${item.name}`)
               : item.description
           }}
+        </NeTableCell>
+        <NeTableCell v-if="kind == 'ip'" :data-label="t('standalone.threat_shield.direction')">
+          <div class="flex flex-row items-center gap-x-2">
+            <FontAwesomeIcon
+              v-if="item.direction && directionIcons[item.direction]"
+              :icon="directionIcons[item.direction].icon"
+              :class="directionIcons[item.direction].rotationClass"
+              class="h-4 w-4 text-gray-700 dark:text-gray-400"
+              aria-hidden="true"
+            />
+            <p>{{ getDirectionLabel(item) }}</p>
+          </div>
+        </NeTableCell>
+        <NeTableCell v-if="kind == 'ip'" :data-label="t('standalone.threat_shield.ports')">
+          <p>{{ getPortsLabel(item) }}</p>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.confidence')">
           <p v-if="item.confidence === -1">{{ t('standalone.threat_shield.unknown') }}</p>

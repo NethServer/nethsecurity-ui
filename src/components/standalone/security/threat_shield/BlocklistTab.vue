@@ -24,12 +24,17 @@ import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import SearchBannedIp from '@/components/standalone/security/threat_shield/SearchBannedIp.vue'
 
+export type BlocklistDirection = 'in' | 'out' | 'inout'
+
 export type Blocklist = {
   name: string
   type: 'community' | 'enterprise' | 'unknown'
   enabled: boolean
   confidence: number
   description: string
+  direction?: BlocklistDirection
+  ports?: string[]
+  protocols?: string[]
 }
 
 const { t } = useI18n()

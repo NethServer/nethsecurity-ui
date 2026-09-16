@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin'
-import { getPreference, savePreference } from '@nethesis/vue-components'
+import { getUiPreference, saveUiPreference } from '@/lib/storage'
 import { isEmpty } from 'lodash-es'
 import { onMounted, ref, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -245,14 +245,14 @@ function toggleExpand(menuItem: MenuItem) {
   const newValue = !menuExpanded.value[menuItem.to]
   menuExpanded.value[menuItem.to] = newValue
   const username = loginStore.username || 'root'
-  savePreference(`${menuItem.to}MenuExpanded`, newValue, username)
+  saveUiPreference(`${menuItem.to}MenuExpanded`, newValue, username)
 }
 
 function loadMenuItemsExpanded() {
   const username = loginStore.username || 'root'
 
   for (const menuName of Object.keys(menuExpanded.value)) {
-    const isMenuExpanded = getPreference(`${menuName}MenuExpanded`, username)
+    const isMenuExpanded = getUiPreference(`${menuName}MenuExpanded`, username)
 
     if (isMenuExpanded || isCurrentRoute(menuName)) {
       menuExpanded.value[menuName] = true

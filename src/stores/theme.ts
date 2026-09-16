@@ -3,10 +3,11 @@
 
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getPreference, getStringFromStorage, savePreference } from '@nethesis/vue-components'
+import { getStringFromStorage } from '@nethesis/vue-components'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
+import { getScopedStorageKey, getUiPreference, saveUiPreference } from '@/lib/storage'
 
 type ThemeType = 'light' | 'dark' | 'system'
 
@@ -33,7 +34,7 @@ export const useThemeStore = defineStore('theme', () => {
   function getUsername() {
     let username
 
-    if (isStandaloneMode()) {
+    if (isStandaloneBuild()) {
       username = useStandaloneLoginStore().username
     } else {
       username = useControllerLoginStore().username
@@ -41,8 +42,8 @@ export const useThemeStore = defineStore('theme', () => {
 
     if (!username) {
       // user is not logged, try reading remembered username from local storage
-      if (isStandaloneMode()) {
-        username = getStringFromStorage('standaloneUsername') || 'root'
+      if (isStandaloneBuild()) {
+        username = getStringFromStorage(getScopedStorageKey('standaloneUsername')) || 'root'
       } else {
         username = getStringFromStorage('controllerUsername') || 'admin'
       }
@@ -57,7 +58,7 @@ export const useThemeStore = defineStore('theme', () => {
     const username = getUsername()
 
     if (username) {
-      savePreference('theme', newTheme, username)
+      saveUiPreference('theme', newTheme, username)
     }
 
     // add or remove dark class to document
@@ -102,7 +103,7 @@ export const useThemeStore = defineStore('theme', () => {
     let theme = 'system' as ThemeType
 
     if (username) {
-      theme = getPreference('theme', username)
+      theme = getUiPreference('theme', username)
     }
     setTheme(theme)
   }

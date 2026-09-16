@@ -5,9 +5,8 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { useThemeStore } from '@/stores/theme'
 import SideMenu from './SideMenu.vue'
 import { getCompanyName } from '@/lib/config'
 import { useI18n } from 'vue-i18n'
@@ -15,9 +14,10 @@ import ToastNotificationsArea from '../ToastNotificationsArea.vue'
 import NotificationDrawer from '../NotificationDrawer.vue'
 import StandaloneTopBar from './StandaloneTopBar.vue'
 import { useAlerts } from '@/composables/useAlerts'
+import { useAppLogo } from '@/composables/useAppLogo'
 
-const themeStore = useThemeStore()
 const { t } = useI18n()
+const { logoUrl } = useAppLogo()
 
 // Alerts are only relevant for a real device (standalone or a managed unit),
 // which is exactly what this shell renders. Fetching lives here so the
@@ -25,14 +25,6 @@ const { t } = useI18n()
 const { notifications: alertNotifications } = useAlerts()
 
 const sidebarOpen = ref(false)
-
-const logoFilename = computed(() => {
-  if (themeStore.isLight) {
-    return 'logo_light.svg'
-  } else {
-    return 'logo_dark.svg'
-  }
-})
 </script>
 
 <template>
@@ -90,7 +82,7 @@ const logoFilename = computed(() => {
                 <div class="flex h-16 shrink-0 items-center">
                   <img
                     class="h-7 w-auto px-3"
-                    :src="`/${logoFilename}`"
+                    :src="logoUrl"
                     :alt="`${getCompanyName()} logo`"
                     aria-hidden="true"
                   />
@@ -118,11 +110,7 @@ const logoFilename = computed(() => {
         class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-2 pb-4 dark:border-gray-700 dark:bg-gray-950"
       >
         <div class="flex h-16 shrink-0 items-center">
-          <img
-            class="h-8 w-auto px-3"
-            :src="`/${logoFilename}`"
-            :alt="`${getCompanyName()} logo`"
-          />
+          <img class="h-8 w-auto px-3" :src="logoUrl" :alt="`${getCompanyName()} logo`" />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">

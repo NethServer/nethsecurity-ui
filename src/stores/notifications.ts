@@ -8,7 +8,7 @@ import { type NeNotification } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
 import { getUbusReproductionCommand } from '@/lib/axiosErrorCommand'
 
 const NOTIFICATIONS_LIMIT = 30
@@ -128,7 +128,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
   const copyCurlToClipboard = (notification: NeNotification) => {
     let token
-    if (isStandaloneMode()) {
+    if (isStandaloneBuild()) {
       token = useStandaloneLoginStore().token
     } else {
       token = useControllerLoginStore().token

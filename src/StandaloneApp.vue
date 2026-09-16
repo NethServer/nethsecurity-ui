@@ -6,14 +6,16 @@
 <script setup lang="ts">
 import StandaloneAppShell from '@/components/standalone/StandaloneAppShell.vue'
 import StandaloneAppLogin from '@/components/standalone/StandaloneAppLogin.vue'
+import UnitSessionExpired from '@/components/standalone/UnitSessionExpired.vue'
+import { isProxiedByController } from '@/lib/deployment'
 import { TOKEN_REFRESH_INTERVAL, useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { onMounted, ref } from 'vue'
 import axios, { type AxiosRequestConfig } from 'axios'
-import { getStandaloneApiEndpoint, isStandaloneMode } from './lib/config'
+import { getStandaloneApiEndpoint, isStandaloneBuild } from './lib/config'
 import { useUnitsStore } from './stores/controller/units'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getPreference } from '@nethesis/vue-components'
+import { getUiPreference } from '@/lib/storage'
 import { getUbusReproductionCommand } from '@/lib/axiosErrorCommand'
 import { UnauthorizedAction, useSudoStore } from '@/stores/standalone/sudo.ts'
 import AskSudoPasswordModal from '@/components/standalone/AskSudoPasswordModal.vue'
@@ -30,14 +32,14 @@ const sudoStore = useSudoStore()
 const isLoaded = ref(false)
 
 onMounted(async () => {
-  if (isStandaloneMode()) {
+  if (isStandaloneBuild()) {
     await loginStore.loadUserFromStorage()
     // Setup localization
     let username = 'root'
     if (loginStore.isLoggedIn) {
       username = loginStore.username
     }
-    locale.value = getPreference('locale', username) || navigator.language
+    locale.value = getUiPreference('locale', username) || navigator.language
   } else {
     // a controller is managing this unit
     await unitsStore.load()
@@ -104,7 +106,7 @@ function configureAxios() {
       }
 
       if (error.response?.status == 401) {
-        if (isStandaloneMode()) {
+        if (isStandaloneBuild()) {
           if (error.response?.data?.message !== 'incorrect Username or Password') {
             console.warn('[interceptor]', 'Detected error 401, logout')
             loginStore.isSessionExpired = true
@@ -167,7 +169,9 @@ function configureAxios() {
       <AskSudoPasswordModal />
     </template>
     <template v-else>
-      <StandaloneAppLogin />
+      <!-- The unit's credentials belong to the controller, so a login form is a dead end here. -->
+      <UnitSessionExpired v-if="isProxiedByController()" />
+      <StandaloneAppLogin v-else />
     </template>
   </template>
   <VueQueryDevtools />

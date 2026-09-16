@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.24.0](https://github.com/NethServer/nethsecurity-ui/compare/2.23.4...2.24.0) (2026-09-16)
+
+
+### Features
+
+* **threat-shield:** enhance blocklist functionality with direction and ports attributes ([975f59c](https://github.com/NethServer/nethsecurity-ui/commit/975f59cbf2d88fc79d917b2ef7234fbdde1c74ee))
+* **threat-shield:** integrate victoriametrics queries for service counter ([155ec6d](https://github.com/NethServer/nethsecurity-ui/commit/155ec6df371853659caca188db0f30d6ec609ebf))
+
+
+### Bug Fixes
+
+* **threat-shield:** rename log variables and update translations for input chain ([620ac37](https://github.com/NethServer/nethsecurity-ui/commit/620ac37a708440f1bf074a41646d60f3f5a8d53d))
+* **threat-shield:** update logging description labels ([334745c](https://github.com/NethServer/nethsecurity-ui/commit/334745c4084f9233e2bbca103739399f54936d69))
+* **ui:** update button styles and improve SSH key labels in i18n files ([04622ad](https://github.com/NethServer/nethsecurity-ui/commit/04622adcf659205e1e39e072088989867f5f329c))
+* **ui:** update ips button labels and drawer stepper with dynamic label color classes ([00405fc](https://github.com/NethServer/nethsecurity-ui/commit/00405fc06f667fd8041ec0c0da9e0f1afe3dd11f))
+
 ## [2.23.4](https://github.com/NethServer/nethsecurity-ui/compare/2.23.3...2.23.4) (2026-08-13)
 
 

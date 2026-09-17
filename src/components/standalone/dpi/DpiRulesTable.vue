@@ -58,8 +58,7 @@ const { data: applicationGroups } = useApplicationGroups()
 
 const headers = [
   {
-    key: 'grip',
-    label: t('standalone.dpi.priority')
+    key: 'grip'
   },
   {
     key: 'name',
@@ -226,9 +225,7 @@ function actionsOf(rule: DpiRule) {
                     rule.enabled ? '' : disabledRuleClasses
                   ]"
                 >
-                  <div
-                    class="flex h-8 items-center border-r border-gray-200 pr-4 dark:border-gray-600"
-                  >
+                  <div class="flex h-8 items-center">
                     <NeTooltip
                       v-if="!canReorder"
                       trigger-event="mouseenter focus"
@@ -249,7 +246,9 @@ function actionsOf(rule: DpiRule) {
                   </div>
                 </td>
                 <td :class="[rule.enabled ? '' : disabledRuleClasses]">
-                  <div class="flex flex-col gap-2">
+                  <div
+                    class="flex w-full flex-col gap-2 border-r border-gray-200 pr-4 dark:border-gray-600"
+                  >
                     <span :class="{ 'opacity-50': !rule.enabled }" class="text-secondary-neutral">{{
                       rule.name
                     }}</span>

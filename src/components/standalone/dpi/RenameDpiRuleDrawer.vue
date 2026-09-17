@@ -30,18 +30,10 @@ const validationBag = ref(new MessageBag())
 const { mutate: renameRule, isPending } = useRenameDpiRule()
 
 const schema = v.object({
-  name: v.pipe(
-    v.string(),
-    v.trim(),
-    v.minLength(1, 'name_required'),
-    v.maxLength(64, 'name_too_long')
-  )
+  name: v.pipe(v.string(), v.trim(), v.minLength(1, 'required'), v.maxLength(64, 'name_too_long'))
 })
 
-const nameError = computed(() => {
-  const message = validationBag.value.getFirstFor('name')
-  return message ? t(`standalone.dpi.${message}`) : ''
-})
+const nameError = computed(() => t(validationBag.value.getFirstI18nKeyFor('name')))
 
 watch(
   () => isShown,

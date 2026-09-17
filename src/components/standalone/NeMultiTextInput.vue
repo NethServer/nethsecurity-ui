@@ -52,6 +52,14 @@ const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
 const keys = ref<string[]>([])
 const items = ref<string[]>([])
 
+const showHelperText = computed(
+  () =>
+    !!props.helperText &&
+    !props.generalInvalidMessage &&
+    !props.invalidMessages?.some(Boolean) &&
+    !props.invalidKeyMessages?.some(Boolean)
+)
+
 const addButtonMargin = computed(() =>
   !props.helperText && (items.value.length > 0 || props.generalInvalidMessage) ? 'mt-8' : 'mt-4'
 )
@@ -193,7 +201,7 @@ onMounted(() => {
         {{ generalInvalidMessage }}
       </p>
     </div>
-    <p v-if="helperText" class="mt-2 text-xs leading-4 text-tertiary-neutral">
+    <p v-if="showHelperText" class="mt-2 text-xs leading-4 text-tertiary-neutral">
       {{ helperText }}
     </p>
     <NeButton

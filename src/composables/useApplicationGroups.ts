@@ -106,7 +106,7 @@ export function useDeleteApplicationGroup() {
   return useMutation({
     mutationFn: (id: string) =>
       ubusCall<{ data: { message: string } }>('ns.dpi', 'delete-appgroup', { id }),
-    onSuccess: invalidate
+    onSettled: invalidate
   })
 }
 

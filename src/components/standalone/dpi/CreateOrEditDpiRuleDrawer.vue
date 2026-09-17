@@ -75,11 +75,6 @@ const validationErrorBag = ref(new MessageBag())
 const sourceAddressesErrors = ref<string[]>([])
 const isShownCreateGroupModal = ref(false)
 
-function messageOf(field: string) {
-  const message = validationErrorBag.value.getFirstFor(field)
-  return message ? t(`standalone.dpi.${message}`) : ''
-}
-
 const STEP_OF_FIELD: Record<string, number> = {
   name: 1,
   source: 2,
@@ -133,6 +128,27 @@ const sourceSummary = computed(() =>
 )
 
 const matchSummary = computed(() => selectedGroups.value.map((option) => option.label).join(', '))
+
+watch(name, (ruleName) => {
+  if (ruleName.trim()) {
+    validationErrorBag.value.delete('name')
+  }
+})
+
+watch(selectedGroups, (groups) => {
+  if (groups.length) {
+    validationErrorBag.value.delete('appgroups')
+  }
+})
+
+watch(
+  sourceAddresses,
+  () => {
+    sourceAddressesErrors.value = []
+    validationErrorBag.value.delete('source')
+  },
+  { deep: true }
+)
 
 watch(
   () => isShown,
@@ -195,7 +211,8 @@ function validateSourceAddresses(): boolean {
   for (const [index, sourceAddress] of sourceAddresses.value.entries()) {
     const requiredValidation = validateRequired(sourceAddress)
     if (!requiredValidation.valid) {
-      sourceAddressesErrors.value[index] = t(requiredValidation.errMessage as string)
+      // the helper text replaces the generic 'required' message, since it states what to enter
+      sourceAddressesErrors.value[index] = t('standalone.dpi.source_addresses_helper')
       isValid = false
       continue
     }
@@ -326,7 +343,7 @@ function save() {
           <NeTextInput
             v-model="name"
             :label="t('standalone.dpi.name')"
-            :invalid-message="messageOf('name')"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('name'))"
           />
         </div>
         <!-- step 2: source -->
@@ -350,7 +367,7 @@ function save() {
             :helper-text="t('standalone.dpi.source_addresses_helper')"
             :add-item-label="t('standalone.dpi.add_source_address')"
             :invalid-messages="sourceAddressesErrors"
-            :general-invalid-message="messageOf('source')"
+            :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('source'))"
             required
             @add-item="sourceAddressesErrors = []"
             @delete-item="sourceAddressesErrors = []"
@@ -378,26 +395,25 @@ function save() {
             :label="t('standalone.dpi.application_groups')"
             :options="applicationGroupOptions"
             :placeholder="t('standalone.dpi.choose_application_group')"
-            :invalid-message="messageOf('appgroups')"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('appgroups'))"
             :optional-label="t('common.optional')"
             :no-results-label="t('ne_combobox.no_results')"
             :limited-options-label="t('ne_combobox.limited_options_label')"
             :no-options-label="t('ne_combobox.no_options_label')"
             :user-input-label="t('ne_combobox.user_input_label')"
-            badge-kind="indigo"
           />
           <NeRadioSelection
             v-model="action"
             :label="t('standalone.dpi.action')"
             :options="actionOptions"
-            :invalid-message="messageOf('action')"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('action'))"
           />
           <NeRadioSelection
             v-if="!isEditing"
             v-model="rulePosition"
             :label="t('standalone.dpi.rule_position')"
             :options="rulePositionOptions"
-            :invalid-message="messageOf('position')"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('position'))"
           />
         </div>
         <!-- step 4: review -->

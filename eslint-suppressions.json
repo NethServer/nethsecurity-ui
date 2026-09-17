@@ -244,21 +244,6 @@
       "count": 1
     }
   },
-  "src/components/standalone/dpi/CreateOrDeleteDpiExceptionDrawer.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
-  "src/components/standalone/dpi/DeleteDpiExceptionModal.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
-  "src/components/standalone/dpi/DpiExceptions.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "src/components/standalone/factory_reset/FactoryResetContent.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2

@@ -11,9 +11,12 @@ import {
   faBriefcase,
   faBug,
   faBullhorn,
+  faCartShopping,
   faCloud,
   faCoins,
   faComments,
+  faCubes,
+  faDatabase,
   faDesktop,
   faDice,
   faEnvelope,
@@ -21,21 +24,28 @@ import {
   faFolderOpen,
   faFutbol,
   faGamepad,
+  faGlobe,
   faGraduationCap,
   faHashtag,
+  faKey,
   faLandmark,
   faLaptopCode,
   faLock,
   faMasksTheater,
   faMicrochip,
+  faNetworkWired,
   faNewspaper,
   faPersonHiking,
+  faPhotoFilm,
   faPlay,
+  faPrint,
+  faRightLeft,
   faServer,
-  faShapes,
   faShareNodes,
   faShieldHalved,
+  faSitemap,
   faTowerCell,
+  faTv,
   faVideo,
   faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons'
@@ -67,41 +77,67 @@ export type DpiCatalogItem = {
 const CATEGORY_ICONS: Record<string, IconDefinition> = {
   adult: faEyeSlash,
   advertiser: faBullhorn,
-  artsandentertainment: faMasksTheater,
+  authentication: faKey,
   business: faBriefcase,
-  careerandeducation: faGraduationCap,
   cdn: faCloud,
   cybersecurity: faShieldHalved,
-  deviceiot: faMicrochip,
-  fileserver: faFolderOpen,
-  filesharing: faShareNodes,
+  database: faDatabase,
+  'device-iot': faMicrochip,
+  education: faGraduationCap,
+  entertainment: faMasksTheater,
+  'file-server': faFolderOpen,
+  'file-sharing': faShareNodes,
   financial: faCoins,
   gambling: faDice,
   games: faGamepad,
   government: faLandmark,
   hosting: faServer,
-  isptelco: faTowerCell,
+  infrastructure: faSitemap,
   mail: faEnvelope,
   malware: faBug,
+  media: faPhotoFilm,
+  'media-provider': faTv,
   messaging: faComments,
+  networking: faNetworkWired,
   news: faNewspaper,
-  ossoftwareupdates: faArrowsRotate,
+  'os-software-updates': faArrowsRotate,
   portal: faWindowMaximize,
+  printing: faPrint,
+  proxy: faRightLeft,
   recreation: faPersonHiking,
   reference: faBookOpen,
-  remotedesktop: faDesktop,
-  socialmedia: faHashtag,
+  'remote-desktop': faDesktop,
+  shopping: faCartShopping,
+  'social-media': faHashtag,
   sports: faFutbol,
-  streamingmedia: faPlay,
+  'streaming-media': faPlay,
   technology: faLaptopCode,
-  voipconferencing: faVideo,
-  vpnandproxy: faLock
+  telco: faTowerCell,
+  voip: faVideo,
+  vpn: faLock,
+  'vpn-and-proxy': faLock,
+  web: faGlobe
 }
+
+// a category the engine adds later borrows the icon protocols use
+const DEFAULT_CATEGORY_ICON = faCubes
 
 export type DpiCatalogKind = 'applications' | 'protocols'
 
-function categoryIconKey(label: string) {
-  return label.toLowerCase().replace(/[^a-z0-9]/g, '')
+/**
+ * The catalog only carries English labels, so the tag drives the translation and
+ * the label is kept as the fallback for categories the engine adds later on.
+ */
+function useCategoryLabel() {
+  const { t, te } = useI18n()
+
+  return function categoryLabel(tag: string, fallback: string) {
+    if (tag === UNCATEGORIZED) {
+      return t('standalone.dpi.uncategorized')
+    }
+    const key = `standalone.dpi.category_${tag}`
+    return te(key) ? t(key) : fallback
+  }
 }
 
 export type DpiCatalogEntry = {
@@ -139,7 +175,7 @@ export function useLoadedProtocols() {
 }
 
 export function useDpiCatalog(kind: Ref<DpiCatalogKind>, categoryId: Ref<string>) {
-  const { t } = useI18n()
+  const categoryLabel = useCategoryLabel()
   const netifydStore = useNetifydStore()
   const loadedApplications = useLoadedApplications()
   const loadedProtocols = useLoadedProtocols()
@@ -207,18 +243,29 @@ export function useDpiCatalog(kind: Ref<DpiCatalogKind>, categoryId: Ref<string>
     [...entriesByCategory.value.entries()]
       .map(([id, group]) => ({
         id,
-        name: group[0]!.categoryLabel || t('standalone.dpi.uncategorized'),
-        icon: CATEGORY_ICONS[categoryIconKey(group[0]!.categoryLabel)] ?? faShapes,
+        name: categoryLabel(id, group[0]!.categoryLabel),
+        icon: CATEGORY_ICONS[id] ?? DEFAULT_CATEGORY_ICON,
         total: group.length,
         selectable: group.filter((entry) => !entry.disabled).length
       }))
       .sort((a, b) => a.name.localeCompare(b.name))
   )
 
+  const itemsByCategory = computed(() => {
+    const groups = new Map<string, DpiCatalogItem[]>()
+    for (const [id, group] of entriesByCategory.value) {
+      groups.set(
+        id,
+        group
+          .map(({ id: entryId, name, disabled, logo }) => ({ id: entryId, name, disabled, logo }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      )
+    }
+    return groups
+  })
+
   function itemsOf(id: string): DpiCatalogItem[] {
-    return (entriesByCategory.value.get(id) ?? [])
-      .map(({ id: entryId, name, disabled, logo }) => ({ id: entryId, name, disabled, logo }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+    return itemsByCategory.value.get(id) ?? []
   }
 
   const items = computed<DpiCatalogItem[]>(() => itemsOf(categoryId.value))
@@ -229,10 +276,11 @@ export function useDpiCatalog(kind: Ref<DpiCatalogKind>, categoryId: Ref<string>
   const isError = computed(() => catalogQuery.value.isError || loadedQuery.value.isError.value)
   const error = computed(() => loadedQuery.value.error.value ?? catalogQuery.value.error)
 
-  return { categories, items, itemsOf, isLoading, isError, error }
+  return { categories, items, itemsByCategory, itemsOf, isLoading, isError, error }
 }
 
 export function useDpiCatalogLabels() {
+  const categoryLabel = useCategoryLabel()
   const netifydStore = useNetifydStore()
   const loadedApplications = useLoadedApplications()
   const loadedProtocols = useLoadedProtocols()
@@ -242,6 +290,10 @@ export function useDpiCatalogLabels() {
     loaded: LoadedEntry[] | undefined
   ) {
     const labels = new Map<string, string>()
+    // entries the engine does not load are identified by their catalog tag
+    for (const entry of catalog) {
+      labels.set(entry.tag, entry.label)
+    }
     const byId = new Map(catalog.map((entry) => [entry.id, entry]))
     for (const entry of loaded ?? []) {
       const catalogEntry = byId.get(entry.id)
@@ -296,17 +348,27 @@ export function useDpiCatalogLabels() {
     return categories.get(id) ?? UNCATEGORIZED
   }
 
+  const loadedApplicationNames = computed(
+    () => new Set((loadedApplications.data.value ?? []).map((entry) => entry.name))
+  )
+  const loadedProtocolNames = computed(
+    () => new Set((loadedProtocols.data.value ?? []).map((entry) => entry.name))
+  )
+
+  function isLoaded(kind: DpiCatalogKind, id: string) {
+    const names = kind === 'applications' ? loadedApplicationNames.value : loadedProtocolNames.value
+    return names.has(id)
+  }
+
   function labelOf(kind: DpiCatalogKind, type: 'item' | 'category', id: string) {
-    const labels =
-      type === 'category'
-        ? kind === 'applications'
-          ? applicationCategoryLabels.value
-          : protocolCategoryLabels.value
-        : kind === 'applications'
-          ? applicationLabels.value
-          : protocolLabels.value
+    if (type === 'category') {
+      const labels =
+        kind === 'applications' ? applicationCategoryLabels.value : protocolCategoryLabels.value
+      return categoryLabel(id, labels.get(id) ?? id)
+    }
+    const labels = kind === 'applications' ? applicationLabels.value : protocolLabels.value
     return labels.get(id) ?? id
   }
 
-  return { labelOf, categoryOf }
+  return { labelOf, categoryOf, isLoaded }
 }

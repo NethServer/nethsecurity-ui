@@ -123,12 +123,7 @@ describe('selectionsFromGroup', () => {
 })
 
 const nameSchema = v.object({
-  name: v.pipe(
-    v.string(),
-    v.trim(),
-    v.minLength(1, 'name_required'),
-    v.maxLength(64, 'name_too_long')
-  )
+  name: v.pipe(v.string(), v.trim(), v.minLength(1, 'required'), v.maxLength(64, 'name_too_long'))
 })
 
 describe('group name schema', () => {
@@ -144,7 +139,7 @@ describe('group name schema', () => {
 
   it('reports the message id the i18n keys are named after', () => {
     const empty = v.safeParse(nameSchema, { name: '' })
-    expect(empty.issues?.[0]?.message).toBe('name_required')
+    expect(empty.issues?.[0]?.message).toBe('required')
     const long = v.safeParse(nameSchema, { name: 'a'.repeat(65) })
     expect(long.issues?.[0]?.message).toBe('name_too_long')
   })

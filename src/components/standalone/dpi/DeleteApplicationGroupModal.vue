@@ -26,31 +26,41 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const deleteError = ref<Error>()
+const validationMessage = ref('')
 
 const { mutate: deleteGroup, isPending } = useDeleteApplicationGroup()
+
+function clearErrors() {
+  deleteError.value = undefined
+  validationMessage.value = ''
+}
 
 watch(
   () => visible,
   (isShown) => {
     if (isShown) {
-      deleteError.value = undefined
+      clearErrors()
     }
   }
 )
+
+function onDeleteError(e: Error) {
+  if (e instanceof ValidationError && e.errorBag.has('id')) {
+    validationMessage.value = t(e.errorBag.getFirstI18nKeyFor('id'))
+  } else {
+    deleteError.value = e
+  }
+}
 
 function confirmDelete() {
   if (!group) {
     return
   }
 
+  clearErrors()
   deleteGroup(group.id, {
     onSuccess: () => emit('deleted'),
-    onError: (e: Error) => {
-      if (e instanceof ValidationError && e.errorBag.has('id')) {
-        return
-      }
-      deleteError.value = e
-    }
+    onError: onDeleteError
   })
 }
 </script>
@@ -70,6 +80,13 @@ function confirmDelete() {
     @primary-click="confirmDelete"
   >
     {{ t('standalone.dpi.confirm_delete_application_group', { name: group?.name ?? '' }) }}
+    <NeInlineNotification
+      v-if="validationMessage"
+      kind="error"
+      :title="t('error.cannot_delete_application_group')"
+      :description="validationMessage"
+      class="mt-4"
+    />
     <NeInlineNotification
       v-if="deleteError"
       kind="error"

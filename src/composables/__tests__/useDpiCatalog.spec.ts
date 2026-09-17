@@ -35,9 +35,14 @@ const LOADED_PROTOCOLS = [
   { id: 99, name: 'DATASAVER' },
   { id: 100, name: 'Unknown' }
 ]
+// the catalog wording differs from the translation on purpose: the tag must win
+const EDUCATION = { id: 6, label: 'Career & Education (catalog wording)', tag: 'education' }
+const MYSTERY = { id: 99, label: 'Mystery Stuff', tag: 'mystery-stuff' }
 const APPLICATION_CATALOG = [
   { id: 20, tag: 'netify.amazon', label: 'Amazon', category: BUSINESS },
-  { id: 21, tag: 'netify.retired', label: 'Retired App', category: BUSINESS, active: false }
+  { id: 21, tag: 'netify.retired', label: 'Retired App', category: BUSINESS, active: false },
+  { id: 22, tag: 'netify.school', label: 'School', category: EDUCATION },
+  { id: 23, tag: 'netify.mystery', label: 'Mystery App', category: MYSTERY }
 ]
 const LOADED_APPLICATIONS = [
   { id: 20, name: 'netify.amazon' },
@@ -55,7 +60,7 @@ function respond(method: string) {
 }
 
 type Probe = {
-  categories?: { id: string; name: string; selectable: number }[]
+  categories?: { id: string; name: string; selectable: number; icon: string }[]
   items?: { id: string; name: string; disabled: boolean }[]
 }
 
@@ -69,10 +74,11 @@ async function runCatalog(kindValue: 'applications' | 'protocols', categoryIdVal
       const categoryId = ref(categoryIdValue)
       const { categories, items } = useDpiCatalog(kind, categoryId)
       return () => {
-        seen.categories = categories.value.map(({ id, name, selectable }) => ({
+        seen.categories = categories.value.map(({ id, name, selectable, icon }) => ({
           id,
           name,
-          selectable
+          selectable,
+          icon: icon.iconName
         }))
         seen.items = items.value.map(({ id, name, disabled }) => ({ id, name, disabled }))
         return h('div')
@@ -143,5 +149,19 @@ describe('useDpiCatalog unclassified protocol', () => {
   it('never shows the engine catch-all for unclassified traffic', async () => {
     const seen = await runCatalog('protocols', UNCATEGORIZED)
     expect(seen.items!.some((item) => item.name.toLowerCase() === 'unknown')).toBe(false)
+  })
+})
+
+describe('useDpiCatalog category labels and icons', () => {
+  it('translates a category from its tag, ignoring the English catalog label', async () => {
+    const seen = await runCatalog('applications', 'education')
+    const education = seen.categories!.find((category) => category.id === 'education')
+    expect(education).toMatchObject({ name: 'Career and Education', icon: 'graduation-cap' })
+  })
+
+  it('falls back to the catalog label and to the protocol icon for an unknown tag', async () => {
+    const seen = await runCatalog('applications', 'mystery-stuff')
+    const mystery = seen.categories!.find((category) => category.id === 'mystery-stuff')
+    expect(mystery).toMatchObject({ name: 'Mystery Stuff', icon: 'cubes' })
   })
 })

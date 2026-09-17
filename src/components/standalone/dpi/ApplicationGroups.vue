@@ -6,12 +6,14 @@
 <script setup lang="ts">
 import {
   getAxiosErrorMessage,
+  getPreference,
   NeButton,
   NeEmptyState,
   NeInlineNotification,
-  NeTextInput
+  NeTextInput,
+  savePreference
 } from '@nethesis/vue-components'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { refDebounced } from '@vueuse/core'
 import { faCirclePlus, faCubes, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -24,8 +26,12 @@ import { useDpiRules } from '@/composables/useDpiRules'
 import ApplicationGroupsTable from '@/components/standalone/dpi/ApplicationGroupsTable.vue'
 import CreateApplicationGroupModal from '@/components/standalone/dpi/CreateApplicationGroupModal.vue'
 import DeleteApplicationGroupModal from '@/components/standalone/dpi/DeleteApplicationGroupModal.vue'
+import { useSubscriptionStore } from '@/stores/standalone/subscription'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
 const { t } = useI18n()
+const subscription = useSubscriptionStore()
+const loginStore = useLoginStore()
 
 const nameFilter = ref('')
 const search = refDebounced(nameFilter, 400)
@@ -80,10 +86,33 @@ function deleteGroup(group: DpiApplicationGroup) {
 function resetFilters() {
   nameFilter.value = ''
 }
+
+const dismissedLimitedCatalog = ref(false)
+
+// without a subscription the engine only loads the community catalog
+const showLimitedCatalog = computed(() => !dismissedLimitedCatalog.value && !subscription.isActive)
+
+function dismissLimitedCatalog() {
+  savePreference('dismiss_dpi_limited_catalog', true, loginStore.username)
+  dismissedLimitedCatalog.value = true
+}
+
+onMounted(() => {
+  dismissedLimitedCatalog.value = getPreference('dismiss_dpi_limited_catalog', loginStore.username)
+})
 </script>
 
 <template>
   <div>
+    <NeInlineNotification
+      v-if="showLimitedCatalog"
+      kind="info"
+      :title="t('standalone.dpi.limited_catalog')"
+      :description="t('standalone.dpi.limited_catalog_description')"
+      class="mb-8"
+      show-close-button
+      @close="dismissLimitedCatalog"
+    />
     <NeInlineNotification
       v-if="isError"
       kind="error"
@@ -133,7 +162,7 @@ function resetFilters() {
           is-search
           :clear-search-label="t('common.clear_filter')"
           :placeholder="t('standalone.dpi.filter_groups')"
-          class="w-80"
+          class="w-sm"
         />
       </div>
       <NeEmptyState

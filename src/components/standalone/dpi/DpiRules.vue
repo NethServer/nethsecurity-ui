@@ -228,7 +228,7 @@ function goToApplicationGroups() {
           is-search
           :clear-search-label="t('common.clear_filter')"
           :placeholder="t('standalone.dpi.filter_rules')"
-          class="w-56"
+          class="w-sm"
         />
         <NeDropdownFilter
           v-model="sourceFilter"

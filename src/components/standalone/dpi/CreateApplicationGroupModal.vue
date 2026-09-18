@@ -223,12 +223,18 @@ watch(
           ? t('standalone.dpi.duplicated_group_name', { name: group.name })
           : group.name
         : ''
-      kind.value = 'applications'
       selections.value = group ? selectionsFromGroup(group, { labelOf, categoryOf }) : []
+      kind.value =
+        selections.value.length &&
+        !selections.value.some((selection) => selection.kind === 'applications')
+          ? 'protocols'
+          : 'applications'
       validationBag.value.clear()
       showNoContentError.value = false
       isCategoryOpen.value = false
       resetFilters()
+      showOnlySelected.value = selections.value.length > 0
+      selectedCategoryId.value = visibleCategories.value[0]?.id ?? ''
     }
   }
 )

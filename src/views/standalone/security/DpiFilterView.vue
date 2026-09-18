@@ -7,13 +7,13 @@
 import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import DpiRules from '@/components/standalone/dpi/DpiRules.vue'
-import DpiExceptions from '@/components/standalone/dpi/DpiExceptions.vue'
+import ApplicationGroups from '@/components/standalone/dpi/ApplicationGroups.vue'
 import { useTabs } from '@/composables/useTabs'
 
 const { t } = useI18n()
 const { tabs, selectedTab } = useTabs([
   { name: 'rules', label: t('standalone.dpi.rules') },
-  { name: 'exceptions', label: t('standalone.dpi.exceptions') }
+  { name: 'application-groups', label: t('standalone.dpi.application_groups') }
 ])
 </script>
 
@@ -32,8 +32,8 @@ const { tabs, selectedTab } = useTabs([
       <template v-if="selectedTab === 'rules'">
         <DpiRules />
       </template>
-      <template v-else-if="selectedTab === 'exceptions'">
-        <DpiExceptions />
+      <template v-else-if="selectedTab === 'application-groups'">
+        <ApplicationGroups />
       </template>
     </div>
   </div>

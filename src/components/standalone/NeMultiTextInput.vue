@@ -1,10 +1,10 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { ref } from 'vue'
 import { NeCombobox, type NeComboboxOption, NeButton, NeTextInput } from '@nethesis/vue-components'
 import { watch } from 'vue'
@@ -38,6 +38,7 @@ const props = withDefaults(
     optionalLabel?: string
     keyInputPlaceholder?: string
     placeholder?: string
+    helperText?: string
   }>(),
   { useKeyInput: false, required: false, keyOptions: () => [] }
 )
@@ -50,6 +51,18 @@ const emit = defineEmits(['delete-item', 'add-item', 'update:modelValue'])
 
 const keys = ref<string[]>([])
 const items = ref<string[]>([])
+
+const showHelperText = computed(
+  () =>
+    !!props.helperText &&
+    !props.generalInvalidMessage &&
+    !props.invalidMessages?.some(Boolean) &&
+    !props.invalidKeyMessages?.some(Boolean)
+)
+
+const addButtonMargin = computed(() =>
+  !props.helperText && (items.value.length > 0 || props.generalInvalidMessage) ? 'mt-8' : 'mt-4'
+)
 
 const inputRef = ref()
 
@@ -187,18 +200,22 @@ onMounted(() => {
       <p v-if="generalInvalidMessage" :class="'mt-2 text-sm text-rose-700 dark:text-rose-400'">
         {{ generalInvalidMessage }}
       </p>
-      <NeButton
-        class="mt-4 -ml-2.5"
-        size="md"
-        :disabled="disableAddButton"
-        kind="tertiary"
-        @click="addItem"
-      >
-        <template #prefix>
-          <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
-        </template>
-        {{ addItemLabel }}
-      </NeButton>
     </div>
+    <p v-if="showHelperText" class="mt-2 text-xs leading-4 text-tertiary-neutral">
+      {{ helperText }}
+    </p>
+    <NeButton
+      class="-ml-2.5"
+      :class="addButtonMargin"
+      size="md"
+      :disabled="disableAddButton"
+      kind="tertiary"
+      @click="addItem"
+    >
+      <template #prefix>
+        <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+      </template>
+      {{ addItemLabel }}
+    </NeButton>
   </div>
 </template>

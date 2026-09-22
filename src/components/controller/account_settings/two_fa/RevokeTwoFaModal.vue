@@ -17,7 +17,7 @@ import {
   NeModal,
   NeTextInput
 } from '@nethesis/vue-components'
-import { isStandaloneMode } from '@/lib/config'
+import { isStandaloneBuild } from '@/lib/config'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -30,7 +30,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'reloadData'])
 
 const { t } = useI18n()
-const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+const loginStore = isStandaloneBuild() ? useStandaloneLoginStore() : useControllerLoginStore()
 const notificationsStore = useNotificationsStore()
 const otp = ref('')
 const otpRef = ref()

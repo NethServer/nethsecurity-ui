@@ -2,7 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useRoute, type RouteLocationNormalizedLoaded } from 'vue-router'
-import { isStandaloneMode } from './config'
+import { isStandaloneBuild } from './config'
 
 /**
  * Used in <router-link> elements of standalone UI to build the full path of destination page. 'route' input param is sometimes needed (e.g. from goTo() function in StandaloneDashboardView.vue)
@@ -13,11 +13,10 @@ export const getStandaloneRoutePrefix = (route?: RouteLocationNormalizedLoaded) 
     route = useRoute()
   }
 
-  if (isStandaloneMode()) {
-    // standalone
+  if (isStandaloneBuild()) {
     return `/standalone`
   } else {
-    // a controller is managing this unit
+    // controller bundle rendering the legacy embedded route
     return `/controller/manage/${route.params.unitId}`
   }
 }

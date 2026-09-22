@@ -5,6 +5,8 @@
 
 <script setup lang="ts">
 import { ubusCall } from '@/lib/standalone/ubus'
+import { getStandaloneApiEndpoint } from '@/lib/config'
+import { isUnitApiResponse } from '@/lib/deployment'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   NeHeading,
@@ -46,8 +48,16 @@ let pollTimeoutId: ReturnType<typeof setTimeout> | null = null
 
 async function checkServerAvailability() {
   try {
-    const response = await fetch('/', { method: 'HEAD' })
-    if (response.ok) {
+    // TODO: check if this change actually works
+    // A HEAD method in '/' could not work when managed by the controller
+    const response = await fetch(`${getStandaloneApiEndpoint()}/ubus/call`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+      cache: 'no-store'
+    })
+
+    if (isUnitApiResponse(response.headers.get('content-type'))) {
       // Server is back online, wait a bit before reloading the page
       stopPolling()
       isServerBackOnline.value = true

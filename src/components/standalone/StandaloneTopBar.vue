@@ -14,9 +14,11 @@ import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import { isEmpty, isEqual } from 'lodash-es'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { isStandaloneMode } from '@/lib/config'
+import { isManagedByController, isProxiedByController } from '@/lib/deployment'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import UciChangesModal from './UciChangesModal.vue'
 import {
+  faArrowLeft,
   faAward,
   faBell,
   faCircleUser,
@@ -55,8 +57,9 @@ const accountMenuOptions = computed(() => {
       id: 'account',
       label: t('common.shell.account_settings'),
       icon: faCircleUser,
-      action: () => router.push('/standalone/account'),
-      disabled: !isStandaloneMode()
+      action: () => router.push(`${getStandaloneRoutePrefix()}/account`),
+      // Account is provisioned by the controller, account access is forbidden and not managed
+      disabled: isManagedByController()
     },
     {
       id: 'theme',
@@ -64,13 +67,21 @@ const accountMenuOptions = computed(() => {
       icon: themeStore.isLight ? faMoon : faSun,
       action: themeStore.toggleTheme
     },
-    {
-      id: 'logout',
-      label: t('common.shell.sign_out'),
-      icon: faRightFromBracket,
-      action: loginStore.logout,
-      disabled: !isStandaloneMode()
-    }
+    // Signing out would invalidate the controller's cached token, we'll redirect back to the controller
+    isProxiedByController()
+      ? {
+          id: 'backToController',
+          label: t('common.shell.back_to_controller'),
+          icon: faArrowLeft,
+          action: () => window.location.assign(`${window.location.origin}/#/controller/units`)
+        }
+      : {
+          id: 'logout',
+          label: t('common.shell.sign_out'),
+          icon: faRightFromBracket,
+          action: loginStore.logout,
+          disabled: isManagedByController()
+        }
   ]
 })
 
@@ -184,7 +195,7 @@ function openNotificationsDrawer() {
         </div>
 
         <!-- badge for controlled unit -->
-        <NeTooltip v-if="!isStandaloneMode()">
+        <NeTooltip v-if="isManagedByController()">
           <template #trigger>
             <NeBadge kind="primary" text="Controller" />
           </template>

@@ -9,6 +9,7 @@ import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [
     vue(),
     vueDevTools(),
@@ -24,6 +25,9 @@ export default defineConfig({
   },
   define: {
     UI_VERSION: JSON.stringify(process.env.npm_package_version),
-    REQUIRED_API_VERSION: JSON.stringify(process.env.npm_package_config_requiredApiVersion)
+    REQUIRED_API_VERSION: JSON.stringify(process.env.npm_package_config_requiredApiVersion),
+    MIN_UI_VERSION_FOR_DIRECT_SERVE: JSON.stringify(
+      process.env.npm_package_config_minUiVersionForDirectServe
+    )
   }
 })

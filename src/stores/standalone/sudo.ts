@@ -3,7 +3,6 @@ import { ref, watchEffect } from 'vue'
 import { useLoginStore } from '@/stores/standalone/standaloneLogin.ts'
 import axios from 'axios'
 import { getStandaloneApiEndpoint } from '@/lib/config.ts'
-import { saveToStorage } from '@nethesis/vue-components'
 import { getValidationErrorsFromAxiosError } from '@/lib/validation.ts'
 
 export class UnauthorizedAction extends Error {
@@ -51,11 +50,7 @@ export const useSudoStore = defineStore('sudo', () => {
         // TODO: tidy up this code with loginStore
         loginStore.token = res.data.data.token
         loginStore.tokenRefreshedTime = new Date().getTime()
-        saveToStorage('standaloneLoginInfo', {
-          username: loginStore.username,
-          token: loginStore.token,
-          tokenRefreshedTime: loginStore.tokenRefreshedTime
-        })
+        loginStore.saveSession(loginStore.username, loginStore.token, loginStore.tokenRefreshedTime)
         askingSudo.value = false
         sudoEnabled.value = true
       })

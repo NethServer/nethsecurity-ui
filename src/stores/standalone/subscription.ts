@@ -39,10 +39,8 @@ export const useSubscriptionStore = defineStore('subscription', () => {
       .then((res: SubscriptionStatusResponse) => {
         isActive.value = res.data.active ?? false
         isEnterprise.value = res.data.type === 'enterprise'
-        if (isActive.value !== isActive.value) {
-          queryClient.invalidateQueries({ queryKey: DPI_LOADED_APPLICATIONS_KEY })
-          queryClient.invalidateQueries({ queryKey: DPI_LOADED_PROTOCOLS_KEY })
-        }
+        queryClient.invalidateQueries({ queryKey: DPI_LOADED_APPLICATIONS_KEY })
+        queryClient.invalidateQueries({ queryKey: DPI_LOADED_PROTOCOLS_KEY })
       })
       .catch((err) => {
         error.value = err

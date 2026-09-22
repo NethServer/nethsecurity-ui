@@ -26,14 +26,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  DPI_RULES_KEY,
   moveRuleIdToEdge,
   reorderRuleIds,
   useDpiRules,
-  useOrderDpiRules,
-  useToggleDpiRule,
   type DpiRule,
-  type DpiRulePosition
+  type DpiRulePosition,
+  type ListRulesResponse
 } from '@/composables/useDpiRules'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import DpiRulesTable from '@/components/standalone/dpi/DpiRulesTable.vue'
 import CreateOrEditDpiRuleDrawer from '@/components/standalone/dpi/CreateOrEditDpiRuleDrawer.vue'
 import DeleteDpiRuleModal from '@/components/standalone/dpi/DeleteDpiRuleModal.vue'
@@ -51,8 +54,27 @@ const search = refDebounced(nameFilter, 400)
 
 const { data: allRules, isLoading: isLoadingAll, isError, error } = useDpiRules()
 
-const { mutate: orderRules, isPending: isReordering } = useOrderDpiRules()
-const { mutate: toggleRule } = useToggleDpiRule()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
+
+function onRulesChanged() {
+  return Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
+}
+
+const { mutate: orderRules, isPending: isReordering } = useMutation({
+  mutationFn: (order: string[]) => ubusCall<ListRulesResponse>('ns.dpi', 'order-rules', { order }),
+  onSuccess: onRulesChanged
+})
+
+const { mutate: toggleRule } = useMutation({
+  mutationFn: (payload: { id: string; enabled: boolean }) =>
+    ubusCall<{ data: { message: string } }>(
+      'ns.dpi',
+      payload.enabled ? 'enable-rule' : 'disable-rule',
+      { id: payload.id }
+    ),
+  onSuccess: onRulesChanged
+})
 
 const isFiltered = computed(
   () =>
@@ -89,6 +111,9 @@ const filteredRules = computed(() => {
 const rules = computed<DpiRule[]>(() => filteredRules.value)
 const isLoading = computed(() => isLoadingAll.value)
 const hasRules = computed(() => rules.value.length > 0)
+const hasNoRulesConfigured = computed(
+  () => !isLoading.value && !isFiltered.value && !hasRules.value
+)
 
 const sourceFilterOptions = computed<FilterOption[]>(() => {
   const sources = new Set<string>()
@@ -186,8 +211,7 @@ function goToApplicationGroups() {
       :description="t(getAxiosErrorMessage(error))"
       class="mb-8"
     />
-    <DpiRulesTable v-if="isLoading" :rules="[]" loading />
-    <template v-else-if="!hasRules && !isFiltered">
+    <template v-if="hasNoRulesConfigured">
       <NeEmptyState
         :title="t('standalone.dpi.no_rules_configured')"
         :description="t('standalone.dpi.no_rules_configured_description')"
@@ -268,7 +292,7 @@ function goToApplicationGroups() {
         </NeButton>
       </div>
       <NeEmptyState
-        v-if="!hasRules"
+        v-if="!isLoading && !hasRules"
         :title="t('standalone.dpi.no_rules_found')"
         :description="t('standalone.dpi.no_rules_found_description')"
         :icon="faMagnifyingGlass"
@@ -278,19 +302,19 @@ function goToApplicationGroups() {
           {{ t('common.reset_filters') }}
         </NeButton>
       </NeEmptyState>
-      <DpiRulesTable
-        v-else
-        :rules="rules"
-        :busy="isReordering"
-        :can-reorder="!isFiltered"
-        @edit="editRule"
-        @duplicate="duplicateRule"
-        @delete="deleteRule"
-        @toggle="(rule) => toggleRule({ id: rule.id, enabled: !rule.enabled })"
-        @move="onMove"
-        @reorder="onReorder"
-      />
     </template>
+    <DpiRulesTable
+      :rules="rules"
+      :loading="isLoading"
+      :busy="isReordering"
+      :can-reorder="!isFiltered"
+      @edit="editRule"
+      @duplicate="duplicateRule"
+      @delete="deleteRule"
+      @toggle="(rule) => toggleRule({ id: rule.id, enabled: !rule.enabled })"
+      @move="onMove"
+      @reorder="onReorder"
+    />
     <CreateOrEditDpiRuleDrawer
       :is-shown="isShownRuleDrawer"
       :rule-to-edit="ruleToEdit"

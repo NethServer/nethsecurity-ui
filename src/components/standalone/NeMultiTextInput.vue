@@ -54,14 +54,16 @@ const items = ref<string[]>([])
 
 const showHelperText = computed(
   () =>
-    !!props.helperText &&
+    props.helperText !== undefined &&
     !props.generalInvalidMessage &&
     !props.invalidMessages?.some(Boolean) &&
     !props.invalidKeyMessages?.some(Boolean)
 )
 
 const addButtonMargin = computed(() =>
-  !props.helperText && (items.value.length > 0 || props.generalInvalidMessage) ? 'mt-8' : 'mt-4'
+  props.helperText === undefined && (items.value.length > 0 || props.generalInvalidMessage)
+    ? 'mt-8'
+    : 'mt-4'
 )
 
 const inputRef = ref()

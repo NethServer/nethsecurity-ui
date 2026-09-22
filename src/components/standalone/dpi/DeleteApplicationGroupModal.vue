@@ -4,14 +4,16 @@
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
-  useDeleteApplicationGroup,
+  APPLICATION_GROUPS_KEY,
   type DpiApplicationGroup
 } from '@/composables/useApplicationGroups'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { visible = false, group = undefined } = defineProps<{
   visible?: boolean
@@ -25,43 +27,45 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const deleteError = ref<Error>()
-const validationMessage = ref('')
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
 
-const { mutate: deleteGroup, isPending } = useDeleteApplicationGroup()
+const {
+  mutate: deleteGroup,
+  isPending,
+  error,
+  reset
+} = useMutation({
+  mutationFn: (id: string) =>
+    ubusCall<{ data: { message: string } }>('ns.dpi', 'delete-appgroup', { id }),
+  onSettled: () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: APPLICATION_GROUPS_KEY }),
+      uci.getChanges()
+    ])
+})
 
-function clearErrors() {
-  deleteError.value = undefined
-  validationMessage.value = ''
-}
+const validationMessage = computed(() =>
+  error.value instanceof ValidationError && error.value.errorBag.has('id')
+    ? t(error.value.errorBag.getFirstI18nKeyFor('id'))
+    : ''
+)
 
 watch(
   () => visible,
   (isShown) => {
     if (isShown) {
-      clearErrors()
+      reset()
     }
   }
 )
-
-function onDeleteError(e: Error) {
-  if (e instanceof ValidationError && e.errorBag.has('id')) {
-    validationMessage.value = t(e.errorBag.getFirstI18nKeyFor('id'))
-  } else {
-    deleteError.value = e
-  }
-}
 
 function confirmDelete() {
   if (!group) {
     return
   }
 
-  clearErrors()
-  deleteGroup(group.id, {
-    onSuccess: () => emit('deleted'),
-    onError: onDeleteError
-  })
+  deleteGroup(group.id, { onSuccess: () => emit('deleted') })
 }
 </script>
 
@@ -88,10 +92,10 @@ function confirmDelete() {
       class="mt-4"
     />
     <NeInlineNotification
-      v-if="deleteError"
+      v-if="error && !validationMessage"
       kind="error"
       :title="t('error.cannot_delete_application_group')"
-      :description="t(getAxiosErrorMessage(deleteError))"
+      :description="t(getAxiosErrorMessage(error))"
       class="mt-4"
     />
   </NeModal>

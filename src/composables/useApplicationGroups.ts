@@ -2,9 +2,8 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import type { Ref } from 'vue'
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { keepPreviousData, useQuery, type UseQueryReturnType } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import type { DpiCatalogKind } from '@/composables/useDpiCatalog'
 
 /** A DPI application group, as `list-appgroups` returns it. */
@@ -33,80 +32,39 @@ export type DpiApplicationGroupsPage = {
 }
 
 type ListAppGroupsResponse = { data: { values: DpiApplicationGroupsPage } }
-type AppGroupIdResponse = { data: { id: string } }
 
 export const APPLICATION_GROUPS_KEY = ['dpi', 'application-groups']
 
-export function useApplicationGroups() {
-  return useQuery({
-    queryKey: [...APPLICATION_GROUPS_KEY, 'all'],
-    queryFn: ({ signal }) =>
-      ubusCall<ListAppGroupsResponse>('ns.dpi', 'list-appgroups', {}, { signal }),
-    select: (res) => res.data.values.data
-  })
-}
-
-export function useApplicationGroupsPage(params: {
+export type DpiApplicationGroupsPageParams = {
   search: Ref<string>
   page: Ref<number>
   pageSize: Ref<number>
-}) {
+}
+
+export function useApplicationGroups(): UseQueryReturnType<DpiApplicationGroup[], Error>
+export function useApplicationGroups(
+  params: DpiApplicationGroupsPageParams
+): UseQueryReturnType<DpiApplicationGroupsPage, Error>
+export function useApplicationGroups(params?: DpiApplicationGroupsPageParams) {
   return useQuery({
-    queryKey: [...APPLICATION_GROUPS_KEY, 'page', params.search, params.page, params.pageSize],
+    queryKey: params
+      ? [...APPLICATION_GROUPS_KEY, 'page', params.search, params.page, params.pageSize]
+      : [...APPLICATION_GROUPS_KEY, 'all'],
     queryFn: ({ signal }) =>
       ubusCall<ListAppGroupsResponse>(
         'ns.dpi',
         'list-appgroups',
-        {
-          search: params.search.value || undefined,
-          limit: params.pageSize.value,
-          page: params.page.value
-        },
+        params
+          ? {
+              search: params.search.value || undefined,
+              limit: params.pageSize.value,
+              page: params.page.value
+            }
+          : {},
         { signal }
       ),
-    select: (res) => res.data.values,
-    placeholderData: keepPreviousData
-  })
-}
-
-function useApplicationGroupsInvalidation() {
-  const queryClient = useQueryClient()
-  const uci = useUciPendingChangesStore()
-
-  return () =>
-    Promise.all([
-      queryClient.invalidateQueries({ queryKey: APPLICATION_GROUPS_KEY }),
-      uci.getChanges()
-    ])
-}
-
-export function useCreateApplicationGroup() {
-  const invalidate = useApplicationGroupsInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: DpiApplicationGroupPayload) =>
-      ubusCall<AppGroupIdResponse>('ns.dpi', 'add-appgroup', payload),
-    onSuccess: invalidate
-  })
-}
-
-export function useEditApplicationGroup() {
-  const invalidate = useApplicationGroupsInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: DpiApplicationGroupPayload & { id: string }) =>
-      ubusCall<AppGroupIdResponse>('ns.dpi', 'edit-appgroup', payload),
-    onSuccess: invalidate
-  })
-}
-
-export function useDeleteApplicationGroup() {
-  const invalidate = useApplicationGroupsInvalidation()
-
-  return useMutation({
-    mutationFn: (id: string) =>
-      ubusCall<{ data: { message: string } }>('ns.dpi', 'delete-appgroup', { id }),
-    onSettled: invalidate
+    select: (res) => (params ? res.data.values : res.data.values.data),
+    placeholderData: params ? keepPreviousData : undefined
   })
 }
 

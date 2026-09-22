@@ -22,6 +22,7 @@ import {
   faCircleCheck,
   faClone,
   faCubes,
+  faGlobe,
   faGripVertical,
   faPenToSquare,
   faSliders,
@@ -167,6 +168,7 @@ function actionsOf(rule: DpiRule) {
 <template>
   <div>
     <NeTable
+      v-if="loading || rules.length"
       :data="rules"
       :headers="headers"
       :style="'card'"
@@ -359,7 +361,11 @@ function actionsOf(rule: DpiRule) {
                       { 'opacity-50': !rule.enabled }
                     ]"
                   >
-                    <template v-for="appgroup in rule.appgroups" :key="appgroup.id">
+                    <span v-if="rule.match_all" class="inline-flex items-center gap-2">
+                      <FontAwesomeIcon :icon="faGlobe" class="h-4 w-4" aria-hidden="true" />
+                      {{ t('standalone.dpi.match_type_all') }}
+                    </span>
+                    <template v-for="appgroup in rule.appgroups" v-else :key="appgroup.id">
                       <NeTooltip
                         v-if="summaryOf(appgroup.id)"
                         trigger-event="mouseenter focus"
@@ -380,7 +386,7 @@ function actionsOf(rule: DpiRule) {
                         {{ appgroup.name }}
                       </span>
                     </template>
-                    <span v-if="!rule.appgroups.length">-</span>
+                    <span v-if="!rule.match_all && !rule.appgroups.length">-</span>
                   </div>
                 </td>
                 <td :class="rule.enabled ? '' : disabledRuleClasses">

@@ -48,8 +48,8 @@ let pollTimeoutId: ReturnType<typeof setTimeout> | null = null
 
 async function checkServerAvailability() {
   try {
-    // Raw fetch on purpose: this must not go through the axios interceptors, which would treat
-    // the expected 401 as a session expiry and log the user out mid-reboot.
+    // TODO: check if this change actually works
+    // A HEAD method in '/' could not work when managed by the controller
     const response = await fetch(`${getStandaloneApiEndpoint()}/ubus/call`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

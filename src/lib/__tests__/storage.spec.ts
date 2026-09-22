@@ -28,8 +28,6 @@ describe('getSessionStorageKey', () => {
     expect(getSessionStorageKey()).toBe('standaloneLoginInfo')
   })
 
-  // This is the handoff contract: the controller writes unit-<uuid> before opening the tab, and
-  // the proxied UI must read back that exact key rather than prompting for a login.
   it('is the controller handoff key when proxied', () => {
     builtAs('standalone')
     servedFrom(`/${UNIT_A}/`)
@@ -37,8 +35,6 @@ describe('getSessionStorageKey', () => {
     expect(getSessionStorageKey()).toBe(`unit-${UNIT_A}`)
   })
 
-  // The controller bundle's legacy embedded route has the unit as a route param, not a path
-  // prefix, so it has to pass the id in explicitly — otherwise it would write the wrong key.
   it('uses an explicitly passed unit id, for the legacy embedded route', () => {
     builtAs('controller')
     servedFrom('/')
@@ -90,8 +86,6 @@ describe('getPreferencesScope', () => {
     expect(getPreferencesScope('root')).toBe('root')
   })
 
-  // Both units authenticate as root, so without scoping they would share preferences-root and
-  // leak theme, locale and menu state into each other.
   it('scopes the username per unit when proxied', () => {
     builtAs('standalone')
 

@@ -7,12 +7,7 @@ import { getUiBasePath, isProxiedByController, isStandaloneBuild } from '@/lib/d
 export { isStandaloneBuild } from '@/lib/deployment'
 
 /**
- * API endpoint of the unit this UI is managing.
- *
- * The standalone bundle is served from two places and must reach the same unit from both:
- * from the unit's own nginx at `/`, and through the controller's per-unit proxy route at
- * `/<uuid>/`. Deriving the base from the document path covers both without the UI having to
- * know which one it is in — `/api` at the root, `/<uuid>/api` behind the proxy.
+ * API endpoint of the unit this UI is managing, derived from the document path
  */
 export const getStandaloneApiEndpoint = () => {
   if (!isStandaloneBuild()) {
@@ -36,12 +31,7 @@ export const getStandaloneApiEndpoint = () => {
 }
 
 /**
- * API endpoint of the controller itself.
- *
- * Deliberately origin-based rather than derived from the deployment path: the controller API is
- * mounted at the absolute `/api` by the controller's proxy, regardless of whether the controller
- * UI is served at `/` or at `/ui/`. Serving the controller itself under a path prefix is not
- * supported.
+ * API endpoint of the controller itself
  */
 export const getControllerApiEndpoint = () => {
   if (import.meta.env.DEV) {
@@ -57,11 +47,7 @@ export const getControllerApiEndpoint = () => {
 }
 
 /**
- * API endpoint of a specific unit, addressed through the controller's proxy.
- *
- * Only used by the controller bundle: either for its controller-native per-unit calls, or by the
- * legacy embedded route that renders StandaloneApp inside the controller shell. The proxied
- * standalone bundle goes through `getStandaloneApiEndpoint()` instead.
+ * API endpoint of a specific unit, through the controller's proxy
  */
 export const getUnitManagementApiEndpoint = (unitId?: string) => {
   const unitsStore = useUnitsStore()

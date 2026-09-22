@@ -28,8 +28,6 @@ import { ValidationError } from '@/lib/standalone/ubus'
 import { getScopedStorageKey } from '@/lib/storage'
 import loginLogoUrl from '@/assets/login_logo.svg'
 
-// scoped because every proxied unit UI shares the controller's origin, and therefore its
-// localStorage namespace
 const rememberedUsernameKey = getScopedStorageKey('standaloneUsername')
 
 const username = ref('')

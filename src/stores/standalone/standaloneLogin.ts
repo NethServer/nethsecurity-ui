@@ -34,11 +34,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     return !isEmpty(username.value)
   })
 
-  /**
-   * localStorage key holding this session. Covers all three deployments: the unit serving its own
-   * UI, the unit proxied by a controller under /<uuid>/, and the controller bundle rendering the
-   * legacy embedded route (where the unit id is a route param, not a path prefix).
-   */
   const sessionStorageKey = () =>
     getSessionStorageKey(isStandaloneBuild() ? undefined : (route.params.unitId as string))
 
@@ -58,8 +53,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       return
     }
 
-    // A session handed over by a controller was minted by retrieveAndSaveUnitToken(), which does
-    // not know the unit's username, so recover it from the token itself.
+    // retrieveAndSaveUnitToken() doesn't know the unit's username, so recover it from the token.
     let claims: { id?: string; exp?: number }
     try {
       claims = jwtDecode(loginInfo.token)
@@ -70,8 +64,7 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
     }
 
     if (claims.exp && claims.exp * 1000 <= Date.now()) {
-      // Discard rather than load: an expired token would 401 on the first call, and in proxied
-      // mode there is no way to re-mint it from here.
+      // Discard: an expired token would 401 immediately
       deleteFromStorage(key)
       return
     }
@@ -115,8 +108,8 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
         }
       )
     } catch (err) {
-      // The token is often already dead by the time we get here (expired session, unit rebooted).
-      // Clearing local state is what actually matters, so never let this reject.
+      // Token is often already dead here (expired session, unit rebooted) - clearing local state
+      // is what matters, so never let this reject
       console.warn('[login]', 'logout request failed, clearing the local session anyway', err)
     }
     deleteFromStorage(sessionStorageKey())
@@ -141,8 +134,6 @@ export const useLoginStore = defineStore('standaloneLogin', () => {
       const jwtToken = res.data.token
       const refreshedTime = new Date().getTime()
 
-      // One write for all three deployments: sessionStorageKey() resolves to standaloneLoginInfo
-      // at the root and to unit-<uuid> when a controller is involved.
       saveSession(username.value, jwtToken, refreshedTime)
       token.value = jwtToken
       tokenRefreshedTime.value = refreshedTime

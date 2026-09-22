@@ -11,9 +11,6 @@ import { useI18n } from 'vue-i18n'
 import { getProductName } from '@/lib/config'
 import loginLogoUrl from '@/assets/login_logo.svg'
 
-// Replaces the login form when proxied: the unit's credentials live in the controller, so the
-// operator cannot fill it in. Not an automatic redirect, or a controller that fails to mint a
-// token would ping-pong between the two SPAs.
 const { t } = useI18n()
 
 function backToController() {

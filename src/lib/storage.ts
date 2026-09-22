@@ -5,22 +5,17 @@ import { getPreference, savePreference } from '@nethesis/vue-components'
 import { getProxiedUnitId, isProxiedByController } from '@/lib/deployment'
 
 /**
- * Local storage keys, scoped to the deployment.
- *
- * localStorage is partitioned by origin, not path, so when a controller proxies unit UIs at
- * `/<uuid>/` every unit and the controller share one namespace — unit A reads back unit B's keys.
- * Two unit tabs at once is the normal workflow.
- *
- * All no-ops unless the standalone bundle is proxied, so call sites are safe to swap wholesale.
+ * Local storage keys, scoped to the deployment. localStorage is partitioned by origin
+ * so proxied unit UIs at `/<uuid>/` share one namespace on the controller's, separation
+ * is needed so that UI's don't read each other stuff.
  */
 
 /**
- * Session key: `standaloneLoginInfo` at the root, `unit-<uuid>` when a controller is involved.
- * The `unit-<uuid>` form is the handoff contract — the same key the controller writes in
- * `retrieveAndSaveUnitToken()`.
+ * Session key: `standaloneLoginInfo` at the root, `unit-<uuid>` when proxied — the same handoff
+ * key `retrieveAndSaveUnitToken()` writes.
  *
- * @param managedUnitId for the controller bundle's embedded route, where the unit is a route param
- *   rather than a path prefix. Wins over the path.
+ * @param managedUnitId for the controller bundle's embedded route, where the unit is a route
+ *   param rather than a path prefix. Wins over the path.
  */
 export const getSessionStorageKey = (managedUnitId?: string): string => {
   const unitId = managedUnitId || (isProxiedByController() ? getProxiedUnitId() : '')

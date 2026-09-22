@@ -98,13 +98,7 @@ onMounted(() => {
 })
 
 /**
- * True when the unit ships a UI new enough to be served under the controller's per-unit path
- * prefix, so we can hand the browser over to the unit's own UI instead of rendering our embedded
- * copy of it.
- *
- * Gated on ui_version rather than api_version on purpose: this is a property of the ns-ui package,
- * and the two are versioned independently. Units that do not report ui_version at all fail closed
- * to the embedded copy, which is the correct answer for them.
+ * True when the unit ships a UI new enough to serve it through the proxy
  */
 function servesItsOwnUi(unit: Unit) {
   const uiVersion = coerce(unit.info?.ui_version)
@@ -123,20 +117,15 @@ async function openUnit(unit: Unit, versionCheck = true) {
     currentUnit.value = unitsStore.units.find((u) => u.id == unit.id)!
 
     if (servesItsOwnUi(currentUnit.value)) {
-      // The unit serves its own UI at its own version, so there is no API version to keep in
-      // lockstep with ours. checkUnitToken writes unit-<id>, which the unit's UI reads back on
-      // load - same origin, so this is the session handover.
+      // checkUnitToken writes unit-<id>, which the unit's UI reads back on load
       await unitsStore.checkUnitToken(unit.id)
-      // Trailing slash is mandatory: the unit's bundle uses a relative base, so without it every
-      // asset would resolve against the controller root. 'noopener' keeps the unit's JS from
-      // reaching back into this tab through window.opener.
+      // Trailing slash required: the unit's bundle uses a relative base
       window.open(`${window.location.origin}/${unit.id}/`, '_blank', 'noopener')
       showGreaterApiModal.value = false
       return
     }
 
-    // Legacy path: render our embedded copy of the standalone UI, which does have to match the
-    // unit's API version.
+    // Legacy path: our embedded copy of the standalone UI, which must match the unit's API version.
     // Logic on which message is shown is inside the ObsoleteApiModal component
     let version = coerce(currentUnit.value?.info.api_version)
     if (version == null) {

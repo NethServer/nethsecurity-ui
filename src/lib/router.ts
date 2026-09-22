@@ -14,15 +14,9 @@ export const getStandaloneRoutePrefix = (route?: RouteLocationNormalizedLoaded) 
   }
 
   if (isStandaloneBuild()) {
-    // Standalone, whether served by the unit itself or proxied by a controller at /<uuid>/.
-    // Deliberately NOT unit-aware: the unit id lives in the URL *path*, and the router uses hash
-    // history with no explicit base, so it derives that base from location.pathname. Generated
-    // links therefore come out as /<uuid>/#/standalone/... on their own. Making this
-    // unit-aware would double the prefix.
     return `/standalone`
   } else {
-    // the controller bundle rendering the legacy embedded route, where the unit is a route param
-    // a controller is managing this unit
+    // controller bundle rendering the legacy embedded route
     return `/controller/manage/${route.params.unitId}`
   }
 }

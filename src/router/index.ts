@@ -295,8 +295,7 @@ const router = createRouter({
 // redirect to wizard page if not completed
 router.beforeEach(async (to) => {
   if (isManagedByController()) {
-    // a unit reached through a controller is already set up, and trapping it in the wizard would
-    // leave the operator with no way out
+    // already set up; trapping it in the wizard would leave the operator with no way out
     return true
   }
   const setupWizardStore = useSetupWizardStore()

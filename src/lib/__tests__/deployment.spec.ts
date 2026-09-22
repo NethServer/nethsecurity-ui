@@ -49,10 +49,7 @@ describe('getUiBasePath', () => {
     expect(getUiBasePath()).toBe(`/${UNIT_ID}/`)
   })
 
-  // Documents the limitation the controller's addslash redirect exists to prevent: without the
-  // slash the browser resolves relative URLs against the origin root, so the API base would
-  // silently become the controller's instead of the unit's. Not fixable here — by the time this
-  // runs the browser has already resolved the asset URLs.
+  // What the controller's addslash redirect exists to prevent (see getUiBasePath jsdoc).
   it('degrades to / when the document path has no trailing slash', () => {
     servedFrom(`https://ctrl.example/${UNIT_ID}`)
     expect(getUiBasePath()).toBe('/')
@@ -74,8 +71,7 @@ describe('isProxiedByController', () => {
     expect(getProxiedUnitId()).toBe(UNIT_ID)
   })
 
-  // The controller UI is served at both / and /ui/. Without the build-mode gate, /ui/ would be
-  // read as a unit id and the controller would start calling /ui/api.
+  // Without the build-mode gate, /ui/ would be misread as a unit id.
   it('is false for the controller bundle served at /ui/', () => {
     builtAs('controller')
     servedFrom('https://ctrl.example/ui/')
@@ -121,8 +117,7 @@ describe('isUnitApiResponse', () => {
     expect(isUnitApiResponse('application/json; charset=utf-8')).toBe(true)
   })
 
-  // While a unit is down, the controller's catch-all answers with HTTP 200 and HTML. Treating
-  // that as "the unit is back" would reload the controller's SPA into the unit's tab.
+  // The controller's catch-all answers 200/HTML for a down unit — must not read as "unit is back".
   it('rejects the controller catch-all answering for a down unit', () => {
     expect(isUnitApiResponse('text/html')).toBe(false)
     expect(isUnitApiResponse('text/html; charset=UTF-8')).toBe(false)
@@ -152,8 +147,7 @@ describe('getUnitIdFromApiUrl', () => {
     expect(getUnitIdFromApiUrl('/api/ubus/call')).toBeUndefined()
   })
 
-  // The regex this replaced returned null for these and then threw on `.length`, inside a
-  // response interceptor, which swallowed the error that triggered it.
+  // The regex this replaced returned null here and threw on `.length`, swallowing the real error.
   it('returns undefined instead of throwing on unexpected input', () => {
     expect(getUnitIdFromApiUrl('')).toBeUndefined()
     expect(getUnitIdFromApiUrl('not a url')).toBeUndefined()

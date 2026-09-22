@@ -58,8 +58,7 @@ const accountMenuOptions = computed(() => {
       label: t('common.shell.account_settings'),
       icon: faCircleUser,
       action: () => router.push(`${getStandaloneRoutePrefix()}/account`),
-      // The account is provisioned and held by the controller; changing its password here would
-      // break every future token the controller mints for this unit.
+      // Account is provisioned by the controller, account access is forbidden and not managed
       disabled: isManagedByController()
     },
     {
@@ -68,8 +67,7 @@ const accountMenuOptions = computed(() => {
       icon: themeStore.isLight ? faMoon : faSun,
       action: themeStore.toggleTheme
     },
-    // Signing out of a proxied unit would invalidate the token the controller cached for it, so
-    // offer a way back to the controller instead of a dead "sign out".
+    // Signing out would invalidate the controller's cached token, we'll redirect back to the controller
     isProxiedByController()
       ? {
           id: 'backToController',

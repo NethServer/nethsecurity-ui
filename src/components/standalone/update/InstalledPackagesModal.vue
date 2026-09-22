@@ -3,6 +3,10 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+<!--
+TODO: remove when testing is done.
+-->
+
 <script lang="ts" setup>
 import {
   getAxiosErrorMessage,

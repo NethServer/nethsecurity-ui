@@ -29,14 +29,9 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     error.value = undefined
     ubusCall('ns.subscription', 'info')
       .then((res: SubscriptionStatusResponse) => {
-        const active = res.data.active ?? false
-
-        if (active !== isActive.value) {
-          queryClient.invalidateQueries({ queryKey: DPI_LOADED_APPLICATIONS_KEY })
-          queryClient.invalidateQueries({ queryKey: DPI_LOADED_PROTOCOLS_KEY })
-        }
-
-        isActive.value = active
+        isActive.value = res.data.active ?? false
+        queryClient.invalidateQueries({ queryKey: DPI_LOADED_APPLICATIONS_KEY })
+        queryClient.invalidateQueries({ queryKey: DPI_LOADED_PROTOCOLS_KEY })
       })
       .catch((err) => {
         error.value = err

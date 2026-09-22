@@ -18,10 +18,7 @@ import { useI18n } from 'vue-i18n'
 import { refDebounced } from '@vueuse/core'
 import { faCirclePlus, faCubes, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  useApplicationGroupsPage,
-  type DpiApplicationGroup
-} from '@/composables/useApplicationGroups'
+import { useApplicationGroups, type DpiApplicationGroup } from '@/composables/useApplicationGroups'
 import { useDpiRules } from '@/composables/useDpiRules'
 import ApplicationGroupsTable from '@/components/standalone/dpi/ApplicationGroupsTable.vue'
 import CreateApplicationGroupModal from '@/components/standalone/dpi/CreateApplicationGroupModal.vue'
@@ -38,7 +35,7 @@ const search = refDebounced(nameFilter, 400)
 const page = ref(1)
 const pageSize = ref(10)
 
-const { data, isLoading, isPlaceholderData, isError, error } = useApplicationGroupsPage({
+const { data, isLoading, isPlaceholderData, isError, error } = useApplicationGroups({
   search,
   page,
   pageSize
@@ -49,6 +46,9 @@ const groups = computed(() => data.value?.data ?? [])
 const totalRows = computed(() => data.value?.meta.total ?? 0)
 const isFiltered = computed(() => search.value.trim() !== '')
 const hasGroups = computed(() => groups.value.length > 0)
+const hasNoGroupsConfigured = computed(
+  () => !isLoading.value && !isFiltered.value && !hasGroups.value
+)
 
 const groupToEdit = ref<DpiApplicationGroup>()
 const isDuplicating = ref(false)
@@ -120,16 +120,7 @@ onMounted(() => {
       :description="t(getAxiosErrorMessage(error))"
       class="mb-8"
     />
-    <ApplicationGroupsTable
-      v-if="isLoading"
-      :groups="[]"
-      :rules="allRules ?? []"
-      loading
-      :current-page="page"
-      :page-size="pageSize"
-      :total-rows="0"
-    />
-    <template v-else-if="!hasGroups && !isFiltered">
+    <template v-if="hasNoGroupsConfigured">
       <NeEmptyState
         :title="t('standalone.dpi.no_application_groups_configured')"
         :description="t('standalone.dpi.no_application_groups_configured_description')"
@@ -166,7 +157,7 @@ onMounted(() => {
         />
       </div>
       <NeEmptyState
-        v-if="!hasGroups"
+        v-if="!isLoading && !hasGroups"
         :title="t('standalone.dpi.no_application_groups_found')"
         :description="t('standalone.dpi.no_application_groups_found_description')"
         :icon="faMagnifyingGlass"
@@ -176,26 +167,25 @@ onMounted(() => {
           {{ t('common.reset_filters') }}
         </NeButton>
       </NeEmptyState>
-      <ApplicationGroupsTable
-        v-else
-        :groups="groups"
-        :rules="allRules ?? []"
-        :loading="isPlaceholderData"
-        :current-page="page"
-        :page-size="pageSize"
-        :total-rows="totalRows"
-        @edit="editGroup"
-        @duplicate="duplicateGroup"
-        @delete="deleteGroup"
-        @select-page="(selected) => (page = selected)"
-        @select-page-size="
-          (size) => {
-            pageSize = size
-            page = 1
-          }
-        "
-      />
     </template>
+    <ApplicationGroupsTable
+      :groups="groups"
+      :rules="allRules ?? []"
+      :loading="isLoading || isPlaceholderData"
+      :current-page="page"
+      :page-size="pageSize"
+      :total-rows="totalRows"
+      @edit="editGroup"
+      @duplicate="duplicateGroup"
+      @delete="deleteGroup"
+      @select-page="(selected) => (page = selected)"
+      @select-page-size="
+        (size) => {
+          pageSize = size
+          page = 1
+        }
+      "
+    />
     <CreateApplicationGroupModal
       :visible="isShownSaveModal"
       :group="groupToEdit"

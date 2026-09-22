@@ -29,7 +29,6 @@ import {
   faMagnifyingGlass
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import * as v from 'valibot'
 import {
   UNCATEGORIZED,
   useDpiCatalog,
@@ -38,16 +37,18 @@ import {
   type DpiCatalogKind
 } from '@/composables/useDpiCatalog'
 import {
+  APPLICATION_GROUPS_KEY,
   selectionsFromGroup,
   selectionsToPayload,
-  useCreateApplicationGroup,
-  useEditApplicationGroup,
   type DpiApplicationGroup,
+  type DpiApplicationGroupPayload,
   type DpiGroupSelection
 } from '@/composables/useApplicationGroups'
 import { useSubscriptionStore } from '@/stores/standalone/subscription'
 import { MessageBag } from '@/lib/validation'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const {
   visible = false,
@@ -65,23 +66,14 @@ const emit = defineEmits<{
   save: []
 }>()
 
+type AppGroupIdResponse = { data: { id: string } }
+
 const { t } = useI18n()
 const subscription = useSubscriptionStore()
 
 const isEditing = computed(() => group !== undefined && !duplicate)
 // without a subscription only community items are usable, so filtering them is offered
 const showCommunityFilter = computed(() => !subscription.isActive)
-
-const NAME_MAX_LENGTH = 64
-
-const nameSchema = v.object({
-  name: v.pipe(
-    v.string(),
-    v.trim(),
-    v.minLength(1, 'required'),
-    v.maxLength(NAME_MAX_LENGTH, 'name_too_long')
-  )
-})
 
 const groupName = ref('')
 const kind = ref<DpiCatalogKind>('applications')
@@ -127,8 +119,27 @@ const {
 } = useDpiCatalog(kind, selectedCategoryId)
 
 const { labelOf, categoryOf, isLoaded } = useDpiCatalogLabels()
-const { mutate: createGroup, isPending: isCreating } = useCreateApplicationGroup()
-const { mutate: editGroup, isPending: isEditingPending } = useEditApplicationGroup()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
+
+function onGroupSaved() {
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: APPLICATION_GROUPS_KEY }),
+    uci.getChanges()
+  ])
+}
+
+const { mutate: createGroup, isPending: isCreating } = useMutation({
+  mutationFn: (payload: DpiApplicationGroupPayload) =>
+    ubusCall<AppGroupIdResponse>('ns.dpi', 'add-appgroup', payload),
+  onSuccess: onGroupSaved
+})
+
+const { mutate: editGroup, isPending: isEditingPending } = useMutation({
+  mutationFn: (payload: DpiApplicationGroupPayload & { id: string }) =>
+    ubusCall<AppGroupIdResponse>('ns.dpi', 'edit-appgroup', payload),
+  onSuccess: onGroupSaved
+})
 
 const isSaving = computed(() => isCreating.value || isEditingPending.value)
 
@@ -393,24 +404,19 @@ function validate() {
   validationBag.value.clear()
   showNoContentError.value = selections.value.length === 0
 
-  const result = v.safeParse(nameSchema, { name: groupName.value })
-  if (!result.success) {
-    for (const issue of result.issues) {
-      const field = issue.path?.[0]?.key
-      if (typeof field === 'string') {
-        validationBag.value.set(field, issue.message)
-      }
-    }
-    isCategoryOpen.value = false
-    nextTick(() => focusElement(nameRef))
-  }
-
-  return result.success && !showNoContentError.value
+  return !showNoContentError.value
 }
 
 function onValidationError(e: Error) {
-  if (e instanceof ValidationError) {
-    validationBag.value = e.errorBag
+  if (!(e instanceof ValidationError)) {
+    return
+  }
+
+  validationBag.value = e.errorBag
+
+  if (e.errorBag.has('name')) {
+    isCategoryOpen.value = false
+    nextTick(() => focusElement(nameRef))
   }
 }
 

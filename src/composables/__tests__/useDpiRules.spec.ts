@@ -12,6 +12,7 @@ function rules(...ids: string[]): DpiRule[] {
     action: 'block',
     source: [],
     appgroups: [],
+    match_all: false,
     managed: true,
     index
   }))

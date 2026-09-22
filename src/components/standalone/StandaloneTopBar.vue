@@ -275,7 +275,7 @@ function openNotificationsDrawer() {
               menu-classes="z-150!"
             >
               <template #button>
-                <button type="button" :class="['-ml-2.5 flex p-2.5', topBarButtonsColorClasses]">
+                <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
                   <div class="flex items-center gap-2">
                     <font-awesome-icon
                       :icon="['fas', 'circle-user']"

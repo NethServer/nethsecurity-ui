@@ -102,6 +102,7 @@ function actionsOf(group: DpiApplicationGroup) {
 
 <template>
   <NeTable
+    v-if="loading || groups.length"
     :aria-label="t('standalone.dpi.application_groups')"
     card-breakpoint="xl"
     :loading="loading"

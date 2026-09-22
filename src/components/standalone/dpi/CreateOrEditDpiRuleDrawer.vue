@@ -31,14 +31,16 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import CreateApplicationGroupModal from '@/components/standalone/dpi/CreateApplicationGroupModal.vue'
 import {
-  useCreateDpiRule,
-  useEditDpiRule,
+  DPI_RULES_KEY,
   type DpiRule,
   type DpiRuleAction,
+  type DpiRulePayload,
   type DpiRulePosition
 } from '@/composables/useDpiRules'
 import { useApplicationGroups } from '@/composables/useApplicationGroups'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
   MessageBag,
   validateAnyOf,
@@ -68,6 +70,8 @@ const emit = defineEmits<{
   save: []
 }>()
 
+type RuleIdResponse = { data: { id: string } }
+
 const { t } = useI18n()
 
 const step = ref(1)
@@ -90,13 +94,30 @@ const name = ref('')
 const sourceType = ref('addresses')
 const sourceAddresses = ref<string[]>([''])
 // step 3
+const matchType = ref<'all' | 'appgroups'>('appgroups')
 const selectedGroups = ref<NeMultiselectComboboxOption[]>([])
 const action = ref<DpiRuleAction>('block')
 const rulePosition = ref<DpiRulePosition>('bottom')
 
 const { data: applicationGroups, isLoading: isLoadingApplicationGroups } = useApplicationGroups()
-const { mutate: createRule, isPending: isCreating } = useCreateDpiRule()
-const { mutate: editRule, isPending: isSavingEdit } = useEditDpiRule()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
+
+function onRuleSaved() {
+  return Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
+}
+
+const { mutate: createRule, isPending: isCreating } = useMutation({
+  mutationFn: (payload: DpiRulePayload & { position: DpiRulePosition }) =>
+    ubusCall<RuleIdResponse>('ns.dpi', 'add-rule', payload),
+  onSuccess: onRuleSaved
+})
+
+const { mutate: editRule, isPending: isSavingEdit } = useMutation({
+  mutationFn: (payload: DpiRulePayload & { id: string }) =>
+    ubusCall<RuleIdResponse>('ns.dpi', 'edit-rule', payload),
+  onSuccess: onRuleSaved
+})
 
 const isSaving = computed(() => isCreating.value || isSavingEdit.value)
 
@@ -105,6 +126,11 @@ const canOpen = computed(() => !isEditing.value || (ruleToEdit?.managed ?? false
 const sourceTypeOptions = computed(() => [
   { id: 'addresses', label: t('standalone.dpi.source_type_addresses') },
   { id: 'any', label: t('standalone.dpi.source_type_any') }
+])
+
+const matchTypeOptions = computed(() => [
+  { id: 'all', label: t('standalone.dpi.match_type_all') },
+  { id: 'appgroups', label: t('standalone.dpi.match_type_appgroups') }
 ])
 
 const actionOptions = computed(() => [
@@ -127,7 +153,11 @@ const sourceSummary = computed(() =>
     : t('standalone.dpi.source_type_any')
 )
 
-const matchSummary = computed(() => selectedGroups.value.map((option) => option.label).join(', '))
+const matchSummary = computed(() =>
+  matchType.value === 'all'
+    ? t('standalone.dpi.match_type_all')
+    : selectedGroups.value.map((option) => option.label).join(', ')
+)
 
 watch(name, (ruleName) => {
   if (ruleName.trim()) {
@@ -139,6 +169,10 @@ watch(selectedGroups, (groups) => {
   if (groups.length) {
     validationErrorBag.value.delete('appgroups')
   }
+})
+
+watch(matchType, () => {
+  validationErrorBag.value.delete('appgroups')
 })
 
 watch(
@@ -163,6 +197,7 @@ watch(
         : ''
       sourceType.value = ruleToEdit && ruleToEdit.source.length === 0 ? 'any' : 'addresses'
       sourceAddresses.value = ruleToEdit?.source.length ? [...ruleToEdit.source] : ['']
+      matchType.value = ruleToEdit?.match_all ? 'all' : 'appgroups'
       selectedGroups.value =
         ruleToEdit?.appgroups.map((appgroup) => ({ id: appgroup.id, label: appgroup.name })) ?? []
       action.value = ruleToEdit?.action ?? 'block'
@@ -242,7 +277,7 @@ function validateStep(currentStep: number): boolean {
     return validateSourceAddresses()
   }
 
-  if (currentStep === 3) {
+  if (currentStep === 3 && matchType.value === 'appgroups') {
     return runValidators(
       [
         selectedGroups.value.length
@@ -296,7 +331,8 @@ function save() {
     enabled: enabled.value,
     action: action.value,
     source: sourceType.value === 'any' ? [] : sourceAddresses.value.filter((address) => address),
-    appgroups: selectedGroups.value.map((option) => option.id)
+    match_all: matchType.value === 'all',
+    appgroups: matchType.value === 'all' ? [] : selectedGroups.value.map((option) => option.id)
   }
   const callbacks = { onSuccess: () => emit('save'), onError: onSaveError }
 
@@ -321,7 +357,6 @@ function save() {
           :current-step="step"
           :total-steps="TOTAL_STEPS"
           :step-label="t('common.step')"
-          bar-size="md"
           bar-color-classes="bg-linear-to-r from-cyan-500 to-indigo-500"
           label-color-classes="text-secondary"
         />
@@ -389,7 +424,13 @@ function save() {
               {{ t('standalone.dpi.match_and_action_description') }}
             </p>
           </div>
+          <NeRadioSelection
+            v-model="matchType"
+            :label="t('standalone.dpi.match_type')"
+            :options="matchTypeOptions"
+          />
           <NeMultiselectCombobox
+            v-if="matchType === 'appgroups'"
             v-model="selectedGroups"
             :loading-options="isLoadingApplicationGroups"
             :label="t('standalone.dpi.application_groups')"

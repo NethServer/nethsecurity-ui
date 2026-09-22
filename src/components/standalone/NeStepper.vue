@@ -11,14 +11,12 @@ const {
   totalSteps,
   currentStep,
   stepLabel,
-  barSize = 'sm',
   labelColorClasses = 'text-primary-600 dark:text-primary-500',
   barColorClasses = 'bg-primary-600 dark:bg-primary-500'
 } = defineProps<{
   totalSteps: number
   currentStep: number
   stepLabel: string
-  barSize?: 'sm' | 'md' | 'lg' | 'xl'
   labelColorClasses?: string
   barColorClasses?: string
 }>()
@@ -28,7 +26,6 @@ const {
   <div>
     <NeProgressBar
       :progress="(currentStep / totalSteps) * 100"
-      :size="barSize"
       color="custom"
       :custom-color-classes="barColorClasses"
     />

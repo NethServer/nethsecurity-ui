@@ -1,9 +1,8 @@
 //  Copyright (C) 2026 Nethesis S.r.l.
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 export type DpiRuleAction = 'block' | 'allow'
 
@@ -19,6 +18,7 @@ export type DpiRule = {
   action: DpiRuleAction
   source: string[]
   appgroups: DpiRuleAppGroup[]
+  match_all: boolean
   managed: boolean
   index: number
   criteria?: string
@@ -30,6 +30,7 @@ export type DpiRulePayload = {
   action: DpiRuleAction
   source: string[]
   appgroups: string[]
+  match_all: boolean
 }
 
 export type DpiRulePosition = 'top' | 'bottom'
@@ -39,9 +40,7 @@ export type DpiRulesPage = {
   meta: { last_page: number; total: number }
 }
 
-type ListRulesResponse = { data: { values: DpiRulesPage | DpiRule[] } }
-type RuleIdResponse = { data: { id: string } }
-type MessageResponse = { data: { message: string } }
+export type ListRulesResponse = { data: { values: DpiRulesPage | DpiRule[] } }
 
 export const DPI_RULES_KEY = ['dpi', 'rules']
 
@@ -53,75 +52,6 @@ export function useDpiRules() {
       const values = res.data.values
       return Array.isArray(values) ? values : values.data
     }
-  })
-}
-
-function useDpiRulesInvalidation() {
-  const queryClient = useQueryClient()
-  const uci = useUciPendingChangesStore()
-
-  return () =>
-    Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
-}
-
-export function useCreateDpiRule() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: DpiRulePayload & { position: DpiRulePosition }) =>
-      ubusCall<RuleIdResponse>('ns.dpi', 'add-rule', payload),
-    onSuccess: invalidate
-  })
-}
-
-export function useEditDpiRule() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: DpiRulePayload & { id: string }) =>
-      ubusCall<RuleIdResponse>('ns.dpi', 'edit-rule', payload),
-    onSuccess: invalidate
-  })
-}
-
-export function useDeleteDpiRule() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (id: string) => ubusCall<MessageResponse>('ns.dpi', 'delete-rule', { id }),
-    onSuccess: invalidate
-  })
-}
-
-export function useRenameDpiRule() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: { id: string; name: string }) =>
-      ubusCall<MessageResponse>('ns.dpi', 'rename-rule', payload),
-    onSuccess: invalidate
-  })
-}
-
-export function useToggleDpiRule() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (payload: { id: string; enabled: boolean }) =>
-      ubusCall<MessageResponse>('ns.dpi', payload.enabled ? 'enable-rule' : 'disable-rule', {
-        id: payload.id
-      }),
-    onSuccess: invalidate
-  })
-}
-
-export function useOrderDpiRules() {
-  const invalidate = useDpiRulesInvalidation()
-
-  return useMutation({
-    mutationFn: (order: string[]) =>
-      ubusCall<ListRulesResponse>('ns.dpi', 'order-rules', { order }),
-    onSuccess: invalidate
   })
 }
 

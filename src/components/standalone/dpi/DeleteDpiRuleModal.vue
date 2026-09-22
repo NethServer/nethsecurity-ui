@@ -4,10 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
-import { useDeleteDpiRule, type DpiRule } from '@/composables/useDpiRules'
+import { DPI_RULES_KEY, type DpiRule } from '@/composables/useDpiRules'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { visible = false, rule = undefined } = defineProps<{
   visible?: boolean
@@ -21,15 +24,26 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const deleteError = ref<Error>()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
 
-const { mutate: deleteRule, isPending } = useDeleteDpiRule()
+const {
+  mutate: deleteRule,
+  isPending,
+  error,
+  reset
+} = useMutation({
+  mutationFn: (id: string) =>
+    ubusCall<{ data: { message: string } }>('ns.dpi', 'delete-rule', { id }),
+  onSuccess: () =>
+    Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
+})
 
 watch(
   () => visible,
   (isShown) => {
     if (isShown) {
-      deleteError.value = undefined
+      reset()
     }
   }
 )
@@ -39,12 +53,7 @@ function confirmDelete() {
     return
   }
 
-  deleteRule(rule.id, {
-    onSuccess: () => emit('deleted'),
-    onError: (e: Error) => {
-      deleteError.value = e
-    }
-  })
+  deleteRule(rule.id, { onSuccess: () => emit('deleted') })
 }
 </script>
 
@@ -64,10 +73,10 @@ function confirmDelete() {
   >
     {{ t('standalone.dpi.confirm_delete_rule', { name: rule?.name ?? '' }) }}
     <NeInlineNotification
-      v-if="deleteError"
+      v-if="error"
       kind="error"
       :title="t('error.cannot_delete_rule')"
-      :description="t(getAxiosErrorMessage(deleteError))"
+      :description="t(getAxiosErrorMessage(error))"
       class="mt-4"
     />
   </NeModal>

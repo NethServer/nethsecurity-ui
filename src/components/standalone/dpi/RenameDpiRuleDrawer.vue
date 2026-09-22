@@ -6,11 +6,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import * as v from 'valibot'
 import { NeButton, NeSideDrawer, NeTextInput } from '@nethesis/vue-components'
-import { ValidationError } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag } from '@/lib/validation'
-import { useRenameDpiRule, type DpiRule } from '@/composables/useDpiRules'
+import { DPI_RULES_KEY, type DpiRule } from '@/composables/useDpiRules'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
 const { isShown = false, rule = undefined } = defineProps<{
   isShown?: boolean
@@ -27,10 +28,14 @@ const { t } = useI18n()
 const name = ref('')
 const validationBag = ref(new MessageBag())
 
-const { mutate: renameRule, isPending } = useRenameDpiRule()
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
 
-const schema = v.object({
-  name: v.pipe(v.string(), v.trim(), v.minLength(1, 'required'), v.maxLength(64, 'name_too_long'))
+const { mutate: renameRule, isPending } = useMutation({
+  mutationFn: (payload: { id: string; name: string }) =>
+    ubusCall<{ data: { message: string } }>('ns.dpi', 'rename-rule', payload),
+  onSuccess: () =>
+    Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
 })
 
 const nameError = computed(() => t(validationBag.value.getFirstI18nKeyFor('name')))
@@ -55,16 +60,6 @@ function save() {
   }
 
   validationBag.value.clear()
-  const result = v.safeParse(schema, { name: name.value })
-  if (!result.success) {
-    for (const issue of result.issues) {
-      const field = issue.path?.[0]?.key
-      if (typeof field === 'string') {
-        validationBag.value.set(field, issue.message)
-      }
-    }
-    return
-  }
 
   renameRule(
     { id: rule.id, name: name.value.trim() },

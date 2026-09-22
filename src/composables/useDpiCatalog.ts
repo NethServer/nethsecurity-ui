@@ -59,7 +59,7 @@ import {
 
 export const UNCATEGORIZED = ''
 
-export type DpiCatalogCategory = {
+type DpiCatalogCategory = {
   id: string
   name: string
   icon: IconDefinition
@@ -140,12 +140,6 @@ function useCategoryLabel() {
   }
 }
 
-export type DpiCatalogEntry = {
-  id: number
-  name: string
-  label: string
-}
-
 type LoadedEntry = {
   id: number
   name: string
@@ -154,7 +148,7 @@ type LoadedEntry = {
 export const DPI_LOADED_APPLICATIONS_KEY = ['dpi', 'loaded-applications']
 export const DPI_LOADED_PROTOCOLS_KEY = ['dpi', 'loaded-protocols']
 
-export function useLoadedApplications() {
+function useLoadedApplications() {
   return useQuery({
     queryKey: DPI_LOADED_APPLICATIONS_KEY,
     queryFn: ({ signal }) =>
@@ -164,7 +158,7 @@ export function useLoadedApplications() {
   })
 }
 
-export function useLoadedProtocols() {
+function useLoadedProtocols() {
   return useQuery({
     queryKey: DPI_LOADED_PROTOCOLS_KEY,
     queryFn: ({ signal }) =>

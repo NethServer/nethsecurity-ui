@@ -19,6 +19,7 @@ import {
   NeTooltip
 } from '@nethesis/vue-components'
 import { computed, nextTick, ref, watch } from 'vue'
+import type { AxiosError } from 'axios'
 import { refDebounced } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import {
@@ -117,6 +118,13 @@ const {
   isError: isCatalogError,
   error: catalogError
 } = useDpiCatalog(kind, selectedCategoryId)
+
+const catalogErrorDescription = computed(() => {
+  const error = catalogError.value as AxiosError<{ message?: string }> | null
+  return error?.response?.data?.message === 'catalog_not_available'
+    ? t('error.catalog_not_available')
+    : t(getAxiosErrorMessage(error))
+})
 
 const { labelOf, categoryOf, isLoaded } = useDpiCatalogLabels()
 const queryClient = useQueryClient()
@@ -460,7 +468,7 @@ function save() {
         v-if="isCatalogError"
         kind="error"
         :title="t('error.cannot_retrieve_applications')"
-        :description="t(getAxiosErrorMessage(catalogError))"
+        :description="catalogErrorDescription"
       />
       <NeInlineNotification
         v-for="message in otherErrors"
@@ -517,7 +525,7 @@ function save() {
         <div class="flex min-h-0 flex-1 gap-4 md:h-146 md:flex-initial">
           <!-- no category survives the filters -->
           <NeEmptyState
-            v-if="!isLoadingCatalog && !visibleCategories.length"
+            v-if="!isLoadingCatalog && !isCatalogError && !visibleCategories.length"
             :title="
               isApplications
                 ? t('standalone.dpi.no_applications_found')

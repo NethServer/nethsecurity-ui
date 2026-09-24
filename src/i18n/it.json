@@ -159,6 +159,7 @@
     "cannot_retrieve_dpi_rules": "Impossibile recuperare le regole DPI",
     "cannot_edit_dns_record": "Impossibile modificare il record DNS",
     "cannot_retrieve_applications": "Impossibile recuperare le app",
+    "catalog_not_available": "Il catalogo delle applicazioni e dei protocolli non è ancora disponibile su questa unità.",
     "cannot_delete_dns_record": "Impossibile eliminare il record DNS",
     "cannot_retrieve_dhcp_range": "Impossibile recuperare l'intervallo DHCP predefinito",
     "invalid_lease_time": "Tempo di lease non valido",

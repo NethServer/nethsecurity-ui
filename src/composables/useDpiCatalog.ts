@@ -50,12 +50,7 @@ import {
   faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons'
 import { ubusCall } from '@/lib/standalone/ubus'
-import {
-  useNetifydStore,
-  type Application,
-  type Protocol,
-  type Response
-} from '@/stores/standalone/netifyd'
+import type { Response } from '@/stores/standalone/netifyd'
 
 export const UNCATEGORIZED = ''
 
@@ -65,6 +60,7 @@ type DpiCatalogCategory = {
   icon: IconDefinition
   total: number
   selectable: number
+  selectableAsMember: boolean
 }
 
 export type DpiCatalogItem = {
@@ -140,123 +136,71 @@ function useCategoryLabel() {
   }
 }
 
-type LoadedEntry = {
-  id: number
-  name: string
+export const DPI_APPGROUP_CATALOG_KEY = ['dpi', 'appgroup-catalog']
+
+type CatalogItem = {
+  id: string
+  label: string
+  selectable: boolean
+  logo?: string
 }
 
-export const DPI_LOADED_APPLICATIONS_KEY = ['dpi', 'loaded-applications']
-export const DPI_LOADED_PROTOCOLS_KEY = ['dpi', 'loaded-protocols']
+type CatalogGroup = {
+  tag: string
+  label: string
+  selectable: boolean
+  items: CatalogItem[]
+}
 
-function useLoadedApplications() {
+type AppgroupCatalog = {
+  applications: CatalogGroup[]
+  protocols: CatalogGroup[]
+}
+
+function useAppgroupCatalog() {
   return useQuery({
-    queryKey: DPI_LOADED_APPLICATIONS_KEY,
+    queryKey: DPI_APPGROUP_CATALOG_KEY,
     queryFn: ({ signal }) =>
-      ubusCall<Response<LoadedEntry[]>>('ns.dpi', 'list-loaded-applications', {}, { signal }),
+      ubusCall<Response<AppgroupCatalog>>('ns.dpi', 'list-appgroup-catalog', {}, { signal }),
     select: (res) => res.data.values,
     staleTime: 5 * 60 * 1000
   })
 }
 
-function useLoadedProtocols() {
-  return useQuery({
-    queryKey: DPI_LOADED_PROTOCOLS_KEY,
-    queryFn: ({ signal }) =>
-      ubusCall<Response<LoadedEntry[]>>('ns.dpi', 'list-loaded-protocols', {}, { signal }),
-    select: (res) => res.data.values,
-    staleTime: 5 * 60 * 1000
-  })
+function toItem(item: CatalogItem): DpiCatalogItem {
+  return { id: item.id, name: item.label, disabled: !item.selectable, logo: item.logo }
+}
+
+function byName(a: { name: string }, b: { name: string }) {
+  return a.name.localeCompare(b.name)
 }
 
 export function useDpiCatalog(kind: Ref<DpiCatalogKind>, categoryId: Ref<string>) {
   const categoryLabel = useCategoryLabel()
-  const netifydStore = useNetifydStore()
-  const loadedApplications = useLoadedApplications()
-  const loadedProtocols = useLoadedProtocols()
+  const catalog = useAppgroupCatalog()
 
-  const isApplications = computed(() => kind.value === 'applications')
+  const groups = computed<CatalogGroup[]>(() => catalog.data.value?.[kind.value] ?? [])
 
-  const catalogQuery = computed(() =>
-    isApplications.value ? netifydStore.applications : netifydStore.protocols
-  )
-  const loadedQuery = computed(() => (isApplications.value ? loadedApplications : loadedProtocols))
-
-  const loaded = computed(() => loadedQuery.value.data.value ?? [])
-  const loadedById = computed(() => new Map(loaded.value.map((entry) => [entry.id, entry.name])))
-
-  type CrossedEntry = DpiCatalogItem & { categoryTag: string; categoryLabel: string }
-
-  const entries = computed<CrossedEntry[]>(() => {
-    const catalog = catalogQuery.value.data ?? []
-
-    const visibleCatalog = isApplications.value
-      ? catalog.filter((entry) => (entry as Application).active !== false)
-      : catalog
-
-    const fromCatalog = visibleCatalog.map((entry) => ({
-      id: loadedById.value.get(entry.id) ?? entry.tag,
-      name: entry.label,
-      logo: (entry as Application).icon,
-      disabled: !loadedById.value.has(entry.id),
-      categoryTag: entry.category?.tag ?? '',
-      categoryLabel: entry.category?.label ?? ''
-    }))
-
-    const catalogIds = new Set(catalog.map((entry) => entry.id))
-    const unknownToCatalog = loaded.value
-      .filter((entry) => !catalogIds.has(entry.id))
-      .map((entry) => ({
-        id: entry.name,
-        name: entry.name,
-        disabled: false,
-        categoryTag: '',
-        categoryLabel: ''
-      }))
-
-    const merged = [...fromCatalog, ...unknownToCatalog]
-
-    return isApplications.value
-      ? merged
-      : merged.filter((entry) => entry.name.toLowerCase() !== 'unknown')
-  })
-
-  const entriesByCategory = computed(() => {
-    const groups = new Map<string, CrossedEntry[]>()
-    for (const entry of entries.value) {
-      const group = groups.get(entry.categoryTag)
-      if (group) {
-        group.push(entry)
-      } else {
-        groups.set(entry.categoryTag, [entry])
-      }
+  const itemsByCategory = computed(() => {
+    const byCategory = new Map<string, DpiCatalogItem[]>()
+    for (const group of groups.value) {
+      byCategory.set(group.tag, group.items.map(toItem).sort(byName))
     }
-    return groups
+    return byCategory
   })
 
   const categories = computed<DpiCatalogCategory[]>(() =>
-    [...entriesByCategory.value.entries()]
-      .map(([id, group]) => ({
-        id,
-        name: categoryLabel(id, group[0]!.categoryLabel),
-        icon: CATEGORY_ICONS[id] ?? DEFAULT_CATEGORY_ICON,
-        total: group.length,
-        selectable: group.filter((entry) => !entry.disabled).length
+    groups.value
+      .map((group) => ({
+        id: group.tag,
+        name: categoryLabel(group.tag, group.label),
+        icon: CATEGORY_ICONS[group.tag] ?? DEFAULT_CATEGORY_ICON,
+        total: group.items.length,
+        selectable: group.items.filter((item) => item.selectable).length,
+        selectableAsMember: group.selectable
       }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort(byName)
   )
-
-  const itemsByCategory = computed(() => {
-    const groups = new Map<string, DpiCatalogItem[]>()
-    for (const [id, group] of entriesByCategory.value) {
-      groups.set(
-        id,
-        group
-          .map(({ id: entryId, name, disabled, logo }) => ({ id: entryId, name, disabled, logo }))
-          .sort((a, b) => a.name.localeCompare(b.name))
-      )
-    }
-    return groups
-  })
 
   function itemsOf(id: string): DpiCatalogItem[] {
     return itemsByCategory.value.get(id) ?? []
@@ -264,104 +208,69 @@ export function useDpiCatalog(kind: Ref<DpiCatalogKind>, categoryId: Ref<string>
 
   const items = computed<DpiCatalogItem[]>(() => itemsOf(categoryId.value))
 
-  const isLoading = computed(
-    () => catalogQuery.value.isLoading || loadedQuery.value.isLoading.value
-  )
-  const isError = computed(() => catalogQuery.value.isError || loadedQuery.value.isError.value)
-  const error = computed(() => loadedQuery.value.error.value ?? catalogQuery.value.error)
+  return {
+    categories,
+    items,
+    itemsByCategory,
+    itemsOf,
+    isLoading: catalog.isLoading,
+    isError: catalog.isError,
+    error: catalog.error
+  }
+}
 
-  return { categories, items, itemsByCategory, itemsOf, isLoading, isError, error }
+type CatalogIndex = {
+  itemLabels: Map<string, string>
+  itemCategories: Map<string, string>
+  categoryLabels: Map<string, string>
+  selectableItems: Set<string>
+}
+
+function indexGroups(groups: CatalogGroup[]): CatalogIndex {
+  const index: CatalogIndex = {
+    itemLabels: new Map(),
+    itemCategories: new Map(),
+    categoryLabels: new Map(),
+    selectableItems: new Set()
+  }
+
+  for (const group of groups) {
+    index.categoryLabels.set(group.tag, group.label)
+    for (const item of group.items) {
+      index.itemLabels.set(item.id, item.label)
+      index.itemCategories.set(item.id, group.tag)
+      if (item.selectable) {
+        index.selectableItems.add(item.id)
+      }
+    }
+  }
+
+  return index
 }
 
 export function useDpiCatalogLabels() {
   const categoryLabel = useCategoryLabel()
-  const netifydStore = useNetifydStore()
-  const loadedApplications = useLoadedApplications()
-  const loadedProtocols = useLoadedProtocols()
+  const catalog = useAppgroupCatalog()
 
-  function labelByEngineName(
-    catalog: (Application | Protocol)[],
-    loaded: LoadedEntry[] | undefined
-  ) {
-    const labels = new Map<string, string>()
-    // entries the engine does not load are identified by their catalog tag
-    for (const entry of catalog) {
-      labels.set(entry.tag, entry.label)
-    }
-    const byId = new Map(catalog.map((entry) => [entry.id, entry]))
-    for (const entry of loaded ?? []) {
-      const catalogEntry = byId.get(entry.id)
-      labels.set(entry.name, catalogEntry?.label ?? entry.name)
-    }
-    return labels
-  }
-
-  function categoryLabels(catalog: (Application | Protocol)[]) {
-    const labels = new Map<string, string>()
-    for (const entry of catalog) {
-      if (entry.category) {
-        labels.set(entry.category.tag, entry.category.label)
-      }
-    }
-    return labels
-  }
-
-  const applicationLabels = computed(() =>
-    labelByEngineName(netifydStore.applications.data ?? [], loadedApplications.data.value)
-  )
-  const protocolLabels = computed(() =>
-    labelByEngineName(netifydStore.protocols.data ?? [], loadedProtocols.data.value)
-  )
-  const applicationCategoryLabels = computed(() =>
-    categoryLabels(netifydStore.applications.data ?? [])
-  )
-  const protocolCategoryLabels = computed(() => categoryLabels(netifydStore.protocols.data ?? []))
-
-  function categoryByEngineName(
-    catalog: (Application | Protocol)[],
-    loaded: LoadedEntry[] | undefined
-  ) {
-    const categories = new Map<string, string>()
-    const byId = new Map(catalog.map((entry) => [entry.id, entry]))
-    for (const entry of loaded ?? []) {
-      categories.set(entry.name, byId.get(entry.id)?.category?.tag ?? UNCATEGORIZED)
-    }
-    return categories
-  }
-
-  const applicationCategoryOf = computed(() =>
-    categoryByEngineName(netifydStore.applications.data ?? [], loadedApplications.data.value)
-  )
-  const protocolCategoryOf = computed(() =>
-    categoryByEngineName(netifydStore.protocols.data ?? [], loadedProtocols.data.value)
-  )
-
-  function categoryOf(kind: DpiCatalogKind, id: string) {
-    const categories =
-      kind === 'applications' ? applicationCategoryOf.value : protocolCategoryOf.value
-    return categories.get(id) ?? UNCATEGORIZED
-  }
-
-  const loadedApplicationNames = computed(
-    () => new Set((loadedApplications.data.value ?? []).map((entry) => entry.name))
-  )
-  const loadedProtocolNames = computed(
-    () => new Set((loadedProtocols.data.value ?? []).map((entry) => entry.name))
-  )
-
-  function isLoaded(kind: DpiCatalogKind, id: string) {
-    const names = kind === 'applications' ? loadedApplicationNames.value : loadedProtocolNames.value
-    return names.has(id)
-  }
+  const indexes = computed<Record<DpiCatalogKind, CatalogIndex>>(() => ({
+    applications: indexGroups(catalog.data.value?.applications ?? []),
+    protocols: indexGroups(catalog.data.value?.protocols ?? [])
+  }))
 
   function labelOf(kind: DpiCatalogKind, type: 'item' | 'category', id: string) {
+    const index = indexes.value[kind]
     if (type === 'category') {
-      const labels =
-        kind === 'applications' ? applicationCategoryLabels.value : protocolCategoryLabels.value
-      return categoryLabel(id, labels.get(id) ?? id)
+      return categoryLabel(id, index.categoryLabels.get(id) ?? id)
     }
-    const labels = kind === 'applications' ? applicationLabels.value : protocolLabels.value
-    return labels.get(id) ?? id
+    return index.itemLabels.get(id) ?? id
+  }
+
+  function categoryOf(kind: DpiCatalogKind, id: string) {
+    return indexes.value[kind].itemCategories.get(id) ?? UNCATEGORIZED
+  }
+
+  function isLoaded(kind: DpiCatalogKind, id: string) {
+    return indexes.value[kind].selectableItems.has(id)
   }
 
   return { labelOf, categoryOf, isLoaded }

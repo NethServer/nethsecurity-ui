@@ -9,17 +9,26 @@ export type Response<T> = {
   }
 }
 
+export type CatalogCategory = {
+  id: number
+  label: string
+  tag: string
+}
+
 export type Application = {
   id: number
   tag: string
   label: string
   icon?: string
+  category?: CatalogCategory
+  active?: boolean
 }
 
 export type Protocol = {
   id: number
   tag: string
   label: string
+  category?: CatalogCategory
 }
 
 export const useNetifydStore = defineStore('netifyd', () => {

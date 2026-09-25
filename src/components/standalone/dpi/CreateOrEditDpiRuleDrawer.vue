@@ -515,7 +515,7 @@ function save() {
                 {{ action === 'block' ? t('standalone.dpi.block') : t('standalone.dpi.allow') }}
               </dd>
             </div>
-            <div class="flex items-center gap-6 pb-1">
+            <div v-if="!isEditing" class="flex items-center gap-6 pb-1">
               <dt class="w-25 shrink-0 font-medium text-secondary-neutral">
                 {{ t('standalone.dpi.rule_position') }}
               </dt>

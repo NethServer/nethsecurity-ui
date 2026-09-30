@@ -3,10 +3,6 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<!--
-TODO: remove when testing is done.
--->
-
 <script lang="ts" setup>
 import {
   getAxiosErrorMessage,
@@ -14,29 +10,19 @@ import {
   NeEmptyState,
   NeInlineNotification,
   NeModal,
-  NePaginator,
-  NeSortDropdown,
-  NeTable,
-  NeTableBody,
-  NeTableCell,
-  NeTableHead,
-  NeTableHeadCell,
-  NeTableRow,
+  NeSkeleton,
   NeTextInput,
-  useItemPagination,
-  useSort,
-  type SortEvent
+  useItemPagination
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { faBoxOpen } from '@fortawesome/free-solid-svg-icons'
-
+import { faBoxOpen, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 export type InstalledPackage = {
   name: string
   version: string
-  description: string
 }
 
 type InstalledPackagesResponse = {
@@ -55,10 +41,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+const PAGE_SIZE = 8
+
 const searchTerm = ref('')
-const sortKey = ref<keyof InstalledPackage>('name')
-const sortDescending = ref(false)
-const pageSize = ref(25)
 
 const {
   data: packages,
@@ -79,28 +64,23 @@ const filteredPackages = computed(() => {
   if (!packages.value) {
     return []
   }
-  if (!searchTerm.value) {
+  const search = searchTerm.value.toLowerCase()
+  if (!search) {
     return packages.value
   }
-  const search = searchTerm.value.toLowerCase()
   return packages.value.filter(
     (item) =>
-      item.name.toLowerCase().includes(search) ||
-      item.version.toLowerCase().includes(search) ||
-      item.description.toLowerCase().includes(search)
+      item.name.toLowerCase().includes(search) || item.version.toLowerCase().includes(search)
   )
 })
 
-const { sortedItems } = useSort(() => filteredPackages.value, sortKey, sortDescending)
-
-const { currentPage, paginatedItems } = useItemPagination(() => sortedItems.value, {
-  itemsPerPage: pageSize
+const { currentPage, pageCount, paginatedItems } = useItemPagination(() => filteredPackages.value, {
+  itemsPerPage: PAGE_SIZE
 })
 
-function onSort(payload: SortEvent) {
-  sortKey.value = payload.key as keyof InstalledPackage
-  sortDescending.value = payload.descending
-}
+watch(searchTerm, () => {
+  currentPage.value = 1
+})
 
 watch(
   () => props.visible,
@@ -117,7 +97,7 @@ watch(
   <NeModal
     :visible="visible"
     kind="neutral"
-    size="xxl"
+    size="md"
     :title="t('standalone.update.installed_packages')"
     :primary-label="t('common.close')"
     :close-aria-label="t('common.close')"
@@ -134,112 +114,77 @@ watch(
         :description="t(getAxiosErrorMessage(error))"
         kind="error"
       />
+      <NeSkeleton v-else-if="isPending" :lines="10" />
       <template v-else>
-        <div class="flex flex-wrap items-end gap-4">
-          <NeTextInput
-            v-model="searchTerm"
-            :disabled="isPending"
-            :placeholder="t('common.filter')"
-            is-search
-          />
-          <NeSortDropdown
-            v-model:sort-key="sortKey"
-            v-model:sort-descending="sortDescending"
-            :label="t('sort.sort')"
-            :options="[
-              { id: 'name', label: t('standalone.update.package_name') },
-              { id: 'version', label: t('standalone.update.package_version') }
-            ]"
-            :open-menu-aria-label="t('ne_dropdown.open_menu')"
-            :sort-by-label="t('sort.sort_by')"
-            :sort-direction-label="t('sort.direction')"
-            :ascending-label="t('sort.ascending')"
-            :descending-label="t('sort.descending')"
-            class="md:hidden"
-          />
-        </div>
-        <div class="max-h-[60vh] overflow-y-auto">
-          <NeTable
-            :aria-label="t('standalone.update.installed_packages')"
-            :loading="isPending"
-            :skeleton-columns="3"
-            :skeleton-rows="10"
-            :sort-key="sortKey"
-            :sort-descending="sortDescending"
-            card-breakpoint="md"
+        <NeTextInput v-model="searchTerm" :placeholder="t('common.filter')" is-search />
+        <NeEmptyState
+          v-if="filteredPackages.length == 0"
+          :icon="faBoxOpen"
+          :title="
+            searchTerm
+              ? t('standalone.update.no_installed_packages_found')
+              : t('standalone.update.no_installed_packages')
+          "
+          :description="
+            searchTerm ? t('standalone.update.no_installed_packages_found_description') : ''
+          "
+        >
+          <NeButton v-if="searchTerm" kind="tertiary" @click="searchTerm = ''">
+            {{ t('common.clear_filter') }}
+          </NeButton>
+        </NeEmptyState>
+        <template v-else>
+          <dl>
+            <div
+              v-for="item in paginatedItems"
+              :key="item.name"
+              class="flex gap-4 border-gray-200 px-4 py-2 not-last:border-b dark:border-gray-700"
+            >
+              <dt class="font-medium">{{ item.name }}</dt>
+              <dd class="ml-auto">{{ item.version }}</dd>
+            </div>
+          </dl>
+          <nav
+            :aria-label="t('ne_table.pagination')"
+            class="flex items-center justify-between gap-4"
           >
-            <NeTableHead>
-              <NeTableHeadCell column-key="name" sortable @sort="onSort">
-                {{ t('standalone.update.package_name') }}
-              </NeTableHeadCell>
-              <NeTableHeadCell column-key="version" sortable @sort="onSort">
-                {{ t('standalone.update.package_version') }}
-              </NeTableHeadCell>
-              <NeTableHeadCell>
-                {{ t('standalone.update.package_description') }}
-              </NeTableHeadCell>
-            </NeTableHead>
-            <NeTableBody v-if="sortedItems.length > 0">
-              <NeTableRow v-for="item in paginatedItems" :key="item.name">
-                <NeTableCell :data-label="t('standalone.update.package_name')">
-                  {{ item.name }}
-                </NeTableCell>
-                <NeTableCell :data-label="t('standalone.update.package_version')">
-                  {{ item.version || '-' }}
-                </NeTableCell>
-                <NeTableCell :data-label="t('standalone.update.package_description')">
-                  {{ item.description || '-' }}
-                </NeTableCell>
-              </NeTableRow>
-            </NeTableBody>
-            <NeTableBody v-else-if="!isPending">
-              <NeTableRow>
-                <NeTableCell colspan="3">
-                  <NeEmptyState
-                    :icon="faBoxOpen"
-                    :title="
-                      searchTerm
-                        ? t('standalone.update.no_installed_packages_found')
-                        : t('standalone.update.no_installed_packages')
-                    "
-                    :description="
-                      searchTerm
-                        ? t('standalone.update.no_installed_packages_found_description')
-                        : ''
-                    "
-                    class="bg-white dark:bg-gray-950"
-                  >
-                    <NeButton v-if="searchTerm" kind="tertiary" @click="searchTerm = ''">
-                      {{ t('common.clear_filter') }}
-                    </NeButton>
-                  </NeEmptyState>
-                </NeTableCell>
-              </NeTableRow>
-            </NeTableBody>
-            <template v-if="sortedItems.length > 0" #paginator>
-              <NePaginator
-                :current-page="currentPage"
-                :total-rows="sortedItems.length"
-                :page-size="pageSize"
-                :nav-pagination-label="t('ne_table.pagination')"
-                :next-label="t('ne_table.go_to_next_page')"
-                :previous-label="t('ne_table.go_to_previous_page')"
-                :range-of-total-label="t('ne_table.of')"
-                :page-size-label="t('ne_table.show')"
-                @select-page="
-                  (page: number) => {
-                    currentPage = page
-                  }
-                "
-                @select-page-size="
-                  (size: number) => {
-                    pageSize = size
-                  }
-                "
-              />
-            </template>
-          </NeTable>
-        </div>
+            <ul class="flex h-10 items-center -space-x-px text-base">
+              <li>
+                <button
+                  :disabled="currentPage === 1"
+                  :aria-label="t('ne_table.go_to_previous_page')"
+                  class="ms-0 flex h-10 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-50 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-white"
+                  @click="currentPage--"
+                >
+                  <span class="sr-only">{{ t('ne_table.go_to_previous_page') }}</span>
+                  <FontAwesomeIcon
+                    :icon="faChevronLeft"
+                    class="h-3 w-3 shrink-0"
+                    aria-hidden="true"
+                  />
+                </button>
+              </li>
+              <li>
+                <button
+                  :disabled="currentPage >= pageCount"
+                  :aria-label="t('ne_table.go_to_next_page')"
+                  class="flex h-10 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-4 leading-tight text-gray-500 hover:bg-gray-50 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-white"
+                  @click="currentPage++"
+                >
+                  <span class="sr-only">{{ t('ne_table.go_to_next_page') }}</span>
+                  <FontAwesomeIcon
+                    :icon="faChevronRight"
+                    class="h-3 w-3 shrink-0"
+                    aria-hidden="true"
+                  />
+                </button>
+              </li>
+            </ul>
+            <span class="text-sm text-gray-700 dark:text-gray-100">
+              {{ t('ne_table.page_of_total', { page: currentPage, total: pageCount }) }}
+            </span>
+          </nav>
+        </template>
       </template>
     </div>
   </NeModal>

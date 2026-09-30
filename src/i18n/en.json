@@ -470,7 +470,8 @@
     "go_to_next_page": "Go to next page",
     "of": "of",
     "pagination": "Table pagination",
-    "show": "Show"
+    "show": "Show",
+    "page_of_total": "Page {page} of {total}"
   },
   "ne_file_input": {
     "dropzone_label": "Drag and drop or click to upload"
@@ -862,9 +863,6 @@
       "check_for_fixes": "Check for fixes",
       "installed_packages": "Installed packages",
       "installed_packages_description": "List of the packages currently installed on the unit.",
-      "package_name": "Package",
-      "package_version": "Version",
-      "package_description": "Description",
       "no_installed_packages": "No installed packages",
       "no_installed_packages_found": "No packages found",
       "no_installed_packages_found_description": "Try changing your search filter.",

@@ -55,9 +55,7 @@ const {
   queryFn: ({ signal }) =>
     ubusCall<InstalledPackagesResponse>('ns.update', 'list-installed-packages', {}, { signal }),
   select: (response) => response.data.packages,
-  enabled: () => props.visible,
-  staleTime: 60_000,
-  refetchOnWindowFocus: false
+  enabled: () => props.visible
 })
 
 const filteredPackages = computed(() => {

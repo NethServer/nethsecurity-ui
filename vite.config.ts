@@ -15,7 +15,7 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     VueI18nPlugin({
-      include: [path.resolve(__dirname, './src/i18n/**')]
+      include: [path.resolve(import.meta.dirname, './src/i18n/**')]
     })
   ],
   resolve: {

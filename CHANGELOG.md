@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.0](https://github.com/NethServer/nethsecurity-ui/compare/2.25.1...2.26.0) (2026-10-01)
+
+
+### Features
+
+* **migration:** adapting UI to the new MY ([#746](https://github.com/NethServer/nethsecurity-ui/issues/746)) ([c364a55](https://github.com/NethServer/nethsecurity-ui/commit/c364a554e6a81fbdbb06dcb9b793cab6898ddd80))
+
 ## [2.25.1](https://github.com/NethServer/nethsecurity-ui/compare/2.25.0...2.25.1) (2026-10-01)
 
 

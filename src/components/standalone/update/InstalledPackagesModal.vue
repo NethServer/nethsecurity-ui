@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { faBoxOpen, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faChevronRight, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 export type InstalledPackage = {
   name: string
@@ -117,7 +117,7 @@ watch(
         <NeTextInput v-model="searchTerm" :placeholder="t('common.filter')" is-search />
         <NeEmptyState
           v-if="filteredPackages.length == 0"
-          :icon="faBoxOpen"
+          :icon="faMagnifyingGlass"
           :title="
             searchTerm
               ? t('standalone.update.no_installed_packages_found')
@@ -146,6 +146,9 @@ watch(
             :aria-label="t('ne_table.pagination')"
             class="flex items-center justify-between gap-4"
           >
+            <span class="text-sm text-gray-600 dark:text-gray-400">
+              {{ t('ne_table.page_of_total', { page: currentPage, total: pageCount }) }}
+            </span>
             <ul class="flex h-10 items-center -space-x-px text-base">
               <li>
                 <button
@@ -178,9 +181,6 @@ watch(
                 </button>
               </li>
             </ul>
-            <span class="text-sm text-gray-700 dark:text-gray-100">
-              {{ t('ne_table.page_of_total', { page: currentPage, total: pageCount }) }}
-            </span>
           </nav>
         </template>
       </template>

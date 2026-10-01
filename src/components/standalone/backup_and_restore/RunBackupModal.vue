@@ -66,6 +66,7 @@ async function runBackup() {
     :secondary-label="t('common.close')"
     secondary-button-kind="tertiary"
     @close="$emit('close')"
+    @secondary-click="$emit('close')"
     @primary-click="runBackup()"
   >
     <div>

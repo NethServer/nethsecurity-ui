@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.25.0](https://github.com/NethServer/nethsecurity-ui/compare/2.24.1...2.25.0) (2026-10-01)
+
+
+### Features
+
+* separated UI from controller ([d214d25](https://github.com/NethServer/nethsecurity-ui/commit/d214d252fba0fba705442434c37cb9a052463af7))
+
+
+### Bug Fixes
+
+* bump ui version for passthrough ([0fbf3bd](https://github.com/NethServer/nethsecurity-ui/commit/0fbf3bd9fbcb50511c2172701f9842926fa3d7b1))
+
+
+### Miscellaneous Chores
+
+* lockfile maintainance ([5ae2f0e](https://github.com/NethServer/nethsecurity-ui/commit/5ae2f0e933dd71c519580bdc241e5f2b1575eb3c))
+
 ## [2.24.1](https://github.com/NethServer/nethsecurity-ui/compare/2.24.0...2.24.1) (2026-09-18)
 
 

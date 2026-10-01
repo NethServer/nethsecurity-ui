@@ -40,7 +40,8 @@
       "open_user_menu": "Apri il menu utente",
       "close_side_drawer": "Chiudi il drawer laterale",
       "about": "Informazioni",
-      "platform_info": "Informazioni controller"
+      "platform_info": "Informazioni controller",
+      "back_to_controller": "Torna al Controller"
     },
     "platform": {
       "controller_version": "Versione controller",
@@ -438,7 +439,8 @@
     "cannot_renew_server_cert": "Impossibile rinnovare il certificato del server",
     "cannot_regenerate_all_certs": "Impossibile rigenerare tutti i certificati",
     "cannot_retrieve_flows": "Impossibile recuperare i flussi, si prega di riprovare più tardi",
-    "cannot_retrieve_ovpn_rw_connection_history": "Impossibile recuperare la cronologia delle connessioni, riprova più tardi"
+    "cannot_retrieve_ovpn_rw_connection_history": "Impossibile recuperare la cronologia delle connessioni, riprova più tardi",
+    "cannot_retrieve_installed_packages": "Non è possibile recuperare i pacchetti installati, si prega di riprovare più tardi"
   },
   "login": {
     "sign_in": "Accedi",
@@ -454,7 +456,11 @@
     "need_help": "Serve aiuto?",
     "privacy_policy": "Privacy policy",
     "please_sign_in_again": "Per favore, accedi di nuovo",
-    "session_has_expired": "La sessione è scaduta."
+    "session_has_expired": "La sessione è scaduta.",
+    "unit_session_expired_hint_title": "Apri nuovamente questa unità dal controller",
+    "unit_session_expired_hint_description": "Questa unità è gestita da un Controller, che gestisce le sue credenziali. Torna al Controller e apri nuovamente la unit per far partire una nuova sessione.",
+    "unit_session_expired_description": "La sessione per questa unità {product} non è più valida.",
+    "unit_session_expired_title": "Sessione scaduta"
   },
   "standalone": {
     "wizard": {
@@ -1645,7 +1651,12 @@
       "generic_error": "Errore durante il controllo degli aggiornamenti",
       "generic_error_description": "Si è verificato un errore durante il controllo degli aggiornamenti. Riprova più tardi.",
       "repository_url_not_set": "L'URL del repository non è impostato",
-      "repository_url_not_set_description": "L'URL del repository sembra non essere impostato. Controlla la configurazione e riprova."
+      "repository_url_not_set_description": "L'URL del repository sembra non essere impostato. Controlla la configurazione e riprova.",
+      "installed_packages": "Pacchetti installati",
+      "no_installed_packages_found_description": "Prova a cambiare il filtro di ricerca.",
+      "installed_packages_description": "Elenco dei pacchetti attualmente installati sull'unità.",
+      "no_installed_packages": "Nessun pacchetto installato",
+      "no_installed_packages_found": "Nessun pacchetto trovato"
     },
     "factory_reset": {
       "title": "Factory reset",
@@ -1895,7 +1906,7 @@
       },
       "tabs": {
         "road_warrior_server": "Server Road Warrior",
-        "connections_history": "Cronologia delle connessioni"
+        "connections_history": "Cronologia connessione"
       },
       "user_not_valid": "Utente non valido: l'utente ha una configurazione VPN ma non è presente all'interno del database utenti remoto.",
       "certificates_expiration": "Scadenza certificati",
@@ -3128,7 +3139,8 @@
     "pagination": "Paginazione della tabella",
     "show": "Mostra",
     "go_to_previous_page": "Pagina precedente",
-    "go_to_next_page": "Pagina successiva"
+    "go_to_next_page": "Pagina successiva",
+    "page_of_total": "Pagina {pagina} di {totale}"
   },
   "ne_file_input": {
     "dropzone_label": "Trascina un file o clicca per eseguire l'upload"

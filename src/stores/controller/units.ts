@@ -34,6 +34,7 @@ interface UnitInfo {
   unit_name: string
   version: string
   api_version: string
+  ui_version?: string
   version_update: string
   scheduled_update: number
   description?: string

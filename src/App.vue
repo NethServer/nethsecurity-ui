@@ -8,7 +8,7 @@ import ControllerApp from './ControllerApp.vue'
 import StandaloneApp from './StandaloneApp.vue'
 import { useThemeStore } from '@/stores/theme'
 import { onMounted } from 'vue'
-import { isStandaloneMode } from './lib/config'
+import { isStandaloneBuild } from './lib/config'
 
 const welcomeMsg = [
   '  _   _      _   _      _____                      _ _         ',
@@ -30,7 +30,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <template v-if="isStandaloneMode()">
+  <template v-if="isStandaloneBuild()">
     <StandaloneApp />
   </template>
   <template v-else>

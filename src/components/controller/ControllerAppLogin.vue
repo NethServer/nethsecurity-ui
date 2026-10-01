@@ -22,6 +22,7 @@ import { MessageBag, validateRequired, validateSixDigitCode } from '@/lib/valida
 import { getControllerRoutePrefix } from '@/lib/router'
 import router from '@/router'
 import { ValidationError } from '@/lib/standalone/ubus'
+import loginLogoUrl from '@/assets/login_logo.svg'
 
 const username = ref('')
 const password = ref('')
@@ -246,7 +247,7 @@ function isFormInvalid() {
       class="relative hidden w-0 flex-1 items-center justify-center bg-linear-to-t from-gray-950 to-primary-800 lg:flex"
     >
       <div class="flex w-2/3 flex-col items-center xl:w-2/5 3xl:w-1/3 5xl:w-1/4">
-        <img src="/login_logo.svg" :alt="`${getCompanyName()} logo`" class="" />
+        <img :src="loginLogoUrl" :alt="`${getCompanyName()} logo`" class="" />
         <span class="text-xl text-white">Controller</span>
       </div>
     </div>

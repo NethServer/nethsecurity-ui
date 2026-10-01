@@ -3,8 +3,7 @@ import {
   getAxiosErrorMessage,
   NeButton,
   NeInlineNotification,
-  NeSkeleton,
-  savePreference
+  NeSkeleton
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -14,13 +13,13 @@ import { ubusCall } from '@/lib/standalone/ubus.ts'
 import FlowsTable from '@/components/standalone/monitoring/FlowsTable.vue'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin.ts'
-import { isStandaloneMode } from '@/lib/config.ts'
+import { isStandaloneBuild } from '@/lib/config.ts'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin.ts'
-import { getPreference } from '@nethesis/vue-components'
+import { getUiPreference, saveUiPreference } from '@/lib/storage'
 
 const { t } = useI18n()
 const subscription = useSubscriptionStore()
-const loginStore = isStandaloneMode() ? useStandaloneLoginStore() : useControllerLoginStore()
+const loginStore = isStandaloneBuild() ? useStandaloneLoginStore() : useControllerLoginStore()
 
 type FlowDaemonResponse = {
   data: {
@@ -67,12 +66,12 @@ const fewAppsWarning = computed<boolean>(() => {
 })
 
 function dismissWarning() {
-  savePreference('dismiss_flows_warning', true, loginStore.username)
+  saveUiPreference('dismiss_flows_warning', true, loginStore.username)
   dismissedWarning.value = true
 }
 
 onMounted(() => {
-  dismissedWarning.value = getPreference('dismiss_flows_warning', loginStore.username)
+  dismissedWarning.value = getUiPreference('dismiss_flows_warning', loginStore.username)
 })
 </script>
 

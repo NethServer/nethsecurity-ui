@@ -35,7 +35,7 @@ import router from '@/router'
 import { onMounted, type PropType, ref } from 'vue'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import RemoveUnitModal from '@/components/controller/units/RemoveUnitModal.vue'
-import { coerce, outside, satisfies } from 'semver'
+import { coerce, gte, outside, satisfies } from 'semver'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faArrowsRotate,
@@ -97,6 +97,14 @@ onMounted(() => {
   hideOpenUnitPopupsTooltip.value = getPreference('hideOpenUnitPopupsTooltip', loginStore.username)
 })
 
+/**
+ * True when the unit ships a UI new enough to serve it through the proxy
+ */
+function servesItsOwnUi(unit: Unit) {
+  const uiVersion = coerce(unit.info?.ui_version)
+  return uiVersion != null && gte(uiVersion, MIN_UI_VERSION_FOR_DIRECT_SERVE)
+}
+
 async function openUnit(unit: Unit, versionCheck = true) {
   error.value.openUnit = ''
   currentUnit.value = unit
@@ -107,6 +115,17 @@ async function openUnit(unit: Unit, versionCheck = true) {
     await unitsStore.getUnits()
     // Find the now updated unit, as the currentUnit might have changed
     currentUnit.value = unitsStore.units.find((u) => u.id == unit.id)!
+
+    if (servesItsOwnUi(currentUnit.value)) {
+      // checkUnitToken writes unit-<id>, which the unit's UI reads back on load
+      await unitsStore.checkUnitToken(unit.id)
+      // Trailing slash required: the unit's bundle uses a relative base
+      window.open(`${window.location.origin}/${unit.id}/`, '_blank', 'noopener')
+      showGreaterApiModal.value = false
+      return
+    }
+
+    // Legacy path: our embedded copy of the standalone UI, which must match the unit's API version.
     // Logic on which message is shown is inside the ObsoleteApiModal component
     let version = coerce(currentUnit.value?.info.api_version)
     if (version == null) {

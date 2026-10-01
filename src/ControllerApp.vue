@@ -14,6 +14,7 @@ import { useI18n } from 'vue-i18n'
 import { useNotificationsStore } from './stores/notifications'
 import { useFavicon, useTitle } from '@vueuse/core'
 import { getControllerApiEndpoint, getProductName } from './lib/config'
+import { getUnitIdFromApiUrl } from '@/lib/deployment'
 
 const loginStore = useLoginStore()
 const { locale } = useI18n({ useScope: 'global' })
@@ -38,7 +39,7 @@ onMounted(async () => {
 
   // set favicon
   const favIcon = useFavicon()
-  favIcon.value = '/favicon-controller.ico'
+  favIcon.value = `${import.meta.env.BASE_URL}favicon-controller.ico`
 })
 
 function configureAxios() {
@@ -92,10 +93,9 @@ function configureAxios() {
             'Detected error 401, removing unit token from local storage'
           )
 
-          const matched = error.config.url.match(/^(.+:\/\/)(.+)\/(.+)\/api\/ubus\/call$/)
+          const unitId = getUnitIdFromApiUrl(error.config.url)
 
-          if (matched.length == 4) {
-            const unitId = matched[3]
+          if (unitId) {
             deleteFromStorage(`unit-${unitId}`)
 
             // show error notification

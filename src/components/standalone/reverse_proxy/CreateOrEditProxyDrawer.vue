@@ -30,6 +30,7 @@ import {
 } from '@nethesis/vue-components'
 import NeMultiTextInput from '../NeMultiTextInput.vue'
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
+import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useRouter } from 'vue-router'
 
 type CreateOrEditProxyPayload = {
@@ -333,7 +334,7 @@ watch(
           :description="t('standalone.reverse_proxy.no_certificate_configured_description')"
           kind="warning"
           :primary-button-label="t('standalone.reverse_proxy.go_to_certificates')"
-          @primary-click="() => router.push('/standalone/system/certificates')"
+          @primary-click="() => router.push(`${getStandaloneRoutePrefix()}/system/certificates`)"
         />
       </template>
       <NeTextInput

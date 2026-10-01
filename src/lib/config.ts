@@ -2,36 +2,37 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useUnitsStore } from '@/stores/controller/units'
+import { getUiBasePath, isProxiedByController, isStandaloneBuild } from '@/lib/deployment'
 
-export const isStandaloneMode = () => {
-  return import.meta.env.VITE_UI_MODE === 'standalone'
-}
+export { isStandaloneBuild } from '@/lib/deployment'
 
+/**
+ * API endpoint of the unit this UI is managing, derived from the document path
+ */
 export const getStandaloneApiEndpoint = () => {
-  if (!isStandaloneMode()) {
-    // a controller is managing this unit
+  if (!isStandaloneBuild()) {
+    // the controller bundle rendering the legacy embedded /controller/manage/:unitId route
     return getUnitManagementApiEndpoint()
   }
 
   if (import.meta.env.DEV) {
     // standalone development environment
-
     const apiScheme = import.meta.env.VITE_API_SCHEME
-    const standaloneApiHost = import.meta.env.VITE_STANDALONE_API_HOST
-    return `${apiScheme}://${standaloneApiHost}/api`
-  } else {
-    // standalone production environment
 
-    return (
-      window.location.protocol +
-      '//' +
-      window.location.hostname +
-      (window.location.port ? ':' + window.location.port : '') +
-      '/api'
-    )
+    if (isProxiedByController()) {
+      // `npm run dev -- --base=/<uuid>/` against a real controller
+      return `${apiScheme}://${import.meta.env.VITE_CONTROLLER_API_HOST}${getUiBasePath()}api`
+    }
+    return `${apiScheme}://${import.meta.env.VITE_STANDALONE_API_HOST}/api`
   }
+
+  // standalone production environment
+  return `${window.location.origin}${getUiBasePath()}api`
 }
 
+/**
+ * API endpoint of the controller itself
+ */
 export const getControllerApiEndpoint = () => {
   if (import.meta.env.DEV) {
     // controller development environment
@@ -39,19 +40,15 @@ export const getControllerApiEndpoint = () => {
     const apiScheme = import.meta.env.VITE_API_SCHEME
     const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
     return `${apiScheme}://${controllerApiHost}/api`
-  } else {
-    // controller production environment
-
-    return (
-      window.location.protocol +
-      '//' +
-      window.location.hostname +
-      (window.location.port ? ':' + window.location.port : '') +
-      '/api'
-    )
   }
+
+  // controller production environment
+  return `${window.location.origin}/api`
 }
 
+/**
+ * API endpoint of a specific unit, through the controller's proxy
+ */
 export const getUnitManagementApiEndpoint = (unitId?: string) => {
   const unitsStore = useUnitsStore()
   // in case of "Open unit" unitsStore.unitId is used
@@ -63,15 +60,9 @@ export const getUnitManagementApiEndpoint = (unitId?: string) => {
     const apiScheme = import.meta.env.VITE_API_SCHEME
     const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
     return `${apiScheme}://${controllerApiHost}/${currentUnitId}/api`
-  } else {
-    return (
-      window.location.protocol +
-      '//' +
-      window.location.hostname +
-      (window.location.port ? ':' + window.location.port : '') +
-      `/${currentUnitId}/api`
-    )
   }
+
+  return `${window.location.origin}/${currentUnitId}/api`
 }
 
 export const getProductName = () => {

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.1](https://github.com/NethServer/nethsecurity-ui/compare/2.25.0...2.25.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* last bump version for the controller ([4c8342d](https://github.com/NethServer/nethsecurity-ui/commit/4c8342d7adf87cc96a7ef75781dfbeb1902dac9d))
+
 ## [2.25.0](https://github.com/NethServer/nethsecurity-ui/compare/2.24.1...2.25.0) (2026-10-01)
 
 

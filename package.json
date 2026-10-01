@@ -3,7 +3,7 @@
   "version": "2.24.1",
   "config": {
     "requiredApiVersion": "~3.8.0",
-    "minUiVersionForDirectServe": "2.24.0"
+    "minUiVersionForDirectServe": "2.25.0"
   },
   "private": true,
   "type": "module",

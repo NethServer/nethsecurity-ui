@@ -90,7 +90,9 @@ function resetFilters() {
 const dismissedLimitedCatalog = ref(false)
 
 // without a subscription the engine only loads the community catalog
-const showLimitedCatalog = computed(() => !dismissedLimitedCatalog.value && !subscription.isActive)
+const showLimitedCatalog = computed(
+  () => !dismissedLimitedCatalog.value && !subscription.loading && !subscription.isActive
+)
 
 function dismissLimitedCatalog() {
   savePreference('dismiss_dpi_limited_catalog', true, loginStore.username)

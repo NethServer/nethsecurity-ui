@@ -150,6 +150,7 @@
     "cannot_retrieve_wan_traffic": "Cannot retrieve WAN traffic",
     "register_unit_error": "Cannot register unit",
     "cancel_registration_error": "Cannot cancel subscription",
+    "migration_error": "Migration error",
     "cannot_load_routes": "Cannot retrieve routes",
     "cannot_create_route": "Cannot create route",
     "cannot_edit_route": "Cannot edit route",
@@ -672,8 +673,7 @@
       "sync_error": "Sync error",
       "sync_error_description": "The unit is unable to sync with remote portal. Check your internet connection and try again.",
       "subscription_active": "Subscription is active",
-      "migrate": "Migrate",
-      "migration_error": "Migration error"
+      "migrate": "Migrate"
     },
     "system": {
       "title": "System"

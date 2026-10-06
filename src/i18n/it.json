@@ -121,6 +121,7 @@
     "cannot_retrieve_wan_list": "Impossibile recuperare l'elenco delle WAN",
     "cannot_retrieve_traffic_summary": "Impossibile recuperare il riepilogo del traffico",
     "cancel_registration_error": "Impossibile annullare la subscription",
+    "migration_error": "Errore di migrazione",
     "register_unit_error": "Impossibile registrare l'unità",
     "cannot_retrieve_zones": "Impossibile recuperare le zone",
     "cannot_retrieve_protocols": "Impossibile recuperare i protocolli",
@@ -785,7 +786,13 @@
       "sync_not_attempted_description": "Dall'ultimo avvio l'unità non ha tentato di sincronizzarsi con il portale remoto. È possibile forzare una sincronizzazione cliccando sul pulsante 'Sincronizza ora' più sotto.",
       "remote_support_session_active": "Sessione di supporto remoto attiva",
       "remote_support_session_description": "La sessione si chiuderà automaticamente il {date}. E' possibile terminarla in qualsiasi momento.",
-      "stop_session": "Termina sessione"
+      "stop_session": "Termina sessione",
+      "view_on_portal": "Vedi sistema sul portale",
+      "company": "Azienda",
+      "system_already_registered": "Questo sistema è già registrato e il suo token non può essere riutilizzato. Per sottoscrivere di nuovo, crea un nuovo sistema su my.nethesis.it e registralo con il suo nuovo token.",
+      "cancel_irreversible_title": "Questa azione è irreversibile",
+      "cancel_irreversible_description": "Una volta annullata, il token di questo sistema non può essere riutilizzato per registrarsi di nuovo. Per sottoscrivere questa unità di nuovo, sarà necessario creare un nuovo sistema su my.nethesis.it e utilizzare il suo nuovo token.",
+      "migrate": "Migra"
     },
     "system_settings": {
       "title": "Impostazioni di sistema",
@@ -1360,7 +1367,7 @@
         "automatic_login_description": "Autenticati con il tuo account My Nethesis.",
         "manual_login": "Login manuale",
         "manual_login_description": "Inserisci le credenziali del hotspot manager.",
-        "login_with_my_nethesis": "Login with My Nethesis",
+        "login_with_my_nethesis": "Login con My Nethesis",
         "login_oidc_waiting": "In attesa di autenticazione",
         "login_oidc_waiting_description": "Completa l'accesso nella finestra del browser appena aperta; l'unità verrà collegata automaticamente.",
         "login_oidc_success": "Autenticato come {account}",

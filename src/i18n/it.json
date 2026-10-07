@@ -789,9 +789,9 @@
       "stop_session": "Termina sessione",
       "view_on_portal": "Vedi sistema sul portale",
       "company": "Azienda",
-      "system_already_registered": "Questo sistema è già registrato e il suo token non può essere riutilizzato. Per sottoscrivere di nuovo, crea un nuovo sistema su my.nethesis.it e registralo con il suo nuovo token.",
+      "system_already_registered": "Questo sistema è già registrato e il suo token non può essere riutilizzato. Per sottoscrivere di nuovo, crea un nuovo sistema su {myNethesis} e registralo con il suo nuovo token.",
       "cancel_irreversible_title": "Questa azione è irreversibile",
-      "cancel_irreversible_description": "Una volta annullata, il token di questo sistema non può essere riutilizzato per registrarsi di nuovo. Per sottoscrivere questa unità di nuovo, sarà necessario creare un nuovo sistema su my.nethesis.it e utilizzare il suo nuovo token.",
+      "cancel_irreversible_description": "Una volta annullata, il token di questo sistema non può essere riutilizzato per registrarsi di nuovo. Per sottoscrivere questa unità di nuovo, sarà necessario creare un nuovo sistema su {myNethesis} e utilizzare il suo nuovo token.",
       "migrate": "Migra"
     },
     "system_settings": {

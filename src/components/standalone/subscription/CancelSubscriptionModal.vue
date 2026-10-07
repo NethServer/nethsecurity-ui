@@ -80,7 +80,11 @@ async function cancelSubscription() {
       <NeInlineNotification
         kind="warning"
         :title="t('standalone.subscription.cancel_irreversible_title')"
-        :description="t('standalone.subscription.cancel_irreversible_description')"
+        :description="
+          t('standalone.subscription.cancel_irreversible_description', {
+            myNethesis: 'my.nethesis.it'
+          })
+        "
         class="mb-4!"
       />
       <p>{{ t('standalone.subscription.confirm_cancel_subscription') }}:</p>

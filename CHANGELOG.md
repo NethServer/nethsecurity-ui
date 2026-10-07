@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.1](https://github.com/NethServer/nethsecurity-ui/compare/2.26.0...2.26.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* **i18n:** add migration error translations for English and Italian ([#824](https://github.com/NethServer/nethsecurity-ui/issues/824)) ([5d6546e](https://github.com/NethServer/nethsecurity-ui/commit/5d6546eafdd4cc9834a28ed7fe41c64dd98271b0))
+
 ## [2.26.0](https://github.com/NethServer/nethsecurity-ui/compare/2.25.1...2.26.0) (2026-10-01)
 
 

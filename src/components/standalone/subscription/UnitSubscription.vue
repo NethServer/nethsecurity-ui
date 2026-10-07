@@ -95,7 +95,9 @@ async function subscribe() {
       e instanceof ValidationError &&
       e.errorBag.getFirstFor('secret') == 'system_already_registered'
     ) {
-      errors.value.request = t('standalone.subscription.system_already_registered')
+      errors.value.request = t('standalone.subscription.system_already_registered', {
+        myNethesis: 'my.nethesis.it'
+      })
     } else if (e.response?.data?.message == 'invalid_secret_or_server_not_found') {
       errors.value.request = t('standalone.subscription.invalid_secret_or_server_not_found')
     } else {

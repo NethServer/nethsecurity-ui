@@ -1,99 +1,83 @@
 <!--
-  Copyright (C) 2024 Nethesis S.r.l.
+  Copyright (C) 2026 Nethesis S.r.l.
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <script setup lang="ts">
-import type { DpiRule } from '@/lib/standalone/dpi'
-import { ubusCall } from '@/lib/standalone/ubus'
-import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
-import { NeModal } from '@nethesis/vue-components'
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getAxiosErrorMessage, NeInlineNotification, NeModal } from '@nethesis/vue-components'
+import { DPI_RULES_KEY, type DpiRule } from '@/composables/useDpiRules'
+import { ubusCall } from '@/lib/standalone/ubus'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 
-interface Props {
-  visible: boolean
+const { visible = false, rule = undefined } = defineProps<{
+  visible?: boolean
   rule?: DpiRule
-}
+}>()
 
-const props = defineProps<Props>()
-
-const emit = defineEmits(['close', 'reloadData'])
+const emit = defineEmits<{
+  close: []
+  deleted: []
+}>()
 
 const { t } = useI18n()
 
-const loading = ref({
-  deleteRule: false
-})
+const queryClient = useQueryClient()
+const uci = useUciPendingChangesStore()
 
-const error = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
+const {
+  mutate: deleteRule,
+  isPending,
+  error,
+  reset
+} = useMutation({
+  mutationFn: (id: string) =>
+    ubusCall<{ data: { message: string } }>('ns.dpi', 'delete-rule', { id }),
+  onSuccess: () =>
+    Promise.all([queryClient.invalidateQueries({ queryKey: DPI_RULES_KEY }), uci.getChanges()])
 })
 
 watch(
-  () => props.visible,
-  () => {
-    if (props.visible) {
-      error.value.notificationTitle = ''
-      error.value.notificationDescription = ''
-      error.value.notificationDetails = ''
+  () => visible,
+  (isShown) => {
+    if (isShown) {
+      reset()
     }
   }
 )
 
-async function deleteRule() {
-  if (!props.rule) {
+function confirmDelete() {
+  if (!rule) {
     return
   }
-  error.value.notificationTitle = ''
-  error.value.notificationDescription = ''
-  error.value.notificationDetails = ''
-  loading.value.deleteRule = true
 
-  try {
-    await ubusCall('ns.dpi', 'delete-rule', {
-      'config-name': props.rule['config-name']
-    })
-    emit('close')
-    emit('reloadData')
-  } catch (err: any) {
-    console.error(err)
-    error.value.notificationTitle = t('error.cannot_delete_rule')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
-  } finally {
-    loading.value.deleteRule = false
-  }
+  deleteRule(rule.id, { onSuccess: () => emit('deleted') })
 }
 </script>
 
 <template>
   <NeModal
     :visible="visible"
-    :title="t('standalone.dpi.delete_rule')"
     kind="warning"
-    :primary-label="t('standalone.dpi.delete_rule')"
+    :title="t('standalone.dpi.delete_rule')"
+    :primary-label="t('common.delete')"
     :cancel-label="t('common.cancel')"
     primary-button-kind="danger"
-    :primary-button-disabled="loading.deleteRule"
-    :primary-button-loading="loading.deleteRule"
+    :primary-button-loading="isPending"
+    :primary-button-disabled="isPending"
     :close-aria-label="t('common.close')"
     @close="emit('close')"
-    @primary-click="deleteRule"
+    @primary-click="confirmDelete"
   >
-    {{ t('standalone.dpi.confirm_delete_rule', { iface: rule?.interface }) }}
+    {{ t('standalone.dpi.confirm_delete_rule', { name: rule?.name ?? '' }) }}
     <NeInlineNotification
-      v-if="error.notificationTitle"
+      v-if="error"
       kind="error"
-      :title="error.notificationTitle"
-      :description="error.notificationDescription"
+      :title="t('error.cannot_delete_rule')"
+      :description="t(getAxiosErrorMessage(error))"
       class="mt-4"
-    >
-      <template v-if="error.notificationDetails" #details>
-        {{ error.notificationDetails }}
-      </template>
-    </NeInlineNotification>
+    />
   </NeModal>
 </template>

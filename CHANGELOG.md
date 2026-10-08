@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.0](https://github.com/NethServer/nethsecurity-ui/compare/2.26.1...2.27.0) (2026-10-08)
+
+
+### Features
+
+* **dpi:** refactor DPI UI ([#815](https://github.com/NethServer/nethsecurity-ui/issues/815)) ([4b65e38](https://github.com/NethServer/nethsecurity-ui/commit/4b65e3827c3ef063c26b5a92cbe999a83d18fd91))
+
 ## [2.26.1](https://github.com/NethServer/nethsecurity-ui/compare/2.26.0...2.26.1) (2026-10-07)
 
 

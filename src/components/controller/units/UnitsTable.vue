@@ -153,7 +153,7 @@ async function openUnit(unit: Unit, versionCheck = true) {
 function openTerminal(unit: Unit) {
   const routeData = router.resolve({
     name: 'ControllerUnitTerminal',
-    query: { unitId: unit.id, unitName: unit.info?.unit_name || unit.id }
+    query: { unitId: unit.id }
   })
   window.open(routeData.href, '_blank')
 }

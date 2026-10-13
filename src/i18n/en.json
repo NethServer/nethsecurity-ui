@@ -362,6 +362,7 @@
     "cannot_add_unit": "Cannot add unit",
     "max_units_reached": "Maximum number of units reached",
     "cannot_upload_backup": "Cannot upload backup",
+    "cannot_retrieve_unit": "Cannot retrieve unit",
     "cannot_retrieve_ssh_keys": "Cannot retrieve account SSH keys",
     "cannot_retrieve_defaults": "Cannot retrieve defaults",
     "cannot_change_password": "Cannot change password",
@@ -3236,6 +3237,8 @@
       "wrong_passphrase": "Wrong passphrase",
       "cannot_open_terminal": "Cannot open terminal",
       "connection_failed": "Connection to the unit terminal failed.",
+      "unit_not_connected": "The unit is not connected to the controller.",
+      "ssh_disabled": "SSH is disabled on the unit.",
       "ssh_key_hint": "Generate an SSH key pair in Account settings and send the public key to the unit."
     },
     "account_settings": {

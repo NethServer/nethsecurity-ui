@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.1](https://github.com/NethServer/nethsecurity-ui/compare/2.27.0...2.27.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* **dpi:** fix modal and drawer titles for application groups and rules ([#828](https://github.com/NethServer/nethsecurity-ui/issues/828)) ([e72e04c](https://github.com/NethServer/nethsecurity-ui/commit/e72e04c05b07097f1e199874990250924483c1ab))
+
 ## [2.27.0](https://github.com/NethServer/nethsecurity-ui/compare/2.26.1...2.27.0) (2026-10-08)
 
 

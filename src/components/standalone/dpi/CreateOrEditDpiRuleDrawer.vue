@@ -65,6 +65,16 @@ const {
 
 const isEditing = computed(() => ruleToEdit !== undefined && !duplicate)
 
+const drawerTitle = computed(() => {
+  if (isEditing.value) {
+    return t('standalone.dpi.edit_rule')
+  } else if (duplicate) {
+    return t('standalone.dpi.duplicate_rule')
+  } else {
+    return t('standalone.dpi.add_rule')
+  }
+})
+
 const emit = defineEmits<{
   close: []
   save: []
@@ -347,7 +357,7 @@ function save() {
 <template>
   <NeSideDrawer
     :is-shown="isShown && canOpen"
-    :title="ruleToEdit ? t('standalone.dpi.edit_rule') : t('standalone.dpi.add_rule')"
+    :title="drawerTitle"
     :close-aria-label="t('common.shell.close_side_drawer')"
     @close="close"
   >

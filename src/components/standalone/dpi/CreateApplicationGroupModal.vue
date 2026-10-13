@@ -73,6 +73,16 @@ const { t } = useI18n()
 const subscription = useSubscriptionStore()
 
 const isEditing = computed(() => group !== undefined && !duplicate)
+
+const modalTitle = computed(() => {
+  if (isEditing.value) {
+    return t('standalone.dpi.edit_application_group')
+  } else if (duplicate) {
+    return t('standalone.dpi.duplicate_application_group')
+  } else {
+    return t('standalone.dpi.create_application_group')
+  }
+})
 // without a subscription only community items are usable, so filtering them is offered
 const showCommunityFilter = computed(() => !subscription.isActive)
 
@@ -442,11 +452,7 @@ function save() {
   <NeModal
     :visible="visible"
     size="xxl"
-    :title="
-      isEditing
-        ? t('standalone.dpi.edit_application_group')
-        : t('standalone.dpi.create_application_group')
-    "
+    :title="modalTitle"
     :primary-label="isEditing ? t('common.save') : t('common.create')"
     :primary-button-loading="isSaving"
     :primary-button-disabled="isSaving"

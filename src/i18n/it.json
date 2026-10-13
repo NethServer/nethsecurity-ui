@@ -1288,7 +1288,7 @@
       "ip_range": "Intervallo IP | Intervalli IP",
       "soft": "Soft",
       "soft_binding_description": "Consente host senza reservation, blocca gli IP/MAC non corrispondenti",
-      "custom": "Personallizzato",
+      "custom": "Personalizzato",
       "strict_binding": "Strict binding",
       "soft_binding": "Soft binding",
       "scan_network_reservation": "Riservato",

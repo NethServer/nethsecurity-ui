@@ -89,11 +89,6 @@
       "count": 1
     }
   },
-  "src/components/controller/units/OpenSshModal.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 3
-    }
-  },
   "src/components/controller/units/RemoveUnitModal.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1

@@ -67,7 +67,6 @@ library.add(faCalendarXmark)
 
 const emit = defineEmits<{
   reloadData: []
-  openSshModal: [unit: Unit]
   scheduleUpdate: [unit: Unit]
   abortUpdate: [unit: Unit]
   upgradeUnitPackages: [unit: Unit]
@@ -151,6 +150,14 @@ async function openUnit(unit: Unit, versionCheck = true) {
   }
 }
 
+function openTerminal(unit: Unit) {
+  const routeData = router.resolve({
+    name: 'ControllerUnitTerminal',
+    query: { unitId: unit.id, unitName: unit.info?.unit_name || unit.id }
+  })
+  window.open(routeData.href, '_blank')
+}
+
 function getKebabMenuItems(unit: Unit) {
   const menuItems: Array<NeDropdownItem> = []
   if (unit.registered) {
@@ -172,7 +179,7 @@ function getKebabMenuItems(unit: Unit) {
         id: 'openSsh',
         label: t('controller.units.open_ssh_terminal'),
         icon: faTerminal,
-        action: () => emit('openSshModal', unit),
+        action: () => openTerminal(unit),
         disabled: !unit.connected
       }
     )

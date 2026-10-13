@@ -779,11 +779,6 @@
       "count": 2
     }
   },
-  "src/views/controller/UnitTerminalView.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "src/views/standalone/firewall/PortForward.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4

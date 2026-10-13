@@ -21,7 +21,6 @@ import {
 import { useI18n } from 'vue-i18n'
 import UnitsTable from '@/components/controller/units/UnitsTable.vue'
 import AddUnitModal from '@/components/controller/units/AddUnitModal.vue'
-import OpenSshModal from '@/components/controller/units/OpenSshModal.vue'
 import SendOrRevokeSshKeyDrawer from '@/components/controller/units/SendOrRevokeSshKeyDrawer.vue'
 import { useDefaultsStore } from '@/stores/controller/defaults'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -44,9 +43,7 @@ const textFilter = ref('')
 const isShownAddUnitModal = ref(false)
 const getUnitsIntervalId = ref(0)
 const isUnitsSkeletonEnabled = ref(true)
-const isShownOpenSshModal = ref(false)
 const isShownSendOrRevokeSshKeyDrawer = ref(false)
-const currentUnit = ref<Unit>()
 const sendOrRevokeAction = ref<SendOrRevokeAction>('send')
 const unitToUpdate = ref<Unit>()
 const unitToAbortUpdate = ref<Unit>()
@@ -123,11 +120,6 @@ async function loadData() {
   isUnitsSkeletonEnabled.value = true
   await unitsStore.getUnits()
   isUnitsSkeletonEnabled.value = false
-}
-
-function showOpenSshModal(unit: Unit) {
-  currentUnit.value = unit
-  isShownOpenSshModal.value = true
 }
 
 function showSendSshKeyDrawer() {
@@ -317,7 +309,6 @@ function getBulkActionsKebabMenuItems() {
           v-else
           :filtered-units="filteredUnits"
           @reload-data="loadData"
-          @open-ssh-modal="showOpenSshModal"
           @schedule-update="unitToUpdate = $event"
           @abort-update="unitToAbortUpdate = $event"
           @upgrade-unit-packages="unitToUpgradePackages = $event"
@@ -330,13 +321,6 @@ function getBulkActionsKebabMenuItems() {
       :visible="isShownAddUnitModal"
       @close="isShownAddUnitModal = false"
       @reload-data="loadData"
-    />
-
-    <!-- open ssh modal -->
-    <OpenSshModal
-      :visible="isShownOpenSshModal"
-      :unit="currentUnit"
-      @close="isShownOpenSshModal = false"
     />
 
     <!-- send/revoke ssh key drawer -->

@@ -3242,7 +3242,12 @@
       "connection_status_closed": "Closed",
       "connection_closed": "Connection closed",
       "connection_closed_description": "Connection to the unit terminal was closed. Please close this window and connect again, if needed.",
-      "exit_terminal_description": "To exit the unit terminal, simply close this window."
+      "exit_terminal_description": "To exit the unit terminal, simply close this window.",
+      "connect": "Connect",
+      "wrong_passphrase": "Wrong passphrase",
+      "cannot_open_terminal": "Cannot open terminal",
+      "connection_failed": "Connection to the unit terminal failed.",
+      "ssh_key_hint": "Generate an SSH key pair in Account settings and send the public key to the unit."
     },
     "account_settings": {
       "title": "Account settings",

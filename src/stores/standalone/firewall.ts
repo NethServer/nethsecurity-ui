@@ -59,6 +59,7 @@ export interface FirewallRule {
   src?: string // source zone
   src_ip?: string[] | RuleHost[] // source addresses
   ns_src?: string // source address object
+  src_mac?: string[] // source MAC addresses
   dest?: string // destination zone
   dest_ip?: string[] | RuleHost[] // destination addresses
   ns_dst?: string // destination address object

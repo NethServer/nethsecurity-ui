@@ -65,6 +65,9 @@ const domainSetObject = computed(() => {
 
 const addresses = computed(() => {
   if (props.columnType === 'source') {
+    if (props.rule.src_mac?.length) {
+      return props.rule.src_mac.map((macAddress) => ({ value: macAddress, label: '', type: 'mac' }))
+    }
     return props.rule.src_ip as RuleHost[]
   } else {
     return props.rule.dest_ip as RuleHost[]

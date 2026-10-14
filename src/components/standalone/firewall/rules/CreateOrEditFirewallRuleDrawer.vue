@@ -35,7 +35,8 @@ import {
   validatePortListOrRange,
   validateRequired,
   validateRequiredOption,
-  validateAnyOf
+  validateAnyOf,
+  validateMacAddress
 } from '@/lib/validation'
 import NeMultiTextInput from '../../NeMultiTextInput.vue'
 import { useObjects, type ObjectReference } from '@/composables/useObjects'
@@ -68,11 +69,14 @@ const firewallConfig = useFirewallStore()
 const isRuleEnabled = ref(true)
 const name = ref('')
 const nameRef = ref()
-const sourceType = ref<'source_address' | 'source_object' | 'source_any'>('source_address')
+const sourceType = ref<'source_address' | 'source_object' | 'source_any' | 'source_mac_address'>(
+  'source_address'
+)
 const destinationType = ref<'destination_address' | 'destination_object' | 'destination_any'>(
   'destination_address'
 )
 const sourceAddresses = ref<string[]>([''])
+const sourceMACAddresses = ref<string[]>([''])
 const destinationAddresses = ref<string[]>([''])
 const sourceAddressObject = ref('')
 const destinationAddressObject = ref('')
@@ -98,6 +102,7 @@ const tags: Ref<NeComboboxOption[]> = ref([])
 const isLoggingEnabled = ref(false)
 const errorBag = ref(new MessageBag())
 const sourceAddressesErrors = ref<string[]>([])
+const sourceMACAddressesErrors = ref<string[]>([])
 const destinationAddressesErrors = ref<string[]>([])
 
 const actionOptions = computed(() => {
@@ -149,6 +154,10 @@ const sourceTypeOptions = ref([
   {
     id: 'source_any',
     label: t('standalone.firewall_rules.any_source_address')
+  },
+  {
+    id: 'source_mac_address',
+    label: t('standalone.firewall_rules.mac_address')
   }
 ])
 
@@ -280,6 +289,7 @@ watch(
         destinationType.value = 'destination_address'
         sourceAddresses.value = ['']
         sourceAddressObject.value = ''
+        sourceMACAddresses.value = ['']
         destinationAddresses.value = ['']
         destinationAddressObject.value = ''
         sourceZone.value = '*'
@@ -337,6 +347,8 @@ watch(
 )
 
 function mapSourceAddressesToUi(rule: FirewallRule) {
+  sourceMACAddresses.value = rule.src_mac?.length ? [...rule.src_mac] : ['']
+
   if (!rule.src_ip) {
     return []
   }
@@ -346,6 +358,8 @@ function mapSourceAddressesToUi(rule: FirewallRule) {
     // source address is an object
     sourceType.value = 'source_object'
     sourceAddressObject.value = rule.ns_src
+  } else if (rule.src_mac?.length) {
+    sourceType.value = 'source_mac_address'
   } else {
     if (rule.src_ip.length) {
       sourceType.value = 'source_address'
@@ -526,6 +540,8 @@ function validate() {
     sourceAddressesErrors.value.push('')
   })
 
+  sourceMACAddressesErrors.value = sourceMACAddresses.value.map(() => '')
+
   destinationAddressesErrors.value = []
   destinationAddresses.value.forEach(() => {
     destinationAddressesErrors.value.push('')
@@ -579,6 +595,18 @@ function validate() {
         errorBag.value.set('ns_src', [t(String(sourceObjectValidation.errMessage))])
         isValidationOk = false
         focusElement(sourceAddressObjectRef)
+      }
+    } else if (sourceType.value === 'source_mac_address') {
+      for (const [index, sourceMACAddress] of sourceMACAddresses.value.entries()) {
+        let sourceMACAddressValidation = validateRequired(sourceMACAddress)
+        if (sourceMACAddressValidation.valid) {
+          sourceMACAddressValidation = validateMacAddress(sourceMACAddress)
+        }
+
+        if (!sourceMACAddressValidation.valid) {
+          sourceMACAddressesErrors.value[index] = t(sourceMACAddressValidation.errMessage as string)
+          isValidationOk = false
+        }
       }
     }
 
@@ -708,6 +736,7 @@ async function saveRule() {
     enabled: isRuleEnabled.value,
     src_ip: [],
     ns_src: '',
+    src_mac: [],
     src: '',
     dest_ip: [],
     ns_dst: '',
@@ -741,6 +770,12 @@ async function saveRule() {
     } else if (sourceType.value === 'source_object') {
       // source address object
       ruleData.ns_src = sourceAddressObject.value
+    } else if (sourceType.value === 'source_mac_address') {
+      ruleData.src_mac = [
+        ...new Set(
+          sourceMACAddresses.value.map((macAddress) => macAddress.toLowerCase().replace(/-/g, ':'))
+        )
+      ]
     }
 
     // source zone
@@ -893,6 +928,18 @@ async function saveRule() {
             :no-options-label="t('ne_combobox.no_options_label')"
             :selected-label="t('ne_combobox.selected')"
             :user-input-label="t('ne_combobox.user_input_label')"
+          />
+          <!-- source MAC addresses -->
+          <NeMultiTextInput
+            v-show="sourceType === 'source_mac_address'"
+            v-model="sourceMACAddresses"
+            :disable-inputs="loading.saveRule"
+            :title="t('standalone.firewall_rules.source_mac_addresses')"
+            :add-item-label="t('standalone.firewall_rules.add_source_mac_address')"
+            :invalid-messages="sourceMACAddressesErrors"
+            :general-invalid-message="t(errorBag.getFirstFor('src_mac'))"
+            required
+            :placeholder="t('standalone.firewall_rules.mac_address_placeholder')"
           />
           <!-- source zone -->
           <NeCombobox

@@ -235,17 +235,6 @@ function goToApplicationGroups() {
       </NeEmptyState>
     </template>
     <template v-else>
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <p class="max-w-2xl text-sm leading-5 text-tertiary-neutral">
-          {{ t('standalone.dpi.rules_evaluation_order') }}
-        </p>
-        <NeButton kind="primary" size="lg" @click="createRule">
-          <template #prefix>
-            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
-          </template>
-          {{ t('standalone.dpi.add_rule') }}
-        </NeButton>
-      </div>
       <div class="mb-6 flex flex-wrap items-center gap-3">
         <NeTextInput
           v-model="nameFilter"
@@ -289,6 +278,12 @@ function goToApplicationGroups() {
         />
         <NeButton v-if="isFiltered" kind="tertiary" size="lg" @click="resetFilters">
           {{ t('common.reset_filters') }}
+        </NeButton>
+        <NeButton kind="primary" size="lg" class="ml-auto" @click="createRule">
+          <template #prefix>
+            <FontAwesomeIcon :icon="faCirclePlus" aria-hidden="true" />
+          </template>
+          {{ t('standalone.dpi.add_rule') }}
         </NeButton>
       </div>
       <NeEmptyState

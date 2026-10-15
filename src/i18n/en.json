@@ -1751,6 +1751,7 @@
     },
     "dpi": {
       "title": "DPI filter",
+      "description": "Deep packet inspection (DPI) analyzes network traffic to identify applications, protocols and domains. Rules can allow or block traffic, either entirely or by application group, and are evaluated from top to bottom: only the first matching rule applies.",
       "rules": "Rules",
       "application_groups": "Application groups",
       "no_application_groups_configured": "No application groups configured",
@@ -1890,7 +1891,6 @@
       "choose_application_group": "Choose application group",
       "filter_rules": "Filter rules",
       "clear_filters_to_sort_rules": "Clear the filters to reorder the rules",
-      "rules_evaluation_order": "Rules are evaluated from top to bottom and the first match wins: a rule never applies if one above it already matched the traffic.",
       "no_rules_found": "No rules found",
       "no_rules_found_description": "No rule matches the current filters. Change them or reset them to see every rule."
     },

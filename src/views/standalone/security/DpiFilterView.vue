@@ -19,7 +19,10 @@ const { tabs, selectedTab } = useTabs([
 
 <template>
   <div class="text-sm">
-    <NeHeading tag="h3" class="mb-7">{{ t('standalone.dpi.title') }}</NeHeading>
+    <NeHeading tag="h3" class="mb-8">{{ t('standalone.dpi.title') }}</NeHeading>
+    <p class="mb-4 max-w-2xl text-gray-500 dark:text-gray-400">
+      {{ t('standalone.dpi.description') }}
+    </p>
     <NeTabs
       :tabs="tabs"
       :selected="selectedTab"

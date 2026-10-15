@@ -259,7 +259,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
   }
 
   // search in array attributes
-  found = ['proto', 'dest_port', 'ns_tag'].some((attrName) => {
+  found = ['src_mac', 'proto', 'dest_port', 'ns_tag'].some((attrName) => {
     const attrValue = rule[attrName as keyof FirewallRule] as string[]
 
     return attrValue?.some((value) => {

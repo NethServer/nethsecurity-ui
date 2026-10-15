@@ -1445,6 +1445,7 @@
       "description": "Connettere l'unità a un'istanza di hotspot manager remota."
     },
     "dpi": {
+      "description": "La deep packet inspection (DPI) analizza il traffico di rete per identificare applicazioni, protocolli e domini. Le regole possono consentire o bloccare il traffico, interamente o per gruppo di applicazioni, e vengono valutate dall’alto verso il basso: si applica solo la prima regola corrispondente.",
       "add_rule": "Aggiungi regola",
       "delete_rule": "Elimina regola",
       "application_groups": "Gruppi di applicazioni",
@@ -1585,7 +1586,6 @@
       "choose_application_group": "Scegli gruppo di applicazioni",
       "filter_rules": "Filtra regole",
       "clear_filters_to_sort_rules": "Azzera i filtri per riordinare le regole",
-      "rules_evaluation_order": "Le regole vengono valutate dall’alto verso il basso e vince la prima corrispondenza: una regola non si applica se una precedente ha già intercettato il traffico.",
       "no_rules_found": "Nessuna regola trovata",
       "no_rules_found_description": "Nessuna regola corrisponde ai filtri attuali. Modificali o azzerali per vedere tutte le regole."
     },

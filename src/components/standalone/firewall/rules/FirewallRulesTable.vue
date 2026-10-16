@@ -38,6 +38,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  tagFilter: {
+    type: Array as PropType<string[]>,
+    required: true
+  },
   loadingRules: {
     type: Boolean,
     required: true
@@ -96,13 +100,20 @@ const ruleDragged = ref<number>()
 const indexOver = ref<number>()
 const disabledRuleClasses = 'bg-[#fcfdfd]! dark:bg-[#18212f]!'
 
+const isFilterActive = computed(() => !!props.textFilter || props.tagFilter.length > 0)
+
 const filteredRules = computed(() => {
-  if (!props.textFilter) {
+  if (!isFilterActive.value) {
     // no filter
     return internalRules.value
   } else {
     // filter rules
-    return internalRules.value.filter((rule) => searchStringInRule(rule, props.textFilter))
+    return internalRules.value.filter((rule) => {
+      const matchesTextFilter = !props.textFilter || searchStringInRule(rule, props.textFilter)
+      const matchesTagFilter =
+        !props.tagFilter.length || rule.ns_tag.some((tag) => props.tagFilter.includes(tag))
+      return matchesTextFilter && matchesTagFilter
+    })
   }
 })
 
@@ -309,7 +320,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
             <template v-for="(rule, index) in filteredRules" :key="rule.id">
               <!-- drop target -->
               <tr
-                v-if="!textFilter"
+                v-if="!isFilterActive"
                 :class="[
                   indexOver == index ? 'drop-over drop-target' : '',
                   ruleDragged != undefined ? 'drop-active' : ''
@@ -329,13 +340,13 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
               <!-- rule -->
               <tr
                 :class="{ 'opacity-30': ruleDragged == index }"
-                :draggable="!textFilter"
+                :draggable="!isFilterActive"
                 @dragend="ruleDragged = undefined"
                 @dragstart="ruleDragged = index"
               >
                 <!-- vertical grip -->
                 <td
-                  v-if="!textFilter"
+                  v-if="!isFilterActive"
                   :class="[
                     'cursor-move text-center hover:bg-gray-100 hover:dark:bg-gray-700',
                     !isEnabled(rule) ? disabledRuleClasses : ''
@@ -343,7 +354,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
                 >
                   <FontAwesomeIcon :icon="faGripVertical" />
                 </td>
-                <!-- cannot drag & drop rules with active text filter -->
+                <!-- cannot drag & drop rules with active filter -->
                 <td v-else :class="!isEnabled(rule) ? disabledRuleClasses : ''">
                   <NeTooltip trigger-event="mouseenter focus" placement="top-start">
                     <template #trigger>

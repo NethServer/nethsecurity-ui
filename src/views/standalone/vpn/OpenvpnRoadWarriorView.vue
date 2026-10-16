@@ -4,31 +4,25 @@
 -->
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useRouteQuery } from '@vueuse/router'
 import {
   NeHeading,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
   NeEmptyState,
-  getAxiosErrorMessage,
-  NeTabs
+  NeTabs,
+  getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { useTabs } from '@/composables/useTabs'
-import RWAccountsManager from '@/components/standalone/openvpn_rw/RWAccountsManager.vue'
-import RWServerDetails from '@/components/standalone/openvpn_rw/RWServerDetails.vue'
-import { onUnmounted, ref } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faGlobe, faPlus, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import { computed } from 'vue'
-import DeleteRWServerModal from '@/components/standalone/openvpn_rw/DeleteRWServerModal.vue'
-import CreateOrEditRWServerDrawer from '@/components/standalone/openvpn_rw/CreateOrEditRWServerDrawer.vue'
-import RenewRWServerCertificateModal from '@/components/standalone/openvpn_rw/RenewRWServerCertificateModal.vue'
-import RegenerateRWAllCertificatesModal from '@/components/standalone/openvpn_rw/RegenerateRWAllCertificatesModal.vue'
-
+import RWServerTab from '@/components/standalone/openvpn_rw/RWServerTab.vue'
 import ConnectionsHistory from '@/components/standalone/openvpn_rw/ConnectionsHistory.vue'
-import { useNotificationsStore } from '@/stores/notifications'
 
 export type RWAuthenticationMode =
   'username_password' | 'certificate' | 'username_password_certificate' | 'username_otp_certificate'
@@ -88,274 +82,154 @@ export type RWAccount = {
   valid?: boolean
 }
 
+export type RWInstance = {
+  instance: string
+  description: string
+  enabled: string
+}
+
+const HISTORY_TAB = 'connection-history'
+const RELOAD_INTERVAL = 10000
+
 const { t } = useI18n()
+const queryClient = useQueryClient()
 const uciChangesStore = useUciPendingChangesStore()
 
-const RELOAD_INTERVAL = 10000
-const loading = ref(true)
-const loadingUsers = ref(true)
-const instanceName = ref('')
-const serverName = ref('')
-const instanceData = ref<RWServer>()
-const users = ref<RWAccount[]>([])
-const error = ref({
-  notificationTitle: '',
-  notificationDescription: '',
-  notificationDetails: ''
+const {
+  data: servers,
+  isPending: isPendingServers,
+  error: serversError
+} = useQuery({
+  queryKey: ['ovpnrw', 'instances'],
+  queryFn: () => ubusCall<{ data: { details: RWInstance[] } }>('ns.ovpnrw', 'list-instances'),
+  select: (res) => res.data.details,
+  refetchInterval: RELOAD_INTERVAL
 })
-const notificationsStore = useNotificationsStore()
 
-const isInitializingInstance = ref(false)
-const showDeleteServerModal = ref(false)
-const showCreateOrEditServerModal = ref(false)
-const loadingError = ref(false)
-const fetchServerIntervalId = ref(0)
-const showRenewServerCertificateModal = ref(false)
-const showRegenerateAllCertificatesModal = ref(false)
-
-const connectedClients = computed(() => users.value.filter((x) => x.connected).length)
-
-const { tabs, selectedTab } = useTabs([
-  {
-    name: 'road-warrior-server',
-    label: t('standalone.openvpn_rw.tabs.road_warrior_server')
+// the tab is the instance of a server or the history, a missing server selects the first one
+const tabFromRoute = useRouteQuery<string>('tab', '')
+const selectedTab = computed({
+  get: () => {
+    const ids = (servers.value ?? []).map((server) => server.instance)
+    return tabFromRoute.value === HISTORY_TAB || ids.includes(tabFromRoute.value)
+      ? tabFromRoute.value
+      : (ids[0] ?? '')
   },
-  {
-    name: 'connection-history',
-    label: t('standalone.openvpn_rw.tabs.connections_history')
+  set: (value: string) => {
+    tabFromRoute.value = value
   }
+})
+
+const tabs = computed(() => [
+  ...(servers.value ?? []).map((server) => ({
+    name: server.instance,
+    label: server.description || t('standalone.openvpn_rw.new_server')
+  })),
+  { name: HISTORY_TAB, label: t('standalone.openvpn_rw.tabs.connections_history') }
 ])
 
-async function fetchUsers(setLoading: boolean = true) {
-  try {
-    if (setLoading) {
-      loadingUsers.value = true
-    }
-    users.value = (
-      await ubusCall('ns.ovpnrw', 'list-users', { instance: instanceName.value })
-    ).data.users
-  } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_users')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
-    loadingError.value = true
-  } finally {
-    if (setLoading) {
-      loadingUsers.value = false
-    }
-  }
-}
+// server just created, its configuration is opened automatically
+const newServer = ref('')
 
-async function fetchServer(setLoading: boolean = true) {
-  try {
-    if (setLoading) {
-      loading.value = true
-    }
-    const instances: string[] = (await ubusCall('ns.ovpnrw', 'list-instances')).data.instances
-    if (instances.length > 0) {
-      instanceName.value = instances[0]!
-      instanceData.value = (
-        await ubusCall('ns.ovpnrw', 'get-configuration', { instance: instanceName.value })
-      ).data
-      if (instanceData.value?.ns_description) {
-        serverName.value = instanceData.value.ns_description
-        await fetchUsers(setLoading)
-      }
-    }
-  } catch (err: any) {
-    error.value.notificationTitle = t('error.cannot_retrieve_rw_server')
-    error.value.notificationDescription = t(getAxiosErrorMessage(err))
-    error.value.notificationDetails = err.toString()
-    loadingError.value = true
-  } finally {
-    if (setLoading) {
-      loading.value = false
-    }
-  }
-}
-
-async function reloadServer() {
-  await uciChangesStore.getChanges()
-  instanceName.value = ''
-  instanceData.value = undefined
-  await fetchServer()
-}
-
-async function reloadUsers() {
-  await uciChangesStore.getChanges()
-  await fetchUsers()
-}
-
-async function initAndConfigureServer() {
-  if (!instanceName.value) {
-    isInitializingInstance.value = true
-    try {
-      await ubusCall('ns.ovpnrw', 'add-instance')
-      await reloadServer()
-    } catch (err: any) {
-      error.value.notificationTitle = t('error.cannot_initialize_server')
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
-      error.value.notificationDetails = err.toString()
-      return
-    } finally {
-      isInitializingInstance.value = false
-    }
-  }
-  showCreateOrEditServerModal.value = true
-}
-
-async function showNotificationAndReload(title: string, description: string) {
-  // show toast notification
-  setTimeout(() => {
-    notificationsStore.createNotification({
-      title: title,
-      description: description,
-      kind: 'success'
-    })
-  }, 500)
-  // reload server data
-  await reloadServer()
-}
-
-/**
- * When the ui pools the server loading, sometimes the load time is pretty big. The following
- * variable is only used in the interval pool below, so that the issue is mitigated.
- */
-const loadingServer = ref(false)
-onMounted(() => {
-  fetchServer().then(() => {
-    fetchServerIntervalId.value = setInterval(() => {
-      if (!loadingServer.value) {
-        loadingServer.value = true
-        fetchServer(false).finally(() => (loadingServer.value = false))
-      }
-    }, RELOAD_INTERVAL)
-  })
-})
-
-onUnmounted(() => {
-  if (fetchServerIntervalId.value) {
-    clearInterval(fetchServerIntervalId.value)
+const {
+  mutate: addServer,
+  isPending: isAddingServer,
+  error: addServerError
+} = useMutation({
+  mutationFn: () => ubusCall<{ data: { instance: string } }>('ns.ovpnrw', 'add-instance'),
+  onSuccess: async (res) => {
+    newServer.value = res.data.instance
+    await reloadServers()
+    selectedTab.value = res.data.instance
   }
 })
+
+async function reloadServers() {
+  await uciChangesStore.getChanges()
+  await queryClient.invalidateQueries({ queryKey: ['ovpnrw', 'instances'] })
+}
+
+async function onServerDeleted() {
+  await reloadServers()
+  selectedTab.value = ''
+}
 </script>
 
 <template>
   <div class="flex flex-col justify-between md:flex-row md:items-center">
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.openvpn_rw.title') }}</NeHeading>
-    <div
-      v-if="selectedTab == 'road-warrior-server'"
-      class="mb-6 text-sm text-gray-500 dark:text-gray-400"
+    <NeButton
+      v-if="servers && servers.length > 0"
+      kind="secondary"
+      size="lg"
+      class="mb-7 shrink-0"
+      :loading="isAddingServer"
+      :disabled="isAddingServer"
+      @click="addServer()"
     >
-      {{ t('common.data_updated_every_seconds', { seconds: RELOAD_INTERVAL / 1000 }) }}
-    </div>
+      <template #prefix>
+        <FontAwesomeIcon :icon="faPlus" class="h-4 w-4" aria-hidden="true" />
+      </template>
+      {{ t('standalone.openvpn_rw.add_server') }}
+    </NeButton>
   </div>
   <NeInlineNotification
-    v-if="error.notificationDescription"
-    :title="t('error.cannot_retrieve_databases')"
-    :description="error.notificationDescription"
+    v-if="serversError"
+    :title="t('error.cannot_retrieve_rw_server')"
+    :description="t(getAxiosErrorMessage(serversError))"
     class="mb-6"
     kind="error"
-  >
-    <template v-if="error.notificationDetails" #details>
-      {{ error.notificationDetails }}
-    </template></NeInlineNotification
-  >
-  <NeSkeleton v-if="loading" size="lg" :lines="10" />
-  <div v-else-if="!loadingError" class="flex flex-col">
-    <div class="flex flex-col gap-y-6">
-      <NeTabs
-        v-if="instanceData && instanceData.ns_description"
-        :selected="selectedTab"
-        :sr-select-tab-label="t('ne_tabs.select_a_tab')"
-        :sr-tabs-label="t('ne_tabs.tabs')"
-        :tabs="tabs"
-        class="mb-8"
-        @select-tab="selectedTab = $event"
-      />
-    </div>
-    <div v-if="selectedTab == 'connection-history'" class="flex flex-col gap-y-6">
-      <ConnectionsHistory :instance="instanceName" />
-    </div>
-    <div v-if="selectedTab == 'road-warrior-server'" class="flex flex-col gap-y-6">
-      <NeHeading tag="h5" class="mb-2">{{
-        t('standalone.openvpn_rw.roadwarrior_server')
-      }}</NeHeading>
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.openvpn_rw.roadwarrior_server_description') }}
-      </p>
-      <NeEmptyState
-        v-if="!instanceData || !instanceData.ns_description"
-        :title="t('standalone.openvpn_rw.no_openvpn_rw_server_found')"
-        :icon="['fas', 'globe']"
-        ><NeButton
-          kind="primary"
-          :loading="isInitializingInstance"
-          :disabled="isInitializingInstance"
-          @click="initAndConfigureServer()"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'wrench']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
-          >{{ t('standalone.openvpn_rw.create_server') }}</NeButton
-        ></NeEmptyState
+  />
+  <NeInlineNotification
+    v-if="addServerError"
+    :title="t('error.cannot_initialize_server')"
+    :description="t(getAxiosErrorMessage(addServerError))"
+    class="mb-6"
+    kind="error"
+  />
+  <NeSkeleton v-if="isPendingServers" size="lg" :lines="10" />
+  <div v-else-if="servers" class="flex flex-col gap-y-6">
+    <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+      {{ t('standalone.openvpn_rw.roadwarrior_server_description') }}
+    </p>
+    <NeEmptyState
+      v-if="servers.length === 0"
+      :title="t('standalone.openvpn_rw.no_openvpn_rw_server_found')"
+      :icon="faGlobe"
+    >
+      <NeButton
+        kind="primary"
+        :loading="isAddingServer"
+        :disabled="isAddingServer"
+        @click="addServer()"
       >
-      <RWServerDetails
+        <template #prefix>
+          <FontAwesomeIcon :icon="faWrench" class="h-4 w-4" aria-hidden="true" />
+        </template>
+        {{ t('standalone.openvpn_rw.create_server') }}
+      </NeButton>
+    </NeEmptyState>
+    <template v-else>
+      <!-- long server names can exceed the page width -->
+      <div class="mb-2 overflow-x-auto">
+        <NeTabs
+          :selected="selectedTab"
+          :sr-select-tab-label="t('ne_tabs.select_a_tab')"
+          :sr-tabs-label="t('ne_tabs.tabs')"
+          :tabs="tabs"
+          @select-tab="selectedTab = $event"
+        />
+      </div>
+      <ConnectionsHistory v-if="selectedTab === HISTORY_TAB" :servers="servers" />
+      <RWServerTab
         v-else
-        :connected-clients="connectedClients"
-        :server="instanceData"
-        @delete-server="showDeleteServerModal = true"
-        @edit-server="showCreateOrEditServerModal = true"
-        @renew-server-certificate="showRenewServerCertificateModal = true"
-        @regenerate-all-certificates="showRegenerateAllCertificatesModal = true"
+        :key="selectedTab"
+        :instance="selectedTab"
+        :open-configure-on-mount="selectedTab === newServer"
+        @configure-opened="newServer = ''"
+        @server-changed="reloadServers"
+        @server-deleted="onServerDeleted"
       />
-
-      <RWAccountsManager
-        v-if="instanceData && instanceData.ns_description"
-        :users="users"
-        :server="instanceData"
-        :instance-name="instanceName"
-        :is-loading="loadingUsers"
-        @update-users="reloadUsers"
-      />
-    </div>
-    <DeleteRWServerModal
-      :visible="showDeleteServerModal"
-      :instance-name="instanceName"
-      @close="showDeleteServerModal = false"
-      @server-deleted="reloadServer"
-    />
-    <CreateOrEditRWServerDrawer
-      :item-to-edit="instanceData"
-      :instance-name="instanceName"
-      :is-shown="showCreateOrEditServerModal"
-      @close="showCreateOrEditServerModal = false"
-      @add-edit-server="reloadServer"
-    />
-    <RenewRWServerCertificateModal
-      :visible="showRenewServerCertificateModal"
-      :instance-name="instanceName"
-      @close="showRenewServerCertificateModal = false"
-      @server-certificate-renewed="
-        showNotificationAndReload(
-          t('standalone.openvpn_rw.server_certificate_renewed'),
-          t('standalone.openvpn_rw.server_certificate_renewed_message')
-        )
-      "
-    />
-    <RegenerateRWAllCertificatesModal
-      :visible="showRegenerateAllCertificatesModal"
-      :instance-name="instanceName"
-      :server-name="serverName"
-      @close="showRegenerateAllCertificatesModal = false"
-      @all-certificates-regenerated="
-        showNotificationAndReload(
-          t('standalone.openvpn_rw.all_certificates_regenerated'),
-          t('standalone.openvpn_rw.all_certificates_regenerated_message')
-        )
-      "
-    />
+    </template>
   </div>
 </template>

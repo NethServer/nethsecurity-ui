@@ -24,10 +24,12 @@ import { useQuery, keepPreviousData } from '@tanstack/vue-query'
 import { useRouteQuery } from '@vueuse/router'
 import { refDebounced } from '@vueuse/core'
 import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons'
+import type { RWInstance } from '@/views/standalone/vpn/OpenvpnRoadWarriorView.vue'
 
 const { t } = useI18n()
 
 export type ConnectionsRecord = {
+  instance: string
   account: string
   bytesReceived?: number
   bytesSent?: number
@@ -53,8 +55,25 @@ type ConnectionsHistoryResponse = {
 }
 
 const props = defineProps<{
-  instance: string
+  servers: RWInstance[]
 }>()
+
+const serverNames = computed<Record<string, string>>(() =>
+  Object.fromEntries(
+    props.servers.map((server) => [
+      server.instance,
+      server.description || t('standalone.openvpn_rw.new_server')
+    ])
+  )
+)
+
+const serverFilterOptions = computed<FilterOption[]>(() => [
+  { id: 'all', label: t('standalone.openvpn_rw.history.all_servers') },
+  ...props.servers.map((server) => ({
+    id: server.instance,
+    label: serverNames.value[server.instance]!
+  }))
+])
 
 type RangeFilterOption = 'all' | 'last_3_months' | 'last_month' | 'last_week' | 'today'
 
@@ -84,6 +103,20 @@ const accountsFilter = useRouteQuery<string, string[]>('accounts', '', {
   }
 })
 
+const serverFilter = useRouteQuery<string, string[]>('server', 'all', {
+  transform: {
+    get: (val) => [val || 'all'],
+    set: (val) => val[0] ?? 'all'
+  }
+})
+
+// empty for all the servers, also when the selected one has been removed
+const selectedServer = computed(() =>
+  props.servers.some((server) => server.instance === serverFilter.value[0])
+    ? serverFilter.value[0]!
+    : ''
+)
+
 const currentPage = ref(1)
 const perPage = ref(10)
 
@@ -112,6 +145,12 @@ watch(textFilterDebounced, () => {
 })
 
 watch(timeRangeFilter, () => {
+  if (currentPage.value !== 1) {
+    currentPage.value = 1
+  }
+})
+
+watch(selectedServer, () => {
   if (currentPage.value !== 1) {
     currentPage.value = 1
   }
@@ -155,6 +194,7 @@ const { data, isError, error, isPending, isSuccess } = useQuery({
   queryKey: [
     'ovpnrw',
     'connection-history',
+    selectedServer,
     textFilterDebounced,
     startTime,
     accountsFilter,
@@ -165,7 +205,7 @@ const { data, isError, error, isPending, isSuccess } = useQuery({
   ],
   queryFn: async () =>
     ubusCall<ConnectionsHistoryResponse>('ns.ovpnrw', 'connection-history', {
-      instance: props.instance,
+      instance: selectedServer.value,
       q: textFilterDebounced.value.toLowerCase(),
       ...(startTime.value !== null && { start_time: startTime.value }),
       accounts: accountsFilter.value,
@@ -209,6 +249,7 @@ function cleanError() {
 // clear filters
 function clearFilters() {
   textFilter.value = ''
+  serverFilter.value = ['all']
   timeRangeFilter.value = ['all']
   accountsFilter.value = []
 }
@@ -224,7 +265,7 @@ async function downloadAllHistory() {
   cleanError()
   try {
     const res = await ubusCall('ns.ovpnrw', 'connection-history-csv', {
-      instance: props.instance,
+      instance: selectedServer.value,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' // get the timezone of the browser
     })
     if (res?.data?.csv_path) {
@@ -281,6 +322,18 @@ async function downloadAllHistory() {
         :placeholder="t('common.filter')"
       />
       <NeDropdownFilter
+        v-if="servers.length > 1"
+        v-model="serverFilter"
+        kind="radio"
+        :label="t('standalone.openvpn_rw.history.server')"
+        :options="serverFilterOptions"
+        :clear-search-label="t('ne_dropdown_filter.clear_search')"
+        :clear-filter-label="t('ne_dropdown_filter.clear_selection')"
+        :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+        :no-options-label="t('ne_dropdown_filter.no_options')"
+        :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+      />
+      <NeDropdownFilter
         v-model="timeRangeFilter"
         kind="radio"
         :label="t('standalone.openvpn_rw.history.time_range')"
@@ -328,6 +381,7 @@ async function downloadAllHistory() {
     <UserConnectionsTable
       v-if="isSuccess && data!.total > 0"
       :connections-records="data!.connections"
+      :server-names="selectedServer === '' && servers.length > 1 ? serverNames : undefined"
       :current-page="currentPage"
       :total-rows="data!.results"
       :page-size="perPage"

@@ -450,6 +450,10 @@ async function createOrEditServer() {
   } catch (err: any) {
     if (err instanceof ValidationError) {
       validationErrorBag.value = err.errorBag
+      // the port is inside the advanced settings
+      if (err.errorBag.has('port')) {
+        showAdvancedSettings.value = true
+      }
     } else {
       error.value.notificationTitle = isEditing
         ? t('error.cannot_edit_server')
@@ -672,7 +676,7 @@ watch(
           ref="portRef"
           v-model="port"
           :label="t('standalone.openvpn_rw.port')"
-          :invalid-message="t(validationErrorBag.getFirstFor('port'))"
+          :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('port'))"
         />
         <NeTextInput
           ref="tunMtuRef"

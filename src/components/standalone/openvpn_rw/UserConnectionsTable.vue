@@ -33,6 +33,8 @@ const props = defineProps<{
   pageSize: number
   sortKey: string
   sortDescending: boolean
+  /** server names by instance, the server column is shown only if set */
+  serverNames?: Record<string, string>
 }>()
 
 const emit = defineEmits<{
@@ -91,6 +93,9 @@ function formatDuration(seconds: number): string {
     :skeleton-rows="5"
   >
     <NeTableHead>
+      <NeTableHeadCell v-if="props.serverNames">{{
+        t('standalone.openvpn_rw.history.server')
+      }}</NeTableHeadCell>
       <NeTableHeadCell
         :sortable="props.connectionsRecords.length > 0"
         column-key="account"
@@ -130,7 +135,16 @@ function formatDuration(seconds: number): string {
       <NeTableHeadCell>{{ t('standalone.openvpn_rw.history.received_sent') }}</NeTableHeadCell>
     </NeTableHead>
     <NeTableBody v-if="props.connectionsRecords.length > 0">
-      <NeTableRow v-for="item in props.connectionsRecords" :key="item.startTime">
+      <NeTableRow
+        v-for="item in props.connectionsRecords"
+        :key="`${item.instance}-${item.account}-${item.startTime}`"
+      >
+        <NeTableCell
+          v-if="props.serverNames"
+          :data-label="t('standalone.openvpn_rw.history.server')"
+        >
+          {{ props.serverNames[item.instance] ?? '-' }}
+        </NeTableCell>
         <NeTableCell :data-label="t('standalone.openvpn_rw.history.account')">
           {{ item.account }}
         </NeTableCell>

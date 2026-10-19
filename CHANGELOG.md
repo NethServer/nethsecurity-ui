@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.28.0](https://github.com/NethServer/nethsecurity-ui/compare/2.27.1...2.28.0) (2026-10-19)
+
+
+### Features
+
+* **firewall:** add support for source MAC addresses in firewall rules ([#832](https://github.com/NethServer/nethsecurity-ui/issues/832)) ([52249db](https://github.com/NethServer/nethsecurity-ui/commit/52249db0db3dc5b34d746f8232633d26fe41db3f))
+* **firewall:** add tag filtering to firewall rules table and content ([#834](https://github.com/NethServer/nethsecurity-ui/issues/834)) ([2aee6c6](https://github.com/NethServer/nethsecurity-ui/commit/2aee6c6ac90bf596d8702b1035f5b951bba99fa3))
+* webssh replacement with own implementation ([be632ed](https://github.com/NethServer/nethsecurity-ui/commit/be632ede90501c87d8f21da57071ca16db9a61b4))
+
 ## [2.27.1](https://github.com/NethServer/nethsecurity-ui/compare/2.27.0...2.27.1) (2026-10-13)
 
 

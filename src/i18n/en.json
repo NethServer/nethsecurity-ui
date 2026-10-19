@@ -1715,7 +1715,11 @@
       "inactive": "Inactive",
       "zone_no_longer_exists": "This rule is inactive because it uses a zone that no longer exists",
       "disabled_rule": "This rule has been manually disabled, but can be re-enabled",
-      "logging_enabled": "Logging enabled"
+      "logging_enabled": "Logging enabled",
+      "mac_address": "MAC address",
+      "add_source_mac_address": "Add source MAC address",
+      "source_mac_addresses": "Source MAC addresses",
+      "mac_address_placeholder": "e.g. 00:1A:2B:3C:4D:5E"
     },
     "firewall": {
       "title": "Firewall"

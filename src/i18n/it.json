@@ -2177,7 +2177,11 @@
       "inactive": "Inattiva",
       "zone_no_longer_exists": "Questa regola è stata disattivata perché utilizza una zona che non esiste più",
       "disabled_rule": "Questa regola è stata disabilitata manualmente, ma può essere riattivata",
-      "logging_enabled": "Logging abilitato"
+      "logging_enabled": "Logging abilitato",
+      "mac_address": "Indirizzo MAC",
+      "add_source_mac_address": "Aggiungi indirizzo MAC sorgente",
+      "source_mac_addresses": "Indirizzi MAC sorgente",
+      "mac_address_placeholder": "es. 00:1A:2B:3C:4D:5E"
     },
     "certificates": {
       "title": "Certificati",

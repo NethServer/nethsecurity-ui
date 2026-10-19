@@ -31,19 +31,17 @@ export const getStandaloneApiEndpoint = () => {
 }
 
 /**
- * API endpoint of the controller itself
+ * API endpoint of the controller itself, proxied by the dev server in development
  */
 export const getControllerApiEndpoint = () => {
-  if (import.meta.env.DEV) {
-    // controller development environment
-
-    const apiScheme = import.meta.env.VITE_API_SCHEME
-    const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
-    return `${apiScheme}://${controllerApiHost}/api`
-  }
-
-  // controller production environment
   return `${window.location.origin}/api`
+}
+
+/**
+ * Websocket URL of the SSH terminal of a unit
+ */
+export const getControllerUnitTerminalUrl = (unitId: string) => {
+  return `${getControllerApiEndpoint().replace(/^http/, 'ws')}/units/${unitId}/terminal`
 }
 
 /**
@@ -53,15 +51,6 @@ export const getUnitManagementApiEndpoint = (unitId?: string) => {
   const unitsStore = useUnitsStore()
   // in case of "Open unit" unitsStore.unitId is used
   const currentUnitId = unitId || unitsStore.unitId
-
-  if (import.meta.env.DEV) {
-    // controller development environment
-
-    const apiScheme = import.meta.env.VITE_API_SCHEME
-    const controllerApiHost = import.meta.env.VITE_CONTROLLER_API_HOST
-    return `${apiScheme}://${controllerApiHost}/${currentUnitId}/api`
-  }
-
   return `${window.location.origin}/${currentUnitId}/api`
 }
 

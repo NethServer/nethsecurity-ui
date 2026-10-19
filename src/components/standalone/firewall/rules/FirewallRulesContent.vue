@@ -11,7 +11,8 @@ import {
   NeButton,
   getAxiosErrorMessage,
   NeEmptyState,
-  NeTextInput
+  NeTextInput,
+  NeDropdownFilter
 } from '@nethesis/vue-components'
 import { onMounted, ref, type PropType, watch, computed } from 'vue'
 import CreateOrEditFirewallRuleDrawer from './CreateOrEditFirewallRuleDrawer.vue'
@@ -39,6 +40,7 @@ const isShownCreateOrEditRuleDrawer = ref(false)
 const isShownDeleteRuleModal = ref(false)
 const knownTags = ref<NeComboboxOption[]>([])
 const textFilter = ref('')
+const tagFilter = ref<string[]>([])
 
 const loading = ref({
   listRules: false,
@@ -99,13 +101,20 @@ const emptyStateTitle = computed(() => {
   }
 })
 
+const isFilterActive = computed(() => !!textFilter.value || tagFilter.value.length > 0)
+
 const filteredRules = computed(() => {
-  if (!textFilter.value) {
+  if (!isFilterActive.value) {
     // no filter
     return rules.value
   } else {
     // filter rules
-    return rules.value.filter((rule) => searchStringInRule(rule, textFilter.value))
+    return rules.value.filter((rule) => {
+      const matchesTextFilter = !textFilter.value || searchStringInRule(rule, textFilter.value)
+      const matchesTagFilter =
+        !tagFilter.value.length || rule.ns_tag.some((tag) => tagFilter.value.includes(tag))
+      return matchesTextFilter && matchesTagFilter
+    })
   }
 })
 
@@ -136,13 +145,14 @@ async function listRules() {
     const res = await ubusCall('ns.firewall', listRulesMethod.value)
     rules.value = res.data.rules
 
-    const tags = uniq(rules.value.map((rule) => rule.ns_tag).flat())
+    const tags = uniq(rules.value.map((rule) => rule.ns_tag).flat()).sort()
     knownTags.value = tags.map((tag) => {
       return {
         id: tag,
         label: tag
       }
     })
+    tagFilter.value = tagFilter.value.filter((tag) => tags.includes(tag))
   } catch (err: any) {
     console.error(err)
     error.value.listRules = t(getAxiosErrorMessage(err))
@@ -215,6 +225,11 @@ function showDuplicateRuleDrawer(rule: FirewallRule) {
 function showDeleteRuleModal(rule: FirewallRule) {
   currentRule.value = rule
   isShownDeleteRuleModal.value = true
+}
+
+function clearFilters() {
+  textFilter.value = ''
+  tagFilter.value = []
 }
 
 function hideCreateOrEditRuleDrawer() {
@@ -331,7 +346,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
     </NeInlineNotification>
     <template v-else>
       <!-- no error -->
-      <!-- text filter -->
+      <!-- filters -->
       <div class="mb-5 flex items-center gap-4">
         <NeTextInput
           v-model.trim="textFilter"
@@ -339,12 +354,24 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
           :disabled="loading.listRules"
           class="max-w-xs"
         />
+        <NeDropdownFilter
+          v-if="knownTags.length"
+          v-model="tagFilter"
+          kind="checkbox"
+          :label="t('standalone.firewall_rules.tags')"
+          :options="knownTags"
+          :clear-search-label="t('ne_dropdown_filter.clear_search')"
+          :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
+          :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+        />
         <NeButton
           kind="tertiary"
-          :disabled="loading.listRules || !textFilter"
-          @click="textFilter = ''"
+          :disabled="loading.listRules || !isFilterActive"
+          @click="clearFilters"
         >
-          {{ t('standalone.firewall_rules.clear_filter') }}
+          {{ t('common.clear_filters') }}
         </NeButton>
       </div>
       <!-- empty state -->
@@ -366,8 +393,8 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
           :icon="['fas', 'circle-info']"
           class="mt-4"
         >
-          <NeButton kind="tertiary" @click="textFilter = ''">
-            {{ t('standalone.firewall_rules.clear_filter') }}</NeButton
+          <NeButton kind="tertiary" @click="clearFilters">
+            {{ t('common.clear_filters') }}</NeButton
           >
         </NeEmptyState>
       </template>
@@ -376,6 +403,7 @@ function searchStringInRule(rule: FirewallRule, queryText: string) {
         :rules-type="rulesType"
         :rules="rules"
         :text-filter="textFilter"
+        :tag-filter="tagFilter"
         :loading-rules="loading.listRules"
         @reload-rules="loadData"
         @edit-rule="showEditRuleDrawer"

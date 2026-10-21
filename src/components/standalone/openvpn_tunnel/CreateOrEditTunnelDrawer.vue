@@ -499,7 +499,7 @@ function validate() {
     // public endpoints validation
     let validPublicEndpoints = true
     if (publicEndpoints.value.length == 0) {
-      validationErrorBag.value.set('publicEndpoints', [t('error.required')])
+      validationErrorBag.value.set('ns_public_ip', ['required'])
       validPublicEndpoints = false
     }
     for (const [index, publicEndpoint] of publicEndpoints.value.entries()) {
@@ -700,7 +700,7 @@ watch(
           :add-item-label="t('standalone.openvpn_tunnel.add_endpoint')"
           :title="t('standalone.openvpn_tunnel.public_endpoints')"
           :invalid-messages="publicEndpointsValidationErrors"
-          :general-invalid-message="validationErrorBag.getFirstFor('publicEndpoints')"
+          :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_public_ip'))"
           :required="true"
           ><template #tooltip>
             <NeTooltip

@@ -30,6 +30,7 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 import { faRotate } from '@fortawesome/free-solid-svg-icons'
 import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const { t } = useI18n()
 const { data: accountInfo } = useAccountInfo()
@@ -321,19 +322,21 @@ function setRestoreTimer() {
       >
         <div class="flex">
           <div class="mr-auto self-start">
-            <NeButton
-              class="ml-"
-              kind="primary"
-              size="lg"
-              type="submit"
-              :disabled="!isValidSubscription && !accountInfo?.is_superuser"
-              @click="showRestoreDrawer = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faRotate" />
-              </template>
-              {{ t('standalone.backup_and_restore.restore.restore_backup') }}
-            </NeButton>
+            <SuperuserOnlyTooltip :show="!isValidSubscription && !accountInfo?.is_superuser">
+              <NeButton
+                class="ml-"
+                kind="primary"
+                size="lg"
+                type="submit"
+                :disabled="!isValidSubscription && !accountInfo?.is_superuser"
+                @click="showRestoreDrawer = true"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faRotate" />
+                </template>
+                {{ t('standalone.backup_and_restore.restore.restore_backup') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
           </div>
         </div>
       </FormLayout>

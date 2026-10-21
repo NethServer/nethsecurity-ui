@@ -12,6 +12,7 @@ import MigrationDrawer from '@/components/standalone/backup_and_restore/Migratio
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { faArrowCircleUp, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const { t } = useI18n()
 const { data: accountInfo } = useAccountInfo()
@@ -49,19 +50,21 @@ function successMigration() {
       </template>
       <div class="flex">
         <div class="mr-auto self-start">
-          <NeButton
-            class="ml-6"
-            kind="primary"
-            size="lg"
-            type="submit"
-            :disabled="!accountInfo?.is_superuser"
-            @click="showMigrationDrawer = true"
-          >
-            <template #prefix>
-              <FontAwesomeIcon :icon="faArrowCircleUp" />
-            </template>
-            {{ t('standalone.backup_and_restore.migration.upload_file') }}
-          </NeButton>
+          <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+            <NeButton
+              class="ml-6"
+              kind="primary"
+              size="lg"
+              type="submit"
+              :disabled="!accountInfo?.is_superuser"
+              @click="showMigrationDrawer = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faArrowCircleUp" />
+              </template>
+              {{ t('standalone.backup_and_restore.migration.upload_file') }}
+            </NeButton>
+          </SuperuserOnlyTooltip>
         </div>
       </div>
       <MigrationDrawer

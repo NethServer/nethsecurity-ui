@@ -29,6 +29,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const props = defineProps<{
   users: User[]
@@ -153,12 +154,14 @@ function getDropdownItems(item: User) {
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">
-              <NeButton :disabled="!canEdit(item)" kind="tertiary" @click="emit('edit', item)">
-                <template #prefix>
-                  <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
-                </template>
-                {{ t('common.edit') }}
-              </NeButton>
+              <SuperuserOnlyTooltip :show="!canEdit(item)">
+                <NeButton :disabled="!canEdit(item)" kind="tertiary" @click="emit('edit', item)">
+                  <template #prefix>
+                    <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
+                  </template>
+                  {{ t('common.edit') }}
+                </NeButton>
+              </SuperuserOnlyTooltip>
               <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
             </div>
           </NeTableCell>

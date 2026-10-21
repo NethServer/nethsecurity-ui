@@ -23,6 +23,7 @@ import { useSystemActionStore } from '@/stores/standalone/systemAction'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 export type PackageUpdate = {
   package: string
   currentVersion: string
@@ -364,18 +365,19 @@ onMounted(() => {
               aria-hidden="true" /></template
           >{{ t('standalone.update.update_system') }}</NeButton
         >
-        <NeButton
-          v-if="!scheduleDate"
-          kind="tertiary"
-          :disabled="!accountInfo?.is_superuser"
-          @click="showUploadImageDrawer = true"
-          ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'circle-arrow-up']"
-              class="h-4 w-4"
-              aria-hidden="true" /></template
-          >{{ t('standalone.update.update_with_image_file') }}</NeButton
-        >
+        <SuperuserOnlyTooltip v-if="!scheduleDate" :show="!accountInfo?.is_superuser">
+          <NeButton
+            kind="tertiary"
+            :disabled="!accountInfo?.is_superuser"
+            @click="showUploadImageDrawer = true"
+            ><template #prefix>
+              <font-awesome-icon
+                :icon="['fas', 'circle-arrow-up']"
+                class="h-4 w-4"
+                aria-hidden="true" /></template
+            >{{ t('standalone.update.update_with_image_file') }}</NeButton
+          >
+        </SuperuserOnlyTooltip>
       </div>
     </template>
   </FormLayout>

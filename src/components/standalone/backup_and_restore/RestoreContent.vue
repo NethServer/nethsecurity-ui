@@ -30,8 +30,10 @@ import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 import { faRotate } from '@fortawesome/free-solid-svg-icons'
 import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import { useAccountInfo } from '@/composables/useAccountInfo'
 
 const { t } = useI18n()
+const { data: accountInfo } = useAccountInfo()
 const RESTORE_WAIT_TIME = 45000
 
 const formRestore = ref({
@@ -51,16 +53,17 @@ const isRestoring = ref(false)
 const restoreProgress = ref(0)
 const restoreIntervalRef = ref<number | undefined>()
 const restoreTimeoutRef = ref<number | undefined>()
-const sourceRestoreOptions = [
+const sourceRestoreOptions = computed(() => [
   {
     id: 'from_backup',
     label: t('standalone.backup_and_restore.restore.from_backup')
   },
   {
     id: 'upload_file',
-    label: t('standalone.backup_and_restore.restore.from_file')
+    label: t('standalone.backup_and_restore.restore.from_file'),
+    disabled: !accountInfo.value?.is_superuser
   }
-]
+])
 const passphraseRef = ref()
 const fileRef = ref()
 const backupRef = ref()
@@ -329,6 +332,7 @@ function setRestoreTimer() {
               kind="primary"
               size="lg"
               type="submit"
+              :disabled="!isValidSubscription && !accountInfo?.is_superuser"
               @click="showRestoreDrawer = true"
             >
               <template #prefix>

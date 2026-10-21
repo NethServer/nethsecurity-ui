@@ -11,8 +11,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MigrationDrawer from '@/components/standalone/backup_and_restore/MigrationDrawer.vue'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { faArrowCircleUp, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
+import { useAccountInfo } from '@/composables/useAccountInfo'
 
 const { t } = useI18n()
+const { data: accountInfo } = useAccountInfo()
 
 const showMigrationDrawer = ref(false)
 const successNotificationMigration = ref(false)
@@ -52,6 +54,7 @@ function successMigration() {
             kind="primary"
             size="lg"
             type="submit"
+            :disabled="!accountInfo?.is_superuser"
             @click="showMigrationDrawer = true"
           >
             <template #prefix>

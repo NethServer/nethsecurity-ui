@@ -49,8 +49,10 @@ import { useBackupsStore } from '@/stores/standalone/backups.ts'
 import { SUBSCRIPTION_KEY, useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 import DeletePassphraseModal from '@/components/standalone/backup_and_restore/DeletePassphraseModal.vue'
 import { useQueryClient } from '@tanstack/vue-query'
+import { useAccountInfo } from '@/composables/useAccountInfo'
 
 const { t } = useI18n()
+const { data: accountInfo } = useAccountInfo()
 const backups = useBackupsStore()
 const subscription = useSubscriptionStore()
 const queryClient = useQueryClient()
@@ -264,6 +266,7 @@ function getDropdownItems(item: Backup) {
       label: t('common.delete'),
       icon: faTrash,
       danger: true,
+      disabled: !accountInfo.value?.is_superuser,
       action: () => {
         openDeleteBackup(
           item.id,
@@ -321,7 +324,7 @@ function successDeleteBackup() {
           </p>
           <template v-if="!backups.isPassPhraseSet">
             <NeInlineNotification
-              v-if="listBackups.length > 0"
+              v-if="listBackups.length > 0 && accountInfo?.is_superuser"
               :description="t('standalone.backup_and_restore.backup.backups_require_a_passphrase')"
               :title="t('standalone.backup_and_restore.backup.passphrase_not_configured')"
               kind="warning"
@@ -363,7 +366,7 @@ function successDeleteBackup() {
               align-to-right
             >
               <template #button>
-                <NeButton size="lg">
+                <NeButton size="lg" :disabled="!accountInfo?.is_superuser">
                   <template #suffix>
                     <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
                   </template>
@@ -371,7 +374,12 @@ function successDeleteBackup() {
                 </NeButton>
               </template>
             </NeDropdown>
-            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal">
+            <NeButton
+              kind="secondary"
+              size="lg"
+              :disabled="!accountInfo?.is_superuser"
+              @click="openDownloadUnencryptedModal"
+            >
               <template #prefix>
                 <FontAwesomeIcon :icon="faArrowCircleDown" />
               </template>
@@ -398,7 +406,12 @@ function successDeleteBackup() {
           :description="t('standalone.backup_and_restore.backup.description')"
         >
           <div class="flex flex-wrap gap-4">
-            <NeButton kind="secondary" size="lg" @click="openDownloadUnencryptedModal">
+            <NeButton
+              kind="secondary"
+              size="lg"
+              :disabled="!accountInfo?.is_superuser"
+              @click="openDownloadUnencryptedModal"
+            >
               <template #prefix>
                 <FontAwesomeIcon :icon="faUnlock" />
               </template>
@@ -407,7 +420,7 @@ function successDeleteBackup() {
             <NeButton
               kind="primary"
               size="lg"
-              :disabled="!backups.isPassPhraseSet"
+              :disabled="!backups.isPassPhraseSet || !accountInfo?.is_superuser"
               @click="showDownloadModal = true"
             >
               <template #prefix>
@@ -441,6 +454,7 @@ function successDeleteBackup() {
               <NeButton
                 :kind="backups.isPassPhraseSet ? 'secondary' : 'primary'"
                 size="lg"
+                :disabled="!accountInfo?.is_superuser"
                 @click="showPassphraseDrawer = true"
               >
                 <template #prefix>
@@ -458,6 +472,7 @@ function successDeleteBackup() {
                 v-if="backups.isPassPhraseSet"
                 kind="tertiary"
                 size="lg"
+                :disabled="!accountInfo?.is_superuser"
                 @click="showPassphraseModal = true"
               >
                 {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
@@ -484,6 +499,7 @@ function successDeleteBackup() {
             v-if="!backups.isPassPhraseSet"
             kind="primary"
             size="lg"
+            :disabled="!accountInfo?.is_superuser"
             @click="showPassphraseDrawer = true"
           >
             <template #prefix>
@@ -539,6 +555,7 @@ function successDeleteBackup() {
               <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
                 <NeButton
                   :kind="'tertiary'"
+                  :disabled="!accountInfo?.is_superuser"
                   @click="openDownloadEnterprise(item.id, item.mimetype, item.uploaded_at)"
                 >
                   <template #prefix>

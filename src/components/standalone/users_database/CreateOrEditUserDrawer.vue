@@ -24,6 +24,7 @@ import {
 import { ValidationError, ubusCall } from '@/lib/standalone/ubus'
 import type { User } from './UsersDatabaseManager.vue'
 import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const props = defineProps<{
   isShown: boolean
@@ -227,20 +228,22 @@ watch(
         :placeholder="id ? t('standalone.users_database.unchanged') : ''"
       />
       <!-- only superusers can change administrators -->
-      <NeToggle
-        v-model="admin"
-        :disabled="!accountInfo?.is_superuser"
-        :top-label="t('standalone.users_database.administrator')"
-        :label="admin ? t('common.enabled') : t('common.disabled')"
-      >
-        <template #topTooltip>
-          <NeTooltip placement="top-start">
-            <template #content>
-              {{ t('standalone.users_database.administrator_tooltip') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeToggle>
+      <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+        <NeToggle
+          v-model="admin"
+          :disabled="!accountInfo?.is_superuser"
+          :top-label="t('standalone.users_database.administrator')"
+          :label="admin ? t('common.enabled') : t('common.disabled')"
+        >
+          <template #topTooltip>
+            <NeTooltip placement="top-start">
+              <template #content>
+                {{ t('standalone.users_database.administrator_tooltip') }}
+              </template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
+      </SuperuserOnlyTooltip>
       <hr />
       <div class="flex justify-end">
         <NeButton kind="tertiary" class="mr-4" @click="close()">{{ t('common.cancel') }}</NeButton>

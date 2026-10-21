@@ -28,6 +28,7 @@
     "search": "Search",
     "help": "Help",
     "optional": "Optional",
+    "only_root_can_perform_this_action": "Only root can perform this action",
     "close": "Close",
     "edit": "Edit",
     "delete": "Delete",

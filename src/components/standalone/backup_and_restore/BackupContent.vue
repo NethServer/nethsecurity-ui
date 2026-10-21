@@ -50,6 +50,7 @@ import { SUBSCRIPTION_KEY, useSubscriptionStore } from '@/stores/standalone/subs
 import DeletePassphraseModal from '@/components/standalone/backup_and_restore/DeletePassphraseModal.vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const { t } = useI18n()
 const { data: accountInfo } = useAccountInfo()
@@ -366,25 +367,29 @@ function successDeleteBackup() {
               align-to-right
             >
               <template #button>
-                <NeButton size="lg" :disabled="!accountInfo?.is_superuser">
-                  <template #suffix>
-                    <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
-                  </template>
-                  {{ t('standalone.backup_and_restore.backup.manage_passphrase') }}
-                </NeButton>
+                <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+                  <NeButton size="lg" :disabled="!accountInfo?.is_superuser">
+                    <template #suffix>
+                      <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" aria-hidden="true" />
+                    </template>
+                    {{ t('standalone.backup_and_restore.backup.manage_passphrase') }}
+                  </NeButton>
+                </SuperuserOnlyTooltip>
               </template>
             </NeDropdown>
-            <NeButton
-              kind="secondary"
-              size="lg"
-              :disabled="!accountInfo?.is_superuser"
-              @click="openDownloadUnencryptedModal"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faArrowCircleDown" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
-            </NeButton>
+            <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+              <NeButton
+                kind="secondary"
+                size="lg"
+                :disabled="!accountInfo?.is_superuser"
+                @click="openDownloadUnencryptedModal"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faArrowCircleDown" />
+                </template>
+                {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
             <NeButton
               v-if="listBackups.length > 0"
               :disabled="!backups.isPassPhraseSet"
@@ -406,28 +411,32 @@ function successDeleteBackup() {
           :description="t('standalone.backup_and_restore.backup.description')"
         >
           <div class="flex flex-wrap gap-4">
-            <NeButton
-              kind="secondary"
-              size="lg"
-              :disabled="!accountInfo?.is_superuser"
-              @click="openDownloadUnencryptedModal"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faUnlock" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
-            </NeButton>
-            <NeButton
-              kind="primary"
-              size="lg"
-              :disabled="!backups.isPassPhraseSet || !accountInfo?.is_superuser"
-              @click="showDownloadModal = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faLock" />
-              </template>
-              {{ t('standalone.backup_and_restore.backup.download_encrypted') }}
-            </NeButton>
+            <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+              <NeButton
+                kind="secondary"
+                size="lg"
+                :disabled="!accountInfo?.is_superuser"
+                @click="openDownloadUnencryptedModal"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faUnlock" />
+                </template>
+                {{ t('standalone.backup_and_restore.backup.download_unencrypted') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
+            <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+              <NeButton
+                kind="primary"
+                size="lg"
+                :disabled="!backups.isPassPhraseSet || !accountInfo?.is_superuser"
+                @click="showDownloadModal = true"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faLock" />
+                </template>
+                {{ t('standalone.backup_and_restore.backup.download_encrypted') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
           </div>
         </FormLayout>
         <hr />
@@ -451,32 +460,38 @@ function successDeleteBackup() {
               size="xs"
             />
             <div class="flex flex-wrap gap-4">
-              <NeButton
-                :kind="backups.isPassPhraseSet ? 'secondary' : 'primary'"
-                size="lg"
-                :disabled="!accountInfo?.is_superuser"
-                @click="showPassphraseDrawer = true"
-              >
-                <template #prefix>
-                  <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
-                  <FontAwesomeIcon v-else :icon="faCog" />
-                </template>
-                <template v-if="backups.isPassPhraseSet">
-                  {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
-                </template>
-                <template v-else>
-                  {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-                </template>
-              </NeButton>
-              <NeButton
+              <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+                <NeButton
+                  :kind="backups.isPassPhraseSet ? 'secondary' : 'primary'"
+                  size="lg"
+                  :disabled="!accountInfo?.is_superuser"
+                  @click="showPassphraseDrawer = true"
+                >
+                  <template #prefix>
+                    <FontAwesomeIcon v-if="backups.isPassPhraseSet" :icon="faEdit" />
+                    <FontAwesomeIcon v-else :icon="faCog" />
+                  </template>
+                  <template v-if="backups.isPassPhraseSet">
+                    {{ t('standalone.backup_and_restore.backup.edit_passphrase') }}
+                  </template>
+                  <template v-else>
+                    {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+                  </template>
+                </NeButton>
+              </SuperuserOnlyTooltip>
+              <SuperuserOnlyTooltip
                 v-if="backups.isPassPhraseSet"
-                kind="tertiary"
-                size="lg"
-                :disabled="!accountInfo?.is_superuser"
-                @click="showPassphraseModal = true"
+                :show="!accountInfo?.is_superuser"
               >
-                {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
-              </NeButton>
+                <NeButton
+                  kind="tertiary"
+                  size="lg"
+                  :disabled="!accountInfo?.is_superuser"
+                  @click="showPassphraseModal = true"
+                >
+                  {{ t('standalone.backup_and_restore.backup.remove_passphrase') }}
+                </NeButton>
+              </SuperuserOnlyTooltip>
             </div>
           </div>
         </FormLayout>
@@ -495,18 +510,19 @@ function successDeleteBackup() {
         :title="t('standalone.backup_and_restore.backup.no_backups')"
       >
         <div class="flex justify-center">
-          <NeButton
-            v-if="!backups.isPassPhraseSet"
-            kind="primary"
-            size="lg"
-            :disabled="!accountInfo?.is_superuser"
-            @click="showPassphraseDrawer = true"
-          >
-            <template #prefix>
-              <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
-            </template>
-            {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
-          </NeButton>
+          <SuperuserOnlyTooltip v-if="!backups.isPassPhraseSet" :show="!accountInfo?.is_superuser">
+            <NeButton
+              kind="primary"
+              size="lg"
+              :disabled="!accountInfo?.is_superuser"
+              @click="showPassphraseDrawer = true"
+            >
+              <template #prefix>
+                <FontAwesomeIcon :icon="faCog" aria-hidden="true" />
+              </template>
+              {{ t('standalone.backup_and_restore.backup.configure_passphrase') }}
+            </NeButton>
+          </SuperuserOnlyTooltip>
           <NeButton v-else kind="primary" size="lg" @click="showRunBackupModal = true">
             <template #prefix>
               <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
@@ -553,16 +569,18 @@ function successDeleteBackup() {
             </NeTableCell>
             <NeTableCell :data-label="t('common.actions')">
               <div class="-ml-2.5 flex items-center gap-2 xl:ml-0 xl:justify-end">
-                <NeButton
-                  :kind="'tertiary'"
-                  :disabled="!accountInfo?.is_superuser"
-                  @click="openDownloadEnterprise(item.id, item.mimetype, item.uploaded_at)"
-                >
-                  <template #prefix>
-                    <FontAwesomeIcon :icon="faArrowCircleDown" />
-                  </template>
-                  {{ t('standalone.backup_and_restore.backup.download') }}
-                </NeButton>
+                <SuperuserOnlyTooltip :show="!accountInfo?.is_superuser">
+                  <NeButton
+                    :kind="'tertiary'"
+                    :disabled="!accountInfo?.is_superuser"
+                    @click="openDownloadEnterprise(item.id, item.mimetype, item.uploaded_at)"
+                  >
+                    <template #prefix>
+                      <FontAwesomeIcon :icon="faArrowCircleDown" />
+                    </template>
+                    {{ t('standalone.backup_and_restore.backup.download') }}
+                  </NeButton>
+                </SuperuserOnlyTooltip>
                 <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
               </div>
             </NeTableCell>

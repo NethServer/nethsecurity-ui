@@ -606,6 +606,12 @@
     },
     "dashboard": {
       "title": "Dashboard",
+      "default_password_title": "Root is using the default password",
+      "default_password_description": "Anyone who knows the default password can log in as root. Change it from the account settings while logged in as root.",
+      "change_root_password": "Change password",
+      "no_ordinary_admins_title": "No personal administrator accounts",
+      "no_ordinary_admins_description": "Everyone logs in as root, so the logs can't tell who made a change. Create an administrator account for each person and keep root to manage them.",
+      "go_to_users_database": "Go to users database",
       "system": "System",
       "internet_connection": "Internet connection",
       "hostname": "Hostname",

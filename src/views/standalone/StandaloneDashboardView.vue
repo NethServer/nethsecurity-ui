@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { NeHeading, NeLink } from '@nethesis/vue-components'
+import { NeHeading, NeInlineNotification, NeLink } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import router from '@/router'
@@ -20,9 +20,12 @@ import MacBindingStatusCard from '@/components/standalone/dashboard/MacBindingSt
 import IpsServiceCard from '@/components/standalone/dashboard/IpsServiceCard.vue'
 import BackupStatusCard from '@/components/standalone/dashboard/BackupStatusCard.vue'
 import HaStatusCard from '@/components/standalone/dashboard/HaStatusCard.vue'
+import { useAccountInfo } from '@/composables/useAccountInfo'
+import { isManagedByController } from '@/lib/deployment'
 
 const { t } = useI18n()
 const route = useRoute()
+const { data: accountInfo } = useAccountInfo()
 
 function goTo(path: string) {
   router.push(`${getStandaloneRoutePrefix(route)}${path}`)
@@ -36,6 +39,28 @@ function goTo(path: string) {
       <div class="text-sm text-gray-500 dark:text-gray-400">
         {{ t('common.data_updated_every_seconds', { seconds: 20 }) }}
       </div>
+    </div>
+    <!-- only superusers can act on these warnings -->
+    <div v-if="accountInfo?.is_superuser" class="mb-6 space-y-4">
+      <!-- account settings aren't available from the controller -->
+      <NeInlineNotification
+        v-if="accountInfo.default_password"
+        :description="t('standalone.dashboard.default_password_description')"
+        :primary-button-label="
+          isManagedByController() ? '' : t('standalone.dashboard.change_root_password')
+        "
+        :title="t('standalone.dashboard.default_password_title')"
+        kind="warning"
+        @primary-click="goTo('/account')"
+      />
+      <NeInlineNotification
+        v-if="accountInfo.ordinary_admins == 0"
+        :description="t('standalone.dashboard.no_ordinary_admins_description')"
+        :primary-button-label="t('standalone.dashboard.go_to_users_database')"
+        :title="t('standalone.dashboard.no_ordinary_admins_title')"
+        kind="warning"
+        @primary-click="goTo('/users-objects/users-database')"
+      />
     </div>
     <div
       class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-3 2xl:grid-cols-6"

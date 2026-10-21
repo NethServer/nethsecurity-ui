@@ -316,7 +316,9 @@ async function resetForm() {
       remoteNetworks.value = serverTunnelData.remote ?? ['']
       localNetworks.value = serverTunnelData.local?.map((x) => ({ id: x, label: x })) ?? []
       localNetworksOptions.value = serverTunnelData.local?.map((x) => ({ id: x, label: x })) ?? []
-      publicEndpoints.value = serverTunnelData.ns_public_ip ?? []
+      publicEndpoints.value = serverTunnelData.ns_public_ip?.length
+        ? serverTunnelData.ns_public_ip
+        : ['']
       vpnNetwork.value = serverTunnelData.server ?? ''
     }
   } else {
@@ -354,7 +356,7 @@ async function resetForm() {
 
       if (!props.isClientTunnel) {
         vpnNetwork.value = defaultsPayload.server
-        publicEndpoints.value = defaultsPayload.remote
+        publicEndpoints.value = defaultsPayload.remote?.length ? defaultsPayload.remote : ['']
         const initialNetworkOptions = defaultsPayload.route.map((localNetwork) => ({
           id: localNetwork,
           label: localNetwork
@@ -496,6 +498,10 @@ function validate() {
 
     // public endpoints validation
     let validPublicEndpoints = true
+    if (publicEndpoints.value.length == 0) {
+      validationErrorBag.value.set('publicEndpoints', [t('error.required')])
+      validPublicEndpoints = false
+    }
     for (const [index, publicEndpoint] of publicEndpoints.value.entries()) {
       const validators = [validateRequired(publicEndpoint), validateIpAddressOrFQDN(publicEndpoint)]
       for (const validator of validators) {
@@ -694,6 +700,8 @@ watch(
           :add-item-label="t('standalone.openvpn_tunnel.add_endpoint')"
           :title="t('standalone.openvpn_tunnel.public_endpoints')"
           :invalid-messages="publicEndpointsValidationErrors"
+          :general-invalid-message="validationErrorBag.getFirstFor('publicEndpoints')"
+          :required="true"
           ><template #tooltip>
             <NeTooltip
               ><template #content>{{

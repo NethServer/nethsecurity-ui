@@ -248,7 +248,7 @@ function resetForm() {
   vpnNetwork.value = serverData?.server ?? ''
   dynamicRangeIpStart.value = serverData?.ifconfig_pool?.length ? serverData.ifconfig_pool[0]! : ''
   dynamicRangeIpEnd.value = serverData?.ifconfig_pool?.length ? serverData.ifconfig_pool[1]! : ''
-  publicIpOrHostname.value = serverData?.ns_public_ip ?? []
+  publicIpOrHostname.value = serverData?.ns_public_ip?.length ? serverData.ns_public_ip : ['']
   protocol.value = serverData?.proto ?? 'udp'
   port.value = serverData?.port ?? ''
   tunMtu.value = serverData?.tun_mtu ?? ''
@@ -649,6 +649,7 @@ watch(
         :title="t('standalone.openvpn_rw.public_ip_hostname_unit')"
         :invalid-messages="publicIpOrHostnameValidationErrors"
         :general-invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ns_public_ip'))"
+        :required="true"
       />
       <div>
         <NeButton kind="tertiary" @click="showAdvancedSettings = !showAdvancedSettings">

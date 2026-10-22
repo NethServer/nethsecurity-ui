@@ -997,7 +997,6 @@ function goToInterfaces() {
       v-if="
         !loadingParentHotspot &&
         !loadingListDevices &&
-        accountName &&
         (isLoggedIn || sessionExpired)
       "
       class="my-8"
@@ -1006,13 +1005,13 @@ function goToInterfaces() {
       v-if="
         !loadingParentHotspot &&
         !loadingListDevices &&
-        accountName &&
         (isLoggedIn || sessionExpired)
       "
       :title="t('standalone.hotspot.settings.connection')"
       :description="t('standalone.hotspot.settings.connection_description')"
       class="max-w-3xl"
     >
+      <template v-if="accountName">
       <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
         {{ t('common.status') }}
       </div>
@@ -1098,6 +1097,7 @@ function goToInterfaces() {
           />
         </template>
       </NeCard>
+      </template>
       <div class="mb-1 font-medium text-gray-900 dark:text-gray-50">
         {{ t('standalone.hotspot.settings.unregister') }}
       </div>

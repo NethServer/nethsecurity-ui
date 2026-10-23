@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.28.1](https://github.com/NethServer/nethsecurity-ui/compare/2.28.0...2.28.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* **hotspot:** restored unregister button for user/pass logins ([#841](https://github.com/NethServer/nethsecurity-ui/issues/841)) ([b812fc1](https://github.com/NethServer/nethsecurity-ui/commit/b812fc1fae8c2fcc79415bc88291211fdaaa34ea))
+* **openvpn:** ensure at least one public IP is provided and not empty ([#839](https://github.com/NethServer/nethsecurity-ui/issues/839)) ([49e42bc](https://github.com/NethServer/nethsecurity-ui/commit/49e42bce6d193e1be85efc4b046aec87487b78ce))
+
 ## [2.28.0](https://github.com/NethServer/nethsecurity-ui/compare/2.27.1...2.28.0) (2026-10-19)
 
 

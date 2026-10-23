@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.28.2](https://github.com/NethServer/nethsecurity-ui/compare/2.28.1...2.28.2) (2026-10-23)
+
+
+### Bug Fixes
+
+* **hotspot:** fixed issue with form missing when expired ([b3ea098](https://github.com/NethServer/nethsecurity-ui/commit/b3ea098d4efb53db343db6c873aff2c50d9df10e))
+
 ## [2.28.1](https://github.com/NethServer/nethsecurity-ui/compare/2.28.0...2.28.1) (2026-10-23)
 
 

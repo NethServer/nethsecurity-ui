@@ -29,8 +29,11 @@ import { validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 import { faRotate } from '@fortawesome/free-solid-svg-icons'
+import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const { t } = useI18n()
+const { data: accountInfo } = useAccountInfo()
 const RESTORE_WAIT_TIME = 45000
 
 const formRestore = ref({
@@ -49,16 +52,17 @@ const isRestoring = ref(false)
 const restoreProgress = ref(0)
 const restoreIntervalRef = ref<number | undefined>()
 const restoreTimeoutRef = ref<number | undefined>()
-const sourceRestoreOptions = [
+const sourceRestoreOptions = computed(() => [
   {
     id: 'from_backup',
     label: t('standalone.backup_and_restore.restore.from_backup')
   },
   {
     id: 'upload_file',
-    label: t('standalone.backup_and_restore.restore.from_file')
+    label: t('standalone.backup_and_restore.restore.from_file'),
+    disabled: !accountInfo.value?.is_superuser
   }
-]
+])
 const passphraseRef = ref()
 const fileRef = ref()
 const backupRef = ref()
@@ -318,18 +322,21 @@ function setRestoreTimer() {
       >
         <div class="flex">
           <div class="mr-auto self-start">
-            <NeButton
-              class="ml-"
-              kind="primary"
-              size="lg"
-              type="submit"
-              @click="showRestoreDrawer = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faRotate" />
-              </template>
-              {{ t('standalone.backup_and_restore.restore.restore_backup') }}
-            </NeButton>
+            <SuperuserOnlyTooltip :show="!isValidSubscription && !accountInfo?.is_superuser">
+              <NeButton
+                class="ml-"
+                kind="primary"
+                size="lg"
+                type="submit"
+                :disabled="!isValidSubscription && !accountInfo?.is_superuser"
+                @click="showRestoreDrawer = true"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faRotate" />
+                </template>
+                {{ t('standalone.backup_and_restore.restore.restore_backup') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
           </div>
         </div>
       </FormLayout>

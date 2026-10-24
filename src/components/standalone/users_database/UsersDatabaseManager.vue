@@ -15,8 +15,9 @@ import {
   NeEmptyState,
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { ref, watch } from 'vue'
+import { useAccountInfo } from '@/composables/useAccountInfo'
 import { useI18n } from 'vue-i18n'
 import CreateOrEditDatabaseDrawer from './CreateOrEditDatabaseDrawer.vue'
 import DeleteDatabaseModal from './DeleteDatabaseModal.vue'
@@ -56,6 +57,8 @@ const emit = defineEmits(['database-changed', 'database-deleted'])
 const { t } = useI18n()
 
 const uciChangesStore = useUciPendingChangesStore()
+const { data: accountInfo } = useAccountInfo()
+const canManageAdmins = computed(() => accountInfo.value?.is_superuser === true)
 
 const isLoadingUsers = ref(false)
 const users = ref<User[]>([])
@@ -256,6 +259,7 @@ onMounted(() => {
       </NeEmptyState>
       <UsersTable
         v-else
+        :can-manage-admins="canManageAdmins"
         :is-ldap-database="database.type === 'ldap'"
         :users="users"
         @delete="openDeleteUserModal"

@@ -3,8 +3,12 @@
 
 import { isStandaloneBuild } from '@/lib/config'
 import { isManagedByController } from '@/lib/deployment'
+import { queryClient } from '@/lib/queryClient'
+import { accountInfoQueryOptions } from '@/composables/useAccountInfo'
 import { useSetupWizardStore } from '@/stores/standalone/setupWizard'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { noop } from '@tanstack/vue-query'
 
 const standaloneRoutes = [
   {
@@ -290,6 +294,15 @@ const router = createRouter({
       component: () => import('../views/controller/UnitGroupsView.vue')
     }
   ]
+})
+
+// load what the logged user is allowed to change before entering a page, pages read it from the cache
+router.beforeEach(async () => {
+  const loginStore = useLoginStore()
+  if (loginStore.isLoggedIn) {
+    // a failure must not block navigation, the page reading the query shows it
+    await queryClient.query(accountInfoQueryOptions(loginStore.username)).catch(noop)
+  }
 })
 
 // redirect to wizard page if not completed

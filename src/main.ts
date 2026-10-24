@@ -13,6 +13,7 @@ import messages from '@intlify/unplugin-vue-i18n/messages'
 import App from './App.vue'
 import router from './router'
 import { VueQueryPlugin } from '@tanstack/vue-query'
+import { queryClient } from './lib/queryClient'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -40,6 +41,6 @@ app.use(
 )
 
 // tanstack
-app.use(VueQueryPlugin)
+app.use(VueQueryPlugin, { queryClient })
 
 app.mount('#app')

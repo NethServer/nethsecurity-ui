@@ -28,6 +28,7 @@
     "search": "Search",
     "help": "Help",
     "optional": "Optional",
+    "only_root_can_perform_this_action": "Only root can perform this action",
     "close": "Close",
     "edit": "Edit",
     "delete": "Delete",
@@ -124,6 +125,7 @@
     "invalid_url": "Enter a valid URL",
     "invalid_uri": "Enter a valid URI",
     "invalid_port": "Invalid port number",
+    "forbidden": "You don't have permission to do this",
     "invalid_port_or_port_range": "Enter a valid port or port range",
     "invalid_uci_name": "Only letters, numbers and underscore (_) are allowed",
     "invalid_alphanumeric_starting_with_letter": "Only letters and numbers are allowed, starting with a letter",
@@ -605,6 +607,12 @@
     },
     "dashboard": {
       "title": "Dashboard",
+      "default_password_title": "Root is using the default password",
+      "default_password_description": "Anyone who knows the default password can log in as root. Change it from the account settings while logged in as root.",
+      "change_root_password": "Change password",
+      "no_ordinary_admins_title": "No personal administrator accounts",
+      "no_ordinary_admins_description": "Everyone logs in as root, so the logs can't tell who made a change. Create an administrator account for each person and keep root to manage them.",
+      "go_to_users_database": "Go to users database",
       "system": "System",
       "internet_connection": "Internet connection",
       "hostname": "Hostname",
@@ -730,6 +738,10 @@
     },
     "ssh": {
       "title": "SSH",
+      "read_only_admin": "Only the root user can change SSH settings and keys.",
+      "read_only_controller": "SSH settings and keys can't be changed from the controller. Log in to the unit as root to change them.",
+      "cannot_load_configuration": "Cannot load SSH configuration",
+      "cannot_save_configuration": "Cannot save SSH configuration",
       "ssh_access": {
         "description": "SSH network shell access and integrated SCP server",
         "title": "SSH Access",
@@ -763,7 +775,10 @@
           "duplicate": "Key already exists"
         },
         "key_deleted_notification": "SSH key deleted successfully",
-        "key_added_notification": "SSH key added successfully"
+        "key_added_notification": "SSH key added successfully",
+        "no_keys": "No SSH keys",
+        "cannot_add_key": "Cannot add SSH key",
+        "cannot_delete_key": "Cannot delete SSH key"
       }
     },
     "backup_and_restore": {

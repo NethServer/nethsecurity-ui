@@ -304,6 +304,7 @@
     "user_db_not_configured": "User database is not configured",
     "db_not_found": "Database not found",
     "user_certificate_already_exists": "User certificate already exists",
+    "user_has_vpn_account": "The user has an OpenVPN Road Warrior account: delete the VPN account first",
     "cannot_renew_certificate": "Cannot renew certificate",
     "cannot_retrieve_qos_interfaces": "Cannot retrieve QoS interfaces",
     "cannot_enable_qos_interface": "Cannot enable QoS interface",

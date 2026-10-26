@@ -289,6 +289,7 @@
     "cannot_download_certificate": "Impossibile scaricare il certificato",
     "cannot_download_qr_code": "Impossibile scaricare il QR code",
     "user_certificate_already_exists": "Il certificato utente già esiste",
+    "user_has_vpn_account": "L'utente ha un account OpenVPN Road Warrior: eliminare prima l'account VPN",
     "cannot_renew_certificate": "Impossibile rinnovare il certificato",
     "cannot_retrieve_certificates": "Impossibile ottenere i certificati",
     "cannot_delete_database": "Impossibile eliminare i database",

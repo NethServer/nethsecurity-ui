@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ubusCall } from '@/lib/standalone/ubus'
+import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NeInlineNotification, getAxiosErrorMessage } from '@nethesis/vue-components'
@@ -39,7 +39,11 @@ async function deleteUser() {
       emit('user-deleted')
       emit('close')
     } catch (err: any) {
-      error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      if (err instanceof ValidationError && err.errorBag.has('name')) {
+        error.value.notificationDescription = t(err.errorBag.getFirstI18nKeyFor('name'))
+      } else {
+        error.value.notificationDescription = t(getAxiosErrorMessage(err))
+      }
       error.value.notificationDetails = err.toString()
     } finally {
       isDeleting.value = false

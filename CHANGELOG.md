@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.29.0](https://github.com/NethServer/nethsecurity-ui/compare/2.28.2...2.29.0) (2026-10-27)
+
+
+### Features
+
+* **dpi:** add description for DPI filter and update UI layout ([a574a9a](https://github.com/NethServer/nethsecurity-ui/commit/a574a9acddd0b7e7b3463e6cf82558a63fb014a5))
+
+
+### Bug Fixes
+
+* **users:** show why a user can't be deleted ([0ee7053](https://github.com/NethServer/nethsecurity-ui/commit/0ee7053fc143630920ef0753819714f92fc7b0c6))
+
 ## [2.28.2](https://github.com/NethServer/nethsecurity-ui/compare/2.28.1...2.28.2) (2026-10-23)
 
 

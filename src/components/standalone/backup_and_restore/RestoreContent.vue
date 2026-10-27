@@ -4,24 +4,19 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
-  NeCombobox,
   NeFileInput,
   NeProgressBar,
   NeInlineNotification,
   NeButton,
   NeTooltip,
-  NeSkeleton,
   NeSideDrawer,
-  NeRadioSelection,
   NeTextInput,
   getAxiosErrorMessage,
-  focusElement,
-  byteFormat1024,
-  formatDateLoc
+  focusElement
 } from '@nethesis/vue-components'
 import { NeModal } from '@nethesis/vue-components'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -35,33 +30,17 @@ const RESTORE_WAIT_TIME = 45000
 
 const formRestore = ref({
   passphrase: '',
-  file: undefined,
-  backup: ''
+  file: undefined
 })
 
-const loading = ref(true)
 const loadingRestore = ref(false)
-const isValidSubscription = ref(false)
 const showRestoreDrawer = ref(false)
-const typeRestore = ref('upload_file')
-const listBackups: any = ref([])
 const isRestoring = ref(false)
 const restoreProgress = ref(0)
 const restoreIntervalRef = ref<number | undefined>()
 const restoreTimeoutRef = ref<number | undefined>()
-const sourceRestoreOptions = [
-  {
-    id: 'from_backup',
-    label: t('standalone.backup_and_restore.restore.from_backup')
-  },
-  {
-    id: 'upload_file',
-    label: t('standalone.backup_and_restore.restore.from_file')
-  }
-]
 const passphraseRef = ref()
 const fileRef = ref()
-const backupRef = ref()
 
 const uploadProgress = ref(0)
 const isUploadingBackupFile = ref(false)
@@ -80,94 +59,26 @@ const errorRestoreBackup = ref({
 })
 const errorRestore = ref({
   passphrase: '',
-  file: '',
-  backup: ''
+  file: ''
 })
 
-// The passphrase input flips from "Optional" to required whenever the
-// selected backup is encrypted. We detect that from the id suffix: the
-// ingest pipeline writes .gpg only when the appliance encrypted the
-// payload with the configured passphrase.
 const isPassphraseRequired = computed(() => {
-  if (typeRestore.value === 'from_backup') {
-    return formRestore.value.backup.toLowerCase().endsWith('.gpg')
-  }
-  if (typeRestore.value === 'upload_file' && formRestore.value.file) {
+  if (formRestore.value.file) {
     return (formRestore.value.file as File).name.toLowerCase().endsWith('.gpg')
   }
   return false
 })
 
-onMounted(() => {
-  getSubscription()
-})
-
-async function getSubscription() {
-  try {
-    const res = await ubusCall('ns.subscription', 'info', {})
-    if (res?.data?.systemd_id && res?.data?.active) {
-      isValidSubscription.value = true
-      typeRestore.value = isValidSubscription.value ? 'from_backup' : 'upload_file'
-      await getBackups()
-    }
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    errorPage.value.notificationDetails = exception.toString()
-  } finally {
-    loading.value = false
-  }
-}
-
-async function getBackups() {
-  if (isValidSubscription.value) {
-    try {
-      const res = await ubusCall('ns.backup', 'registered-list-backups')
-      if (res?.data?.values?.backups?.length) {
-        listBackups.value = res.data.values.backups
-          .sort(
-            (a: any, b: any) =>
-              new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
-          )
-          .map((item: any) => ({
-            id: item.id,
-            label:
-              formatDateLoc(new Date(item.uploaded_at), 'PPpp') +
-              ' (' +
-              byteFormat1024(item.size) +
-              ')'
-          }))
-      }
-    } catch (exception: any) {
-      errorPage.value.notificationTitle = t('error.cannot_retrieve_backup')
-      errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-      errorPage.value.notificationDetails = exception.toString()
-    }
-  }
-}
-
 function validateRestore(): boolean {
   let isValidationOk = true
   const isFocusInput = false
 
-  if (typeRestore.value === 'upload_file') {
-    const { valid, errMessage } = validateRequired(
-      formRestore?.value?.file ? formRestore.value.file : ''
-    )
-    if (!valid) {
-      errorRestore.value.file = t(errMessage as string)
-      isValidationOk = false
-    }
-  } else if (isValidSubscription.value && typeRestore.value === 'from_backup') {
-    const { valid, errMessage } = validateRequired(formRestore.value.backup)
-    if (!valid) {
-      errorRestore.value.backup = t(errMessage as string)
-      isValidationOk = false
-    }
-
-    if (!isValidationOk && !isFocusInput) {
-      focusElement(backupRef)
-    }
+  const { valid, errMessage } = validateRequired(
+    formRestore?.value?.file ? formRestore.value.file : ''
+  )
+  if (!valid) {
+    errorRestore.value.file = t(errMessage as string)
+    isValidationOk = false
   }
 
   if (isPassphraseRequired.value) {
@@ -187,8 +98,7 @@ function validateRestore(): boolean {
 function clearErrors() {
   errorRestore.value = {
     passphrase: '',
-    file: '',
-    backup: ''
+    file: ''
   }
   errorRestoreBackup.value = {
     notificationTitle: '',
@@ -200,8 +110,7 @@ function clearErrors() {
 function cleanForm() {
   formRestore.value = {
     passphrase: '',
-    file: undefined,
-    backup: ''
+    file: undefined
   }
   uploadedBackupFileName.value = ''
   canRestoreBackupFile.value = false
@@ -218,31 +127,18 @@ async function restoreBackup() {
   clearErrors()
   if (validateRestore()) {
     loadingRestore.value = true
-    const error = false
     try {
-      const payload = {}
-      let methodCall = 'restore'
+      const payload = { backup: uploadedBackupFileName.value }
 
       if (formRestore.value.passphrase) {
         Object.assign(payload, { passphrase: formRestore.value.passphrase })
       }
 
-      if (isValidSubscription.value && typeRestore.value === 'from_backup') {
-        methodCall = 'registered-restore'
-        Object.assign(payload, { file: formRestore.value.backup })
-      } else {
-        Object.assign(payload, { backup: uploadedBackupFileName.value })
-      }
-
-      if (!error && methodCall) {
-        const res = await ubusCall('ns.backup', methodCall, payload)
-        if (res?.data?.message && res?.data?.message === 'success') {
-          isRestoring.value = true
-          showRestoreDrawer.value = false
-          setRestoreTimer()
-        }
-      } else {
-        errorRestoreBackup.value.notificationTitle = t('error.cannot_restore_backup')
+      const res = await ubusCall('ns.backup', 'restore', payload)
+      if (res?.data?.message && res?.data?.message === 'success') {
+        isRestoring.value = true
+        showRestoreDrawer.value = false
+        setRestoreTimer()
       }
     } catch (exception: any) {
       if (exception instanceof ValidationError) {
@@ -299,9 +195,8 @@ function setRestoreTimer() {
 
 <template>
   <div>
-    <NeSkeleton v-if="loading" :lines="4" size="lg" />
     <NeInlineNotification
-      v-if="!loading && errorPage.notificationTitle"
+      v-if="errorPage.notificationTitle"
       class="my-4"
       kind="error"
       :title="errorPage.notificationTitle"
@@ -311,7 +206,7 @@ function setRestoreTimer() {
         {{ errorPage.notificationDetails }}
       </template>
     </NeInlineNotification>
-    <template v-if="!loading && !errorPage.notificationTitle">
+    <template v-if="!errorPage.notificationTitle">
       <FormLayout
         :description="t('standalone.backup_and_restore.restore.description')"
         class="max-w-6xl"
@@ -340,44 +235,19 @@ function setRestoreTimer() {
       @close="close()"
     >
       <div class="space-y-8">
-        <template v-if="isValidSubscription">
-          <NeRadioSelection
-            v-model="typeRestore"
-            :label="t('standalone.backup_and_restore.restore.source')"
-            :options="sourceRestoreOptions"
-          />
-          <template v-if="typeRestore === 'from_backup'">
-            <NeCombobox
-              ref="backupRef"
-              v-model="formRestore.backup"
-              :options="listBackups"
-              :label="t('standalone.backup_and_restore.restore.backup')"
-              :invalid-message="errorRestore.backup"
-              :no-results-label="t('ne_combobox.no_results')"
-              :limited-options-label="t('ne_combobox.limited_options_label')"
-              :no-options-label="t('ne_combobox.no_options_label')"
-              :selected-label="t('ne_combobox.selected')"
-              :user-input-label="t('ne_combobox.user_input_label')"
-              :optional-label="t('common.optional')"
-              class="grow"
-            />
-          </template>
-        </template>
-        <template v-if="typeRestore === 'upload_file'">
-          <NeFileInput
-            ref="fileRef"
-            v-model="formRestore.file"
-            :label="
-              t('standalone.backup_and_restore.restore.upload_file', {
-                extensions: '*.tar.gz, *.tar.gz.gpg, *.bin'
-              })
-            "
-            :dropzone-label="t('ne_file_input.dropzone_label')"
-            :invalid-message="errorRestore.file"
-            accept=".tar.gz,.tar.gz.gpg,.bin"
-            @select="handleFileUpload"
-          />
-        </template>
+        <NeFileInput
+          ref="fileRef"
+          v-model="formRestore.file"
+          :label="
+            t('standalone.backup_and_restore.restore.upload_file', {
+              extensions: '*.tar.gz, *.tar.gz.gpg, *.bin'
+            })
+          "
+          :dropzone-label="t('ne_file_input.dropzone_label')"
+          :invalid-message="errorRestore.file"
+          accept=".tar.gz,.tar.gz.gpg,.bin"
+          @select="handleFileUpload"
+        />
         <NeTextInput
           ref="passphraseRef"
           v-model="formRestore.passphrase"
@@ -412,10 +282,7 @@ function setRestoreTimer() {
             {{ t('common.cancel') }}
           </NeButton>
           <NeButton
-            :disabled="
-              loadingRestore ||
-              ((!isValidSubscription || typeRestore === 'upload_file') && !canRestoreBackupFile)
-            "
+            :disabled="loadingRestore || !canRestoreBackupFile"
             :kind="'primary'"
             :loading="loadingRestore"
             @click="restoreBackup()"

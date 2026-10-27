@@ -166,7 +166,7 @@
   },
   "src/components/standalone/backup_and_restore/RestoreContent.vue": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 8
+      "count": 2
     }
   },
   "src/components/standalone/backup_and_restore/RunBackupModal.vue": {

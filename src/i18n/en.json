@@ -839,10 +839,6 @@
         "restore_backup": "Restore backup",
         "passphrase": "Passphrase",
         "passphrase_helper": "Enter the passphrase used to encrypt the backup, or leave empty if the backup is not encrypted. If the passphrase is incorrect, the backup cannot be restored.",
-        "source": "Backup source",
-        "backup": "Backup",
-        "from_backup": "From last backups",
-        "from_file": "Upload file",
         "upload_file": "Backup file ({extensions})"
       },
       "migration": {

@@ -103,12 +103,23 @@ const isUpdateScheduled = computed(
 )
 
 function getProgressBarColor(progress: number) {
-  if (progress < 75) {
+  if (progress < 80) {
     return 'primary'
   } else if (progress < 90) {
     return 'amber'
   } else {
     return 'rose'
+  }
+}
+
+// root is often ~220 MB, so it follows the free-space thresholds of the RootSpace alerts
+function getRootProgressBarColor(free: number) {
+  if (free < 10 * 1024 * 1024) {
+    return 'rose'
+  } else if (free < 20 * 1024 * 1024) {
+    return 'amber'
+  } else {
+    return 'primary'
   }
 }
 
@@ -232,7 +243,7 @@ function goToUpdates() {
           <NeProgressBar
             :progress="root.perc"
             size="sm"
-            :color="getProgressBarColor(root.perc)"
+            :color="getRootProgressBarColor(root.free)"
             class="my-1"
           />
         </div>

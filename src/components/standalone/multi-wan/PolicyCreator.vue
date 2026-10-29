@@ -67,12 +67,15 @@ const availableGateways = computed((): Array<NeComboboxOption> => {
 watch(
   () => props.isShown,
   () => {
+    // reset the form only on open, avoids changing the form while the drawer is closing
+    if (!props.isShown) {
+      return
+    }
     policyForm.cleanForm()
     messageBag.value.clear()
     if (props.createDefault) {
       policyForm.label = 'Default'
-    }
-    if (props.isShown && !props.createDefault) {
+    } else {
       setTimeout(() => labelElement.value?.focus(), 50)
     }
   }
@@ -125,7 +128,6 @@ function create() {
     })
       .then(() => {
         emit('success')
-        policyForm.cleanForm()
       })
       .catch((reason: ValidationError) => {
         messageBag.value = reason.errorBag

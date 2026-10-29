@@ -60,11 +60,21 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
       // set name of the policy if defined
       label.value = policy.value.label ?? ''
 
+      // old policies saved without gateways
+      const members = policy.value.members ?? {}
+      if (Object.keys(members).length == 0) {
+        selection.value = PolicyOptions.CUSTOM
+        priorities.value = [[new Gateway()]]
+        return
+      }
+
       // decode members into picker
-      const metrics = Object.values(policy.value?.members)
+      const metrics = Object.values(members)
         .flat()
         .map((member) => member.metric)
-      if (metrics.every((metric, index, array) => metric == array[0])) {
+      if (metrics.length <= 1) {
+        selection.value = PolicyOptions.CUSTOM
+      } else if (metrics.every((metric, index, array) => metric == array[0])) {
         selection.value = PolicyOptions.BALANCE
       } else if (metrics.every((metric, index, array) => array.indexOf(metric) == index)) {
         selection.value = PolicyOptions.BACKUP
@@ -74,8 +84,8 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
 
       // parse gateways
       priorities.value = []
-      Object.values(policy.value?.members).forEach((members, index) => {
-        priorities.value[index] = members.map(
+      Object.values(members).forEach((priorityMembers, index) => {
+        priorities.value[index] = priorityMembers.map(
           (member) => new Gateway(member.interface, String(member.weight))
         )
       })
@@ -123,7 +133,7 @@ export function usePolicyForm(policy: Ref<Policy | undefined>) {
     } else if (selection.value == 'backup') {
       return priorities.value.length < 3
     }
-    return false
+    return priorities.value.flat().length < 2
   })
 
   /**

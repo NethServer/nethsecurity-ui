@@ -21,7 +21,7 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useQueryClient } from '@tanstack/vue-query'
 import { onMounted } from 'vue'
@@ -35,6 +35,7 @@ const uciChangesStore = useUciPendingChangesStore()
 const queryClient = useQueryClient()
 
 const isThreatShieldEnabled = ref(false)
+const isLogPreroutingEnabled = ref(false)
 const isLogInboundEnabled = ref(false)
 const isLogOutboundEnabled = ref(false)
 const isBlockBruteForceEnabled = ref(false)
@@ -50,11 +51,6 @@ const isBlockUdpDosEnabled = ref(false)
 const blockUdpDosLimit = ref('')
 const blockUdpDosDefault = ref(0)
 const errorBag = ref(new MessageBag())
-
-// the API enables pre-routing logging when any DoS limit is active
-const isLogPreroutingEnabled = computed(
-  () => isBlockIcmpDosEnabled.value || isBlockSynDosEnabled.value || isBlockUdpDosEnabled.value
-)
 
 const jailLabels: Record<string, string> = {
   'ns-ssh': t('standalone.threat_shield.jail_ssh'),
@@ -119,6 +115,7 @@ async function fetchSettings() {
     const res = await ubusCall<ListSettingsResponse>('ns.threatshield', 'list-settings')
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
+    isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
     isLogInboundEnabled.value = threatShieldConfig.ban_loginbound
     isLogOutboundEnabled.value = threatShieldConfig.ban_logoutbound
     isBlockBruteForceEnabled.value = threatShieldConfig.ban_loglimit
@@ -288,19 +285,11 @@ onMounted(() => {
                   :close-aria-label="t('common.close')"
                 />
                 <NeToggle
-                  :model-value="isLogPreroutingEnabled"
+                  v-model="isLogPreroutingEnabled"
                   :top-label="t('standalone.threat_shield.log_prerouting_chain')"
                   :label="isLogPreroutingEnabled ? t('common.enabled') : t('common.disabled')"
-                  disabled
-                >
-                  <template #topTooltip>
-                    <NeTooltip>
-                      <template #content>
-                        {{ t('standalone.threat_shield.log_prerouting_chain_tooltip') }}
-                      </template>
-                    </NeTooltip>
-                  </template>
-                </NeToggle>
+                  :disabled="loading.editSettings"
+                />
                 <NeToggle
                   v-model="isLogInboundEnabled"
                   :top-label="t('standalone.threat_shield.log_input_chain')"
@@ -443,9 +432,6 @@ onMounted(() => {
                   :invalid-message="errorBag.getFirstFor('blockUdpDosLimit')"
                   :helper-text="t('standalone.threat_shield.packets_per_second')"
                 />
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ t('standalone.threat_shield.dos_sources_banned') }}
-                </p>
               </div>
             </FormLayout>
             <hr />

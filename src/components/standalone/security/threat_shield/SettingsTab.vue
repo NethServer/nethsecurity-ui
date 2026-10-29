@@ -6,7 +6,9 @@
 <script setup lang="ts">
 import FormLayout from '../../FormLayout.vue'
 import {
+  NeCheckbox,
   NeCombobox,
+  NeFormItemLabel,
   NeTextInput,
   NeToggle,
   NeTooltip,
@@ -19,12 +21,11 @@ import {
   getAxiosErrorMessage
 } from '@nethesis/vue-components'
 import { useI18n } from 'vue-i18n'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useQueryClient } from '@tanstack/vue-query'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
-import NeMultiTextInput from '../../NeMultiTextInput.vue'
 import { MessageBag } from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
@@ -34,13 +35,11 @@ const uciChangesStore = useUciPendingChangesStore()
 const queryClient = useQueryClient()
 
 const isThreatShieldEnabled = ref(false)
-const isLogPreroutingEnabled = ref(false)
 const isLogInboundEnabled = ref(false)
 const isLogOutboundEnabled = ref(false)
 const isBlockBruteForceEnabled = ref(false)
 const banTime = ref('')
-const maxFailedAccesses = ref('')
-const attackPatterns = ref([''])
+const jails = ref<Jail[]>([])
 const isBlockIcmpDosEnabled = ref(false)
 const blockIcmpDosLimit = ref('')
 const blockIcmpDosDefault = ref(0)
@@ -51,6 +50,19 @@ const isBlockUdpDosEnabled = ref(false)
 const blockUdpDosLimit = ref('')
 const blockUdpDosDefault = ref(0)
 const errorBag = ref(new MessageBag())
+
+// the API enables pre-routing logging when any DoS limit is active
+const isLogPreroutingEnabled = computed(
+  () => isBlockIcmpDosEnabled.value || isBlockSynDosEnabled.value || isBlockUdpDosEnabled.value
+)
+
+const jailLabels: Record<string, string> = {
+  'ns-ssh': t('standalone.threat_shield.jail_ssh'),
+  'ns-webui': t('standalone.threat_shield.jail_webui'),
+  'ns-openvpn': t('standalone.threat_shield.jail_openvpn'),
+  'ns-proxy-auth': t('standalone.threat_shield.jail_proxy_auth'),
+  'ns-proxy-scan': t('standalone.threat_shield.jail_proxy_scan')
+}
 
 const loading = ref({
   listSettings: false,
@@ -74,16 +86,20 @@ const banTimeOptions = ref<NeComboboxOption[]>([
   { id: '3d', label: t('standalone.threat_shield.three_days') }
 ])
 
+type Jail = {
+  name: string
+  enabled: boolean
+}
+
 type ListSettingsResponse = {
   data: {
     data: {
       ban_icmplimit: number
-      ban_logcount: string
       ban_logoutbound: boolean
       ban_loginbound: boolean
       ban_loglimit: boolean
       ban_logprerouting: boolean
-      ban_logterm: string[]
+      jails: Jail[]
       ban_nftexpiry: string
       ban_synlimit: number
       ban_udplimit: number
@@ -103,13 +119,11 @@ async function fetchSettings() {
     const res = await ubusCall<ListSettingsResponse>('ns.threatshield', 'list-settings')
     const threatShieldConfig = res.data.data
     isThreatShieldEnabled.value = threatShieldConfig.enabled
-    isLogPreroutingEnabled.value = threatShieldConfig.ban_logprerouting
     isLogInboundEnabled.value = threatShieldConfig.ban_loginbound
     isLogOutboundEnabled.value = threatShieldConfig.ban_logoutbound
     isBlockBruteForceEnabled.value = threatShieldConfig.ban_loglimit
     banTime.value = threatShieldConfig.ban_nftexpiry
-    maxFailedAccesses.value = threatShieldConfig.ban_logcount.toString()
-    attackPatterns.value = threatShieldConfig.ban_logterm
+    jails.value = threatShieldConfig.jails
     blockIcmpDosLimit.value = String(threatShieldConfig.ban_icmplimit)
     isBlockIcmpDosEnabled.value = threatShieldConfig.ban_icmplimit > 0
     blockSynDosLimit.value = String(threatShieldConfig.ban_synlimit)
@@ -161,21 +175,6 @@ function isFormInvalid(): boolean {
   clearErrors()
   errorBag.value.clear()
 
-  if (isBlockBruteForceEnabled.value) {
-    // max failed accesses
-    if (isNaN(Number(maxFailedAccesses.value)) || Number(maxFailedAccesses.value) < 1) {
-      errorBag.value.set('maxFailedAccess', [
-        t('standalone.threat_shield.enter_a_number_greater_than_0')
-      ])
-    }
-
-    // attack patterns
-
-    if (attackPatterns.value.length === 0 || !attackPatterns.value[0]) {
-      errorBag.value.set('attackPatterns', [t('error.required')])
-    }
-  }
-
   if (isBlockIcmpDosEnabled.value) {
     // block icmp dos limit
     if (isNaN(Number(blockIcmpDosLimit.value)) || Number(blockIcmpDosLimit.value) < 1) {
@@ -214,9 +213,6 @@ async function saveSettings() {
   try {
     loading.value.editSettings = true
 
-    // remove empty string patterns
-    const patterns = attackPatterns.value.filter((pattern) => pattern)
-
     await ubusCall('ns.threatshield', 'edit-settings', {
       enabled: isThreatShieldEnabled.value,
       ban_logprerouting: isLogPreroutingEnabled.value,
@@ -224,8 +220,7 @@ async function saveSettings() {
       ban_logoutbound: isLogOutboundEnabled.value,
       ban_loglimit: isBlockBruteForceEnabled.value,
       ban_nftexpiry: banTime.value,
-      ban_logcount: Number(maxFailedAccesses.value),
-      ban_logterm: patterns,
+      jails: jails.value.filter((jail) => jail.enabled).map((jail) => jail.name),
       ban_icmplimit: isBlockIcmpDosEnabled.value ? Number(blockIcmpDosLimit.value) : 0,
       ban_synlimit: isBlockSynDosEnabled.value ? Number(blockSynDosLimit.value) : 0,
       ban_udplimit: isBlockUdpDosEnabled.value ? Number(blockUdpDosLimit.value) : 0
@@ -293,11 +288,19 @@ onMounted(() => {
                   :close-aria-label="t('common.close')"
                 />
                 <NeToggle
-                  v-model="isLogPreroutingEnabled"
+                  :model-value="isLogPreroutingEnabled"
                   :top-label="t('standalone.threat_shield.log_prerouting_chain')"
                   :label="isLogPreroutingEnabled ? t('common.enabled') : t('common.disabled')"
-                  :disabled="loading.editSettings"
-                />
+                  disabled
+                >
+                  <template #topTooltip>
+                    <NeTooltip>
+                      <template #content>
+                        {{ t('standalone.threat_shield.log_prerouting_chain_tooltip') }}
+                      </template>
+                    </NeTooltip>
+                  </template>
+                </NeToggle>
                 <NeToggle
                   v-model="isLogInboundEnabled"
                   :top-label="t('standalone.threat_shield.log_input_chain')"
@@ -337,24 +340,6 @@ onMounted(() => {
                   </template>
                 </NeToggle>
                 <template v-if="isBlockBruteForceEnabled">
-                  <!-- ban after N failed accesses -->
-                  <NeTextInput
-                    v-model="maxFailedAccesses"
-                    :label="t('standalone.threat_shield.ban_after_n_attempts')"
-                    type="number"
-                    min="1"
-                    max="100"
-                    :disabled="loading.editSettings"
-                    :invalid-message="errorBag.getFirstFor('maxFailedAccess')"
-                  >
-                    <template #tooltip>
-                      <NeTooltip>
-                        <template #content>
-                          {{ t('standalone.threat_shield.ban_after_n_attempts_tooltip') }}
-                        </template>
-                      </NeTooltip>
-                    </template>
-                  </NeTextInput>
                   <!-- ban time -->
                   <NeCombobox
                     v-model="banTime"
@@ -377,23 +362,24 @@ onMounted(() => {
                       </NeTooltip>
                     </template>
                   </NeCombobox>
-                  <!-- patterns to detect attacks -->
-                  <NeMultiTextInput
-                    v-model="attackPatterns"
-                    :add-item-label="t('standalone.threat_shield.add_pattern')"
-                    :title="t('standalone.threat_shield.attack_patterns')"
-                    required
-                    :disabled-inputs="loading.editSettings"
-                    :general-invalid-message="errorBag.getFirstFor('attackPatterns')"
-                  >
-                    <template #tooltip>
+                  <!-- protected services -->
+                  <div class="space-y-2">
+                    <NeFormItemLabel class="flex gap-2">
+                      <p>{{ t('standalone.threat_shield.protected_services') }}</p>
                       <NeTooltip>
                         <template #content>
-                          {{ t('standalone.threat_shield.attack_patterns_tooltip') }}
+                          {{ t('standalone.threat_shield.protected_services_tooltip') }}
                         </template>
                       </NeTooltip>
-                    </template>
-                  </NeMultiTextInput>
+                    </NeFormItemLabel>
+                    <NeCheckbox
+                      v-for="jail in jails"
+                      :key="jail.name"
+                      v-model="jail.enabled"
+                      :label="jailLabels[jail.name] ?? jail.name"
+                      :disabled="loading.editSettings"
+                    />
+                  </div>
                 </template>
               </div>
             </FormLayout>
@@ -457,6 +443,9 @@ onMounted(() => {
                   :invalid-message="errorBag.getFirstFor('blockUdpDosLimit')"
                   :helper-text="t('standalone.threat_shield.packets_per_second')"
                 />
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ t('standalone.threat_shield.dos_sources_banned') }}
+                </p>
               </div>
             </FormLayout>
             <hr />

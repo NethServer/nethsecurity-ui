@@ -30,7 +30,7 @@ import { MessageBag } from '@/lib/validation'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const uciChangesStore = useUciPendingChangesStore()
 const queryClient = useQueryClient()
 
@@ -79,12 +79,10 @@ type Jail = {
   enabled: boolean
 }
 
-const jailLabels: Record<string, string> = {
-  'ns-ssh': t('standalone.threat_shield.jail_ssh'),
-  'ns-webui': t('standalone.threat_shield.jail_webui'),
-  'ns-openvpn': t('standalone.threat_shield.jail_openvpn'),
-  'ns-proxy-auth': t('standalone.threat_shield.jail_proxy_auth'),
-  'ns-proxy-scan': t('standalone.threat_shield.jail_proxy_scan')
+// same labels as the Banned IPs reasons (ns-ssh -> ns_ssh), unknown jails show their name
+function jailLabel(jail: string) {
+  const key = `standalone.threat_shield.${jail.replace(/-/g, '_')}`
+  return te(key) ? t(key) : jail
 }
 
 type ListSettingsResponse = {
@@ -365,7 +363,7 @@ onMounted(() => {
                       v-for="jail in jails"
                       :key="jail.name"
                       v-model="jail.enabled"
-                      :label="jailLabels[jail.name] ?? jail.name"
+                      :label="jailLabel(jail.name)"
                       :disabled="loading.editSettings"
                     />
                   </div>

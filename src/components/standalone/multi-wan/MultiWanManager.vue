@@ -222,6 +222,7 @@ function policyIcon(policy: Policy) {
           </template>
           <template #gateways="{ item }: { item: Policy }">
             <div class="space-y-4">
+              <p v-if="Object.keys(item.members).length == 0">-</p>
               <div
                 v-for="([metric, members], metricIndex) in Object.entries(item.members)"
                 :key="metric"

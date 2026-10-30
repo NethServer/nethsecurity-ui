@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import type { PropType } from 'vue'
-import { computed, onMounted, reactive, ref, toRef } from 'vue'
+import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
 import type { Policy } from '@/composables/useMwan'
 import {
   NeCombobox,
@@ -63,13 +63,18 @@ const availableGateways = computed((): Array<NeComboboxOption> => {
     })
 })
 
+// the form is filled by usePolicyForm on open, only stale errors need to be cleared
+watch(
+  () => props.policy,
+  () => {
+    if (props.policy != undefined) {
+      messageBag.value.clear()
+    }
+  }
+)
+
 function close() {
   emit('close')
-  cleanForm()
-}
-function cleanForm() {
-  policyForm.cleanForm()
-  messageBag.value.clear()
 }
 
 /**

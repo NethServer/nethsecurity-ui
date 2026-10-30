@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.29.1](https://github.com/NethServer/nethsecurity-ui/compare/2.29.0...2.29.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* **controller,ssh:** restoring ssh password access ([#849](https://github.com/NethServer/nethsecurity-ui/issues/849)) ([40d5748](https://github.com/NethServer/nethsecurity-ui/commit/40d5748a17b9f9b0eaf94a482e3abb8de30b948f))
+* **dashboard:** remove yellow warning, syncing it to alerts ([#846](https://github.com/NethServer/nethsecurity-ui/issues/846)) ([680cbe1](https://github.com/NethServer/nethsecurity-ui/commit/680cbe1010f50e46d568dbaabf70d74c1078e983))
+* **mwan:** prevent saving custom policy without gateways ([#848](https://github.com/NethServer/nethsecurity-ui/issues/848)) ([83a1de8](https://github.com/NethServer/nethsecurity-ui/commit/83a1de801bd396fa94008e97f618034d9e83723c))
+
 ## [2.29.0](https://github.com/NethServer/nethsecurity-ui/compare/2.28.2...2.29.0) (2026-10-27)
 
 

@@ -151,7 +151,7 @@ async function revokeSshKeyFromUnit(unit: Unit) {
       kind="error"
       :title="t('error.cannot_delete_ssh_key')"
       :description="
-        unitsStore.errorListUnits ? unitsStore.errorListUnits : error.notificationDescription
+        unitsStore.errorListUnits ? t(unitsStore.errorListUnits) : error.notificationDescription
       "
       class="my-2"
     >

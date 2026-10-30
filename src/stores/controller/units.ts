@@ -8,7 +8,6 @@ import { ref } from 'vue'
 import { useLoginStore as useControllerLoginStore } from '@/stores/controller/controllerLogin'
 import { useLoginStore as useStandaloneLoginStore } from '@/stores/standalone/standaloneLogin'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage, getJsonFromStorage, saveToStorage } from '@nethesis/vue-components'
 import { isEmpty } from 'lodash-es'
 import { jwtDecode } from 'jwt-decode'
@@ -50,8 +49,8 @@ interface UnitVpnData {
 
 export const MAX_NO_SUBSCRIPTION_UNITS = 3
 
+// no useI18n here: it needs a component, and ubusCallFromController can create this store from anywhere
 export const useUnitsStore = defineStore('units', () => {
-  const { t } = useI18n()
   const controllerLoginStore = useControllerLoginStore()
   const standaloneLoginStore = useStandaloneLoginStore()
 
@@ -90,7 +89,7 @@ export const useUnitsStore = defineStore('units', () => {
       units.value = unitsList.sort(sortUnits)
     } catch (err: any) {
       console.error(err)
-      errorListUnits.value = t(getAxiosErrorMessage(err))
+      errorListUnits.value = getAxiosErrorMessage(err)
       errorListUnitsDetails.value = err.toString()
     } finally {
       loadingListUnits.value = false

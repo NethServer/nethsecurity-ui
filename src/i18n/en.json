@@ -366,6 +366,7 @@
     "cannot_retrieve_unit": "Cannot retrieve unit",
     "cannot_retrieve_ssh_keys": "Cannot retrieve account SSH keys",
     "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
+    "cannot_retrieve_unit_ssh_configuration": "Cannot retrieve unit SSH configuration",
     "cannot_retrieve_defaults": "Cannot retrieve defaults",
     "cannot_change_password": "Cannot change password",
     "cannot_delete_ssh_key": "Cannot delete SSH key",
@@ -3249,6 +3250,7 @@
       "root_password_access": "Access with root password",
       "root_password_access_description": "Your SSH key isn't on this unit, so you need the unit's root password to connect. Avoid accessing units with the root password: generate an SSH key pair in Account settings and send the public key to the unit.",
       "root_password": "Unit root password",
+      "root_password_login_disabled": "Your SSH key isn't on this unit and the unit doesn't allow root login with password. Send your SSH public key to the unit from the Unit manager page.",
       "wrong_root_password": "Wrong root password"
     },
     "account_settings": {

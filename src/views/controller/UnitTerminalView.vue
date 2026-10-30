@@ -97,15 +97,42 @@ const {
   staleTime: Infinity
 })
 
-const loading = computed(
-  () => unitPending.value || sshKeyPending.value || (unitReachable.value && unitKeysPending.value)
-)
 // the key comment plays no part in authentication
 const keyOnUnit = computed(() => {
   const [type, key] = (accountPubKey.value ?? '').split(' ')
   return !!key && !!unitKeys.value?.some((unitKey) => unitKey.type === type && unitKey.key === key)
 })
-const canConnect = computed(() => unitReachable.value && !!unitKeys.value)
+const needsRootPassword = computed(() => !!unitKeys.value && !keyOnUnit.value)
+
+// dropbear options read as booleans, unset means on
+const dropbearOff = ['0', 'off', 'false', 'no', 'disabled']
+const {
+  data: rootPasswordLogin,
+  isPending: dropbearPending,
+  error: dropbearError
+} = useQuery({
+  queryKey: ['controller', 'units', unitId, 'dropbear'],
+  queryFn: () =>
+    ubusCallFromController('uci', 'get', { config: 'dropbear', section: 'main' }, unitId),
+  // root login with password needs both options on
+  select: (res): boolean =>
+    !dropbearOff.includes(res.data.values.PasswordAuth) &&
+    !dropbearOff.includes(res.data.values.RootPasswordAuth),
+  enabled: needsRootPassword,
+  staleTime: Infinity
+})
+
+const loading = computed(
+  () =>
+    unitPending.value ||
+    sshKeyPending.value ||
+    (unitReachable.value && unitKeysPending.value) ||
+    (needsRootPassword.value && dropbearPending.value)
+)
+const canConnect = computed(
+  () =>
+    unitReachable.value && !!unitKeys.value && (keyOnUnit.value || rootPasswordLogin.value === true)
+)
 
 term.loadAddon(fitAddon)
 
@@ -273,6 +300,19 @@ function getBadgeIcon() {
         kind="error"
         :title="t('error.cannot_retrieve_unit_ssh_keys')"
         :description="t(getAxiosErrorMessage(unitKeysError))"
+      />
+      <NeInlineNotification
+        v-else-if="dropbearError"
+        kind="error"
+        :title="t('error.cannot_retrieve_unit_ssh_configuration')"
+        :description="t(getAxiosErrorMessage(dropbearError))"
+      />
+      <!-- account key isn't on the unit and the unit refuses root password login -->
+      <NeInlineNotification
+        v-else-if="needsRootPassword && !rootPasswordLogin"
+        kind="warning"
+        :title="t('controller.unit_terminal.cannot_open_terminal')"
+        :description="t('controller.unit_terminal.root_password_login_disabled')"
       />
       <template v-else>
         <!-- account key isn't on the unit, root password access -->

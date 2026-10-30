@@ -238,7 +238,7 @@ async function setPasswordChanged() {
         v-if="wizardStore.errorSetWizardConfig"
         kind="error"
         :title="t('standalone.wizard.cannot_save_wizard_configuration')"
-        :description="wizardStore.errorSetWizardConfig"
+        :description="t(wizardStore.errorSetWizardConfig)"
       >
         <template v-if="wizardStore.errorSetWizardConfigDetails" #details>
           {{ wizardStore.errorSetWizardConfigDetails }}

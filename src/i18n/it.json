@@ -2306,7 +2306,7 @@
       "ns_webui": "Brute force interfaccia web",
       "ns_openvpn": "Brute force OpenVPN",
       "ns_proxy_auth": "Login falliti sul reverse proxy",
-      "ns_proxy_scan": "Scansione del reverse proxy",
+      "ns_proxy_scan": "Scansione web",
       "ban_start": "Inizio blocco",
       "ban_expiration": "Scadenza blocco",
       "ip_address_not_found": "Indirizzo IP non trovato",

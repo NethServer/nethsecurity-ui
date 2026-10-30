@@ -1980,7 +1980,7 @@
       "ns_webui": "Web UI brute force",
       "ns_openvpn": "OpenVPN brute force",
       "ns_proxy_auth": "Reverse proxy login failures",
-      "ns_proxy_scan": "Reverse proxy scan",
+      "ns_proxy_scan": "Web scan",
       "ban_start": "Ban start",
       "ban_expiration": "Ban expiration",
       "ip_address_not_found": "IP address not found",

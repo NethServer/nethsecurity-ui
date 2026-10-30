@@ -30,7 +30,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UnBanIpModal from '@/components/standalone/security/threat_shield/UnBanIpModal.vue'
 import { useNotificationsStore } from '@/stores/notifications.ts'
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const notificationsStore = useNotificationsStore()
 
 type BannedIp = {
@@ -39,13 +39,13 @@ type BannedIp = {
   expires: number
   jails: string[]
 }
-const banReasons: Record<string, string> = {
-  'ns-ssh': t('standalone.threat_shield.reason_ssh'),
-  'ns-webui': t('standalone.threat_shield.reason_webui'),
-  'ns-openvpn': t('standalone.threat_shield.reason_openvpn'),
-  'ns-proxy-auth': t('standalone.threat_shield.reason_proxy_auth'),
-  'ns-proxy-scan': t('standalone.threat_shield.reason_proxy_scan')
+
+// i18n key per jail (ns-ssh -> ns_ssh), unknown jails show their name
+function banReason(jail: string) {
+  const key = `standalone.threat_shield.${jail.replace(/-/g, '_')}`
+  return te(key) ? t(key) : jail
 }
+
 const ipList = ref<BannedIp[]>([])
 const error = ref<Error>()
 const loading = ref(false)
@@ -159,7 +159,7 @@ function handleIpDeleted() {
             {{ item.ip }}
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.threat_shield.reason')">
-            {{ item.jails.map((jail) => banReasons[jail] ?? jail).join(', ') }}
+            {{ item.jails.map(banReason).join(', ') }}
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.threat_shield.ban_start')">
             <p :title="bannedSince(item.expires, item.timeout).toUTCString()">

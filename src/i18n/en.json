@@ -365,6 +365,7 @@
     "cannot_upload_backup": "Cannot upload backup",
     "cannot_retrieve_unit": "Cannot retrieve unit",
     "cannot_retrieve_ssh_keys": "Cannot retrieve account SSH keys",
+    "cannot_retrieve_unit_ssh_keys": "Cannot retrieve unit SSH keys",
     "cannot_retrieve_defaults": "Cannot retrieve defaults",
     "cannot_change_password": "Cannot change password",
     "cannot_delete_ssh_key": "Cannot delete SSH key",
@@ -3244,7 +3245,11 @@
       "connection_failed": "Connection to the unit terminal failed.",
       "unit_not_connected": "The unit is not connected to the controller.",
       "ssh_disabled": "SSH is disabled on the unit.",
-      "ssh_key_hint": "Generate an SSH key pair in Account settings and send the public key to the unit."
+      "ssh_key_hint": "Generate an SSH key pair in Account settings and send the public key to the unit.",
+      "root_password_access": "Access with root password",
+      "root_password_access_description": "Your SSH key isn't on this unit, so you need the unit's root password to connect. Avoid accessing units with the root password: generate an SSH key pair in Account settings and send the public key to the unit.",
+      "root_password": "Unit root password",
+      "wrong_root_password": "Wrong root password"
     },
     "account_settings": {
       "title": "Account settings",

@@ -24,10 +24,12 @@ import {
 } from '@nethesis/vue-components'
 import { faCheck, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { getControllerApiEndpoint, getControllerUnitTerminalUrl } from '@/lib/config'
+import { ubusCallFromController } from '@/lib/standalone/ubus'
 import { useLoginStore } from '@/stores/controller/controllerLogin'
 import type { Unit } from '@/stores/controller/units'
 
 type ConnectionStatus = 'pending' | 'active' | 'error' | 'closed'
+type UnitSshKey = { type: string; key: string; comment: string }
 
 const { t } = useI18n()
 const route = useRoute()
@@ -44,6 +46,8 @@ const hasOutput = ref(false)
 const connecting = ref(false)
 const passphrase = ref('')
 const passphraseError = ref('')
+const password = ref('')
+const passwordError = ref('')
 const closeReason = ref('')
 
 const {
@@ -63,7 +67,7 @@ const {
 })
 
 const {
-  data: hasSshKey,
+  data: accountPubKey,
   isPending: sshKeyPending,
   error: sshKeyError
 } = useQuery({
@@ -73,16 +77,35 @@ const {
       headers: { Authorization: `Bearer ${loginStore.token}` },
       signal
     }),
-  select: (res) => res.data.data.key_pub !== '',
+  select: (res) => res.data.data.key_pub,
   staleTime: Infinity
 })
 
-const loading = computed(() => unitPending.value || sshKeyPending.value)
 const unitConnected = computed(() => unit.value?.vpn.connected_since !== 0)
 const sshEnabled = computed(() => !!unit.value?.info.ssh_port)
-const canConnect = computed(
-  () => !!unit.value && unitConnected.value && sshEnabled.value && hasSshKey.value === true
+const unitReachable = computed(() => !!unit.value && unitConnected.value && sshEnabled.value)
+
+const {
+  data: unitKeys,
+  isPending: unitKeysPending,
+  error: unitKeysError
+} = useQuery({
+  queryKey: ['controller', 'units', unitId, 'ssh-keys'],
+  queryFn: () => ubusCallFromController('ns.ssh', 'list-keys', {}, unitId),
+  select: (res): UnitSshKey[] => res.data.keys,
+  enabled: unitReachable,
+  staleTime: Infinity
+})
+
+const loading = computed(
+  () => unitPending.value || sshKeyPending.value || (unitReachable.value && unitKeysPending.value)
 )
+// the key comment plays no part in authentication
+const keyOnUnit = computed(() => {
+  const [type, key] = (accountPubKey.value ?? '').split(' ')
+  return !!key && !!unitKeys.value?.some((unitKey) => unitKey.type === type && unitKey.key === key)
+})
+const canConnect = computed(() => unitReachable.value && !!unitKeys.value)
 
 term.loadAddon(fitAddon)
 
@@ -107,7 +130,10 @@ watch(
     if (ok && !term.element) {
       term.open(terminalContainer.value!)
       fitAddon.fit()
-      connect()
+      // root password access waits for the user to fill in the password
+      if (keyOnUnit.value) {
+        connect()
+      }
     }
   },
   { flush: 'post' }
@@ -119,18 +145,30 @@ onUnmounted(() => {
 })
 
 function connect() {
+  passphraseError.value = ''
+  passwordError.value = ''
+  closeReason.value = ''
+  if (!keyOnUnit.value && !password.value) {
+    passwordError.value = t('error.required')
+    return
+  }
   connectionStatus.value = 'pending'
   connecting.value = true
-  passphraseError.value = ''
-  closeReason.value = ''
 
   const ws = new WebSocket(getControllerUnitTerminalUrl(unitId))
   ws.binaryType = 'arraybuffer'
   webSocket = ws
 
   ws.onopen = () => {
-    // first frame carries the key passphrase and the initial terminal size
-    ws.send(JSON.stringify({ passphrase: passphrase.value, cols: term.cols, rows: term.rows }))
+    // first frame carries the credentials and the initial terminal size
+    ws.send(
+      JSON.stringify({
+        passphrase: keyOnUnit.value ? passphrase.value : '',
+        password: keyOnUnit.value ? '' : password.value,
+        cols: term.cols,
+        rows: term.rows
+      })
+    )
   }
 
   ws.onmessage = (event) => {
@@ -154,6 +192,8 @@ function connect() {
     // a missing passphrase just leaves the form enabled for the user to fill in
     if (event.reason.endsWith('wrong key passphrase')) {
       passphraseError.value = t('controller.unit_terminal.wrong_passphrase')
+    } else if (event.reason.endsWith('wrong root password')) {
+      passwordError.value = t('controller.unit_terminal.wrong_root_password')
     } else if (!event.reason.endsWith('key passphrase required')) {
       connectionStatus.value = 'error'
       closeReason.value = event.reason || t('controller.unit_terminal.connection_failed')
@@ -163,7 +203,9 @@ function connect() {
 
 function isSshKeyError() {
   return (
-    closeReason.value.includes('no ssh key for user') || closeReason.value.includes('ssh handshake')
+    keyOnUnit.value &&
+    (closeReason.value.includes('no ssh key for user') ||
+      closeReason.value.includes('ssh handshake'))
   )
 }
 
@@ -227,12 +269,19 @@ function getBadgeIcon() {
         :description="t('controller.unit_terminal.ssh_disabled')"
       />
       <NeInlineNotification
-        v-else-if="!hasSshKey"
-        kind="warning"
-        :title="t('controller.unit_terminal.cannot_open_terminal')"
-        :description="t('controller.unit_terminal.ssh_key_hint')"
+        v-else-if="unitKeysError"
+        kind="error"
+        :title="t('error.cannot_retrieve_unit_ssh_keys')"
+        :description="t(getAxiosErrorMessage(unitKeysError))"
       />
       <template v-else>
+        <!-- account key isn't on the unit, root password access -->
+        <NeInlineNotification
+          v-if="!keyOnUnit"
+          kind="warning"
+          :title="t('controller.unit_terminal.root_password_access')"
+          :description="t('controller.unit_terminal.root_password_access_description')"
+        />
         <div class="flex items-center gap-4">
           <span>{{ t('controller.unit_terminal.connection') }}</span>
           <NeBadge
@@ -244,9 +293,22 @@ function getBadgeIcon() {
         <div>
           {{ t('controller.unit_terminal.exit_terminal_description') }}
         </div>
-        <!-- passphrase prompt -->
+        <!-- passphrase or root password prompt -->
         <form v-if="!hasOutput" class="flex max-w-md items-end gap-4" @submit.prevent="connect">
           <NeTextInput
+            v-if="!keyOnUnit"
+            v-model="password"
+            :label="t('controller.unit_terminal.root_password')"
+            :invalid-message="passwordError"
+            :disabled="connecting"
+            is-password
+            :show-password-label="t('ne_text_input.show_password')"
+            :hide-password-label="t('ne_text_input.hide_password')"
+            autocomplete="current-password"
+            class="grow"
+          />
+          <NeTextInput
+            v-else
             v-model="passphrase"
             :label="t('controller.units.passphrase')"
             :invalid-message="passphraseError"

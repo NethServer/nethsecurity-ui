@@ -2306,6 +2306,7 @@
       "filter_blocklists": "Filtra blocklist",
       "banned_ips": "IP bloccati",
       "banned_ips_description": "Questa pagina mostra gli indirizzi IP che sono stati temporaneamente bloccati dal firewall. Questi indirizzi hanno effettuato più tentativi falliti di accesso al sistema, indicando potenziali attacchi brute force.",
+      "service": "Servizio",
       "ban_start": "Inizio blocco",
       "ban_expiration": "Scadenza blocco",
       "ip_address_not_found": "Indirizzo IP non trovato",

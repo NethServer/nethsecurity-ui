@@ -23,7 +23,6 @@ import {
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { getJailLabel } from '@/lib/standalone/threatShield'
 import { useQueryClient } from '@tanstack/vue-query'
 import { onMounted } from 'vue'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
@@ -78,6 +77,14 @@ const banTimeOptions = ref<NeComboboxOption[]>([
 type Jail = {
   name: string
   enabled: boolean
+}
+
+const jailLabels: Record<string, string> = {
+  'ns-ssh': t('standalone.threat_shield.jail_ssh'),
+  'ns-webui': t('standalone.threat_shield.jail_webui'),
+  'ns-openvpn': t('standalone.threat_shield.jail_openvpn'),
+  'ns-proxy-auth': t('standalone.threat_shield.jail_proxy_auth'),
+  'ns-proxy-scan': t('standalone.threat_shield.jail_proxy_scan')
 }
 
 type ListSettingsResponse = {
@@ -358,7 +365,7 @@ onMounted(() => {
                       v-for="jail in jails"
                       :key="jail.name"
                       v-model="jail.enabled"
-                      :label="getJailLabel(jail.name, t)"
+                      :label="jailLabels[jail.name] ?? jail.name"
                       :disabled="loading.editSettings"
                     />
                   </div>

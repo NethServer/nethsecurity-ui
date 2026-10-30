@@ -24,7 +24,6 @@ import {
 } from '@nethesis/vue-components'
 import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
-import { getJailLabel } from '@/lib/standalone/threatShield.ts'
 import type { AxiosResponse } from 'axios'
 import { faSearch, faShield, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -39,6 +38,13 @@ type BannedIp = {
   timeout: number
   expires: number
   jails: string[]
+}
+const banReasons: Record<string, string> = {
+  'ns-ssh': t('standalone.threat_shield.reason_ssh'),
+  'ns-webui': t('standalone.threat_shield.reason_webui'),
+  'ns-openvpn': t('standalone.threat_shield.reason_openvpn'),
+  'ns-proxy-auth': t('standalone.threat_shield.reason_proxy_auth'),
+  'ns-proxy-scan': t('standalone.threat_shield.reason_proxy_scan')
 }
 const ipList = ref<BannedIp[]>([])
 const error = ref<Error>()
@@ -135,7 +141,7 @@ function handleIpDeleted() {
           {{ t('common.ip_address') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
-          {{ t('standalone.threat_shield.service') }}
+          {{ t('standalone.threat_shield.reason') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
           {{ t('standalone.threat_shield.ban_start') }}
@@ -152,8 +158,8 @@ function handleIpDeleted() {
           <NeTableCell :data-label="t('common.ip_address')">
             {{ item.ip }}
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.threat_shield.service')">
-            {{ item.jails.map((jail) => getJailLabel(jail, t)).join(', ') }}
+          <NeTableCell :data-label="t('standalone.threat_shield.reason')">
+            {{ item.jails.map((jail) => banReasons[jail] ?? jail).join(', ') }}
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.threat_shield.ban_start')">
             <p :title="bannedSince(item.expires, item.timeout).toUTCString()">

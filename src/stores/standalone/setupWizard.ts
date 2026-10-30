@@ -4,11 +4,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { ubusCall } from '@/lib/standalone/ubus'
-import { useI18n } from 'vue-i18n'
 import { getAxiosErrorMessage } from '@nethesis/vue-components'
 
+// no useI18n here: it needs a component, and ubusCallFromController can create this store from anywhere
 export const useSetupWizardStore = defineStore('setupWizard', () => {
-  const { t } = useI18n()
   const isComplete = ref(true)
   const isPasswordChanged = ref(false)
   const sshPort = ref('22')
@@ -36,7 +35,7 @@ export const useSetupWizardStore = defineStore('setupWizard', () => {
       isPasswordChanged.value = res.data.password_changed
     } catch (err: unknown) {
       console.error(err)
-      errorGetWizardConfig.value = t(getAxiosErrorMessage(err))
+      errorGetWizardConfig.value = getAxiosErrorMessage(err)
       errorGetWizardConfigDetails.value = String(err)
 
       // rethrow error so it can be caught by the caller
@@ -58,7 +57,7 @@ export const useSetupWizardStore = defineStore('setupWizard', () => {
       isComplete.value = value
     } catch (err: unknown) {
       console.error(err)
-      errorSetWizardConfig.value = t(getAxiosErrorMessage(err))
+      errorSetWizardConfig.value = getAxiosErrorMessage(err)
       errorSetWizardConfigDetails.value = String(err)
 
       // rethrow error so it can be caught by the caller
@@ -80,7 +79,7 @@ export const useSetupWizardStore = defineStore('setupWizard', () => {
       isPasswordChanged.value = value
     } catch (err: unknown) {
       console.error(err)
-      errorSetWizardConfig.value = t(getAxiosErrorMessage(err))
+      errorSetWizardConfig.value = getAxiosErrorMessage(err)
       errorSetWizardConfigDetails.value = String(err)
 
       // rethrow error so it can be caught by the caller

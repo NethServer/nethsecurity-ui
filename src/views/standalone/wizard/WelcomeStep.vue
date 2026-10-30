@@ -80,7 +80,7 @@ async function skipWizard() {
       v-if="wizardStore.errorGetWizardConfig"
       kind="error"
       :title="t('standalone.wizard.cannot_retrieve_wizard_configuration')"
-      :description="wizardStore.errorGetWizardConfig"
+      :description="t(wizardStore.errorGetWizardConfig)"
     >
       <template v-if="wizardStore.errorGetWizardConfigDetails" #details>
         {{ wizardStore.errorGetWizardConfigDetails }}
@@ -91,7 +91,7 @@ async function skipWizard() {
       v-if="wizardStore.errorSetWizardConfig"
       kind="error"
       :title="t('standalone.wizard.cannot_save_wizard_configuration')"
-      :description="wizardStore.errorSetWizardConfig"
+      :description="t(wizardStore.errorSetWizardConfig)"
     >
       <template v-if="wizardStore.errorSetWizardConfigDetails" #details>
         {{ wizardStore.errorSetWizardConfigDetails }}

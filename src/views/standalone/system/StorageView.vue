@@ -280,7 +280,7 @@ onMounted(() => {
       </li>
       <li>
         {{ t('standalone.storage.configure_storage_logs_description') }}
-        <code class="inline">/mnt/data/logs/messages</code>
+        <code class="inline">/mnt/data/victoria-logs-data</code>
       </li>
       <li>
         {{ t('standalone.storage.configure_storage_extra_data_description') }}

@@ -43,8 +43,7 @@ Additional components are listed below:
 
 Follow the steps below to prepare the development environment:
 
-- Install NethSecurity on a development machine and
-  follow [the steps to disable CORS](https://nethserver.github.io/nethsecurity/packages/ns-ui/#ui-development)
+- Install NethSecurity on a development machine, the dev server proxies the API calls to it
 - If you need to code Controller UI install and
   configure [NethSecurity Controller](https://github.com/NethServer/nethsecurity-controller)
 - Create a copy of `.env.development.sample` and rename your copy to `.env.development`

@@ -480,7 +480,7 @@ function clearFilters() {
             >
               <div
                 v-if="row.isNewDay"
-                class="flex items-center gap-2 border-y border-primary-100 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-900 sm:px-6 dark:border-primary-900 dark:bg-primary-950 dark:text-primary-100"
+                class="flex items-center gap-2 border-y border-indigo-100 bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-800 sm:px-6 dark:border-indigo-900 dark:bg-indigo-700 dark:text-indigo-100"
               >
                 <FontAwesomeIcon :icon="faCalendarDay" class="size-4" aria-hidden="true" />
                 {{ row.day }}

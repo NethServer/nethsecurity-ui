@@ -2315,6 +2315,7 @@
       "cannot_retrieve_banned_ips": "Impossibile recuperare gli IP bloccati",
       "unban_ip_modal_title": "Sblocca IP",
       "unban_ip_modal_description": "Rimuovendo l'indirizzo {ip} dalla blocklist, gli sarà consentito di riprendere l'attività sulla rete.",
+      "unban_ip_modal_removes_bans": "Anche i suoi blocchi vengono rimossi da questo elenco, insieme alle righe di log corrispondenti.",
       "cannot_unban_ip": "Impossibile sbloccare l'IP",
       "ip_unbanned_title": "IP sbloccato",
       "ip_unbanned_description": "L'indirizzo {ip} è stato rimosso dalla blocklist",

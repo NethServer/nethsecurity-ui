@@ -75,6 +75,9 @@ function unbanIp() {
       <p>
         {{ t('standalone.threat_shield.unban_ip_modal_description', { ip: shallowIpToDelete }) }}
       </p>
+      <p>
+        {{ t('standalone.threat_shield.unban_ip_modal_removes_bans') }}
+      </p>
     </div>
   </NeModal>
 </template>

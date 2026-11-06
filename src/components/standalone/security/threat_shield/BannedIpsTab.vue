@@ -8,8 +8,8 @@ import { useI18n } from 'vue-i18n'
 import {
   formatDateLoc,
   getAxiosErrorMessage,
-  NeBadge,
   NeButton,
+  NeDropdown,
   NeEmptyState,
   NeInlineNotification,
   NeModal,
@@ -27,7 +27,15 @@ import {
 import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
-import { faArrowsRotate, faSearch, faShield, faUnlock } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowsRotate,
+  faBan,
+  faCircleInfo,
+  faHourglassEnd,
+  faSearch,
+  faShield,
+  faUnlock
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UnBanIpModal from '@/components/standalone/security/threat_shield/UnBanIpModal.vue'
 import { useNotificationsStore } from '@/stores/notifications.ts'
@@ -116,6 +124,27 @@ function openDetails(item: Ban) {
 }
 
 const ipToDelete = ref<string>()
+
+function getDropdownItems(item: Ban) {
+  return [
+    {
+      id: 'details',
+      label: t('standalone.threat_shield.details'),
+      icon: faCircleInfo,
+      action: () => openDetails(item)
+    },
+    {
+      id: 'unban',
+      label: t('standalone.threat_shield.unban'),
+      icon: faUnlock,
+      action: () => {
+        ipToDelete.value = item.ip
+      },
+      disabled: !item.active
+    }
+  ]
+}
+
 function handleIpDeleted() {
   notificationsStore.addNotification({
     kind: 'success',
@@ -142,7 +171,7 @@ function handleIpDeleted() {
         class="sm:max-w-xs"
         is-search
       />
-      <NeButton kind="tertiary" :disabled="loading" @click="fetchBans">
+      <NeButton kind="primary" :disabled="loading" @click="fetchBans">
         <template #prefix>
           <FontAwesomeIcon
             :icon="faArrowsRotate"
@@ -208,26 +237,21 @@ function handleIpDeleted() {
             {{ banReason(item.jail) }}
           </NeTableCell>
           <NeTableCell :data-label="t('common.status')">
-            <NeBadge
-              :text="banStatus(item)"
-              :kind="item.active ? 'error' : 'secondary'"
-              size="xs"
-            />
+            <div class="flex items-center gap-2">
+              <FontAwesomeIcon
+                :icon="item.active ? faBan : faHourglassEnd"
+                :class="['size-4 shrink-0', item.active ? 'text-danger' : 'text-disabled']"
+                aria-hidden="true"
+              />
+              <span>{{ banStatus(item) }}</span>
+            </div>
           </NeTableCell>
           <NeTableCell :data-label="t('standalone.threat_shield.failures')">
             {{ item.failures }}
           </NeTableCell>
           <NeTableCell>
-            <div class="flex flex-col gap-2 xl:-my-2 xl:flex-row xl:justify-end">
-              <NeButton kind="tertiary" size="lg" @click="openDetails(item)">
-                {{ t('standalone.threat_shield.details') }}
-              </NeButton>
-              <NeButton v-if="item.active" kind="tertiary" size="lg" @click="ipToDelete = item.ip">
-                <span class="flex items-center gap-3">
-                  <FontAwesomeIcon class="h-4 w-4" :icon="faUnlock" />
-                  <span>{{ t('standalone.threat_shield.unban') }}</span>
-                </span>
-              </NeButton>
+            <div class="flex justify-end">
+              <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
             </div>
           </NeTableCell>
         </NeTableRow>
@@ -274,7 +298,7 @@ function handleIpDeleted() {
       <p class="font-medium">{{ t('standalone.threat_shield.matched_log_lines') }}</p>
       <pre
         v-if="selectedBan?.matches.length"
-        class="max-h-96 overflow-auto rounded-md bg-gray-50 p-4 text-sm whitespace-pre-wrap dark:bg-gray-900"
+        class="max-h-96 overflow-auto rounded-md bg-gray-100 p-4 text-sm whitespace-pre-wrap dark:bg-gray-800"
         >{{ selectedBan.matches.join('\n') }}</pre>
       <p v-else class="text-sm text-tertiary-neutral">
         {{ t('standalone.threat_shield.no_matched_log_lines') }}

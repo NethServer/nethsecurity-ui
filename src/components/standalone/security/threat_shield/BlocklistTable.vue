@@ -5,10 +5,8 @@
 
 <script setup lang="ts">
 import type { Blocklist, BlocklistDirection } from './BlocklistTab.vue'
-import { maskUrlCredentials } from '@/composables/useThreatShieldCustomLists'
 import { useI18n } from 'vue-i18n'
 import {
-  NeBadge,
   NeButton,
   NeDropdown,
   NeProgressBar,
@@ -54,6 +52,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.blocklists
 })
 
 function getTypeLabel(item: Blocklist) {
+  if (item.custom) return t('standalone.threat_shield.custom')
   switch (item.type) {
     case 'community':
       return t('standalone.threat_shield.community')
@@ -65,6 +64,7 @@ function getTypeLabel(item: Blocklist) {
 }
 
 function getTypeIcon(item: Blocklist) {
+  if (item.custom) return 'wrench'
   switch (item.type) {
     case 'community':
       return 'users'
@@ -77,13 +77,6 @@ function getTypeIcon(item: Blocklist) {
 
 function getBlocklistName(blocklist: Blocklist) {
   return props.kind === 'ip' ? blocklist.description || blocklist.name : blocklist.name
-}
-
-function getCustomUrls(blocklist: Blocklist) {
-  return [blocklist.url_4, blocklist.url_6]
-    .filter((u): u is string => !!u)
-    .map(maskUrlCredentials)
-    .join(', ')
 }
 
 function getDropdownItems(item: Blocklist) {
@@ -158,18 +151,9 @@ function getPortsLabel(item: Blocklist) {
       <NeTableRow v-for="item in paginatedItems" :key="item.name">
         <NeTableCell :data-label="t('standalone.threat_shield.name')">
           <p>{{ getBlocklistName(item) }}</p>
-          <p v-if="item.custom" class="text-sm break-all text-gray-500 dark:text-gray-400">
-            {{ getCustomUrls(item) }}
-          </p>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.type')">
-          <NeBadge
-            v-if="item.custom"
-            kind="secondary"
-            size="xs"
-            :text="t('standalone.threat_shield.custom')"
-          />
-          <div v-else class="flex flex-row items-center gap-x-2">
+          <div class="flex flex-row items-center gap-x-2">
             <FontAwesomeIcon :icon="['fas', getTypeIcon(item)]" class="h-5 w-5" />
             <p>
               {{ getTypeLabel(item) }}
@@ -229,7 +213,7 @@ function getPortsLabel(item: Blocklist) {
           />
         </NeTableCell>
         <NeTableCell v-if="kind == 'ip'" :data-label="t('common.actions')">
-          <div v-if="item.custom" class="-ml-2.5 flex gap-2 md:justify-end xl:ml-0">
+          <div v-if="item.custom" class="-ml-2.5 flex gap-2 md:justify-end xl:-my-2 xl:ml-0">
             <NeButton kind="tertiary" @click="emit('edit', item)">
               <template #prefix>
                 <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />

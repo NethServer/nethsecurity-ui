@@ -4,14 +4,14 @@
 -->
 
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef, watchEffect } from 'vue'
+import { computed, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import axios from 'axios'
 import { useI18n } from 'vue-i18n'
 import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { refDebounced, useElementVisibility } from '@vueuse/core'
+import { refDebounced, useElementVisibility, useIntervalFn } from '@vueuse/core'
 import { useRouteQuery } from '@vueuse/router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowsRotate, faScroll } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsRotate, faCalendarDay, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import {
   NeButton,
   NeDropdownFilterV2,
@@ -22,6 +22,7 @@ import {
   NeSkeleton,
   NeSpinner,
   NeTextInput,
+  NeToggle,
   getAxiosErrorMessage,
   type NeDropdownFilterV2Option
 } from '@nethesis/vue-components'
@@ -57,18 +58,33 @@ const unixMs = {
   set: (v: number | undefined) => (v === undefined ? '' : String(v))
 }
 
-// every filter lives in the URL so a view can be shared or reloaded
-const search = useRouteQuery('q', '')
-const serviceIds = useRouteQuery<string, string[]>('services', '', { transform: commaList })
-const hiddenLevels = useRouteQuery<string, string[]>('hidden', '', { transform: commaList })
+// every filter lives in the URL so a view can be shared or reloaded, and Back undoes a change
+const search = useRouteQuery('q', '', { mode: 'push' })
+const serviceIds = useRouteQuery<string, string[]>('services', '', {
+  mode: 'push',
+  transform: commaList
+})
+const hiddenLevels = useRouteQuery<string, string[]>('hidden', '', {
+  mode: 'push',
+  transform: commaList
+})
 const preset = useRouteQuery<string, Preset>('range', '1h', {
+  mode: 'push',
   transform: { get: (v) => (Object.hasOwn(PRESETS, v) ? (v as Preset) : '1h'), set: (v) => v }
 })
-const from = useRouteQuery<string, number | undefined>('from', '', { transform: unixMs })
-const to = useRouteQuery<string, number | undefined>('to', '', { transform: unixMs })
+const from = useRouteQuery<string, number | undefined>('from', '', {
+  mode: 'push',
+  transform: unixMs
+})
+const to = useRouteQuery<string, number | undefined>('to', '', { mode: 'push', transform: unixMs })
 
 const now = ref(Date.now())
-const debouncedSearch = refDebounced(search, 400)
+const follow = ref(false)
+// the URL gets the search once typing stops, not one history entry per keystroke
+const searchText = ref(search.value)
+const debouncedSearch = refDebounced(searchText, 400)
+watch(debouncedSearch, (value) => (search.value = value))
+watch(search, (value) => (searchText.value = value))
 
 const customRange = computed(() =>
   from.value !== undefined && to.value !== undefined && from.value < to.value
@@ -131,6 +147,7 @@ const range = computed(() => {
 })
 
 function setCustomRange(start: number, end: number) {
+  follow.value = false
   const missing = Math.max(0, MIN_ZOOM_MS - (end - start))
   from.value = Math.round(start - missing / 2)
   to.value = Math.round(end + missing / 2)
@@ -143,7 +160,7 @@ function clearCustomRange() {
 }
 
 const filters = computed(() => ({
-  search: debouncedSearch.value,
+  search: search.value,
   services: serviceIds.value,
   hiddenLevels: hiddenLevels.value
 }))
@@ -214,7 +231,7 @@ const serviceValues = useQuery({
       query: '*',
       field: 'app_name'
     })
-    return res.data.values.map((v) => v.value)
+    return res.data.values.map((v) => v.value).sort((a, b) => a.localeCompare(b))
   },
   placeholderData: keepPreviousData
 })
@@ -223,6 +240,10 @@ function toOptions(values?: string[]) {
   return (values ?? []).map((v) => ({ id: v, label: v }))
 }
 const serviceOptions = computed(() => toOptions(serviceValues.data.value))
+
+function toggleAllServices() {
+  serviceIds.value = serviceIds.value.length ? [] : (serviceValues.data.value ?? [])
+}
 
 const entries = computed(() => lines.data.value?.pages.flat() ?? [])
 
@@ -281,11 +302,25 @@ watchEffect(() => {
 })
 
 function refresh() {
+  // new data redraws the chart, which drops the selection being dragged
+  if (dragRange.value) {
+    return
+  }
   if (!customRange.value) {
     now.value = Date.now()
   }
   queryClient.invalidateQueries({ queryKey: ['logs'] })
 }
+
+const followInterval = useIntervalFn(refresh, 5000, { immediate: false })
+watch(follow, (value) => {
+  if (value) {
+    clearCustomRange()
+    followInterval.resume()
+  } else {
+    followInterval.pause()
+  }
+})
 
 function toggleLevel(level: string) {
   hiddenLevels.value = hiddenLevels.value.includes(level)
@@ -308,13 +343,12 @@ function clearFilters() {
 </script>
 
 <template>
-  Bucket
   <NeHeading tag="h3" class="mb-7">{{ t('standalone.logs.title') }}</NeHeading>
   <div class="space-y-6">
     <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
       <div class="flex flex-wrap items-center gap-3">
         <NeTextInput
-          v-model="search"
+          v-model="searchText"
           is-search
           class="w-full sm:w-96"
           :placeholder="t('standalone.logs.search_placeholder')"
@@ -335,18 +369,26 @@ function clearFilters() {
           :label="t('standalone.logs.service')"
           :options="serviceOptions"
           :loading-options="serviceValues.isPending.value"
+          :max-options-shown="serviceOptions.length"
+          :custom-action-label="
+            serviceIds.length
+              ? t('ne_dropdown_filter.clear_all')
+              : t('ne_dropdown_filter.select_all')
+          "
           :options-filter-placeholder="t('standalone.logs.filter_services')"
           :clear-search-label="t('ne_dropdown_filter.clear_search')"
           :clear-filter-label="t('ne_dropdown_filter.clear_filter')"
           :open-menu-aria-label="t('ne_dropdown_filter.open_filter')"
           :no-options-label="t('ne_dropdown_filter.no_options')"
           :more-options-hidden-label="t('ne_dropdown_filter.more_options_hidden')"
+          @custom-action="toggleAllServices"
         />
         <NeButton kind="tertiary" :disabled="!hasFilters" @click="clearFilters">
           {{ t('common.clear_filters') }}
         </NeButton>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-6">
+        <NeToggle v-model="follow" :label="t('standalone.logs.follow')" />
         <NeButton kind="primary" @click="refresh">
           <template #prefix>
             <FontAwesomeIcon
@@ -395,8 +437,12 @@ function clearFilters() {
         v-else-if="!entries.length && !lines.isError.value"
         :title="t('standalone.logs.no_logs')"
         :description="t('standalone.logs.no_logs_description')"
-        :icon="faScroll"
-      />
+        :icon="faMagnifyingGlass"
+      >
+        <NeButton v-if="hasFilters" kind="tertiary" size="lg" @click="clearFilters">
+          {{ t('common.reset_filters') }}
+        </NeButton>
+      </NeEmptyState>
       <ol
         v-else
         ref="list"
@@ -406,8 +452,9 @@ function clearFilters() {
         <template v-for="({ id, entry, time, day, isNewDay }, index) in rows" :key="id">
           <li
             v-if="isNewDay"
-            class="sticky top-0 z-10 border-y border-gray-200 bg-gray-50 px-4 py-1.5 text-xs font-medium text-gray-700 sm:px-6 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
+            class="sticky top-0 z-10 flex items-center gap-2 border-y border-primary-100 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-900 sm:px-6 dark:border-primary-900 dark:bg-primary-950 dark:text-primary-100"
           >
+            <FontAwesomeIcon :icon="faCalendarDay" class="size-4" aria-hidden="true" />
             {{ day }}
           </li>
           <LogRow

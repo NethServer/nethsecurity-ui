@@ -31,7 +31,6 @@ import { useNotificationsStore } from '@/stores/notifications'
 import {
   ALLOWLIST_URLS_KEY,
   getMutationErrorKey,
-  maskUrlCredentials,
   useAllowlistUrls,
   type AllowlistUrl
 } from '@/composables/useThreatShieldCustomLists'
@@ -59,14 +58,14 @@ const toggleMutation = useMutation({
       'edit-allowlist-url',
       // the builtin list accepts only the enabled flag
       item.builtin
-        ? { id: item.id, enabled: item.enabled }
-        : { id: item.id, url: item.url, description: item.description, enabled: item.enabled }
+        ? { name: item.name, enabled: item.enabled }
+        : { name: item.name, url: item.url, description: item.description, enabled: item.enabled }
     ),
   onSuccess
 })
 
 const deleteMutation = useMutation({
-  mutationFn: (id: string) => ubusCall('ns.threatshield', 'delete-allowlist-url', { id }),
+  mutationFn: (name: string) => ubusCall('ns.threatshield', 'delete-allowlist-url', { name }),
   onSuccess
 })
 
@@ -108,7 +107,7 @@ function cancelDisableNethesis() {
 
 function deleteItem() {
   if (selectedItem.value) {
-    deleteMutation.mutate(selectedItem.value.id, {
+    deleteMutation.mutate(selectedItem.value.name, {
       onSuccess: () => {
         showDeleteModal.value = false
         notificationsStore.createNotification({
@@ -145,7 +144,7 @@ function getDropdownItems(item: AllowlistUrl) {
             {{ t('standalone.threat_shield.remote_allowlists_description') }}
           </p>
         </div>
-        <NeButton kind="secondary" class="shrink-0" @click="openDrawer()">
+        <NeButton kind="primary" class="shrink-0" @click="openDrawer()">
           <template #prefix>
             <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ t('standalone.threat_shield.add_allowlist_url') }}</NeButton
@@ -161,7 +160,7 @@ function getDropdownItems(item: AllowlistUrl) {
         v-if="toggleMutation.error.value"
         kind="error"
         :title="t('error.cannot_edit_allowlist_url')"
-        :description="t(getMutationErrorKey(toggleMutation.error.value, 'id'))"
+        :description="t(getMutationErrorKey(toggleMutation.error.value, 'name'))"
       />
       <NeSkeleton v-if="isPending" :lines="4" size="lg" />
       <NeTable
@@ -170,7 +169,7 @@ function getDropdownItems(item: AllowlistUrl) {
         card-breakpoint="xl"
       >
         <NeTableHead>
-          <NeTableHeadCell>{{ t('standalone.threat_shield.url') }}</NeTableHeadCell>
+          <NeTableHeadCell>{{ t('standalone.threat_shield.name') }}</NeTableHeadCell>
           <NeTableHeadCell>{{ t('standalone.threat_shield.description') }}</NeTableHeadCell>
           <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
           <NeTableHeadCell>
@@ -178,13 +177,9 @@ function getDropdownItems(item: AllowlistUrl) {
           </NeTableHeadCell>
         </NeTableHead>
         <NeTableBody>
-          <NeTableRow v-for="item in allowlistUrls" :key="item.id">
-            <NeTableCell :data-label="t('standalone.threat_shield.url')">
-              <span class="break-all">{{
-                item.builtin
-                  ? t('standalone.threat_shield.nethesis_allowlist')
-                  : maskUrlCredentials(item.url)
-              }}</span>
+          <NeTableRow v-for="item in allowlistUrls" :key="item.name">
+            <NeTableCell :data-label="t('standalone.threat_shield.name')">
+              {{ item.builtin ? t('standalone.threat_shield.nethesis_allowlist') : item.name }}
             </NeTableCell>
             <NeTableCell :data-label="t('standalone.threat_shield.description')">
               {{
@@ -242,14 +237,14 @@ function getDropdownItems(item: AllowlistUrl) {
     >
       {{
         t('standalone.threat_shield.delete_allowlist_url_message', {
-          url: maskUrlCredentials(selectedItem?.url ?? '')
+          name: selectedItem?.name ?? ''
         })
       }}
       <NeInlineNotification
         v-if="deleteMutation.error.value"
         kind="error"
         :title="t('error.cannot_delete_allowlist_url')"
-        :description="t(getMutationErrorKey(deleteMutation.error.value, 'id'))"
+        :description="t(getMutationErrorKey(deleteMutation.error.value, 'name'))"
         class="mt-4"
       />
     </NeModal>

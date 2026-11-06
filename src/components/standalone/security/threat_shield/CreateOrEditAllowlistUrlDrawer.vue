@@ -34,14 +34,15 @@ const { t } = useI18n()
 const queryClient = useQueryClient()
 const uci = useUciPendingChangesStore()
 
+const name = ref('')
 const url = ref('')
 const description = ref('')
 const enabled = ref(true)
 const validationBag = ref(new MessageBag())
 
 const { mutate, isPending, error, reset } = useMutation({
-  mutationFn: (payload: Omit<AllowlistUrl, 'builtin' | 'id'> & { id?: string }) =>
-    ubusCall('ns.threatshield', payload.id ? 'edit-allowlist-url' : 'add-allowlist-url', payload),
+  mutationFn: (payload: Omit<AllowlistUrl, 'builtin'>) =>
+    ubusCall('ns.threatshield', itemToEdit ? 'edit-allowlist-url' : 'add-allowlist-url', payload),
   onSuccess: () =>
     Promise.all([queryClient.invalidateQueries({ queryKey: ALLOWLIST_URLS_KEY }), uci.getChanges()])
 })
@@ -50,6 +51,7 @@ watch(
   () => isShown,
   (shown) => {
     if (shown) {
+      name.value = itemToEdit?.name ?? ''
       url.value = itemToEdit?.url ?? ''
       description.value = itemToEdit?.description ?? ''
       enabled.value = itemToEdit?.enabled ?? true
@@ -61,6 +63,9 @@ watch(
 
 function validate() {
   validationBag.value.clear()
+  if (!name.value) {
+    validationBag.value.set('name', 'error.required')
+  }
   if (!url.value) {
     validationBag.value.set('url', 'error.required')
   }
@@ -73,7 +78,7 @@ function save() {
   }
   mutate(
     {
-      id: itemToEdit?.id,
+      name: name.value,
       url: url.value,
       description: description.value,
       enabled: enabled.value
@@ -114,22 +119,16 @@ function save() {
         :description="t(getAxiosErrorMessage(error))"
       />
       <NeInlineNotification
-        v-else-if="validationBag.has('id')"
-        kind="error"
-        :title="t('error.cannot_edit_allowlist_url')"
-        :description="t(validationBag.getFirstI18nKeyFor('id'))"
-      />
-      <NeInlineNotification
         kind="info"
         :title="t('standalone.threat_shield.remote_list_format')"
         :description="t('standalone.threat_shield.allowlist_url_format_description')"
       />
       <NeTextInput
-        v-model="url"
-        :label="t('standalone.threat_shield.url')"
-        placeholder="https://"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('url'))"
-        :disabled="isPending"
+        v-model="name"
+        :label="t('standalone.threat_shield.name')"
+        :helper-text="t('standalone.threat_shield.custom_blocklist_name_helper')"
+        :invalid-message="t(validationBag.getFirstI18nKeyFor('name'))"
+        :disabled="isPending || Boolean(itemToEdit)"
       />
       <NeTextInput
         v-model="description"
@@ -137,6 +136,13 @@ function save() {
         :invalid-message="t(validationBag.getFirstI18nKeyFor('description'))"
         :optional="true"
         :optional-label="t('common.optional')"
+        :disabled="isPending"
+      />
+      <NeTextInput
+        v-model="url"
+        :label="t('standalone.threat_shield.url')"
+        placeholder="https://"
+        :invalid-message="t(validationBag.getFirstI18nKeyFor('url'))"
         :disabled="isPending"
       />
       <NeToggle

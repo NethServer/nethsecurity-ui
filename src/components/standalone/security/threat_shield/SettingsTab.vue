@@ -170,6 +170,14 @@ function isFormInvalid(): boolean {
   clearErrors()
   errorBag.value.clear()
 
+  if (
+    isThreatShieldEnabled.value &&
+    isBlockBruteForceEnabled.value &&
+    !jails.value.some((jail) => jail.enabled)
+  ) {
+    errorBag.value.set('jails', [t('standalone.threat_shield.select_at_least_one_service')])
+  }
+
   if (isBlockIcmpDosEnabled.value) {
     // block icmp dos limit
     if (isNaN(Number(blockIcmpDosLimit.value)) || Number(blockIcmpDosLimit.value) < 1) {
@@ -366,6 +374,12 @@ onMounted(() => {
                       :label="jailLabel(jail.name)"
                       :disabled="loading.editSettings"
                     />
+                    <p
+                      v-if="errorBag.getFirstFor('jails')"
+                      class="mt-2 text-sm text-rose-700 dark:text-rose-400"
+                    >
+                      {{ errorBag.getFirstFor('jails') }}
+                    </p>
                   </div>
                 </template>
               </div>

@@ -2272,6 +2272,7 @@
       "local_blocklist_is_empty": "La blocklist locale è vuota",
       "protected_services": "Servizi protetti",
       "protected_services_tooltip": "Gli accessi falliti ai servizi selezionati vengono conteggiati e l'IP sorgente viene bloccato.",
+      "select_at_least_one_service": "Seleziona almeno un servizio",
       "block_dos": "Blocca DoS",
       "block_icmp_dos": "Blocca DoS ICMP",
       "block_syn_dos": "Blocca DoS TCP SYN",

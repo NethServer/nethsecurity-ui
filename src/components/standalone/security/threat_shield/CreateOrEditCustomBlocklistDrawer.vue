@@ -12,6 +12,7 @@ import {
   NeRadioSelection,
   NeSideDrawer,
   NeTextInput,
+  NeToggle,
   getAxiosErrorMessage,
   type RadioOption
 } from '@nethesis/vue-components'
@@ -39,6 +40,7 @@ const url4 = ref('')
 const url6 = ref('')
 const chain = ref<BlocklistDirection>('in')
 const description = ref('')
+const enabled = ref(true)
 const validationBag = ref(new MessageBag())
 
 const chainOptions: RadioOption[] = [
@@ -48,7 +50,7 @@ const chainOptions: RadioOption[] = [
 ]
 
 const { mutate, isPending, error, reset } = useMutation({
-  mutationFn: (payload: Record<string, string>) =>
+  mutationFn: (payload: Record<string, string | boolean>) =>
     ubusCall(
       'ns.threatshield',
       itemToEdit ? 'edit-custom-blocklist' : 'add-custom-blocklist',
@@ -66,6 +68,7 @@ watch(
       url6.value = itemToEdit?.url_6 ?? ''
       chain.value = itemToEdit?.direction ?? 'in'
       description.value = itemToEdit?.description ?? ''
+      enabled.value = itemToEdit?.enabled ?? true
       validationBag.value.clear()
       reset()
     }
@@ -93,7 +96,8 @@ function save() {
       url_4: url4.value,
       url_6: url6.value,
       chain: chain.value,
-      description: description.value
+      description: description.value,
+      enabled: enabled.value
     },
     {
       onSuccess: () => {
@@ -171,6 +175,12 @@ function save() {
         :invalid-message="t(validationBag.getFirstI18nKeyFor('description'))"
         :optional="true"
         :optional-label="t('common.optional')"
+        :disabled="isPending"
+      />
+      <NeToggle
+        v-model="enabled"
+        :top-label="t('common.status')"
+        :label="enabled ? t('common.enabled') : t('common.disabled')"
         :disabled="isPending"
       />
       <hr />

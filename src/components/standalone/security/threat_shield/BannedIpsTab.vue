@@ -9,8 +9,10 @@ import {
   formatDateLoc,
   getAxiosErrorMessage,
   NeButton,
+  NeDropdown,
   NeEmptyState,
   NeInlineNotification,
+  NeModal,
   NePaginator,
   NeSkeleton,
   NeTable,
@@ -25,29 +27,49 @@ import {
 import { computed, onMounted, ref } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus.ts'
 import type { AxiosResponse } from 'axios'
-import { faSearch, faShield, faUnlock } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowsRotate,
+  faBan,
+  faCircleInfo,
+  faHourglassEnd,
+  faSearch,
+  faShield,
+  faUnlock
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UnBanIpModal from '@/components/standalone/security/threat_shield/UnBanIpModal.vue'
 import { useNotificationsStore } from '@/stores/notifications.ts'
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const notificationsStore = useNotificationsStore()
 
-type BannedIp = {
+type Ban = {
   ip: string
+  jail: string
+  time: number
   timeout: number
-  expires: number
+  active: boolean
+  failures: number
+  matches: string[]
 }
-const ipList = ref<BannedIp[]>([])
+
+// i18n key per jail (ns-ssh -> ns_ssh), unknown jails show their name
+function banReason(jail: string) {
+  const key = `standalone.threat_shield.${jail.replace(/-/g, '_')}`
+  return te(key) ? t(key) : jail
+}
+
+const banList = ref<Ban[]>([])
 const error = ref<Error>()
 const loading = ref(false)
 
-function fetchBannedIps() {
+function fetchBans() {
   error.value = undefined
   loading.value = true
-  ubusCall('ns.threatshield', 'list-active-blocks')
-    .then((response: AxiosResponse<BannedIp[]>) => {
-      ipList.value = response.data
+  ubusCall('ns.threatshield', 'list-recent-bans')
+    .then((response: AxiosResponse<Ban[]>) => {
+      // active bans first, the API already sorts by time
+      banList.value = [...response.data].sort((a, b) => Number(b.active) - Number(a.active))
     })
     .catch((reason) => {
       error.value = reason
@@ -58,30 +80,71 @@ function fetchBannedIps() {
 }
 
 onMounted(() => {
-  fetchBannedIps()
+  fetchBans()
 })
 
-const search = ref('')
-const filteredIps = computed((): BannedIp[] => {
-  return ipList.value.filter((item) => {
-    return item.ip.toLowerCase().includes(search.value.toLowerCase())
+function banDate(item: Ban) {
+  return formatDateLoc(new Date(item.time * 1000), 'PPpp')
+}
+
+function banStatus(item: Ban) {
+  if (!item.active) {
+    return t('standalone.threat_shield.block_expired')
+  }
+  if (item.timeout < 0) {
+    return t('standalone.threat_shield.blocked')
+  }
+  return t('standalone.threat_shield.blocked_until', {
+    date: formatDateLoc(new Date((item.time + item.timeout) * 1000), 'PPpp')
   })
+}
+
+const search = ref('')
+const filteredBans = computed((): Ban[] => {
+  const query = search.value.toLowerCase()
+  return banList.value.filter((item) =>
+    [banDate(item), item.ip, banReason(item.jail), banStatus(item)].some((field) =>
+      field.toLowerCase().includes(query)
+    )
+  )
 })
 
 const pageSize = ref(10)
-const { currentPage, paginatedItems } = useItemPagination(filteredIps, {
+const { currentPage, paginatedItems } = useItemPagination(filteredBans, {
   itemsPerPage: pageSize
 })
 
-function bannedSince(expiresIn: number, timeout: number): Date {
-  return new Date(new Date().getTime() + (expiresIn - timeout) * 1000)
-}
+// kept separate from visibility so the modal content stays during the close transition
+const selectedBan = ref<Ban>()
+const showDetails = ref(false)
 
-function banExpiresAt(expiresIn: number): Date {
-  return new Date(new Date().getTime() + expiresIn * 1000)
+function openDetails(item: Ban) {
+  selectedBan.value = item
+  showDetails.value = true
 }
 
 const ipToDelete = ref<string>()
+
+function getDropdownItems(item: Ban) {
+  return [
+    {
+      id: 'details',
+      label: t('standalone.threat_shield.details'),
+      icon: faCircleInfo,
+      action: () => openDetails(item)
+    },
+    {
+      id: 'unban',
+      label: t('standalone.threat_shield.unban'),
+      icon: faUnlock,
+      action: () => {
+        ipToDelete.value = item.ip
+      },
+      disabled: !item.active
+    }
+  ]
+}
+
 function handleIpDeleted() {
   notificationsStore.addNotification({
     kind: 'success',
@@ -91,7 +154,7 @@ function handleIpDeleted() {
       ip: ipToDelete.value
     })
   })
-  fetchBannedIps()
+  fetchBans()
   ipToDelete.value = undefined
 }
 </script>
@@ -101,12 +164,24 @@ function handleIpDeleted() {
     <p class="max-w-2xl text-sm font-normal text-tertiary-neutral">
       {{ t('standalone.threat_shield.banned_ips_description') }}
     </p>
-    <NeTextInput
-      v-model.trim="search"
-      :placeholder="t('common.search')"
-      class="sm:max-w-xs"
-      is-search
-    />
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <NeTextInput
+        v-model.trim="search"
+        :placeholder="t('common.search')"
+        class="sm:max-w-xs"
+        is-search
+      />
+      <NeButton kind="primary" :disabled="loading" @click="fetchBans">
+        <template #prefix>
+          <FontAwesomeIcon
+            :icon="faArrowsRotate"
+            :class="{ 'animate-spin': loading }"
+            aria-hidden="true"
+          />
+        </template>
+        {{ t('standalone.threat_shield.refresh') }}
+      </NeButton>
+    </div>
     <NeSkeleton v-if="loading" :lines="10" />
     <NeInlineNotification
       v-else-if="error"
@@ -116,55 +191,67 @@ function handleIpDeleted() {
       :close-aria-label="t('common.close')"
     />
     <NeEmptyState
-      v-else-if="ipList.length < 1"
+      v-else-if="banList.length < 1"
       :description="t('standalone.threat_shield.the_firewall_is_not_currently_blocking_any_ips')"
       :icon="faShield"
       :title="t('standalone.threat_shield.no_banned_ips')"
     />
     <NeEmptyState
-      v-else-if="filteredIps.length < 1"
-      :description="t('standalone.threat_shield.ip_is_not_currently_banned', { ip: search })"
+      v-else-if="filteredBans.length < 1"
+      :description="t('common.try_changing_search_filter')"
       :icon="faSearch"
-      :title="t('standalone.threat_shield.ip_address_not_found')"
+      :title="t('standalone.threat_shield.no_bans_found')"
     />
     <NeTable v-else :aria-label="t('standalone.threat_shield.banned_ips')" card-breakpoint="xl">
       <NeTableHead>
         <NeTableHeadCell>
+          {{ t('standalone.threat_shield.banned_at') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
           {{ t('common.ip_address') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
-          {{ t('standalone.threat_shield.ban_start') }}
+          {{ t('standalone.threat_shield.reason') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
-          {{ t('standalone.threat_shield.ban_expiration') }}
+          {{ t('common.status') }}
+        </NeTableHeadCell>
+        <NeTableHeadCell>
+          {{ t('standalone.threat_shield.failures') }}
         </NeTableHeadCell>
         <NeTableHeadCell>
           <!-- no header for actions -->
         </NeTableHeadCell>
       </NeTableHead>
       <NeTableBody>
-        <NeTableRow v-for="item in paginatedItems" :key="item.ip">
+        <NeTableRow v-for="item in paginatedItems" :key="`${item.ip}-${item.jail}-${item.time}`">
+          <NeTableCell :data-label="t('standalone.threat_shield.banned_at')">
+            <p :title="new Date(item.time * 1000).toUTCString()">
+              {{ banDate(item) }}
+            </p>
+          </NeTableCell>
           <NeTableCell :data-label="t('common.ip_address')">
             {{ item.ip }}
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.threat_shield.ban_start')">
-            <p :title="bannedSince(item.expires, item.timeout).toUTCString()">
-              {{ formatDateLoc(bannedSince(item.expires, item.timeout), 'PPpp') }}
-            </p>
+          <NeTableCell :data-label="t('standalone.threat_shield.reason')">
+            {{ banReason(item.jail) }}
           </NeTableCell>
-          <NeTableCell :data-label="t('standalone.threat_shield.ban_expiration')">
-            <p :title="banExpiresAt(item.expires).toUTCString()">
-              {{ formatDateLoc(banExpiresAt(item.expires), 'PPpp') }}
-            </p>
+          <NeTableCell :data-label="t('common.status')">
+            <div class="flex items-center gap-2">
+              <FontAwesomeIcon
+                :icon="item.active ? faBan : faHourglassEnd"
+                :class="['size-4 shrink-0', item.active ? 'text-danger' : 'text-disabled']"
+                aria-hidden="true"
+              />
+              <span>{{ banStatus(item) }}</span>
+            </div>
+          </NeTableCell>
+          <NeTableCell :data-label="t('standalone.threat_shield.failures')">
+            {{ item.failures }}
           </NeTableCell>
           <NeTableCell>
-            <div class="flex flex-col xl:-my-2 xl:flex-row xl:justify-end">
-              <NeButton kind="tertiary" size="lg" @click="ipToDelete = item.ip">
-                <span class="flex items-center gap-3">
-                  <FontAwesomeIcon class="h-4 w-4" :icon="faUnlock" />
-                  <span>{{ t('standalone.threat_shield.unban') }}</span>
-                </span>
-              </NeButton>
+            <div class="flex justify-end">
+              <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
             </div>
           </NeTableCell>
         </NeTableRow>
@@ -178,7 +265,7 @@ function handleIpDeleted() {
           :page-size-label="t('ne_table.show')"
           :previous-label="t('ne_table.go_to_previous_page')"
           :range-of-total-label="t('ne_table.of')"
-          :total-rows="filteredIps.length"
+          :total-rows="filteredBans.length"
           @select-page-size="
             (size: number) => {
               pageSize = size
@@ -198,4 +285,24 @@ function handleIpDeleted() {
     @close="ipToDelete = undefined"
     @success="handleIpDeleted"
   />
+  <NeModal
+    :visible="showDetails"
+    size="xl"
+    :title="t('standalone.threat_shield.ban_details', { ip: selectedBan?.ip })"
+    :primary-label="t('common.close')"
+    :close-aria-label="t('common.close')"
+    @close="showDetails = false"
+    @primary-click="showDetails = false"
+  >
+    <div class="space-y-2">
+      <p class="font-medium">{{ t('standalone.threat_shield.matched_log_lines') }}</p>
+      <pre
+        v-if="selectedBan?.matches.length"
+        class="max-h-96 overflow-auto rounded-md bg-gray-100 p-4 text-sm whitespace-pre-wrap dark:bg-gray-800"
+        >{{ selectedBan.matches.join('\n') }}</pre>
+      <p v-else class="text-sm text-tertiary-neutral">
+        {{ t('standalone.threat_shield.no_matched_log_lines') }}
+      </p>
+    </div>
+  </NeModal>
 </template>

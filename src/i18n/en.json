@@ -2044,6 +2044,7 @@
       "ipv6_url": "IPv6 list URL",
       "remote_list_format": "List format",
       "remote_allowlists": "Remote allowlists",
+      "local_allowlist": "Local allowlist",
       "remote_allowlists_description": "IP addresses and networks downloaded from these URLs are never blocked by Threat shield IP.",
       "allowlist_url_format_description": "The URL must point to a plain text list with one IP address or network per line. If a URL cannot be downloaded, the last downloaded copy of the remote allowlists is used.",
       "add_allowlist_url": "Add allowlist URL",

@@ -7,6 +7,8 @@
 import type { Blocklist, BlocklistDirection } from './BlocklistTab.vue'
 import { useI18n } from 'vue-i18n'
 import {
+  NeButton,
+  NeDropdown,
   NeProgressBar,
   NeToggle,
   NeTable,
@@ -21,7 +23,13 @@ import {
 import { range } from 'lodash-es'
 import { ref } from 'vue'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { faArrowDown, faArrowRightArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowDown,
+  faArrowRightArrowLeft,
+  faArrowUp,
+  faPenToSquare,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
@@ -31,8 +39,10 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   toggleBlocklist: [item: Blocklist]
+  edit: [item: Blocklist]
+  delete: [item: Blocklist]
 }>()
 
 const { t, te } = useI18n()
@@ -42,6 +52,7 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.blocklists
 })
 
 function getTypeLabel(item: Blocklist) {
+  if (item.custom) return t('standalone.threat_shield.custom')
   switch (item.type) {
     case 'community':
       return t('standalone.threat_shield.community')
@@ -53,6 +64,7 @@ function getTypeLabel(item: Blocklist) {
 }
 
 function getTypeIcon(item: Blocklist) {
+  if (item.custom) return 'wrench'
   switch (item.type) {
     case 'community':
       return 'users'
@@ -64,7 +76,19 @@ function getTypeIcon(item: Blocklist) {
 }
 
 function getBlocklistName(blocklist: Blocklist) {
-  return props.kind === 'ip' ? blocklist.description : blocklist.name
+  return props.kind === 'ip' ? blocklist.description || blocklist.name : blocklist.name
+}
+
+function getDropdownItems(item: Blocklist) {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: faTrash,
+      danger: true,
+      action: () => emit('delete', item)
+    }
+  ]
 }
 
 type DirectionIcon = {
@@ -100,7 +124,7 @@ function getPortsLabel(item: Blocklist) {
   <NeTable
     :aria-label="t('standalone.threat_shield.blocklist')"
     card-breakpoint="xl"
-    :skeleton-columns="kind == 'ip' ? 6 : 4"
+    :skeleton-columns="kind == 'ip' ? 7 : 4"
     :skeleton-rows="8"
     :loading="loading"
     class="z-10"
@@ -119,6 +143,9 @@ function getPortsLabel(item: Blocklist) {
       </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.threat_shield.confidence') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
+      <NeTableHeadCell v-if="kind == 'ip'">
+        <!-- no header for actions -->
+      </NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.name">
@@ -184,6 +211,17 @@ function getPortsLabel(item: Blocklist) {
               }
             "
           />
+        </NeTableCell>
+        <NeTableCell v-if="kind == 'ip'" :data-label="t('common.actions')">
+          <div v-if="item.custom" class="-ml-2.5 flex gap-2 md:justify-end xl:-my-2 xl:ml-0">
+            <NeButton kind="tertiary" @click="emit('edit', item)">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
+              </template>
+              {{ t('common.edit') }}
+            </NeButton>
+            <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+          </div>
         </NeTableCell>
       </NeTableRow>
     </NeTableBody>

@@ -13,7 +13,8 @@ import {
   NeInlineNotification,
   getAxiosErrorMessage,
   NeTextInput,
-  NeEmptyState
+  NeEmptyState,
+  NeModal
 } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { computed } from 'vue'
@@ -23,6 +24,11 @@ import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import SearchBannedIp from '@/components/standalone/security/threat_shield/SearchBannedIp.vue'
+import CreateOrEditCustomBlocklistDrawer from './CreateOrEditCustomBlocklistDrawer.vue'
+import { getMutationErrorKey } from '@/composables/useThreatShieldCustomLists'
+import { useMutation } from '@tanstack/vue-query'
+import { useNotificationsStore } from '@/stores/notifications'
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 export type BlocklistDirection = 'in' | 'out' | 'inout'
 
@@ -32,6 +38,9 @@ export type Blocklist = {
   enabled: boolean
   confidence: number
   description: string
+  custom?: boolean
+  url_4?: string
+  url_6?: string
   direction?: BlocklistDirection
   ports?: string[]
   protocols?: string[]
@@ -52,6 +61,15 @@ const isTogglingBlocklistEnabled = ref(false)
 const blocklists = ref<Blocklist[]>([])
 const filter = ref('')
 const isThreatShieldEnabled = ref(false)
+const notificationsStore = useNotificationsStore()
+const selectedCustomBlocklist = ref<Blocklist>()
+const showCustomBlocklistDrawer = ref(false)
+const showDeleteCustomBlocklistModal = ref(false)
+
+const deleteCustomBlocklistMutation = useMutation({
+  mutationFn: (name: string) => ubusCall('ns.threatshield', 'delete-custom-blocklist', { name }),
+  onSuccess: () => refreshAfterCustomChange()
+})
 
 const filteredBlocklists = computed(() => {
   return filter.value
@@ -120,6 +138,36 @@ async function toggleBlocklistEnable(blocklist: Blocklist) {
   } finally {
     isTogglingBlocklistEnabled.value = false
   }
+}
+
+function openCustomBlocklistDrawer(item?: Blocklist) {
+  selectedCustomBlocklist.value = item
+  showCustomBlocklistDrawer.value = true
+}
+
+function openDeleteCustomBlocklistModal(item: Blocklist) {
+  selectedCustomBlocklist.value = item
+  deleteCustomBlocklistMutation.reset()
+  showDeleteCustomBlocklistModal.value = true
+}
+
+function deleteCustomBlocklist() {
+  if (selectedCustomBlocklist.value) {
+    deleteCustomBlocklistMutation.mutate(selectedCustomBlocklist.value.name, {
+      onSuccess: () => {
+        showDeleteCustomBlocklistModal.value = false
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.threat_shield.custom_blocklist_deleted')
+        })
+      }
+    })
+  }
+}
+
+function refreshAfterCustomChange() {
+  uciChangesStore.getChanges()
+  fetchBlocklists()
 }
 
 onMounted(() => {
@@ -195,13 +243,21 @@ onMounted(() => {
             is-search
           />
           <SearchBannedIp />
+          <NeButton kind="secondary" @click="openCustomBlocklistDrawer()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+            </template>
+            {{ t('standalone.threat_shield.add_custom_blocklist') }}
+          </NeButton>
         </div>
         <BlocklistTable
           v-if="filteredBlocklists.length > 0"
           :blocklists="filteredBlocklists"
           :disable-toggles="isTogglingBlocklistEnabled"
           kind="ip"
-          @toggle-blocklist="toggleBlocklistEnable" />
+          @toggle-blocklist="toggleBlocklistEnable"
+          @edit="openCustomBlocklistDrawer"
+          @delete="openDeleteCustomBlocklistModal" />
         <NeEmptyState
           v-else
           :title="t('standalone.threat_shield.no_blacklists_found')"
@@ -209,4 +265,44 @@ onMounted(() => {
       /></template>
     </template>
   </div>
+  <CreateOrEditCustomBlocklistDrawer
+    :is-shown="showCustomBlocklistDrawer"
+    :item-to-edit="selectedCustomBlocklist"
+    @close="showCustomBlocklistDrawer = false"
+    @saved="
+      () => {
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.threat_shield.custom_blocklist_saved')
+        })
+        fetchBlocklists()
+      }
+    "
+  />
+  <NeModal
+    :visible="showDeleteCustomBlocklistModal"
+    kind="warning"
+    primary-button-kind="danger"
+    :title="t('standalone.threat_shield.delete_custom_blocklist')"
+    :primary-label="t('common.delete')"
+    :cancel-label="t('common.cancel')"
+    :primary-button-disabled="deleteCustomBlocklistMutation.isPending.value"
+    :primary-button-loading="deleteCustomBlocklistMutation.isPending.value"
+    :close-aria-label="t('common.close')"
+    @primary-click="deleteCustomBlocklist()"
+    @close="showDeleteCustomBlocklistModal = false"
+  >
+    {{
+      t('standalone.threat_shield.delete_custom_blocklist_message', {
+        name: selectedCustomBlocklist?.name ?? ''
+      })
+    }}
+    <NeInlineNotification
+      v-if="deleteCustomBlocklistMutation.error.value"
+      kind="error"
+      :title="t('error.cannot_delete_custom_blocklist')"
+      :description="t(getMutationErrorKey(deleteCustomBlocklistMutation.error.value, 'name'))"
+      class="mt-4"
+    />
+  </NeModal>
 </template>

@@ -7,6 +7,7 @@
 import { useI18n } from 'vue-i18n'
 import {
   NeButton,
+  NeHeading,
   NeInlineNotification,
   NeSkeleton,
   NeEmptyState,
@@ -21,6 +22,7 @@ import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import AddressTable from './AddressTable.vue'
+import AllowlistUrlsSection from './AllowlistUrlsSection.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
 
@@ -78,10 +80,15 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-y-6">
-    <div class="flex flex-row items-center justify-between">
-      <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-        {{ t('standalone.threat_shield.allowlist_description') }}
-      </p>
+    <div class="flex flex-row items-start justify-between gap-4">
+      <div>
+        <NeHeading tag="h5" class="mb-2">{{
+          t('standalone.threat_shield.local_allowlist')
+        }}</NeHeading>
+        <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
+          {{ t('standalone.threat_shield.allowlist_description') }}
+        </p>
+      </div>
       <NeButton v-if="allowlist.length > 0" kind="primary" @click="openCreateEditAddressDrawer()">
         <template #prefix>
           <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" /> </template
@@ -119,6 +126,7 @@ onMounted(() => {
         @edit="openCreateEditAddressDrawer"
       />
     </template>
+    <AllowlistUrlsSection class="mt-4" />
   </div>
   <DeleteAddressModal
     :visible="showDeleteAddressModal"

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.2](https://github.com/NethServer/nethsecurity-ui/compare/2.29.1...2.29.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* adjusted some styles, made top bar look like my ([d64ac66](https://github.com/NethServer/nethsecurity-ui/commit/d64ac668d6dafab3f1dfbeec2e1d24fa8e2e18b8))
+
 ## [2.29.1](https://github.com/NethServer/nethsecurity-ui/compare/2.29.0...2.29.1) (2026-10-30)
 
 

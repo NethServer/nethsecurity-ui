@@ -25,10 +25,13 @@ import {
 } from '@/composables/useDashboardOverview'
 import { useThreatShieldSettings } from '@/composables/useThreatShieldSettings'
 import { getStatusBadge } from '@/lib/standalone/dashboard'
-import { vmQuery } from '@/lib/standalone/victoriaMetrics'
+import axios from 'axios'
+import { getStandaloneApiEndpoint } from '@/lib/config'
+import { useLoginStore } from '@/stores/standalone/standaloneLogin'
 
 const { t } = useI18n()
 const route = useRoute()
+const loginStore = useLoginStore()
 
 const {
   data: overview,
@@ -44,8 +47,7 @@ const {
   error: settingsError
 } = useThreatShieldSettings({ refetchInterval: DASHBOARD_REFRESH_INTERVAL })
 
-// the blocked IPs counter is read straight from VictoriaMetrics, since banIP
-// exposes it as a metric instead of a ubus counter
+// banIP blocks of the last hour, counted from the kernel log lines in VictoriaLogs
 const {
   data: serviceCounter,
   isPending: isCounterPending,
@@ -53,11 +55,16 @@ const {
   error: counterError
 } = useQuery({
   queryKey: ['dashboard', 'threat-shield-ip-counter'],
-  queryFn: () => vmQuery('sum(count_over_time(banip_blocked_bytes[1h]))'),
-  select: (res) => {
-    const value = res.data?.result?.[0]?.value?.[1]
-    return value !== undefined ? Math.trunc(Number(value)) : 0
-  },
+  queryFn: () =>
+    axios.get<{ blocked: string }>(`${getStandaloneApiEndpoint()}/logs/query`, {
+      params: {
+        query:
+          'app_name:kernel "banIP/" | extract "banIP/<chain>/<verdict>/<feed>: " | filter feed:* | stats count() blocked',
+        start: '1h'
+      },
+      headers: { Authorization: `Bearer ${loginStore.token}` }
+    }),
+  select: (res) => Math.trunc(Number(res.data.blocked ?? 0)),
   refetchInterval: DASHBOARD_REFRESH_INTERVAL
 })
 

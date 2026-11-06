@@ -25,7 +25,7 @@ const message = computed(() => entry._msg.replace(/#011/g, ' ').trim())
 </script>
 
 <template>
-  <li
+  <div
     class="grid grid-cols-[auto_auto_1fr] items-center gap-x-3 gap-y-1 px-4 py-2 text-sm sm:grid-cols-[6rem_5.5rem_11rem_1fr] sm:px-6"
   >
     <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -51,5 +51,5 @@ const message = computed(() => entry._msg.replace(/#011/g, ' ').trim())
     <p
       class="col-span-3 font-mono text-[13px] leading-5 break-words whitespace-pre-wrap text-gray-900 sm:col-span-1 dark:text-gray-100"
     >{{ message }}</p>
-  </li>
+  </div>
 </template>

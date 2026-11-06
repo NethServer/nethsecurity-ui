@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { refDebounced, useElementVisibility, useIntervalFn } from '@vueuse/core'
 import { useRouteQuery } from '@vueuse/router'
+import { useVirtualizer } from '@tanstack/vue-virtual'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faArrowsRotate, faCalendarDay, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import {
@@ -286,6 +287,23 @@ const hasFilters = computed(
 )
 
 const listRef = useTemplateRef<HTMLElement>('list')
+// only the rows in view are in the DOM, heights are measured as they render
+const virtualizer = useVirtualizer(
+  computed(() => ({
+    count: rows.value.length,
+    getScrollElement: () => listRef.value,
+    estimateSize: () => 36,
+    overscan: 10,
+    getItemKey: (index: number) => rows.value[index]?.id ?? index
+  }))
+)
+const virtualRows = computed(() =>
+  virtualizer.value.getVirtualItems().flatMap(({ index, start }) => {
+    const row = rows.value[index]
+    return row ? [{ index, start, row }] : []
+  })
+)
+
 const sentinelRef = useTemplateRef<HTMLElement>('sentinel')
 const sentinelVisible = useElementVisibility(sentinelRef, { scrollTarget: listRef })
 // keeps loading pages while the end of the list is in view
@@ -443,28 +461,40 @@ function clearFilters() {
           {{ t('common.reset_filters') }}
         </NeButton>
       </NeEmptyState>
-      <ol
+      <div
         v-else
         ref="list"
         class="max-h-[65vh] overflow-y-auto"
         :class="{ 'opacity-50': lines.isPlaceholderData.value }"
       >
-        <template v-for="({ id, entry, time, day, isNewDay }, index) in rows" :key="id">
-          <li
-            v-if="isNewDay"
-            class="sticky top-0 z-10 flex items-center gap-2 border-y border-primary-100 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-900 sm:px-6 dark:border-primary-900 dark:bg-primary-950 dark:text-primary-100"
+        <div class="relative" :style="{ height: `${virtualizer.getTotalSize()}px` }">
+          <ol
+            class="absolute inset-x-0 top-0"
+            :style="{ transform: `translateY(${virtualRows[0]?.start ?? 0}px)` }"
           >
-            <FontAwesomeIcon :icon="faCalendarDay" class="size-4" aria-hidden="true" />
-            {{ day }}
-          </li>
-          <LogRow
-            :entry="entry"
-            :time="time"
-            :class="{ 'bg-gray-100 dark:bg-gray-900/60': index % 2 }"
-            @filter-service="filterService"
-          />
-        </template>
-        <li
+            <li
+              v-for="{ index, row } in virtualRows"
+              :key="row.id"
+              :ref="(el) => virtualizer.measureElement(el as Element | null)"
+              :data-index="index"
+            >
+              <div
+                v-if="row.isNewDay"
+                class="flex items-center gap-2 border-y border-primary-100 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-900 sm:px-6 dark:border-primary-900 dark:bg-primary-950 dark:text-primary-100"
+              >
+                <FontAwesomeIcon :icon="faCalendarDay" class="size-4" aria-hidden="true" />
+                {{ row.day }}
+              </div>
+              <LogRow
+                :entry="row.entry"
+                :time="row.time"
+                :class="{ 'bg-gray-100 dark:bg-gray-900/60': index % 2 }"
+                @filter-service="filterService"
+              />
+            </li>
+          </ol>
+        </div>
+        <div
           ref="sentinel"
           class="flex justify-center px-4 py-3 text-sm text-gray-500 dark:text-gray-400"
         >
@@ -472,8 +502,8 @@ function clearFilters() {
           <span v-else-if="!lines.hasNextPage.value">
             {{ t('standalone.logs.end_of_range') }}
           </span>
-        </li>
-      </ol>
+        </div>
+      </div>
       <p
         v-if="entries.length"
         class="border-t border-gray-200 px-4 py-2 text-xs text-gray-500 sm:px-6 dark:border-gray-800 dark:text-gray-400"

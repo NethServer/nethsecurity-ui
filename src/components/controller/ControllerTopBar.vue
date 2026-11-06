@@ -29,7 +29,7 @@ const themeStore = useThemeStore()
 const loginStore = useLoginStore()
 const shakeNotificationsIcon = ref(false)
 const topBarButtonsColorClasses =
-  'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-50'
+  'rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-50'
 
 const showPlatformInfoModal = ref(false)
 
@@ -170,15 +170,20 @@ function openNotificationsDrawer() {
               :align-to-right="true"
               :open-menu-aria-label="t('common.shell.open_user_menu')"
               menu-classes="z-150!"
+              class="align-top"
             >
               <template #button>
-                <button type="button" :class="['-m-2.5 flex p-2.5', topBarButtonsColorClasses]">
+                <button
+                  type="button"
+                  :class="['-m-1.5 flex p-1.5 pr-3', topBarButtonsColorClasses]"
+                >
                   <div class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="loginStore.isAdmin ? ['fas', 'crown'] : ['fas', 'circle-user']"
-                      class="h-6 w-6 shrink-0"
+                    <span
+                      class="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-700 dark:bg-gray-300 dark:text-gray-900"
                       aria-hidden="true"
-                    />
+                    >
+                      {{ loginStore.username.charAt(0).toUpperCase() }}
+                    </span>
                     {{ loginStore.username }}
                     <font-awesome-icon
                       :icon="['fas', 'chevron-down']"

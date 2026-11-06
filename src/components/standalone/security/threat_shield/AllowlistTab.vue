@@ -21,6 +21,7 @@ import CreateOrEditAddressDrawer from './CreateOrEditAddressDrawer.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 import type { BanIpLocalAddress } from '@/views/standalone/security/ThreatShieldView.vue'
 import AddressTable from './AddressTable.vue'
+import AllowlistUrlsSection from './AllowlistUrlsSection.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCirclePlus, faShield } from '@fortawesome/free-solid-svg-icons'
 
@@ -119,6 +120,7 @@ onMounted(() => {
         @edit="openCreateEditAddressDrawer"
       />
     </template>
+    <AllowlistUrlsSection class="mt-4" />
   </div>
   <DeleteAddressModal
     :visible="showDeleteAddressModal"

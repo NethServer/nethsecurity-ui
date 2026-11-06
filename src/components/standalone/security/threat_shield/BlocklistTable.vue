@@ -5,8 +5,12 @@
 
 <script setup lang="ts">
 import type { Blocklist, BlocklistDirection } from './BlocklistTab.vue'
+import { maskUrlCredentials } from '@/composables/useThreatShieldCustomLists'
 import { useI18n } from 'vue-i18n'
 import {
+  NeBadge,
+  NeButton,
+  NeDropdown,
   NeProgressBar,
   NeToggle,
   NeTable,
@@ -21,7 +25,13 @@ import {
 import { range } from 'lodash-es'
 import { ref } from 'vue'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { faArrowDown, faArrowRightArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowDown,
+  faArrowRightArrowLeft,
+  faArrowUp,
+  faPenToSquare,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
@@ -31,8 +41,10 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   toggleBlocklist: [item: Blocklist]
+  edit: [item: Blocklist]
+  delete: [item: Blocklist]
 }>()
 
 const { t, te } = useI18n()
@@ -64,7 +76,26 @@ function getTypeIcon(item: Blocklist) {
 }
 
 function getBlocklistName(blocklist: Blocklist) {
-  return props.kind === 'ip' ? blocklist.description : blocklist.name
+  return props.kind === 'ip' ? blocklist.description || blocklist.name : blocklist.name
+}
+
+function getCustomUrls(blocklist: Blocklist) {
+  return [blocklist.url_4, blocklist.url_6]
+    .filter((u): u is string => !!u)
+    .map(maskUrlCredentials)
+    .join(', ')
+}
+
+function getDropdownItems(item: Blocklist) {
+  return [
+    {
+      id: 'delete',
+      label: t('common.delete'),
+      icon: faTrash,
+      danger: true,
+      action: () => emit('delete', item)
+    }
+  ]
 }
 
 type DirectionIcon = {
@@ -100,7 +131,7 @@ function getPortsLabel(item: Blocklist) {
   <NeTable
     :aria-label="t('standalone.threat_shield.blocklist')"
     card-breakpoint="xl"
-    :skeleton-columns="kind == 'ip' ? 6 : 4"
+    :skeleton-columns="kind == 'ip' ? 7 : 4"
     :skeleton-rows="8"
     :loading="loading"
     class="z-10"
@@ -119,14 +150,26 @@ function getPortsLabel(item: Blocklist) {
       </NeTableHeadCell>
       <NeTableHeadCell>{{ t('standalone.threat_shield.confidence') }}</NeTableHeadCell>
       <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
+      <NeTableHeadCell v-if="kind == 'ip'">
+        <!-- no header for actions -->
+      </NeTableHeadCell>
     </NeTableHead>
     <NeTableBody>
       <NeTableRow v-for="item in paginatedItems" :key="item.name">
         <NeTableCell :data-label="t('standalone.threat_shield.name')">
           <p>{{ getBlocklistName(item) }}</p>
+          <p v-if="item.custom" class="text-sm break-all text-gray-500 dark:text-gray-400">
+            {{ getCustomUrls(item) }}
+          </p>
         </NeTableCell>
         <NeTableCell :data-label="t('standalone.threat_shield.type')">
-          <div class="flex flex-row items-center gap-x-2">
+          <NeBadge
+            v-if="item.custom"
+            kind="secondary"
+            size="xs"
+            :text="t('standalone.threat_shield.custom')"
+          />
+          <div v-else class="flex flex-row items-center gap-x-2">
             <FontAwesomeIcon :icon="['fas', getTypeIcon(item)]" class="h-5 w-5" />
             <p>
               {{ getTypeLabel(item) }}
@@ -184,6 +227,17 @@ function getPortsLabel(item: Blocklist) {
               }
             "
           />
+        </NeTableCell>
+        <NeTableCell v-if="kind == 'ip'" :data-label="t('common.actions')">
+          <div v-if="item.custom" class="-ml-2.5 flex gap-2 md:justify-end xl:ml-0">
+            <NeButton kind="tertiary" @click="emit('edit', item)">
+              <template #prefix>
+                <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
+              </template>
+              {{ t('common.edit') }}
+            </NeButton>
+            <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
+          </div>
         </NeTableCell>
       </NeTableRow>
     </NeTableBody>

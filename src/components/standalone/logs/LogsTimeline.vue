@@ -97,10 +97,14 @@ function levelLabel(level: string) {
   return level === NO_LEVEL ? t('standalone.logs.no_level') : level
 }
 
+// the parent passes a new array on every render, a redraw mid-drag resets the brush
+const hiddenKey = computed(() => hiddenLevels.join('\n'))
+
 // a new accessor whenever the colors change, unovis only redraws on a changed prop
 const barColor = computed(() => {
+  const hidden = hiddenKey.value.split('\n')
   const colors = levels.value.map((level) =>
-    hiddenLevels.includes(level) ? (theme.isLight ? GRAY_200 : GRAY_700) : levelColor(level)
+    hidden.includes(level) ? (theme.isLight ? GRAY_200 : GRAY_700) : levelColor(level)
   )
   return (_d: Bucket, i: number) => colors[i] ?? GRAY_500
 })
@@ -142,10 +146,12 @@ function tooltipTemplate(bucket: Bucket) {
   return `<div class="text-xs"><div class="mb-1 font-medium">${from} - ${to}</div>${rows}</div>`
 }
 
+// widened to whole bars, which start at multiples of the step
 function selectionRange(selection: FreeBrushSelection | undefined) {
   if (selection && typeof selection[0] === 'number') {
     const [from, to] = selection as [number, number]
-    return { start: Math.floor(from), end: Math.ceil(to) }
+    const stepMs = stepSeconds * 1000
+    return { start: Math.floor(from / stepMs) * stepMs, end: Math.ceil(to / stepMs) * stepMs }
   }
 }
 

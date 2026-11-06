@@ -505,7 +505,9 @@
     "more_options_hidden": "Continue typing to show more options",
     "clear_selection": "Clear selection",
     "clear_search": "Clear search",
-    "clear_search_label": "Clear"
+    "clear_search_label": "Clear",
+    "select_all": "Select all",
+    "clear_all": "Clear all"
   },
   "login": {
     "welcome_title_standalone": "Welcome",
@@ -2511,14 +2513,15 @@
       "last_30d": "Last 30 days",
       "custom": "Custom",
       "refresh": "Refresh",
+      "follow": "Follow logs",
       "drag_to_zoom": "Drag across the chart to zoom in",
       "zoomed_range": "From {start} to {end}",
       "timeline_aria_label": "Log lines over time, by level",
       "no_level": "no level",
       "show_level": "Show {level}",
       "hide_level": "Hide {level}",
-      "no_logs": "No logs in this time range",
-      "no_logs_description": "Widen the time range or clear the filters.",
+      "no_logs": "No logs found",
+      "no_logs_description": "Try changing the time range or your search filters",
       "end_of_range": "No older lines in this time range",
       "showing_count": "Showing {shown} of {total} lines"
     },

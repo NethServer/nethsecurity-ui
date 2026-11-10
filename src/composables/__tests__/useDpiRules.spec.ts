@@ -2,7 +2,12 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { describe, expect, it } from 'vitest'
-import { moveRuleIdToEdge, reorderRuleIds, type DpiRule } from '@/composables/useDpiRules'
+import {
+  moveRuleIdToEdge,
+  reorderRuleIds,
+  ruleSourceLabels,
+  type DpiRule
+} from '@/composables/useDpiRules'
 
 function rules(...ids: string[]): DpiRule[] {
   return ids.map((id, index) => ({
@@ -70,5 +75,30 @@ describe('moveRuleIdToEdge', () => {
   it('is a no-op for a rule already at that edge', () => {
     expect(moveRuleIdToEdge(all, 'a', 'top')).toEqual(['a', 'b', 'c', 'd', 'e'])
     expect(moveRuleIdToEdge(all, 'e', 'bottom')).toEqual(['a', 'b', 'c', 'd', 'e'])
+  })
+})
+
+describe('ruleSourceLabels', () => {
+  const [rule] = rules('a') as [DpiRule]
+
+  it('lists the object names before the addresses', () => {
+    expect(
+      ruleSourceLabels({
+        ...rule,
+        source: ['192.168.1.1'],
+        source_objects: [
+          { id: 'objects/ns_1', name: 'office', type: 'host_set', subtype: 'host_set' },
+          { id: 'users/ns_2', name: 'john', type: 'vpn_user', subtype: 'vpn_user' }
+        ]
+      })
+    ).toEqual(['office', 'john', '192.168.1.1'])
+  })
+
+  it('lists the addresses of a rule from an API without source objects', () => {
+    expect(ruleSourceLabels({ ...rule, source: ['192.168.1.1'] })).toEqual(['192.168.1.1'])
+  })
+
+  it('is empty for a rule matching every host', () => {
+    expect(ruleSourceLabels({ ...rule, source_objects: [] })).toEqual([])
   })
 })

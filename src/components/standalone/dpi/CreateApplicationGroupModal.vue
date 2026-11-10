@@ -668,7 +668,11 @@ function save() {
                 }}
               </p>
             </div>
-            <div class="flex min-h-0 flex-1 flex-col overflow-y-auto pr-4">
+            <!-- keyed by category: a new category starts from the top of its list -->
+            <div
+              :key="selectedCategoryId"
+              class="flex min-h-0 flex-1 flex-col overflow-y-auto pr-4"
+            >
               <NeSkeleton v-if="isLoadingCatalog" :lines="8" />
               <div
                 v-for="item in filteredItems"

@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import {
   formatDateLoc,
   getAxiosErrorMessage,
+  NeBadgeV2,
   NeButton,
   NeDropdown,
   NeEmptyState,
@@ -30,6 +31,7 @@ import type { AxiosResponse } from 'axios'
 import {
   faArrowsRotate,
   faBan,
+  faCheck,
   faCircleInfo,
   faHourglassEnd,
   faSearch,
@@ -39,9 +41,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UnBanIpModal from '@/components/standalone/security/threat_shield/UnBanIpModal.vue'
 import { useNotificationsStore } from '@/stores/notifications.ts'
+import { useThreatShieldSettings } from '@/composables/useThreatShieldSettings'
 
 const { t, te } = useI18n()
 const notificationsStore = useNotificationsStore()
+const { data: settings } = useThreatShieldSettings()
 
 type Ban = {
   ip: string
@@ -161,9 +165,15 @@ function handleIpDeleted() {
 
 <template>
   <div class="space-y-8">
-    <p class="max-w-2xl text-sm font-normal text-tertiary-neutral">
-      {{ t('standalone.threat_shield.banned_ips_description') }}
-    </p>
+    <div class="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
+      <p class="max-w-2xl text-sm font-normal text-tertiary-neutral">
+        {{ t('standalone.threat_shield.banned_ips_description') }}
+      </p>
+      <NeBadgeV2 v-if="settings?.enabled" kind="green" class="shrink-0">
+        <FontAwesomeIcon :icon="faCheck" class="size-4" aria-hidden="true" />
+        {{ t('standalone.threat_shield.threat_shield_enabled') }}
+      </NeBadgeV2>
+    </div>
     <div class="flex flex-wrap items-center justify-between gap-4">
       <NeTextInput
         v-model.trim="search"

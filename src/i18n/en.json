@@ -1920,7 +1920,7 @@
       "confidence": "Confidence",
       "direction": "Direction",
       "direction_in": "Incoming",
-      "direction_out": "Outcoming",
+      "direction_out": "Outgoing",
       "direction_inout": "Incoming and outcoming",
       "ports": "Ports",
       "no_blacklists_found": "No blocklists found. Try changing your search filter",

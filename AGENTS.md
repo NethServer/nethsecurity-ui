@@ -52,11 +52,11 @@ Requires `.env.development` copied from `.env.development.sample`. See [CONTRIBU
 
 | Skill                                                        | Trigger                                                                        |
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| [vue-components](.github/skills/vue-components/SKILL.md)     | Writing or reviewing Vue components/views; Ne\* component library usage        |
-| [data-fetching](.github/skills/data-fetching/SKILL.md)       | Adding `useQuery`, `useMutation`, `ubusCall`, or migrating manual loading refs |
-| [typescript](.github/skills/typescript/SKILL.md)             | Typing API responses, avoiding `any`, ESLint-clean TypeScript                  |
-| [composables](.github/skills/composables/SKILL.md)           | Creating or refactoring `use*` composables in `src/composables/`               |
-| [forms-validation](.github/skills/forms-validation/SKILL.md) | Building forms with `valibot`, `MessageBag`, `ValidationError`                 |
-| [testing](.github/skills/testing/SKILL.md)                   | Writing Vitest tests (TDD, edge cases, mocking `ubusCall`)                     |
+| [vue-components](.agents/skills/vue-components/SKILL.md)     | Writing or reviewing Vue components/views; Ne\* component library usage        |
+| [data-fetching](.agents/skills/data-fetching/SKILL.md)       | Adding `useQuery`, `useMutation`, `ubusCall`, or migrating manual loading refs |
+| [typescript](.agents/skills/typescript/SKILL.md)             | Typing API responses, avoiding `any`, ESLint-clean TypeScript                  |
+| [composables](.agents/skills/composables/SKILL.md)           | Creating or refactoring `use*` composables in `src/composables/`               |
+| [forms-validation](.agents/skills/forms-validation/SKILL.md) | Building forms with `valibot`, `MessageBag`, `ValidationError`                 |
+| [testing](.agents/skills/testing/SKILL.md)                   | Writing Vitest tests (TDD, edge cases, mocking `ubusCall`)                     |
 
-Ne\* component reference: [.github/skills/vue-components/references/ne-components.md](.github/skills/vue-components/references/ne-components.md)
+Ne\* component reference: [.agents/skills/vue-components/references/ne-components.md](.agents/skills/vue-components/references/ne-components.md)

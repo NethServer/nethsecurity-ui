@@ -159,9 +159,6 @@ onMounted(() => {
   errorListParents.value = { ...objError }
   errorListDevices.value = { ...objError }
   errorGetConfiguration.value = { ...objError }
-  // the subscription may have changed since the store was first loaded
-  // (e.g. the unit was just registered): refresh it on every visit
-  subscriptionStore.loadData()
   getListParents()
   getListDevices()
   getConfiguration()

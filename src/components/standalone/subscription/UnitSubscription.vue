@@ -10,7 +10,7 @@ import {
   focusElement,
   formatDateLoc,
   getAxiosErrorMessage,
-  NeBadge,
+  NeBadgeV2,
   NeButton,
   NeHeading,
   NeInlineNotification,
@@ -18,35 +18,29 @@ import {
   NeSkeleton,
   NeTextInput
 } from '@nethesis/vue-components'
-import type { SubscriptionDataType } from '@/views/standalone/system/SubscriptionView.vue'
-import { computed, onMounted, type PropType, ref, toRefs } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { validateRequired } from '@/lib/validation'
 import CancelSubscriptionModal from './CancelSubscriptionModal.vue'
-import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import {
+  isSubscriptionUnknown,
+  SUBSCRIPTION_KEY,
+  useSubscriptionStore
+} from '@/stores/standalone/subscription.ts'
 import type { AxiosResponse } from 'axios'
-import { useMutation } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 const { t } = useI18n()
-
-const props = defineProps({
-  subscriptionData: {
-    type: Object as PropType<SubscriptionDataType | null>,
-    default: null
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  }
-})
-const { subscriptionData, loading } = toRefs(props)
-const emit = defineEmits(['subscription-update'])
 
 const authTokenRef = ref()
 const authToken = ref('')
 const isProcessingRequest = ref(false)
 const isShownCancelSubscriptionModal = ref(false)
 const subscriptionStore = useSubscriptionStore()
+const queryClient = useQueryClient()
+const subscriptionData = computed(() =>
+  subscriptionStore.data?.systemd_id ? subscriptionStore.data : null
+)
 
 const errors = ref({
   authToken: '',
@@ -58,7 +52,7 @@ const expirationDateString = computed(() => {
     return ''
   }
 
-  return subscriptionData.value.expiration == 0
+  return !subscriptionData.value.expiration
     ? t('standalone.subscription.no_expiration')
     : new Date(subscriptionData.value.expiration).toLocaleDateString()
 })
@@ -87,8 +81,7 @@ async function subscribe() {
     isProcessingRequest.value = true
     await ubusCall('ns.subscription', 'register', { secret: authToken.value })
     authToken.value = ''
-    emit('subscription-update')
-    subscriptionStore.loadData()
+    await queryClient.invalidateQueries({ queryKey: SUBSCRIPTION_KEY })
   } catch (e: any) {
     // expected outcomes come back as validation errors (400, no global toast)
     if (
@@ -181,7 +174,7 @@ const {
     :description="t('standalone.subscription.unit_subscription_description')"
     class="max-w-3xl"
   >
-    <NeSkeleton v-if="loading" :lines="5" />
+    <NeSkeleton v-if="subscriptionStore.loading" :lines="5" />
     <template v-else>
       <template v-if="subscriptionData">
         <div class="flex flex-col gap-y-8">
@@ -236,15 +229,15 @@ const {
             <NeHeading tag="h6" class="mr-4 mb-0! inline-block">{{
               t('standalone.subscription.status')
             }}</NeHeading>
-            <NeBadge
-              :text="
-                subscriptionData.active
-                  ? t('standalone.subscription.active')
-                  : t('standalone.subscription.inactive')
-              "
-              :kind="subscriptionData.active ? 'success' : 'warning'"
-              size="sm"
-            />
+            <NeBadgeV2 v-if="subscriptionData.active" kind="green" size="sm">
+              {{ t('standalone.subscription.active') }}
+            </NeBadgeV2>
+            <NeBadgeV2 v-else-if="isSubscriptionUnknown(subscriptionData)" kind="gray" size="sm">
+              {{ t('standalone.subscription.not_verified') }}
+            </NeBadgeV2>
+            <NeBadgeV2 v-else kind="amber" size="sm">
+              {{ t('standalone.subscription.inactive') }}
+            </NeBadgeV2>
           </div>
           <div class="-mt-6">
             <NeSkeleton v-if="loadingLastSync" :lines="1" />
@@ -359,6 +352,5 @@ const {
   <CancelSubscriptionModal
     :visible="isShownCancelSubscriptionModal"
     @close="isShownCancelSubscriptionModal = false"
-    @subscription-update="emit('subscription-update')"
   />
 </template>

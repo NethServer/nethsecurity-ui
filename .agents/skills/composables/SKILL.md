@@ -103,6 +103,13 @@ const filteredRules = computed(() =>
 )
 ```
 
+## When Not to Write a Composable
+
+Keep logic inside the component when only that component uses it, a single
+`useQuery` included. Write a composable only when two or more components share
+the logic, or when moving it out makes the component clearly easier to read.
+Don't move single-use functions to a shared file "for later".
+
 ## Composable vs. Pinia Store
 
 | Use composable | Use Pinia store |

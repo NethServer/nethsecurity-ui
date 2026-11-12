@@ -7,6 +7,8 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { isAxiosError } from 'axios'
+import * as v from 'valibot'
 import {
   byteFormat1024,
   getAxiosErrorMessage,
@@ -34,9 +36,8 @@ import {
 } from '@nethesis/vue-components'
 import { faBan, faShieldHalved, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import type { AxiosError } from 'axios'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { MessageBag } from '@/lib/validation'
+import { MessageBag, validateIpAddress, validatePort } from '@/lib/validation'
 import { formatRate } from '@/composables/useFlows'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import type { FirewallRule, RuleHost } from '@/stores/standalone/firewall'
@@ -142,7 +143,7 @@ const layerLabels: Record<string, string> = {
 }
 
 const ip = ref('')
-const duration = ref(durationOptions[1]!.id)
+const duration = ref('120')
 const port = ref('')
 const protocol = ref('any')
 const filter = ref('')
@@ -153,23 +154,28 @@ const destinationFilter = ref<NeDropdownFilterV2Option[]>([])
 const statusFilter = ref<NeDropdownFilterV2Option[]>([])
 const validationBag = ref(new MessageBag())
 
+const STATUS_KEY = ['livetrace', 'status']
+
 // poll every 2s while running, the poll that sees running=false is the final status
 const { data, error, isPending } = useQuery({
-  queryKey: ['livetrace', 'status'],
-  queryFn: async () => (await ubusCall<{ data: Status }>('ns.livetrace', 'status')).data,
-  refetchInterval: (query) => (query.state.data?.running ? 2000 : false)
+  queryKey: STATUS_KEY,
+  queryFn: () => ubusCall<{ data: Status }>('ns.livetrace', 'status'),
+  select: (res) => res.data,
+  refetchInterval: (query) => (query.state.data?.data.running ? 2000 : false)
 })
 
-const refreshStatus = () => queryClient.invalidateQueries({ queryKey: ['livetrace', 'status'] })
+const refreshStatus = () => queryClient.invalidateQueries({ queryKey: STATUS_KEY })
 
 const start = useMutation({
-  mutationFn: () =>
-    ubusCall('ns.livetrace', 'start', {
-      ip: ip.value,
+  mutationFn: () => {
+    const portValue = String(port.value).trim()
+    return ubusCall<{ data: unknown }>('ns.livetrace', 'start', {
+      ip: ip.value.trim(),
       duration: Number(duration.value),
-      ...(String(port.value).trim() ? { port: Number(port.value) } : {}),
+      ...(portValue ? { port: Number(portValue) } : {}),
       ...(protocol.value != 'any' ? { protocol: protocol.value } : {})
-    }),
+    })
+  },
   onMutate: () => {
     validationBag.value.clear()
     stop.reset()
@@ -183,37 +189,64 @@ const start = useMutation({
   }
 })
 
-// the backend treats port 0 as no filter, reject it here
-function startTrace() {
-  validationBag.value.clear()
-  const value = String(port.value).trim()
-  const number = Number(value)
-  if (value && !(Number.isInteger(number) && number >= 1 && number <= 65535)) {
-    validationBag.value.set('port', 'error.invalid_port')
-    return
-  }
-  start.mutate()
-}
-
-// drop the stale port error once the value changes
-watch(port, () => validationBag.value.delete('port'))
-
 const stop = useMutation({
-  mutationFn: () => ubusCall('ns.livetrace', 'stop'),
+  mutationFn: () => ubusCall<{ data: unknown }>('ns.livetrace', 'stop'),
+  onMutate: () => start.reset(),
   onSuccess: refreshStatus
 })
+
+// the backend treats port 0 as no filter, an empty port means no filter
+const formSchema = v.object({
+  ip: v.pipe(
+    v.string(),
+    v.check((value) => validateIpAddress(value.trim()).valid, 'error.invalid_ip_address')
+  ),
+  port: v.pipe(
+    v.string(),
+    v.check(
+      (value) => value.trim() == '' || (/^\d+$/.test(value.trim()) && validatePort(value).valid),
+      'error.invalid_port'
+    )
+  )
+})
+
+function validate(): boolean {
+  validationBag.value.clear()
+  const result = v.safeParse(formSchema, { ip: ip.value, port: String(port.value) })
+  if (!result.success) {
+    for (const issue of result.issues) {
+      const field = issue.path?.[0]?.key
+      if (typeof field == 'string' && !validationBag.value.has(field)) {
+        validationBag.value.set(field, issue.message)
+      }
+    }
+  }
+  return result.success
+}
+
+function startTrace() {
+  if (validate()) {
+    start.mutate()
+  }
+}
+
+// drop stale errors once the value changes
+watch(ip, () => validationBag.value.delete('ip'))
+watch(port, () => validationBag.value.delete('port'))
 
 const actionError = computed(() =>
   start.error.value instanceof ValidationError ? null : (start.error.value ?? stop.error.value)
 )
 
 // start error codes with their own message
+const errorKeys: Record<string, string> = {
+  session_busy: 'error.session_busy',
+  collector_not_started: 'error.collector_not_started'
+}
 const errorDescription = computed(() => {
-  const e = (error.value ?? actionError.value) as AxiosError<{ message?: string }> | null
-  const code = e?.response?.data?.message ?? ''
-  return ['session_busy', 'collector_not_started'].includes(code)
-    ? t(`error.${code}`)
-    : t(getAxiosErrorMessage(e))
+  const e = error.value ?? actionError.value
+  const code = isAxiosError<{ message?: string }>(e) ? (e.response?.data?.message ?? '') : ''
+  return t(errorKeys[code] ?? getAxiosErrorMessage(e))
 })
 
 const hasResults = computed(
@@ -495,7 +528,7 @@ const isUserRule = (item: Blocked) =>
   !/^(?:drop|reject)_(?:from|to)_/.test(item.chain ?? '')
 
 const { data: firewallRules } = useQuery({
-  queryKey: ['livetrace-firewall-rules'],
+  queryKey: ['livetrace', 'firewall-rules'],
   queryFn: async () => {
     const responses = await Promise.all(
       ['list-forward-rules', 'list-input-rules', 'list-output-rules'].map((method) =>
@@ -718,14 +751,20 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
                               <dd class="inline">{{ value }}</dd>
                             </div>
                           </dl>
-                          <NeLink
-                            class="mt-2 inline-block"
-                            @click="
-                              $router.push(`${getStandaloneRoutePrefix($route)}/firewall/rules`)
-                            "
+                          <RouterLink
+                            v-slot="{ href, navigate }"
+                            :to="`${getStandaloneRoutePrefix($route)}/firewall/rules`"
+                            custom
                           >
-                            {{ t('standalone.live_trace.go_to_rules') }}
-                          </NeLink>
+                            <NeLink
+                              class="mt-2 inline-block"
+                              inverted-theme
+                              :href="href"
+                              @click="navigate"
+                            >
+                              {{ t('standalone.live_trace.go_to_rules') }}
+                            </NeLink>
+                          </RouterLink>
                         </template>
                       </NeTooltip>
                       <template v-else>{{ blockedRule(item) }}</template>
@@ -814,9 +853,9 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
         <NeEmptyState
           v-if="(data.running ? filteredConnections : filteredAllowed).length == 0"
           :title="
-            t(
-              `standalone.live_trace.${filterRows.length ? 'no_connections_found' : 'no_connections'}`
-            )
+            filterRows.length
+              ? t('standalone.live_trace.no_connections_found')
+              : t('standalone.live_trace.no_connections')
           "
           :description="filterRows.length ? t('common.try_changing_search_filters') : ''"
         >
@@ -958,7 +997,14 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
       <!-- dns queries -->
       <section class="space-y-4">
         <NeHeading tag="h5">{{ t('standalone.live_trace.dns_queries') }}</NeHeading>
-        <NeEmptyState v-if="data.dns.length == 0" :title="t('standalone.live_trace.no_dns')" />
+        <NeEmptyState
+          v-if="data.dns.length == 0"
+          :title="
+            data.running
+              ? t('standalone.live_trace.no_dns')
+              : t('standalone.live_trace.no_dns_last_session')
+          "
+        />
         <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
           <NeTableHead>
             <NeTableHeadCell>{{ t('common.name') }}</NeTableHeadCell>

@@ -27,7 +27,6 @@ import {
   NeTableHeadCell,
   NeTableRow,
   NeTextInput,
-  NeToggle,
   NeTooltip,
   useItemPagination,
   type NeDropdownFilterV2Option,
@@ -391,13 +390,10 @@ const totalDownload = computed(() =>
 )
 const totalUpload = computed(() => filteredConnections.value.reduce((sum, c) => sum + c.upload, 0))
 
-const showDetails = ref(false)
-// one row per connection when details are shown
+// one row per connection
 const allowedRows = computed<(Allowed & { source_port?: string })[]>(() =>
   (data.value?.allowed ?? []).flatMap((a) =>
-    showDetails.value && a.source_ports?.length
-      ? a.source_ports.map((port) => ({ ...a, source_port: port }))
-      : [a]
+    a.source_ports?.length ? a.source_ports.map((port) => ({ ...a, source_port: port })) : [a]
   )
 )
 
@@ -429,15 +425,7 @@ const { currentPage: allowedPage, paginatedItems: paginatedAllowed } = useItemPa
   { itemsPerPage: allowedPageSize }
 )
 watch(
-  [
-    filter,
-    applicationFilter,
-    protocolFilter,
-    sourceFilter,
-    destinationFilter,
-    statusFilter,
-    showDetails
-  ],
+  [filter, applicationFilter, protocolFilter, sourceFilter, destinationFilter, statusFilter],
   () => {
     if (currentPage.value != 1) {
       currentPage.value = 1
@@ -765,40 +753,6 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
           </NeTable>
         </template>
       </section>
-      <!-- dns queries -->
-      <section class="space-y-4">
-        <NeHeading tag="h5">{{ t('standalone.live_trace.dns_queries') }}</NeHeading>
-        <NeEmptyState v-if="data.dns.length == 0" :title="t('standalone.live_trace.no_dns')" />
-        <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
-          <NeTableHead>
-            <NeTableHeadCell>{{ t('common.name') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('common.type') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.result') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.count') }}</NeTableHeadCell>
-          </NeTableHead>
-          <NeTableBody>
-            <NeTableRow v-for="(item, index) in data.dns" :key="index">
-              <NeTableCell :data-label="t('common.name')">
-                {{ item.name }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('common.type')">
-                {{ item.type }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.result')">
-                <span class="flex flex-wrap items-center gap-2">
-                  {{ dnsResult(item.result) }}
-                  <NeBadgeV2 v-if="item.filtered" kind="rose">
-                    {{ t('standalone.live_trace.blocked_by_dns_filter') }}
-                  </NeBadgeV2>
-                </span>
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.count')">
-                {{ item.count }}
-              </NeTableCell>
-            </NeTableRow>
-          </NeTableBody>
-        </NeTable>
-      </section>
       <!-- connections while running, allowed connections of the last session after -->
       <section v-if="data.running || data.allowed?.length" class="space-y-4">
         <NeHeading tag="h5">
@@ -851,11 +805,6 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
             <NeButton kind="tertiary" @click="resetFilters">
               {{ t('common.reset_filters') }}
             </NeButton>
-            <NeToggle
-              v-if="!data.running"
-              v-model="showDetails"
-              :label="t('standalone.live_trace.show_details')"
-            />
           </div>
           <template v-if="data.running">
             <span>{{ t('common.download') }} {{ formatRate(totalDownload) }}</span>
@@ -967,9 +916,6 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
             <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
             <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
             <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
-            <NeTableHeadCell v-if="!showDetails">
-              {{ t('standalone.live_trace.count') }}
-            </NeTableHeadCell>
           </NeTableHead>
           <NeTableBody>
             <NeTableRow v-for="(item, index) in paginatedAllowed" :key="index">
@@ -991,9 +937,6 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
                   {{ item.rule }}
                 </p>
               </NeTableCell>
-              <NeTableCell v-if="!showDetails" :data-label="t('standalone.live_trace.count')">
-                {{ item.count }}
-              </NeTableCell>
             </NeTableRow>
           </NeTableBody>
           <template #paginator>
@@ -1010,6 +953,40 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
               @select-page-size="(size: number) => (allowedPageSize = size)"
             />
           </template>
+        </NeTable>
+      </section>
+      <!-- dns queries -->
+      <section class="space-y-4">
+        <NeHeading tag="h5">{{ t('standalone.live_trace.dns_queries') }}</NeHeading>
+        <NeEmptyState v-if="data.dns.length == 0" :title="t('standalone.live_trace.no_dns')" />
+        <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
+          <NeTableHead>
+            <NeTableHeadCell>{{ t('common.name') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('common.type') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.live_trace.result') }}</NeTableHeadCell>
+            <NeTableHeadCell>{{ t('standalone.live_trace.count') }}</NeTableHeadCell>
+          </NeTableHead>
+          <NeTableBody>
+            <NeTableRow v-for="(item, index) in data.dns" :key="index">
+              <NeTableCell :data-label="t('common.name')">
+                {{ item.name }}
+              </NeTableCell>
+              <NeTableCell :data-label="t('common.type')">
+                {{ item.type }}
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.live_trace.result')">
+                <span class="flex flex-wrap items-center gap-2">
+                  {{ dnsResult(item.result) }}
+                  <NeBadgeV2 v-if="item.filtered" kind="rose">
+                    {{ t('standalone.live_trace.blocked_by_dns_filter') }}
+                  </NeBadgeV2>
+                </span>
+              </NeTableCell>
+              <NeTableCell :data-label="t('standalone.live_trace.count')">
+                {{ item.count }}
+              </NeTableCell>
+            </NeTableRow>
+          </NeTableBody>
         </NeTable>
       </section>
     </template>

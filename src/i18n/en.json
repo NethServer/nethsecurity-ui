@@ -2735,8 +2735,7 @@
       "dns_not_found": "Domain not found",
       "dns_server_failure": "Server failure",
       "dns_refused": "Refused",
-      "go_to_rules": "Go to Firewall rules",
-      "show_details": "Show details"
+      "go_to_rules": "Go to Firewall rules"
     },
     "flows": {
       "subtitle": "View real-time network connections, each row represents an active flow with live transfer rates and total traffic.",

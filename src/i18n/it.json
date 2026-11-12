@@ -3191,8 +3191,7 @@
       "dns_not_found": "Dominio non trovato",
       "dns_server_failure": "Errore del server",
       "dns_refused": "Rifiutata",
-      "go_to_rules": "Vai a Regole firewall",
-      "show_details": "Mostra dettagli"
+      "go_to_rules": "Vai a Regole firewall"
     }
   },
   "controller": {

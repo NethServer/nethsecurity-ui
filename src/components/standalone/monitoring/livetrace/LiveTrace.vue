@@ -735,11 +735,15 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
                       {{ layerLabels[item.layer] ?? item.layer }}
                     </NeBadgeV2>
                     <p v-if="item.rule" class="font-medium">
-                      <NeTooltip v-if="firewallRule(item)" trigger-event="mouseenter focus">
+                      <!-- a button opens it with Enter, focus on the inner element does not -->
+                      <NeTooltip v-if="firewallRule(item)" trigger-event="mouseenter click">
                         <template #trigger>
-                          <span class="cursor-help underline decoration-dotted" tabindex="0">{{
-                            blockedRule(item)
-                          }}</span>
+                          <button
+                            type="button"
+                            class="cursor-help text-left underline decoration-dotted"
+                          >
+                            {{ blockedRule(item) }}
+                          </button>
                         </template>
                         <template #content>
                           <dl class="space-y-1 text-left font-normal">

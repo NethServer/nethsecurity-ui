@@ -188,6 +188,11 @@ const standaloneRoutes = [
     component: () => import('../views/standalone/monitoring/RealTimeMonitoringView.vue')
   },
   {
+    path: 'monitoring/live-trace',
+    name: 'LiveTrace',
+    component: () => import('../views/standalone/monitoring/LiveTraceView.vue')
+  },
+  {
     path: 'monitoring/netify-informatics',
     name: 'NetifyInformatics',
     component: () => import('../views/standalone/monitoring/NetifyInformaticsView.vue')

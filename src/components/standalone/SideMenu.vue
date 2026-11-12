@@ -45,6 +45,10 @@ const navigation: Ref<MenuItem[]> = ref([
         to: 'monitoring/real-time-monitoring'
       },
       {
+        name: 'standalone.live_trace.title',
+        to: 'monitoring/live-trace'
+      },
+      {
         name: 'standalone.netify_informatics.title',
         to: 'monitoring/netify-informatics'
       },

@@ -2797,7 +2797,7 @@
     },
     "threat_shield_dns": {
       "title": "Threat shield DNS",
-      "blocklist_sources": "Sorgenti blocklist",
+      "blocklist_sources": "Blocklist feed",
       "filter_bypass": "Bypass filtro",
       "local_blocklist": "Blocklist locale",
       "settings": "Impostazioni",

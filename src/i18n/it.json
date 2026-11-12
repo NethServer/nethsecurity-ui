@@ -1562,6 +1562,7 @@
       "review": "Riepilogo",
       "review_description": "Controlla la regola prima di crearla. Le regole vengono valutate dall’alto verso il basso.",
       "edit_rule": "Modifica regola",
+      "empty_group": "Gruppo vuoto",
       "duplicate_rule": "Duplica regola",
       "title": "Filtro DPI",
       "status": "Stato",

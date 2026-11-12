@@ -312,6 +312,9 @@ function actionsOf(rule: DpiRule) {
                             aria-hidden="true"
                           />
                           {{ sourceObject.name }}
+                          <NeBadgeV2 v-if="sourceObject.empty" kind="amber" size="xs">
+                            {{ t('standalone.dpi.empty_group') }}
+                          </NeBadgeV2>
                         </span>
                       </div>
                       <div v-if="rule.source.length" class="flex flex-col gap-1">

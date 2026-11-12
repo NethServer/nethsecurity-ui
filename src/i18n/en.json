@@ -1847,6 +1847,7 @@
       "general_description": "Define the rule name and status",
       "name": "Name",
       "edit_rule": "Edit rule",
+      "empty_group": "Empty group",
       "duplicate_rule": "Duplicate rule",
       "source": "Source",
       "source_description": "Choose which IP addresses or networks this rule applies to.",

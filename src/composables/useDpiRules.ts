@@ -12,12 +12,14 @@ export type DpiRuleAppGroup = {
   name: string
 }
 
-// an object referenced by a rule source; type and subtype are null when the object no longer exists
+// an object referenced by a rule source; type and subtype are null when the object no longer exists,
+// empty is true when the object has no address, so the rule matches no host for it
 export type DpiRuleSourceObject = {
   id: string
   name: string
   type: string | null
   subtype: string | null
+  empty: boolean
 }
 
 // an object a rule source can reference, as returned by list-source-objects

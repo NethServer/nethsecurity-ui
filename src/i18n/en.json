@@ -2096,7 +2096,7 @@
     "threat_shield_dns": {
       "title": "Threat shield DNS",
       "page_description": " Threat shield DNS is a service that blocks access to malicious or unwanted websites by blocking DNS resolution for specified domains, effectively stopping users from reaching harmful sites.",
-      "blocklist_sources": "Blocklist sources",
+      "blocklist_sources": "Blocklist feeds",
       "filter_bypass": "Filter bypass",
       "local_blocklist": "Local blocklist",
       "settings": "Settings",

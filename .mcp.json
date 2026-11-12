@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "unovis": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@unovis/mcp"
+      ],
+      "env": {}
+    }
+  }
+}

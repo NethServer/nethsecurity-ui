@@ -2,7 +2,7 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useUnitsStore } from '@/stores/controller/units'
-import { getUiBasePath, isProxiedByController, isStandaloneBuild } from '@/lib/deployment'
+import { getUiBasePath, isStandaloneBuild } from '@/lib/deployment'
 
 export { isStandaloneBuild } from '@/lib/deployment'
 
@@ -15,18 +15,6 @@ export const getStandaloneApiEndpoint = () => {
     return getUnitManagementApiEndpoint()
   }
 
-  if (import.meta.env.DEV) {
-    // standalone development environment
-    const apiScheme = import.meta.env.VITE_API_SCHEME
-
-    if (isProxiedByController()) {
-      // `npm run dev -- --base=/<uuid>/` against a real controller
-      return `${apiScheme}://${import.meta.env.VITE_CONTROLLER_API_HOST}${getUiBasePath()}api`
-    }
-    return `${apiScheme}://${import.meta.env.VITE_STANDALONE_API_HOST}/api`
-  }
-
-  // standalone production environment
   return `${window.location.origin}${getUiBasePath()}api`
 }
 

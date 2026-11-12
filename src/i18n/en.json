@@ -679,6 +679,7 @@
       "cancel_irreversible_description": "Once cancelled, this system's token cannot be reused to register again. To subscribe this unit again you will need to create a new system on {myNethesis} and use its new token.",
       "active": "Active",
       "inactive": "Inactive",
+      "not_verified": "Not verified",
       "confirm_cancel_subscription": "If you cancel the unit subscription you will lose access to the extra features included in your plan. These may include",
       "dpi_filter": "2600+ applications for DPI filter",
       "automatic_updates": "Automatic updates",

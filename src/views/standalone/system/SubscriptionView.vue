@@ -7,66 +7,27 @@
 import { useI18n } from 'vue-i18n'
 import UnitSubscription from '@/components/standalone/subscription/UnitSubscription.vue'
 import RemoteSupport from '@/components/standalone/subscription/RemoteSupport.vue'
-import { ref } from 'vue'
-import { ubusCall } from '@/lib/standalone/ubus'
-import { onMounted } from 'vue'
 import { NeInlineNotification, NeHeading, getAxiosErrorMessage } from '@nethesis/vue-components'
-
-/** * @deprecated use SubscriptionDataType in subscription.ts */
-export type SubscriptionDataType = {
-  server_id: number | string
-  systemd_id: string
-  plan: string
-  expiration: number
-  active: boolean
-  // enterprise units (migrated to the new my): type='enterprise' and the
-  // organization name; community units keep the legacy plan name and no org.
-  type?: string
-  organization?: string
-  // enterprise: the system name given on my at creation time
-  system_name?: string
-  // enterprise: link to the system page on the my portal
-  system_url?: string
-  migrated?: boolean
-}
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const { t } = useI18n()
-const loading = ref(true)
-const pageError = ref('')
-const subscriptionData = ref<SubscriptionDataType | null>(null)
-
-/** * @deprecated use subscription.ts store */
-async function fetchSubscription() {
-  try {
-    loading.value = true
-    const res = await ubusCall('ns.subscription', 'info')
-    subscriptionData.value = res.data.systemd_id != '' ? res.data : null
-    loading.value = false
-  } catch (e: any) {
-    pageError.value = getAxiosErrorMessage(e)
-  }
-}
-
-onMounted(() => {
-  fetchSubscription()
-})
+const subscription = useSubscriptionStore()
 </script>
 
 <template>
   <div class="flex flex-col gap-y-8">
     <NeHeading tag="h3">{{ t('standalone.subscription.title') }}</NeHeading>
     <NeInlineNotification
-      v-if="pageError"
+      v-if="subscription.error"
       kind="error"
       :title="t('error.generic_error')"
-      :description="t(pageError)"
+      :description="t(getAxiosErrorMessage(subscription.error))"
     />
-    <UnitSubscription
-      :subscription-data="subscriptionData"
-      :loading="loading"
-      @subscription-update="fetchSubscription()"
-    />
+    <UnitSubscription />
     <hr />
-    <RemoteSupport :enable-remote-support="subscriptionData != null" :loading="loading" />
+    <RemoteSupport
+      :enable-remote-support="!!subscription.data?.systemd_id"
+      :loading="subscription.loading"
+    />
   </div>
 </template>

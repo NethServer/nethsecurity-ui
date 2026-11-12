@@ -13,6 +13,7 @@ import BlocklistTab from '@/components/standalone/security/threat_shield/Blockli
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
 import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
 import BannedIpsTab from '@/components/standalone/security/threat_shield/BannedIpsTab.vue'
+import BlocklistBansTab from '@/components/standalone/security/threat_shield/BlocklistBansTab.vue'
 import GeoBlockingTab from '@/components/standalone/security/threat_shield/GeoBlockingTab.vue'
 
 export type BanIpLocalAddress = {
@@ -24,8 +25,12 @@ const { t } = useI18n()
 
 const { tabs, selectedTab } = useTabs([
   {
+    name: 'blocklistBans',
+    label: t('standalone.threat_shield.blocklist_bans')
+  },
+  {
     name: 'bannedIps',
-    label: t('standalone.threat_shield.banned_ips')
+    label: t('standalone.threat_shield.brute_force_bans')
   },
   {
     name: 'blocklist',
@@ -69,6 +74,7 @@ const { tabs, selectedTab } = useTabs([
     <AllowlistFeedsTab v-if="selectedTab === 'allowlistFeeds'" />
     <AllowlistTab v-if="selectedTab === 'allowlist'" />
     <LocalBlocklistTab v-if="selectedTab === 'localBlocklist'" />
+    <BlocklistBansTab v-if="selectedTab === 'blocklistBans'" />
     <BannedIpsTab v-if="selectedTab === 'bannedIps'" />
     <SettingsTab v-if="selectedTab === 'settings'" />
     <GeoBlockingTab v-if="selectedTab === 'geoblocking'" />

@@ -1355,8 +1355,9 @@
       "flashstart_disabled_threat_shield_enabled": "Per abilitarlo, prima è necessario disabilitare Threat shield DNS",
       "custom_servers": "Server DNS personalizzati",
       "add_custom_servers": "Aggiungi server DNS personalizzato",
-      "pro": "Pro",
-      "proplus": "ProPlus",
+      "secure_essential": "Secure Essential",
+      "secure_pro": "Secure Pro",
+      "secure_plus": "Secure Plus",
       "service_type": "Tipo di servizio",
       "custom_server_helper": "Utilizzare la sintassi '/{'<'}domain{'>'}/{'<'}server{'>'}' per indirizzare solo le richieste di un dominio specifico al server inserito. Utilizzare la sintassi '/{'<'}server{'>'}#{'<'}port{'>'}` se il server upstream non ascolta su una porta standard."
     },

@@ -38,7 +38,7 @@ type ListZonesResponse = AxiosResponse<{
 type GetConfigResponse = AxiosResponse<{
   values: {
     enabled: boolean
-    proplus: boolean
+    plan: ModeTypes
     username: string
     password: string
     bypass: string[]
@@ -47,7 +47,7 @@ type GetConfigResponse = AxiosResponse<{
   }
 }>
 
-type ModeTypes = 'pro' | 'proplus'
+type ModeTypes = 'essential' | 'pro' | 'plus'
 
 type RadioSelection = Array<{
   id: ModeTypes
@@ -61,12 +61,16 @@ const status = ref(false)
 const mode = ref<ModeTypes>('pro')
 const radioOptions: RadioSelection = [
   {
-    label: t('standalone.flashstart.pro'),
+    label: t('standalone.flashstart.secure_essential'),
+    id: 'essential'
+  },
+  {
+    label: t('standalone.flashstart.secure_pro'),
     id: 'pro'
   },
   {
-    label: t('standalone.flashstart.proplus') + ' (BETA)',
-    id: 'proplus'
+    label: t('standalone.flashstart.secure_plus'),
+    id: 'plus'
   }
 ]
 const username = ref('')
@@ -93,11 +97,7 @@ function fetchConfig() {
     }),
     ubusCall('ns.flashstart', 'get-config').then((response: GetConfigResponse) => {
       status.value = response.data.values.enabled
-      if (response.data.values.proplus) {
-        mode.value = 'proplus'
-      } else {
-        mode.value = 'pro'
-      }
+      mode.value = response.data.values.plan
       username.value = response.data.values.username
       password.value = response.data.values.password
       zones.value = response.data.values.zones.map((item) => {
@@ -142,7 +142,7 @@ function save() {
   saving.value = true
   ubusCall('ns.flashstart', 'set-config', {
     enabled: status.value,
-    proplus: mode.value == 'proplus',
+    plan: mode.value,
     username: username.value,
     password: password.value,
     zones: zones.value.map((zone: NeComboboxOption) => zone.label),

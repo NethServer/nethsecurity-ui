@@ -87,14 +87,8 @@ describe('ruleSourceLabels', () => {
         ...rule,
         source: ['192.168.1.1'],
         source_objects: [
-          {
-            id: 'objects/ns_1',
-            name: 'office',
-            type: 'host_set',
-            subtype: 'host_set',
-            empty: false
-          },
-          { id: 'users/ns_2', name: 'john', type: 'vpn_user', subtype: 'vpn_user', empty: true }
+          { id: 'objects/ns_1', name: 'office', type: 'host_set', subtype: 'host_set' },
+          { id: 'users/ns_2', name: 'john', type: 'vpn_user', subtype: 'vpn_user' }
         ]
       })
     ).toEqual(['office', 'john', '192.168.1.1'])

@@ -14,13 +14,14 @@ import {
   getAxiosErrorMessage,
   NeBadgeV2,
   NeButton,
-  NeCombobox,
   NeDropdownFilterV2,
   NeEmptyState,
   NeHeading,
   NeInlineNotification,
   NeLink,
+  NeListbox,
   NePaginator,
+  NeSideDrawer,
   NeSkeleton,
   NeTable,
   NeTableBody,
@@ -29,12 +30,12 @@ import {
   NeTableHeadCell,
   NeTableRow,
   NeTextInput,
-  NeTooltip,
   useItemPagination,
   type NeDropdownFilterV2Option,
-  type NeComboboxOption
+  type NeListboxOption
 } from '@nethesis/vue-components'
-import { faBan, faShieldHalved, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faBan, faMagnifyingGlass, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faEmptySet } from '@nethesis/nethesis-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateIpAddress, validatePort } from '@/lib/validation'
@@ -121,12 +122,12 @@ type ConnectionRow = Connection & { download: number; upload: number }
 const { t } = useI18n()
 const queryClient = useQueryClient()
 
-const durationOptions: NeComboboxOption[] = [1, 2, 5, 10].map((minutes) => ({
+const durationOptions: NeListboxOption[] = [1, 2, 5, 10].map((minutes) => ({
   id: String(minutes * 60),
   label: t('standalone.live_trace.minutes', { n: minutes }, minutes)
 }))
 
-const protocolOptions: NeComboboxOption[] = [
+const protocolOptions: NeListboxOption[] = [
   { id: 'any', label: t('common.any') },
   { id: 'tcp', label: 'TCP' },
   { id: 'udp', label: 'UDP' }
@@ -199,13 +200,16 @@ const stop = useMutation({
 const formSchema = v.object({
   ip: v.pipe(
     v.string(),
-    v.check((value) => validateIpAddress(value.trim()).valid, 'error.invalid_ip_address')
+    v.check(
+      (value) => validateIpAddress(value.trim()).valid,
+      'standalone.live_trace.invalid_ip_address'
+    )
   ),
   port: v.pipe(
     v.string(),
     v.check(
       (value) => value.trim() == '' || (/^\d+$/.test(value.trim()) && validatePort(value).valid),
-      'error.invalid_port'
+      'standalone.live_trace.invalid_port'
     )
   )
 })
@@ -271,11 +275,9 @@ const traceTarget = computed(() => {
 // allowed traffic that left through the WAN on the default route, not blocked
 const isRouteWarning = (item: Blocked) => item.layer == 'routing' && item.rule == 'private_to_wan'
 
-// each blocked row aggregates several attempts
-const blockedAttempts = computed(() =>
-  (data.value?.blocked ?? [])
-    .filter((item) => !isRouteWarning(item))
-    .reduce((sum, item) => sum + item.count, 0)
+// each blocked row is a connection, its count is the number of attempts
+const blockedConnections = computed(
+  () => (data.value?.blocked ?? []).filter((item) => !isRouteWarning(item)).length
 )
 
 const remaining = computed(() => {
@@ -326,10 +328,21 @@ const connectionStatus = (c: Connection) =>
     : c.unreplied
       ? 'unreplied'
       : c.state || ''
+// conntrack states, unknown ones are shown as they are
 const statusLabels: Record<string, string> = {
   'netify-blocked': t('standalone.live_trace.blocked_by_dpi'),
-  unreplied: t('standalone.live_trace.no_reply')
+  unreplied: t('standalone.live_trace.no_reply'),
+  SYN_SENT: t('standalone.live_trace.state_syn_sent'),
+  SYN_SENT2: t('standalone.live_trace.state_syn_sent'),
+  SYN_RECV: t('standalone.live_trace.state_syn_recv'),
+  ESTABLISHED: t('standalone.live_trace.state_established'),
+  FIN_WAIT: t('standalone.live_trace.state_fin_wait'),
+  CLOSE_WAIT: t('standalone.live_trace.state_close_wait'),
+  LAST_ACK: t('standalone.live_trace.state_last_ack'),
+  TIME_WAIT: t('standalone.live_trace.state_time_wait'),
+  CLOSE: t('standalone.live_trace.state_close')
 }
+const statusLabel = (value: string) => statusLabels[value] ?? value
 
 // options from the current connections, plus selected values no longer present
 const filterOptions = (
@@ -372,11 +385,7 @@ const destinationIps = computed(() =>
   )
 )
 const statuses = computed(() =>
-  filterOptions(
-    connections.value.map(connectionStatus),
-    statusFilter.value,
-    (value) => statusLabels[value] ?? value
-  )
+  filterOptions(connections.value.map(connectionStatus), statusFilter.value, statusLabel)
 )
 
 const dropdownProps = {
@@ -563,12 +572,20 @@ const ruleService = (rule: FirewallRule) => {
 }
 
 const ruleDetails = (rule: FirewallRule): [string, string][] => [
+  ['common.name', rule.name],
   ['standalone.firewall_rules.action', rule.target],
   ['standalone.live_trace.source', ruleEndpoint(rule.src, rule.src_ip)],
   ['standalone.live_trace.destination', ruleEndpoint(rule.dest, rule.dest_ip)],
   ['standalone.firewall_rules.service', ruleService(rule)],
   ['common.status', t(rule.enabled ? 'common.enabled' : 'common.disabled')]
 ]
+
+const ruleDrawerShown = ref(false)
+const selectedRule = ref<FirewallRule>()
+function showRule(rule: FirewallRule) {
+  selectedRule.value = rule
+  ruleDrawerShown.value = true
+}
 </script>
 
 <template>
@@ -594,8 +611,10 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
     <NeInlineNotification
       v-else-if="data?.running"
       kind="info"
-      :title="t('standalone.live_trace.running', { ip: traceTarget })"
-      :description="t('standalone.live_trace.remaining', { time: remaining })"
+      :title="t('standalone.live_trace.running')"
+      :description="
+        t('standalone.live_trace.running_description', { ip: traceTarget, time: remaining })
+      "
       :primary-button-label="t('standalone.live_trace.stop')"
       @primary-click="stop.mutate()"
     />
@@ -616,42 +635,26 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
         :disabled="start.isPending.value"
         optional
         :optional-label="t('common.optional')"
-      >
-        <template #tooltip>
-          <NeTooltip>
-            <template #content>
-              {{ t('standalone.live_trace.filter_helper') }}
-            </template>
-          </NeTooltip>
-        </template>
-      </NeTextInput>
-      <NeCombobox
+      />
+      <NeListbox
         v-model="protocol"
-        class="max-w-40"
+        class="w-40"
         :label="t('standalone.live_trace.protocol')"
         :options="protocolOptions"
         :invalid-message="t(validationBag.getFirstI18nKeyFor('protocol'))"
         :disabled="start.isPending.value"
-        :no-results-label="t('ne_combobox.no_results')"
-        :limited-options-label="t('ne_combobox.limited_options_label')"
-        :no-options-label="t('ne_combobox.no_options_label')"
-        :selected-label="t('ne_combobox.selected')"
-        :user-input-label="t('ne_combobox.user_input_label')"
+        :no-options-label="t('ne_dropdown_filter.no_options')"
         optional
         :optional-label="t('common.optional')"
       />
-      <NeCombobox
+      <NeListbox
         v-model="duration"
-        class="max-w-xs"
+        class="w-40"
         :label="t('standalone.live_trace.duration')"
         :options="durationOptions"
         :invalid-message="t(validationBag.getFirstI18nKeyFor('duration'))"
         :disabled="start.isPending.value"
-        :no-results-label="t('ne_combobox.no_results')"
-        :limited-options-label="t('ne_combobox.limited_options_label')"
-        :no-options-label="t('ne_combobox.no_options_label')"
-        :selected-label="t('ne_combobox.selected')"
-        :user-input-label="t('ne_combobox.user_input_label')"
+        :no-options-label="t('ne_dropdown_filter.no_options')"
         :optional-label="t('common.optional')"
       />
       <NeButton
@@ -663,11 +666,17 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
       >
         {{ t('standalone.live_trace.start') }}
       </NeButton>
+      <p class="w-full text-sm text-tertiary-neutral">
+        {{ t('standalone.live_trace.filter_helper') }}
+      </p>
     </form>
     <NeEmptyState
       v-if="data && !data.running && data.ip && !data.failure && !hasResults"
-      :title="t('standalone.live_trace.no_traffic_last_session', { ip: traceTarget })"
-      :icon="faShieldHalved"
+      :title="t('standalone.live_trace.no_traffic_last_session')"
+      :description="
+        t('standalone.live_trace.no_traffic_last_session_description', { ip: traceTarget })
+      "
+      :icon="faEmptySet"
     />
     <template v-else-if="data && hasResults">
       <p v-if="!data.running" class="text-sm text-tertiary-neutral">
@@ -692,13 +701,13 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
           :description="
             data.running ? t('standalone.live_trace.no_blocked_traffic_description') : ''
           "
-          :icon="faShieldHalved"
+          :icon="faEmptySet"
         />
         <template v-else>
           <NeInlineNotification
-            v-if="blockedAttempts > 0"
-            kind="error"
-            :title="t('standalone.live_trace.blocked_detected', { n: blockedAttempts })"
+            v-if="blockedConnections > 0"
+            kind="warning"
+            :title="t('standalone.live_trace.blocked_detected', { n: blockedConnections })"
           />
           <NeTable :aria-label="t('standalone.live_trace.blocked_traffic')" card-breakpoint="xl">
             <NeTableHead>
@@ -735,42 +744,14 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
                       {{ layerLabels[item.layer] ?? item.layer }}
                     </NeBadgeV2>
                     <p v-if="item.rule" class="font-medium">
-                      <!-- a button opens it with Enter, focus on the inner element does not -->
-                      <NeTooltip v-if="firewallRule(item)" trigger-event="mouseenter click">
-                        <template #trigger>
-                          <button
-                            type="button"
-                            class="cursor-help text-left underline decoration-dotted"
-                          >
-                            {{ blockedRule(item) }}
-                          </button>
-                        </template>
-                        <template #content>
-                          <dl class="space-y-1 text-left font-normal">
-                            <div
-                              v-for="[label, value] in ruleDetails(firewallRule(item)!)"
-                              :key="label"
-                            >
-                              <dt class="mr-1 inline font-medium">{{ t(label) }}</dt>
-                              <dd class="inline">{{ value }}</dd>
-                            </div>
-                          </dl>
-                          <RouterLink
-                            v-slot="{ href, navigate }"
-                            :to="`${getStandaloneRoutePrefix($route)}/firewall/rules`"
-                            custom
-                          >
-                            <NeLink
-                              class="mt-2 inline-block"
-                              inverted-theme
-                              :href="href"
-                              @click="navigate"
-                            >
-                              {{ t('standalone.live_trace.go_to_rules') }}
-                            </NeLink>
-                          </RouterLink>
-                        </template>
-                      </NeTooltip>
+                      <NeButton
+                        v-if="firewallRule(item)"
+                        kind="tertiary"
+                        size="sm"
+                        @click="showRule(firewallRule(item)!)"
+                      >
+                        {{ blockedRule(item) }}
+                      </NeButton>
                       <template v-else>{{ blockedRule(item) }}</template>
                     </p>
                     <p
@@ -810,6 +791,7 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
             <NeTextInput
               v-model="filter"
               :placeholder="t('standalone.live_trace.filter_connections')"
+              :aria-label="t('standalone.live_trace.filter_connections')"
               :clear-search-label="t('ne_dropdown_filter.clear_search')"
               is-search
             />
@@ -819,24 +801,28 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
               v-bind="dropdownProps"
               :label="t('standalone.live_trace.application')"
               :options="applications"
+              :options-filter-placeholder="t('standalone.live_trace.filter_applications')"
             />
             <NeDropdownFilterV2
               v-model="protocolFilter"
               v-bind="dropdownProps"
               :label="t('standalone.live_trace.protocol')"
               :options="protocols"
+              :options-filter-placeholder="t('standalone.live_trace.filter_protocols')"
             />
             <NeDropdownFilterV2
               v-model="sourceFilter"
               v-bind="dropdownProps"
               :label="t('standalone.live_trace.source')"
               :options="sourceIps"
+              :options-filter-placeholder="t('standalone.live_trace.filter_sources')"
             />
             <NeDropdownFilterV2
               v-model="destinationFilter"
               v-bind="dropdownProps"
               :label="t('standalone.live_trace.destination')"
               :options="destinationIps"
+              :options-filter-placeholder="t('standalone.live_trace.filter_destinations')"
             />
             <NeDropdownFilterV2
               v-if="data.running"
@@ -844,6 +830,7 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
               v-bind="dropdownProps"
               :label="t('common.status')"
               :options="statuses"
+              :options-filter-placeholder="t('standalone.live_trace.filter_statuses')"
             />
             <NeButton kind="tertiary" @click="resetFilters">
               {{ t('common.reset_filters') }}
@@ -862,8 +849,9 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
               : t('standalone.live_trace.no_connections')
           "
           :description="filterRows.length ? t('common.try_changing_search_filters') : ''"
+          :icon="filterRows.length ? faMagnifyingGlass : faEmptySet"
         >
-          <NeButton v-if="filterRows.length" kind="tertiary" @click="resetFilters">
+          <NeButton v-if="filterRows.length" kind="tertiary" size="lg" @click="resetFilters">
             {{ t('common.reset_filters') }}
           </NeButton>
         </NeEmptyState>
@@ -930,7 +918,10 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
                 <NeBadgeV2 v-else-if="item.unreplied" kind="amber">
                   {{ t('standalone.live_trace.no_reply') }}
                 </NeBadgeV2>
-                <template v-else>{{ item.state || '-' }}</template>
+                <NeBadgeV2 v-else-if="item.state" kind="gray">
+                  {{ statusLabel(item.state) }}
+                </NeBadgeV2>
+                <template v-else>-</template>
               </NeTableCell>
             </NeTableRow>
           </NeTableBody>
@@ -1008,6 +999,7 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
               ? t('standalone.live_trace.no_dns')
               : t('standalone.live_trace.no_dns_last_session')
           "
+          :icon="faEmptySet"
         />
         <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
           <NeTableHead>
@@ -1040,5 +1032,29 @@ const ruleDetails = (rule: FirewallRule): [string, string][] => [
         </NeTable>
       </section>
     </template>
+    <NeSideDrawer
+      :is-shown="ruleDrawerShown"
+      :title="t('standalone.live_trace.rule_details')"
+      :close-aria-label="t('common.shell.close_side_drawer')"
+      @close="ruleDrawerShown = false"
+    >
+      <div v-if="selectedRule" class="space-y-6">
+        <dl class="space-y-4">
+          <div v-for="[label, value] in ruleDetails(selectedRule)" :key="label">
+            <dt class="font-medium">{{ t(label) }}</dt>
+            <dd>{{ value }}</dd>
+          </div>
+        </dl>
+        <RouterLink
+          v-slot="{ href, navigate }"
+          :to="`${getStandaloneRoutePrefix($route)}/firewall/rules`"
+          custom
+        >
+          <NeLink :href="href" @click="navigate">
+            {{ t('standalone.live_trace.go_to_rules') }}
+          </NeLink>
+        </RouterLink>
+      </div>
+    </NeSideDrawer>
   </div>
 </template>

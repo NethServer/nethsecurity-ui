@@ -1792,7 +1792,7 @@
       "automatic_updates_enabled_message": "Aggiornamenti automatici abilitati con successo",
       "automatic_updates_disabled_message": "Aggiornamenti automatici disattivati con successo",
       "schedule_update": "Pianifica aggiornamento",
-      "no_updates_available": "Nessun aggiornamento disponibilw",
+      "no_updates_available": "Nessun aggiornamento disponibile",
       "new_release_available": "Nuova versione disponibile",
       "connection_error": "Errore di connessione",
       "connection_error_description": "Impossibile connettersi al server di aggiornamento. Controlla la connessione internet e riprova.",

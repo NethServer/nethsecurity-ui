@@ -78,6 +78,7 @@ const tunMtu = ref('')
 const tunMtuRef = ref()
 const mssfix = ref('')
 const mssfixRef = ref()
+const dco = ref(true)
 const routeTrafficThroughVpn = ref(false)
 const pushCustomNetworkRoutes = ref<string[]>([])
 const clientToClientNetworkTraffic = ref(false)
@@ -253,6 +254,7 @@ function resetForm() {
   port.value = serverData?.port ?? ''
   tunMtu.value = serverData?.tun_mtu ?? ''
   mssfix.value = serverData?.mssfix ?? ''
+  dco.value = serverData?.disable_dco !== '1'
   pushCustomNetworkRoutes.value = serverData?.ns_local ?? []
   compression.value = serverData?.compress ?? 'disabled'
   cipher.value = serverData?.cipher ?? 'auto'
@@ -445,7 +447,8 @@ async function createOrEditServer() {
           value: option.value
         })),
       tun_mtu: tunMtu.value,
-      mssfix: mssfix.value
+      mssfix: mssfix.value,
+      disable_dco: dco.value ? '0' : '1'
     })
   } catch (err: any) {
     if (err instanceof ValidationError) {
@@ -687,6 +690,15 @@ watch(
           :label="t('standalone.openvpn_rw.mssfix')"
           :invalid-message="t(validationErrorBag.getFirstFor('mssfix'))"
         />
+        <div>
+          <NeFormItemLabel
+            >{{ t('standalone.openvpn_rw.dco') }}
+            <NeTooltip
+              ><template #content>{{ t('standalone.openvpn_rw.dco_tooltip') }}</template></NeTooltip
+            ></NeFormItemLabel
+          >
+          <NeToggle v-model="dco" :label="dco ? t('common.enabled') : t('common.disabled')" />
+        </div>
         <div>
           <NeFormItemLabel>{{
             t('standalone.openvpn_rw.route_all_client_traffic_through_vpn')

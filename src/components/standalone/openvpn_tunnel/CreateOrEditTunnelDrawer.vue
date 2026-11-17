@@ -65,6 +65,7 @@ type SharedTunnelPayload = {
   auth?: string
   tun_mtu: string
   mssfix: string
+  disable_dco: string
 }
 
 type ClientTunnelPayload = {
@@ -124,6 +125,7 @@ const digest = ref('SHA256')
 const cipher = ref('AES-256-GCM')
 const tunMtu = ref('')
 const mssfix = ref('')
+const dco = ref(true)
 
 // Server tunnel form fields
 const publicEndpoints = ref<string[]>([''])
@@ -290,6 +292,7 @@ async function resetForm() {
     port.value = tunnelData.port
     tunMtu.value = tunnelData.tun_mtu
     mssfix.value = tunnelData.mssfix
+    dco.value = tunnelData.disable_dco !== '1'
     protocol.value = tunnelData.proto
     localP2pIp.value = tunnelData.ifconfig_local ?? ''
     remoteP2pIp.value = tunnelData.ifconfig_remote ?? ''
@@ -331,6 +334,7 @@ async function resetForm() {
     compression.value = 'disabled'
     digest.value = 'SHA256'
     cipher.value = 'AES-256-GCM'
+    dco.value = true
 
     if (!props.isClientTunnel) {
       minimumTLSVersion.value = 'auto'
@@ -537,6 +541,7 @@ async function createOrEditTunnel() {
         port: port.value,
         tun_mtu: tunMtu.value,
         mssfix: mssfix.value,
+        disable_dco: dco.value ? '0' : '1',
         proto: protocol.value,
         compress: compression.value === 'disabled' ? '' : compression.value,
         enabled: enabled.value ? '1' : '0',
@@ -898,6 +903,17 @@ watch(
           :label="t('standalone.openvpn_tunnel.mssfix')"
           :invalid-message="t(validationErrorBag.getFirstFor('mssfix'))"
         />
+        <div>
+          <NeFormItemLabel
+            >{{ t('standalone.openvpn_tunnel.dco') }}
+            <NeTooltip
+              ><template #content>{{
+                t('standalone.openvpn_tunnel.dco_tooltip')
+              }}</template></NeTooltip
+            ></NeFormItemLabel
+          >
+          <NeToggle v-model="dco" :label="dco ? t('common.enabled') : t('common.disabled')" />
+        </div>
         <NeCombobox
           v-model="compression"
           :label="t('standalone.openvpn_tunnel.compression')"

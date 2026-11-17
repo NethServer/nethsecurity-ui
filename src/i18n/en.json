@@ -2320,7 +2320,7 @@
       "ca": "CA",
       "tun_mtu": "MTU",
       "mssfix": "MSSFix",
-      "dco": "Data channel offload (DCO)",
+      "dco": "Data Channel Offload (DCO)",
       "dco_tooltip": "Processes VPN traffic in the kernel for higher throughput. Disable it only to troubleshoot connection issues"
     },
     "openvpn_tunnel": {
@@ -2421,7 +2421,7 @@
       "remote_host": "Remote hosts",
       "tun_mtu": "MTU",
       "mssfix": "MSSFix",
-      "dco": "Data channel offload (DCO)",
+      "dco": "Data Channel Offload (DCO)",
       "dco_tooltip": "Processes VPN traffic in the kernel for higher throughput. Disable it only to troubleshoot connection issues"
     },
     "ipsec_tunnel": {

@@ -903,17 +903,17 @@ watch(
           :label="t('standalone.openvpn_tunnel.mssfix')"
           :invalid-message="t(validationErrorBag.getFirstFor('mssfix'))"
         />
-        <div>
-          <NeFormItemLabel
-            >{{ t('standalone.openvpn_tunnel.dco') }}
-            <NeTooltip
-              ><template #content>{{
-                t('standalone.openvpn_tunnel.dco_tooltip')
-              }}</template></NeTooltip
-            ></NeFormItemLabel
-          >
-          <NeToggle v-model="dco" :label="dco ? t('common.enabled') : t('common.disabled')" />
-        </div>
+        <NeToggle
+          v-model="dco"
+          :top-label="t('standalone.openvpn_tunnel.dco')"
+          :label="dco ? t('common.enabled') : t('common.disabled')"
+        >
+          <template #topTooltip>
+            <NeTooltip>
+              <template #content>{{ t('standalone.openvpn_tunnel.dco_tooltip') }}</template>
+            </NeTooltip>
+          </template>
+        </NeToggle>
         <NeCombobox
           v-model="compression"
           :label="t('standalone.openvpn_tunnel.compression')"

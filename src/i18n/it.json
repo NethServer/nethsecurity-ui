@@ -1696,7 +1696,7 @@
       "remote_host": "Host remoti",
       "tun_mtu": "MTU",
       "mssfix": "MSSFix",
-      "dco": "Data channel offload (DCO)",
+      "dco": "Data Channel Offload (DCO)",
       "dco_tooltip": "Elabora il traffico VPN nel kernel per prestazioni più elevate. Disabilitalo solo per risolvere problemi di connessione"
     },
     "ipsec_tunnel": {
@@ -2093,7 +2093,7 @@
       "ca": "CA",
       "tun_mtu": "MTU",
       "mssfix": "MSSFix",
-      "dco": "Data channel offload (DCO)",
+      "dco": "Data Channel Offload (DCO)",
       "dco_tooltip": "Elabora il traffico VPN nel kernel per prestazioni più elevate. Disabilitalo solo per risolvere problemi di connessione"
     },
     "qos": {

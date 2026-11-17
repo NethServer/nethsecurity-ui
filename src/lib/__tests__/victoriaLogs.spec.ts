@@ -2,9 +2,18 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { describe, it, expect } from 'vitest'
-import { NO_LEVEL, buildLogsQuery, timeTicks, type LogFilters } from '@/lib/standalone/victoriaLogs'
+import {
+  NO_LEVEL,
+  bootTimes,
+  buildLogsQuery,
+  findRegExp,
+  sortNewestFirst,
+  timeTicks,
+  withFind,
+  type LogFilters
+} from '@/lib/standalone/victoriaLogs'
 
-const empty: LogFilters = { search: '', services: [], hiddenLevels: [] }
+const empty: LogFilters = { search: '', logsql: false, services: [], hiddenLevels: [] }
 
 describe('timeTicks', () => {
   const HOUR = 3600_000
@@ -81,5 +90,70 @@ describe('buildLogsQuery', () => {
     expect(buildLogsQuery({ ...empty, services: ['openvpn(ns_roadwarrior1)', 'dropbear'] })).toBe(
       'app_name:in("openvpn(ns_roadwarrior1)","dropbear")'
     )
+  })
+
+  it('excludes words and phrases with a leading dash', () => {
+    expect(buildLogsQuery({ ...empty, search: 'error -dnsmasq -"query[A]"' })).toBe(
+      'i("error"*) -i("dnsmasq"*) -i("query[A]")'
+    )
+    expect(buildLogsQuery({ ...empty, search: '-' })).toBe('i("-"*)')
+  })
+
+  it('matches /regex/ case-insensitively, also excluded', () => {
+    expect(buildLogsQuery({ ...empty, search: '/oom|segfault/ -/^DHCP\\/v6/' })).toBe(
+      '~"(?i)oom|segfault" -~"(?i)^DHCP\\\\/v6"'
+    )
+  })
+
+  it('reads a path as a word, not a regex', () => {
+    expect(buildLogsQuery({ ...empty, search: '/etc/config/network' })).toBe(
+      'i("/etc/config/network"*)'
+    )
+  })
+
+  it('sends LogsQL as is, grouped before the other filters', () => {
+    expect(
+      buildLogsQuery({ ...empty, logsql: true, search: 'a or b', services: ['dropbear'] })
+    ).toBe('(a or b) app_name:in("dropbear")')
+    expect(buildLogsQuery({ ...empty, logsql: true, search: '  ' })).toBe('*')
+  })
+})
+
+describe('find', () => {
+  it('adds the find text as a prefix filter', () => {
+    expect(withFind('*', 'oom')).toBe('i("oom"*)')
+    expect(withFind('app_name:in("kernel")', 'out of "mem')).toBe(
+      'app_name:in("kernel") i("out of \\"mem"*)'
+    )
+  })
+
+  it('matches at the start of a word, in any case', () => {
+    const re = findRegExp('oom')
+    expect(re.test('Out of memory: OOM killer')).toBe(true)
+    expect(re.test('oom-kill:constraint')).toBe(true)
+    expect(re.test('zoom in')).toBe(false)
+    expect(findRegExp('a.b').test('axb')).toBe(false)
+  })
+})
+
+describe('sortNewestFirst', () => {
+  it('orders by the full timestamp, trimmed zeros included', () => {
+    const lines = ['13:55:50.0015Z', '13:55:50.001548Z', '13:55:51Z', '13:55:50.1Z'].map(
+      (time) => ({ _time: `2026-11-16T${time}`, _msg: '', _stream_id: '' })
+    )
+    expect(sortNewestFirst(lines).map((l) => l._time.slice(11))).toEqual([
+      '13:55:51Z',
+      '13:55:50.1Z',
+      '13:55:50.001548Z',
+      '13:55:50.0015Z'
+    ])
+  })
+})
+
+describe('bootTimes', () => {
+  it('keeps one time per boot', () => {
+    expect(bootTimes([1793009416, 1793009415, 1792748769, 1793009415])).toEqual([
+      1792748769_000, 1793009415_000
+    ])
   })
 })

@@ -2,7 +2,6 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useQuery } from '@tanstack/vue-query'
-import type { MaybeRefOrGetter } from 'vue'
 import { ubusCall } from '@/lib/standalone/ubus'
 
 export type DpiRuleAction = 'block' | 'allow'
@@ -18,14 +17,6 @@ export type DpiRuleSourceObject = {
   name: string
   type: string | null
   subtype: string | null
-}
-
-// an object a rule source can reference, as returned by list-source-objects
-export type DpiSourceObject = {
-  id: string
-  name: string
-  type: string
-  subtype: string
 }
 
 export type DpiRule = {
@@ -63,10 +54,6 @@ export type ListRulesResponse = { data: { values: DpiRulesPage | DpiRule[] } }
 
 export const DPI_RULES_KEY = ['dpi', 'rules']
 
-export const DPI_SOURCE_OBJECTS_KEY = ['dpi', 'source-objects']
-
-type ListSourceObjectsResponse = { data: { values: DpiSourceObject[] } }
-
 export function useDpiRules() {
   return useQuery({
     queryKey: [...DPI_RULES_KEY, 'all'],
@@ -75,16 +62,6 @@ export function useDpiRules() {
       const values = res.data.values
       return Array.isArray(values) ? values : values.data
     }
-  })
-}
-
-export function useDpiSourceObjects(enabled: MaybeRefOrGetter<boolean> = true) {
-  return useQuery({
-    queryKey: DPI_SOURCE_OBJECTS_KEY,
-    queryFn: ({ signal }) =>
-      ubusCall<ListSourceObjectsResponse>('ns.dpi', 'list-source-objects', {}, { signal }),
-    select: (res) => res.data.values,
-    enabled
   })
 }
 

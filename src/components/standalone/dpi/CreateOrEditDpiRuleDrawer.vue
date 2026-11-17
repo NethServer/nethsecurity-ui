@@ -35,13 +35,12 @@ import {
   type DpiRule,
   type DpiRuleAction,
   type DpiRulePayload,
-  type DpiRulePosition,
-  useDpiSourceObjects
+  type DpiRulePosition
 } from '@/composables/useDpiRules'
 import { useObjectStore } from '@/stores/standalone/objects'
 import { useApplicationGroups } from '@/composables/useApplicationGroups'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
   MessageBag,
@@ -84,6 +83,16 @@ const emit = defineEmits<{
 
 type RuleIdResponse = { data: { id: string } }
 
+// an object a rule source can reference, as returned by list-source-objects
+type DpiSourceObject = {
+  id: string
+  name: string
+  type: string
+  subtype: string
+}
+
+type ListSourceObjectsResponse = { data: { values: DpiSourceObject[] } }
+
 const { t } = useI18n()
 
 const step = ref(1)
@@ -115,9 +124,13 @@ const rulePosition = ref<DpiRulePosition>('bottom')
 
 const { data: applicationGroups, isLoading: isLoadingApplicationGroups } = useApplicationGroups()
 // objects change outside this page: fetched again every time the drawer opens
-const { data: sourceObjects, isFetching: isLoadingSourceObjects } = useDpiSourceObjects(
-  () => isShown
-)
+const { data: sourceObjects, isFetching: isLoadingSourceObjects } = useQuery({
+  queryKey: ['dpi', 'source-objects'],
+  queryFn: ({ signal }) =>
+    ubusCall<ListSourceObjectsResponse>('ns.dpi', 'list-source-objects', {}, { signal }),
+  select: (res) => res.data.values,
+  enabled: () => isShown
+})
 const { getObjectIcon } = useObjectStore()
 const queryClient = useQueryClient()
 const uci = useUciPendingChangesStore()

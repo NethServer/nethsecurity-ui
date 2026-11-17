@@ -14,15 +14,15 @@ import {
   getAxiosErrorMessage,
   NeBadgeV2,
   NeButton,
+  NeCard,
   NeDropdownFilterV2,
   NeEmptyState,
   NeHeading,
   NeInlineNotification,
-  NeLink,
   NeListbox,
   NePaginator,
   NeSideDrawer,
-  NeSkeleton,
+  NeSpinner,
   NeTable,
   NeTableBody,
   NeTableCell,
@@ -40,7 +40,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import { MessageBag, validateIpAddress, validatePort } from '@/lib/validation'
 import { formatRate } from '@/composables/useFlows'
-import { getStandaloneRoutePrefix } from '@/lib/router'
 import type { FirewallRule, RuleHost } from '@/stores/standalone/firewall'
 
 type Blocked = {
@@ -165,6 +164,20 @@ const { data, error, isPending } = useQuery({
   refetchInterval: (query) => (query.state.data?.data.running ? 2000 : false)
 })
 
+// show the traced values while running and on the first load
+watch(
+  data,
+  (status, old) => {
+    if (status?.ip && (status.running || !old)) {
+      ip.value = status.ip
+      port.value = status.port ? String(status.port) : ''
+      protocol.value = status.protocol || 'any'
+      duration.value = String(status.duration)
+    }
+  },
+  { immediate: true }
+)
+
 const refreshStatus = () => queryClient.invalidateQueries({ queryKey: STATUS_KEY })
 
 const start = useMutation({
@@ -233,6 +246,8 @@ function startTrace() {
     start.mutate()
   }
 }
+
+const formDisabled = computed(() => start.isPending.value || !!data.value?.running)
 
 // drop stale errors once the value changes
 watch(ip, () => validationBag.value.delete('ip'))
@@ -607,289 +622,378 @@ function showRule(rule: FirewallRule) {
     >
       <template #details>{{ data.failure }}</template>
     </NeInlineNotification>
-    <NeSkeleton v-if="isPending" :lines="5" />
-    <NeInlineNotification
-      v-else-if="data?.running"
-      kind="info"
-      :title="t('standalone.live_trace.running')"
-      :description="
-        t('standalone.live_trace.running_description', { ip: traceTarget, time: remaining })
-      "
-      :primary-button-label="t('standalone.live_trace.stop')"
-      @primary-click="stop.mutate()"
-    />
-    <form v-else class="flex flex-wrap items-start gap-4" @submit.prevent="startTrace">
-      <NeTextInput
-        v-model="ip"
-        class="max-w-xs"
-        :label="t('standalone.live_trace.client_ip')"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('ip'))"
-        :disabled="start.isPending.value"
-      />
-      <NeTextInput
-        v-model="port"
-        class="max-w-40"
-        type="number"
-        :label="t('common.port')"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('port'))"
-        :disabled="start.isPending.value"
-        optional
-        :optional-label="t('common.optional')"
-      />
-      <NeListbox
-        v-model="protocol"
-        class="w-40"
-        :label="t('standalone.live_trace.protocol')"
-        :options="protocolOptions"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('protocol'))"
-        :disabled="start.isPending.value"
-        :no-options-label="t('ne_dropdown_filter.no_options')"
-        optional
-        :optional-label="t('common.optional')"
-      />
-      <NeListbox
-        v-model="duration"
-        class="w-40"
-        :label="t('standalone.live_trace.duration')"
-        :options="durationOptions"
-        :invalid-message="t(validationBag.getFirstI18nKeyFor('duration'))"
-        :disabled="start.isPending.value"
-        :no-options-label="t('ne_dropdown_filter.no_options')"
-        :optional-label="t('common.optional')"
-      />
-      <NeButton
-        class="sm:mt-8"
-        kind="primary"
-        type="submit"
-        :disabled="start.isPending.value || !ip"
-        :loading="start.isPending.value"
-      >
-        {{ t('standalone.live_trace.start') }}
-      </NeButton>
-      <p class="w-full text-sm text-tertiary-neutral">
-        {{ t('standalone.live_trace.filter_helper') }}
-      </p>
-    </form>
-    <NeEmptyState
-      v-if="data && !data.running && data.ip && !data.failure && !hasResults"
-      :title="t('standalone.live_trace.no_traffic_last_session')"
-      :description="
-        t('standalone.live_trace.no_traffic_last_session_description', { ip: traceTarget })
-      "
-      :icon="faEmptySet"
-    />
-    <template v-else-if="data && hasResults">
-      <p v-if="!data.running" class="text-sm text-tertiary-neutral">
-        {{ t('standalone.live_trace.last_session_results', { ip: traceTarget }) }}
-      </p>
-      <NeInlineNotification
-        v-if="data.truncated"
-        kind="warning"
-        :title="t('standalone.live_trace.truncated')"
-        :description="t('standalone.live_trace.truncated_description')"
-      />
-      <!-- blocked traffic -->
-      <section class="space-y-4">
-        <NeHeading tag="h5">{{ t('standalone.live_trace.blocked_traffic') }}</NeHeading>
-        <NeEmptyState
-          v-if="data.blocked.length == 0"
-          :title="
-            data.running
-              ? t('standalone.live_trace.no_blocked_traffic')
-              : t('standalone.live_trace.no_blocked_traffic_last_session')
-          "
-          :description="
-            data.running ? t('standalone.live_trace.no_blocked_traffic_description') : ''
-          "
-          :icon="faEmptySet"
+    <!-- configuration -->
+    <NeCard :loading="isPending" :skeleton-lines="3">
+      <form class="flex flex-wrap items-start gap-4" @submit.prevent="startTrace">
+        <NeTextInput
+          v-model="ip"
+          class="max-w-xs"
+          :label="t('standalone.live_trace.client_ip')"
+          :invalid-message="t(validationBag.getFirstI18nKeyFor('ip'))"
+          :disabled="formDisabled"
         />
-        <template v-else>
-          <NeInlineNotification
-            v-if="blockedConnections > 0"
-            kind="warning"
-            :title="t('standalone.live_trace.blocked_detected', { n: blockedConnections })"
+        <NeTextInput
+          v-model="port"
+          class="max-w-40"
+          type="number"
+          :label="t('common.port')"
+          :invalid-message="t(validationBag.getFirstI18nKeyFor('port'))"
+          :disabled="formDisabled"
+          optional
+          :optional-label="t('common.optional')"
+        />
+        <NeListbox
+          v-model="protocol"
+          class="w-40"
+          :label="t('standalone.live_trace.protocol')"
+          :options="protocolOptions"
+          :invalid-message="t(validationBag.getFirstI18nKeyFor('protocol'))"
+          :disabled="formDisabled"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          optional
+          :optional-label="t('common.optional')"
+        />
+        <NeListbox
+          v-model="duration"
+          class="w-40"
+          :label="t('standalone.live_trace.duration')"
+          :options="durationOptions"
+          :invalid-message="t(validationBag.getFirstI18nKeyFor('duration'))"
+          :disabled="formDisabled"
+          :no-options-label="t('ne_dropdown_filter.no_options')"
+          :optional-label="t('common.optional')"
+        />
+        <NeButton
+          v-if="data?.running"
+          class="sm:mt-8"
+          kind="primary"
+          size="lg"
+          :disabled="stop.isPending.value"
+          :loading="stop.isPending.value"
+          @click="stop.mutate()"
+        >
+          {{ t('standalone.live_trace.stop') }}
+        </NeButton>
+        <NeButton
+          v-else
+          class="sm:mt-8"
+          kind="primary"
+          size="lg"
+          type="submit"
+          :disabled="start.isPending.value || !ip"
+          :loading="start.isPending.value"
+        >
+          {{ t('standalone.live_trace.start') }}
+        </NeButton>
+        <div v-if="data?.running" class="ml-auto flex items-center gap-3 sm:mt-8 sm:h-9">
+          <NeSpinner size="5" aria-hidden="true" />
+          <p>
+            <span class="font-medium">{{ t('standalone.live_trace.running') }}</span>
+            <span class="ml-2 text-tertiary-neutral">
+              {{ t('standalone.live_trace.time_remaining', { time: remaining }) }}
+            </span>
+          </p>
+        </div>
+        <p class="w-full text-sm text-tertiary-neutral">
+          {{ t('standalone.live_trace.filter_helper') }}
+        </p>
+      </form>
+    </NeCard>
+    <!-- results -->
+    <NeCard v-if="data && (hasResults || (data.ip && !data.failure))">
+      <NeEmptyState
+        v-if="!hasResults"
+        :title="t('standalone.live_trace.no_traffic_last_session')"
+        :description="
+          t('standalone.live_trace.no_traffic_last_session_description', { ip: traceTarget })
+        "
+        :icon="faEmptySet"
+      />
+      <div v-else class="space-y-8">
+        <p v-if="!data.running" class="text-sm text-tertiary-neutral">
+          {{ t('standalone.live_trace.last_session_results', { ip: traceTarget }) }}
+        </p>
+        <NeInlineNotification
+          v-if="data.truncated"
+          kind="warning"
+          :title="t('standalone.live_trace.truncated')"
+          :description="t('standalone.live_trace.truncated_description')"
+        />
+        <!-- blocked traffic -->
+        <section class="space-y-4">
+          <NeHeading tag="h5">{{ t('standalone.live_trace.blocked_traffic') }}</NeHeading>
+          <NeEmptyState
+            v-if="data.blocked.length == 0"
+            :title="
+              data.running
+                ? t('standalone.live_trace.no_blocked_traffic')
+                : t('standalone.live_trace.no_blocked_traffic_last_session')
+            "
+            :description="
+              data.running ? t('standalone.live_trace.no_blocked_traffic_description') : ''
+            "
+            :icon="faEmptySet"
           />
-          <NeTable :aria-label="t('standalone.live_trace.blocked_traffic')" card-breakpoint="xl">
+          <template v-else>
+            <NeInlineNotification
+              v-if="blockedConnections > 0"
+              kind="warning"
+              :title="t('standalone.live_trace.blocked_detected', { n: blockedConnections })"
+            />
+            <NeTable :aria-label="t('standalone.live_trace.blocked_traffic')" card-breakpoint="xl">
+              <NeTableHead>
+                <NeTableHeadCell>{{ t('standalone.live_trace.last_seen') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.protocol') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.blocked_by') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
+                <NeTableHeadCell>{{ t('standalone.live_trace.attempts') }}</NeTableHeadCell>
+              </NeTableHead>
+              <NeTableBody>
+                <NeTableRow v-for="(item, index) in data.blocked" :key="index">
+                  <NeTableCell :data-label="t('standalone.live_trace.last_seen')">
+                    {{ formatTime(item.last_seen) }}
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.protocol')">
+                    {{ item.protocol.toUpperCase() }}
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.source')">
+                    {{ item.source || '-' }}
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.destination')">
+                    {{ endpoint(item.destination, item.destination_port) }}
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.blocked_by')">
+                    <div class="space-y-1">
+                      <NeBadgeV2 :kind="isRouteWarning(item) ? 'amber' : 'rose'">
+                        <FontAwesomeIcon
+                          :icon="isRouteWarning(item) ? faTriangleExclamation : faBan"
+                          class="size-4"
+                          aria-hidden="true"
+                        />
+                        {{ layerLabels[item.layer] ?? item.layer }}
+                      </NeBadgeV2>
+                      <p v-if="item.rule" class="font-medium">
+                        <NeButton
+                          v-if="firewallRule(item)"
+                          kind="tertiary"
+                          size="sm"
+                          @click="showRule(firewallRule(item)!)"
+                        >
+                          {{ blockedRule(item) }}
+                        </NeButton>
+                        <template v-else>{{ blockedRule(item) }}</template>
+                      </p>
+                      <p
+                        v-if="item.layer == 'dpi' && item.host"
+                        class="text-xs text-tertiary-neutral"
+                      >
+                        {{ item.host }}
+                      </p>
+                      <p v-else-if="item.chain" class="text-xs text-tertiary-neutral">
+                        {{ [item.table, item.chain].filter(Boolean).join(' / ') }}
+                      </p>
+                    </div>
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.interfaces')">
+                    {{ item.in_interface || '-' }}
+                    <template v-if="item.out_interface">&rarr; {{ item.out_interface }}</template>
+                  </NeTableCell>
+                  <NeTableCell :data-label="t('standalone.live_trace.attempts')">
+                    {{ item.count }}
+                  </NeTableCell>
+                </NeTableRow>
+              </NeTableBody>
+            </NeTable>
+          </template>
+        </section>
+        <!-- connections while running, allowed connections of the last session after -->
+        <section v-if="data.running || data.allowed?.length" class="space-y-4">
+          <NeHeading tag="h5">
+            {{
+              data.running
+                ? t('standalone.live_trace.connections')
+                : t('standalone.live_trace.allowed_connections')
+            }}
+          </NeHeading>
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="mr-auto flex flex-wrap items-center gap-4">
+              <NeTextInput
+                v-model="filter"
+                :placeholder="t('standalone.live_trace.filter_connections')"
+                :aria-label="t('standalone.live_trace.filter_connections')"
+                :clear-search-label="t('ne_dropdown_filter.clear_search')"
+                is-search
+              />
+              <NeDropdownFilterV2
+                v-if="data.running"
+                v-model="applicationFilter"
+                v-bind="dropdownProps"
+                :label="t('standalone.live_trace.application')"
+                :options="applications"
+                :options-filter-placeholder="t('standalone.live_trace.filter_applications')"
+              />
+              <NeDropdownFilterV2
+                v-model="protocolFilter"
+                v-bind="dropdownProps"
+                :label="t('standalone.live_trace.protocol')"
+                :options="protocols"
+                :options-filter-placeholder="t('standalone.live_trace.filter_protocols')"
+              />
+              <NeDropdownFilterV2
+                v-model="sourceFilter"
+                v-bind="dropdownProps"
+                :label="t('standalone.live_trace.source')"
+                :options="sourceIps"
+                :options-filter-placeholder="t('standalone.live_trace.filter_sources')"
+              />
+              <NeDropdownFilterV2
+                v-model="destinationFilter"
+                v-bind="dropdownProps"
+                :label="t('standalone.live_trace.destination')"
+                :options="destinationIps"
+                :options-filter-placeholder="t('standalone.live_trace.filter_destinations')"
+              />
+              <NeDropdownFilterV2
+                v-if="data.running"
+                v-model="statusFilter"
+                v-bind="dropdownProps"
+                :label="t('common.status')"
+                :options="statuses"
+                :options-filter-placeholder="t('standalone.live_trace.filter_statuses')"
+              />
+              <NeButton kind="tertiary" @click="resetFilters">
+                {{ t('common.reset_filters') }}
+              </NeButton>
+            </div>
+            <template v-if="data.running">
+              <span>{{ t('common.download') }} {{ formatRate(totalDownload) }}</span>
+              <span>{{ t('common.upload') }} {{ formatRate(totalUpload) }}</span>
+            </template>
+          </div>
+          <NeEmptyState
+            v-if="(data.running ? filteredConnections : filteredAllowed).length == 0"
+            :title="
+              filterRows.length
+                ? t('standalone.live_trace.no_connections_found')
+                : t('standalone.live_trace.no_connections')
+            "
+            :description="filterRows.length ? t('common.try_changing_search_filters') : ''"
+            :icon="filterRows.length ? faMagnifyingGlass : faEmptySet"
+          >
+            <NeButton v-if="filterRows.length" kind="tertiary" size="lg" @click="resetFilters">
+              {{ t('common.reset_filters') }}
+            </NeButton>
+          </NeEmptyState>
+          <NeTable
+            v-else-if="data.running"
+            :aria-label="t('standalone.live_trace.connections')"
+            card-breakpoint="xl"
+          >
             <NeTableHead>
-              <NeTableHeadCell>{{ t('standalone.live_trace.last_seen') }}</NeTableHeadCell>
               <NeTableHeadCell>{{ t('standalone.live_trace.protocol') }}</NeTableHeadCell>
               <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
               <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
-              <NeTableHeadCell>{{ t('standalone.live_trace.blocked_by') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.application') }}</NeTableHeadCell>
               <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
-              <NeTableHeadCell>{{ t('standalone.live_trace.attempts') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.download_rate') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.upload_rate') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.total_traffic') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
             </NeTableHead>
             <NeTableBody>
-              <NeTableRow v-for="(item, index) in data.blocked" :key="index">
-                <NeTableCell :data-label="t('standalone.live_trace.last_seen')">
-                  {{ formatTime(item.last_seen) }}
-                </NeTableCell>
+              <NeTableRow v-for="item in paginatedItems" :key="item.id">
                 <NeTableCell :data-label="t('standalone.live_trace.protocol')">
                   {{ item.protocol.toUpperCase() }}
                 </NeTableCell>
                 <NeTableCell :data-label="t('standalone.live_trace.source')">
-                  {{ item.source || '-' }}
+                  {{ endpoint(item.source, item.source_port) }}
                 </NeTableCell>
                 <NeTableCell :data-label="t('standalone.live_trace.destination')">
                   {{ endpoint(item.destination, item.destination_port) }}
                 </NeTableCell>
-                <NeTableCell :data-label="t('standalone.live_trace.blocked_by')">
-                  <div class="space-y-1">
-                    <NeBadgeV2 :kind="isRouteWarning(item) ? 'amber' : 'rose'">
-                      <FontAwesomeIcon
-                        :icon="isRouteWarning(item) ? faTriangleExclamation : faBan"
-                        class="size-4"
-                        aria-hidden="true"
-                      />
-                      {{ layerLabels[item.layer] ?? item.layer }}
-                    </NeBadgeV2>
-                    <p v-if="item.rule" class="font-medium">
-                      <NeButton
-                        v-if="firewallRule(item)"
-                        kind="tertiary"
-                        size="sm"
-                        @click="showRule(firewallRule(item)!)"
-                      >
-                        {{ blockedRule(item) }}
-                      </NeButton>
-                      <template v-else>{{ blockedRule(item) }}</template>
-                    </p>
-                    <p
-                      v-if="item.layer == 'dpi' && item.host"
-                      class="text-xs text-tertiary-neutral"
-                    >
-                      {{ item.host }}
-                    </p>
-                    <p v-else-if="item.chain" class="text-xs text-tertiary-neutral">
-                      {{ [item.table, item.chain].filter(Boolean).join(' / ') }}
-                    </p>
-                  </div>
+                <NeTableCell :data-label="t('standalone.live_trace.application')">
+                  <p>{{ item.application || item.dpi_protocol || '-' }}</p>
+                  <p v-if="item.host" class="text-xs text-tertiary-neutral">
+                    {{ item.host }}
+                  </p>
                 </NeTableCell>
                 <NeTableCell :data-label="t('standalone.live_trace.interfaces')">
-                  {{ item.in_interface || '-' }}
-                  <template v-if="item.out_interface">&rarr; {{ item.out_interface }}</template>
+                  <template v-if="item.in_interface || item.out_interface">
+                    <p>
+                      {{ item.in_interface || '-' }}
+                      <template v-if="item.out_interface">&rarr; {{ item.out_interface }}</template>
+                    </p>
+                    <p v-if="item.rule" class="text-xs text-tertiary-neutral">
+                      {{ item.rule }}
+                    </p>
+                  </template>
+                  <span v-else class="text-tertiary-neutral">
+                    {{ t('standalone.live_trace.not_traced') }}
+                  </span>
                 </NeTableCell>
-                <NeTableCell :data-label="t('standalone.live_trace.attempts')">
-                  {{ item.count }}
+                <NeTableCell :data-label="t('standalone.live_trace.download_rate')">
+                  {{ formatRate(item.download) }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.upload_rate')">
+                  {{ formatRate(item.upload) }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.total_traffic')">
+                  {{ byteFormat1024(totalBytes(item)) }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('common.status')">
+                  <NeBadgeV2 v-if="item.labels?.includes('netify-blocked')" kind="rose">
+                    {{ t('standalone.live_trace.blocked_by_dpi') }}
+                  </NeBadgeV2>
+                  <NeBadgeV2 v-else-if="item.unreplied" kind="amber">
+                    {{ t('standalone.live_trace.no_reply') }}
+                  </NeBadgeV2>
+                  <NeBadgeV2 v-else-if="item.state" kind="gray">
+                    {{ statusLabel(item.state) }}
+                  </NeBadgeV2>
+                  <template v-else>-</template>
                 </NeTableCell>
               </NeTableRow>
             </NeTableBody>
+            <template #paginator>
+              <NePaginator
+                :current-page="currentPage"
+                :total-rows="filteredConnections.length"
+                :page-size="pageSize"
+                :nav-pagination-label="t('ne_table.pagination')"
+                :next-label="t('ne_table.go_to_next_page')"
+                :previous-label="t('ne_table.go_to_previous_page')"
+                :range-of-total-label="t('ne_table.of')"
+                :page-size-label="t('ne_table.show')"
+                @select-page="(page: number) => (currentPage = page)"
+                @select-page-size="(size: number) => (pageSize = size)"
+              />
+            </template>
           </NeTable>
-        </template>
-      </section>
-      <!-- connections while running, allowed connections of the last session after -->
-      <section v-if="data.running || data.allowed?.length" class="space-y-4">
-        <NeHeading tag="h5">
-          {{
-            data.running
-              ? t('standalone.live_trace.connections')
-              : t('standalone.live_trace.allowed_connections')
-          }}
-        </NeHeading>
-        <div class="flex flex-wrap items-center gap-6">
-          <div class="mr-auto flex flex-wrap items-center gap-4">
-            <NeTextInput
-              v-model="filter"
-              :placeholder="t('standalone.live_trace.filter_connections')"
-              :aria-label="t('standalone.live_trace.filter_connections')"
-              :clear-search-label="t('ne_dropdown_filter.clear_search')"
-              is-search
-            />
-            <NeDropdownFilterV2
-              v-if="data.running"
-              v-model="applicationFilter"
-              v-bind="dropdownProps"
-              :label="t('standalone.live_trace.application')"
-              :options="applications"
-              :options-filter-placeholder="t('standalone.live_trace.filter_applications')"
-            />
-            <NeDropdownFilterV2
-              v-model="protocolFilter"
-              v-bind="dropdownProps"
-              :label="t('standalone.live_trace.protocol')"
-              :options="protocols"
-              :options-filter-placeholder="t('standalone.live_trace.filter_protocols')"
-            />
-            <NeDropdownFilterV2
-              v-model="sourceFilter"
-              v-bind="dropdownProps"
-              :label="t('standalone.live_trace.source')"
-              :options="sourceIps"
-              :options-filter-placeholder="t('standalone.live_trace.filter_sources')"
-            />
-            <NeDropdownFilterV2
-              v-model="destinationFilter"
-              v-bind="dropdownProps"
-              :label="t('standalone.live_trace.destination')"
-              :options="destinationIps"
-              :options-filter-placeholder="t('standalone.live_trace.filter_destinations')"
-            />
-            <NeDropdownFilterV2
-              v-if="data.running"
-              v-model="statusFilter"
-              v-bind="dropdownProps"
-              :label="t('common.status')"
-              :options="statuses"
-              :options-filter-placeholder="t('standalone.live_trace.filter_statuses')"
-            />
-            <NeButton kind="tertiary" @click="resetFilters">
-              {{ t('common.reset_filters') }}
-            </NeButton>
-          </div>
-          <template v-if="data.running">
-            <span>{{ t('common.download') }} {{ formatRate(totalDownload) }}</span>
-            <span>{{ t('common.upload') }} {{ formatRate(totalUpload) }}</span>
-          </template>
-        </div>
-        <NeEmptyState
-          v-if="(data.running ? filteredConnections : filteredAllowed).length == 0"
-          :title="
-            filterRows.length
-              ? t('standalone.live_trace.no_connections_found')
-              : t('standalone.live_trace.no_connections')
-          "
-          :description="filterRows.length ? t('common.try_changing_search_filters') : ''"
-          :icon="filterRows.length ? faMagnifyingGlass : faEmptySet"
-        >
-          <NeButton v-if="filterRows.length" kind="tertiary" size="lg" @click="resetFilters">
-            {{ t('common.reset_filters') }}
-          </NeButton>
-        </NeEmptyState>
-        <NeTable
-          v-else-if="data.running"
-          :aria-label="t('standalone.live_trace.connections')"
-          card-breakpoint="xl"
-        >
-          <NeTableHead>
-            <NeTableHeadCell>{{ t('standalone.live_trace.protocol') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.application') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.download_rate') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.upload_rate') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.total_traffic') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('common.status') }}</NeTableHeadCell>
-          </NeTableHead>
-          <NeTableBody>
-            <NeTableRow v-for="item in paginatedItems" :key="item.id">
-              <NeTableCell :data-label="t('standalone.live_trace.protocol')">
-                {{ item.protocol.toUpperCase() }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.source')">
-                {{ endpoint(item.source, item.source_port) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.destination')">
-                {{ endpoint(item.destination, item.destination_port) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.application')">
-                <p>{{ item.application || item.dpi_protocol || '-' }}</p>
-                <p v-if="item.host" class="text-xs text-tertiary-neutral">
-                  {{ item.host }}
-                </p>
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.interfaces')">
-                <template v-if="item.in_interface || item.out_interface">
+          <NeTable
+            v-else
+            :aria-label="t('standalone.live_trace.allowed_connections')"
+            card-breakpoint="xl"
+          >
+            <NeTableHead>
+              <NeTableHeadCell>{{ t('standalone.live_trace.protocol') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
+            </NeTableHead>
+            <NeTableBody>
+              <NeTableRow v-for="(item, index) in paginatedAllowed" :key="index">
+                <NeTableCell :data-label="t('standalone.live_trace.protocol')">
+                  {{ item.protocol.toUpperCase() }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.source')">
+                  {{ endpoint(item.source, item.source_port) }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.destination')">
+                  {{ endpoint(item.destination, item.destination_port) }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.interfaces')">
                   <p>
                     {{ item.in_interface || '-' }}
                     <template v-if="item.out_interface">&rarr; {{ item.out_interface }}</template>
@@ -897,141 +1001,69 @@ function showRule(rule: FirewallRule) {
                   <p v-if="item.rule" class="text-xs text-tertiary-neutral">
                     {{ item.rule }}
                   </p>
-                </template>
-                <span v-else class="text-tertiary-neutral">
-                  {{ t('standalone.live_trace.not_traced') }}
-                </span>
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.download_rate')">
-                {{ formatRate(item.download) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.upload_rate')">
-                {{ formatRate(item.upload) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.total_traffic')">
-                {{ byteFormat1024(totalBytes(item)) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('common.status')">
-                <NeBadgeV2 v-if="item.labels?.includes('netify-blocked')" kind="rose">
-                  {{ t('standalone.live_trace.blocked_by_dpi') }}
-                </NeBadgeV2>
-                <NeBadgeV2 v-else-if="item.unreplied" kind="amber">
-                  {{ t('standalone.live_trace.no_reply') }}
-                </NeBadgeV2>
-                <NeBadgeV2 v-else-if="item.state" kind="gray">
-                  {{ statusLabel(item.state) }}
-                </NeBadgeV2>
-                <template v-else>-</template>
-              </NeTableCell>
-            </NeTableRow>
-          </NeTableBody>
-          <template #paginator>
-            <NePaginator
-              :current-page="currentPage"
-              :total-rows="filteredConnections.length"
-              :page-size="pageSize"
-              :nav-pagination-label="t('ne_table.pagination')"
-              :next-label="t('ne_table.go_to_next_page')"
-              :previous-label="t('ne_table.go_to_previous_page')"
-              :range-of-total-label="t('ne_table.of')"
-              :page-size-label="t('ne_table.show')"
-              @select-page="(page: number) => (currentPage = page)"
-              @select-page-size="(size: number) => (pageSize = size)"
-            />
-          </template>
-        </NeTable>
-        <NeTable
-          v-else
-          :aria-label="t('standalone.live_trace.allowed_connections')"
-          card-breakpoint="xl"
-        >
-          <NeTableHead>
-            <NeTableHeadCell>{{ t('standalone.live_trace.protocol') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.source') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.destination') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.interfaces') }}</NeTableHeadCell>
-          </NeTableHead>
-          <NeTableBody>
-            <NeTableRow v-for="(item, index) in paginatedAllowed" :key="index">
-              <NeTableCell :data-label="t('standalone.live_trace.protocol')">
-                {{ item.protocol.toUpperCase() }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.source')">
-                {{ endpoint(item.source, item.source_port) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.destination')">
-                {{ endpoint(item.destination, item.destination_port) }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.interfaces')">
-                <p>
-                  {{ item.in_interface || '-' }}
-                  <template v-if="item.out_interface">&rarr; {{ item.out_interface }}</template>
-                </p>
-                <p v-if="item.rule" class="text-xs text-tertiary-neutral">
-                  {{ item.rule }}
-                </p>
-              </NeTableCell>
-            </NeTableRow>
-          </NeTableBody>
-          <template #paginator>
-            <NePaginator
-              :current-page="allowedPage"
-              :total-rows="filteredAllowed.length"
-              :page-size="allowedPageSize"
-              :nav-pagination-label="t('ne_table.pagination')"
-              :next-label="t('ne_table.go_to_next_page')"
-              :previous-label="t('ne_table.go_to_previous_page')"
-              :range-of-total-label="t('ne_table.of')"
-              :page-size-label="t('ne_table.show')"
-              @select-page="(page: number) => (allowedPage = page)"
-              @select-page-size="(size: number) => (allowedPageSize = size)"
-            />
-          </template>
-        </NeTable>
-      </section>
-      <!-- dns queries -->
-      <section class="space-y-4">
-        <NeHeading tag="h5">{{ t('standalone.live_trace.dns_queries') }}</NeHeading>
-        <NeEmptyState
-          v-if="data.dns.length == 0"
-          :title="
-            data.running
-              ? t('standalone.live_trace.no_dns')
-              : t('standalone.live_trace.no_dns_last_session')
-          "
-          :icon="faEmptySet"
-        />
-        <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
-          <NeTableHead>
-            <NeTableHeadCell>{{ t('common.name') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('common.type') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.result') }}</NeTableHeadCell>
-            <NeTableHeadCell>{{ t('standalone.live_trace.count') }}</NeTableHeadCell>
-          </NeTableHead>
-          <NeTableBody>
-            <NeTableRow v-for="(item, index) in data.dns" :key="index">
-              <NeTableCell :data-label="t('common.name')">
-                {{ item.name }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('common.type')">
-                {{ item.type }}
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.result')">
-                <span class="flex flex-wrap items-center gap-2">
-                  {{ dnsResult(item.result) }}
-                  <NeBadgeV2 v-if="item.filtered" kind="rose">
-                    {{ t('standalone.live_trace.blocked_by_dns_filter') }}
-                  </NeBadgeV2>
-                </span>
-              </NeTableCell>
-              <NeTableCell :data-label="t('standalone.live_trace.count')">
-                {{ item.count }}
-              </NeTableCell>
-            </NeTableRow>
-          </NeTableBody>
-        </NeTable>
-      </section>
-    </template>
+                </NeTableCell>
+              </NeTableRow>
+            </NeTableBody>
+            <template #paginator>
+              <NePaginator
+                :current-page="allowedPage"
+                :total-rows="filteredAllowed.length"
+                :page-size="allowedPageSize"
+                :nav-pagination-label="t('ne_table.pagination')"
+                :next-label="t('ne_table.go_to_next_page')"
+                :previous-label="t('ne_table.go_to_previous_page')"
+                :range-of-total-label="t('ne_table.of')"
+                :page-size-label="t('ne_table.show')"
+                @select-page="(page: number) => (allowedPage = page)"
+                @select-page-size="(size: number) => (allowedPageSize = size)"
+              />
+            </template>
+          </NeTable>
+        </section>
+        <!-- dns queries -->
+        <section class="space-y-4">
+          <NeHeading tag="h5">{{ t('standalone.live_trace.dns_queries') }}</NeHeading>
+          <NeEmptyState
+            v-if="data.dns.length == 0"
+            :title="
+              data.running
+                ? t('standalone.live_trace.no_dns')
+                : t('standalone.live_trace.no_dns_last_session')
+            "
+            :icon="faEmptySet"
+          />
+          <NeTable v-else :aria-label="t('standalone.live_trace.dns_queries')" card-breakpoint="xl">
+            <NeTableHead>
+              <NeTableHeadCell>{{ t('common.name') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('common.type') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.result') }}</NeTableHeadCell>
+              <NeTableHeadCell>{{ t('standalone.live_trace.count') }}</NeTableHeadCell>
+            </NeTableHead>
+            <NeTableBody>
+              <NeTableRow v-for="(item, index) in data.dns" :key="index">
+                <NeTableCell :data-label="t('common.name')">
+                  {{ item.name }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('common.type')">
+                  {{ item.type }}
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.result')">
+                  <span class="flex flex-wrap items-center gap-2">
+                    {{ dnsResult(item.result) }}
+                    <NeBadgeV2 v-if="item.filtered" kind="rose">
+                      {{ t('standalone.live_trace.blocked_by_dns_filter') }}
+                    </NeBadgeV2>
+                  </span>
+                </NeTableCell>
+                <NeTableCell :data-label="t('standalone.live_trace.count')">
+                  {{ item.count }}
+                </NeTableCell>
+              </NeTableRow>
+            </NeTableBody>
+          </NeTable>
+        </section>
+      </div>
+    </NeCard>
     <NeSideDrawer
       :is-shown="ruleDrawerShown"
       :title="t('standalone.live_trace.rule_details')"
@@ -1045,15 +1077,6 @@ function showRule(rule: FirewallRule) {
             <dd>{{ value }}</dd>
           </div>
         </dl>
-        <RouterLink
-          v-slot="{ href, navigate }"
-          :to="`${getStandaloneRoutePrefix($route)}/firewall/rules`"
-          custom
-        >
-          <NeLink :href="href" @click="navigate">
-            {{ t('standalone.live_trace.go_to_rules') }}
-          </NeLink>
-        </RouterLink>
       </div>
     </NeSideDrawer>
   </div>

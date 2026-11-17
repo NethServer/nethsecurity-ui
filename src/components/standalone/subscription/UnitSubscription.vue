@@ -233,7 +233,7 @@ const {
               {{ t('standalone.subscription.active') }}
             </NeBadgeV2>
             <NeBadgeV2 v-else-if="isSubscriptionUnknown(subscriptionData)" kind="gray" size="sm">
-              {{ t('standalone.subscription.not_verified') }}
+              {{ t('standalone.subscription.pending') }}
             </NeBadgeV2>
             <NeBadgeV2 v-else kind="amber" size="sm">
               {{ t('standalone.subscription.inactive') }}

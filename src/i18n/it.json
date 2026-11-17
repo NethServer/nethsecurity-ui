@@ -1743,7 +1743,9 @@
       "virtual_address": "Indirizzo virtuale",
       "remote_host": "Host remoti",
       "tun_mtu": "MTU",
-      "mssfix": "MSSFix"
+      "mssfix": "MSSFix",
+      "dco": "Data Channel Offload (DCO)",
+      "dco_tooltip": "Elabora il traffico VPN nel kernel per prestazioni più elevate. Disabilitalo solo per risolvere problemi di connessione"
     },
     "ipsec_tunnel": {
       "local_identifier_tooltip": "Inserire una stringa che identifica la macchina corrente; questa stringa dovrebbe iniziare con il carattere '{'@'}. Sull'altra estremità del tunnel, gli identificatori dovrebbero essere invertiti",
@@ -2138,7 +2140,9 @@
       "server": "Server",
       "ca": "CA",
       "tun_mtu": "MTU",
-      "mssfix": "MSSFix"
+      "mssfix": "MSSFix",
+      "dco": "Data Channel Offload (DCO)",
+      "dco_tooltip": "Elabora il traffico VPN nel kernel per prestazioni più elevate. Disabilitalo solo per risolvere problemi di connessione"
     },
     "qos": {
       "interface": "Interfaccia",

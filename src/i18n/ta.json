@@ -1628,8 +1628,6 @@
       "flashstart_disabled": "FlashStart DNS முடக்கப்பட்டுள்ளது",
       "flashstart_disabled_description": "FlashStart வடிப்பான் {product} சந்தாவுடன் மட்டுமே கிடைக்கும்",
       "flashstart_disabled_threat_shield_enabled": "அதை இயக்க, நீங்கள் முதலில் அச்சுறுத்தல் கவச DNS ஐ முடக்க வேண்டும்",
-      "proplus": "வேகூடுதல்",
-      "pro": "ப்ரோ",
       "service_type": "பணி வகை",
       "custom_servers": "தனிப்பயன் DNS சேவையகங்கள்",
       "add_custom_servers": "தனிப்பயன் DNS சேவையகத்தைச் சேர்க்கவும்",

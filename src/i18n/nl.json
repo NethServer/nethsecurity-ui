@@ -1672,8 +1672,6 @@
       "flashstart_disabled": "FlashStart DNS is uitgeschakeld",
       "flashstart_disabled_description": "Het FlashStart-filter is alleen beschikbaar met een {product}-abonnement",
       "flashstart_disabled_threat_shield_enabled": "Om het in te schakelen, moet je eerst Threat shield DNS uitschakelen",
-      "proplus": "ProPlus",
-      "pro": "Pro",
       "service_type": "Type service",
       "custom_servers": "Aangepaste DNS-servers",
       "add_custom_servers": "Aangepaste DNS-server toevoegen",

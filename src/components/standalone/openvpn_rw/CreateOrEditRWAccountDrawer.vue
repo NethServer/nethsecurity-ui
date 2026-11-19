@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   MessageBag,
   validateIpAddress,
@@ -56,6 +56,37 @@ const reservedIp = ref('')
 const certificateExpiration = ref('3650')
 
 const usernameOptions = ref<NeComboboxOption[]>([])
+
+// kinds of configuration using the account as an object, e.g. "DPI rules", shown when its reserved IP can't be removed
+const usageKinds = ref<string[]>([])
+
+const reservedIpInvalidMessage = computed(() => {
+  if (
+    validationErrorBag.value.getFirstFor('ipaddr') === 'reserved_ip_is_used' &&
+    usageKinds.value.length
+  ) {
+    return t('error.reserved_ip_is_used_in', { usages: usageKinds.value.join(', ') })
+  }
+  return t(validationErrorBag.value.getFirstI18nKeyFor('ipaddr'))
+})
+
+async function loadUsageKinds() {
+  usageKinds.value = []
+  const ids = props.itemToEdit?.matches ?? []
+  if (!ids.length) {
+    return
+  }
+  try {
+    const res = await ubusCall('ns.objects', 'get-info', { ids })
+    const kinds = Object.values(
+      res.data.info as Record<string, { database: string; type: string }>
+    ).map((info) => t(`standalone.objects.type_${info.database}_${info.type}`))
+    usageKinds.value = [...new Set(kinds)]
+  } catch (err) {
+    // the generic message is shown instead
+    console.error(err)
+  }
+}
 
 async function fetchOptions() {
   try {
@@ -159,6 +190,9 @@ async function createOrEditAccount() {
     close()
   } catch (err: any) {
     if (err instanceof ValidationError) {
+      if (err.errorBag.getFirstFor('ipaddr') === 'reserved_ip_is_used') {
+        await loadUsageKinds()
+      }
       validationErrorBag.value = err.errorBag
     } else {
       error.value.notificationTitle = isEditing
@@ -252,7 +286,7 @@ watch(
               : ''
           })
         "
-        :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('ipaddr'))"
+        :invalid-message="reservedIpInvalidMessage"
         :optional="true"
         :optional-label="t('common.optional')"
       />

@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.30.0](https://github.com/NethServer/nethsecurity-ui/compare/2.29.1...2.30.0) (2026-11-19)
+
+
+### Features
+
+* **i18n:** add Spanish translation ([#864](https://github.com/NethServer/nethsecurity-ui/issues/864)) ([f93c4b9](https://github.com/NethServer/nethsecurity-ui/commit/f93c4b994fa75800cae8c3584fb159fc94af7fbf))
+
+
+### Bug Fixes
+
+* added essential branding for flashstart ([#859](https://github.com/NethServer/nethsecurity-ui/issues/859)) ([c9c6bf4](https://github.com/NethServer/nethsecurity-ui/commit/c9c6bf49ab594735de78bf62855aa4b636e03bb2))
+* adjusted some styles, made top bar look like my ([d64ac66](https://github.com/NethServer/nethsecurity-ui/commit/d64ac668d6dafab3f1dfbeec2e1d24fa8e2e18b8))
+* **typo:** no_updates_label it translation ([845bef8](https://github.com/NethServer/nethsecurity-ui/commit/845bef841fb5e58f8053642ac2f4dbac0070b446))
+
 ## [2.29.1](https://github.com/NethServer/nethsecurity-ui/compare/2.29.0...2.29.1) (2026-10-30)
 
 

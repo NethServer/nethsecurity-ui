@@ -2676,6 +2676,7 @@
       "disk": "Disk usage (%)",
       "processes": "Total processes",
       "memory": "RAM usage",
+      "temperature": "Temperature",
       "packets": "Network packets",
       "no_data": "No data available for the selected time range",
       "cannot_retrieve_metrics": "Cannot retrieve metrics",

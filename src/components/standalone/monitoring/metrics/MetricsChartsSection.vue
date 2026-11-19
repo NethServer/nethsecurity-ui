@@ -32,6 +32,9 @@ import {
   getTrafficInterfaces,
   getInterfaceDisplayName,
   getLatencyQuality,
+  buildTemperatureChart,
+  getTemperatureChips,
+  temperatureOptions,
   byteAxisOptions,
   latencyOptions,
   qualityOptions,
@@ -162,6 +165,8 @@ const trafficInterfaces = computed(() => getTrafficInterfaces(data.value ?? null
 
 const latencyQuality = computed(() => getLatencyQuality(data.value ?? null))
 
+const temperatureChips = computed(() => getTemperatureChips(data.value ?? null))
+
 // ── Helper methods ────────────────────────────────────────────────────────────
 
 function getInterfaceTrafficChart(iface: string) {
@@ -178,6 +183,10 @@ function getLatencyCommunityChart(hostData: PingHost) {
 
 function getQualityCommunityChart(hostData: PingHost) {
   return buildQualityChart(hostData, themeStore.isLight)
+}
+
+function getTemperatureChart(chip: string) {
+  return buildTemperatureChart(chip, data.value ?? null, themeStore.isLight)
 }
 </script>
 
@@ -249,6 +258,15 @@ function getQualityCommunityChart(hostData: PingHost) {
           :title="t('standalone.metrics.memory')"
           :chart="memoryChart"
           dataset-suffix="MB"
+          :loading="isPending"
+        />
+        <!-- Temperature per sensor chip -->
+        <MetricChartCard
+          v-for="chip in temperatureChips"
+          :key="`temperature-${chip}`"
+          :title="`${t('standalone.metrics.temperature')} - ${chip}`"
+          :chart="getTemperatureChart(chip)"
+          :options="temperatureOptions"
           :loading="isPending"
         />
         <NeHeading tag="h5" class="col-span-full uppercase">

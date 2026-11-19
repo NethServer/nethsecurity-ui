@@ -52,6 +52,22 @@ export interface MetricsData {
   memory: MetricSeries
   packets: MetricSeries
   latency_quality?: Record<string, PingHost>
+  temperature?: Record<string, TemperatureSeries>
+}
+
+export type TemperatureThreshold = 'max' | 'crit'
+
+export interface TemperatureDataset {
+  label: string
+  // null marks a missing sample
+  data: (number | null)[]
+  // set on the "max" (high) and "crit" threshold datasets of the chip
+  threshold?: TemperatureThreshold
+}
+
+export interface TemperatureSeries {
+  labels: number[]
+  datasets: TemperatureDataset[]
 }
 
 export interface ChartData {
@@ -86,7 +102,7 @@ function toMs(labels: number[]): number[] {
   return labels.map((s) => s * 1000)
 }
 
-function makeDataset(ds: MetricDataset, color: string) {
+function makeDataset(ds: MetricDataset | TemperatureDataset, color: string) {
   return {
     label: ds.label,
     data: ds.data,
@@ -181,6 +197,26 @@ export const qualityOptions = {
         label: (ctx: { dataset: { label?: string }; parsed: { y: number } }) => {
           const label = ctx.dataset.label ? `${ctx.dataset.label}: ` : ''
           return label + `${Math.round(ctx.parsed.y)}%`
+        }
+      }
+    }
+  }
+}
+
+function formatCelsius(value: number): string {
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 1 })} °C`
+}
+
+export const temperatureOptions = {
+  scales: {
+    y: { ticks: { callback: (value: number) => formatCelsius(value) } }
+  },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (ctx: { dataset: { label?: string }; parsed: { y: number } }) => {
+          const label = ctx.dataset.label ? `${ctx.dataset.label}: ` : ''
+          return label + formatCelsius(ctx.parsed.y)
         }
       }
     }
@@ -295,6 +331,41 @@ export function buildQualityChart(hostData: PingHost, isLight: boolean): ChartDa
   }
 }
 
+// Sensor lines avoid amber and rose, which are reserved to the thresholds
+const TEMPERATURE_PALETTE_LIGHT = [CYAN_600, INDIGO_600, EMERALD_600, VIOLET_600, FUCHSIA_600]
+const TEMPERATURE_PALETTE_DARK = [CYAN_500, INDIGO_500, EMERALD_500, VIOLET_500, FUCHSIA_500]
+
+const TEMPERATURE_THRESHOLD_STYLE: Record<
+  TemperatureThreshold,
+  { light: string; dark: string; borderDash: number[] }
+> = {
+  max: { light: AMBER_600, dark: AMBER_500, borderDash: [6, 4] },
+  crit: { light: ROSE_600, dark: ROSE_500, borderDash: [2, 3] }
+}
+
+export function buildTemperatureChart(
+  chip: string,
+  metrics: MetricsData | null,
+  isLight: boolean
+): ChartData | null {
+  const s = metrics?.temperature?.[chip]
+  if (!s?.labels?.length) return null
+  const palette = isLight ? TEMPERATURE_PALETTE_LIGHT : TEMPERATURE_PALETTE_DARK
+  let sensorIndex = 0
+  const datasets = s.datasets.map((ds) => {
+    if (ds.threshold) {
+      const style = TEMPERATURE_THRESHOLD_STYLE[ds.threshold]
+      return {
+        ...makeDataset(ds, isLight ? style.light : style.dark),
+        borderDash: style.borderDash,
+        borderWidth: 1
+      }
+    }
+    return makeDataset(ds, palette[sensorIndex++ % palette.length]!)
+  })
+  return { labels: toMs(s.labels), datasets }
+}
+
 // ── Utility helpers ───────────────────────────────────────────────────────────
 
 export function getTrafficInterfaces(metrics: MetricsData | null): string[] {
@@ -313,4 +384,8 @@ export function getInterfaceDisplayName(iface: string, metrics: MetricsData | nu
 
 export function getLatencyQuality(metrics: MetricsData | null): Record<string, PingHost> {
   return metrics?.latency_quality ?? {}
+}
+
+export function getTemperatureChips(metrics: MetricsData | null): string[] {
+  return Object.keys(metrics?.temperature ?? {}).sort()
 }

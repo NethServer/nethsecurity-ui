@@ -328,13 +328,13 @@ function setRestoreTimer() {
       >
         <div class="flex">
           <div class="mr-auto self-start">
-            <SuperuserOnlyTooltip :show="!isValidSubscription && !accountInfo?.is_superuser">
+            <SuperuserOnlyTooltip :show="!subscription.isActive && !accountInfo?.is_superuser">
               <NeButton
                 class="ml-"
                 kind="primary"
                 size="lg"
                 type="submit"
-                :disabled="!isValidSubscription && !accountInfo?.is_superuser"
+                :disabled="!subscription.isActive &&!accountInfo?.is_superuser"
                 @click="showRestoreDrawer = true"
               >
                 <template #prefix>

@@ -13,67 +13,48 @@ import {
   NeSkeleton
 } from '@nethesis/vue-components'
 import { getProductName } from '@/lib/config'
-import { ubusCall } from '@/lib/standalone/ubus'
 import FlashstartContent from '@/components/standalone/security/FlashstartContent.vue'
-import { ref, onMounted } from 'vue'
+import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import { useThreatShieldStore } from '@/stores/standalone/threatShield'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 
 const { t } = useI18n()
 const tsStore = useThreatShieldStore()
+const subscription = useSubscriptionStore()
 const router = useRouter()
-const activeSubscription = ref(false)
-const loading = ref({
-  getSubscriptionInfo: true
-})
-const error = ref({
-  getSubscriptionInfo: '',
-  getSubscriptionInfoDetails: ''
-})
 
-async function fetchSubscriptionInfo() {
-  loading.value.getSubscriptionInfo = true
-
-  try {
-    const res = await ubusCall('ns.subscription', 'info')
-    activeSubscription.value = (res.data?.systemd_id && res.data?.active) || false
-
-    if (activeSubscription.value) {
+watch(
+  () => subscription.isActive,
+  (isActive) => {
+    if (isActive) {
       tsStore.listDnsSettings()
     }
-  } catch (err: any) {
-    error.value.getSubscriptionInfo = t(getAxiosErrorMessage(err))
-    error.value.getSubscriptionInfoDetails = err.toString()
-  } finally {
-    loading.value.getSubscriptionInfo = false
-  }
-}
-
-onMounted(() => {
-  fetchSubscriptionInfo()
-})
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <div class="flex flex-col gap-y-6">
     <NeHeading tag="h3" class="mb-7">{{ t('standalone.flashstart.title') }}</NeHeading>
     <NeInlineNotification
-      v-if="error.getSubscriptionInfo"
+      v-if="subscription.error"
       :title="t('error.cannot_retrieve_subscription_info')"
-      :description="error.getSubscriptionInfo"
+      :description="t(getAxiosErrorMessage(subscription.error))"
       class="mb-6"
       kind="error"
     />
     <NeSkeleton
-      v-if="loading.getSubscriptionInfo || tsStore.loadingListDnsSettings"
+      v-if="subscription.loading || tsStore.loadingListDnsSettings"
       :lines="7"
       size="lg"
     />
     <template v-else>
       <!-- no active subscription -->
       <NeEmptyState
-        v-if="!activeSubscription"
+        v-if="!subscription.isActive"
         :title="t('standalone.flashstart.flashstart_disabled')"
         :description="
           t('standalone.flashstart.flashstart_disabled_description', {

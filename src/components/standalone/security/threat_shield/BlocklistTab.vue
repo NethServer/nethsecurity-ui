@@ -7,13 +7,13 @@
 import { ubusCall } from '@/lib/standalone/ubus'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
-  NeBadge,
   NeButton,
   NeSkeleton,
   NeInlineNotification,
   getAxiosErrorMessage,
   NeTextInput,
-  NeEmptyState
+  NeEmptyState,
+  NeModal
 } from '@nethesis/vue-components'
 import { onMounted } from 'vue'
 import { computed } from 'vue'
@@ -23,6 +23,17 @@ import BlocklistTable from './BlocklistTable.vue'
 import { useRouter } from 'vue-router'
 import { getStandaloneRoutePrefix } from '@/lib/router'
 import SearchBannedIp from '@/components/standalone/security/threat_shield/SearchBannedIp.vue'
+import CreateOrEditCustomBlocklistDrawer from './CreateOrEditCustomBlocklistDrawer.vue'
+import { getMutationErrorKey } from '@/composables/useThreatShieldCustomLists'
+import { useMutation } from '@tanstack/vue-query'
+import { useNotificationsStore } from '@/stores/notifications'
+import { useSubscriptionStore } from '@/stores/standalone/subscription'
+import {
+  faArrowRight,
+  faCircleInfo,
+  faCirclePlus,
+  faShield
+} from '@fortawesome/free-solid-svg-icons'
 
 export type BlocklistDirection = 'in' | 'out' | 'inout'
 
@@ -32,6 +43,9 @@ export type Blocklist = {
   enabled: boolean
   confidence: number
   description: string
+  custom?: boolean
+  url_4?: string
+  url_6?: string
   direction?: BlocklistDirection
   ports?: string[]
   protocols?: string[]
@@ -52,6 +66,16 @@ const isTogglingBlocklistEnabled = ref(false)
 const blocklists = ref<Blocklist[]>([])
 const filter = ref('')
 const isThreatShieldEnabled = ref(false)
+const notificationsStore = useNotificationsStore()
+const subscription = useSubscriptionStore()
+const selectedCustomBlocklist = ref<Blocklist>()
+const showCustomBlocklistDrawer = ref(false)
+const showDeleteCustomBlocklistModal = ref(false)
+
+const deleteCustomBlocklistMutation = useMutation({
+  mutationFn: (name: string) => ubusCall('ns.threatshield', 'delete-custom-blocklist', { name }),
+  onSuccess: () => refreshAfterCustomChange()
+})
 
 const filteredBlocklists = computed(() => {
   return filter.value
@@ -122,6 +146,36 @@ async function toggleBlocklistEnable(blocklist: Blocklist) {
   }
 }
 
+function openCustomBlocklistDrawer(item?: Blocklist) {
+  selectedCustomBlocklist.value = item
+  showCustomBlocklistDrawer.value = true
+}
+
+function openDeleteCustomBlocklistModal(item: Blocklist) {
+  selectedCustomBlocklist.value = item
+  deleteCustomBlocklistMutation.reset()
+  showDeleteCustomBlocklistModal.value = true
+}
+
+function deleteCustomBlocklist() {
+  if (selectedCustomBlocklist.value) {
+    deleteCustomBlocklistMutation.mutate(selectedCustomBlocklist.value.name, {
+      onSuccess: () => {
+        showDeleteCustomBlocklistModal.value = false
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: t('standalone.threat_shield.custom_feed_deleted')
+        })
+      }
+    })
+  }
+}
+
+function refreshAfterCustomChange() {
+  uciChangesStore.getChanges()
+  fetchBlocklists()
+}
+
 onMounted(() => {
   fetchBlocklists()
 })
@@ -141,34 +195,39 @@ onMounted(() => {
       </template></NeInlineNotification
     >
     <template v-if="!fetchError">
-      <div class="flex flex-row items-start justify-between">
-        <div>
-          <p class="max-w-2xl text-sm font-normal text-gray-500 dark:text-gray-400">
-            {{ t('standalone.threat_shield.blocklist_description') }}
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div class="max-w-2xl">
+          <p class="text-sm font-normal text-tertiary-neutral">
+            {{ t('standalone.threat_shield.blocklist_feeds_description') }}
           </p>
-          <div v-if="isEnterprise" class="mt-2 flex flex-row gap-x-2">
+          <p
+            v-if="subscription.isActive && !isEnterprise"
+            class="mt-3 flex items-center gap-2 text-sm font-medium text-primary-neutral"
+          >
             <FontAwesomeIcon
-              :icon="['fas', 'circle-info']"
-              class="h-4 w-4 text-indigo-500 dark:text-indigo-300"
+              :icon="faCircleInfo"
+              class="size-4 shrink-0 text-indigo-500 dark:text-indigo-300"
+              aria-hidden="true"
             />
-            <p>
-              {{ t('standalone.threat_shield.blocklist_subscription_description') }}
-            </p>
-          </div>
+            {{ t('standalone.threat_shield.blocklist_feeds_addon_info') }}
+          </p>
         </div>
-        <NeBadge
-          v-if="isThreatShieldEnabled"
-          :icon="['fas', 'check']"
-          :text="t('standalone.threat_shield.threat_shield_enabled')"
-          kind="success"
-        />
+        <div v-if="isThreatShieldEnabled" class="flex shrink-0 flex-wrap gap-4">
+          <NeButton kind="secondary" @click="openCustomBlocklistDrawer()">
+            <template #prefix>
+              <FontAwesomeIcon :icon="faCirclePlus" class="h-4 w-4" aria-hidden="true" />
+            </template>
+            {{ t('standalone.threat_shield.create_custom_feed') }}
+          </NeButton>
+          <SearchBannedIp />
+        </div>
       </div>
 
       <NeEmptyState
         v-if="!isThreatShieldEnabled"
         :title="t('standalone.threat_shield.threat_shield_disabled')"
         :description="t('standalone.threat_shield.threat_shield_disabled_description')"
-        :icon="['fas', 'shield']"
+        :icon="faShield"
         class="pb-8"
         ><NeButton
           kind="primary"
@@ -178,35 +237,72 @@ onMounted(() => {
             }
           "
           ><template #prefix>
-            <font-awesome-icon
-              :icon="['fas', 'arrow-right']"
-              class="h-4 w-4"
-              aria-hidden="true"
-            /> </template
+            <font-awesome-icon :icon="faArrowRight" class="h-4 w-4" aria-hidden="true" /> </template
           >{{ t('standalone.threat_shield.go_to_settings') }}</NeButton
         ></NeEmptyState
       >
       <template v-else>
-        <div class="flex flex-col flex-wrap gap-4 sm:flex-row">
-          <NeTextInput
-            v-model="filter"
-            class="mr-auto sm:max-w-sm"
-            :placeholder="t('standalone.threat_shield.filter_blocklists')"
-            is-search
-          />
-          <SearchBannedIp />
-        </div>
+        <NeTextInput
+          v-model="filter"
+          class="sm:max-w-sm"
+          :placeholder="t('standalone.threat_shield.filter_blocklists')"
+          is-search
+          :clear-search-label="t('ne_dropdown_filter.clear_search')" />
         <BlocklistTable
           v-if="filteredBlocklists.length > 0"
           :blocklists="filteredBlocklists"
           :disable-toggles="isTogglingBlocklistEnabled"
           kind="ip"
-          @toggle-blocklist="toggleBlocklistEnable" />
+          @toggle-blocklist="toggleBlocklistEnable"
+          @edit="openCustomBlocklistDrawer"
+          @delete="openDeleteCustomBlocklistModal" />
         <NeEmptyState
           v-else
           :title="t('standalone.threat_shield.no_blacklists_found')"
-          :icon="['fas', 'shield']"
+          :icon="faShield"
       /></template>
     </template>
   </div>
+  <CreateOrEditCustomBlocklistDrawer
+    :is-shown="showCustomBlocklistDrawer"
+    :item-to-edit="selectedCustomBlocklist"
+    @close="showCustomBlocklistDrawer = false"
+    @saved="
+      () => {
+        notificationsStore.createNotification({
+          kind: 'success',
+          title: selectedCustomBlocklist
+            ? t('standalone.threat_shield.custom_feed_updated')
+            : t('standalone.threat_shield.custom_feed_created')
+        })
+        fetchBlocklists()
+      }
+    "
+  />
+  <NeModal
+    :visible="showDeleteCustomBlocklistModal"
+    kind="warning"
+    primary-button-kind="danger"
+    :title="t('standalone.threat_shield.delete_custom_feed')"
+    :primary-label="t('common.delete')"
+    :cancel-label="t('common.cancel')"
+    :primary-button-disabled="deleteCustomBlocklistMutation.isPending.value"
+    :primary-button-loading="deleteCustomBlocklistMutation.isPending.value"
+    :close-aria-label="t('common.close')"
+    @primary-click="deleteCustomBlocklist()"
+    @close="showDeleteCustomBlocklistModal = false"
+  >
+    {{
+      t('standalone.threat_shield.delete_custom_feed_message', {
+        name: selectedCustomBlocklist?.name ?? ''
+      })
+    }}
+    <NeInlineNotification
+      v-if="deleteCustomBlocklistMutation.error.value"
+      kind="error"
+      :title="t('error.cannot_delete_custom_feed')"
+      :description="t(getMutationErrorKey(deleteCustomBlocklistMutation.error.value, 'name'))"
+      class="mt-4"
+    />
+  </NeModal>
 </template>

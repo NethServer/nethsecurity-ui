@@ -46,12 +46,14 @@ import {
   faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { useBackupsStore } from '@/stores/standalone/backups.ts'
-import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import { SUBSCRIPTION_KEY, useSubscriptionStore } from '@/stores/standalone/subscription.ts'
 import DeletePassphraseModal from '@/components/standalone/backup_and_restore/DeletePassphraseModal.vue'
+import { useQueryClient } from '@tanstack/vue-query'
 
 const { t } = useI18n()
 const backups = useBackupsStore()
 const subscription = useSubscriptionStore()
+const queryClient = useQueryClient()
 
 const MAX_RETRIES = 3
 const RETRY_DELAY_MS = 1000
@@ -133,7 +135,7 @@ watch(
         errorFetchBackups.value = undefined
         errorFetchHostname.value = undefined
         // Reload store data
-        subscription.loadData()
+        queryClient.invalidateQueries({ queryKey: SUBSCRIPTION_KEY })
         backups.loadData()
         // Reload local data
         getHostname()

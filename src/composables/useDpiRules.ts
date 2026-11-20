@@ -11,12 +11,21 @@ export type DpiRuleAppGroup = {
   name: string
 }
 
+// an object referenced by a rule source; type and subtype are null when the object no longer exists
+export type DpiRuleSourceObject = {
+  id: string
+  name: string
+  type: string | null
+  subtype: string | null
+}
+
 export type DpiRule = {
   id: string
   name: string
   enabled: boolean
   action: DpiRuleAction
   source: string[]
+  source_objects?: DpiRuleSourceObject[]
   appgroups: DpiRuleAppGroup[]
   match_all: boolean
   managed: boolean
@@ -29,6 +38,7 @@ export type DpiRulePayload = {
   enabled: boolean
   action: DpiRuleAction
   source: string[]
+  source_objects: string[]
   appgroups: string[]
   match_all: boolean
 }
@@ -53,6 +63,13 @@ export function useDpiRules() {
       return Array.isArray(values) ? values : values.data
     }
   })
+}
+
+/**
+ * Labels of a rule source, objects first: object names followed by the addresses.
+ */
+export function ruleSourceLabels(rule: DpiRule): string[] {
+  return [...(rule.source_objects ?? []).map((sourceObject) => sourceObject.name), ...rule.source]
 }
 
 export function reorderRuleIds(rules: DpiRule[], movedId: string, targetIndex: number): string[] {

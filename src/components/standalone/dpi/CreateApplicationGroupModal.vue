@@ -18,7 +18,7 @@ import {
   NeTextInput,
   NeTooltip
 } from '@nethesis/vue-components'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import { refDebounced } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
@@ -225,6 +225,11 @@ watch(
 watch(kind, () => {
   nameFilter.value = ''
 })
+
+const itemsList = useTemplateRef<HTMLElement>('items-list')
+
+// a new category starts from the top of its list
+watch(selectedCategoryId, () => itemsList.value?.scrollTo({ top: 0 }), { flush: 'post' })
 
 watch(groupName, (name) => {
   if (name.trim()) {
@@ -668,7 +673,7 @@ function save() {
                 }}
               </p>
             </div>
-            <div class="flex min-h-0 flex-1 flex-col overflow-y-auto pr-4">
+            <div ref="items-list" class="flex min-h-0 flex-1 flex-col overflow-y-auto pr-4">
               <NeSkeleton v-if="isLoadingCatalog" :lines="8" />
               <div
                 v-for="item in filteredItems"

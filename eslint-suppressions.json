@@ -166,7 +166,7 @@
   },
   "src/components/standalone/backup_and_restore/RestoreContent.vue": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 8
+      "count": 7
     }
   },
   "src/components/standalone/backup_and_restore/RunBackupModal.vue": {
@@ -799,11 +799,6 @@
       "count": 1
     }
   },
-  "src/views/standalone/security/FlashStartView.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "src/views/standalone/security/ThreatShieldDnsView.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
@@ -827,11 +822,6 @@
   "src/views/standalone/system/StorageView.vue": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
-    }
-  },
-  "src/views/standalone/system/SubscriptionView.vue": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
     }
   },
   "src/views/standalone/system/UpdateView.vue": {

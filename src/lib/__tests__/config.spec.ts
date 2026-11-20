@@ -47,25 +47,22 @@ describe('getStandaloneApiEndpoint', () => {
   })
 
   describe('development', () => {
-    it('uses the configured standalone host at the root', () => {
+    it('targets the dev server origin, proxied to the unit', () => {
       vi.stubEnv('VITE_UI_MODE', 'standalone')
       vi.stubEnv('DEV', true)
-      vi.stubEnv('VITE_API_SCHEME', 'https')
       vi.stubEnv('VITE_STANDALONE_API_HOST', '10.0.1.1:9090')
       servedFrom('/')
 
-      expect(getStandaloneApiEndpoint()).toBe('https://10.0.1.1:9090/api')
+      expect(getStandaloneApiEndpoint()).toBe(`${ORIGIN}/api`)
     })
 
-    // `npm run dev -- --base=/<uuid>/` against a real controller.
-    it('uses the configured controller host when served under a unit prefix', () => {
+    it('targets the unit prefix on the dev server origin, proxied to the controller', () => {
       vi.stubEnv('VITE_UI_MODE', 'standalone')
       vi.stubEnv('DEV', true)
-      vi.stubEnv('VITE_API_SCHEME', 'https')
       vi.stubEnv('VITE_CONTROLLER_API_HOST', 'ctrl.example')
       servedFrom(`/${UNIT_ID}/`)
 
-      expect(getStandaloneApiEndpoint()).toBe(`https://ctrl.example/${UNIT_ID}/api`)
+      expect(getStandaloneApiEndpoint()).toBe(`${ORIGIN}/${UNIT_ID}/api`)
     })
   })
 })

@@ -62,6 +62,7 @@ export type RWServer = {
   }
   tun_mtu: string
   mssfix: string
+  disable_dco: string
 }
 
 export type RWAccount = {

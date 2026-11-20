@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
 import {
@@ -29,8 +29,12 @@ import { validateRequired } from '@/lib/validation'
 import FormLayout from '@/components/standalone/FormLayout.vue'
 import { uploadFile } from '@/lib/standalone/fileUpload'
 import { faRotate } from '@fortawesome/free-solid-svg-icons'
+import { useSubscriptionStore } from '@/stores/standalone/subscription.ts'
+import { useAccountInfo } from '@/composables/useAccountInfo'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const { t } = useI18n()
+const { data: accountInfo } = useAccountInfo()
 const RESTORE_WAIT_TIME = 45000
 
 const formRestore = ref({
@@ -39,9 +43,10 @@ const formRestore = ref({
   backup: ''
 })
 
-const loading = ref(true)
+const subscription = useSubscriptionStore()
+const loadingBackups = ref(false)
+const loading = computed(() => subscription.loading || loadingBackups.value)
 const loadingRestore = ref(false)
-const isValidSubscription = ref(false)
 const showRestoreDrawer = ref(false)
 const typeRestore = ref('upload_file')
 const listBackups: any = ref([])
@@ -49,16 +54,17 @@ const isRestoring = ref(false)
 const restoreProgress = ref(0)
 const restoreIntervalRef = ref<number | undefined>()
 const restoreTimeoutRef = ref<number | undefined>()
-const sourceRestoreOptions = [
+const sourceRestoreOptions = computed(() => [
   {
     id: 'from_backup',
     label: t('standalone.backup_and_restore.restore.from_backup')
   },
   {
     id: 'upload_file',
-    label: t('standalone.backup_and_restore.restore.from_file')
+    label: t('standalone.backup_and_restore.restore.from_file'),
+    disabled: !accountInfo.value?.is_superuser
   }
-]
+])
 const passphraseRef = ref()
 const fileRef = ref()
 const backupRef = ref()
@@ -98,29 +104,33 @@ const isPassphraseRequired = computed(() => {
   return false
 })
 
-onMounted(() => {
-  getSubscription()
-})
-
-async function getSubscription() {
-  try {
-    const res = await ubusCall('ns.subscription', 'info', {})
-    if (res?.data?.systemd_id && res?.data?.active) {
-      isValidSubscription.value = true
-      typeRestore.value = isValidSubscription.value ? 'from_backup' : 'upload_file'
-      await getBackups()
+watch(
+  () => subscription.error,
+  (error) => {
+    if (error) {
+      errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
+      errorPage.value.notificationDescription = t(getAxiosErrorMessage(error))
+      errorPage.value.notificationDetails = error.toString()
     }
-  } catch (exception: any) {
-    errorPage.value.notificationTitle = t('error.cannot_retrieve_subscription_info')
-    errorPage.value.notificationDescription = t(getAxiosErrorMessage(exception))
-    errorPage.value.notificationDetails = exception.toString()
-  } finally {
-    loading.value = false
-  }
-}
+  },
+  { immediate: true }
+)
+
+watch(
+  () => subscription.isActive,
+  async (isActive) => {
+    if (isActive) {
+      typeRestore.value = 'from_backup'
+      loadingBackups.value = true
+      await getBackups()
+      loadingBackups.value = false
+    }
+  },
+  { immediate: true }
+)
 
 async function getBackups() {
-  if (isValidSubscription.value) {
+  if (subscription.isActive) {
     try {
       const res = await ubusCall('ns.backup', 'registered-list-backups')
       if (res?.data?.values?.backups?.length) {
@@ -158,7 +168,7 @@ function validateRestore(): boolean {
       errorRestore.value.file = t(errMessage as string)
       isValidationOk = false
     }
-  } else if (isValidSubscription.value && typeRestore.value === 'from_backup') {
+  } else if (subscription.isActive && typeRestore.value === 'from_backup') {
     const { valid, errMessage } = validateRequired(formRestore.value.backup)
     if (!valid) {
       errorRestore.value.backup = t(errMessage as string)
@@ -227,7 +237,7 @@ async function restoreBackup() {
         Object.assign(payload, { passphrase: formRestore.value.passphrase })
       }
 
-      if (isValidSubscription.value && typeRestore.value === 'from_backup') {
+      if (subscription.isActive && typeRestore.value === 'from_backup') {
         methodCall = 'registered-restore'
         Object.assign(payload, { file: formRestore.value.backup })
       } else {
@@ -318,18 +328,21 @@ function setRestoreTimer() {
       >
         <div class="flex">
           <div class="mr-auto self-start">
-            <NeButton
-              class="ml-"
-              kind="primary"
-              size="lg"
-              type="submit"
-              @click="showRestoreDrawer = true"
-            >
-              <template #prefix>
-                <FontAwesomeIcon :icon="faRotate" />
-              </template>
-              {{ t('standalone.backup_and_restore.restore.restore_backup') }}
-            </NeButton>
+            <SuperuserOnlyTooltip :show="!subscription.isActive && !accountInfo?.is_superuser">
+              <NeButton
+                class="ml-"
+                kind="primary"
+                size="lg"
+                type="submit"
+                :disabled="!subscription.isActive &&!accountInfo?.is_superuser"
+                @click="showRestoreDrawer = true"
+              >
+                <template #prefix>
+                  <FontAwesomeIcon :icon="faRotate" />
+                </template>
+                {{ t('standalone.backup_and_restore.restore.restore_backup') }}
+              </NeButton>
+            </SuperuserOnlyTooltip>
           </div>
         </div>
       </FormLayout>
@@ -340,7 +353,7 @@ function setRestoreTimer() {
       @close="close()"
     >
       <div class="space-y-8">
-        <template v-if="isValidSubscription">
+        <template v-if="subscription.isActive">
           <NeRadioSelection
             v-model="typeRestore"
             :label="t('standalone.backup_and_restore.restore.source')"
@@ -414,7 +427,7 @@ function setRestoreTimer() {
           <NeButton
             :disabled="
               loadingRestore ||
-              ((!isValidSubscription || typeRestore === 'upload_file') && !canRestoreBackupFile)
+              ((!subscription.isActive || typeRestore === 'upload_file') && !canRestoreBackupFile)
             "
             :kind="'primary'"
             :loading="loadingRestore"

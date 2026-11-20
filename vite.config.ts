@@ -18,19 +18,28 @@ export default defineConfig(({ mode }) => {
     ws: true,
     rewriteWsOrigin: true
   }
+  const standaloneProxy: ProxyOptions = {
+    target: `${env.VITE_API_SCHEME}://${env.VITE_STANDALONE_API_HOST}`,
+    changeOrigin: true,
+    // units run with a self-signed certificate
+    secure: false
+  }
+  const proxy: Record<string, ProxyOptions> =
+    env.VITE_UI_MODE === 'controller'
+      ? {
+          '/api': controllerProxy,
+          // units served through the controller, /<unit-uuid>/
+          '^/[0-9a-f-]{36}/': controllerProxy
+        }
+      : {
+          '/api': standaloneProxy,
+          // `npm run dev -- --base=/<unit-uuid>/` against a controller, the UI itself stays local
+          '^/[0-9a-f-]{36}/api': controllerProxy
+        }
 
   return {
     base: './',
-    server:
-      env.VITE_UI_MODE === 'controller'
-        ? {
-            proxy: {
-              '/api': controllerProxy,
-              // units served through the controller, /<unit-uuid>/
-              '^/[0-9a-f-]{36}/': controllerProxy
-            }
-          }
-        : undefined,
+    server: { proxy },
     plugins: [
       vue(),
       vueDevTools(),

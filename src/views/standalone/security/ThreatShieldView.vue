@@ -7,11 +7,13 @@
 import { useI18n } from 'vue-i18n'
 import { NeHeading, NeTabs } from '@nethesis/vue-components'
 import { useTabs } from '@/composables/useTabs'
+import AllowlistFeedsTab from '@/components/standalone/security/threat_shield/AllowlistFeedsTab.vue'
 import AllowlistTab from '@/components/standalone/security/threat_shield/AllowlistTab.vue'
 import BlocklistTab from '@/components/standalone/security/threat_shield/BlocklistTab.vue'
 import SettingsTab from '@/components/standalone/security/threat_shield/SettingsTab.vue'
 import LocalBlocklistTab from '@/components/standalone/security/threat_shield/LocalBlocklistTab.vue'
 import BannedIpsTab from '@/components/standalone/security/threat_shield/BannedIpsTab.vue'
+import BlocklistBansTab from '@/components/standalone/security/threat_shield/BlocklistBansTab.vue'
 import GeoBlockingTab from '@/components/standalone/security/threat_shield/GeoBlockingTab.vue'
 
 export type BanIpLocalAddress = {
@@ -23,24 +25,32 @@ const { t } = useI18n()
 
 const { tabs, selectedTab } = useTabs([
   {
+    name: 'blocklistBans',
+    label: t('standalone.threat_shield.blocklist_bans')
+  },
+  {
+    name: 'bannedIps',
+    label: t('standalone.threat_shield.brute_force_bans')
+  },
+  {
     name: 'blocklist',
     label: t('standalone.threat_shield.blocklist')
   },
   {
-    name: 'geoblocking',
-    label: t('standalone.threat_shield.geoblocking')
-  },
-  {
-    name: 'allowlist',
-    label: t('standalone.threat_shield.allowlist')
+    name: 'allowlistFeeds',
+    label: t('standalone.threat_shield.allowlist_feeds')
   },
   {
     name: 'localBlocklist',
     label: t('standalone.threat_shield.local_blocklist')
   },
   {
-    name: 'bannedIps',
-    label: t('standalone.threat_shield.banned_ips')
+    name: 'allowlist',
+    label: t('standalone.threat_shield.allowlist')
+  },
+  {
+    name: 'geoblocking',
+    label: t('standalone.threat_shield.geoblocking')
   },
   {
     name: 'settings',
@@ -61,8 +71,10 @@ const { tabs, selectedTab } = useTabs([
       @select-tab="selectedTab = $event"
     />
     <BlocklistTab v-if="selectedTab === 'blocklist'" />
+    <AllowlistFeedsTab v-if="selectedTab === 'allowlistFeeds'" />
     <AllowlistTab v-if="selectedTab === 'allowlist'" />
     <LocalBlocklistTab v-if="selectedTab === 'localBlocklist'" />
+    <BlocklistBansTab v-if="selectedTab === 'blocklistBans'" />
     <BannedIpsTab v-if="selectedTab === 'bannedIps'" />
     <SettingsTab v-if="selectedTab === 'settings'" />
     <GeoBlockingTab v-if="selectedTab === 'geoblocking'" />

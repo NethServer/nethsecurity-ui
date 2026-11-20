@@ -29,10 +29,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import SuperuserOnlyTooltip from '@/components/standalone/SuperuserOnlyTooltip.vue'
 
 const props = defineProps<{
   users: User[]
   isLdapDatabase: boolean
+  canManageAdmins: boolean
 }>()
 
 const emit = defineEmits<{
@@ -48,6 +50,11 @@ const { currentPage, paginatedItems } = useItemPagination(() => props.users, {
   itemsPerPage: pageSize
 })
 
+// only superusers can change administrators
+function canEdit(item: User) {
+  return props.canManageAdmins || !item.admin
+}
+
 function getDropdownItems(item: User) {
   return [
     {
@@ -55,6 +62,7 @@ function getDropdownItems(item: User) {
       label: t('common.delete'),
       icon: faTrash,
       danger: true,
+      disabled: !canEdit(item),
       action: () => {
         emit('delete', item)
       }
@@ -64,6 +72,7 @@ function getDropdownItems(item: User) {
           id: 'remove_admin',
           label: t('standalone.users_database.remove_admin'),
           icon: faCircleMinus,
+          disabled: !props.canManageAdmins,
           action: () => {
             emit('removeAdmin', item)
           }
@@ -72,6 +81,7 @@ function getDropdownItems(item: User) {
           id: 'set_admin',
           label: t('standalone.users_database.set_admin'),
           icon: faCrown,
+          disabled: !props.canManageAdmins,
           action: () => {
             emit('setAdmin', item)
           }
@@ -144,12 +154,14 @@ function getDropdownItems(item: User) {
           </NeTableCell>
           <NeTableCell :data-label="t('common.actions')">
             <div class="align-center -ml-2.5 flex gap-2 xl:ml-0 xl:justify-end">
-              <NeButton kind="tertiary" @click="emit('edit', item)">
-                <template #prefix>
-                  <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
-                </template>
-                {{ t('common.edit') }}
-              </NeButton>
+              <SuperuserOnlyTooltip :show="!canEdit(item)">
+                <NeButton :disabled="!canEdit(item)" kind="tertiary" @click="emit('edit', item)">
+                  <template #prefix>
+                    <FontAwesomeIcon :icon="faPenToSquare" class="h-4 w-4" aria-hidden="true" />
+                  </template>
+                  {{ t('common.edit') }}
+                </NeButton>
+              </SuperuserOnlyTooltip>
               <NeDropdown :items="getDropdownItems(item)" :align-to-right="true" />
             </div>
           </NeTableCell>

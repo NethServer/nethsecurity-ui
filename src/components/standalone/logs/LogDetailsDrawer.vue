@@ -6,7 +6,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NeButton, NeSideDrawer } from '@nethesis/vue-components'
+import { NeSideDrawer } from '@nethesis/vue-components'
 import { levelDotClass, type LogEntry } from '@/lib/standalone/victoriaLogs'
 
 const { entry = undefined } = defineProps<{
@@ -15,7 +15,6 @@ const { entry = undefined } = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  filterService: [service: string]
 }>()
 
 const { t, locale } = useI18n()
@@ -68,9 +67,6 @@ const otherFields = computed(() =>
           <dd class="font-mono break-all">{{ value }}</dd>
         </template>
       </dl>
-      <NeButton v-if="entry.app_name" kind="secondary" @click="emit('filterService', entry.app_name)">
-        {{ t('standalone.logs.filter_by_service', { service: entry.app_name }) }}
-      </NeButton>
     </div>
   </NeSideDrawer>
 </template>

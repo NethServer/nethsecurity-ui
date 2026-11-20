@@ -42,7 +42,7 @@ import {
 import LogsTimeline from '@/components/standalone/logs/LogsTimeline.vue'
 import LogRow from '@/components/standalone/logs/LogRow.vue'
 import LogDetailsDrawer from '@/components/standalone/logs/LogDetailsDrawer.vue'
-import LogsTimeRange from '@/components/standalone/logs/LogsTimeRange.vue'
+import TimeRangePicker from '@/components/standalone/TimeRangePicker.vue'
 import {
   bootTimes,
   buildLogsQuery,
@@ -58,8 +58,6 @@ import {
 import { vmQuery, vmQueryRange } from '@/lib/standalone/victoriaMetrics'
 
 const PAGE_SIZE = 500
-// how far a page looks past its cursor, an unbounded search opens every daily partition at once
-const PAGE_SPAN_MS = 7 * 24 * 3600_000
 const MAX_LINES = 50_000
 // every list item is a single line of this height, so the virtualizer never has to measure
 const ITEM_HEIGHT = 28
@@ -216,6 +214,12 @@ function setCustomRange(start: number, end: number) {
   to.value = Math.round(end + missing / 2)
 }
 
+// moves the range start back by its span, the lines in view stay
+function loadOlderRange() {
+  const { start, end } = selectedRange.value
+  setCustomRange(start - (end - start), end)
+}
+
 function clearCustomRange() {
   from.value = undefined
   to.value = undefined
@@ -258,85 +262,46 @@ const hits = useQuery({
   placeholderData: keepPreviousData
 })
 
-type LinesParam = { direction: 'older' | 'newer'; cursor: string }
-// `exhausted`: nothing in the page's direction within PAGE_SPAN_MS of its cursor
+// `exhausted`: the page reached the range start
 type LinesPage = { lines: LogEntry[]; exhausted: boolean }
 
 function withFilter(query: string, filter: string) {
   return query === '*' ? filter : `${query} ${filter}`
 }
 
-// the chart range only places the list: it starts at the range end, and scrolls on past both ends
+// the list starts at the range end and pages back to the range start, the cursor is the page end
 const lines = useInfiniteQuery({
   queryKey: ['logs', 'lines', range, linesQuery],
-  queryFn: async ({ pageParam: param, signal }): Promise<LinesPage> => {
-    const pageParam = param ?? firstLinesParam()
-    const cursor = Date.parse(pageParam.cursor)
-    if (pageParam.direction === 'older') {
-      // `end` is exclusive, newest lines first
-      const res = await getLogs<string>(
-        'query',
-        {
-          start: new Date(cursor - PAGE_SPAN_MS).toISOString(),
-          end: pageParam.cursor,
-          query: linesQuery.value,
-          limit: PAGE_SIZE
-        },
-        true,
-        signal
-      )
-      const page = sortNewestFirst(parseLogLines(res.data))
-      const last = page.at(-1)?._time
-      if (page.length < PAGE_SIZE || !last) {
-        return { lines: page, exhausted: !page.length }
-      }
-      return {
-        lines: [...page.filter((l) => l._time !== last), ...(await linesAt(last, signal))],
-        exhausted: false
-      }
-    }
+  queryFn: async ({ pageParam, signal }): Promise<LinesPage> => {
+    // `end` is exclusive, newest lines first
     const res = await getLogs<string>(
       'query',
       {
-        start: pageParam.cursor,
-        end: new Date(Math.min(Date.now(), cursor + PAGE_SPAN_MS)).toISOString(),
-        query: `${withFilter(linesQuery.value, `_time:>${pageParam.cursor}`)} | first ${PAGE_SIZE} by (_time)`
+        start: rangeParams.value.start,
+        end: pageParam ?? rangeParams.value.end,
+        query: linesQuery.value,
+        limit: PAGE_SIZE
       },
       true,
       signal
     )
     const page = sortNewestFirst(parseLogLines(res.data))
-    const first = page[0]?._time
-    if (page.length < PAGE_SIZE || !first) {
-      return { lines: page, exhausted: !page.length }
+    const last = page.at(-1)?._time
+    if (page.length < PAGE_SIZE || !last) {
+      return { lines: page, exhausted: true }
     }
     return {
-      lines: [...(await linesAt(first, signal)), ...page.filter((l) => l._time !== first)],
+      lines: [...page.filter((l) => l._time !== last), ...(await linesAt(last, signal))],
       exhausted: false
     }
   },
   // null is the first page, from the range end
-  initialPageParam: null as LinesParam | null,
-  getNextPageParam: (lastPage, allPages, lastPageParam): LinesParam | undefined => {
+  initialPageParam: null as string | null,
+  getNextPageParam: (lastPage, allPages): string | undefined => {
     if (lastPage.exhausted || loadedCount(allPages) >= MAX_LINES) {
       return undefined
     }
-    return {
-      direction: 'older',
-      cursor: lastPage.lines.at(-1)?._time ?? (lastPageParam ?? firstLinesParam()).cursor
-    }
-  },
-  getPreviousPageParam: (firstPage, allPages, firstPageParam): LinesParam | undefined => {
-    if (
-      (firstPageParam?.direction === 'newer' && firstPage.exhausted) ||
-      loadedCount(allPages) >= MAX_LINES
-    ) {
-      return undefined
-    }
-    return {
-      direction: 'newer',
-      cursor: firstPage.lines[0]?._time ?? (firstPageParam ?? firstLinesParam()).cursor
-    }
+    return lastPage.lines.at(-1)?._time
   },
   enabled: rangeReady,
   placeholderData: keepPreviousData
@@ -356,10 +321,6 @@ async function linesAt(time: string, signal: AbortSignal) {
     signal
   )
   return parseLogLines(res.data)
-}
-
-function firstLinesParam(): LinesParam {
-  return { direction: 'older', cursor: new Date(range.value.end).toISOString() }
 }
 
 function loadedCount(pages: LinesPage[]) {
@@ -461,8 +422,13 @@ const olderStatus = computed(() => {
   if (entries.value.length >= MAX_LINES) {
     return t('standalone.logs.lines_capped', { max: MAX_LINES.toLocaleString(locale.value) })
   }
-  return t('standalone.logs.no_older_lines', { time: formatDateTime(entries.value.at(-1)?._time) })
+  return t('standalone.logs.no_older_lines')
 })
+
+const atRangeStart = computed(
+  () =>
+    !lines.hasNextPage.value && !lines.isFetchingNextPage.value && entries.value.length < MAX_LINES
+)
 
 // oldest line first, like cat, with day and boot separators; formatted once per data change
 const items = computed(() => {
@@ -562,9 +528,8 @@ watch(items, async () => {
   // the list has its new height after the render
   await nextTick()
   if (pinToBottom.value && listRef.value) {
-    // the newer lines loader row stays just out of view, it loads once scrolled into
     const el = listRef.value
-    el.scrollTop = el.scrollHeight - el.clientHeight - ITEM_HEIGHT
+    el.scrollTop = el.scrollHeight - el.clientHeight
     // cleared only now, at scroll 0 the top would start loading older lines
     pinToBottom.value = false
   }
@@ -590,50 +555,17 @@ const visibleSpan = computed(() => {
 })
 
 // read from the element, a scroll done in code moves it before any scroll event
-function listNear(edge: 'top' | 'bottom') {
-  const el = listRef.value
-  if (!el) {
-    return false
-  }
-  const distance = edge === 'top' ? el.scrollTop : el.scrollHeight - el.scrollTop - el.clientHeight
-  return distance < ITEM_HEIGHT / 2
-}
-
-const loadingNewer = ref(false)
-// keeps loading newer pages while the bottom of the list is in view
-watchEffect(() => {
-  void listScrollY.value
-  void items.value
-  if (
-    listNear('bottom') &&
-    !pinToBottom.value &&
-    !loadingNewer.value &&
-    lines.hasPreviousPage.value &&
-    !lines.isFetchPreviousPageError.value &&
-    !lines.isPlaceholderData.value
-  ) {
-    loadNewer()
-  }
-})
-
-async function loadNewer() {
-  loadingNewer.value = true
-  try {
-    await lines.fetchPreviousPage()
-  } finally {
-    // checked again once the new lines are rendered and the list is taller
-    await nextTick()
-    loadingNewer.value = false
-  }
+function listNearTop() {
+  return !!listRef.value && listRef.value.scrollTop < ITEM_HEIGHT / 2
 }
 
 const loadingOlder = ref(false)
-// and older ones at the top
+// keeps loading older pages while the top of the list is in view
 watchEffect(() => {
   void listScrollY.value
   void items.value
   if (
-    listNear('top') &&
+    listNearTop() &&
     !pinToBottom.value &&
     !loadingOlder.value &&
     lines.hasNextPage.value &&
@@ -723,7 +655,7 @@ function refresh() {
     return
   }
   // invalidating an infinite query refetches every loaded page, only the newest one is kept
-  queryClient.setQueriesData<InfiniteData<LinesPage, LinesParam | null>>(
+  queryClient.setQueriesData<InfiniteData<LinesPage, string | null>>(
     { queryKey: ['logs', 'lines'] },
     (data) => data && { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) }
   )
@@ -749,7 +681,6 @@ function toggleLevel(level: string) {
 }
 
 function filterService(name: string) {
-  selectedEntry.value = undefined
   if (!serviceIds.value.includes(name)) {
     serviceIds.value = [...serviceIds.value, name]
   }
@@ -796,16 +727,6 @@ const error = computed(
         <div class="flex h-9 items-center">
           <NeToggle v-model="logsql" :label="t('standalone.logs.logsql')" />
         </div>
-        <LogsTimeRange
-          class="w-full sm:w-72"
-          :options="rangeOptions"
-          :selected="customRange ? '' : preset"
-          :label="rangeLabel"
-          :start="range.start"
-          :end="range.end"
-          @select="selectPreset"
-          @apply="setCustomRange"
-        />
         <div class="flex h-9 items-center">
           <NeDropdownFilterV2
             v-model="services"
@@ -835,8 +756,15 @@ const error = computed(
           </NeButton>
         </div>
       </div>
-      <div class="flex h-9 items-center gap-6">
+      <div class="flex min-h-9 flex-wrap items-center gap-x-6 gap-y-4">
         <NeToggle v-model="follow" :label="t('standalone.logs.follow')" />
+        <TimeRangePicker
+          :options="rangeOptions"
+          :selected="customRange ? '' : preset"
+          :label="rangeLabel"
+          @select="selectPreset"
+          @apply="setCustomRange"
+        />
         <NeButton kind="primary" @click="refresh">
           <template #prefix>
             <FontAwesomeIcon
@@ -928,9 +856,14 @@ const error = computed(
         :description="t('standalone.logs.no_logs_description')"
         :icon="faMagnifyingGlass"
       >
-        <NeButton v-if="hasFilters" kind="tertiary" size="lg" @click="clearFilters">
-          {{ t('common.reset_filters') }}
-        </NeButton>
+        <div class="flex flex-wrap justify-center gap-2">
+          <NeButton kind="tertiary" size="lg" @click="loadOlderRange">
+            {{ t('standalone.logs.load_older_lines') }}
+          </NeButton>
+          <NeButton v-if="hasFilters" kind="tertiary" size="lg" @click="clearFilters">
+            {{ t('common.reset_filters') }}
+          </NeButton>
+        </div>
       </NeEmptyState>
       <div
         v-else
@@ -950,6 +883,9 @@ const error = computed(
               >
                 <NeSpinner v-if="lines.isFetchingNextPage.value" size="4" />
                 {{ item.text }}
+                <NeButton v-if="atRangeStart" kind="tertiary" size="sm" @click="loadOlderRange">
+                  {{ t('standalone.logs.load_older_lines') }}
+                </NeButton>
               </div>
               <div
                 v-else-if="item.kind === 'day'"
@@ -976,25 +912,11 @@ const error = computed(
                     ? 'bg-primary-100 dark:bg-primary-900'
                     : item.striped && 'bg-gray-100 dark:bg-gray-900/60'
                 "
-                @click="selectedEntry = item.entry"
+                @select="selectedEntry = item.entry"
+                @filter-service="filterService"
               />
             </li>
           </ol>
-        </div>
-        <div
-          class="flex h-7 items-center justify-center gap-2 px-4 text-sm text-gray-600 dark:text-gray-400"
-        >
-          <template v-if="lines.isFetchingPreviousPage.value">
-            <NeSpinner size="4" />
-            {{ t('standalone.logs.loading_newer') }}
-          </template>
-          <template v-else-if="!lines.hasPreviousPage.value">
-            {{
-              entries.length >= MAX_LINES
-                ? t('standalone.logs.lines_capped', { max: MAX_LINES.toLocaleString(locale) })
-                : t('standalone.logs.no_newer_lines')
-            }}
-          </template>
         </div>
       </div>
       <p
@@ -1011,9 +933,5 @@ const error = computed(
       </p>
     </div>
   </div>
-  <LogDetailsDrawer
-    :entry="selectedEntry"
-    @close="selectedEntry = undefined"
-    @filter-service="filterService"
-  />
+  <LogDetailsDrawer :entry="selectedEntry" @close="selectedEntry = undefined" />
 </template>

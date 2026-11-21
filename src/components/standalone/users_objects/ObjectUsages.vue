@@ -90,6 +90,8 @@ function getManagementPageLabel(kind: string) {
       return t('common.go_to_page', { page: t('standalone.multi_wan.title') })
     case 'firewall_redirect':
       return t('common.go_to_page', { page: t('standalone.port_forward.title') })
+    case 'dpi_rule':
+      return t('common.go_to_page', { page: t('standalone.dpi.title') })
   }
 }
 
@@ -109,6 +111,9 @@ function goToManagementPage(subtype: string) {
       break
     case 'firewall_redirect':
       path = 'firewall/port-forward'
+      break
+    case 'dpi_rule':
+      path = 'security/dpi'
       break
   }
   router.push(`${getStandaloneRoutePrefix(route)}/${path}`)

@@ -29,6 +29,7 @@ import {
   DPI_RULES_KEY,
   moveRuleIdToEdge,
   reorderRuleIds,
+  ruleSourceLabels,
   useDpiRules,
   type DpiRule,
   type DpiRulePosition,
@@ -92,7 +93,7 @@ const filteredRules = computed(() => {
       return false
     }
     if (sourceFilter.value.length) {
-      if (!rule.source.some((entry) => sourceFilter.value.includes(entry))) {
+      if (!ruleSourceLabels(rule).some((entry) => sourceFilter.value.includes(entry))) {
         return false
       }
     }
@@ -118,7 +119,7 @@ const hasNoRulesConfigured = computed(
 const sourceFilterOptions = computed<FilterOption[]>(() => {
   const sources = new Set<string>()
   for (const rule of allRules.value ?? []) {
-    for (const source of rule.source) {
+    for (const source of ruleSourceLabels(rule)) {
       sources.add(source)
     }
   }

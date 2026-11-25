@@ -2228,6 +2228,7 @@
       "certificate": "Certificate",
       "username_password_certificate": "Username, password and certificate",
       "username_otp_certificate": "Username, certificate and OTP",
+      "username_password_otp_certificate": "Username, password, certificate and OTP",
       "local_database": "Local database",
       "custom_option_combobox_placeholder": "Search key",
       "strong": "Strong",

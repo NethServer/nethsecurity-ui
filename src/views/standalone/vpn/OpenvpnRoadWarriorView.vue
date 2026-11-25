@@ -31,7 +31,11 @@ import ConnectionsHistory from '@/components/standalone/openvpn_rw/ConnectionsHi
 import { useNotificationsStore } from '@/stores/notifications'
 
 export type RWAuthenticationMode =
-  'username_password' | 'certificate' | 'username_password_certificate' | 'username_otp_certificate'
+  | 'username_password'
+  | 'certificate'
+  | 'username_password_certificate'
+  | 'username_otp_certificate'
+  | 'username_password_otp_certificate'
 
 export type RWServer = {
   proto: string

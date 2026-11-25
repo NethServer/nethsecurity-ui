@@ -129,7 +129,8 @@ function getDropdownItems(item: RWAccount) {
         emit('downloadCertificate', item)
       }
     },
-    ...(props.authenticationMode === 'username_otp_certificate'
+    ...(props.authenticationMode === 'username_otp_certificate' ||
+    props.authenticationMode === 'username_password_otp_certificate'
       ? [
           {
             id: 'download_qr_code',
@@ -254,7 +255,8 @@ function isCertificateExpiringSoon(expiryTimestamp: number): boolean {
                     item.local &&
                     !item.password &&
                     (authenticationMode === 'username_password' ||
-                      authenticationMode === 'username_password_certificate')
+                      authenticationMode === 'username_password_certificate' ||
+                      authenticationMode === 'username_password_otp_certificate')
                   "
                   interactive
                 >

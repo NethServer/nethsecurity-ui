@@ -37,9 +37,10 @@ import {
   type DpiRulePayload,
   type DpiRulePosition
 } from '@/composables/useDpiRules'
+import { useObjectStore } from '@/stores/standalone/objects'
 import { useApplicationGroups } from '@/composables/useApplicationGroups'
 import { ubusCall, ValidationError } from '@/lib/standalone/ubus'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { useUciPendingChangesStore } from '@/stores/standalone/uciPendingChanges'
 import {
   MessageBag,
@@ -82,6 +83,16 @@ const emit = defineEmits<{
 
 type RuleIdResponse = { data: { id: string } }
 
+// an object a rule source can reference, as returned by list-source-objects
+type DpiSourceObject = {
+  id: string
+  name: string
+  type: string
+  subtype: string
+}
+
+type ListSourceObjectsResponse = { data: { values: DpiSourceObject[] } }
+
 const { t } = useI18n()
 
 const step = ref(1)
@@ -92,6 +103,7 @@ const isShownCreateGroupModal = ref(false)
 const STEP_OF_FIELD: Record<string, number> = {
   name: 1,
   source: 2,
+  source_objects: 2,
   action: 3,
   appgroups: 3,
   position: 3
@@ -101,8 +113,9 @@ const STEP_OF_FIELD: Record<string, number> = {
 const enabled = ref(true)
 const name = ref('')
 // step 2
-const sourceType = ref('addresses')
+const sourceType = ref<'addresses' | 'objects' | 'any'>('addresses')
 const sourceAddresses = ref<string[]>([''])
+const selectedSourceObjects = ref<NeMultiselectComboboxOption[]>([])
 // step 3
 const matchType = ref<'all' | 'appgroups'>('appgroups')
 const selectedGroups = ref<NeMultiselectComboboxOption[]>([])
@@ -110,6 +123,15 @@ const action = ref<DpiRuleAction>('block')
 const rulePosition = ref<DpiRulePosition>('bottom')
 
 const { data: applicationGroups, isLoading: isLoadingApplicationGroups } = useApplicationGroups()
+// objects change outside this page: fetched again every time the drawer opens
+const { data: sourceObjects, isFetching: isLoadingSourceObjects } = useQuery({
+  queryKey: ['dpi', 'source-objects'],
+  queryFn: ({ signal }) =>
+    ubusCall<ListSourceObjectsResponse>('ns.dpi', 'list-source-objects', {}, { signal }),
+  select: (res) => res.data.values,
+  enabled: () => isShown
+})
+const { getObjectIcon } = useObjectStore()
 const queryClient = useQueryClient()
 const uci = useUciPendingChangesStore()
 
@@ -135,8 +157,29 @@ const canOpen = computed(() => !isEditing.value || (ruleToEdit?.managed ?? false
 
 const sourceTypeOptions = computed(() => [
   { id: 'addresses', label: t('standalone.dpi.source_type_addresses') },
+  { id: 'objects', label: t('standalone.dpi.source_type_objects') },
   { id: 'any', label: t('standalone.dpi.source_type_any') }
 ])
+
+function sourceObjectOption(
+  id: string,
+  name: string,
+  subtype: string | null
+): NeMultiselectComboboxOption {
+  return {
+    id,
+    label: name,
+    description: subtype ? t(`standalone.objects.subtype_${subtype}`) : undefined,
+    icon: getObjectIcon(subtype ?? '')
+  }
+}
+
+const sourceObjectOptions = computed(
+  () =>
+    sourceObjects.value?.map((sourceObject) =>
+      sourceObjectOption(sourceObject.id, sourceObject.name, sourceObject.subtype)
+    ) ?? []
+)
 
 const matchTypeOptions = computed(() => [
   { id: 'all', label: t('standalone.dpi.match_type_all') },
@@ -185,6 +228,17 @@ watch(matchType, () => {
   validationErrorBag.value.delete('appgroups')
 })
 
+watch(selectedSourceObjects, (selected) => {
+  if (selected.length) {
+    validationErrorBag.value.delete('source_objects')
+  }
+})
+
+watch(sourceType, () => {
+  validationErrorBag.value.delete('source')
+  validationErrorBag.value.delete('source_objects')
+})
+
 watch(
   sourceAddresses,
   () => {
@@ -205,8 +259,17 @@ watch(
           ? t('standalone.dpi.duplicated_rule_name', { name: ruleToEdit.name })
           : ruleToEdit.name
         : ''
-      sourceType.value = ruleToEdit && ruleToEdit.source.length === 0 ? 'any' : 'addresses'
+      const ruleSourceObjects = ruleToEdit?.source_objects ?? []
+      if (ruleSourceObjects.length) {
+        sourceType.value = 'objects'
+      } else {
+        sourceType.value = ruleToEdit && ruleToEdit.source.length === 0 ? 'any' : 'addresses'
+      }
       sourceAddresses.value = ruleToEdit?.source.length ? [...ruleToEdit.source] : ['']
+      // an object no longer existing stays selected, named after its id, until it is removed
+      selectedSourceObjects.value = ruleSourceObjects.map((sourceObject) =>
+        sourceObjectOption(sourceObject.id, sourceObject.name, sourceObject.subtype)
+      )
       matchType.value = ruleToEdit?.match_all ? 'all' : 'appgroups'
       selectedGroups.value =
         ruleToEdit?.appgroups.map((appgroup) => ({ id: appgroup.id, label: appgroup.name })) ?? []
@@ -287,6 +350,17 @@ function validateStep(currentStep: number): boolean {
     return validateSourceAddresses()
   }
 
+  if (currentStep === 2 && sourceType.value === 'objects') {
+    return runValidators(
+      [
+        selectedSourceObjects.value.length
+          ? { valid: true }
+          : { valid: false, errMessage: 'source_objects_required' }
+      ],
+      'source_objects'
+    )
+  }
+
   if (currentStep === 3 && matchType.value === 'appgroups') {
     return runValidators(
       [
@@ -340,7 +414,11 @@ function save() {
     name: name.value.trim(),
     enabled: enabled.value,
     action: action.value,
-    source: sourceType.value === 'any' ? [] : sourceAddresses.value.filter((address) => address),
+    // addresses and objects are alternatives: only the chosen kind is saved
+    source:
+      sourceType.value === 'addresses' ? sourceAddresses.value.filter((address) => address) : [],
+    source_objects:
+      sourceType.value === 'objects' ? selectedSourceObjects.value.map((option) => option.id) : [],
     match_all: matchType.value === 'all',
     appgroups: matchType.value === 'all' ? [] : selectedGroups.value.map((option) => option.id)
   }
@@ -425,6 +503,20 @@ function save() {
               </NeTooltip>
             </template>
           </NeMultiTextInput>
+          <NeMultiselectCombobox
+            v-else-if="sourceType === 'objects'"
+            v-model="selectedSourceObjects"
+            :loading-options="isLoadingSourceObjects"
+            :label="t('standalone.dpi.source_objects')"
+            :options="sourceObjectOptions"
+            :placeholder="t('standalone.dpi.choose_source_object')"
+            :invalid-message="t(validationErrorBag.getFirstI18nKeyFor('source_objects'))"
+            :optional-label="t('common.optional')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+          />
         </div>
         <!-- step 3: match and action -->
         <div v-else-if="step === 3" class="flex flex-col gap-8">
@@ -500,7 +592,25 @@ function save() {
               <dt class="w-25 shrink-0 font-medium text-secondary-neutral">
                 {{ t('standalone.dpi.source') }}
               </dt>
-              <dd class="text-primary-neutral">{{ sourceSummary }}</dd>
+              <dd
+                v-if="sourceType === 'objects'"
+                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-secondary"
+              >
+                <span
+                  v-for="sourceObject in selectedSourceObjects"
+                  :key="sourceObject.id"
+                  class="flex items-center gap-2"
+                >
+                  <FontAwesomeIcon
+                    v-if="sourceObject.icon"
+                    :icon="sourceObject.icon"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                  {{ sourceObject.label }}
+                </span>
+              </dd>
+              <dd v-else class="text-primary-neutral">{{ sourceSummary }}</dd>
             </div>
             <div class="flex items-center gap-6 pb-1">
               <dt class="w-25 shrink-0 font-medium text-secondary-neutral">

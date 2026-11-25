@@ -30,6 +30,7 @@ import {
   faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import type { DpiRule, DpiRulePosition } from '@/composables/useDpiRules'
+import { useObjectStore } from '@/stores/standalone/objects'
 import { groupContentSummary, useApplicationGroups } from '@/composables/useApplicationGroups'
 
 const {
@@ -56,6 +57,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const { data: applicationGroups } = useApplicationGroups()
+const { getObjectIcon } = useObjectStore()
 
 const headers = [
   {
@@ -290,39 +292,67 @@ function actionsOf(rule: DpiRule) {
                     </template>
                   </NeTooltip>
                   <template v-else>
-                    <div v-if="rule.source.length" class="flex flex-col gap-1">
-                      <span :class="{ 'opacity-50': !rule.enabled }" class="text-secondary-neutral">
-                        {{ rule.source.slice(0, 2).join(', ') }}
-                      </span>
-                      <div v-if="rule.source.length > 2" class="flex items-center gap-2">
+                    <div
+                      v-if="rule.source_objects?.length || rule.source.length"
+                      class="flex flex-col gap-1"
+                    >
+                      <div
+                        v-if="rule.source_objects?.length"
+                        :class="{ 'opacity-50': !rule.enabled }"
+                        class="flex flex-wrap items-center gap-x-4 gap-y-2"
+                      >
+                        <span
+                          v-for="sourceObject in rule.source_objects"
+                          :key="sourceObject.id"
+                          class="inline-flex items-center gap-2 text-primary-700 dark:text-primary-500"
+                        >
+                          <FontAwesomeIcon
+                            :icon="getObjectIcon(sourceObject.subtype ?? '')"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                          />
+                          {{ sourceObject.name }}
+                        </span>
+                      </div>
+                      <div v-if="rule.source.length" class="flex flex-col gap-1">
                         <span
                           :class="{ 'opacity-50': !rule.enabled }"
                           class="text-secondary-neutral"
                         >
-                          {{ rule.source[2] }}
+                          {{ rule.source.slice(0, 2).join(', ') }}
                         </span>
-                        <NeTooltip
-                          v-if="rule.source.length > 3"
-                          trigger-event="mouseenter focus"
-                          placement="top-start"
-                        >
-                          <template #trigger>
-                            <span
-                              class="text-sm font-medium text-primary-700 dark:text-primary-500"
-                            >
-                              {{
-                                t('standalone.dpi.n_other_rules', { count: rule.source.length - 3 })
-                              }}
-                            </span>
-                          </template>
-                          <template #content>
-                            <div class="flex flex-col gap-1">
-                              <div v-for="source in rule.source.slice(3)" :key="source">
-                                {{ source }}
+                        <div v-if="rule.source.length > 2" class="flex items-center gap-2">
+                          <span
+                            :class="{ 'opacity-50': !rule.enabled }"
+                            class="text-secondary-neutral"
+                          >
+                            {{ rule.source[2] }}
+                          </span>
+                          <NeTooltip
+                            v-if="rule.source.length > 3"
+                            trigger-event="mouseenter focus"
+                            placement="top-start"
+                          >
+                            <template #trigger>
+                              <span
+                                class="text-sm font-medium text-primary-700 dark:text-primary-500"
+                              >
+                                {{
+                                  t('standalone.dpi.n_other_rules', {
+                                    count: rule.source.length - 3
+                                  })
+                                }}
+                              </span>
+                            </template>
+                            <template #content>
+                              <div class="flex flex-col gap-1">
+                                <div v-for="source in rule.source.slice(3)" :key="source">
+                                  {{ source }}
+                                </div>
                               </div>
-                            </div>
-                          </template>
-                        </NeTooltip>
+                            </template>
+                          </NeTooltip>
+                        </div>
                       </div>
                     </div>
                     <span

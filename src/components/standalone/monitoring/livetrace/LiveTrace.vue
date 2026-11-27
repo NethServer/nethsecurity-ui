@@ -1073,105 +1073,108 @@ async function copyResults() {
       :loading="isPending"
       :skeleton-lines="3"
     >
-      <form class="flex flex-wrap items-start gap-4 2xl:flex-nowrap" @submit.prevent="startTrace">
-        <!-- remount once the leases arrive, so an ip set before them is not listed twice -->
-        <NeCombobox
-          ref="ipRef"
-          :key="clientNames ? 'leases' : 'no-leases'"
-          v-model="ip"
-          class="w-full sm:max-w-xs xl:max-w-sm 2xl:min-w-40"
-          :label="t('standalone.live_trace.client_ip')"
-          :placeholder="t('standalone.live_trace.client_ip_placeholder')"
-          :options="clientOptions"
-          :invalid-message="t(validationBag.getFirstI18nKeyFor('ip'))"
-          :disabled="formDisabled"
-          accept-user-input
-          :optional-label="t('common.optional')"
-          :no-results-label="t('ne_combobox.no_results')"
-          :limited-options-label="t('ne_combobox.limited_options_label')"
-          :no-options-label="t('ne_combobox.no_options_label')"
-          :selected-label="t('ne_combobox.selected')"
-          :user-input-label="t('ne_combobox.user_input_label')"
-        />
-        <NeTextInput
-          ref="portRef"
-          v-model="port"
-          class="w-full sm:w-40 2xl:min-w-24"
-          inputmode="numeric"
-          :label="t('common.port')"
-          :placeholder="t('common.eg_value', { value: 443 })"
-          :invalid-message="t(validationBag.getFirstI18nKeyFor('port'))"
-          :disabled="formDisabled"
-          optional
-          :optional-label="t('common.optional')"
-        />
-        <NeListbox
-          v-model="protocol"
-          class="w-full sm:w-40 2xl:min-w-24"
-          :label="t('standalone.live_trace.protocol')"
-          :options="protocolOptions"
-          :invalid-message="t(validationBag.getFirstI18nKeyFor('protocol'))"
-          :disabled="formDisabled"
-          :no-options-label="t('ne_dropdown_filter.no_options')"
-          :optional-label="t('common.optional')"
-        />
-        <NeListbox
-          v-model="duration"
-          class="w-full sm:w-40 2xl:min-w-24"
-          :label="t('standalone.live_trace.duration')"
-          :options="durationOptions"
-          :invalid-message="t(validationBag.getFirstI18nKeyFor('duration'))"
-          :disabled="formDisabled"
-          :no-options-label="t('ne_dropdown_filter.no_options')"
-          :optional-label="t('common.optional')"
-        />
-        <NeButton
-          v-if="data?.running"
-          ref="stopButton"
-          class="w-full shrink-0 sm:mt-8 sm:w-auto"
-          kind="primary"
-          size="lg"
-          :disabled="stop.isPending.value"
-          :loading="stop.isPending.value"
-          @click="stop.mutate()"
-        >
-          <template #prefix>
-            <FontAwesomeIcon :icon="faStop" aria-hidden="true" />
-          </template>
-          {{ t('standalone.live_trace.stop') }}
-        </NeButton>
-        <NeButton
-          v-else
-          ref="startButton"
-          class="w-full shrink-0 sm:mt-8 sm:w-auto"
-          kind="primary"
-          size="lg"
-          type="submit"
-          :disabled="start.isPending.value"
-          :loading="start.isPending.value"
-        >
-          <template #prefix>
-            <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
-          </template>
-          {{ t('standalone.live_trace.start') }}
-        </NeButton>
-        <!-- on the controls row from 2xl, where the fields shrink to make room -->
-        <div
-          v-if="data?.running"
-          class="flex w-full items-center gap-3 2xl:mt-8 2xl:ml-auto 2xl:min-h-9 2xl:w-auto 2xl:shrink-0 2xl:whitespace-nowrap"
-        >
-          <NeSpinner size="5" aria-hidden="true" />
-          <p>
-            <span class="font-medium">{{ t('standalone.live_trace.running') }}</span>
-            <span class="ml-2 text-tertiary-neutral tabular-nums">
-              {{ t('standalone.live_trace.time_remaining', { time: remaining, end: endsAtTime }) }}
-            </span>
+      <!-- the status wraps below as a whole once the fields no longer fit on one row -->
+      <form class="flex flex-wrap items-end gap-4" @submit.prevent="startTrace">
+        <div class="mr-auto flex flex-wrap items-end gap-4">
+          <!-- remount once the leases arrive, so an ip set before them is not listed twice -->
+          <NeCombobox
+            ref="ipRef"
+            :key="clientNames ? 'leases' : 'no-leases'"
+            v-model="ip"
+            class="w-full sm:w-80"
+            :label="t('standalone.live_trace.client_ip')"
+            :placeholder="t('standalone.live_trace.client_ip_placeholder')"
+            :options="clientOptions"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('ip'))"
+            :disabled="formDisabled"
+            accept-user-input
+            :optional-label="t('common.optional')"
+            :no-results-label="t('ne_combobox.no_results')"
+            :limited-options-label="t('ne_combobox.limited_options_label')"
+            :no-options-label="t('ne_combobox.no_options_label')"
+            :selected-label="t('ne_combobox.selected')"
+            :user-input-label="t('ne_combobox.user_input_label')"
+          />
+          <NeTextInput
+            ref="portRef"
+            v-model="port"
+            class="w-full sm:w-40"
+            inputmode="numeric"
+            :label="t('common.port')"
+            :placeholder="t('common.eg_value', { value: 443 })"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('port'))"
+            :disabled="formDisabled"
+            optional
+            :optional-label="t('common.optional')"
+          />
+          <NeListbox
+            v-model="protocol"
+            class="w-full sm:w-40"
+            :label="t('standalone.live_trace.protocol')"
+            :options="protocolOptions"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('protocol'))"
+            :disabled="formDisabled"
+            :no-options-label="t('ne_dropdown_filter.no_options')"
+            :optional-label="t('common.optional')"
+          />
+          <NeListbox
+            v-model="duration"
+            class="w-full sm:w-40"
+            :label="t('standalone.live_trace.duration')"
+            :options="durationOptions"
+            :invalid-message="t(validationBag.getFirstI18nKeyFor('duration'))"
+            :disabled="formDisabled"
+            :no-options-label="t('ne_dropdown_filter.no_options')"
+            :optional-label="t('common.optional')"
+          />
+          <NeButton
+            v-if="data?.running"
+            ref="stopButton"
+            class="w-full shrink-0 sm:w-auto"
+            kind="primary"
+            size="lg"
+            :disabled="stop.isPending.value"
+            :loading="stop.isPending.value"
+            @click="stop.mutate()"
+          >
+            <template #prefix>
+              <FontAwesomeIcon :icon="faStop" aria-hidden="true" />
+            </template>
+            {{ t('standalone.live_trace.stop') }}
+          </NeButton>
+          <NeButton
+            v-else
+            ref="startButton"
+            class="w-full shrink-0 sm:w-auto"
+            kind="primary"
+            size="lg"
+            type="submit"
+            :disabled="start.isPending.value"
+            :loading="start.isPending.value"
+          >
+            <template #prefix>
+              <FontAwesomeIcon :icon="faPlay" aria-hidden="true" />
+            </template>
+            {{ t('standalone.live_trace.start') }}
+          </NeButton>
+        </div>
+        <div v-if="data?.running || String(port).trim() || protocol != 'any'" class="space-y-1">
+          <div v-if="data?.running" class="flex items-center gap-3">
+            <NeSpinner size="5" aria-hidden="true" />
+            <p>
+              <span class="font-medium">{{ t('standalone.live_trace.running') }}</span>
+              <span class="ml-2 text-tertiary-neutral tabular-nums">
+                {{
+                  t('standalone.live_trace.time_remaining', { time: remaining, end: endsAtTime })
+                }}
+              </span>
+            </p>
+          </div>
+          <p v-if="String(port).trim() || protocol != 'any'" class="text-sm text-tertiary-neutral">
+            {{ t('standalone.live_trace.filter_helper') }}
           </p>
         </div>
       </form>
-      <p v-if="String(port).trim() || protocol != 'any'" class="mt-4 text-sm text-tertiary-neutral">
-        {{ t('standalone.live_trace.filter_helper') }}
-      </p>
     </NeCard>
     <!-- results -->
     <NeCard
